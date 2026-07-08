@@ -10,7 +10,17 @@ Set `AUTH_PROVIDER=supabase` to force Supabase, or `AUTH_PROVIDER=netlify-identi
 2. Copy **Project URL** and **anon public key** from **Project Settings → API**.
 3. Keep the **service role key** server-only (billing webhooks later). Auth functions use only the anon key.
 
-## 2. Netlify environment variables
+## 2. Repo + local CLI
+
+The repo now includes `supabase/config.toml` and these scripts:
+
+- `npm run supabase:start`
+- `npm run supabase:stop`
+- `npm run supabase:db:push`
+
+They assume you already have the Supabase CLI installed locally.
+
+## 3. Netlify environment variables
 
 In **Site configuration → Environment variables** (and in local `.env` for `netlify dev`):
 
@@ -23,7 +33,7 @@ In **Site configuration → Environment variables** (and in local `.env` for `ne
 | `AUTH_ALLOWED_ORIGINS` | No | Comma-separated extra origins for CORS checks |
 | `ALLOWED_ORIGIN` | No | Legacy single-origin allowlist |
 
-## 3. Auth settings in Supabase
+## 4. Auth settings in Supabase
 
 1. **Authentication → Providers → Email**: enable email signups.
 2. **Authentication → URL configuration**:
@@ -36,7 +46,7 @@ The frontend accepts:
 - Netlify Identity: `#confirmation_token`, `#recovery_token`
 - Supabase: `?token_hash=...&type=signup|recovery` (query or hash)
 
-## 4. Database schema
+## 5. Database schema
 
 Run `supabase/migrations/001_profiles.sql` in the Supabase SQL editor (or via Supabase CLI).
 
@@ -47,7 +57,7 @@ This creates:
 - RLS policies so users only read/write their own rows
 - Trigger `on_auth_user_created` after signup
 
-## 5. Routes (unchanged API surface)
+## 6. Routes (unchanged API surface)
 
 - `POST /api/auth/signup` — create account (30-day Pro trial from `created_at`)
 - `POST /api/auth/login`
@@ -64,7 +74,7 @@ Supabase sessions use HttpOnly cookies:
 - Production: `__Host-atm_access`, `__Host-atm_refresh`
 - Local dev: `atm_access`, `atm_refresh`
 
-## 6. Plans & billing metadata
+## 7. Plans & billing metadata
 
 Trial and Pro logic live in `netlify/lib/plan-access.mjs`.
 
@@ -79,7 +89,7 @@ To mark a paid subscriber (until Stripe/Mercado Pago webhooks ship), set **app m
 
 Use the service role key only in server-side webhook functions — never in the browser.
 
-## 7. Smoke test
+## 8. Smoke test
 
 1. Set env vars and deploy (or `netlify dev`).
 2. Open `/login` → **Create account**.
@@ -89,7 +99,7 @@ Use the service role key only in server-side webhook functions — never in the 
 6. Open `/pricing` and confirm trial/Pro badges on `/app`.
 7. Pro users: ads off via `/api/ads-config`.
 
-## 8. Migration from Netlify Identity
+## 9. Migration from Netlify Identity
 
 - Existing Identity users do **not** migrate automatically.
 - For a clean cutover: enable Supabase vars, deploy, and ask new signups to use Supabase.
