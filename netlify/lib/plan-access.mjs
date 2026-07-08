@@ -93,7 +93,7 @@ export function publicUser(user) {
   return {
     id: user?.id || null,
     email: user?.email || null,
-    emailConfirmed: Boolean(user?.confirmedAt),
+    emailConfirmed: Boolean(user?.confirmedAt || user?.email_confirmed_at),
     lastSignInAt: user?.lastSignInAt || null,
     createdAt: user?.createdAt || user?.created_at || null,
     role: access.role,

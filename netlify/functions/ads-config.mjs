@@ -1,5 +1,5 @@
-import { getUser, refreshSession } from '@netlify/identity';
-import { json, options, publicUser, PLAN_PRICING } from '../lib/netlify-identity-utils.mjs';
+import { authSession } from '../lib/auth-provider.mjs';
+import { json, jsonWithCookies, options, publicUser, PLAN_PRICING } from '../lib/netlify-identity-utils.mjs';
 
 export default async function handler(request) {
   if (request.method === 'OPTIONS') return options();
@@ -7,20 +7,18 @@ export default async function handler(request) {
     return json(405, { ok: false, error: 'Method not allowed' });
   }
 
-  try {
-    await refreshSession();
-  } catch (_err) {
-    // Anonymous visitors remain free.
-  }
+  const session = await authSession(request);
+  const user = session?.user ? publicUser(session.user) : null;
 
-  const identityUser = await getUser();
-  const user = identityUser ? publicUser(identityUser) : null;
-
-  return json(200, {
-    ok: true,
-    signedIn: Boolean(user),
-    adsEnabled: user ? !user.adsFree : true,
-    user,
-    pricing: PLAN_PRICING
-  });
+  return jsonWithCookies(
+    200,
+    {
+      ok: true,
+      signedIn: Boolean(user),
+      adsEnabled: user ? !user.adsFree : true,
+      user,
+      pricing: PLAN_PRICING
+    },
+    session?.cookieHeaders || []
+  );
 }

@@ -1,6 +1,17 @@
-# Netlify Identity setup for Atomurus
+# Atomurus authentication
 
-Atomurus now uses Netlify Identity for email/password accounts. Do not create a custom database table for passwords and do not store raw passwords anywhere in the project.
+Atomurus supports two auth backends (one active per deploy):
+
+| Provider | When used |
+|----------|-----------|
+| **Supabase Auth** | `SUPABASE_URL` + `SUPABASE_ANON_KEY` set (or `AUTH_PROVIDER=supabase`) |
+| **Netlify Identity** | Default when Supabase is not configured |
+
+**Supabase:** see `SUPABASE-SETUP.md` (signup, cookies, SQL profiles, email redirects).
+
+**Netlify Identity:** see below.
+
+Atomurus does not store raw passwords in the repo. Sessions are server-managed (Supabase HttpOnly cookies or Netlify `nf_jwt` cookies).
 
 ## What Netlify stores
 

@@ -1,5 +1,5 @@
-import { getUser, refreshSession } from '@netlify/identity';
-import { json, options, publicUser } from '../lib/netlify-identity-utils.mjs';
+import { authSession } from '../lib/auth-provider.mjs';
+import { json, jsonWithCookies, options, publicUser } from '../lib/netlify-identity-utils.mjs';
 
 export default async function handler(request) {
   if (request.method === 'OPTIONS') return options();
@@ -7,16 +7,10 @@ export default async function handler(request) {
     return json(405, { ok: false, error: 'Method not allowed' });
   }
 
-  try {
-    await refreshSession();
-  } catch (_err) {
-    // getUser returns null if the session cannot be refreshed.
-  }
-
-  const user = await getUser();
-  if (!user) {
+  const session = await authSession(request);
+  if (!session?.user) {
     return json(401, { ok: false, error: 'Session expired', code: 'session_expired' });
   }
 
-  return json(200, { ok: true, user: publicUser(user) });
+  return jsonWithCookies(200, { ok: true, user: publicUser(session.user) }, session.cookieHeaders);
 }

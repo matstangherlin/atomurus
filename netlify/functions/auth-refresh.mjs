@@ -1,5 +1,5 @@
-import { getUser, refreshSession } from '@netlify/identity';
-import { json, options, publicUser, verifySameOrigin } from '../lib/netlify-identity-utils.mjs';
+import { authRefresh } from '../lib/auth-provider.mjs';
+import { json, jsonWithCookies, options, publicUser, verifySameOrigin } from '../lib/netlify-identity-utils.mjs';
 
 export default async function handler(request) {
   if (request.method === 'OPTIONS') return options();
@@ -13,16 +13,10 @@ export default async function handler(request) {
     return json(403, { ok: false, error: 'Forbidden' });
   }
 
-  try {
-    await refreshSession();
-  } catch (err) {
-    console.warn('[auth-refresh] Netlify Identity refresh failed:', err.message);
-  }
-
-  const user = await getUser();
-  if (!user) {
+  const refreshed = await authRefresh(request);
+  if (!refreshed?.user) {
     return json(401, { ok: false, error: 'Session expired' });
   }
 
-  return json(200, { ok: true, user: publicUser(user) });
+  return jsonWithCookies(200, { ok: true, user: publicUser(refreshed.user) }, refreshed.cookieHeaders);
 }

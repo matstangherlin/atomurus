@@ -1,4 +1,3 @@
-import { verifyRequestOrigin } from '@netlify/identity';
 export { accessForUser, publicUser, PLAN_PRICING, trialEndsAtForUser } from './plan-access.mjs';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -71,11 +70,46 @@ function configuredOrigins() {
 export function verifySameOrigin(request) {
   const ownOrigin = new URL(request.url).origin;
   const allowedOrigins = Array.from(new Set([ownOrigin, ...configuredOrigins()]));
-  verifyRequestOrigin(request, { allowedOrigins });
+  const origin = request.headers.get('origin');
+  const referer = request.headers.get('referer');
+
+  if (origin) {
+    if (!allowedOrigins.includes(origin)) {
+      const err = new Error('Forbidden origin');
+      err.status = 403;
+      throw err;
+    }
+    return;
+  }
+
+  if (referer) {
+    let refererOrigin = '';
+    try {
+      refererOrigin = new URL(referer).origin;
+    } catch (_err) {
+      const err = new Error('Forbidden referer');
+      err.status = 403;
+      throw err;
+    }
+    if (!allowedOrigins.includes(refererOrigin)) {
+      const err = new Error('Forbidden referer');
+      err.status = 403;
+      throw err;
+    }
+  }
+}
+
+export function jsonWithCookies(status, payload, cookieHeaders = []) {
+  const headers = new Headers(noStoreHeaders());
+  for (const cookie of cookieHeaders) headers.append('Set-Cookie', cookie);
+  return new Response(JSON.stringify(payload), {
+    status,
+    headers
+  });
 }
 
 export function isIdentityConfigError(error) {
-  return error?.name === 'MissingIdentityError';
+  return error?.name === 'MissingIdentityError' || error?.code === 'auth_not_configured';
 }
 
 export function statusFromError(error, fallback = 500) {

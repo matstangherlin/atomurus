@@ -53,6 +53,10 @@
     return new URLSearchParams(location.hash.slice(1)).get(name) || '';
   }
 
+  function searchParam(name) {
+    return new URLSearchParams(location.search).get(name) || '';
+  }
+
   function clearHash() {
     if (history && history.replaceState) {
       history.replaceState(null, document.title, location.pathname + location.search);
@@ -60,8 +64,10 @@
   }
 
   async function initAuthCallbacks() {
-    var confirmationToken = hashParam('confirmation_token');
-    var recoveryToken = hashParam('recovery_token');
+    var tokenHash = hashParam('token_hash') || searchParam('token_hash');
+    var callbackType = hashParam('type') || searchParam('type');
+    var confirmationToken = hashParam('confirmation_token') || (tokenHash && callbackType === 'signup' ? tokenHash : '');
+    var recoveryToken = hashParam('recovery_token') || (tokenHash && callbackType === 'recovery' ? tokenHash : '');
     var loginOk = $('auth-login-ok');
     var loginErr = $('auth-login-err');
 
@@ -69,7 +75,10 @@
       hide(loginOk);
       hide(loginErr);
       try {
-        await postJson('/api/auth/confirm', { token: confirmationToken });
+        await postJson('/api/auth/confirm', {
+          token: confirmationToken,
+          type: callbackType || 'signup'
+        });
         clearHash();
         window.location.assign('/app');
       } catch (_err) {
@@ -84,6 +93,7 @@
       if (panel) {
         panel.hidden = false;
         panel.dataset.recoveryToken = recoveryToken;
+        panel.dataset.recoveryType = callbackType || 'recovery';
         clearHash();
         if (panel.scrollIntoView) panel.scrollIntoView({ block: 'start' });
       }
@@ -159,10 +169,11 @@
       hide(errBox);
 
       var token = panel.dataset.recoveryToken || '';
+      var recoveryType = panel.dataset.recoveryType || 'recovery';
       var password = $('auth-new-password').value || '';
       setBusy(button, true, t('auth.saving', 'Saving...'));
       try {
-        await postJson('/api/auth/reset', { token: token, password: password });
+        await postJson('/api/auth/reset', { token: token, password: password, type: recoveryType });
         window.location.assign('/app');
       } catch (err) {
         show(errBox, err && err.message ? err.message : t('auth.resetError', 'Password reset link is invalid or expired.'));

@@ -1,5 +1,5 @@
-import { logout } from '@netlify/identity';
-import { json, options, verifySameOrigin } from '../lib/netlify-identity-utils.mjs';
+import { authLogout } from '../lib/auth-provider.mjs';
+import { json, jsonWithCookies, options, verifySameOrigin } from '../lib/netlify-identity-utils.mjs';
 
 export default async function handler(request) {
   if (request.method === 'OPTIONS') return options();
@@ -13,11 +13,6 @@ export default async function handler(request) {
     return json(403, { ok: false, error: 'Forbidden' });
   }
 
-  try {
-    await logout();
-  } catch (err) {
-    console.warn('[auth-logout] Netlify Identity logout failed:', err.message);
-  }
-
-  return json(200, { ok: true });
+  const cookieHeaders = await authLogout(request);
+  return jsonWithCookies(200, { ok: true }, cookieHeaders);
 }

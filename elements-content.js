@@ -87,7 +87,7 @@
     return chunkState.promises[z];
   }
 
-  function elContentFor(z) {
+function elContentFor(z) {
     if (currentLang() === 'en') {
       return chunkState.en[z] || chunkState.pt[z] || null;
     }
@@ -98,7 +98,7 @@
   window.__registerElementContentChunk = registerChunk;
   window.ELEMENT_CONTENT_PT = chunkState.pt;
   window.ELEMENT_CONTENT_EN = chunkState.en;
-  window.elContentFor = elContentFor;
+window.elContentFor = elContentFor;
   window.loadElementContentFor = ensureChunk;
 
   if (window.PAGE_Z) {

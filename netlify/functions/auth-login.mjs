@@ -1,9 +1,9 @@
-import { login } from '@netlify/identity';
+import { authLogin, isAuthConfigError, isAuthConfigured } from '../lib/auth-provider.mjs';
 import {
   clientIp,
   createRateLimit,
-  isIdentityConfigError,
   json,
+  jsonWithCookies,
   normalizeEmail,
   options,
   publicUser,
@@ -20,6 +20,10 @@ export default async function handler(request) {
   if (request.method === 'OPTIONS') return options();
   if (request.method !== 'POST') {
     return json(405, { ok: false, error: 'Method not allowed' });
+  }
+
+  if (!isAuthConfigured()) {
+    return json(500, { ok: false, error: 'Authentication unavailable' });
   }
 
   try {
@@ -47,12 +51,12 @@ export default async function handler(request) {
   }
 
   try {
-    const user = await login(email, password);
-    return json(200, { ok: true, user: publicUser(user) });
+    const result = await authLogin(email, password);
+    return jsonWithCookies(200, { ok: true, user: publicUser(result.user) }, result.cookieHeaders);
   } catch (err) {
     const status = statusFromError(err, 500);
-    if (isIdentityConfigError(err) || status >= 500) {
-      console.error('[auth-login] Netlify Identity request failed:', err.message);
+    if (isAuthConfigError(err) || status >= 500) {
+      console.error('[auth-login] Auth request failed:', err.message);
       return json(500, { ok: false, error: 'Authentication unavailable' });
     }
     console.warn(`[auth-login] Rejected login for ${email} from ${ip}: ${status}`);

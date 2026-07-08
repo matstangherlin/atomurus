@@ -1,5 +1,5 @@
-import { getUser, refreshSession } from '@netlify/identity';
-import { json, options, publicUser, PLAN_PRICING } from '../lib/netlify-identity-utils.mjs';
+import { authSession } from '../lib/auth-provider.mjs';
+import { json, jsonWithCookies, options, publicUser, PLAN_PRICING } from '../lib/netlify-identity-utils.mjs';
 
 export default async function handler(request) {
   if (request.method === 'OPTIONS') return options();
@@ -7,18 +7,12 @@ export default async function handler(request) {
     return json(405, { ok: false, error: 'Method not allowed' });
   }
 
-  try {
-    await refreshSession();
-  } catch (_err) {
-    // getUser returns null if refresh is not possible.
-  }
-
-  const identityUser = await getUser();
-  if (!identityUser) {
+  const session = await authSession(request);
+  if (!session?.user) {
     return json(401, { ok: false, error: 'Session expired', code: 'session_expired' });
   }
 
-  const user = publicUser(identityUser);
+  const user = publicUser(session.user);
   const features = user.features || {};
 
   const modules = [
@@ -66,35 +60,39 @@ export default async function handler(request) {
     }
   ];
 
-  return json(200, {
-    ok: true,
-    user,
-    access: {
-      role: user.role,
-      plan: user.plan,
-      planSource: user.planSource,
-      isPro: user.isPro,
-      adsFree: user.adsFree,
-      trialEndsAt: user.trialEndsAt,
-      features
+  return jsonWithCookies(
+    200,
+    {
+      ok: true,
+      user,
+      access: {
+        role: user.role,
+        plan: user.plan,
+        planSource: user.planSource,
+        isPro: user.isPro,
+        adsFree: user.adsFree,
+        trialEndsAt: user.trialEndsAt,
+        features
+      },
+      pricing: PLAN_PRICING,
+      dashboard: {
+        title: 'Atomurus Pro workspace',
+        status: user.planSource === 'trial' ? 'trial' : user.plan,
+        upgradeUrl: '/pricing',
+        modules,
+        nextSteps: user.isPro
+          ? [
+              'Explore the periodic table without ads.',
+              'Bookmark this workspace and return after each study session.',
+              'Premium tracks and AI tutor ship next in the roadmap.'
+            ]
+          : [
+              'Start a free account to unlock 30 days of Pro.',
+              'Compare Free vs Pro on the pricing page.',
+              'Checkout (Stripe / Mercado Pago) connects next.'
+            ]
+      }
     },
-    pricing: PLAN_PRICING,
-    dashboard: {
-      title: 'Atomurus Pro workspace',
-      status: user.planSource === 'trial' ? 'trial' : user.plan,
-      upgradeUrl: '/pricing',
-      modules,
-      nextSteps: user.isPro
-        ? [
-            'Explore the periodic table without ads.',
-            'Bookmark this workspace and return after each study session.',
-            'Premium tracks and AI tutor ship next in the roadmap.'
-          ]
-        : [
-            'Start a free account to unlock 30 days of Pro.',
-            'Compare Free vs Pro on the pricing page.',
-            'Checkout (Stripe / Mercado Pago) connects next.'
-          ]
-    }
-  });
+    session.cookieHeaders
+  );
 }

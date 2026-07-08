@@ -1,4 +1,4 @@
-import { requestPasswordRecovery } from '@netlify/identity';
+import { authRecover } from '../lib/auth-provider.mjs';
 import {
   clientIp,
   createRateLimit,
@@ -42,9 +42,9 @@ export default async function handler(request) {
   }
 
   try {
-    await requestPasswordRecovery(email);
+    await authRecover(email);
   } catch (err) {
-    console.warn('[auth-recover] Netlify Identity recovery request failed:', err.message);
+    console.warn('[auth-recover] Recovery request failed:', err.message);
   }
 
   return json(200, { ok: true });

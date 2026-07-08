@@ -1,0 +1,264 @@
+import {
+  clearSessionCookieHeaders,
+  readSessionTokens,
+  sessionCookieHeaders
+} from './auth-cookies.mjs';
+
+const DEFAULT_ACCESS_TTL = 3600;
+
+function supabaseConfig() {
+  const url = String(process.env.SUPABASE_URL || '').replace(/\/$/, '');
+  const anonKey = String(process.env.SUPABASE_ANON_KEY || '').trim();
+  if (!url || !anonKey) return null;
+  return { url, anonKey };
+}
+
+export function isSupabaseConfigured() {
+  return Boolean(supabaseConfig());
+}
+
+function authUrl(path) {
+  const cfg = supabaseConfig();
+  if (!cfg) {
+    const err = new Error('Supabase auth is not configured');
+    err.status = 500;
+    err.code = 'auth_not_configured';
+    throw err;
+  }
+  return `${cfg.url}/auth/v1${path}`;
+}
+
+function anonHeaders(extra = {}) {
+  const cfg = supabaseConfig();
+  return {
+    apikey: cfg.anonKey,
+    Authorization: `Bearer ${cfg.anonKey}`,
+    'Content-Type': 'application/json',
+    ...extra
+  };
+}
+
+async function parseSupabaseResponse(res) {
+  const text = await res.text();
+  let data = {};
+  if (text) {
+    try {
+      data = JSON.parse(text);
+    } catch (_err) {
+      data = { message: text };
+    }
+  }
+  if (!res.ok) {
+    const err = new Error(data.msg || data.message || data.error_description || 'Supabase auth request failed');
+    err.status = res.status;
+    err.code = data.error_code || data.error || null;
+    throw err;
+  }
+  return data;
+}
+
+export function normalizeSupabaseUser(user) {
+  if (!user) return null;
+  const app = user.app_metadata || {};
+  const roles = Array.isArray(app.roles) ? app.roles : [];
+  return {
+    id: user.id,
+    email: user.email,
+    createdAt: user.created_at || null,
+    confirmedAt: user.email_confirmed_at || null,
+    lastSignInAt: user.last_sign_in_at || null,
+    appMetadata: app,
+    userMetadata: user.user_metadata || {},
+    role: user.role || (roles.includes('admin') ? 'admin' : 'member'),
+    roles
+  };
+}
+
+function sessionFromPayload(payload) {
+  if (!payload?.access_token || !payload?.refresh_token) return null;
+  return {
+    accessToken: payload.access_token,
+    refreshToken: payload.refresh_token,
+    expiresIn: Number(payload.expires_in) || DEFAULT_ACCESS_TTL,
+    user: normalizeSupabaseUser(payload.user)
+  };
+}
+
+function redirectBase() {
+  const configured = String(process.env.AUTH_SITE_URL || process.env.URL || process.env.DEPLOY_PRIME_URL || '').replace(/\/$/, '');
+  if (configured) return configured;
+  if (process.env.NETLIFY_DEV === 'true') return 'http://localhost:8888';
+  return 'https://atomurus.com';
+}
+
+export async function supabaseSignup(email, password) {
+  const res = await fetch(authUrl('/signup'), {
+    method: 'POST',
+    headers: anonHeaders(),
+    body: JSON.stringify({
+      email,
+      password,
+      data: {
+        atomurus_signup_source: 'login_page'
+      }
+    })
+  });
+  const data = await parseSupabaseResponse(res);
+  const session = sessionFromPayload(data);
+  const user = session?.user || normalizeSupabaseUser(data.user || data);
+  const needsConfirmation = !user?.confirmedAt && !session;
+  return {
+    user,
+    needsConfirmation,
+    signedIn: Boolean(session),
+    cookieHeaders: session ? sessionCookieHeaders(session.accessToken, session.refreshToken, session.expiresIn) : []
+  };
+}
+
+export async function supabaseLogin(email, password) {
+  const res = await fetch(authUrl('/token?grant_type=password'), {
+    method: 'POST',
+    headers: anonHeaders(),
+    body: JSON.stringify({ email, password })
+  });
+  const data = await parseSupabaseResponse(res);
+  const session = sessionFromPayload(data);
+  if (!session) {
+    const err = new Error('Invalid email or password');
+    err.status = 401;
+    throw err;
+  }
+  return {
+    user: session.user,
+    cookieHeaders: sessionCookieHeaders(session.accessToken, session.refreshToken, session.expiresIn)
+  };
+}
+
+export async function supabaseGetUser(accessToken) {
+  if (!accessToken) return null;
+  const res = await fetch(authUrl('/user'), {
+    method: 'GET',
+    headers: anonHeaders({ Authorization: `Bearer ${accessToken}` })
+  });
+  if (res.status === 401) return null;
+  const data = await parseSupabaseResponse(res);
+  return normalizeSupabaseUser(data.user || data);
+}
+
+export async function supabaseRefresh(refreshToken) {
+  if (!refreshToken) return null;
+  const res = await fetch(authUrl('/token?grant_type=refresh_token'), {
+    method: 'POST',
+    headers: anonHeaders(),
+    body: JSON.stringify({ refresh_token: refreshToken })
+  });
+  if (res.status === 401) return null;
+  const data = await parseSupabaseResponse(res);
+  const session = sessionFromPayload(data);
+  if (!session) return null;
+  return {
+    user: session.user,
+    cookieHeaders: sessionCookieHeaders(session.accessToken, session.refreshToken, session.expiresIn)
+  };
+}
+
+export async function supabaseLogout(accessToken) {
+  if (accessToken) {
+    try {
+      await fetch(authUrl('/logout'), {
+        method: 'POST',
+        headers: anonHeaders({ Authorization: `Bearer ${accessToken}` })
+      });
+    } catch (_err) {
+      // Always clear local cookies even if remote logout fails.
+    }
+  }
+  return clearSessionCookieHeaders();
+}
+
+export async function supabaseRecover(email) {
+  const redirectTo = `${redirectBase()}/login`;
+  const res = await fetch(authUrl('/recover'), {
+    method: 'POST',
+    headers: anonHeaders(),
+    body: JSON.stringify({ email, redirect_to: redirectTo })
+  });
+  await parseSupabaseResponse(res);
+}
+
+export async function supabaseVerifyToken(token, type = 'signup') {
+  const res = await fetch(authUrl('/verify'), {
+    method: 'POST',
+    headers: anonHeaders(),
+    body: JSON.stringify({ token_hash: token, type })
+  });
+  const data = await parseSupabaseResponse(res);
+  const session = sessionFromPayload(data);
+  if (!session) {
+    const err = new Error('Verification failed');
+    err.status = 400;
+    throw err;
+  }
+  return {
+    user: session.user,
+    cookieHeaders: sessionCookieHeaders(session.accessToken, session.refreshToken, session.expiresIn)
+  };
+}
+
+export async function supabaseResetPassword(token, password, type = 'recovery') {
+  const verified = await supabaseVerifyToken(token, type);
+  const accessToken = verified.cookieHeaders.length
+    ? readSessionTokensFromHeaders(verified.cookieHeaders).accessToken
+    : null;
+  if (!accessToken) {
+    const err = new Error('Password reset link is invalid or expired.');
+    err.status = 400;
+    throw err;
+  }
+
+  const res = await fetch(authUrl('/user'), {
+    method: 'PUT',
+    headers: anonHeaders({ Authorization: `Bearer ${accessToken}` }),
+    body: JSON.stringify({ password })
+  });
+  const data = await parseSupabaseResponse(res);
+  const user = normalizeSupabaseUser(data.user || data) || verified.user;
+  return {
+    user,
+    cookieHeaders: verified.cookieHeaders
+  };
+}
+
+function readSessionTokensFromHeaders(cookieHeaders) {
+  const jar = {};
+  for (const header of cookieHeaders) {
+    const [pair] = header.split(';');
+    const eq = pair.indexOf('=');
+    if (eq === -1) continue;
+    const key = pair.slice(0, eq).trim();
+    const value = pair.slice(eq + 1);
+    try {
+      jar[key] = decodeURIComponent(value);
+    } catch (_err) {
+      jar[key] = value;
+    }
+  }
+  return {
+    accessToken: jar.atm_access || jar['__Host-atm_access'] || null,
+    refreshToken: jar.atm_refresh || jar['__Host-atm_refresh'] || null
+  };
+}
+
+export async function supabaseSessionFromRequest(request) {
+  const { accessToken, refreshToken } = readSessionTokens(request);
+  let user = await supabaseGetUser(accessToken);
+  let cookieHeaders = [];
+  if (!user && refreshToken) {
+    const refreshed = await supabaseRefresh(refreshToken);
+    if (refreshed) {
+      user = refreshed.user;
+      cookieHeaders = refreshed.cookieHeaders;
+    }
+  }
+  return { user, cookieHeaders };
+}

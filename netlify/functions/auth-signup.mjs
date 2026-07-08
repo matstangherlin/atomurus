@@ -1,9 +1,9 @@
-import { getSettings, signup } from '@netlify/identity';
+import { authSignup, isAuthConfigError, isAuthConfigured } from '../lib/auth-provider.mjs';
 import {
   clientIp,
   createRateLimit,
-  isIdentityConfigError,
   json,
+  jsonWithCookies,
   normalizeEmail,
   options,
   publicUser,
@@ -20,6 +20,10 @@ export default async function handler(request) {
   if (request.method === 'OPTIONS') return options();
   if (request.method !== 'POST') {
     return json(405, { ok: false, error: 'Method not allowed' });
+  }
+
+  if (!isAuthConfigured()) {
+    return json(500, { ok: false, error: 'Account creation is unavailable.' });
   }
 
   try {
@@ -46,26 +50,22 @@ export default async function handler(request) {
     return json(429, { ok: false, error: 'Too many attempts. Try again later.' });
   }
 
-  let settings = null;
   try {
-    settings = await getSettings();
-  } catch (_err) {
-    // Signup still reports configuration failures below if Identity is unavailable.
-  }
-
-  try {
-    const user = await signup(email, password);
-    const needsConfirmation = settings ? !settings.autoconfirm : !user.confirmedAt;
-    return json(200, {
-      ok: true,
-      needsConfirmation,
-      signedIn: !needsConfirmation,
-      user: publicUser(user)
-    });
+    const result = await authSignup(email, password);
+    return jsonWithCookies(
+      200,
+      {
+        ok: true,
+        needsConfirmation: result.needsConfirmation,
+        signedIn: result.signedIn,
+        user: publicUser(result.user)
+      },
+      result.cookieHeaders
+    );
   } catch (err) {
     const status = statusFromError(err, 500);
-    if (isIdentityConfigError(err) || status >= 500) {
-      console.error('[auth-signup] Netlify Identity request failed:', err.message);
+    if (isAuthConfigError(err) || status >= 500) {
+      console.error('[auth-signup] Auth request failed:', err.message);
       return json(500, { ok: false, error: 'Account creation is unavailable.' });
     }
     console.warn(`[auth-signup] Rejected signup for ${email} from ${ip}: ${status}`);
