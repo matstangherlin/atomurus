@@ -28,6 +28,7 @@ In **Site configuration → Environment variables** (and in local `.env` for `ne
 |----------|----------|-------|
 | `SUPABASE_URL` | Yes | `https://xxxx.supabase.co` |
 | `SUPABASE_ANON_KEY` | Yes | Public anon key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Yes for username login | Server-only key used to reserve unique usernames and resolve username login |
 | `AUTH_PROVIDER` | No | `supabase` or `netlify-identity` |
 | `AUTH_SITE_URL` | No | Canonical site URL for email redirects (`https://atomurus.com`) |
 | `AUTH_ALLOWED_ORIGINS` | No | Comma-separated extra origins for CORS checks |
@@ -48,19 +49,21 @@ The frontend accepts:
 
 ## 5. Database schema
 
-Run `supabase/migrations/001_profiles.sql` in the Supabase SQL editor (or via Supabase CLI).
+Run `supabase/migrations/001_profiles.sql` and `supabase/migrations/002_profile_identity.sql` in the Supabase SQL editor (or via Supabase CLI).
 
 This creates:
 
 - `profiles` — one row per user, auto trial end (+30 days)
+- `profiles.username` — unique public login name
+- `profiles.full_name` — full natural name from signup
 - `study_items` — favorites/history (Pro workspace, next step)
 - RLS policies so users only read/write their own rows
 - Trigger `on_auth_user_created` after signup
 
 ## 6. Routes (unchanged API surface)
 
-- `POST /api/auth/signup` — create account (30-day Pro trial from `created_at`)
-- `POST /api/auth/login`
+- `POST /api/auth/signup` — create account with full name, username, email and password
+- `POST /api/auth/login` — accepts email or username
 - `GET /api/auth/me`
 - `POST /api/auth/refresh`
 - `POST /api/auth/logout`
