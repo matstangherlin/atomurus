@@ -3,12 +3,38 @@ const MS_DAY = 24 * 60 * 60 * 1000;
 
 export const PLAN_PRICING = {
   brl: {
-    monthly: { amount: 24.9, label: 'R$24,90/mês' },
-    annual: { amount: 180, perMonth: 15, label: 'R$15/mês no anual', billed: 'R$180/ano' }
+    currency: 'BRL',
+    monthly: {
+      key: 'pro_monthly_brl',
+      amount: 24.9,
+      label: 'R$24,90/mês',
+      period: 'monthly'
+    },
+    annual: {
+      key: 'pro_annual_brl',
+      amount: 180,
+      perMonth: 15,
+      label: 'R$15/mês no anual',
+      billed: 'R$180/ano',
+      period: 'annual'
+    }
   },
   usd: {
-    monthly: { amount: 10, label: 'US$10/mês' },
-    annual: { amount: 60, perMonth: 5, label: 'US$5/mês no anual', billed: 'US$60/ano' }
+    currency: 'USD',
+    monthly: {
+      key: 'pro_monthly_usd',
+      amount: 10,
+      label: 'US$10/month',
+      period: 'monthly'
+    },
+    annual: {
+      key: 'pro_annual_usd',
+      amount: 60,
+      perMonth: 5,
+      label: 'US$5/month on annual',
+      billed: 'US$60/year',
+      period: 'annual'
+    }
   },
   trialDays: TRIAL_DAYS
 };
@@ -27,6 +53,10 @@ function appMeta(user) {
   return user?.appMetadata || user?.app_metadata || {};
 }
 
+function billingStatus(app) {
+  return String(app.subscription_status || '').trim().toLowerCase();
+}
+
 export function trialEndsAtForUser(user) {
   const app = appMeta(user);
   const explicit = parseIso(app.atomurus_trial_ends_at || app.trial_ends_at);
@@ -42,13 +72,14 @@ export function accessForUser(user) {
   const roles = rolesOf(user);
   const app = appMeta(user);
   const isAdmin = user?.role === 'admin' || roles.includes('admin');
+  const subscriptionStatus = billingStatus(app);
 
   const paidMeta =
     roles.includes('paid') ||
     app.atomurus_plan === 'paid' ||
     app.plan === 'paid' ||
-    app.subscription_status === 'active' ||
-    app.subscription_status === 'trialing';
+    subscriptionStatus === 'active' ||
+    subscriptionStatus === 'trialing';
 
   const trialEndsAt = trialEndsAtForUser(user);
   const trialActive = Boolean(trialEndsAt && Date.now() < Date.parse(trialEndsAt) && !paidMeta && !isAdmin);
@@ -60,7 +91,7 @@ export function accessForUser(user) {
     planSource = 'admin';
   } else if (paidMeta) {
     plan = 'paid';
-    planSource = app.subscription_status === 'trialing' ? 'billing_trial' : 'paid';
+    planSource = subscriptionStatus === 'trialing' ? 'billing_trial' : 'paid';
   } else if (trialActive) {
     plan = 'paid';
     planSource = 'trial';
@@ -75,7 +106,9 @@ export function accessForUser(user) {
     isPro,
     adsFree: isPro,
     trialEndsAt: isPro && planSource === 'trial' ? trialEndsAt : (trialActive ? trialEndsAt : null),
-    subscriptionStatus: app.subscription_status || null,
+    subscriptionStatus: subscriptionStatus || null,
+    billingPeriod: app.subscription_interval || null,
+    billingCurrency: app.subscription_currency || null,
     features: {
       labWorkspace: true,
       premiumLessons: isPro,
@@ -110,6 +143,11 @@ export function publicUser(user) {
     isPro: access.isPro,
     adsFree: access.adsFree,
     trialEndsAt: access.trialEndsAt,
+    subscriptionStatus: access.subscriptionStatus,
+    billingPeriod: access.billingPeriod,
+    billingCurrency: access.billingCurrency,
+    stripeCustomerId: user?.role === 'admin' ? (user?.appMetadata?.stripe_customer_id || user?.app_metadata?.stripe_customer_id || null) : null,
+    stripeSubscriptionId: user?.role === 'admin' ? (user?.appMetadata?.stripe_subscription_id || user?.app_metadata?.stripe_subscription_id || null) : null,
     features: access.features
   };
 }

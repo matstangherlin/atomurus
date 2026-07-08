@@ -1,4 +1,5 @@
 import { authSession } from '../lib/auth-provider.mjs';
+import { resolvePricingContext } from '../lib/geo-pricing.mjs';
 import { json, jsonWithCookies, options, publicUser } from '../lib/netlify-identity-utils.mjs';
 
 export default async function handler(request) {
@@ -12,5 +13,9 @@ export default async function handler(request) {
     return json(401, { ok: false, error: 'Session expired', code: 'session_expired' });
   }
 
-  return jsonWithCookies(200, { ok: true, user: publicUser(session.user) }, session.cookieHeaders);
+  return jsonWithCookies(200, {
+    ok: true,
+    user: publicUser(session.user),
+    pricingContext: resolvePricingContext(request)
+  }, session.cookieHeaders);
 }

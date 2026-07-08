@@ -11,11 +11,18 @@
 # OPTIONAL ENVIRONMENT VARIABLES:
 #   SUPABASE_URL         = https://<project>.supabase.co
 #   SUPABASE_ANON_KEY    = <supabase anon key>
+#   SUPABASE_SERVICE_ROLE_KEY = <supabase service role key> # required for profile sync + billing webhook metadata writes
 #   AUTH_PROVIDER        = supabase | netlify-identity
 #   AUTH_SITE_URL        = https://atomurus.com
 #   ALLOWED_ORIGIN       = https://atomurus.com   # lock CORS to your domain
 #   AUTH_ALLOWED_ORIGINS = https://atomurus.com,https://www.atomurus.com
 #   AUTH_PASSWORD_REDIRECT = https://atomurus.com/login
+#   STRIPE_SECRET_KEY    = sk_live_...
+#   STRIPE_WEBHOOK_SECRET = whsec_...
+#   STRIPE_PRICE_MONTHLY_BRL = price_...
+#   STRIPE_PRICE_ANNUAL_BRL  = price_...
+#   STRIPE_PRICE_MONTHLY_USD = price_...
+#   STRIPE_PRICE_ANNUAL_USD  = price_...
 #   MAILGUN_BASE_URL     = https://api.mailgun.net # US (default) | https://api.eu.mailgun.net (EU)
 #   CONTACT_FROM         = Atomurus <postmaster@MAILGUN_DOMAIN>   # custom From header
 #   RECAPTCHA_MIN_SCORE  = 0.5                     # contact-send spam threshold
@@ -99,6 +106,16 @@
 [[redirects]]
   from   = "/api/ads-config"
   to     = "/.netlify/functions/ads-config"
+  status = 200
+
+[[redirects]]
+  from   = "/api/billing/checkout"
+  to     = "/.netlify/functions/billing-checkout"
+  status = 200
+
+[[redirects]]
+  from   = "/api/billing/webhook"
+  to     = "/.netlify/functions/billing-webhook"
   status = 200
 
 # Auth pages. Explicit rewrites keep these stable alongside pretty URLs.

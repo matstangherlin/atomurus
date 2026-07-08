@@ -1,4 +1,5 @@
 import { authSession } from '../lib/auth-provider.mjs';
+import { resolvePricingContext } from '../lib/geo-pricing.mjs';
 import { json, jsonWithCookies, options, publicUser, PLAN_PRICING } from '../lib/netlify-identity-utils.mjs';
 
 export default async function handler(request) {
@@ -14,6 +15,7 @@ export default async function handler(request) {
 
   const user = publicUser(session.user);
   const features = user.features || {};
+  const pricingContext = resolvePricingContext(request);
 
   const modules = [
     {
@@ -75,6 +77,7 @@ export default async function handler(request) {
         features
       },
       pricing: PLAN_PRICING,
+      pricingContext,
       dashboard: {
         title: 'Atomurus Pro workspace',
         status: user.planSource === 'trial' ? 'trial' : user.plan,

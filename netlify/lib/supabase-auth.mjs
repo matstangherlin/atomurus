@@ -303,6 +303,46 @@ export async function supabaseSessionFromRequest(request) {
   return { user, cookieHeaders };
 }
 
+export async function supabaseAdminUpdateUser(userId, payload = {}) {
+  if (!userId) {
+    const err = new Error('Missing user id');
+    err.status = 400;
+    throw err;
+  }
+  const res = await fetch(authUrl(`/admin/users/${encodeURIComponent(userId)}`), {
+    method: 'PUT',
+    headers: serviceHeaders(),
+    body: JSON.stringify(payload)
+  });
+  const data = await parseSupabaseResponse(res);
+  return normalizeSupabaseUser(data.user || data);
+}
+
+export async function supabaseAdminPatchAppMetadata(userId, patch = {}) {
+  const current = await supabaseAdminGetUser(userId);
+  if (!current) {
+    const err = new Error('User not found');
+    err.status = 404;
+    throw err;
+  }
+  const nextMetadata = {
+    ...(current.appMetadata || {}),
+    ...patch
+  };
+  return supabaseAdminUpdateUser(userId, { app_metadata: nextMetadata });
+}
+
+export async function supabaseAdminGetUser(userId) {
+  if (!userId) return null;
+  const res = await fetch(authUrl(`/admin/users/${encodeURIComponent(userId)}`), {
+    method: 'GET',
+    headers: serviceHeaders()
+  });
+  if (res.status === 404) return null;
+  const data = await parseSupabaseResponse(res);
+  return normalizeSupabaseUser(data.user || data);
+}
+
 async function resolveLoginEmail(identifier) {
   const raw = String(identifier || '').trim();
   if (!raw) {

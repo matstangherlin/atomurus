@@ -21,7 +21,7 @@ assert.equal(expired.adsFree, false);
 
 const paid = accessForUser({
   createdAt: daysAgo(40),
-  appMetadata: { atomurus_plan: 'paid', subscription_status: 'active' }
+  appMetadata: { atomurus_plan: 'paid', subscription_status: 'active', subscription_currency: 'usd', subscription_interval: 'annual' }
 });
 assert.equal(paid.plan, 'paid');
 assert.equal(paid.planSource, 'paid');
@@ -35,10 +35,14 @@ const pub = publicUser({
   id: '1',
   email: 'x@y.com',
   confirmedAt: daysAgo(1),
-  createdAt: daysAgo(1)
+  createdAt: daysAgo(1),
+  appMetadata: { subscription_status: 'trialing', subscription_currency: 'brl', subscription_interval: 'monthly' }
 });
 assert.equal(pub.isPro, true);
 assert.equal(pub.features.adsFree, true);
+assert.equal(pub.subscriptionStatus, 'trialing');
+assert.equal(pub.billingCurrency, 'brl');
+assert.equal(pub.billingPeriod, 'monthly');
 
 assert.ok(trialEndsAtForUser({ appMetadata: { atomurus_trial_ends_at: daysFromNow(10) } }));
 

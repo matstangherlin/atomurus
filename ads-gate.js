@@ -19,7 +19,8 @@
     signedIn: false,
     isPro: false,
     plan: 'free',
-    user: null
+    user: null,
+    pricingContext: null
   };
 
   window.__ATOMURUS_ADS__ = state;
@@ -104,6 +105,7 @@
         state.adsEnabled = data.adsEnabled !== false;
         state.signedIn = Boolean(data.signedIn);
         state.user = data.user || null;
+        state.pricingContext = data.pricingContext || null;
         if (data.user) {
           state.isPro = Boolean(data.user.isPro);
           state.plan = data.user.plan || 'free';

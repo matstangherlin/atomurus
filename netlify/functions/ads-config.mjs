@@ -1,4 +1,5 @@
 import { authSession } from '../lib/auth-provider.mjs';
+import { resolvePricingContext } from '../lib/geo-pricing.mjs';
 import { json, jsonWithCookies, options, publicUser, PLAN_PRICING } from '../lib/netlify-identity-utils.mjs';
 
 export default async function handler(request) {
@@ -9,6 +10,7 @@ export default async function handler(request) {
 
   const session = await authSession(request);
   const user = session?.user ? publicUser(session.user) : null;
+  const pricingContext = resolvePricingContext(request);
 
   return jsonWithCookies(
     200,
@@ -17,7 +19,8 @@ export default async function handler(request) {
       signedIn: Boolean(user),
       adsEnabled: user ? !user.adsFree : true,
       user,
-      pricing: PLAN_PRICING
+      pricing: PLAN_PRICING,
+      pricingContext
     },
     session?.cookieHeaders || []
   );

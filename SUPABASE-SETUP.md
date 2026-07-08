@@ -81,12 +81,17 @@ Supabase sessions use HttpOnly cookies:
 
 Trial and Pro logic live in `netlify/lib/plan-access.mjs`.
 
-To mark a paid subscriber (until Stripe/Mercado Pago webhooks ship), set **app metadata** in Supabase:
+Stripe webhook sync writes **app metadata** in Supabase. The expected shape is:
 
 ```json
 {
   "atomurus_plan": "paid",
-  "subscription_status": "active"
+  "subscription_status": "active",
+  "subscription_interval": "annual",
+  "subscription_currency": "usd",
+  "atomurus_plan_key": "pro_annual_usd",
+  "stripe_customer_id": "cus_123",
+  "stripe_subscription_id": "sub_123"
 }
 ```
 

@@ -11,13 +11,15 @@
     "build": "node tools/build-home-preview-data.js && node tools/build-i18n-assets.js && node tools/build-element-content-chunks.js && node tools/generate-isomerism-pt-variants.js && node bump-version.js && node build-i18n.js",
     "test:plan": "node tools/test-plan-access.mjs",
     "test:auth": "node tools/test-auth-provider.mjs",
+    "test:billing": "node tools/test-billing-geo.mjs",
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
     "supabase:db:push": "supabase db push",
     "validate": "node tools/validate-site.js",
-    "ci": "npm run build && npm run test:plan && npm run test:auth && npm run validate"
+    "ci": "npm run build && npm run test:plan && npm run test:auth && npm run test:billing && npm run validate"
   },
   "dependencies": {
-    "@netlify/identity": "1.2.0"
+    "@netlify/identity": "1.2.0",
+    "stripe": "^22.3.0"
   }
 }

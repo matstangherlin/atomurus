@@ -69,7 +69,7 @@
 
   function planLabel(user) {
     if (!user) return 'free';
-    if (user.planSource === 'trial') return 'pro trial';
+    if (user.planSource === 'trial' || user.planSource === 'billing_trial') return 'pro trial';
     if (user.plan === 'admin') return 'admin';
     if (user.isPro) return 'pro';
     return user.plan || 'free';
@@ -82,10 +82,14 @@
     if ($('aside-role')) $('aside-role').textContent = user.role || 'member';
     if (!node) return;
     var displayName = user.displayName || user.fullName || user.username || user.email || 'member';
+    var billingLabel = user.billingPeriod && user.billingCurrency
+      ? (user.billingPeriod + ' / ' + String(user.billingCurrency).toUpperCase())
+      : 'trial or free';
     node.innerHTML = [
       card('name', displayName),
       card('email', user.email || 'unknown'),
       card('plan', planLabel(user)),
+      card('billing', billingLabel),
       card('ads', user.adsFree ? 'off (pro)' : 'on'),
       card('trial ends', formatDate(user.trialEndsAt)),
       card('role', user.role || 'member'),

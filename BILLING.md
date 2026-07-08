@@ -2,15 +2,29 @@
 
 ## Pricing (product)
 
-| Plan | Brazil | International |
-|------|--------|---------------|
-| Free | R$0 | US$0 |
-| Pro monthly | **R$24,90/mês** | **US$10/mês** |
-| Pro annual | **R$180/ano** (~R$15/mês) | **US$60/ano** (~US$5/mês) |
-| Trial | 30 days of Pro on every new account | same |
+- Free: `R$0` / `US$0`
+- Pro monthly: `R$24,90/mês` or `US$10/mês`
+- Pro annual: `R$180/ano` (~`R$15/mês`) or `US$60/ano` (~`US$5/mês`)
+- Trial: 30 days of Pro for new accounts, preserved through checkout when applicable
 
-Public SEO surfaces (periodic table, element pages, Explore articles) stay free.
-Pro sells: **ad-free lab, private dashboard, favorites/history/export flags**, plus roadmap tracks / AI tutor.
+Public SEO surfaces stay free: periodic table, element pages, Explore articles, core calculators and simple simulations.
+
+## Free month (trial)
+
+Every new account gets **30 days of Pro automatically** through `plan-access.mjs` — no card required.
+
+When the user later opens Stripe Checkout:
+
+- remaining trial days are passed to Stripe as `trial_period_days`
+- users who already had a Stripe subscription do not get another free month
+- checkout returns `trialDays` in the API response when a deferred billing period applies
+
+Pro sells convenience and continuity:
+
+- ad-free workspace
+- favorites / history / saved study flow
+- PDF and richer exports
+- guided tracks, exercises, flashcards and AI tutor rollout
 
 ## How entitlements work today
 
@@ -35,19 +49,28 @@ Features exposed to the client:
 - `GET /api/ads-config` — anonymous-safe; returns `{ adsEnabled, signedIn, user }`
 - `GET /api/private/dashboard` — authenticated Pro-aware modules
 - `GET /api/auth/me` — includes `isPro`, `trialEndsAt`, `features`
+- `POST /api/billing/checkout` — authenticated only; creates Stripe Checkout Session for `pro_monthly_brl`, `pro_annual_brl`, `pro_monthly_usd`, `pro_annual_usd`
+- `POST /api/billing/webhook` — Stripe webhook; syncs subscription metadata back into Supabase Auth app metadata
 
-## Manual paid (until Stripe/Mercado Pago webhooks)
+`/api/ads-config`, `/api/auth/me` and `/api/private/dashboard` now also expose `pricingContext` with server-resolved currency (`brl`/`usd`) and detection source (`geo` / `language` / `default`).
 
-Netlify → Identity → user → App metadata:
+## Metadata shape
+
+Supabase Auth `app_metadata` is the billing source of truth:
 
 ```json
 {
   "atomurus_plan": "paid",
-  "subscription_status": "active"
+  "subscription_status": "active",
+  "subscription_interval": "annual",
+  "subscription_currency": "usd",
+  "atomurus_plan_key": "pro_annual_usd",
+  "stripe_customer_id": "cus_123",
+  "stripe_subscription_id": "sub_123"
 }
 ```
 
-Or add the Identity role `paid`.
+If a subscription is canceled or becomes inactive, webhook sync writes the billing status back and `plan-access.mjs` falls through to `free` unless a local trial is still valid.
 
 ## Ads gate
 
@@ -58,13 +81,15 @@ Or add the Identity role `paid`.
 
 Failures default to **ads on** so a broken function does not erase revenue.
 
-## Still TODO (checkout)
+## Geo pricing
 
-1. Stripe Checkout Session for USD annual/monthly
-2. Mercado Pago preference for BRL Pix/card
-3. Webhook functions that set Identity `app_metadata` via Admin API
-4. Cancel / customer portal
-5. Legal copy updates (privacy/terms still describe an older no-account model)
+Server-side currency resolution lives in `netlify/lib/geo-pricing.mjs`:
+
+1. `BR` country header from Netlify => `brl`
+2. otherwise Portuguese language fallback => `brl`
+3. everything else => `usd`
+
+The UI may still let the user toggle currency before checkout, but defaults come from the server so the first rendered price is predictable.
 
 Pages:
 
@@ -72,13 +97,37 @@ Pages:
 - `/login` — start trial path (signup)
 - `/app` — private workspace shell
 
-## Env vars (future checkout)
+## Required env vars
 
-Document placeholders; do not commit secrets:
+Do not commit secrets:
 
+- `SUPABASE_SERVICE_ROLE_KEY`
 - `STRIPE_SECRET_KEY`
 - `STRIPE_WEBHOOK_SECRET`
-- `STRIPE_PRICE_MONTHLY_USD` / `STRIPE_PRICE_ANNUAL_USD`
-- `MERCADOPAGO_ACCESS_TOKEN`
-- `MERCADOPAGO_WEBHOOK_SECRET`
-- `IDENTITY_ADMIN` credentials as required by Netlify Admin APIs to write metadata
+- `STRIPE_PRICE_MONTHLY_BRL`
+- `STRIPE_PRICE_ANNUAL_BRL`
+- `STRIPE_PRICE_MONTHLY_USD`
+- `STRIPE_PRICE_ANNUAL_USD`
+
+## Stripe setup notes
+
+Create four recurring Stripe prices and map them exactly:
+
+- `pro_monthly_brl`
+- `pro_annual_brl`
+- `pro_monthly_usd`
+- `pro_annual_usd`
+
+Current mapped Stripe Price IDs in code fallback:
+
+- `pro_monthly_brl` => `price_1Tr1FbBtqIZtQQj8L0muniX3`
+- `pro_annual_brl` => `price_1Tr1FbBtqIZtQQj8o3rBN4ji`
+- `pro_monthly_usd` => `price_1Tr1FbBtqIZtQQj8rRZAb3cM`
+- `pro_annual_usd` => `price_1Tr1FbBtqIZtQQj8XccYbVEj`
+
+You can still override any of them in Netlify with:
+
+- `STRIPE_PRICE_MONTHLY_BRL`
+- `STRIPE_PRICE_ANNUAL_BRL`
+- `STRIPE_PRICE_MONTHLY_USD`
+- `STRIPE_PRICE_ANNUAL_USD`
