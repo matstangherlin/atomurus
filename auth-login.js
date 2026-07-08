@@ -10,14 +10,37 @@
   }
 
   function hide(node) {
-    if (node) node.classList.remove('show');
+    if (!node) return;
+    node.classList.remove('show');
+    node.style.display = '';
+    node.hidden = false;
   }
 
   function show(node, message) {
     if (!node) return;
     if (message) node.textContent = message;
     node.classList.add('show');
+    node.style.display = 'block';
+    node.hidden = false;
     if (node.scrollIntoView) node.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+
+  function friendlySignupError(message) {
+    var text = String(message || '').trim();
+    if (!text) return 'Não foi possível criar a conta. Tente entrar ou use outro email.';
+    if (/already registered|already exists|already in use/i.test(text)) {
+      return 'Este email já tem conta. Vá em Login e entre com sua senha.';
+    }
+    if (/username.*already|already.*username/i.test(text)) {
+      return 'Este nome de usuário já está em uso. Escolha outro.';
+    }
+    if (/password/i.test(text) && /character|special|weak|short/i.test(text)) {
+      return text;
+    }
+    if (/too many|rate limit/i.test(text)) {
+      return 'Muitas tentativas. Aguarde alguns minutos e tente de novo.';
+    }
+    return text;
   }
 
   function setBusy(button, busy, busyLabel) {
@@ -110,6 +133,8 @@
 
   function bindModeLinks() {
     document.querySelectorAll('[data-auth-route]').forEach(function (link) {
+      if (link.dataset.authRouteBound === '1') return;
+      link.dataset.authRouteBound = '1';
       link.addEventListener('click', function (event) {
         event.preventDefault();
         setMode(link.getAttribute('data-auth-route'));
@@ -220,9 +245,9 @@
       show(okBox, t('auth.signupOk', 'Account created. Check your email if confirmation is required, then sign in.'));
       form.reset();
       setMode('login');
-    } catch (err) {
-      show(errBox, err && err.message ? err.message : t('auth.signupError', 'Could not create this account. Try signing in or use another email.'));
-    } finally {
+      } catch (err) {
+        show(errBox, friendlySignupError(err && err.message ? err.message : t('auth.signupError', 'Could not create this account. Try signing in or use another email.')));
+      } finally {
       setBusy(button, false);
     }
   }
@@ -268,90 +293,61 @@
     }
   }
 
-  function bindAuthForms() {
-    if (bindAuthForms.done) return;
-
-    var loginForm = $('auth-login-form');
-    var signupForm = $('auth-signup-form');
-    var passwordForm = $('auth-password-form');
-    var recoveryForm = $('auth-reset-form');
-    if (!loginForm && !signupForm && !passwordForm && !recoveryForm) return;
-    bindAuthForms.done = true;
-
-    if (loginForm) {
-      loginForm.addEventListener('submit', function (event) {
+  function bindAuthControl(formId, buttonId, handler) {
+    var form = $(formId);
+    if (form && form.dataset.authBound !== '1') {
+      form.dataset.authBound = '1';
+      form.addEventListener('submit', function (event) {
         event.preventDefault();
-        void handleLoginSubmit();
+        void handler();
       });
     }
-
-    if (signupForm) {
-      signupForm.addEventListener('submit', function (event) {
+    var button = $(buttonId);
+    if (button && button.dataset.authBound !== '1') {
+      button.dataset.authBound = '1';
+      button.addEventListener('click', function (event) {
         event.preventDefault();
-        void handleSignupSubmit();
-      });
-    }
-
-    if (passwordForm) {
-      passwordForm.addEventListener('submit', function (event) {
-        event.preventDefault();
-        void handlePasswordResetSubmit();
-      });
-    }
-
-    if (recoveryForm) {
-      recoveryForm.addEventListener('submit', function (event) {
-        event.preventDefault();
-        void handleRecoverySubmit();
-      });
-    }
-
-    var loginButton = $('auth-login-submit');
-    if (loginButton) {
-      loginButton.addEventListener('click', function (event) {
-        event.preventDefault();
-        void handleLoginSubmit();
-      });
-    }
-
-    var signupButton = $('auth-signup-submit');
-    if (signupButton) {
-      signupButton.addEventListener('click', function (event) {
-        event.preventDefault();
-        void handleSignupSubmit();
-      });
-    }
-
-    var resetButton = $('auth-password-submit');
-    if (resetButton) {
-      resetButton.addEventListener('click', function (event) {
-        event.preventDefault();
-        void handlePasswordResetSubmit();
-      });
-    }
-
-    var recoverButton = $('auth-reset-submit');
-    if (recoverButton) {
-      recoverButton.addEventListener('click', function (event) {
-        event.preventDefault();
-        void handleRecoverySubmit();
+        void handler();
       });
     }
   }
 
+  function bindAuthForms() {
+    bindAuthControl('auth-login-form', 'auth-login-submit', handleLoginSubmit);
+    bindAuthControl('auth-signup-form', 'auth-signup-submit', handleSignupSubmit);
+    bindAuthControl('auth-password-form', 'auth-password-submit', handlePasswordResetSubmit);
+    bindAuthControl('auth-reset-form', 'auth-reset-submit', handleRecoverySubmit);
+  }
+
   function bootAuth() {
-    if (bootAuth.done) return;
     bindModeLinks();
     setMode(currentMode(), { skipHistory: true });
     bindAuthForms();
     void initAuthCallbacks();
-    if (bindAuthForms.done) bootAuth.done = true;
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', bootAuth);
-  } else {
-    bootAuth();
-  }
+  window.AtomurusAuth = {
+    login: function (event) {
+      if (event) event.preventDefault();
+      void handleLoginSubmit();
+    },
+    signup: function (event) {
+      if (event) event.preventDefault();
+      void handleSignupSubmit();
+    },
+    recover: function (event) {
+      if (event) event.preventDefault();
+      void handleRecoverySubmit();
+    },
+    resetPassword: function (event) {
+      if (event) event.preventDefault();
+      void handlePasswordResetSubmit();
+    },
+    boot: bootAuth
+  };
+
+  bootAuth();
+  document.addEventListener('DOMContentLoaded', bootAuth);
   window.addEventListener('load', bootAuth);
+  window.addEventListener('pageshow', bootAuth);
 })();
