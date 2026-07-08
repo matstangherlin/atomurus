@@ -108,6 +108,21 @@
   status = 200
 
 [[redirects]]
+  from   = "/signup"
+  to     = "/login.html?mode=signup"
+  status = 200
+
+[[redirects]]
+  from   = "/forgot-password"
+  to     = "/login.html?mode=recover"
+  status = 200
+
+[[redirects]]
+  from   = "/login/reset"
+  to     = "/login.html?mode=reset"
+  status = 200
+
+[[redirects]]
   from   = "/app"
   to     = "/app.html"
   status = 200

@@ -63,6 +63,47 @@
     }
   }
 
+  function currentMode() {
+    var path = (location.pathname || '').replace(/\/+$/, '');
+    var mode = (searchParam('mode') || '').toLowerCase();
+    if (path === '/signup') return 'signup';
+    if (path === '/forgot-password') return 'recover';
+    if (path === '/login/reset') return 'reset';
+    if (mode === 'signup' || mode === 'recover' || mode === 'reset') return mode;
+    return 'login';
+  }
+
+  function setMode(mode, options) {
+    options = options || {};
+    document.querySelectorAll('[data-auth-panel]').forEach(function (panel) {
+      var active = panel.getAttribute('data-auth-panel') === mode;
+      panel.classList.toggle('active', active);
+      panel.hidden = !active;
+    });
+    document.querySelectorAll('[data-auth-route]').forEach(function (tab) {
+      var active = tab.getAttribute('data-auth-route') === mode;
+      tab.classList.toggle('active', active);
+      if (active) tab.setAttribute('aria-current', 'page');
+      else tab.removeAttribute('aria-current');
+    });
+    if (!options.skipHistory) {
+      var nextPath = '/login';
+      if (mode === 'signup') nextPath = '/signup';
+      if (mode === 'recover') nextPath = '/forgot-password';
+      if (mode === 'reset') nextPath = '/login/reset';
+      if (history && history.replaceState) history.replaceState(null, document.title, nextPath);
+    }
+  }
+
+  function bindModeLinks() {
+    document.querySelectorAll('[data-auth-route]').forEach(function (link) {
+      link.addEventListener('click', function (event) {
+        event.preventDefault();
+        setMode(link.getAttribute('data-auth-route'));
+      });
+    });
+  }
+
   async function initAuthCallbacks() {
     var tokenHash = hashParam('token_hash') || searchParam('token_hash');
     var callbackType = hashParam('type') || searchParam('type');
@@ -72,6 +113,7 @@
     var loginErr = $('auth-login-err');
 
     if (confirmationToken) {
+      setMode('login', { skipHistory: true });
       hide(loginOk);
       hide(loginErr);
       try {
@@ -91,9 +133,9 @@
     if (recoveryToken) {
       var panel = $('auth-password-panel');
       if (panel) {
-        panel.hidden = false;
         panel.dataset.recoveryToken = recoveryToken;
         panel.dataset.recoveryType = callbackType || 'recovery';
+        setMode('reset', { skipHistory: true });
         clearHash();
         if (panel.scrollIntoView) panel.scrollIntoView({ block: 'start' });
       }
@@ -148,6 +190,7 @@
         }
         show(okBox, t('auth.signupOk', 'Account created. Check your email if confirmation is required, then sign in.'));
         form.reset();
+        setMode('login');
       } catch (err) {
         show(errBox, err && err.message ? err.message : t('auth.signupError', 'Could not create this account. Try signing in or use another email.'));
       } finally {
@@ -210,6 +253,8 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
+    bindModeLinks();
+    setMode(currentMode(), { skipHistory: true });
     initAuthCallbacks();
     initLogin();
     initSignup();
