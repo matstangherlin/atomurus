@@ -2,7 +2,8 @@ const ACCESS_BASE = 'atm_access';
 const REFRESH_BASE = 'atm_refresh';
 
 function isSecureContext() {
-  return process.env.NETLIFY_DEV !== 'true' && process.env.CONTEXT === 'production';
+  // Local `netlify dev` is HTTP; deployed Netlify (prod + previews) is HTTPS.
+  return process.env.NETLIFY_DEV !== 'true';
 }
 
 export function accessCookieName() {

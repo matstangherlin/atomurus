@@ -47,6 +47,11 @@ withEnv({ NETLIFY_DEV: '', CONTEXT: 'production' }, () => {
   assert.equal(refreshCookieName(), '__Host-atm_refresh');
 });
 
+withEnv({ NETLIFY_DEV: '', CONTEXT: 'deploy-preview' }, () => {
+  assert.equal(accessCookieName(), '__Host-atm_access');
+  assert.equal(refreshCookieName(), '__Host-atm_refresh');
+});
+
 const user = normalizeSupabaseUser({
   id: 'u1',
   email: 'a@b.com',

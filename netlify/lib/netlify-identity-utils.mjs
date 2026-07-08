@@ -78,7 +78,12 @@ export function clientIp(request) {
 }
 
 function configuredOrigins() {
-  return [process.env.AUTH_ALLOWED_ORIGINS, process.env.ALLOWED_ORIGIN]
+  return [
+    process.env.AUTH_ALLOWED_ORIGINS,
+    process.env.ALLOWED_ORIGIN,
+    'https://atomurus.com',
+    'https://www.atomurus.com'
+  ]
     .filter(Boolean)
     .join(',')
     .split(',')
@@ -86,14 +91,38 @@ function configuredOrigins() {
     .filter(Boolean);
 }
 
+function hostOriginAliases(origin) {
+  try {
+    const url = new URL(origin);
+    const host = url.hostname;
+    const aliases = [origin];
+    if (host.startsWith('www.')) {
+      aliases.push(`${url.protocol}//${host.slice(4)}`);
+    } else if (!host.includes('localhost') && !host.endsWith('.netlify.app') && host.includes('.')) {
+      aliases.push(`${url.protocol}//www.${host}`);
+    }
+    return aliases;
+  } catch (_err) {
+    return [origin];
+  }
+}
+
+function allowedOriginSet(request) {
+  const seeds = [new URL(request.url).origin, ...configuredOrigins()];
+  const allowed = new Set();
+  for (const origin of seeds) {
+    for (const alias of hostOriginAliases(origin)) allowed.add(alias);
+  }
+  return allowed;
+}
+
 export function verifySameOrigin(request) {
-  const ownOrigin = new URL(request.url).origin;
-  const allowedOrigins = Array.from(new Set([ownOrigin, ...configuredOrigins()]));
+  const allowedOrigins = allowedOriginSet(request);
   const origin = request.headers.get('origin');
   const referer = request.headers.get('referer');
 
   if (origin) {
-    if (!allowedOrigins.includes(origin)) {
+    if (!allowedOrigins.has(origin)) {
       const err = new Error('Forbidden origin');
       err.status = 403;
       throw err;
@@ -110,7 +139,7 @@ export function verifySameOrigin(request) {
       err.status = 403;
       throw err;
     }
-    if (!allowedOrigins.includes(refererOrigin)) {
+    if (!allowedOrigins.has(refererOrigin)) {
       const err = new Error('Forbidden referer');
       err.status = 403;
       throw err;

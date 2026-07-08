@@ -50,7 +50,7 @@
   to     = "/.netlify/functions/contact-send"
   status = 200
 
-# Auth API (Netlify Identity through Netlify-managed nf_jwt/nf_refresh cookies)
+# Auth API (Supabase HttpOnly atm_* cookies, or Netlify Identity nf_jwt/nf_refresh)
 [[redirects]]
   from   = "/api/auth/login"
   to     = "/.netlify/functions/auth-login"

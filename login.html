@@ -171,7 +171,7 @@
         <label for="auth-password">Password</label>
         <input id="auth-password" name="password" type="password" required minlength="8" autocomplete="current-password">
       </div>
-      <button class="auth-primary-btn" type="submit" id="auth-login-submit" onclick="window.AtomurusAuth && window.AtomurusAuth.login(event)">
+      <button class="auth-primary-btn" type="submit" id="auth-login-submit">
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5h8M6.5 3l3.5 3.5L6.5 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <span>Sign in</span>
       </button>
@@ -209,7 +209,7 @@
         <label for="auth-signup-password-confirm">Repeat password</label>
         <input id="auth-signup-password-confirm" name="passwordConfirm" type="password" required minlength="9" autocomplete="new-password">
       </div>
-      <button class="auth-primary-btn" type="submit" id="auth-signup-submit" onclick="window.AtomurusAuth && window.AtomurusAuth.signup(event)">
+      <button class="auth-primary-btn" type="submit" id="auth-signup-submit">
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 2v9M2 6.5h9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
         <span>Create account</span>
       </button>

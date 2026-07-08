@@ -84,6 +84,44 @@
     return data;
   }
 
+  async function fetchJson(url, options) {
+    var res = await fetch(url, Object.assign({
+      credentials: 'include',
+      headers: { 'Accept': 'application/json' }
+    }, options || {}));
+    var data = await res.json().catch(function () { return {}; });
+    if (!res.ok || data.ok === false) {
+      var err = new Error(data.error || 'Request failed');
+      err.status = res.status;
+      err.code = data.code;
+      throw err;
+    }
+    return data;
+  }
+
+  function friendlyLoginError(err) {
+    var status = err && err.status;
+    if (status === 403) {
+      return t('auth.originBlocked', 'Sign-in was blocked for this site address. Open atomurus.com/login and try again.');
+    }
+    if (status === 429) {
+      return t('auth.rateLimited', 'Too many attempts. Wait a few minutes and try again.');
+    }
+    if (status >= 500) {
+      return t('auth.unavailable', 'Authentication is temporarily unavailable. Try again shortly.');
+    }
+    return t('auth.loginError', 'Invalid email or password.');
+  }
+
+  async function ensureSession() {
+    await fetchJson('/api/auth/me');
+  }
+
+  async function enterApp() {
+    await ensureSession();
+    window.location.assign('/app');
+  }
+
   function hashParam(name) {
     if (!location.hash || location.hash.length < 2) return '';
     return new URLSearchParams(location.hash.slice(1)).get(name) || '';
@@ -160,7 +198,7 @@
           type: callbackType || 'signup'
         });
         clearHash();
-        window.location.assign('/app');
+        await enterApp();
       } catch (_err) {
         clearHash();
         show(loginErr, t('auth.confirmError', 'Email confirmation link is invalid or expired.'));
@@ -191,9 +229,13 @@
     setBusy(button, true, t('auth.entering', 'Entering…'));
     try {
       await postJson('/api/auth/login', { identifier: identifier, password: password });
-      window.location.assign('/app');
-    } catch (_err) {
-      show(errBox, t('auth.loginError', 'Invalid email or password.'));
+      await enterApp();
+    } catch (err) {
+      if (err && err.status === 401 && err.message && err.message.indexOf('session') !== -1) {
+        show(errBox, t('auth.sessionNotSaved', 'Signed in, but the browser did not keep your session. Disable blockers for this site and try again.'));
+      } else {
+        show(errBox, friendlyLoginError(err));
+      }
       setBusy(button, false);
     }
   }
@@ -239,15 +281,15 @@
         passwordConfirm: passwordConfirm
       });
       if (data.signedIn && !data.needsConfirmation) {
-        window.location.assign('/app');
+        await enterApp();
         return;
       }
       show(okBox, t('auth.signupOk', 'Account created. Check your email if confirmation is required, then sign in.'));
       form.reset();
       setMode('login');
-      } catch (err) {
-        show(errBox, friendlySignupError(err && err.message ? err.message : t('auth.signupError', 'Could not create this account. Try signing in or use another email.')));
-      } finally {
+    } catch (err) {
+      show(errBox, friendlySignupError(err && err.message ? err.message : t('auth.signupError', 'Could not create this account. Try signing in or use another email.')));
+    } finally {
       setBusy(button, false);
     }
   }
@@ -265,7 +307,7 @@
     setBusy(button, true, t('auth.saving', 'Saving...'));
     try {
       await postJson('/api/auth/reset', { token: token, password: password, type: recoveryType });
-      window.location.assign('/app');
+      await enterApp();
     } catch (err) {
       show(errBox, err && err.message ? err.message : t('auth.resetError', 'Password reset link is invalid or expired.'));
     } finally {
@@ -293,30 +335,21 @@
     }
   }
 
-  function bindAuthControl(formId, buttonId, handler) {
+  function bindAuthForm(formId, handler) {
     var form = $(formId);
-    if (form && form.dataset.authBound !== '1') {
-      form.dataset.authBound = '1';
-      form.addEventListener('submit', function (event) {
-        event.preventDefault();
-        void handler();
-      });
-    }
-    var button = $(buttonId);
-    if (button && button.dataset.authBound !== '1') {
-      button.dataset.authBound = '1';
-      button.addEventListener('click', function (event) {
-        event.preventDefault();
-        void handler();
-      });
-    }
+    if (!form || form.dataset.authBound === '1') return;
+    form.dataset.authBound = '1';
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      void handler();
+    });
   }
 
   function bindAuthForms() {
-    bindAuthControl('auth-login-form', 'auth-login-submit', handleLoginSubmit);
-    bindAuthControl('auth-signup-form', 'auth-signup-submit', handleSignupSubmit);
-    bindAuthControl('auth-password-form', 'auth-password-submit', handlePasswordResetSubmit);
-    bindAuthControl('auth-reset-form', 'auth-reset-submit', handleRecoverySubmit);
+    bindAuthForm('auth-login-form', handleLoginSubmit);
+    bindAuthForm('auth-signup-form', handleSignupSubmit);
+    bindAuthForm('auth-password-form', handlePasswordResetSubmit);
+    bindAuthForm('auth-reset-form', handleRecoverySubmit);
   }
 
   function bootAuth() {
