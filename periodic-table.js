@@ -1,6 +1,7 @@
 /* ─────────────────────────────────────────────────────────────
  * Atomurus — Periodic Table app logic
- * Depends on: elements-data.js (loaded first), chart.js, html2canvas, jspdf
+ * Depends on: elements-data.js (loaded first)
+ * Lazy-loads: chart.js, chartjs-plugin-zoom, html2canvas, jspdf
  * ─────────────────────────────────────────────────────────── */
 
 // ════════════ ELEMENT DATA ════════════
@@ -18,6 +19,58 @@ function _T(key, fallback) {
     if (v && v !== key) return v;
   }
   return fallback != null ? fallback : key;
+}
+
+const PERIODIC_REMOTE_DEPS = {
+  chart: 'https://cdn.jsdelivr.net/npm/chart.js',
+  chartZoom: 'https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.2.0/dist/chartjs-plugin-zoom.min.js',
+  html2canvas: 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
+  jspdf: 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
+};
+
+const _periodicDepPromises = Object.create(null);
+
+function loadScriptOnce(key, src, isReady) {
+  if (isReady && isReady()) return Promise.resolve();
+  if (_periodicDepPromises[key]) return _periodicDepPromises[key];
+  _periodicDepPromises[key] = new Promise((resolve, reject) => {
+    const existing = document.querySelector(`script[data-atomurus-dep="${key}"]`);
+    if (existing) {
+      existing.addEventListener('load', () => resolve(), { once: true });
+      existing.addEventListener('error', () => reject(new Error(`Failed to load ${key}`)), { once: true });
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = src;
+    script.async = true;
+    script.defer = true;
+    script.dataset.atomurusDep = key;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error(`Failed to load ${key}`));
+    document.head.appendChild(script);
+  }).then(() => {
+    if (isReady && !isReady()) throw new Error(`${key} loaded but did not initialize`);
+  });
+  return _periodicDepPromises[key];
+}
+
+function ensureChartJs() {
+  return loadScriptOnce('chart', PERIODIC_REMOTE_DEPS.chart, () => !!window.Chart);
+}
+
+function ensureChartZoom() {
+  return ensureChartJs().then(() =>
+    loadScriptOnce('chartZoom', PERIODIC_REMOTE_DEPS.chartZoom, () => !!(window.ChartZoom || window.chartjsPluginZoom))
+      .catch(() => null)
+  );
+}
+
+function ensureHtml2Canvas() {
+  return loadScriptOnce('html2canvas', PERIODIC_REMOTE_DEPS.html2canvas, () => typeof window.html2canvas === 'function');
+}
+
+function ensureJsPdf() {
+  return loadScriptOnce('jspdf', PERIODIC_REMOTE_DEPS.jspdf, () => !!(window.jspdf && window.jspdf.jsPDF));
 }
 
 // \u2500\u2500\u2500 BOHR ANIMATION \u2500\u2500\u2500
@@ -1221,12 +1274,13 @@ function drawBohrInto(ctx, W, H, el, extra, isDark){
   });
 }
 
-function downloadElement(fmt) {
+async function downloadElement(fmt) {
   if (!currentElement) return;
   const el = currentElement;
   const canvas = renderElementCard(el);
   const fname = 'atomurus-' + el.sym.toLowerCase();
-  if (fmt === 'pdf' && window.jspdf) {
+  if (fmt === 'pdf') {
+    await ensureJsPdf();
     const { jsPDF } = window.jspdf;
     const w = canvas.width, h = canvas.height;
     const pdf = new jsPDF({ orientation: w > h ? 'landscape' : 'portrait', unit:'px', format:[w,h] });
@@ -4166,7 +4220,8 @@ function wireTrendSelect(inst) {
 function buildTrendSelects() { buildTrendSelect(TREND_SELECTS.prop); buildTrendSelect(TREND_SELECTS.scope); }
 function syncTrendSelectButtons() { syncTrendSelectButton(TREND_SELECTS.prop); syncTrendSelectButton(TREND_SELECTS.scope); }
 
-function renderTrendChart() {
+async function renderTrendChart() {
+  await ensureChartZoom();
   if (!window.Chart) { setTimeout(renderTrendChart, 200); return; }
   buildTrendSelects();               // (re)build BOTH dropdowns' <select> mirrors + custom listboxes (language-aware)
   applyTrendStoredControlsOnce();    // restore persisted prop/filter — options now all exist
@@ -5973,10 +6028,12 @@ function applyDecayFilter() {
 // isotopes are omitted (no half-life to plot). Bar color encodes primary decay
 // mode so the chart and the filter chips visually align.
 let isoHalfLifeChart = null;
-function drawHalfLifeChart(z) {
+async function drawHalfLifeChart(z) {
   const canvas = document.getElementById('iso-halflife-chart');
   const emptyMsg = document.getElementById('iso-halflife-empty');
-  if (!canvas || typeof Chart === 'undefined') return;
+  if (!canvas) return;
+  await ensureChartJs();
+  if (typeof Chart === 'undefined') return;
 
   const isos = (typeof ISOTOPES !== 'undefined' && ISOTOPES[z]) || [];
   // Only radioactive isotopes; honour current decay-mode filter (except
@@ -6065,10 +6122,12 @@ function drawHalfLifeChart(z) {
 // element as a bar chart. Synthetic-only elements (Tc, Pm, transuranics) show
 // the empty-state message instead.
 let isoAbundanceChart = null;
-function drawAbundanceChart(z) {
+async function drawAbundanceChart(z) {
   const canvas = document.getElementById('iso-abundance-chart');
   const emptyMsg = document.getElementById('iso-abundance-empty');
-  if (!canvas || typeof Chart === 'undefined') return;
+  if (!canvas) return;
+  await ensureChartJs();
+  if (typeof Chart === 'undefined') return;
 
   const isos = (typeof ISOTOPES !== 'undefined' && ISOTOPES[z]) || [];
   const natural = isos.filter(i => i.ab != null && i.ab > 0);
@@ -6760,6 +6819,8 @@ async function downloadTable() {
   document.getElementById('dl-action-label').textContent = 'Gerando…';
 
   try {
+    await ensureHtml2Canvas();
+    if (_dlFormat === 'pdf') await ensureJsPdf();
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     const bgColor = isDark ? '#111210' : '#F4F1EC';
     const surfaceColor = isDark ? '#1A1918' : '#FDFCFA';
