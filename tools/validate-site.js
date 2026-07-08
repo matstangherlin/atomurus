@@ -105,11 +105,14 @@ function assertI18nNamespaceAssets() {
   if (!runtime.includes('assets/i18n/')) {
     fail('i18n.js is not loading namespace chunks from assets/i18n/');
   }
+  if (!runtime.includes('.json') || !runtime.includes('JSON.parse')) {
+    fail('i18n.js is not loading JSON namespace chunks');
+  }
   if (!runtime.includes('ensureNamespace(') || !runtime.includes('collectNamespaces(')) {
     fail('i18n.js is not using the namespace-loading runtime');
   }
   ['common', 'home', 'el'].forEach((ns) => {
-    const relPath = path.join('assets', 'i18n', `${ns}.js`);
+    const relPath = path.join('assets', 'i18n', `${ns}.json`);
     if (!fs.existsSync(path.join(ROOT, relPath))) {
       fail(`Missing i18n namespace chunk: ${relPath}`);
     }

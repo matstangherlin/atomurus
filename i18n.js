@@ -12,7 +12,6 @@
   const DEFAULT = 'en';
   const SUPPORTED = ['en', 'pt'];
   const HTML_LANG = { en: 'en-US', pt: 'pt-BR' };
-  const CHUNK_STORE_KEY = '__ATOMURUS_I18N_CHUNKS__';
   const CHUNK_BASE_URL = new URL(
     'assets/i18n/',
     new URL((document.currentScript && document.currentScript.src) || 'i18n.js', location.href)
@@ -82,23 +81,20 @@
     loadedNamespaces.add(ns);
   }
 
-  function loadChunkScript(ns) {
-    const url = new URL(ns + '.js', CHUNK_BASE_URL).toString();
+  function loadChunkData(ns) {
+    const url = new URL(ns + '.json', CHUNK_BASE_URL).toString();
     const xhr = new XMLHttpRequest();
     xhr.open('GET', url, false);
     xhr.send(null);
     if (!((xhr.status >= 200 && xhr.status < 300) || xhr.status === 0)) {
       throw new Error('Failed to load i18n namespace ' + ns + ' from ' + url + ' (' + xhr.status + ')');
     }
-    // eslint-disable-next-line no-new-func
-    new Function(xhr.responseText + '\n//# sourceURL=' + url)();
+    return JSON.parse(xhr.responseText);
   }
 
   function ensureNamespace(ns) {
     if (!ns || loadedNamespaces.has(ns)) return;
-    window[CHUNK_STORE_KEY] = window[CHUNK_STORE_KEY] || {};
-    if (!window[CHUNK_STORE_KEY][ns]) loadChunkScript(ns);
-    mergeNamespace(ns, window[CHUNK_STORE_KEY][ns]);
+    mergeNamespace(ns, loadChunkData(ns));
   }
 
   function ensureNamespaces(namespaces) {
