@@ -13,22 +13,22 @@
 <meta name="apple-mobile-web-app-title" content="Atomurus">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex,nofollow">
-<link rel="icon" type="image/png" href="assets/atomurus-logo.png?v=202607081604">
-<link rel="apple-touch-icon" href="assets/atomurus-logo.png?v=202607081604">
+<link rel="icon" type="image/png" href="assets/atomurus-logo.png?v=202607081625">
+<link rel="apple-touch-icon" href="assets/atomurus-logo.png?v=202607081625">
 <title>Login â€” Atomurus</title>
 <meta name="description" content="Atomurus login and account creation with email and password.">
 <link rel="canonical" href="https://atomurus.com/login">
 <link rel="preload" href="/assets/fonts/inter-tight-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/jetbrains-mono-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/instrument-serif-400-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202607081604">
-<script src="ads-gate.js?v=202607081604" defer></script>
-<script src="cookie-consent.js?v=202607081604" defer></script>
-<script src="i18n.js?v=202607081604" defer></script>
-<script src="meta-i18n.js?v=202607081604" defer></script>
-<link rel="stylesheet" href="atomurus-lab-console.css?v=202607081604">
-<script src="atomurus-mobile-nav.js?v=202607081604" defer></script>
-<script src="auth-login.js?v=202607081604" defer></script>
+<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202607081625">
+<script src="ads-gate.js?v=202607081625" defer></script>
+<script src="cookie-consent.js?v=202607081625" defer></script>
+<script src="i18n.js?v=202607081625" defer></script>
+<script src="meta-i18n.js?v=202607081625" defer></script>
+<link rel="stylesheet" href="atomurus-lab-console.css?v=202607081625">
+<script src="atomurus-mobile-nav.js?v=202607081625" defer></script>
+<script src="auth-login.js?v=202607081625" defer></script>
 <style>
   *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { min-height: 100vh; }
@@ -83,7 +83,7 @@
   <span class="ds-sep"></span>
   <span class="ds-k">session</span><span class="ds-v">HttpOnly cookie</span>
   <span class="ds-spacer"></span>
-  <span class="ds-k">provider</span><span class="ds-v ds-hi">Netlify Identity</span>
+  <span class="ds-k">provider</span><span class="ds-v ds-hi">Secure auth</span>
 </div>
 
 <header class="lc-doc-hero">
@@ -92,7 +92,7 @@
     <span class="pill">auth.login</span>
   </div>
   <h1 class="lc-doc-title">Enter the <em>Atomurus workspace.</em></h1>
-  <p class="lc-doc-desc">Sign in or create an Atomurus account with only email and password. Netlify Identity stores the user database and handles password security; this site never saves raw passwords.</p>
+  <p class="lc-doc-desc">Sign in or create an Atomurus account with only email and password. A managed authentication provider handles the user database and password security; this site never saves raw passwords.</p>
 </header>
 
 <div class="lc-doc-body">
@@ -152,13 +152,13 @@
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 2v9M2 6.5h9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
         <span>Create account</span>
       </button>
-      <div class="note">Passwords are processed by Netlify Identity. Do not store or send passwords anywhere else.</div>
+      <div class="note">Passwords are processed by the authentication provider. Do not store or send passwords anywhere else.</div>
       <div class="feedback ok" id="auth-signup-ok">Account created. Check your email if confirmation is required, then sign in.</div>
       <div class="feedback err" id="auth-signup-err">Could not create this account. Try signing in or use another email.</div>
     </form>
 
     <h2 id="recover"><span class="h-no">Â§ 03</span> Forgot your password?</h2>
-    <p>Enter the email tied to your account. If it has access, Netlify Identity sends a recovery link. For privacy, we never reveal whether an email exists.</p>
+    <p>Enter the email tied to your account. If it has access, the authentication provider sends a recovery link. For privacy, we never reveal whether an email exists.</p>
 
     <form class="lc-form" id="auth-reset-form" novalidate>
       <div class="field">
@@ -169,7 +169,7 @@
         <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M1 7l5 5 7-10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <span>Send recovery email</span>
       </button>
-      <div class="feedback ok" id="auth-reset-ok">If this email has access, Netlify Identity will send recovery instructions.</div>
+      <div class="feedback ok" id="auth-reset-ok">If this email has access, the authentication provider will send recovery instructions.</div>
       <div class="feedback err" id="auth-reset-err">Could not send right now. Please try again later.</div>
     </form>
 

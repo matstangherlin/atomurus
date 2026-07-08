@@ -148,8 +148,78 @@
     });
   }
 
+  function ensureAuthNav() {
+    ensureTopnavAuthLinks();
+    ensureSidebarAuthLinks();
+    ensureMobileMenuAuthLinks();
+  }
+
+  function makeLink(className, href, key, fallback, prefixNo) {
+    const a = document.createElement('a');
+    a.className = className;
+    a.href = href;
+    a.setAttribute('data-auth-nav-link', key);
+    if (prefixNo) {
+      const no = document.createElement('span');
+      no.className = 'lc-tn-no';
+      no.textContent = prefixNo;
+      a.appendChild(no);
+      a.appendChild(document.createTextNode(' '));
+    }
+    const span = document.createElement('span');
+    span.setAttribute('data-i18n', key);
+    span.textContent = fallback;
+    a.appendChild(span);
+    return a;
+  }
+
+  function makeSidebarLink(href, key, fallback, icon) {
+    const a = document.createElement('a');
+    a.className = 'nav-item';
+    a.href = href;
+    a.setAttribute('data-auth-nav-link', key);
+    a.innerHTML = icon + '<span data-i18n="' + key + '">' + fallback + '</span>';
+    return a;
+  }
+
+  function ensureTopnavAuthLinks() {
+    const wrap = document.querySelector('.lc-topnav-links');
+    if (!wrap) return;
+    if (!wrap.querySelector('[data-auth-nav-link="common.nav.login"]')) {
+      wrap.appendChild(makeLink('lc-topnav-link lc-topnav-auth', '/login', 'common.nav.login', 'Login', '06'));
+    }
+    if (!wrap.querySelector('[data-auth-nav-link="common.nav.app"]')) {
+      wrap.appendChild(makeLink('lc-topnav-link lc-topnav-auth', '/app', 'common.nav.app', 'App', '07'));
+    }
+  }
+
+  function ensureSidebarAuthLinks() {
+    const foot = document.querySelector('.sidebar-foot');
+    if (!foot) return;
+    const loginIcon = '<svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M6 3.5H4.8A1.8 1.8 0 0 0 3 5.3v5.4a1.8 1.8 0 0 0 1.8 1.8H6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M8 11.5 12 8 8 4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 8H6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>';
+    const appIcon = '<svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.2"/><path d="M5 6h6M5 8h6M5 10h3.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>';
+    if (!foot.querySelector('[data-auth-nav-link="common.nav.app"]')) {
+      foot.insertBefore(makeSidebarLink('/app', 'common.nav.app', 'App', appIcon), foot.firstChild);
+    }
+    if (!foot.querySelector('[data-auth-nav-link="common.nav.login"]')) {
+      foot.insertBefore(makeSidebarLink('/login', 'common.nav.login', 'Login', loginIcon), foot.firstChild);
+    }
+  }
+
+  function ensureMobileMenuAuthLinks() {
+    const list = document.querySelector('.lc-mobile-menu-list');
+    if (!list) return;
+    if (!list.querySelector('[data-auth-nav-link="common.nav.login"]')) {
+      list.appendChild(makeLink('lc-mobile-menu-item lc-mobile-menu-auth', '/login', 'common.nav.login', 'Login', '11'));
+    }
+    if (!list.querySelector('[data-auth-nav-link="common.nav.app"]')) {
+      list.appendChild(makeLink('lc-mobile-menu-item lc-mobile-menu-auth', '/app', 'common.nav.app', 'App', '12'));
+    }
+  }
+
   function apply(root) {
     root = root || document;
+    if (root === document) ensureAuthNav();
     ensureNamespaces(collectNamespaces(root));
     root.querySelectorAll('[data-i18n]').forEach(function (el) {
       const v = translate(el.getAttribute('data-i18n'));
