@@ -269,23 +269,42 @@
   }
 
   function bindAuthForms() {
-    document.addEventListener('submit', function (event) {
-      var form = event.target;
-      if (!form || !form.id) return;
-      if (form.id === 'auth-login-form') {
+    if (bindAuthForms.done) return;
+
+    var loginForm = $('auth-login-form');
+    var signupForm = $('auth-signup-form');
+    var passwordForm = $('auth-password-form');
+    var recoveryForm = $('auth-reset-form');
+    if (!loginForm && !signupForm && !passwordForm && !recoveryForm) return;
+    bindAuthForms.done = true;
+
+    if (loginForm) {
+      loginForm.addEventListener('submit', function (event) {
         event.preventDefault();
         void handleLoginSubmit();
-      } else if (form.id === 'auth-signup-form') {
+      });
+    }
+
+    if (signupForm) {
+      signupForm.addEventListener('submit', function (event) {
         event.preventDefault();
         void handleSignupSubmit();
-      } else if (form.id === 'auth-password-form') {
+      });
+    }
+
+    if (passwordForm) {
+      passwordForm.addEventListener('submit', function (event) {
         event.preventDefault();
         void handlePasswordResetSubmit();
-      } else if (form.id === 'auth-reset-form') {
+      });
+    }
+
+    if (recoveryForm) {
+      recoveryForm.addEventListener('submit', function (event) {
         event.preventDefault();
         void handleRecoverySubmit();
-      }
-    });
+      });
+    }
 
     var loginButton = $('auth-login-submit');
     if (loginButton) {
@@ -322,11 +341,11 @@
 
   function bootAuth() {
     if (bootAuth.done) return;
-    bootAuth.done = true;
     bindModeLinks();
     setMode(currentMode(), { skipHistory: true });
     bindAuthForms();
     void initAuthCallbacks();
+    if (bindAuthForms.done) bootAuth.done = true;
   }
 
   if (document.readyState === 'loading') {
@@ -334,4 +353,5 @@
   } else {
     bootAuth();
   }
+  window.addEventListener('load', bootAuth);
 })();
