@@ -153,11 +153,11 @@
       if (button && button.disabled) return; // block double submit
       hide(errBox);
 
-      var email = ($('auth-email').value || '').trim();
+      var identifier = ($('auth-email').value || '').trim();
       var password = $('auth-password').value || '';
       setBusy(button, true, t('auth.entering', 'Entering…'));
       try {
-        await postJson('/api/auth/login', { email: email, password: password });
+        await postJson('/api/auth/login', { identifier: identifier, password: password });
         window.location.assign('/app');
       } catch (_err) {
         show(errBox, t('auth.loginError', 'Invalid email or password.'));
@@ -179,11 +179,24 @@
       hide(okBox);
       hide(errBox);
 
+      var fullName = ($('auth-signup-name').value || '').trim();
+      var username = ($('auth-signup-username').value || '').trim().toLowerCase();
       var email = ($('auth-signup-email').value || '').trim();
       var password = $('auth-signup-password').value || '';
+      var passwordConfirm = $('auth-signup-password-confirm').value || '';
+      if (password !== passwordConfirm) {
+        show(errBox, t('auth.passwordMismatch', 'Password confirmation does not match.'));
+        return;
+      }
       setBusy(button, true, t('auth.creating', 'Creating...'));
       try {
-        var data = await postJson('/api/auth/signup', { email: email, password: password });
+        var data = await postJson('/api/auth/signup', {
+          fullName: fullName,
+          username: username,
+          email: email,
+          password: password,
+          passwordConfirm: passwordConfirm
+        });
         if (data.signedIn && !data.needsConfirmation) {
           window.location.assign('/app');
           return;

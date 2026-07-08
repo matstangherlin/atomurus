@@ -13,6 +13,10 @@ function supabaseConfig() {
   return { url, anonKey };
 }
 
+function serviceRoleKey() {
+  return String(process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim();
+}
+
 export function isSupabaseConfigured() {
   return Boolean(supabaseConfig());
 }
@@ -33,6 +37,23 @@ function anonHeaders(extra = {}) {
   return {
     apikey: cfg.anonKey,
     Authorization: `Bearer ${cfg.anonKey}`,
+    'Content-Type': 'application/json',
+    ...extra
+  };
+}
+
+function serviceHeaders(extra = {}) {
+  const cfg = supabaseConfig();
+  const serviceKey = serviceRoleKey();
+  if (!cfg || !serviceKey) {
+    const err = new Error('Supabase service role is not configured');
+    err.status = 500;
+    err.code = 'supabase_service_role_missing';
+    throw err;
+  }
+  return {
+    apikey: serviceKey,
+    Authorization: `Bearer ${serviceKey}`,
     'Content-Type': 'application/json',
     ...extra
   };
@@ -64,6 +85,8 @@ export function normalizeSupabaseUser(user) {
   return {
     id: user.id,
     email: user.email,
+    username: user.user_metadata?.username || null,
+    fullName: user.user_metadata?.full_name || user.user_metadata?.name || null,
     createdAt: user.created_at || null,
     confirmedAt: user.email_confirmed_at || null,
     lastSignInAt: user.last_sign_in_at || null,
@@ -91,7 +114,16 @@ function redirectBase() {
   return 'https://atomurus.com';
 }
 
-export async function supabaseSignup(email, password) {
+export async function supabaseSignup(email, password, profile = {}) {
+  const fullName = String(profile.fullName || profile.name || '').trim();
+  const username = String(profile.username || '').trim().toLowerCase();
+  if (!serviceRoleKey()) {
+    const err = new Error('Account creation needs SUPABASE_SERVICE_ROLE_KEY for username login.');
+    err.status = 500;
+    err.code = 'supabase_service_role_missing';
+    throw err;
+  }
+  await assertUsernameAvailable(username);
   const res = await fetch(authUrl('/signup'), {
     method: 'POST',
     headers: anonHeaders(),
@@ -99,13 +131,22 @@ export async function supabaseSignup(email, password) {
       email,
       password,
       data: {
-        atomurus_signup_source: 'login_page'
+        atomurus_signup_source: 'login_page',
+        name: fullName || undefined,
+        full_name: fullName || undefined,
+        username: username || undefined
       }
     })
   });
   const data = await parseSupabaseResponse(res);
   const session = sessionFromPayload(data);
   const user = session?.user || normalizeSupabaseUser(data.user || data);
+  await saveProfileIdentity({
+    userId: user?.id,
+    email,
+    username,
+    fullName
+  });
   const needsConfirmation = !user?.confirmedAt && !session;
   return {
     user,
@@ -115,7 +156,8 @@ export async function supabaseSignup(email, password) {
   };
 }
 
-export async function supabaseLogin(email, password) {
+export async function supabaseLogin(identifier, password) {
+  const email = await resolveLoginEmail(identifier);
   const res = await fetch(authUrl('/token?grant_type=password'), {
     method: 'POST',
     headers: anonHeaders(),
@@ -261,4 +303,60 @@ export async function supabaseSessionFromRequest(request) {
     }
   }
   return { user, cookieHeaders };
+}
+
+async function resolveLoginEmail(identifier) {
+  const raw = String(identifier || '').trim();
+  if (!raw) {
+    const err = new Error('Invalid email or password');
+    err.status = 401;
+    throw err;
+  }
+  if (raw.includes('@')) return raw.toLowerCase();
+  const profile = await getProfileByUsername(raw.toLowerCase());
+  if (!profile?.email) {
+    const err = new Error('Invalid email or password');
+    err.status = 401;
+    throw err;
+  }
+  return String(profile.email).toLowerCase();
+}
+
+async function assertUsernameAvailable(username) {
+  const existing = await getProfileByUsername(username);
+  if (existing?.id) {
+    const err = new Error('This username is already in use.');
+    err.status = 409;
+    err.code = 'username_taken';
+    throw err;
+  }
+}
+
+async function getProfileByUsername(username) {
+  if (!username) return null;
+  const cfg = supabaseConfig();
+  const url = `${cfg.url}/rest/v1/profiles?select=id,email,username&username=eq.${encodeURIComponent(username)}&limit=1`;
+  const res = await fetch(url, {
+    method: 'GET',
+    headers: serviceHeaders()
+  });
+  const data = await parseSupabaseResponse(res);
+  return Array.isArray(data) ? (data[0] || null) : null;
+}
+
+async function saveProfileIdentity({ userId, email, username, fullName }) {
+  if (!userId) return;
+  const cfg = supabaseConfig();
+  const url = `${cfg.url}/rest/v1/profiles?id=eq.${encodeURIComponent(userId)}`;
+  const res = await fetch(url, {
+    method: 'PATCH',
+    headers: serviceHeaders({ Prefer: 'return=minimal' }),
+    body: JSON.stringify({
+      email,
+      username,
+      full_name: fullName,
+      updated_at: new Date().toISOString()
+    })
+  });
+  await parseSupabaseResponse(res);
 }

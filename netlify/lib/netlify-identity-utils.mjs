@@ -46,8 +46,16 @@ export function normalizeEmail(email) {
   return String(email || '').trim().toLowerCase();
 }
 
+export function normalizeUsername(username) {
+  return String(username || '').trim().toLowerCase();
+}
+
 export function validEmail(email) {
   return EMAIL_RE.test(email) && email.length <= 200;
+}
+
+export function validUsername(username) {
+  return /^[a-z0-9](?:[a-z0-9._-]{1,28}[a-z0-9])?$/.test(username);
 }
 
 export function clientIp(request) {

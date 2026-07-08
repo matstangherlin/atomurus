@@ -5,11 +5,13 @@ import {
   json,
   jsonWithCookies,
   normalizeEmail,
+  normalizeUsername,
   options,
   publicUser,
   readJsonBody,
   statusFromError,
   validEmail,
+  validUsername,
   verifySameOrigin
 } from '../lib/netlify-identity-utils.mjs';
 
@@ -40,9 +42,21 @@ export default async function handler(request) {
   }
 
   const email = normalizeEmail(body.email);
+  const fullName = String(body.fullName || body.name || '').trim();
+  const username = normalizeUsername(body.username);
   const password = String(body.password || '');
+  const passwordConfirm = String(body.passwordConfirm || '');
+  if (!fullName || fullName.length < 4 || fullName.length > 120 || !/\s+/.test(fullName)) {
+    return json(400, { ok: false, error: 'Use your full name as it appears naturally.' });
+  }
+  if (!validUsername(username)) {
+    return json(400, { ok: false, error: 'Choose a unique username with 3 to 30 letters, numbers, dot, underscore or hyphen.' });
+  }
   if (!validEmail(email) || password.length < 8 || password.length > 1024) {
     return json(400, { ok: false, error: 'Use a valid email and a password with at least 8 characters.' });
+  }
+  if (password !== passwordConfirm) {
+    return json(400, { ok: false, error: 'Password confirmation does not match.' });
   }
 
   const ip = clientIp(request);
@@ -51,7 +65,7 @@ export default async function handler(request) {
   }
 
   try {
-    const result = await authSignup(email, password);
+    const result = await authSignup(email, password, { fullName, username });
     return jsonWithCookies(
       200,
       {

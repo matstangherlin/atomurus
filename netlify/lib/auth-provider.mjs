@@ -45,9 +45,9 @@ function normalizeIdentityUser(user) {
   };
 }
 
-export async function authSignup(email, password) {
+export async function authSignup(email, password, profile = {}) {
   if (authProviderName() === 'supabase') {
-    return supabaseSignup(email, password);
+    return supabaseSignup(email, password, profile);
   }
 
   let settings = null;
@@ -57,7 +57,27 @@ export async function authSignup(email, password) {
     // Signup still reports configuration failures below if Identity is unavailable.
   }
 
-  const user = normalizeIdentityUser(await signup(email, password));
+  let identityUser;
+  try {
+    identityUser = await signup(
+      email,
+      password,
+      profile && (profile.fullName || profile.username)
+        ? {
+            full_name: profile.fullName || '',
+            name: profile.fullName || '',
+            username: profile.username || ''
+          }
+        : undefined
+    );
+  } catch (err) {
+    if (profile && (profile.fullName || profile.username)) {
+      identityUser = await signup(email, password);
+    } else {
+      throw err;
+    }
+  }
+  const user = normalizeIdentityUser(identityUser);
   const needsConfirmation = settings ? !settings.autoconfirm : !user.confirmedAt;
   return {
     user,
@@ -67,12 +87,17 @@ export async function authSignup(email, password) {
   };
 }
 
-export async function authLogin(email, password) {
+export async function authLogin(identifier, password) {
   if (authProviderName() === 'supabase') {
-    return supabaseLogin(email, password);
+    return supabaseLogin(identifier, password);
+  }
+  if (!String(identifier || '').includes('@')) {
+    const err = new Error('Username login requires Supabase authentication.');
+    err.status = 400;
+    throw err;
   }
 
-  const user = normalizeIdentityUser(await login(email, password));
+  const user = normalizeIdentityUser(await login(identifier, password));
   return { user, cookieHeaders: [] };
 }
 
