@@ -7,6 +7,7 @@ import {
   normalizeEmail,
   normalizeUsername,
   options,
+  passwordPolicyError,
   publicUser,
   readJsonBody,
   statusFromError,
@@ -46,14 +47,15 @@ export default async function handler(request) {
   const username = normalizeUsername(body.username);
   const password = String(body.password || '');
   const passwordConfirm = String(body.passwordConfirm || '');
-  if (!fullName || fullName.length < 4 || fullName.length > 120 || !/\s+/.test(fullName)) {
-    return json(400, { ok: false, error: 'Use your full name as it appears naturally.' });
+  if (!fullName || fullName.length < 2 || fullName.length > 120) {
+    return json(400, { ok: false, error: 'Use your name with at least 2 characters.' });
   }
   if (!validUsername(username)) {
     return json(400, { ok: false, error: 'Choose a unique username with 3 to 30 letters, numbers, dot, underscore or hyphen.' });
   }
-  if (!validEmail(email) || password.length < 8 || password.length > 1024) {
-    return json(400, { ok: false, error: 'Use a valid email and a password with at least 8 characters.' });
+  const passwordError = passwordPolicyError(password);
+  if (!validEmail(email) || passwordError) {
+    return json(400, { ok: false, error: passwordError || 'Use a valid email address.' });
   }
   if (password !== passwordConfirm) {
     return json(400, { ok: false, error: 'Password confirmation does not match.' });
@@ -83,6 +85,9 @@ export default async function handler(request) {
       return json(500, { ok: false, error: 'Account creation is unavailable.' });
     }
     console.warn(`[auth-signup] Rejected signup for ${email} from ${ip}: ${status}`);
-    return json(400, { ok: false, error: 'Could not create this account. Try signing in or use another email.' });
+    return json(status >= 400 && status < 500 ? status : 400, {
+      ok: false,
+      error: err?.message || 'Could not create this account. Try signing in or use another email.'
+    });
   }
 }

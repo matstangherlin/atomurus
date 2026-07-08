@@ -4,6 +4,7 @@ import {
   json,
   jsonWithCookies,
   options,
+  passwordPolicyError,
   publicUser,
   readJsonBody,
   statusFromError,
@@ -36,8 +37,9 @@ export default async function handler(request) {
   const token = String(body.token || '').trim();
   const type = String(body.type || 'recovery').trim();
   const password = String(body.password || '');
-  if (!token || token.length > 2048 || password.length < 8 || password.length > 1024) {
-    return json(400, { ok: false, error: 'Use a password with at least 8 characters.' });
+  const passwordError = passwordPolicyError(password);
+  if (!token || token.length > 2048 || passwordError) {
+    return json(400, { ok: false, error: passwordError || 'Use a valid password.' });
   }
 
   try {

@@ -32,6 +32,18 @@
     }
   }
 
+  function validUsername(username) {
+    return /^[a-z0-9](?:[a-z0-9._-]{1,28}[a-z0-9])?$/.test(username);
+  }
+
+  function passwordPolicyError(password) {
+    if (password.length < 9) return 'Use a password with at least 9 characters.';
+    if (!/[!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.test(password)) {
+      return 'Use at least one special character in your password.';
+    }
+    return '';
+  }
+
   async function postJson(url, payload) {
     var res = await fetch(url, {
       method: 'POST',
@@ -184,6 +196,19 @@
       var email = ($('auth-signup-email').value || '').trim();
       var password = $('auth-signup-password').value || '';
       var passwordConfirm = $('auth-signup-password-confirm').value || '';
+      if (fullName.length < 2) {
+        show(errBox, t('auth.nameInvalid', 'Enter your name with at least 2 characters.'));
+        return;
+      }
+      if (!validUsername(username)) {
+        show(errBox, t('auth.usernameInvalid', 'Choose a username with 3 to 30 letters, numbers, dot, underscore or hyphen.'));
+        return;
+      }
+      var passwordError = passwordPolicyError(password);
+      if (passwordError) {
+        show(errBox, t('auth.passwordWeak', passwordError));
+        return;
+      }
       if (password !== passwordConfirm) {
         show(errBox, t('auth.passwordMismatch', 'Password confirmation does not match.'));
         return;

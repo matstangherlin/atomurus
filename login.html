@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en-US" data-theme="light">
 <head>
 <script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
@@ -175,11 +175,11 @@
       <form class="lc-form" id="auth-signup-form" novalidate>
       <div class="field">
         <label for="auth-signup-name">Full name</label>
-        <input id="auth-signup-name" name="fullName" type="text" required autocomplete="name" maxlength="120">
+        <input id="auth-signup-name" name="fullName" type="text" required autocomplete="name" maxlength="120" placeholder="Matheus Stan Gherlin">
       </div>
       <div class="field">
         <label for="auth-signup-username">Username</label>
-        <input id="auth-signup-username" name="username" type="text" required autocomplete="username" maxlength="30" pattern="^[a-z0-9](?:[a-z0-9._-]{1,28}[a-z0-9])?$">
+        <input id="auth-signup-username" name="username" type="text" required autocomplete="username" maxlength="30" pattern="^[a-z0-9](?:[a-z0-9._-]{1,28}[a-z0-9])?$" placeholder="matheusstan">
       </div>
       <div class="field">
         <label for="auth-signup-email">Email</label>
@@ -187,17 +187,17 @@
       </div>
       <div class="field">
         <label for="auth-signup-password">Password</label>
-        <input id="auth-signup-password" name="password" type="password" required minlength="8" autocomplete="new-password">
+        <input id="auth-signup-password" name="password" type="password" required minlength="9" autocomplete="new-password">
       </div>
       <div class="field">
         <label for="auth-signup-password-confirm">Repeat password</label>
-        <input id="auth-signup-password-confirm" name="passwordConfirm" type="password" required minlength="8" autocomplete="new-password">
+        <input id="auth-signup-password-confirm" name="passwordConfirm" type="password" required minlength="9" autocomplete="new-password">
       </div>
       <button class="auth-primary-btn" type="submit" id="auth-signup-submit">
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 2v9M2 6.5h9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
         <span>Create account</span>
       </button>
-      <div class="auth-fineprint">Use your full natural name and a unique public username. Passwords are processed by the authentication provider and are never stored in raw form by Atomurus.</div>
+      <div class="auth-fineprint">Use your full natural name and a unique public username. Passwords must have at least 9 characters and one special character, and are never stored in raw form by Atomurus.</div>
       <div class="feedback ok" id="auth-signup-ok">Account created. Check your email if confirmation is required, then sign in.</div>
       <div class="feedback err" id="auth-signup-err">Could not create this account. Try signing in or use another email.</div>
       </form>

@@ -58,6 +58,17 @@ export function validUsername(username) {
   return /^[a-z0-9](?:[a-z0-9._-]{1,28}[a-z0-9])?$/.test(username);
 }
 
+export function passwordPolicyError(password) {
+  const value = String(password || '');
+  if (value.length < 9 || value.length > 1024) {
+    return 'Use a password with at least 9 characters.';
+  }
+  if (!/[!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.test(value)) {
+    return 'Use at least one special character in your password.';
+  }
+  return '';
+}
+
 export function clientIp(request) {
   return (
     request.headers.get('x-nf-client-connection-ip') ||
