@@ -6,7 +6,11 @@
   }
 
   function t(key, fallback) {
-    return (window.I18N && window.I18N.t && window.I18N.t(key)) || fallback;
+    try {
+      return (window.I18N && window.I18N.t && window.I18N.t(key)) || fallback;
+    } catch (_err) {
+      return fallback;
+    }
   }
 
   function hide(node) {
