@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#eee9de">
+  <title>Atomurus — Variações minimalistas</title>
+  <meta name="description" content="Variações minimalistas para a homepage do Atomurus, preservando o texto original.">
+  <link rel="icon" href="../assets/atomurus-logo.png">
+  <link rel="stylesheet" href="../assets/fonts/fonts.css">
+  <link rel="stylesheet" href="minimalistas.css">
+  <script src="../elements-data.js" defer></script>
+  <script src="minimalistas.js" defer></script>
+</head>
+<body class="minimal-body theme-caderno">
+  <aside class="variation-picker" aria-label="Variação visual">
+    <a href="minimalistas-galeria.html" class="variation-back">Visão geral</a>
+    <a href="?tema=caderno" data-theme-link="caderno">01</a>
+    <a href="?tema=observatorio" data-theme-link="observatorio">02</a>
+    <a href="?tema=instrumento" data-theme-link="instrumento">03</a>
+  </aside>
+
+  <header class="minimal-header">
+    <a class="minimal-brand" href="../index.pt.html" aria-label="Atomurus">
+      <svg width="25" height="25" viewBox="0 0 25 25" fill="none" aria-hidden="true">
+        <circle cx="12.5" cy="12.5" r="2.5" fill="currentColor"/>
+        <ellipse cx="12.5" cy="12.5" rx="10" ry="4" stroke="currentColor"/>
+        <ellipse cx="12.5" cy="12.5" rx="10" ry="4" stroke="currentColor" transform="rotate(60 12.5 12.5)"/>
+        <ellipse cx="12.5" cy="12.5" rx="10" ry="4" stroke="currentColor" transform="rotate(120 12.5 12.5)"/>
+      </svg>
+      <span>Atomurus</span>
+    </a>
+
+    <nav class="minimal-nav" data-minimal-nav>
+      <a href="../periodic-table.pt.html">Tabela Periódica</a>
+      <a href="../viewer/atomic-models.pt.html">Visualizador</a>
+      <a href="../calculators.pt.html">Calculadoras</a>
+      <a href="../explore.pt.html">Explorar</a>
+    </nav>
+
+    <a class="minimal-open" href="../periodic-table.pt.html">Abrir lab <span>↗</span></a>
+    <button class="minimal-menu" type="button" aria-label="Abrir menu" aria-expanded="false" data-menu>
+      <i></i><i></i>
+    </button>
+  </header>
+
+  <div class="minimal-strip">
+    <span>workspace <b>ATOMURUS / LAB</b></span>
+    <span>elementos <b>118</b></span>
+    <span>módulos <b>4 ativos</b></span>
+    <span>última sync <b data-clock>— ms atrás</b></span>
+    <span>dados <b>IUPAC 2024 · CODATA 2022</b></span>
+  </div>
+
+  <main>
+    <section class="minimal-hero">
+      <div class="minimal-hero-copy">
+        <div class="minimal-kicker">
+          <span>bem-vindo ao atomurus</span>
+          <span>v1.11 · 2026</span>
+        </div>
+        <h1>Um laboratório<br>de química,<br><em>instrumental.</em></h1>
+        <p>
+          Um workspace de química para 118 elementos, tendências periódicas, 40+ modelos 3D,
+          cinco calculadoras e artigos Explore para estudo guiado.
+        </p>
+        <div class="minimal-actions">
+          <a class="minimal-primary" href="../periodic-table.pt.html">Abrir tabela periódica <span>↗</span></a>
+          <a class="minimal-secondary" href="../viewer/atomic-models.pt.html">Visualizador <span>→</span></a>
+        </div>
+      </div>
+
+      <div class="periodic-stage" aria-label="Tabela periódica interativa">
+        <div class="periodic-stage-head">
+          <span>periodic.tbl · ao vivo</span>
+          <span>118 elementos · IUPAC 2024</span>
+        </div>
+        <div class="minimal-periodic" id="minimal-periodic"></div>
+        <div class="periodic-focus" data-periodic-focus>
+          <span data-focus-number>006</span>
+          <strong data-focus-symbol>C</strong>
+          <small data-focus-name>Carbono</small>
+        </div>
+        <div class="periodic-stage-foot">
+          <span>grp 1–18 · prd 1–7</span>
+          <span data-theme-name>Caderno de Matéria</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="minimal-stats" aria-label="Estatísticas">
+      <div><strong>118</strong><span>Elementos</span></div>
+      <div><strong>40+</strong><span>Modelos 3D</span></div>
+      <div><strong>5</strong><span>Calculadoras</span></div>
+      <div><strong>∞</strong><span>Curiosidade</span></div>
+    </section>
+
+    <section class="minimal-modules">
+      <header class="minimal-section-head">
+        <span>§ 01 · módulos</span>
+        <h2>Quatro instrumentos. Um workspace.</h2>
+        <p><b>4</b> ativos · <b>40+</b> modelos</p>
+      </header>
+
+      <div class="minimal-module-list">
+        <a class="minimal-module" href="../periodic-table.pt.html">
+          <span class="module-no">01 — Referência<br>● ativo</span>
+          <div>
+            <h3>Tabela Periódica</h3>
+            <p>Os 118 elementos confirmados com cartões de propriedades, mapa de calor, gráficos de tendências, comparador e dados de isótopos. Filtre por família, busque por nome ou número atômico, exporte como PNG/PDF.</p>
+          </div>
+          <span class="module-meta"><b>Abrir tabela</b><br>118 elementos · 10 famílias · 5 visões</span>
+          <span class="module-arrow">↗</span>
+        </a>
+
+        <a class="minimal-module" href="../viewer/atomic-models.pt.html">
+          <span class="module-no">02 — Visualização<br>● ativo</span>
+          <div>
+            <h3>Visualizadores 3D</h3>
+            <p>Modelos atômicos, moléculas, alótropos e isomeria em 3D interativo: de Dalton aos orbitais quânticos, geometria molecular, estruturas de carbono e exemplos de isômeros orgânicos.</p>
+          </div>
+          <span class="module-meta"><b>Explorar modelos</b><br>5 modelos atômicos · 24 moléculas · isomeria + alótropos</span>
+          <span class="module-arrow">↗</span>
+        </a>
+
+        <a class="minimal-module" href="../calculators.pt.html">
+          <span class="module-no">03 — Computar<br>● ativo</span>
+          <div>
+            <h3>Calculadoras</h3>
+            <p>Cinco calculadoras de química: massa molar, expressões científicas, gás ideal PV=nRT, diluição e diagnóstico pH/pOH.</p>
+          </div>
+          <span class="module-meta"><b>Usar calculadoras</b><br>5 instrumentos · Parser de fórmulas ao vivo · Unidades SI</span>
+          <span class="module-arrow">↗</span>
+        </a>
+
+        <a class="minimal-module" href="../explore.pt.html">
+          <span class="module-no">04 — Conhecimento<br>● ativo</span>
+          <div>
+            <h3>Explorar</h3>
+            <p>Artigos e leituras guiadas para conceitos e história da química, incluindo tabela periódica, isomeria e Bhopal/isocianato de metila.</p>
+          </div>
+          <span class="module-meta"><b>Ler artigos</b><br>artigos · conceitos · história</span>
+          <span class="module-arrow">↗</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="minimal-manifest">
+      <span>§ 02 — Manifesto</span>
+      <p>
+        A maioria das ferramentas de química <em>fala</em> sobre a matéria. O Atomurus mostra ela
+        acontecendo — de dados de elementos a estruturas 3D, cálculos e artigos, com a tipografia
+        certa para estudar e a quantidade certa de nada entre uma coisa e outra.
+        <em>Feito para estudar, não para impressionar.</em>
+      </p>
+    </section>
+  </main>
+
+  <footer class="minimal-footer">
+    <div>
+      <strong>Atomurus</strong>
+      <p>Um laboratório de química instrumental para os estudiosos, os curiosos e os pacientes.</p>
+    </div>
+    <nav>
+      <h4>Módulos</h4>
+      <a href="../periodic-table.pt.html">Tabela Periódica</a>
+      <a href="../viewer/atomic-models.pt.html">Visualizador</a>
+      <a href="../calculators.pt.html">Calculadoras</a>
+      <a href="../explore.pt.html">Explorar</a>
+    </nav>
+    <nav>
+      <h4>Projeto</h4>
+      <a href="../about.pt.html">Sobre</a>
+      <a href="../privacy.pt.html">Privacidade</a>
+      <a href="../terms.pt.html">Termos</a>
+      <a href="../contact.pt.html">Contato</a>
+    </nav>
+    <div class="minimal-footer-data">
+      <h4>Dados</h4>
+      <span>IUPAC 2024</span>
+      <span>CODATA 2022</span>
+      <span>NIST</span>
+    </div>
+  </footer>
+
+  <div class="minimal-status">
+    <span>● pronto</span>
+    <span>·</span>
+    <span>workspace inicial</span>
+    <span>·</span>
+    <span>4 módulos registrados</span>
+    <span class="status-spacer"></span>
+    <a href="../periodic-table.pt.html">→ periodic-table</a>
+    <span>·</span>
+    <a href="../viewer/atomic-models.pt.html">→ 3d-viewer</a>
+    <span>·</span>
+    <a href="../calculators.pt.html">→ calculators</a>
+    <span>·</span>
+    <a href="../explore.pt.html">→ explore</a>
+  </div>
+
+  <div class="minimal-bottom">
+    <span>● sistema nominal</span>
+    <span>© 2026 Atomurus · v1.11</span>
+  </div>
+<script type="text/javascript">
+    aclib.runAutoTag({
+        zoneId: 'o42jwt5vja',
+    });
+</script>
+</body>
+</html>

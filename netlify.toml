@@ -1,0 +1,569 @@
+# ───────────────────────────────────────────────────────────────────
+# Atomurus — Netlify configuration
+# ───────────────────────────────────────────────────────────────────
+# REQUIRED ENVIRONMENT VARIABLES (set in Netlify dashboard):
+#   RECAPTCHA_SECRET_KEY = <secret key from reCAPTCHA admin console>
+#   MAILGUN_API_KEY      = <private Mailgun API key>   # contact form — NEVER in client code
+#   MAILGUN_DOMAIN       = sandboxXXXX.mailgun.org      # or mg.atomurus.com (verified domain)
+#   CONTACT_TO           = contato@atomurus.com         # inbox that receives form messages
+#   Netlify Identity must be enabled in Project configuration > Identity.
+#
+# OPTIONAL ENVIRONMENT VARIABLES:
+#   ALLOWED_ORIGIN       = https://atomurus.com   # lock CORS to your domain
+#   AUTH_ALLOWED_ORIGINS = https://atomurus.com,https://www.atomurus.com
+#   AUTH_PASSWORD_REDIRECT = https://atomurus.com/login
+#   MAILGUN_BASE_URL     = https://api.mailgun.net # US (default) | https://api.eu.mailgun.net (EU)
+#   CONTACT_FROM         = Atomurus <postmaster@MAILGUN_DOMAIN>   # custom From header
+#   RECAPTCHA_MIN_SCORE  = 0.5                     # contact-send spam threshold
+# See MAILGUN-SETUP.md for the full walkthrough.
+# ───────────────────────────────────────────────────────────────────
+
+[build]
+  publish      = "."
+  functions    = "netlify/functions"
+  command      = "node bump-version.js && node build-i18n.js"
+
+# Hide .html in URLs — /periodic-table/aurum serves periodic-table/aurum.html,
+# and /periodic-table/aurum.html is 301'd to /periodic-table/aurum.
+# Applies site-wide (about, contact, privacy, terms, etc. all benefit too).
+[build.processing.html]
+  pretty_urls = true
+
+[functions]
+  node_bundler = "esbuild"
+
+# Pretty URL for the reCAPTCHA verifier:
+#   POST /api/recaptcha-verify  →  /.netlify/functions/recaptcha-verify
+[[redirects]]
+  from   = "/api/recaptcha-verify"
+  to     = "/.netlify/functions/recaptcha-verify"
+  status = 200
+
+# Pretty URL for the contact-form email sender (Mailgun):
+#   POST /api/contact-send  →  /.netlify/functions/contact-send
+[[redirects]]
+  from   = "/api/contact-send"
+  to     = "/.netlify/functions/contact-send"
+  status = 200
+
+# Auth API (Netlify Identity through Netlify-managed nf_jwt/nf_refresh cookies)
+[[redirects]]
+  from   = "/api/auth/login"
+  to     = "/.netlify/functions/auth-login"
+  status = 200
+
+[[redirects]]
+  from   = "/api/auth/signup"
+  to     = "/.netlify/functions/auth-signup"
+  status = 200
+
+[[redirects]]
+  from   = "/api/auth/me"
+  to     = "/.netlify/functions/auth-me"
+  status = 200
+
+[[redirects]]
+  from   = "/api/auth/refresh"
+  to     = "/.netlify/functions/auth-refresh"
+  status = 200
+
+[[redirects]]
+  from   = "/api/auth/logout"
+  to     = "/.netlify/functions/auth-logout"
+  status = 200
+
+[[redirects]]
+  from   = "/api/auth/recover"
+  to     = "/.netlify/functions/auth-recover"
+  status = 200
+
+[[redirects]]
+  from   = "/api/auth/reset"
+  to     = "/.netlify/functions/auth-reset"
+  status = 200
+
+[[redirects]]
+  from   = "/api/auth/confirm"
+  to     = "/.netlify/functions/auth-confirm"
+  status = 200
+
+[[redirects]]
+  from   = "/api/private/dashboard"
+  to     = "/.netlify/functions/private-dashboard"
+  status = 200
+
+# Auth pages. Explicit rewrites keep these stable alongside pretty URLs.
+[[redirects]]
+  from   = "/login"
+  to     = "/login.html"
+  status = 200
+
+[[redirects]]
+  from   = "/app"
+  to     = "/app.html"
+  status = 200
+
+# Defense-in-depth while publish="." is still used.
+[[redirects]]
+  from   = "/.env*"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/.git/*"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/.agents/*"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/.codex/*"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/.claude/*"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/netlify/*"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/scripts/*"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/*.log"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+# Legacy element URLs (/elements/<latin>) → new home (/periodic-table/<latin>).
+# Permanent 301 so Google transfers any ranking earned by the old paths.
+[[redirects]]
+  from   = "/elements/*"
+  to     = "/periodic-table/:splat"
+  status = 301
+  force  = true
+
+# Hide .html in URL bar — anyone (Google, bookmarks, old links) hitting
+# /foo.html gets 301-redirected to /foo. Belt-and-suspenders alongside
+# pretty_urls in case the build-processing flag is silently disabled.
+[[redirects]]
+  from   = "/*.html"
+  to     = "/:splat"
+  status = 301
+  force  = true
+
+# ── Pre-rendered language variants ─────────────────────────────────
+# When ?lang=pt-BR is present, serve the pre-rendered <page>.pt.html so
+# crawlers see the Portuguese title/description/og:* in the raw HTML
+# (instead of having to execute i18n.js to swap them client-side).
+# status=200 is an INTERNAL rewrite — the URL stays /?lang=pt-BR so the
+# canonical / hreflang stays consistent.
+# force=true so the rewrite wins over the static EN file at the same path.
+# Generated by build-i18n.js; sources stay as the EN/default variant.
+[[redirects]]
+  from   = "/"
+  to     = "/index.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/periodic-table"
+  to     = "/periodic-table.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/calculators"
+  to     = "/calculators.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/about"
+  to     = "/about.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/contact"
+  to     = "/contact.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/privacy"
+  to     = "/privacy.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/terms"
+  to     = "/terms.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/config"
+  to     = "/config.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+# Periodic-table sub-views (heatmap, trends, compare, isotopes) — PT variant
+[[redirects]]
+  from   = "/periodic-table/heatmap"
+  to     = "/periodic-table/heatmap.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/periodic-table/trends"
+  to     = "/periodic-table/trends.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/periodic-table/compare"
+  to     = "/periodic-table/compare.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/periodic-table/isotopes"
+  to     = "/periodic-table/isotopes.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+# Viewer pages — PT variant
+[[redirects]]
+  from   = "/viewer/molecules"
+  to     = "/viewer/molecules.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/viewer/allotropes"
+  to     = "/viewer/allotropes.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/viewer/atomic-models"
+  to     = "/viewer/atomic-models.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/viewer/atomic-models/bohr"
+  to     = "/viewer/atomic-models/bohr.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/viewer/atomic-models/dalton"
+  to     = "/viewer/atomic-models/dalton.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/viewer/atomic-models/quantum"
+  to     = "/viewer/atomic-models/quantum.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/viewer/atomic-models/rutherford"
+  to     = "/viewer/atomic-models/rutherford.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/viewer/atomic-models/thomson"
+  to     = "/viewer/atomic-models/thomson.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+# Isomerism hub — PT variant. Only the hub: the isomerism SUBPAGES have no
+# usable .pt.html (their .pt.html files are broken redirect stubs) and are
+# translated client-side via ?lang=pt-BR, so no rewrite for them.
+[[redirects]]
+  from   = "/viewer/isomerism"
+  to     = "/viewer/isomerism.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+# Explore hub + knowledge articles — PT variant (.pt.html). These are
+# fully pre-rendered per language (not data-i18n), so ?lang=pt-BR serves
+# the Portuguese file directly. EN is the default (.html, no redirect needed).
+[[redirects]]
+  from   = "/explore"
+  to     = "/explore.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/explore/bhopal-disaster"
+  to     = "/explore/bhopal-disaster.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/explore/what-is-the-periodic-table"
+  to     = "/explore/what-is-the-periodic-table.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/explore/what-is-isomerism"
+  to     = "/explore/what-is-isomerism.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/explore/viewer/methyl-isocyanate"
+  to     = "/explore/viewer/methyl-isocyanate.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+# Periodic-table sub-views (heatmap/trends/compare/isotopes) are EN-default
+# data-i18n pages — for ?lang=en they should serve the source HTML, NOT be
+# captured by the element wildcard below. These explicit rules short-circuit.
+[[redirects]]
+  from   = "/periodic-table/heatmap"
+  to     = "/periodic-table/heatmap.html"
+  status = 200
+  force  = true
+  query  = { lang = "en" }
+
+[[redirects]]
+  from   = "/periodic-table/trends"
+  to     = "/periodic-table/trends.html"
+  status = 200
+  force  = true
+  query  = { lang = "en" }
+
+[[redirects]]
+  from   = "/periodic-table/compare"
+  to     = "/periodic-table/compare.html"
+  status = 200
+  force  = true
+  query  = { lang = "en" }
+
+[[redirects]]
+  from   = "/periodic-table/isotopes"
+  to     = "/periodic-table/isotopes.html"
+  status = 200
+  force  = true
+  query  = { lang = "en" }
+
+# The periodic-table HUB itself (EN-default data-i18n page) for ?lang=en.
+# MUST come before the element wildcard below: otherwise `/periodic-table?lang=en`
+# is captured by `/periodic-table/*` and rewritten to `/periodic-table/.en.html`
+# (empty splat) — a file that doesn't exist → 404. Serve the source HTML instead.
+[[redirects]]
+  from   = "/periodic-table"
+  to     = "/periodic-table.html"
+  status = 200
+  force  = true
+  query  = { lang = "en" }
+
+# Element pages — EN variant (sources are PT-default). The splat captures
+# the latin slug (e.g. "hydrogenium" → /periodic-table/hydrogenium.en.html).
+# Pretty URLs keep this internal: the user-visible URL stays /periodic-table/hydrogenium?lang=en.
+[[redirects]]
+  from   = "/periodic-table/*"
+  to     = "/periodic-table/:splat.en.html"
+  status = 200
+  force  = true
+  query  = { lang = "en" }
+
+# ── Accept-Language auto-serve (PT) ────────────────────────────────
+# First-time visitor lands on the clean root URL `/` with a Portuguese
+# browser → INTERNAL 200 rewrite serves the pre-rendered /index.pt.html
+# directly. End result: zero flash of English content for Brazilian
+# visitors typing atomurus.com, with no extra redirect round-trip.
+# (This used to be a 302 to /?lang=pt-BR — same end state, but it cost
+# Brazilian first-time visitors one full round-trip before the HTML,
+# and a separate CDN cache variant. Lighthouse TTFB flagged it.)
+#
+# Body content is identical between index.html and index.pt.html (only
+# head meta differs) — the inline FOUC script + i18n.js still resolve
+# the user's language client-side from localStorage/navigator, so a
+# returning user who explicitly chose EN keeps EN.
+#
+# Ordering: the explicit `query = { lang = "pt-BR" }` rule above matches
+# /?lang=pt-BR first; this conditional rule only fires for the plain `/`.
+# force=true so the rewrite wins over the static index.html at `/`.
+#
+# Why only `/` and not every page: internal navigation after the first
+# visit inherits language from localStorage via the inline FOUC script
+# in each HTML head (the `lang-pt-pending` class), so subsequent pages
+# don't flash. Deep-linking into /about etc. is rare without query already.
+[[redirects]]
+  from       = "/"
+  to         = "/index.pt.html"
+  status     = 200
+  force      = true
+  conditions = { Language = ["pt"] }
+
+# ── Cache strategy ──────────────────────────────────────────────────
+# HTML: revalidate on every request (so users always see latest version).
+# Assets (CSS/JS/img): 1-year + immutable (CDN never re-checks until file
+# is renamed or query-busted). Multiplies free-tier bandwidth capacity.
+
+# ── Security headers (apply globally to every response) ────────────────
+# Addresses OWASP ZAP findings: CSP, X-Frame-Options, X-Content-Type-Options,
+# Referrer-Policy, Permissions-Policy. SRI for external scripts is handled
+# in HTML where applicable (Google Fonts CSS doesn't accept SRI hashes
+# because the file changes per User-Agent).
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # CSP — allow our own assets + Google services we explicitly use.
+    # 'unsafe-inline' on script-src is required because the site uses
+    # inline <script> for theme/lang bootstrapping and gtag init.
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com https://www.googletagmanager.com https://www.googletagservices.com https://www.google-analytics.com https://www.google.com https://www.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://www.google-analytics.com https://pagead2.googlesyndication.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://googleads.g.doubleclick.net https://stats.g.doubleclick.net; frame-src 'self' https://www.google.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://www.youtube.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"
+    # Clickjacking — only this origin can frame us (matches CSP frame-ancestors)
+    X-Frame-Options = "SAMEORIGIN"
+    # Disable MIME-sniffing
+    X-Content-Type-Options = "nosniff"
+    # HTTPS-only in production. No preload yet, so future subdomain choices stay flexible.
+    Strict-Transport-Security = "max-age=31536000"
+    # Only send the origin (not the full URL) when navigating to other sites
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    # Block features we don't use
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+
+# Auth pages and API responses may reveal account state, so do not cache them.
+[[headers]]
+  for = "/login"
+  [headers.values]
+    Cache-Control = "no-store, max-age=0"
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/app"
+  [headers.values]
+    Cache-Control = "no-store, max-age=0"
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Cache-Control = "no-store, max-age=0"
+    X-Robots-Tag = "noindex, nofollow"
+
+# HTML — always revalidate
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Wildcard static assets — 1 year, immutable. To bust, append ?v=N or
+# rename the file. Browser will NOT make a conditional request.
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Named bundles in root — explicit so they don't accidentally inherit
+# something weaker. Same 1-year + immutable policy.
+[[headers]]
+  for = "/elements-data.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/periodic-table.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/periodic-table.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/cookie-consent.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/recaptcha.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/atomurus-lab-console.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# PWA manifest — short cache (occasionally updated)
+[[headers]]
+  for = "/manifest.json"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+    Content-Type = "application/manifest+json; charset=utf-8"
+
+# robots / sitemap — short-medium cache (occasionally regenerated)
+[[headers]]
+  for = "/robots.txt"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"

@@ -1,0 +1,16 @@
+# Keep secrets and workspace-only files out of the publish upload when
+# publish = "." is used.
+.env
+.env.*
+!.env.example
+.git/
+.agents/
+.codex/
+.claude/
+node_modules/
+*.log
+sitemap.zip
+
+# Internal docs, plans and backups — never publish (publish=".")
+*.md
+*.bak*

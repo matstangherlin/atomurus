@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+<html lang="en-US" data-theme="light">
+<head>
+<script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
+<meta name="google-adsense-account" content="ca-pub-9495821870733084">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9495821870733084" crossorigin="anonymous" fetchpriority="low"></script>
+<style>html.lang-pt-pending [data-i18n],html.lang-pt-pending [data-i18n-html],html.lang-pt-pending [data-i18n-attr],html.lang-pt-pending [data-page-field]{visibility:hidden!important}html[data-theme="dark"] #icon-theme-light,html[data-theme="light"] #icon-theme-dark{display:none!important}html[data-theme="dark"] #icon-theme-dark,html[data-theme="light"] #icon-theme-light{display:block!important}</style>
+<script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var KEY='atomurus-lang';var p=new URLSearchParams(location.search).get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem(KEY);if(l!=='pt'&&l!=='en'){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}try{localStorage.setItem(KEY,l);}catch(e){}if(l==='pt'){document.documentElement.lang='pt-BR';document.documentElement.classList.add('lang-pt-pending');setTimeout(function(){document.documentElement.classList.remove('lang-pt-pending');},120);}else{document.documentElement.lang='en-US';}}catch(e){}})();</script>
+<script src="../cookie-consent.js?v=202605281652" defer></script>
+<meta charset="UTF-8">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1E6A50" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E0D0C" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Atomurus">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="../assets/atomurus-logo.png?v=202605281652">
+<link rel="apple-touch-icon" href="../assets/atomurus-logo.png?v=202605281652">
+<title data-i18n="molecules.metaTitle">Molecules: 3D Interactive Viewer — H₂O, CO₂, CH₄ | Atomurus</title>
+<meta name="description" content="Interactive 3D molecule viewer: water (H₂O), carbon dioxide (CO₂), methane (CH₄), ammonia (NH₃), salt (NaCl), sulfuric acid and more." data-i18n-attr="content:molecules.metaDesc">
+<meta property="og:image" content="https://atomurus.com/assets/og-molecules.png?v=202606030">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://atomurus.com/assets/og-molecules.png?v=202606030">
+<link rel="canonical" href="https://atomurus.com/viewer/molecules">
+<link rel="alternate" hreflang="en" href="https://atomurus.com/viewer/molecules?lang=en">
+<link rel="alternate" hreflang="pt-BR" href="https://atomurus.com/viewer/molecules?lang=pt-BR">
+<link rel="alternate" hreflang="x-default" href="https://atomurus.com/viewer/molecules">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": ["WebPage", "LearningResource"],
+      "@id": "https://atomurus.com/viewer/molecules#webpage",
+      "name": "Molecular Viewer — Atomurus",
+      "alternateName": "Visualizador de Moléculas",
+      "description": "Interactive 3D molecular viewer with H₂O, CO₂, CH₄, NH₃, NaCl, H₂SO₄ and more.",
+      "url": "https://atomurus.com/viewer/molecules",
+      "inLanguage": ["en", "pt-BR"],
+      "learningResourceType": "Interactive Resource",
+      "educationalLevel": ["secondary education", "higher education"],
+      "about": "Molecular geometry",
+      "isPartOf": { "@id": "https://atomurus.com/#website" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type":"ListItem","position":1,"name":"Atomurus","item":"https://atomurus.com/"},
+        {"@type":"ListItem","position":2,"name":"Viewer","item":"https://atomurus.com/viewer/atomic-models"},
+        {"@type":"ListItem","position":3,"name":"Molecules","item":"https://atomurus.com/viewer/molecules"}
+      ]
+    }
+  ]
+}
+</script>
+
+<link rel="preload" href="/assets/fonts/inter-tight-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/jetbrains-mono-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/instrument-serif-400-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/dm-serif-display-400-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/dm-sans-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202606101200">
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#F0EDE6;
+  --bg-gradient:radial-gradient(circle at 15% 50%,rgba(30,106,80,.08),transparent 28%),radial-gradient(circle at 85% 30%,rgba(217,119,6,.07),transparent 28%),#F0EDE6;
+  --surface:rgba(255,254,252,.85);
+  --surface-2:rgba(248,245,240,.75);
+  --sidebar-bg:rgba(255,255,255,.80);
+  --sidebar-w:210px;
+  --border:#DDD8CE;
+  --border-soft:#E8E3DB;
+  --text-1:#12100E;
+  --text-2:#5A5550;
+  --text-3:#9A948C;
+  --accent:#1E6A50;
+  --accent-2:#D97706;
+  --accent-light:#E2F0EB;
+  --purple:#6D28D9;
+  --purple-light:rgba(124,58,237,.10);
+  --shadow-sm:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05);
+  --shadow-md:0 4px 16px rgba(0,0,0,.11),0 2px 4px rgba(0,0,0,.06);
+  --shadow-lg:0 20px 60px rgba(0,0,0,.16),0 4px 12px rgba(0,0,0,.07);
+
+  --viewer-bg:#F6F3EC;
+  --viewer-border:#DDD8CE;
+  --viewer-rule:rgba(0,0,0,.07);
+  --viewer-info-bg:rgba(245,241,232,.7);
+  --viewer-text-1:#12100E;
+  --viewer-text-2:#5A5550;
+  --viewer-text-3:#9A948C;
+  --viewer-pill-border:rgba(0,0,0,.14);
+  --viewer-pill-text:#5A5550;
+  --viewer-pill-text-hover:#12100E;
+  --viewer-pill-active-bg:rgba(30,106,80,.12);
+  --viewer-pill-active-border:#1E6A50;
+  --viewer-pill-active-text:#0e4f3a;
+  --canvas-bg-1:#ffffff;
+  --ctrl-bg:rgba(255,255,255,.85);
+  --ctrl-border:rgba(0,0,0,.10);
+  --ctrl-text:#3a3631;
+  --ctrl-hover-bg:#FFFFFF;
+  --ctrl-active-bg:#1E6A50;
+  --ctrl-active-text:#FFFFFF;
+}
+[data-theme="dark"]{
+  --bg:#0E0D0C;
+  --bg-gradient:radial-gradient(circle at 15% 50%,rgba(52,168,114,.12),transparent 32%),radial-gradient(circle at 85% 30%,rgba(245,158,11,.10),transparent 32%),#0E0D0C;
+  --surface:rgba(22,21,19,.85);
+  --surface-2:rgba(28,27,25,.75);
+  --sidebar-bg:rgba(18,17,16,.90);
+  --border:#2A2824;
+  --border-soft:#222018;
+  --text-1:#F2EFE9;
+  --text-2:#928C84;
+  --text-3:#52504A;
+  --accent:#34A872;
+  --accent-2:#F59E0B;
+  --accent-light:rgba(52,168,114,.14);
+  --purple:#A78BFA;
+  --purple-light:rgba(124,58,237,.18);
+  --shadow-sm:0 1px 3px rgba(0,0,0,.35);
+  --shadow-md:0 4px 20px rgba(0,0,0,.45);
+  --shadow-lg:0 24px 64px rgba(0,0,0,.65);
+
+  --viewer-bg:#0d0d0d;
+  --viewer-border:rgba(255,255,255,.06);
+  --viewer-rule:rgba(255,255,255,.08);
+  --viewer-info-bg:rgba(0,0,0,.25);
+  --viewer-text-1:#F2EFE9;
+  --viewer-text-2:rgba(255,255,255,.6);
+  --viewer-text-3:rgba(255,255,255,.30);
+  --viewer-pill-border:rgba(255,255,255,.15);
+  --viewer-pill-text:rgba(255,255,255,.55);
+  --viewer-pill-text-hover:rgba(255,255,255,.92);
+  --viewer-pill-active-bg:#1e3a8a;
+  --viewer-pill-active-border:#1d4e89;
+  --viewer-pill-active-text:#93c5fd;
+  --canvas-bg-1:#161616;
+  --ctrl-bg:rgba(20,20,20,.75);
+  --ctrl-border:rgba(255,255,255,.10);
+  --ctrl-text:rgba(255,255,255,.78);
+  --ctrl-hover-bg:rgba(40,40,40,.85);
+  --ctrl-active-bg:#34A872;
+  --ctrl-active-text:#0E0D0C;
+}
+
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg-gradient);
+  color:var(--text-1);
+  display:flex;height:100dvh;overflow:hidden;
+  transition:background .25s,color .25s;
+}
+
+.sidebar{
+  width:var(--sidebar-w);flex-shrink:0;
+  background:var(--sidebar-bg);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden;
+  transition:background .25s,border-color .25s;
+  box-shadow:2px 0 10px rgba(0,0,0,0.02);z-index:50;
+}
+.sidebar > .logo-wrap,.sidebar > .sidebar-foot{flex-shrink:0}
+.sidebar-scroll{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden}
+.sidebar-scroll::-webkit-scrollbar{width:4px}
+.sidebar-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.logo-wrap{display:flex;align-items:center;gap:10px;padding:18px 16px 15px;border-bottom:1px solid var(--border)}
+.logo-mark{width:30px;height:30px;background:var(--text-1);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .25s}
+[data-theme="dark"] .logo-mark{background:var(--accent)}
+.logo-text{font-family:'DM Serif Display',serif;font-size:17px;color:var(--text-1);letter-spacing:-.3px}
+.logo-tag{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-3);margin-top:1px}
+
+.nav-section{padding:14px 10px 6px}
+.nav-label{font-size:9px;font-weight:600;letter-spacing:1.1px;text-transform:uppercase;color:var(--text-3);padding:0 8px;margin-bottom:3px}
+.nl-no{font-family:'DM Mono',monospace;margin-right:6px;opacity:.6}
+.nl-no::after{content:' —'}
+.nav-item{
+  display:flex;align-items:center;gap:8px;
+  padding:7px 10px;border-radius:8px;cursor:pointer;
+  font-size:12.5px;font-weight:400;color:var(--text-2);
+  text-decoration:none;
+  transition:background .14s,color .14s;
+  position:relative;user-select:none;
+}
+.nav-item:hover{background:var(--bg);color:var(--text-1)}
+.nav-item.active{background:var(--accent-light);color:var(--accent);font-weight:500}
+.nav-icon{width:15px;height:15px;flex-shrink:0;opacity:.65;transition:opacity .14s}
+.nav-item.active .nav-icon,.nav-item:hover .nav-icon{opacity:1}
+.sidebar-foot{padding:10px 10px;border-top:1px solid var(--border);background:var(--sidebar-bg)}
+
+.nav-expandable .nav-row{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;cursor:pointer;font-size:12.5px;font-weight:400;color:var(--text-2);transition:background .14s,color .14s;user-select:none}
+.nav-expandable .nav-row:hover{background:var(--bg);color:var(--text-1)}
+.nav-expandable.has-active .nav-row{color:var(--text-1);font-weight:500}
+.nav-chevron{margin-left:auto;width:11px;height:11px;opacity:.45;transition:transform .2s;flex-shrink:0}
+.nav-expandable.open .nav-chevron{transform:rotate(90deg);opacity:.75}
+.nav-children{display:none;margin:2px 0 4px 12px;padding-left:8px;border-left:1px solid var(--border-soft)}
+.nav-expandable.open .nav-children{display:block}
+.nav-children .nav-item{padding:6px 8px;font-size:12px;border-radius:6px}
+.nav-children .nav-icon{width:13px;height:13px}
+
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{
+  height:50px;background:var(--sidebar-bg);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:0 24px;display:flex;align-items:center;gap:12px;flex-shrink:0;
+  transition:background .25s,border-color .25s;position:relative;z-index:40;
+}
+.breadcrumb{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-3)}
+.breadcrumb span{color:var(--text-1);font-weight:500}
+.theme-btn{
+  width:32px;height:32px;border-radius:8px;
+  border:1px solid var(--border);background:var(--surface-2);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .15s,border-color .15s,color .15s;
+  flex-shrink:0;color:var(--text-2);margin-left:auto;
+}
+.theme-btn:hover{background:var(--accent-light);border-color:var(--accent);color:var(--accent)}
+.mobile-menu-btn{display:none}
+
+.content{
+  flex:1;overflow-y:auto;overflow-x:hidden;
+  padding:28px 32px 60px;
+  animation:pageIn .28s ease;
+}
+@keyframes pageIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.content::-webkit-scrollbar{width:6px}
+.content::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.content-inner{max-width:980px;margin:0 auto}
+
+.ph-kicker{font-size:9.5px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:var(--text-3);margin-bottom:5px}
+.ph-title{font-family:'DM Serif Display',serif;font-size:32px;color:var(--text-1);letter-spacing:-.4px;line-height:1.15;margin-bottom:8px}
+.ph-desc{font-size:13.5px;color:var(--text-2);line-height:1.6;max-width:680px;margin-bottom:24px}
+
+.viewer{
+  background:var(--viewer-bg);border-radius:16px;overflow:hidden;
+  box-shadow:var(--shadow-lg);border:1px solid var(--viewer-border);
+  margin-bottom:20px;
+  transition:background .25s,border-color .25s;
+}
+
+.panel{padding:20px 24px 8px}
+.panel-label{font-size:11px;color:var(--viewer-text-3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;transition:color .25s}
+.pill-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.pill{
+  padding:7px 14px;border-radius:20px;
+  border:1px solid var(--viewer-pill-border);background:transparent;
+  color:var(--viewer-pill-text);font-family:'DM Sans',sans-serif;
+  font-size:12px;font-weight:600;letter-spacing:.3px;
+  cursor:pointer;transition:all .18s;
+}
+.pill:hover{border-color:var(--viewer-pill-active-border);color:var(--viewer-pill-text-hover)}
+.pill.active{border-color:var(--viewer-pill-active-border);background:var(--viewer-pill-active-bg);color:var(--viewer-pill-active-text)}
+.pill.sm{padding:6px 12px;font-size:11.5px}
+
+.canvas-wrap{position:relative}
+canvas#viewer3d{width:100%;height:460px;display:block;cursor:grab;background:var(--canvas-bg-1);transition:background .25s}
+
+.viewer-controls{
+  position:absolute;top:12px;right:12px;z-index:5;
+  display:flex;gap:6px;padding:6px;border-radius:12px;
+  background:var(--ctrl-bg);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border:1px solid var(--ctrl-border);box-shadow:var(--shadow-sm);
+}
+.vc-btn{
+  width:30px;height:30px;border-radius:8px;
+  border:none;background:transparent;color:var(--ctrl-text);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .14s,color .14s;position:relative;
+}
+.vc-btn:hover{background:var(--ctrl-hover-bg);color:var(--text-1)}
+.vc-btn.active{background:var(--ctrl-active-bg);color:var(--ctrl-active-text)}
+.vc-btn svg{width:15px;height:15px}
+.vc-btn::after{
+  content:attr(data-tip);
+  position:absolute;bottom:calc(100% + 7px);left:50%;transform:translateX(-50%);
+  background:rgba(10,10,10,.88);color:#fff;
+  font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.04em;
+  white-space:nowrap;padding:3px 8px;border-radius:3px;
+  pointer-events:none;opacity:0;transition:opacity .15s;z-index:100;
+}
+.vc-btn:hover::after{opacity:1}
+.vc-sep{width:1px;background:var(--ctrl-border);margin:3px 1px}
+.viewer-zoom{
+  position:absolute;bottom:12px;right:12px;z-index:5;
+  display:flex;flex-direction:column;gap:4px;padding:5px;border-radius:10px;
+  background:var(--ctrl-bg);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border:1px solid var(--ctrl-border);
+}
+.viewer-zoom .vc-btn{width:28px;height:28px}
+
+.viewer-mode-toggle{
+  position:absolute;top:12px;left:12px;z-index:5;
+  display:flex;gap:2px;background:var(--ctrl-bg);
+  border:1px solid var(--ctrl-border);padding:3px;border-radius:4px;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+}
+.viewer-mode-toggle .vc-btn{
+  font-family:'DM Mono',monospace;font-size:10px;font-weight:600;
+  padding:2px 8px;width:auto;height:24px;border-radius:2px;
+}
+
+canvas#viewer2d-full{display:none;width:100%;height:460px;background:var(--canvas-bg-1);cursor:grab}
+
+.info-bar{
+  padding:16px 24px;border-top:1px solid var(--viewer-rule);
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  background:var(--viewer-info-bg);flex-wrap:wrap;
+  transition:background .25s,border-color .25s;
+}
+.info-name{font-size:14px;font-weight:700;color:var(--viewer-text-1);margin-bottom:2px}
+.info-desc{font-size:12px;color:var(--viewer-text-2);line-height:1.4}
+.info-meta{display:flex;gap:14px;font-size:11px;color:var(--viewer-text-3);margin-top:4px;flex-wrap:wrap;font-family:'DM Mono',monospace}
+.info-meta span b{color:var(--viewer-text-2);font-weight:600}
+.info-hint{font-size:11px;color:var(--viewer-text-3);letter-spacing:.4px;text-align:right;font-family:'DM Mono',monospace}
+
+.legend-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:14px 18px;backdrop-filter:blur(12px);
+  margin-bottom:24px;
+}
+.legend-title{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-3);margin-bottom:10px}
+.legend-grid{display:flex;gap:12px 22px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--text-2)}
+.legend-dot{width:12px;height:12px;border-radius:50%;display:inline-block;flex-shrink:0;box-shadow:0 0 0 1px rgba(0,0,0,.1)}
+
+/* ── Optical isomerism panel — shown only for chiral molecules ── */
+.chiral-panel{display:none;background:linear-gradient(135deg,rgba(168,120,230,0.08),rgba(91,141,239,0.06));border:1px solid rgba(168,120,230,0.25);border-radius:12px;padding:14px 18px;margin-top:14px;backdrop-filter:blur(8px)}
+.chiral-panel.visible{display:block}
+.chiral-panel-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.chiral-badge{font-family:'DM Mono',monospace;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#a878e6;background:rgba(168,120,230,0.15);border:1px solid rgba(168,120,230,0.35);border-radius:6px;padding:3px 9px}
+.chiral-panel-title{font-size:13px;font-weight:700;color:var(--viewer-text-1)}
+.chiral-panel-body{font-size:12.5px;color:var(--viewer-text-2);line-height:1.55}
+.chiral-rs{display:flex;gap:18px;margin-top:10px;flex-wrap:wrap}
+.chiral-rs-item{flex:1;min-width:160px;font-size:11.5px;color:var(--viewer-text-3);font-family:'DM Mono',monospace;background:rgba(0,0,0,0.04);border-radius:8px;padding:8px 12px}
+.chiral-rs-item b{display:block;color:var(--viewer-text-1);font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:700;margin-bottom:2px;letter-spacing:.5px}
+html[data-theme="dark"] .chiral-rs-item{background:rgba(255,255,255,0.04)}
+.vc-btn.chiral-on{color:#a878e6;background:rgba(168,120,230,0.18)}
+
+.av-substrip{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 0;margin-bottom:14px;
+  border-bottom:1px solid var(--border-soft);
+  font-family:'DM Mono',monospace;font-size:10.5px;
+  color:var(--text-3);letter-spacing:.04em;flex-wrap:wrap;
+}
+.av-substrip .av-k{text-transform:uppercase;letter-spacing:.14em;color:var(--text-3)}
+.av-substrip .av-v{color:var(--text-1);font-weight:500}
+.av-substrip .av-sep{width:1px;height:10px;background:var(--border)}
+
+.vz-tabs{display:flex;gap:4px;margin:0 0 18px 0;padding:4px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.vz-tabs::-webkit-scrollbar{display:none}
+.vz-tab{flex:1 1 auto;min-width:130px;padding:10px 14px;border-radius:8px;background:transparent;color:var(--text-2);text-decoration:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;display:flex;align-items:center;gap:9px;transition:background .15s,color .15s;white-space:nowrap;user-select:none}
+.vz-tab:hover{background:var(--bg);color:var(--text-1)}
+.vz-tab.active{background:var(--accent-light);color:var(--accent);font-weight:600}
+.vz-tab .vz-num{font-family:'DM Mono',monospace;font-size:10.5px;opacity:.55}
+.vz-tab.active .vz-num{opacity:1}
+.vz-tab .vz-icon{width:14px;height:14px;opacity:.7;flex-shrink:0}
+.vz-tab.active .vz-icon{opacity:1}
+@media(max-width:640px){.vz-tab{font-size:12px;padding:8px 11px;min-width:112px;gap:6px}.vz-tab .vz-num{font-size:9.5px}}
+
+@media(max-width:900px){
+  .sidebar{position:fixed;top:0;left:0;bottom:0;width:260px;z-index:500;transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);box-shadow:var(--shadow-lg)}
+  .sidebar.mobile-open{transform:translateX(0)}
+  .mobile-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:400;backdrop-filter:blur(2px)}
+  .mobile-overlay.show{display:block}
+  .topbar{padding:0 14px;gap:8px}
+  .mobile-menu-btn{display:flex !important;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:var(--surface-2);cursor:pointer;color:var(--text-2);flex-shrink:0}
+  .content{padding:20px 18px 50px}
+  .ph-title{font-size:24px}
+  canvas#viewer3d,canvas#viewer2d-full{height:380px}
+}
+</style>
+<script src="../i18n.js?v=202605281652" defer></script>
+<script src="../share-button.js?v=202605281652" defer></script>
+<script src="../page-share-init.js?v=202605281652" defer></script>
+<style id="lc-statusbar-spacing-applied">
+  .main, body.lc-app-main { padding-bottom: 22px; }
+</style>
+<link rel="stylesheet" href="../atomurus-lab-console.css?v=202605281652">
+<script src="../lazy-ads.js?v=202605281652" defer></script>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+  <a class="logo-wrap" href="../index.html" title="Atomurus home" style="text-decoration:none;color:inherit;">
+    <div class="logo-mark">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="2.5" fill="currentColor"/>
+        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/>
+        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/>
+        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/>
+      </svg>
+    </div>
+    <div>
+      <div class="logo-text">Atomurus</div>
+      <div class="logo-tag">v1.11</div>
+    </div>
+  </a>
+  <div class="sidebar-scroll">
+    <div class="nav-section" style="margin-bottom:6px;">
+      <a class="nav-item" href="../index.html" style="opacity:.7;font-size:12px;">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M2 8L8 2l6 6M3 7v7h10V7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <span data-i18n="common.nav.home">Home</span>
+      </a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label"><span class="nl-no">00</span><span data-i18n="common.nav.laboratory">Laboratory</span></div>
+      <a class="nav-item" href="../periodic-table.html">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" fill="currentColor" opacity=".9"/><rect x="9" y="1" width="6" height="6" rx="1.5" fill="currentColor" opacity=".5"/><rect x="1" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity=".5"/><rect x="9" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity=".3"/></svg>
+        <span data-i18n="common.nav.periodic">Periodic Table</span>
+      </a>
+
+      <div class="nav-expandable" data-expand="visualizador">
+        <div class="nav-row" onclick="toggleNavGroup('visualizador')" role="button" tabindex="0" aria-expanded="false">
+          <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="1.5" fill="currentColor"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/></svg>
+          <span data-i18n="common.nav.visualizador">Visualizador</span>
+          <svg class="nav-chevron" viewBox="0 0 11 11" fill="none"><path d="M3.5 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="nav-children">
+          <a class="nav-item" href="atomic-models.html">
+            <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="1.5" fill="currentColor"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/></svg>
+            <span data-i18n="common.nav.atomicModels">Atomic Models</span>
+          </a>
+          <a class="nav-item active" href="molecules.html" aria-current="page">
+            <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="4" cy="4" r="2" fill="currentColor"/><circle cx="12" cy="6" r="2" fill="currentColor" opacity=".7"/><circle cx="8" cy="12" r="2" fill="currentColor" opacity=".5"/><line x1="4" y1="4" x2="12" y2="6" stroke="currentColor" stroke-width="1"/><line x1="12" y1="6" x2="8" y2="12" stroke="currentColor" stroke-width="1"/><line x1="4" y1="4" x2="8" y2="12" stroke="currentColor" stroke-width="1"/></svg>
+            <span data-i18n="common.nav.molecules">Molecules</span>
+          </a>
+          <a class="nav-item" href="allotropes.html">
+            <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><polygon points="8,2 14,6 12,13 4,13 2,6" stroke="currentColor" stroke-width="1.2" fill="none"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/></svg>
+            <span data-i18n="common.nav.allotropes">Allotropes</span>
+          </a>
+          <a class="nav-item" href="isomerism/constitutional/function.html">
+            <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
+              <circle cx="4" cy="8" r="2" fill="currentColor" opacity=".85"/>
+              <circle cx="12" cy="8" r="2" fill="currentColor" opacity=".85"/>
+              <line x1="4" y1="8" x2="4" y2="3.5" stroke="currentColor" stroke-width="1.1"/>
+              <line x1="12" y1="8" x2="12" y2="3.5" stroke="currentColor" stroke-width="1.1"/>
+              <line x1="4" y1="8" x2="4" y2="12.5" stroke="currentColor" stroke-width="1.1"/>
+              <line x1="12" y1="8" x2="12" y2="12.5" stroke="currentColor" stroke-width="1.1"/>
+              <line x1="8" y1="1" x2="8" y2="15" stroke="currentColor" stroke-width="1" stroke-dasharray="2,1.5" opacity=".5"/>
+            </svg>
+            <span data-i18n="common.nav.isomerism">Isomerism</span>
+          </a>
+        </div>
+      </div>
+
+      <a class="nav-item" href="../calculators.html">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="2" y="1" width="12" height="14" rx="2" stroke="currentColor" stroke-width="1.3" fill="none"/><line x1="5" y1="5" x2="11" y2="5" stroke="currentColor" stroke-width="1.1"/><line x1="5" y1="8" x2="11" y2="8" stroke="currentColor" stroke-width="1"/><line x1="5" y1="11" x2="9" y2="11" stroke="currentColor" stroke-width="1"/></svg>
+        <span data-i18n="common.nav.calc">Calculators</span>
+      </a>
+      <a class="nav-item" href="../explore.html">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.3" stroke="currentColor" stroke-width="1.1" fill="none"/><rect x="9" y="1" width="6" height="6" rx="1.3" stroke="currentColor" stroke-width="1.1" fill="none"/><rect x="1" y="9" width="6" height="6" rx="1.3" stroke="currentColor" stroke-width="1.1" fill="none"/><circle cx="12" cy="12" r="2.6" stroke="currentColor" stroke-width="1.3" fill="none"/><line x1="14" y1="14" x2="15.5" y2="15.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        <span data-i18n="common.nav.explore">Explore</span>
+      </a>
+    </div>
+  </div>
+  <div class="sidebar-foot">
+    <a class="nav-item" href="../config.html">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.2" stroke="currentColor" stroke-width="1.3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M2.93 2.93l1.06 1.06M12.01 12.01l1.06 1.06M2.93 13.07l1.06-1.06M12.01 3.99l1.06-1.06" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <span data-i18n="common.nav.settings">Settings</span>
+    </a>
+  </div>
+</aside>
+
+<div class="mobile-overlay" id="mobile-overlay" onclick="toggleMobileSidebar()"></div>
+
+<main class="main">
+  <div class="topbar">
+    <button class="mobile-menu-btn" onclick="toggleMobileSidebar()" aria-label="Abrir menu">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><line x1="2" y1="4.5" x2="14" y2="4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="2" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="2" y1="11.5" x2="14" y2="11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+    </button>
+    <div class="breadcrumb">
+      Workspace
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="opacity:.35"><path d="M3.5 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      <span data-i18n="molecules.breadcrumb">Molecules</span>
+    </div>
+    <button class="theme-btn" data-i18n-toggle
+            data-i18n-attr="title:common.langToggle; aria-label:common.langToggle"
+            title="Switch language" aria-label="Switch language"
+            style="margin-left:auto;width:auto;min-width:32px;padding:0 8px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;">
+      <span data-i18n-toggle-label>PT</span>
+    </button>
+    <button class="theme-btn" onclick="toggleTheme()"
+            data-i18n-attr="title:common.themeToggle; aria-label:common.themeToggle"
+            title="Toggle theme" aria-label="Toggle theme"
+            style="margin-left:0;">
+      <svg id="theme-icon" width="15" height="15" viewBox="0 0 15 15" fill="none"></svg>
+    </button>
+  </div>
+  <div class="data-strip">
+    <span class="ds-k">scope</span><span class="ds-v">VIEWER.MOLECULES</span>
+    <span class="ds-sep"></span>
+    <span class="ds-k">section</span><span class="ds-v">molecules</span>
+    <span class="ds-sep"></span>
+    <span class="ds-k">engine</span><span class="ds-v">three.js · WebGL</span>
+    <span class="ds-spacer"></span>
+    <span class="ds-k">module</span><span class="ds-v ds-hi" data-i18n="molecules.dsModule">molecular geometry</span>
+  </div>
+
+
+  <div class="content">
+    <div class="content-inner">
+      <div class="ph-kicker" data-i18n="molecules.kicker">§ 03 · Visualization</div>
+      <h1 class="ph-title" data-i18n="molecules.title">Molecules</h1>
+      <p class="ph-desc" data-i18n="molecules.desc">Real molecular geometry in 3D and structural diagram in 2D. See how atoms arrange themselves — bent, tetrahedral, linear, pyramidal — and compare covalent vs. ionic bonds.</p>
+
+      <nav class="vz-tabs" aria-label="Visualizador">
+        <a class="vz-tab" href="atomic-models.html">
+          <span class="vz-num">01</span>
+          <svg class="vz-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="1.5" fill="currentColor"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/></svg>
+          <span data-i18n="atomicModels.tabAtomic">Atomic Models</span>
+        </a>
+        <a class="vz-tab active" href="molecules.html" aria-current="page">
+          <span class="vz-num">02</span>
+          <svg class="vz-icon" viewBox="0 0 16 16" fill="none"><circle cx="4" cy="4" r="2" fill="currentColor"/><circle cx="12" cy="6" r="2" fill="currentColor" opacity=".7"/><circle cx="8" cy="12" r="2" fill="currentColor" opacity=".5"/><line x1="4" y1="4" x2="12" y2="6" stroke="currentColor" stroke-width="1"/><line x1="12" y1="6" x2="8" y2="12" stroke="currentColor" stroke-width="1"/><line x1="4" y1="4" x2="8" y2="12" stroke="currentColor" stroke-width="1"/></svg>
+          <span data-i18n="atomicModels.tabMolecules">Molecules</span>
+        </a>
+        <a class="vz-tab" href="allotropes.html">
+          <span class="vz-num">03</span>
+          <svg class="vz-icon" viewBox="0 0 16 16" fill="none"><polygon points="8,2 14,6 12,13 4,13 2,6" stroke="currentColor" stroke-width="1.2" fill="none"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/></svg>
+          <span data-i18n="atomicModels.tabAllotropes">Allotropes</span>
+        </a>
+        <a class="vz-tab" href="isomerism/constitutional/function.html">
+          <span class="vz-num">04</span>
+          <svg class="vz-icon" viewBox="0 0 16 16" fill="none"><circle cx="4" cy="8" r="2" fill="currentColor" opacity=".85"/><circle cx="12" cy="8" r="2" fill="currentColor" opacity=".85"/><line x1="4" y1="8" x2="4" y2="3.5" stroke="currentColor" stroke-width="1.1"/><line x1="12" y1="8" x2="12" y2="3.5" stroke="currentColor" stroke-width="1.1"/><line x1="4" y1="8" x2="4" y2="12.5" stroke="currentColor" stroke-width="1.1"/><line x1="12" y1="8" x2="12" y2="12.5" stroke="currentColor" stroke-width="1.1"/><line x1="8" y1="1" x2="8" y2="15" stroke="currentColor" stroke-width="1" stroke-dasharray="2,1.5" opacity=".5"/></svg>
+          <span data-i18n="common.nav.isomerism">Isomerism</span>
+        </a>
+      </nav>
+
+      <div class="av-substrip">
+        <span class="av-k" data-i18n="molecules.avPage">page</span><span class="av-v" data-i18n="molecules.avPageVal">molecules</span>
+        <span class="av-sep"></span>
+        <span class="av-k" data-i18n="molecules.avComposto">compound</span><span class="av-v" id="av-mol">water</span>
+        <span class="av-sep"></span>
+        <span class="av-k" data-i18n="molecules.avView">view</span><span class="av-v" id="av-view">3d</span>
+        <span class="av-sep"></span>
+        <span class="av-k" data-i18n="molecules.avShortcuts">shortcuts</span><span class="av-v">space · r · l · f · 2 · p</span>
+      </div>
+
+      <div class="viewer">
+        <div class="panel">
+          <div class="panel-label" data-i18n="molecules.panelByElement">By element</div>
+          <div class="pill-row">
+            <button class="pill sm mol-elem-btn" data-elem="H"  onclick="setMoleculeByElement('H')">H → H₂O</button>
+            <button class="pill sm mol-elem-btn" data-elem="C"  onclick="setMoleculeByElement('C')">C → CH₄</button>
+            <button class="pill sm mol-elem-btn" data-elem="N"  onclick="setMoleculeByElement('N')">N → NH₃</button>
+            <button class="pill sm mol-elem-btn" data-elem="O"  onclick="setMoleculeByElement('O')">O → H₂O</button>
+            <button class="pill sm mol-elem-btn" data-elem="Na" onclick="setMoleculeByElement('Na')">Na → NaCl</button>
+            <button class="pill sm mol-elem-btn" data-elem="Cl" onclick="setMoleculeByElement('Cl')">Cl → HCl</button>
+            <button class="pill sm mol-elem-btn" data-elem="S"  onclick="setMoleculeByElement('S')">S → H₂SO₄</button>
+            <button class="pill sm mol-elem-btn" data-elem="P"  onclick="setMoleculeByElement('P')">P → H₃PO₄</button>
+            <button class="pill sm mol-elem-btn" data-elem="Fe" onclick="setMoleculeByElement('Fe')">Fe → Fe₂O₃</button>
+          </div>
+          <div class="panel-label" data-i18n="molecules.panelByFormula">By chemical formula</div>
+          <div class="pill-row">
+            <button class="pill mol-btn active" data-mol="water"   onclick="setMolecule('water')"   data-i18n="molecules.mol.water.name">H₂O — Water</button>
+            <button class="pill mol-btn"        data-mol="ethanol" onclick="setMolecule('ethanol')" data-i18n="molecules.mol.ethanol.name">C₂H₅OH — Ethanol</button>
+            <button class="pill mol-btn"        data-mol="butane" onclick="setMolecule('butane')">C₄H₁₀ — Butane</button>
+            <button class="pill mol-btn"        data-mol="isobutane" onclick="setMolecule('isobutane')">C₄H₁₀ — Isobutane</button>
+            <button class="pill mol-btn"        data-mol="but1ene" onclick="setMolecule('but1ene')">C₄H₈ — 1-Butene</button>
+            <button class="pill mol-btn"        data-mol="but2ene" onclick="setMolecule('but2ene')">C₄H₈ — 2-Butene</button>
+            <button class="pill mol-btn"        data-mol="cis2butene" onclick="setMolecule('cis2butene')">C₄H₈ — cis-2-Butene</button>
+            <button class="pill mol-btn"        data-mol="trans2butene" onclick="setMolecule('trans2butene')">C₄H₈ — trans-2-Butene</button>
+            <button class="pill mol-btn"        data-mol="dimethylether" onclick="setMolecule('dimethylether')">C₂H₆O — Dimethyl ether</button>
+            <button class="pill mol-btn"        data-mol="acetone" onclick="setMolecule('acetone')">C₃H₆O — Acetone</button>
+            <button class="pill mol-btn"        data-mol="methyl-isocyanate" onclick="setMolecule('methyl-isocyanate')" data-i18n="molecules.mol.methyl-isocyanate.name">C₂H₃NO — Methyl isocyanate</button>
+            <button class="pill mol-btn"        data-mol="co2"     onclick="setMolecule('co2')"     data-i18n="molecules.mol.co2.name">CO₂ — Carbon Dioxide</button>
+            <button class="pill mol-btn"        data-mol="ammonia" onclick="setMolecule('ammonia')" data-i18n="molecules.mol.ammonia.name">NH₃ — Ammonia</button>
+            <button class="pill mol-btn"        data-mol="methane" onclick="setMolecule('methane')" data-i18n="molecules.mol.methane.name">CH₄ — Methane</button>
+            <button class="pill mol-btn"        data-mol="hcl"     onclick="setMolecule('hcl')"     data-i18n="molecules.mol.hcl.name">HCl — Hydrochloric Acid</button>
+            <button class="pill mol-btn"        data-mol="nacl"    onclick="setMolecule('nacl')"    data-i18n="molecules.mol.nacl.name">NaCl — Salt</button>
+            <button class="pill mol-btn"        data-mol="h2so4"   onclick="setMolecule('h2so4')"   data-i18n="molecules.mol.h2so4.name">H₂SO₄ — Sulfuric Acid</button>
+            <button class="pill mol-btn"        data-mol="h3po4"   onclick="setMolecule('h3po4')"   data-i18n="molecules.mol.h3po4.name">H₃PO₄ — Phosphoric Acid</button>
+            <button class="pill mol-btn"        data-mol="fe2o3"   onclick="setMolecule('fe2o3')"   data-i18n="molecules.mol.fe2o3.name">Fe₂O₃ — Rust</button>
+            <button class="pill mol-btn"        data-mol="chfclbr" onclick="setMolecule('chfclbr')" data-i18n="molecules.mol.chfclbr.name">CHFClBr — Chiral</button>
+            <button class="pill mol-btn"        data-mol="bromobutane"     onclick="setMolecule('bromobutane')">C₄H₉Br — 2-Bromobutane</button>
+            <button class="pill mol-btn"        data-mol="lacticacid"      onclick="setMolecule('lacticacid')">C₃H₆O₃ — Lactic acid</button>
+            <button class="pill mol-btn"        data-mol="alanine"         onclick="setMolecule('alanine')">C₃H₇NO₂ — Alanine</button>
+            <button class="pill mol-btn"        data-mol="glyceraldehyde"  onclick="setMolecule('glyceraldehyde')">C₃H₆O₃ — Glyceraldehyde</button>
+          </div>
+        </div>
+
+        <div class="canvas-wrap" id="canvas-wrap">
+          <div class="viewer-mode-toggle">
+            <button class="vc-btn active" id="mode-btn-3d" onclick="setViewerMode('3d')" data-tip="3D">3D</button>
+            <button class="vc-btn" id="mode-btn-2d" onclick="setViewerMode('2d')" data-tip="2D">2D</button>
+          </div>
+
+          <canvas id="viewer3d" aria-label="3D Molecules Viewer" data-i18n-attr="aria-label:molecules.viewerAria"></canvas>
+          <canvas id="viewer2d-full"></canvas>
+
+          <div class="viewer-controls">
+            <button class="vc-btn active" id="vc-rotate" onclick="toggleAutoRotate()" data-tip="Auto-rotate (Space)" data-i18n-attr="data-tip:molecules.tipRotate">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M2 8a6 6 0 0 1 10.5-3.9M14 8a6 6 0 0 1-10.5 3.9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M11 2v3h3M5 14v-3H2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <button class="vc-btn" id="vc-reset" onclick="resetView()" data-tip="Reset (R)" data-i18n-attr="data-tip:molecules.tipReset">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M8 3v3M8 3L6 5M8 3l2 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="9" r="4.5" stroke="currentColor" stroke-width="1.4"/></svg>
+            </button>
+            <span class="vc-sep"></span>
+            <button class="vc-btn active" id="vc-labels" onclick="toggleLabels()" data-tip="Labels (L)" data-i18n-attr="data-tip:molecules.tipLabels">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            </button>
+            <button class="vc-btn" id="vc-2d-play" onclick="toggle2DAnim()" data-tip="Animate 2D (P)" data-i18n-attr="data-tip:molecules.tip2dPlay">
+              <svg id="vc-2d-play-icon" viewBox="0 0 16 16" fill="none"><path d="M5 3l8 5-8 5V3z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" fill="currentColor"/></svg>
+            </button>
+            <button class="vc-btn" id="vc-fs" onclick="toggleFullscreen()" data-tip="Fullscreen (F)" data-i18n-attr="data-tip:molecules.tipFs">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M2 5V2h3M14 5V2h-3M2 11v3h3M14 11v3h-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <button class="vc-btn" id="vc-mirror" onclick="toggleMirror()" style="display:none" data-tip="Mirror enantiomer" data-i18n-attr="data-tip:molecules.tipMirror" aria-label="Mirror enantiomer">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M8 1v14" stroke="currentColor" stroke-width="1.3" stroke-dasharray="1.5 1.5"/><path d="M6 4L2 8l4 4M10 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+
+          <div class="viewer-zoom">
+            <button class="vc-btn" onclick="zoomBy(-1)" title="Zoom in"  data-i18n-attr="title:molecules.tipZoomIn"><svg viewBox="0 0 16 16" fill="none"><path d="M4 8h8M8 4v8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+            <button class="vc-btn" onclick="zoomBy(1)"  title="Zoom out" data-i18n-attr="title:molecules.tipZoomOut"><svg viewBox="0 0 16 16" fill="none"><path d="M4 8h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+          </div>
+        </div>
+
+        <div class="info-bar">
+          <div>
+            <div id="model-name" class="info-name" data-i18n="molecules.mol.water.name">H₂O — Water</div>
+            <div id="model-desc" class="info-desc" data-i18n="molecules.mol.water.desc">Bent geometry (104.5°) · Polar · Hydrogen bonds</div>
+            <div class="info-meta" id="info-meta"></div>
+          </div>
+          <div class="info-hint" data-i18n="molecules.infoHint">drag · scroll · or use controls</div>
+        </div>
+
+        <div class="chiral-panel" id="chiral-panel">
+          <div class="chiral-panel-head">
+            <span class="chiral-badge" data-i18n="molecules.chiralBadge">Chiral</span>
+            <span class="chiral-panel-title" data-i18n="molecules.chiralTitle">Optical isomerism</span>
+          </div>
+          <div class="chiral-panel-body" data-i18n="molecules.chiralIntro">This molecule has an <b>asymmetric carbon</b> (4 different groups bonded to the same atom) — it exists in two non-superimposable mirror-image forms called <b>enantiomers</b>. Use the <b>Mirror</b> button in the controls to switch between R and S.</div>
+          <div class="chiral-rs">
+            <div class="chiral-rs-item"><b data-i18n="molecules.chiralR">R · Rectus</b><span data-i18n="molecules.chiralRDesc">Group priorities rotate clockwise (with the lowest-priority group pointing away).</span></div>
+            <div class="chiral-rs-item"><b data-i18n="molecules.chiralS">S · Sinister</b><span data-i18n="molecules.chiralSDesc">Group priorities rotate counter-clockwise. Rotates polarized light in the opposite direction to R.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="legend-card">
+        <div class="legend-title" data-i18n="molecules.legendTitle">CPK Legend (international standard)</div>
+        <div class="legend-grid">
+          <div class="legend-item"><span class="legend-dot" style="background:#e8e8e8"></span> <span data-i18n="molecules.legend.H">H — Hydrogen</span></div>
+          <div class="legend-item"><span class="legend-dot" style="background:#666"></span> <span data-i18n="molecules.legend.C">C — Carbon</span></div>
+          <div class="legend-item"><span class="legend-dot" style="background:#e33"></span> <span data-i18n="molecules.legend.O">O — Oxygen</span></div>
+          <div class="legend-item"><span class="legend-dot" style="background:#3af"></span> <span data-i18n="molecules.legend.N">N — Nitrogen</span></div>
+          <div class="legend-item"><span class="legend-dot" style="background:#4d4"></span> <span data-i18n="molecules.legend.Cl">Cl — Chlorine</span></div>
+          <div class="legend-item"><span class="legend-dot" style="background:#aaf"></span> <span data-i18n="molecules.legend.Na">Na — Sodium</span></div>
+          <div class="legend-item"><span class="legend-dot" style="background:#fc3"></span> <span data-i18n="molecules.legend.S">S — Sulfur</span></div>
+          <div class="legend-item"><span class="legend-dot" style="background:#f83"></span> <span data-i18n="molecules.legend.P">P — Phosphorus</span></div>
+          <div class="legend-item"><span class="legend-dot" style="background:#c63"></span> <span data-i18n="molecules.legend.Fe">Fe — Iron</span></div>
+          <div class="legend-item"><span class="legend-dot" style="background:#b3ff3a"></span> <span data-i18n="molecules.legend.F">F — Fluorine</span></div>
+          <div class="legend-item"><span class="legend-dot" style="background:#a62929"></span> <span data-i18n="molecules.legend.Br">Br — Bromine</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+function applyTheme(isDark){
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  localStorage.setItem('atomurus-theme', isDark ? 'dark' : 'light');
+  updateThemeIcon(isDark);
+  window.dispatchEvent(new CustomEvent('atomurus:themechange',{detail:{isDark}}));
+}
+function toggleTheme(){ applyTheme(document.documentElement.getAttribute('data-theme') !== 'dark'); }
+function updateThemeIcon(isDark){
+  const icon = document.getElementById('theme-icon');
+  if (!icon) return;
+  icon.innerHTML = isDark
+    ? '<path d="M7.5 1.5A6 6 0 1 0 13.5 7.5a4.5 4.5 0 0 1-6-6z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" fill="none"/>'
+    : '<path d="M7.5 1v1M7.5 13v1M1 7.5H0M15 7.5h-1M2.93 2.93l.7.7M11.37 11.37l.7.7M2.93 12.07l.7-.7M11.37 3.63l.7-.7M7.5 5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>';
+}
+(function initTheme(){
+  const saved = localStorage.getItem('atomurus-theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyTheme((saved || (prefersDark ? 'dark' : 'light')) === 'dark');
+})();
+function toggleMobileSidebar(){
+  const s = document.getElementById('sidebar'), o = document.getElementById('mobile-overlay');
+  const open = s.classList.contains('mobile-open');
+  s.classList.toggle('mobile-open', !open);
+  o.classList.toggle('show', !open);
+}
+function toggleNavGroup(name){
+  const el = document.querySelector('.nav-expandable[data-expand="'+name+'"]');
+  if (!el) return;
+  const open = !el.classList.contains('open');
+  el.classList.toggle('open', open);
+  const row = el.querySelector('.nav-row');
+  if (row) row.setAttribute('aria-expanded', open ? 'true' : 'false');
+  try { localStorage.setItem('atomurus-nav-' + name, open ? '1' : '0'); } catch(e){}
+}
+(function initExpandable(){
+  document.querySelectorAll('.nav-expandable').forEach(el => {
+    const name = el.dataset.expand;
+    const hasActive = !!el.querySelector('.nav-item.active, [aria-current="page"]');
+    let stored = null;
+    try { stored = localStorage.getItem('atomurus-nav-' + name); } catch(e){}
+    if (hasActive || stored === '1') {
+      el.classList.add('open');
+      const row = el.querySelector('.nav-row');
+      if (row) row.setAttribute('aria-expanded', 'true');
+    }
+    if (hasActive) el.classList.add('has-active');
+    const row = el.querySelector('.nav-row');
+    if (row) row.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleNavGroup(name); }
+    });
+  });
+})();
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  const canvas = document.getElementById('viewer3d');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:false });
+  renderer.setPixelRatio(window.devicePixelRatio);
+  function updateBg(){
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    renderer.setClearColor(isDark ? 0x000000 : 0xffffff, 1);
+  }
+  updateBg();
+  window.addEventListener('atomurus:themechange', updateBg);
+
+  const camera = new THREE.PerspectiveCamera(50, 2, 0.1, 100);
+  camera.position.set(0,0,10);
+  const scene = new THREE.Scene();
+  scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+  const dL1 = new THREE.DirectionalLight(0xffffff, 1.0); dL1.position.set(5,10,7); scene.add(dL1);
+  const dL2 = new THREE.DirectionalLight(0x88bbff, 0.5); dL2.position.set(-5,-3,-5); scene.add(dL2);
+  const dL3 = new THREE.DirectionalLight(0xffeecc, 0.3); dL3.position.set(0,5,-8); scene.add(dL3);
+
+  let currentGroup = new THREE.Group();
+  scene.add(currentGroup);
+
+  let isDragging=false, lastX=0, lastY=0, rotX=0, rotY=0, autoRotate=true;
+  let rotVelX = 0, rotVelY = 0;
+  const ROT_DAMPING = 0.92, ROT_SENS = 0.0085;
+  let labelsVisible = true;
+  const DEFAULT_CAM_Z = 10;
+
+  canvas.addEventListener('mousedown', e => {
+    isDragging=true; autoRotate=false; updateRotateBtn();
+    rotVelX = 0; rotVelY = 0;
+    lastX=e.clientX; lastY=e.clientY; canvas.style.cursor='grabbing';
+  });
+  window.addEventListener('mouseup', () => { isDragging=false; canvas.style.cursor='grab'; });
+  window.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    const dx = (e.clientX - lastX) * ROT_SENS;
+    const dy = (e.clientY - lastY) * ROT_SENS;
+    rotY += dx; rotX += dy;
+    rotVelY = dx * 0.6 + rotVelY * 0.4;
+    rotVelX = dy * 0.6 + rotVelX * 0.4;
+    lastX=e.clientX; lastY=e.clientY;
+  });
+  canvas.addEventListener('wheel', e => {
+    camera.position.z = Math.max(3, Math.min(20, camera.position.z + e.deltaY*0.01));
+    e.preventDefault();
+  }, { passive:false });
+
+  function updateRotateBtn(){
+    const b=document.getElementById('vc-rotate');
+    if (b) b.classList.toggle('active', autoRotate);
+  }
+
+  // ── Helpers ──
+  const ATOM_SCALE = 1.4;
+  const BOND_R     = 0.10;
+  // Bond cylinder pokes slightly INTO the atom so there's no visible gap at the joint.
+  const BOND_GAP   = -0.04;
+
+  function makeSphere(r,color,seg=32){
+    return new THREE.Mesh(new THREE.SphereGeometry(r,seg,seg),
+      new THREE.MeshStandardMaterial({color,roughness:0.35,metalness:0.15}));
+  }
+  function makeBond(p1,p2,r1,r2,color1,color2,order=1){
+    const group = new THREE.Group();
+    const dir = new THREE.Vector3().subVectors(p2,p1);
+    const len = dir.length();
+    if (len < 0.01) return group;
+    const unit = dir.clone().normalize();
+
+    // Bond starts at each atom's surface (+ a small visual gap)
+    const start = p1.clone().add(unit.clone().multiplyScalar(r1 + BOND_GAP));
+    const end   = p2.clone().sub(unit.clone().multiplyScalar(r2 + BOND_GAP));
+    if (start.distanceTo(end) < 0.05) return group;
+
+    // Perpendicular axis for double/triple-bond offset.
+    // Prefer the Y axis so parallel cylinders sit side-by-side in the default front view.
+    let perp;
+    const yAxis = new THREE.Vector3(0, 1, 0);
+    perp = yAxis.clone().sub(unit.clone().multiplyScalar(yAxis.dot(unit)));
+    if (perp.lengthSq() < 0.01) {
+      // Bond is along Y — fall back to projecting X
+      const xAxis = new THREE.Vector3(1, 0, 0);
+      perp = xAxis.clone().sub(unit.clone().multiplyScalar(xAxis.dot(unit)));
+    }
+    perp.normalize();
+
+    function addCyl(s, e, color, r) {
+      const mid = new THREE.Vector3().addVectors(s,e).multiplyScalar(0.5);
+      const cyl = new THREE.Mesh(
+        new THREE.CylinderGeometry(r, r, s.distanceTo(e), 12),
+        new THREE.MeshStandardMaterial({color, roughness:0.4, metalness:0.1})
+      );
+      cyl.position.copy(mid);
+      const d = new THREE.Vector3().subVectors(e,s).normalize();
+      cyl.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), d);
+      group.add(cyl);
+    }
+    function addPair(s, e, r) {
+      const mid = new THREE.Vector3().addVectors(s,e).multiplyScalar(0.5);
+      addCyl(s,   mid, color1, r);
+      addCyl(mid, e,   color2, r);
+    }
+
+    if (order === 2) {
+      const off = perp.clone().multiplyScalar(BOND_R * 1.4);
+      const thinR = BOND_R * 0.62;
+      addPair(start.clone().add(off), end.clone().add(off), thinR);
+      addPair(start.clone().sub(off), end.clone().sub(off), thinR);
+    } else if (order === 3) {
+      const off = perp.clone().multiplyScalar(BOND_R * 1.8);
+      const thinR = BOND_R * 0.55;
+      addPair(start, end, thinR);
+      addPair(start.clone().add(off), end.clone().add(off), thinR);
+      addPair(start.clone().sub(off), end.clone().sub(off), thinR);
+    } else {
+      addPair(start, end, BOND_R);
+    }
+    return group;
+  }
+
+  const COLOR_TO_ELEMENT = {
+    0xdddddd:'H', 0xe8e8e8:'H',
+    0xee3333:'O',
+    0x666666:'C', 0x555555:'C', 0x444444:'C', 0x333333:'C', 0x222222:'C',
+    0x3399ff:'N',
+    0x44dd44:'Cl',
+    0xaaaaff:'Na',
+    0xffcc33:'S', 0xddaa00:'S', 0xeecc22:'S',
+    0xff8833:'P', 0xffdd44:'P', 0xcc3311:'P',
+    0xcc6633:'Fe',
+    0xb3ff3a:'F',
+    0xa62929:'Br'
+  };
+
+  // ── Molecule data ──
+  const molData = {
+    water:{name:'H₂O — Água',desc:'Geometria angular (104,5°) · Polar · Pontes de hidrogênio',
+      draw2d:{atoms:[{x:0,y:0.45,label:'O'},{x:-1.3,y:-0.55,label:'H'},{x:1.3,y:-0.55,label:'H'}],bonds:[{a:0,b:1,order:1},{a:0,b:2,order:1}]},
+      atoms:[{pos:[0,0,0],r:0.38,color:0xee3333},{pos:[-0.886,-0.686,0],r:0.22,color:0xdddddd},{pos:[0.886,-0.686,0],r:0.22,color:0xdddddd}],
+      bonds:[[0,1],[0,2]]},
+    ethanol:{name:'C₂H₅OH — Etanol',desc:'Cadeia aberta · Grupo hidroxila OH · Polar e apolar',
+      draw2d:{atoms:[{x:-2,y:0,label:'C'},{x:0,y:0,label:'C'},{x:1.8,y:0,label:'O'},{x:3.1,y:-0.7,label:'H'},{x:-2,y:1.5,label:'H'},{x:-3.5,y:0,label:'H'},{x:-2,y:-1.5,label:'H'},{x:0,y:1.5,label:'H'},{x:0,y:-1.5,label:'H'}],bonds:[{a:0,b:1,order:1},{a:1,b:2,order:1},{a:2,b:3,order:1},{a:0,b:4,order:1},{a:0,b:5,order:1},{a:0,b:6,order:1},{a:1,b:7,order:1},{a:1,b:8,order:1}]},
+      atoms:[
+        {pos:[-1.2,0,0],r:0.35,color:0x666666},           // 0 C1 (CH3)
+        {pos:[1.2,0,0],r:0.35,color:0x666666},            // 1 C2 (CH2)
+        {pos:[1.7,1.3,0],r:0.30,color:0xee3333},          // 2 O   (C-C-O ≈ 110°)
+        {pos:[2.7,1.3,0],r:0.20,color:0xdddddd},          // 3 H of OH
+        {pos:[-1.56,1.03,0],r:0.20,color:0xdddddd},       // 4 H of C1 (top)
+        {pos:[-1.56,-0.51,0.89],r:0.20,color:0xdddddd},   // 5 H of C1 (lower-front)
+        {pos:[-1.56,-0.51,-0.89],r:0.20,color:0xdddddd},  // 6 H of C1 (lower-back)
+        {pos:[1.56,-0.52,0.89],r:0.20,color:0xdddddd},    // 7 H of C2 (lower-front, sp3)
+        {pos:[1.56,-0.52,-0.89],r:0.20,color:0xdddddd}    // 8 H of C2 (lower-back, sp3)
+      ],
+      bonds:[[0,1],[1,2],[2,3],[0,4],[0,5],[0,6],[1,7],[1,8]]},
+    butane:{name:'C₄H₁₀ — n-Butane',desc:'Linear alkane · chain isomer reference',
+      draw2d:{atoms:[{x:-3,y:0,label:'C'},{x:-1,y:0,label:'C'},{x:1,y:0,label:'C'},{x:3,y:0,label:'C'},{x:-3,y:1.5,label:'H'},{x:-4.4,y:0,label:'H'},{x:-3,y:-1.5,label:'H'},{x:-1,y:1.5,label:'H'},{x:-1,y:-1.5,label:'H'},{x:1,y:1.5,label:'H'},{x:1,y:-1.5,label:'H'},{x:3,y:1.5,label:'H'},{x:4.4,y:0,label:'H'},{x:3,y:-1.5,label:'H'}],bonds:[{a:0,b:1,order:1},{a:1,b:2,order:1},{a:2,b:3,order:1},{a:0,b:4,order:1},{a:0,b:5,order:1},{a:0,b:6,order:1},{a:1,b:7,order:1},{a:1,b:8,order:1},{a:2,b:9,order:1},{a:2,b:10,order:1},{a:3,b:11,order:1},{a:3,b:12,order:1},{a:3,b:13,order:1}]},
+      atoms:[{pos:[-2.0,0,0],r:0.35,color:0x666666},{pos:[-0.7,0,0],r:0.35,color:0x666666},{pos:[0.7,0,0],r:0.35,color:0x666666},{pos:[2.0,0,0],r:0.35,color:0x666666},{pos:[-2.6,0.95,0],r:0.20,color:0xdddddd},{pos:[-2.6,-0.48,0.82],r:0.20,color:0xdddddd},{pos:[-2.6,-0.48,-0.82],r:0.20,color:0xdddddd},{pos:[-0.7,0.82,0.52],r:0.20,color:0xdddddd},{pos:[-0.7,-0.82,-0.52],r:0.20,color:0xdddddd},{pos:[0.7,0.82,-0.52],r:0.20,color:0xdddddd},{pos:[0.7,-0.82,0.52],r:0.20,color:0xdddddd},{pos:[2.6,0.95,0],r:0.20,color:0xdddddd},{pos:[2.6,-0.48,0.82],r:0.20,color:0xdddddd},{pos:[2.6,-0.48,-0.82],r:0.20,color:0xdddddd}],
+      bonds:[[0,1],[1,2],[2,3],[0,4],[0,5],[0,6],[1,7],[1,8],[2,9],[2,10],[3,11],[3,12],[3,13]]},
+    isobutane:{name:'C₄H₁₀ — Isobutane',desc:'Branched alkane · 2-methylpropane',
+      draw2d:{atoms:[{x:0,y:0,label:'C'},{x:0,y:2,label:'C'},{x:-2.1,y:-1,label:'C'},{x:2.1,y:-1,label:'C'},{x:0,y:-1.4,label:'H'},{x:0,y:3.5,label:'H'},{x:-1.4,y:2.7,label:'H'},{x:1.4,y:2.7,label:'H'},{x:-3.6,y:-1,label:'H'},{x:-2.8,y:0.3,label:'H'},{x:-2.8,y:-2.3,label:'H'},{x:3.6,y:-1,label:'H'},{x:2.8,y:0.3,label:'H'},{x:2.8,y:-2.3,label:'H'}],bonds:[{a:0,b:1,order:1},{a:0,b:2,order:1},{a:0,b:3,order:1},{a:0,b:4,order:1},{a:1,b:5,order:1},{a:1,b:6,order:1},{a:1,b:7,order:1},{a:2,b:8,order:1},{a:2,b:9,order:1},{a:2,b:10,order:1},{a:3,b:11,order:1},{a:3,b:12,order:1},{a:3,b:13,order:1}]},
+      atoms:[{pos:[0,0,0],r:0.35,color:0x666666},{pos:[-1.3,0,0],r:0.35,color:0x666666},{pos:[0.9,1.1,0],r:0.35,color:0x666666},{pos:[0.9,-1.1,0],r:0.35,color:0x666666},{pos:[0,0,1.0],r:0.20,color:0xdddddd},{pos:[-1.9,0.95,0],r:0.20,color:0xdddddd},{pos:[-1.9,-0.48,0.82],r:0.20,color:0xdddddd},{pos:[-1.9,-0.48,-0.82],r:0.20,color:0xdddddd},{pos:[0.4,2.0,0],r:0.20,color:0xdddddd},{pos:[1.7,1.5,0.55],r:0.20,color:0xdddddd},{pos:[1.7,1.5,-0.55],r:0.20,color:0xdddddd},{pos:[0.4,-2.0,0],r:0.20,color:0xdddddd},{pos:[1.7,-1.5,0.55],r:0.20,color:0xdddddd},{pos:[1.7,-1.5,-0.55],r:0.20,color:0xdddddd}],
+      bonds:[[0,1],[0,2],[0,3],[0,4],[1,5],[1,6],[1,7],[2,8],[2,9],[2,10],[3,11],[3,12],[3,13]]},
+    but1ene:{name:'C₄H₈ — 1-Butene',desc:'Terminal C=C double bond (position isomerism)',
+      draw2d:{atoms:[{x:-3,y:0,label:'C'},{x:-1,y:0,label:'C'},{x:1,y:0,label:'C'},{x:3,y:0,label:'C'},{x:-4.2,y:1.0,label:'H'},{x:-4.2,y:-1.0,label:'H'},{x:-1,y:1.5,label:'H'},{x:1,y:1.5,label:'H'},{x:1,y:-1.5,label:'H'},{x:3,y:1.5,label:'H'},{x:4.4,y:0,label:'H'},{x:3,y:-1.5,label:'H'}],bonds:[{a:0,b:1,order:2},{a:1,b:2,order:1},{a:2,b:3,order:1},{a:0,b:4,order:1},{a:0,b:5,order:1},{a:1,b:6,order:1},{a:2,b:7,order:1},{a:2,b:8,order:1},{a:3,b:9,order:1},{a:3,b:10,order:1},{a:3,b:11,order:1}]},
+      atoms:[{pos:[-2.0,0,0],r:0.35,color:0x666666},{pos:[-0.8,0,0],r:0.35,color:0x666666},{pos:[0.5,0,0],r:0.35,color:0x666666},{pos:[1.8,0,0],r:0.35,color:0x666666},{pos:[-2.7,0.85,0],r:0.20,color:0xdddddd},{pos:[-2.7,-0.85,0],r:0.20,color:0xdddddd},{pos:[-0.8,0.95,0],r:0.20,color:0xdddddd},{pos:[0.5,0.82,0.52],r:0.20,color:0xdddddd},{pos:[0.5,-0.82,-0.52],r:0.20,color:0xdddddd},{pos:[2.5,0.85,0],r:0.20,color:0xdddddd},{pos:[2.5,-0.42,0.74],r:0.20,color:0xdddddd},{pos:[2.5,-0.42,-0.74],r:0.20,color:0xdddddd}],
+      bonds:[[0,1,2],[1,2],[2,3],[0,4],[0,5],[1,6],[2,7],[2,8],[3,9],[3,10],[3,11]]},
+    but2ene:{name:'C₄H₈ — 2-Butene',desc:'Internal C=C double bond',
+      draw2d:{atoms:[{x:-3,y:0,label:'C'},{x:-1,y:0,label:'C'},{x:1,y:0,label:'C'},{x:3,y:0,label:'C'},{x:-3,y:1.5,label:'H'},{x:-4.4,y:0,label:'H'},{x:-3,y:-1.5,label:'H'},{x:-1,y:1.5,label:'H'},{x:1,y:1.5,label:'H'},{x:3,y:1.5,label:'H'},{x:4.4,y:0,label:'H'},{x:3,y:-1.5,label:'H'}],bonds:[{a:0,b:1,order:1},{a:1,b:2,order:2},{a:2,b:3,order:1},{a:0,b:4,order:1},{a:0,b:5,order:1},{a:0,b:6,order:1},{a:1,b:7,order:1},{a:2,b:8,order:1},{a:3,b:9,order:1},{a:3,b:10,order:1},{a:3,b:11,order:1}]},
+      atoms:[{pos:[-2.0,0,0],r:0.35,color:0x666666},{pos:[-0.7,0,0],r:0.35,color:0x666666},{pos:[0.7,0,0],r:0.35,color:0x666666},{pos:[2.0,0,0],r:0.35,color:0x666666},{pos:[-2.6,0.95,0],r:0.20,color:0xdddddd},{pos:[-2.6,-0.48,0.82],r:0.20,color:0xdddddd},{pos:[-2.6,-0.48,-0.82],r:0.20,color:0xdddddd},{pos:[-0.7,0.95,0],r:0.20,color:0xdddddd},{pos:[0.7,-0.95,0],r:0.20,color:0xdddddd},{pos:[2.6,0.95,0],r:0.20,color:0xdddddd},{pos:[2.6,-0.48,0.82],r:0.20,color:0xdddddd},{pos:[2.6,-0.48,-0.82],r:0.20,color:0xdddddd}],
+      bonds:[[0,1],[1,2,2],[2,3],[0,4],[0,5],[0,6],[1,7],[2,8],[3,9],[3,10],[3,11]]},
+    cis2butene:{name:'C₄H₈ — cis-2-Butene',desc:'Geometric isomer · CH₃ groups on same side',
+      draw2d:{atoms:[{x:-2.8,y:1.0,label:'C'},{x:-1.2,y:0,label:'C'},{x:1.2,y:0,label:'C'},{x:2.8,y:1.0,label:'C'},{x:-2.8,y:2.5,label:'H'},{x:-4.1,y:1.6,label:'H'},{x:-4.1,y:0.4,label:'H'},{x:-1.2,y:-1.5,label:'H'},{x:1.2,y:-1.5,label:'H'},{x:2.8,y:2.5,label:'H'},{x:4.1,y:1.6,label:'H'},{x:4.1,y:0.4,label:'H'}],bonds:[{a:0,b:1,order:1},{a:1,b:2,order:2},{a:2,b:3,order:1},{a:0,b:4,order:1},{a:0,b:5,order:1},{a:0,b:6,order:1},{a:1,b:7,order:1},{a:2,b:8,order:1},{a:3,b:9,order:1},{a:3,b:10,order:1},{a:3,b:11,order:1}]},
+      atoms:[{pos:[-2.0,0.8,0],r:0.35,color:0x666666},{pos:[-0.7,0,0],r:0.35,color:0x666666},{pos:[0.7,0,0],r:0.35,color:0x666666},{pos:[2.0,0.8,0],r:0.35,color:0x666666},{pos:[-2.75,1.45,0],r:0.20,color:0xdddddd},{pos:[-2.60,0.25,0.74],r:0.20,color:0xdddddd},{pos:[-2.60,0.25,-0.74],r:0.20,color:0xdddddd},{pos:[-0.7,-0.95,0],r:0.20,color:0xdddddd},{pos:[0.7,-0.95,0],r:0.20,color:0xdddddd},{pos:[2.75,1.45,0],r:0.20,color:0xdddddd},{pos:[2.60,0.25,0.74],r:0.20,color:0xdddddd},{pos:[2.60,0.25,-0.74],r:0.20,color:0xdddddd}],
+      bonds:[[0,1],[1,2,2],[2,3],[0,4],[0,5],[0,6],[1,7],[2,8],[3,9],[3,10],[3,11]]},
+    trans2butene:{name:'C₄H₈ — trans-2-Butene',desc:'Geometric isomer · CH₃ groups on opposite sides',
+      draw2d:{atoms:[{x:-2.8,y:1.0,label:'C'},{x:-1.2,y:0,label:'C'},{x:1.2,y:0,label:'C'},{x:2.8,y:-1.0,label:'C'},{x:-2.8,y:2.5,label:'H'},{x:-4.1,y:1.6,label:'H'},{x:-4.1,y:0.4,label:'H'},{x:-1.2,y:-1.5,label:'H'},{x:1.2,y:1.5,label:'H'},{x:2.8,y:-2.5,label:'H'},{x:4.1,y:-1.6,label:'H'},{x:4.1,y:-0.4,label:'H'}],bonds:[{a:0,b:1,order:1},{a:1,b:2,order:2},{a:2,b:3,order:1},{a:0,b:4,order:1},{a:0,b:5,order:1},{a:0,b:6,order:1},{a:1,b:7,order:1},{a:2,b:8,order:1},{a:3,b:9,order:1},{a:3,b:10,order:1},{a:3,b:11,order:1}]},
+      atoms:[{pos:[-2.0,0.8,0],r:0.35,color:0x666666},{pos:[-0.7,0,0],r:0.35,color:0x666666},{pos:[0.7,0,0],r:0.35,color:0x666666},{pos:[2.0,-0.8,0],r:0.35,color:0x666666},{pos:[-2.75,1.45,0],r:0.20,color:0xdddddd},{pos:[-2.60,0.25,0.74],r:0.20,color:0xdddddd},{pos:[-2.60,0.25,-0.74],r:0.20,color:0xdddddd},{pos:[-0.7,-0.95,0],r:0.20,color:0xdddddd},{pos:[0.7,0.95,0],r:0.20,color:0xdddddd},{pos:[2.75,-1.45,0],r:0.20,color:0xdddddd},{pos:[2.60,-0.25,0.74],r:0.20,color:0xdddddd},{pos:[2.60,-0.25,-0.74],r:0.20,color:0xdddddd}],
+      bonds:[[0,1],[1,2,2],[2,3],[0,4],[0,5],[0,6],[1,7],[2,8],[3,9],[3,10],[3,11]]},
+    dimethylether:{name:'C₂H₆O — Dimethyl ether',desc:'Functional/metameric isomer of ethanol',
+      draw2d:{atoms:[{x:-2,y:0,label:'C'},{x:0,y:0,label:'O'},{x:2,y:0,label:'C'},{x:-2,y:1.5,label:'H'},{x:-3.5,y:0,label:'H'},{x:-2,y:-1.5,label:'H'},{x:2,y:1.5,label:'H'},{x:3.5,y:0,label:'H'},{x:2,y:-1.5,label:'H'}],bonds:[{a:0,b:1,order:1},{a:1,b:2,order:1},{a:0,b:3,order:1},{a:0,b:4,order:1},{a:0,b:5,order:1},{a:2,b:6,order:1},{a:2,b:7,order:1},{a:2,b:8,order:1}]},
+      atoms:[{pos:[-1.4,0,0],r:0.35,color:0x666666},{pos:[0,0,0],r:0.30,color:0xee3333},{pos:[1.4,0,0],r:0.35,color:0x666666},{pos:[-2.1,0.90,0],r:0.20,color:0xdddddd},{pos:[-2.1,-0.45,0.78],r:0.20,color:0xdddddd},{pos:[-2.1,-0.45,-0.78],r:0.20,color:0xdddddd},{pos:[2.1,0.90,0],r:0.20,color:0xdddddd},{pos:[2.1,-0.45,0.78],r:0.20,color:0xdddddd},{pos:[2.1,-0.45,-0.78],r:0.20,color:0xdddddd}],
+      bonds:[[0,1],[1,2],[0,3],[0,4],[0,5],[2,6],[2,7],[2,8]]},
+    acetone:{name:'C₃H₆O — Acetone',desc:'Keto form (tautomerism reference)',
+      draw2d:{atoms:[{x:0,y:2.5,label:'O'},{x:0,y:1.0,label:'C'},{x:-1.8,y:-0.4,label:'C'},{x:1.8,y:-0.4,label:'C'},{x:-3.2,y:0.2,label:'H'},{x:-3.0,y:-1.3,label:'H'},{x:-1.6,y:-1.9,label:'H'},{x:3.2,y:0.2,label:'H'},{x:3.0,y:-1.3,label:'H'},{x:1.6,y:-1.9,label:'H'}],bonds:[{a:0,b:1,order:2},{a:1,b:2,order:1},{a:1,b:3,order:1},{a:2,b:4,order:1},{a:2,b:5,order:1},{a:2,b:6,order:1},{a:3,b:7,order:1},{a:3,b:8,order:1},{a:3,b:9,order:1}]},
+      atoms:[{pos:[-1.4,0,0],r:0.35,color:0x666666},{pos:[0,0,0],r:0.35,color:0x666666},{pos:[1.4,0,0],r:0.35,color:0x666666},{pos:[0,1.1,0],r:0.30,color:0xee3333},{pos:[-2.1,0.90,0],r:0.20,color:0xdddddd},{pos:[-2.1,-0.45,0.78],r:0.20,color:0xdddddd},{pos:[-2.1,-0.45,-0.78],r:0.20,color:0xdddddd},{pos:[2.1,0.90,0],r:0.20,color:0xdddddd},{pos:[2.1,-0.45,0.78],r:0.20,color:0xdddddd},{pos:[2.1,-0.45,-0.78],r:0.20,color:0xdddddd}],
+      bonds:[[0,1],[1,2],[1,3,2],[0,4],[0,5],[0,6],[2,7],[2,8],[2,9]]},
+    'methyl-isocyanate':{name:'C₂H₃NO — Methyl isocyanate',desc:'Volatile isocyanate · Linear N=C=O group · Bhopal gas',
+      draw2d:{atoms:[{x:-2.2,y:0,label:'C'},{x:-0.7,y:0,label:'N'},{x:0.9,y:0,label:'C'},{x:2.4,y:0,label:'O'},{x:-2.9,y:1.2,label:'H'},{x:-3.5,y:0,label:'H'},{x:-2.9,y:-1.2,label:'H'}],bonds:[{a:0,b:1,order:1},{a:1,b:2,order:2},{a:2,b:3,order:2},{a:0,b:4,order:1},{a:0,b:5,order:1},{a:0,b:6,order:1}]},
+      atoms:[
+        {pos:[-2.10,0.95,0],r:0.35,color:0x666666},
+        {pos:[-1.20,0.00,0],r:0.35,color:0x3399ff},
+        {pos:[0.05,0.00,0],r:0.35,color:0x666666},
+        {pos:[1.25,0.00,0],r:0.30,color:0xee3333},
+        {pos:[-2.60,1.85,0],r:0.20,color:0xdddddd},
+        {pos:[-2.95,0.55,0.78],r:0.20,color:0xdddddd},
+        {pos:[-2.95,0.55,-0.78],r:0.20,color:0xdddddd}
+      ],
+      bonds:[[0,1],[1,2,2],[2,3,2],[0,4],[0,5],[0,6]]},
+    co2:{name:'CO₂ — Dióxido de Carbono',desc:'Geometria linear · Apolar · Duplas C=O',
+      draw2d:{atoms:[{x:0,y:0,label:'C'},{x:-1.7,y:0,label:'O'},{x:1.7,y:0,label:'O'}],bonds:[{a:0,b:1,order:2},{a:0,b:2,order:2}]},
+      atoms:[{pos:[0,0,0],r:0.36,color:0x444444},{pos:[-1.6,0,0],r:0.34,color:0xee3333},{pos:[1.6,0,0],r:0.34,color:0xee3333}],
+      bonds:[[0,1,2],[0,2,2]]},
+    ammonia:{name:'NH₃ — Amônia',desc:'Geometria piramidal trigonal · Polar · Básica',
+      draw2d:{atoms:[{x:0,y:0.7,label:'N'},{x:-1.4,y:-0.7,label:'H'},{x:0,y:-1.0,label:'H'},{x:1.4,y:-0.7,label:'H'}],bonds:[{a:0,b:1,order:1},{a:0,b:2,order:1},{a:0,b:3,order:1}]},
+      atoms:[{pos:[0,0.4,0],r:0.33,color:0x3399ff},{pos:[0,0,1.0],r:0.20,color:0xdddddd},{pos:[-0.866,0,-0.5],r:0.20,color:0xdddddd},{pos:[0.866,0,-0.5],r:0.20,color:0xdddddd}],
+      bonds:[[0,1],[0,2],[0,3]]},
+    methane:{name:'CH₄ — Metano',desc:'Geometria tetraédrica · Apolar · Gás natural',
+      draw2d:{atoms:[{x:0,y:0,label:'C'},{x:0,y:1.5,label:'H'},{x:-1.5,y:0,label:'H'},{x:0,y:-1.5,label:'H'},{x:1.5,y:0,label:'H'}],bonds:[{a:0,b:1,order:1},{a:0,b:2,order:1},{a:0,b:3,order:1},{a:0,b:4,order:1}]},
+      atoms:[{pos:[0,0,0],r:0.36,color:0x555555},{pos:[1.0,1.0,1.0],r:0.20,color:0xdddddd},{pos:[-1.0,-1.0,1.0],r:0.20,color:0xdddddd},{pos:[-1.0,1.0,-1.0],r:0.20,color:0xdddddd},{pos:[1.0,-1.0,-1.0],r:0.20,color:0xdddddd}],
+      bonds:[[0,1],[0,2],[0,3],[0,4]]},
+    hcl:{name:'HCl — Ácido Clorídrico',desc:'Linear · Polar · Ácido forte · Diatômico',
+      draw2d:{atoms:[{x:-1.3,y:0,label:'H'},{x:0.9,y:0,label:'Cl'}],bonds:[{a:0,b:1,order:1}]},
+      atoms:[{pos:[-0.7,0,0],r:0.20,color:0xdddddd},{pos:[0.7,0,0],r:0.42,color:0x44dd44}],
+      bonds:[[0,1]]},
+    nacl:{name:'NaCl — Sal',desc:'Ligação iônica · Par Na⁺Cl⁻',
+      draw2d:{atoms:[{x:-1.5,y:0,label:'Na'},{x:1.3,y:0,label:'Cl'}],bonds:[{a:0,b:1,order:1}]},
+      atoms:[{pos:[-1.3,0,0],r:0.32,color:0xaaaaff},{pos:[1.0,0,0],r:0.42,color:0x44dd44}],
+      bonds:[[0,1]]},
+    h2so4:{name:'H₂SO₄ — Ácido Sulfúrico',desc:'Tetraédrica em torno do S · Diprótico · Ác. forte',
+      draw2d:{atoms:[{x:0,y:0,label:'S'},{x:0,y:1.9,label:'O'},{x:0,y:-1.9,label:'O'},{x:-1.9,y:0,label:'O'},{x:-3.6,y:0.7,label:'H'},{x:1.9,y:0,label:'O'},{x:3.6,y:0.7,label:'H'}],bonds:[{a:0,b:1,order:2},{a:0,b:2,order:2},{a:0,b:3,order:1},{a:3,b:4,order:1},{a:0,b:5,order:1},{a:5,b:6,order:1}]},
+      atoms:[{pos:[0,0,0],r:0.40,color:0xffcc33},{pos:[0,1.3,0],r:0.32,color:0xee3333},{pos:[0,-1.3,0],r:0.32,color:0xee3333},{pos:[1.2,0.4,0.6],r:0.32,color:0xee3333},{pos:[-1.2,0.4,-0.6],r:0.32,color:0xee3333},{pos:[2.0,1.0,0.6],r:0.18,color:0xdddddd},{pos:[-2.0,1.0,-0.6],r:0.18,color:0xdddddd}],
+      bonds:[[0,1,2],[0,2,2],[0,3],[0,4],[3,5],[4,6]]},
+    h3po4:{name:'H₃PO₄ — Ácido Fosfórico',desc:'Tetraédrica em torno do P · DNA, ATP, fertilizantes',
+      draw2d:{atoms:[{x:0,y:0,label:'P'},{x:0,y:1.9,label:'O'},{x:-1.9,y:0,label:'O'},{x:-3.6,y:0.7,label:'H'},{x:1.9,y:0,label:'O'},{x:3.6,y:0.7,label:'H'},{x:0,y:-1.9,label:'O'},{x:0,y:-3.6,label:'H'}],bonds:[{a:0,b:1,order:2},{a:0,b:2,order:1},{a:2,b:3,order:1},{a:0,b:4,order:1},{a:4,b:5,order:1},{a:0,b:6,order:1},{a:6,b:7,order:1}]},
+      atoms:[{pos:[0,0,0],r:0.40,color:0xff8833},{pos:[0,1.3,0],r:0.32,color:0xee3333},{pos:[1.2,-0.5,0.6],r:0.32,color:0xee3333},{pos:[-1.2,-0.5,0.6],r:0.32,color:0xee3333},{pos:[0,-0.5,-1.3],r:0.32,color:0xee3333},{pos:[2.0,-1.1,0.6],r:0.18,color:0xdddddd},{pos:[-2.0,-1.1,0.6],r:0.18,color:0xdddddd},{pos:[0,-1.1,-2.1],r:0.18,color:0xdddddd}],
+      bonds:[[0,1,2],[0,2],[0,3],[0,4],[2,5],[3,6],[4,7]]},
+    fe2o3:{name:'Fe₂O₃ — Ferrugem',desc:'Rede cristalina hematita · Óxido férrico · Corrosão',
+      draw2d:{atoms:[{x:-2.5,y:0,label:'Fe'},{x:2.5,y:0,label:'Fe'},{x:0,y:1.6,label:'O'},{x:0,y:0,label:'O'},{x:0,y:-1.6,label:'O'}],bonds:[{a:0,b:2,order:1},{a:1,b:2,order:1},{a:0,b:3,order:1},{a:1,b:3,order:1},{a:0,b:4,order:1},{a:1,b:4,order:1}]},
+      atoms:[{pos:[-1.4,0,0],r:0.42,color:0xcc6633},{pos:[1.4,0,0],r:0.42,color:0xcc6633},{pos:[0,1.0,0],r:0.32,color:0xee3333},{pos:[0,-1.0,0],r:0.32,color:0xee3333},{pos:[0,0,1.0],r:0.32,color:0xee3333}],
+      bonds:[[0,2],[0,3],[0,4],[1,2],[1,3],[1,4]]},
+    chfclbr:{name:'CHFClBr — Bromochlorofluoromethane',desc:'Tetrahedral geometry · Chiral · Asymmetric carbon (4 different groups)',chiral:true,
+      draw2d:{atoms:[{x:0,y:0,label:'C'},{x:0,y:1.6,label:'H'},{x:-1.8,y:0,label:'F'},{x:1.8,y:0,label:'Cl'},{x:0,y:-1.8,label:'Br'}],bonds:[{a:0,b:1,order:1},{a:0,b:2,order:1},{a:0,b:3,order:1},{a:0,b:4,order:1}]},
+      atoms:[
+        {pos:[0,0,0],r:0.36,color:0x555555},
+        {pos:[1.0,1.0,1.0],r:0.20,color:0xdddddd},
+        {pos:[-1.0,-1.0,1.0],r:0.26,color:0xb3ff3a},
+        {pos:[-1.0,1.0,-1.0],r:0.38,color:0x44dd44},
+        {pos:[1.0,-1.0,-1.0],r:0.46,color:0xa62929}
+      ],
+      bonds:[[0,1],[0,2],[0,3],[0,4]]},
+    bromobutane:{name:'C₄H₉Br — 2-Bromobutane',desc:'Asymmetric carbon at C2 · Chiral · Alkyl halide',chiral:true,
+      draw2d:{atoms:[{x:-3,y:0,label:'C'},{x:-1,y:0,label:'C'},{x:1,y:0,label:'C'},{x:3,y:0,label:'C'},{x:-1,y:-1.8,label:'Br'},{x:-3,y:1.5,label:'H'},{x:-4.4,y:0,label:'H'},{x:-3,y:-1.5,label:'H'},{x:-1,y:1.5,label:'H'},{x:1,y:1.5,label:'H'},{x:1,y:-1.5,label:'H'},{x:3,y:1.5,label:'H'},{x:4.4,y:0,label:'H'},{x:3,y:-1.5,label:'H'}],bonds:[{a:0,b:1,order:1},{a:1,b:2,order:1},{a:2,b:3,order:1},{a:1,b:4,order:1},{a:0,b:5,order:1},{a:0,b:6,order:1},{a:0,b:7,order:1},{a:1,b:8,order:1},{a:2,b:9,order:1},{a:2,b:10,order:1},{a:3,b:11,order:1},{a:3,b:12,order:1},{a:3,b:13,order:1}]},
+      atoms:[
+        {pos:[-2.0,0,0],r:0.35,color:0x666666},
+        {pos:[-0.7,0,0],r:0.35,color:0x666666},
+        {pos:[0.7,0,0],r:0.35,color:0x666666},
+        {pos:[2.0,0,0],r:0.35,color:0x666666},
+        {pos:[-0.7,-1.44,-0.91],r:0.46,color:0xa62929},
+        {pos:[-2.6,0.95,0],r:0.20,color:0xdddddd},
+        {pos:[-2.6,-0.48,0.82],r:0.20,color:0xdddddd},
+        {pos:[-2.6,-0.48,-0.82],r:0.20,color:0xdddddd},
+        {pos:[-0.7,0.82,0.52],r:0.20,color:0xdddddd},
+        {pos:[0.7,0.82,-0.52],r:0.20,color:0xdddddd},
+        {pos:[0.7,-0.82,0.52],r:0.20,color:0xdddddd},
+        {pos:[2.6,0.95,0],r:0.20,color:0xdddddd},
+        {pos:[2.6,-0.48,0.82],r:0.20,color:0xdddddd},
+        {pos:[2.6,-0.48,-0.82],r:0.20,color:0xdddddd}
+      ],
+      bonds:[[0,1],[1,2],[2,3],[1,4],[0,5],[0,6],[0,7],[1,8],[2,9],[2,10],[3,11],[3,12],[3,13]]},
+    lacticacid:{name:'C₃H₆O₃ — Lactic acid',desc:'Asymmetric carbon at C2 · Chiral · Biological (muscle)',chiral:true,
+      draw2d:{atoms:[{x:-3,y:0,label:'C'},{x:-1,y:0,label:'C'},{x:1,y:0,label:'C'},{x:-1,y:1.5,label:'O'},{x:-0.2,y:2.5,label:'H'},{x:1,y:-1.5,label:'O'},{x:2.5,y:0.7,label:'O'},{x:3.7,y:0.7,label:'H'},{x:-1,y:-1.5,label:'H'},{x:-3,y:1.5,label:'H'},{x:-4.4,y:0,label:'H'},{x:-3,y:-1.5,label:'H'}],bonds:[{a:0,b:1,order:1},{a:1,b:2,order:1},{a:1,b:3,order:1},{a:3,b:4,order:1},{a:2,b:5,order:2},{a:2,b:6,order:1},{a:6,b:7,order:1},{a:1,b:8,order:1},{a:0,b:9,order:1},{a:0,b:10,order:1},{a:0,b:11,order:1}]},
+      atoms:[
+        {pos:[-2.0,0,0],r:0.35,color:0x666666},
+        {pos:[-0.7,0,0],r:0.35,color:0x666666},
+        {pos:[0.7,0,0],r:0.35,color:0x666666},
+        {pos:[-0.7,1.4,0],r:0.30,color:0xee3333},
+        {pos:[0.0,2.05,0],r:0.20,color:0xdddddd},
+        {pos:[0.7,-1.3,0],r:0.30,color:0xee3333},
+        {pos:[1.9,0.7,0],r:0.30,color:0xee3333},
+        {pos:[3.0,0.5,0],r:0.20,color:0xdddddd},
+        {pos:[-0.7,-0.7,0.9],r:0.20,color:0xdddddd},
+        {pos:[-2.6,0.95,0],r:0.20,color:0xdddddd},
+        {pos:[-2.6,-0.48,0.82],r:0.20,color:0xdddddd},
+        {pos:[-2.6,-0.48,-0.82],r:0.20,color:0xdddddd}
+      ],
+      bonds:[[0,1],[1,2],[1,3],[3,4],[2,5,2],[2,6],[6,7],[1,8],[0,9],[0,10],[0,11]]},
+    alanine:{name:'C₃H₇NO₂ — Alanine',desc:'Natural amino acid (L-alanine) · Chiral at α-C',chiral:true,
+      draw2d:{atoms:[{x:-3,y:0,label:'C'},{x:-1,y:0,label:'C'},{x:1,y:0,label:'C'},{x:-1,y:1.5,label:'N'},{x:-0.2,y:2.6,label:'H'},{x:-1.8,y:2.6,label:'H'},{x:1,y:-1.5,label:'O'},{x:2.5,y:0.7,label:'O'},{x:3.7,y:0.7,label:'H'},{x:-1,y:-1.5,label:'H'},{x:-3,y:1.5,label:'H'},{x:-4.4,y:0,label:'H'},{x:-3,y:-1.5,label:'H'}],bonds:[{a:0,b:1,order:1},{a:1,b:2,order:1},{a:1,b:3,order:1},{a:3,b:4,order:1},{a:3,b:5,order:1},{a:2,b:6,order:2},{a:2,b:7,order:1},{a:7,b:8,order:1},{a:1,b:9,order:1},{a:0,b:10,order:1},{a:0,b:11,order:1},{a:0,b:12,order:1}]},
+      atoms:[
+        {pos:[-2.0,0,0],r:0.35,color:0x666666},
+        {pos:[-0.7,0,0],r:0.35,color:0x666666},
+        {pos:[0.7,0,0],r:0.35,color:0x666666},
+        {pos:[-0.7,1.4,0],r:0.33,color:0x3399ff},
+        {pos:[0.0,2.05,0],r:0.20,color:0xdddddd},
+        {pos:[-1.4,2.05,0],r:0.20,color:0xdddddd},
+        {pos:[0.7,-1.3,0],r:0.30,color:0xee3333},
+        {pos:[1.9,0.7,0],r:0.30,color:0xee3333},
+        {pos:[3.0,0.5,0],r:0.20,color:0xdddddd},
+        {pos:[-0.7,-0.7,0.9],r:0.20,color:0xdddddd},
+        {pos:[-2.6,0.95,0],r:0.20,color:0xdddddd},
+        {pos:[-2.6,-0.48,0.82],r:0.20,color:0xdddddd},
+        {pos:[-2.6,-0.48,-0.82],r:0.20,color:0xdddddd}
+      ],
+      bonds:[[0,1],[1,2],[1,3],[3,4],[3,5],[2,6,2],[2,7],[7,8],[1,9],[0,10],[0,11],[0,12]]},
+    glyceraldehyde:{name:'C₃H₆O₃ — Glyceraldehyde',desc:'Simplest triose · Fischer reference for D/L · Chiral at C2',chiral:true,
+      draw2d:{atoms:[{x:-3,y:0,label:'C'},{x:-4,y:1.5,label:'O'},{x:-3,y:-1.5,label:'H'},{x:-1,y:0,label:'C'},{x:-1,y:-1.5,label:'H'},{x:-1,y:1.5,label:'O'},{x:-0.2,y:2.5,label:'H'},{x:1,y:0,label:'C'},{x:1,y:1.5,label:'H'},{x:1,y:-1.5,label:'H'},{x:2.5,y:0,label:'O'},{x:3.7,y:0.7,label:'H'}],bonds:[{a:0,b:1,order:2},{a:0,b:2,order:1},{a:0,b:3,order:1},{a:3,b:4,order:1},{a:3,b:5,order:1},{a:5,b:6,order:1},{a:3,b:7,order:1},{a:7,b:8,order:1},{a:7,b:9,order:1},{a:7,b:10,order:1},{a:10,b:11,order:1}]},
+      atoms:[
+        {pos:[-2.0,0,0],r:0.35,color:0x666666},
+        {pos:[-2.4,1.3,0],r:0.30,color:0xee3333},
+        {pos:[-2.4,-1.0,0],r:0.20,color:0xdddddd},
+        {pos:[-0.7,0,0],r:0.35,color:0x666666},
+        {pos:[-0.7,-0.7,0.9],r:0.20,color:0xdddddd},
+        {pos:[-0.7,1.4,0],r:0.30,color:0xee3333},
+        {pos:[0.0,2.05,0],r:0.20,color:0xdddddd},
+        {pos:[0.7,0,0],r:0.35,color:0x666666},
+        {pos:[0.7,0.62,0.88],r:0.20,color:0xdddddd},
+        {pos:[0.7,0.62,-0.88],r:0.20,color:0xdddddd},
+        {pos:[1.9,-0.5,0],r:0.30,color:0xee3333},
+        {pos:[3.0,-0.7,0],r:0.20,color:0xdddddd}
+      ],
+      bonds:[[0,1,2],[0,2],[0,3],[3,4],[3,5],[5,6],[3,7],[7,8],[7,9],[7,10],[10,11]]}
+  };
+
+  let trackedAtoms = [];
+  let bondCount = 0;
+  let currentMolecule = 'water';
+  let mirrorMode = false;
+
+  function buildMolecule(key){
+    const g=new THREE.Group(); trackedAtoms=[];
+    const mol=molData[key];
+    const sx = mirrorMode ? -1 : 1;
+    const meshes=mol.atoms.map(a=>{
+      const radius=a.r*ATOM_SCALE;
+      const m=makeSphere(radius,a.color);
+      const pos = [a.pos[0]*sx, a.pos[1], a.pos[2]];
+      m.position.fromArray(pos);
+      const label = COLOR_TO_ELEMENT[a.color] || '';
+      trackedAtoms.push({mesh:m, label, radius, color:a.color, pos});
+      g.add(m); return m;
+    });
+    mol.bonds.forEach(b=>{
+      const i = b[0], j = b[1], order = b[2] || 1;
+      const a1 = mol.atoms[i], a2 = mol.atoms[j];
+      const r1 = a1.r * ATOM_SCALE, r2 = a2.r * ATOM_SCALE;
+      g.add(makeBond(meshes[i].position, meshes[j].position, r1, r2, a1.color, a2.color, order));
+    });
+    bondCount = mol.bonds.length;
+    return g;
+  }
+
+  function rebuildScene(){
+    scene.remove(currentGroup);
+    currentGroup = buildMolecule(currentMolecule);
+    scene.add(currentGroup);
+    // Default camera tilt — gives an isometric-ish 3D perspective instead of a flat front view.
+    rotX = 0.18; rotY = 0.35;
+    camera.position.set(0,0,DEFAULT_CAM_Z);
+    autoRotate = true; updateRotateBtn();
+    refreshLabels();
+  }
+
+  // ── Label sprites ──
+  function makeLabelSprite(text, atomRadius){
+    const c = document.createElement('canvas');
+    c.width = 128; c.height = 64;
+    const ctx = c.getContext('2d');
+    // Labels live INSIDE the atom — text color contrasts against the sphere itself,
+    // not the page background. Use light text on coloured atoms, dark on H/light atoms.
+    ctx.font = 'bold 56px "DM Sans", sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.lineJoin = 'round';
+    ctx.strokeStyle = 'rgba(0,0,0,.55)';
+    ctx.lineWidth = 5;
+    ctx.strokeText(text, 64, 32);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(text, 64, 32);
+    const tex = new THREE.CanvasTexture(c); tex.needsUpdate = true;
+    const sp = new THREE.Sprite(new THREE.SpriteMaterial({map:tex, transparent:true, depthTest:false, depthWrite:false}));
+    const r = atomRadius || 0.5;
+    const w = Math.max(0.45, r * 1.7);
+    sp.scale.set(w, w * 0.5, 1);
+    sp.renderOrder = 999;
+    return sp;
+  }
+  function refreshLabels(){
+    trackedAtoms.forEach(a=>{
+      if (a.labelSprite){ a.mesh.remove(a.labelSprite); a.labelSprite = null; }
+    });
+    if (!labelsVisible) return;
+    trackedAtoms.forEach(a=>{
+      if (!a.label) return;
+      const sp = makeLabelSprite(a.label, a.radius);
+      // Center the label inside the atom (depthTest:false keeps it visible through the sphere)
+      sp.position.set(0, 0, 0);
+      a.mesh.add(sp); a.labelSprite = sp;
+    });
+  }
+
+  // ── 2D viewer ──
+  const viewer2d = document.getElementById('viewer2d-full');
+  const ctx2d    = viewer2d.getContext('2d');
+  let viewMode   = '3d';
+  let anim2dEnabled = false;
+  let zoom2d = 1.0;
+  let pan2d = { x:0, y:0 };
+  let dragging2d = false;
+  let dragStart  = { x:0, y:0 };
+  let panStart   = { x:0, y:0 };
+
+  function resize2d(){
+    const w = viewer2d.clientWidth || canvas.clientWidth || 800;
+    const h = viewer2d.clientHeight || 460;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    viewer2d.width  = w * dpr;
+    viewer2d.height = h * dpr;
+    viewer2d.style.width  = w + 'px';
+    viewer2d.style.height = h + 'px';
+    ctx2d.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  // Hex color (e.g. 0xee3333) → CSS '#ee3333'
+  function hexCSS(c){ return '#' + c.toString(16).padStart(6, '0'); }
+
+  function draw2DMolecule(time){
+    if (viewMode !== '2d') return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const W = viewer2d.width / dpr, H = viewer2d.height / dpr;
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+    ctx2d.save();
+    ctx2d.clearRect(0, 0, W, H);
+    ctx2d.fillStyle = isDark ? '#111111' : '#ffffff';
+    ctx2d.fillRect(0, 0, W, H);
+
+    const mol = molData[currentMolecule];
+    if (!mol || !mol.atoms.length) { ctx2d.restore(); return; }
+
+    // Blend color toward white for specular highlights
+    function lighten(hex, amt) {
+      const c = hex.replace('#','');
+      const r = parseInt(c.slice(0,2),16), g = parseInt(c.slice(2,4),16), b = parseInt(c.slice(4,6),16);
+      return '#' + [r,g,b].map(v => Math.min(255, Math.round(v + (255-v)*amt)).toString(16).padStart(2,'0')).join('');
+    }
+
+    function elemColor(lbl) {
+      if (!lbl) return 0xaaaaaa;
+      const l = lbl.toUpperCase();
+      if (l === 'O' || l === 'OH') return 0xee3333;
+      if (l === 'N' || l === 'NH' || l === 'NH2') return 0x3399ff;
+      if (l === 'S') return 0xffcc33;
+      if (l === 'P') return 0xff8833;
+      if (l === 'CL') return 0x44dd44;
+      if (l === 'BR') return 0xa62929;
+      if (l === 'F') return 0xb3ff3a;
+      if (l === 'NA') return 0xaaaaff;
+      if (l === 'FE') return 0xcc6633;
+      if (l.match(/^H\d?$/)) return 0xdddddd;
+      return 0x666666;
+    }
+    function elemRadius(lbl) {
+      if (!lbl) return 0.40;
+      const l = lbl.toUpperCase();
+      if (l.match(/^H\d?$/)) return 0.26;
+      if (l === 'F') return 0.32;
+      if (l === 'O' || l === 'OH') return 0.38;
+      if (l === 'N' || l === 'NH' || l === 'NH2') return 0.38;
+      if (l === 'C') return 0.40;
+      if (l === 'NA') return 0.42;
+      if (l === 'CL') return 0.46;
+      if (l === 'S') return 0.48;
+      if (l === 'P') return 0.48;
+      if (l === 'FE') return 0.52;
+      if (l === 'BR') return 0.52;
+      return 0.40;
+    }
+
+    let atomsToDraw = [];
+    let bondsToDraw = [];
+
+    if (mol.draw2d && mol.draw2d.atoms && mol.draw2d.bonds) {
+      // ── Structural formula mode ──
+      let maxExt = 0;
+      mol.draw2d.atoms.forEach(a => { maxExt = Math.max(maxExt, Math.abs(a.x), Math.abs(a.y)); });
+      maxExt = Math.max(1, maxExt + 1.5);
+      const z = Math.min(W, H) / (2 * maxExt) * 0.8 * zoom2d;
+      const cx = W / 2 + pan2d.x;
+      const cy = H / 2 + pan2d.y;
+      const ang = anim2dEnabled ? (time || 0) * 0.18 : 0;
+      const cosA = Math.cos(ang), sinA = Math.sin(ang);
+      // Chiral mirror: flip horizontally (x sign) when mirrorMode is on.
+      const mx = (mol.chiral && mirrorMode) ? -1 : 1;
+      const project = (p) => ({
+        x: cx + ((p.x * mx) * cosA - p.y * sinA) * z,
+        y: cy - ((p.x * mx) * sinA + p.y * cosA) * z
+      });
+
+      atomsToDraw = mol.draw2d.atoms.map(a => {
+        const p = project(a);
+        const col = elemColor(a.label);
+        return { p, r: z * elemRadius(a.label), color: col, label: a.label || '' };
+      });
+      bondsToDraw = mol.draw2d.bonds.map(b => ({
+        p1: atomsToDraw[b.a].p, p2: atomsToDraw[b.b].p,
+        order: b.order || 1,
+        c1: atomsToDraw[b.a].color, c2: atomsToDraw[b.b].color
+      }));
+    } else {
+      // ── Atom-position mode ──
+      let maxExt = 0;
+      mol.atoms.forEach(a => {
+        const [x, y] = a.pos;
+        maxExt = Math.max(maxExt, Math.abs(x), Math.abs(y));
+      });
+      maxExt = Math.max(0.5, maxExt + 0.8);
+      const z = Math.min(W, H) / (2 * maxExt) * 0.72 * zoom2d;
+      const cx = W / 2 + pan2d.x;
+      const cy = H / 2 + pan2d.y;
+      const ang = anim2dEnabled ? (time || 0) * 0.25 : 0;
+      const cosA = Math.cos(ang), sinA = Math.sin(ang);
+      // Chiral mirror: flip horizontally (x sign) when mirrorMode is on.
+      const mx = (mol.chiral && mirrorMode) ? -1 : 1;
+      const project = (pos) => ({
+        x: cx + ((pos[0] * mx) * cosA - pos[1] * sinA) * z,
+        y: cy - ((pos[0] * mx) * sinA + pos[1] * cosA) * z
+      });
+
+      atomsToDraw = mol.atoms.map(a => {
+        const label = COLOR_TO_ELEMENT[a.color] || '';
+        return { p: project(a.pos), r: a.r * z * 1.5, color: a.color, label };
+      });
+      bondsToDraw = mol.bonds.map(([i, j]) => ({
+        p1: atomsToDraw[i].p, p2: atomsToDraw[j].p,
+        order: 1,
+        c1: atomsToDraw[i].color, c2: atomsToDraw[j].color
+      }));
+    }
+
+    // ── Draw bonds (behind atoms) ──
+    ctx2d.lineCap = 'round';
+    bondsToDraw.forEach(b => {
+      const dx = b.p2.x - b.p1.x, dy = b.p2.y - b.p1.y;
+      const len = Math.hypot(dx, dy) || 1;
+      const nx = -dy / len, ny = dx / len;
+      const thickness = Math.max(4, len * 0.09);
+
+      // Two-tone gradient: each half matches its atom color
+      const grad = ctx2d.createLinearGradient(b.p1.x, b.p1.y, b.p2.x, b.p2.y);
+      grad.addColorStop(0, hexCSS(b.c1));
+      grad.addColorStop(0.48, hexCSS(b.c1));
+      grad.addColorStop(0.52, hexCSS(b.c2));
+      grad.addColorStop(1, hexCSS(b.c2));
+      ctx2d.strokeStyle = grad;
+
+      if (b.order === 2) {
+        const sep = thickness * 1.6;
+        const ox = nx * sep * 0.5, oy = ny * sep * 0.5;
+        ctx2d.lineWidth = thickness * 0.7;
+        ctx2d.beginPath(); ctx2d.moveTo(b.p1.x + ox, b.p1.y + oy); ctx2d.lineTo(b.p2.x + ox, b.p2.y + oy); ctx2d.stroke();
+        ctx2d.beginPath(); ctx2d.moveTo(b.p1.x - ox, b.p1.y - oy); ctx2d.lineTo(b.p2.x - ox, b.p2.y - oy); ctx2d.stroke();
+      } else if (b.order === 3) {
+        const sep = thickness * 2;
+        const ox = nx * sep * 0.5, oy = ny * sep * 0.5;
+        ctx2d.lineWidth = thickness * 0.6;
+        ctx2d.beginPath(); ctx2d.moveTo(b.p1.x, b.p1.y); ctx2d.lineTo(b.p2.x, b.p2.y); ctx2d.stroke();
+        ctx2d.beginPath(); ctx2d.moveTo(b.p1.x + ox, b.p1.y + oy); ctx2d.lineTo(b.p2.x + ox, b.p2.y + oy); ctx2d.stroke();
+        ctx2d.beginPath(); ctx2d.moveTo(b.p1.x - ox, b.p1.y - oy); ctx2d.lineTo(b.p2.x - ox, b.p2.y - oy); ctx2d.stroke();
+      } else {
+        ctx2d.lineWidth = thickness;
+        ctx2d.beginPath(); ctx2d.moveTo(b.p1.x, b.p1.y); ctx2d.lineTo(b.p2.x, b.p2.y); ctx2d.stroke();
+      }
+    });
+
+    // ── Draw atoms (on top of bonds) ──
+    atomsToDraw.forEach(a => {
+      const r = a.r;
+      const css = hexCSS(a.color);
+
+      // Realistic 3D sphere: specular highlight upper-left
+      const hlX = a.p.x - r * 0.3, hlY = a.p.y - r * 0.3;
+      const grad = ctx2d.createRadialGradient(hlX, hlY, r * 0.05, a.p.x, a.p.y, r);
+      grad.addColorStop(0, '#ffffff');
+      grad.addColorStop(0.12, lighten(css, 0.6));
+      grad.addColorStop(0.35, css);
+      grad.addColorStop(0.80, shade(css, -0.30));
+      grad.addColorStop(1.0,  shade(css, -0.55));
+
+      ctx2d.beginPath();
+      ctx2d.arc(a.p.x, a.p.y, r, 0, Math.PI * 2);
+      ctx2d.fillStyle = grad;
+      ctx2d.fill();
+
+      // Subtle outline matching the dark edge
+      ctx2d.strokeStyle = shade(css, -0.40);
+      ctx2d.lineWidth = Math.max(0.5, r * 0.025);
+      ctx2d.stroke();
+
+      // Label
+      if (a.label && labelsVisible) {
+        const fontSize = Math.max(11, r * 0.85);
+        ctx2d.textAlign = 'center';
+        ctx2d.textBaseline = 'middle';
+        const txtColor = labelColor(a.color);
+        ctx2d.fillStyle = txtColor;
+
+        let txt = a.label;
+        if (/[0-9]/.test(txt) && txt.length > 1) {
+          // Multi-char with subscripts (CH3, CH2, NH2, etc.)
+          let totalW = 0;
+          for (let i = 0; i < txt.length; i++) {
+            const isNum = /[0-9]/.test(txt[i]);
+            ctx2d.font = 'bold ' + (isNum ? fontSize * 0.7 : fontSize) + 'px Arial, "DM Sans", sans-serif';
+            totalW += ctx2d.measureText(txt[i]).width;
+          }
+          let drawX = a.p.x - totalW / 2;
+          for (let i = 0; i < txt.length; i++) {
+            const c = txt[i];
+            const isNum = /[0-9]/.test(c);
+            const fs = isNum ? fontSize * 0.7 : fontSize;
+            ctx2d.font = 'bold ' + fs + 'px Arial, "DM Sans", sans-serif';
+            const cw = ctx2d.measureText(c).width;
+            ctx2d.fillText(c, drawX + cw / 2, a.p.y + (isNum ? fontSize * 0.2 : 0));
+            drawX += cw;
+          }
+        } else {
+          ctx2d.font = 'bold ' + fontSize + 'px Arial, "DM Sans", sans-serif';
+          ctx2d.fillText(txt, a.p.x, a.p.y + 1);
+        }
+      }
+    });
+
+    // Footer
+    ctx2d.fillStyle = isDark ? 'rgba(255,255,255,.4)' : 'rgba(0,0,0,.4)';
+    ctx2d.font = '500 11px "DM Mono", monospace';
+    ctx2d.textAlign = 'left'; ctx2d.textBaseline = 'bottom';
+    ctx2d.fillText('VIEW 2D · ' + (mol.name || '').toUpperCase(), 14, H - 12);
+    ctx2d.restore();
+  }
+
+  function shade(hex, pct){
+    // hex like '#aabbcc', pct -1..1
+    const c = hex.replace('#','');
+    const r = parseInt(c.slice(0,2),16), g = parseInt(c.slice(2,4),16), b = parseInt(c.slice(4,6),16);
+    const f = pct < 0 ? 1 + pct : 1 - pct;
+    const nr = Math.round(r * f), ng = Math.round(g * f), nb = Math.round(b * f);
+    return '#' + [nr,ng,nb].map(v => Math.max(0,Math.min(255,v)).toString(16).padStart(2,'0')).join('');
+  }
+  // Pick a readable text colour against a hex bg
+  function labelColor(hex){
+    const r = ((hex >> 16) & 255) / 255;
+    const g = ((hex >> 8)  & 255) / 255;
+    const b = ((hex)       & 255) / 255;
+    const L = 0.2126*r + 0.7152*g + 0.0722*b;
+    return L > 0.55 ? '#111' : '#fff';
+  }
+
+  // 2D pan + zoom
+  viewer2d.addEventListener('mousedown', e => {
+    if (viewMode !== '2d') return;
+    dragging2d = true;
+    dragStart = { x: e.clientX, y: e.clientY };
+    panStart  = { x: pan2d.x,   y: pan2d.y   };
+    viewer2d.style.cursor = 'grabbing';
+  });
+  window.addEventListener('mousemove', e => {
+    if (!dragging2d) return;
+    pan2d.x = panStart.x + (e.clientX - dragStart.x);
+    pan2d.y = panStart.y + (e.clientY - dragStart.y);
+    draw2DMolecule(_t2dFrozen);
+  });
+  window.addEventListener('mouseup', () => {
+    if (!dragging2d) return;
+    dragging2d = false;
+    viewer2d.style.cursor = 'grab';
+  });
+  viewer2d.addEventListener('wheel', e => {
+    if (viewMode !== '2d') return;
+    e.preventDefault();
+    const step = e.deltaY > 0 ? -0.12 : 0.12;
+    zoom2d = Math.max(0.3, Math.min(4.0, zoom2d + step));
+    draw2DMolecule(anim2dEnabled ? t : _t2dFrozen);
+  }, { passive:false });
+
+  // ── Public API ──
+  let t = 0;
+  let _t2dFrozen = 0;
+
+  function _i18nTr(k, fb){
+    return (window.I18N && window.I18N.t) ? window.I18N.t(k, { fallback: fb }) : fb;
+  }
+  function syncMoleculeUrl(key){
+    if (!window.history || !window.history.replaceState) return;
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('mol', key);
+      window.history.replaceState({ mol:key }, '', url);
+    } catch (_) {}
+  }
+  window.setMolecule = function(key, skipUrl){
+    if (!molData[key]) return;
+    currentMolecule = key;
+    mirrorMode = false;
+    rebuildScene();
+    const md = molData[key];
+    const tName  = _i18nTr('molecules.mol.' + key + '.name',  md.name);
+    const tDesc  = _i18nTr('molecules.mol.' + key + '.desc',  md.desc);
+    const tShort = _i18nTr('molecules.mol.' + key + '.short', key);
+    const lAtoms = _i18nTr('molecules.metaAtoms',    'atoms');
+    const lBonds = _i18nTr('molecules.metaBonds',    'bonds');
+    const lGeom  = _i18nTr('molecules.metaGeometry', 'geometry');
+    const nameEl = document.getElementById('model-name');
+    const descEl = document.getElementById('model-desc');
+    nameEl.setAttribute('data-i18n', 'molecules.mol.' + key + '.name');
+    descEl.setAttribute('data-i18n', 'molecules.mol.' + key + '.desc');
+    nameEl.textContent = tName;
+    descEl.textContent = tDesc;
+    const lConfig = _i18nTr('molecules.metaConfig', 'config.');
+    const configLabel = md.chiral ? '<span>' + lConfig + ' <b>R</b></span>' : '';
+    document.getElementById('info-meta').innerHTML =
+      '<span><b>' + md.atoms.length + '</b> ' + lAtoms + '</span>' +
+      '<span><b>' + bondCount + '</b> ' + lBonds + '</span>' +
+      '<span>' + lGeom + ' <b>3D</b></span>' + configLabel;
+    document.getElementById('av-mol').textContent = tShort;
+    const chiralPanel = document.getElementById('chiral-panel');
+    const mirrorBtn = document.getElementById('vc-mirror');
+    if (chiralPanel) chiralPanel.classList.toggle('visible', !!md.chiral);
+    if (mirrorBtn) {
+      mirrorBtn.style.display = md.chiral ? '' : 'none';
+      mirrorBtn.classList.remove('chiral-on');
+    }
+    document.querySelectorAll('.mol-btn').forEach(b => {
+      const isActive = b.dataset.mol === key;
+      b.classList.toggle('active', isActive);
+      b.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
+    document.querySelectorAll('.mol-elem-btn').forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-pressed', 'false');
+    });
+    if (!skipUrl) syncMoleculeUrl(key);
+    if (viewMode === '2d') draw2DMolecule(anim2dEnabled ? t : _t2dFrozen);
+  };
+
+  window.toggleMirror = function(){
+    const md = molData[currentMolecule];
+    if (!md || !md.chiral) return;
+    mirrorMode = !mirrorMode;
+    rebuildScene();
+    // Reflect the 2D rendering too when the mirror is engaged.
+    if (viewMode === '2d') draw2DMolecule(anim2dEnabled ? t : _t2dFrozen);
+    const btn = document.getElementById('vc-mirror');
+    if (btn) btn.classList.toggle('chiral-on', mirrorMode);
+    const meta = document.getElementById('info-meta');
+    if (meta) {
+      const lConfig = _i18nTr('molecules.metaConfig', 'config.');
+      meta.innerHTML = meta.innerHTML.replace(
+        /<span>[^<]*<b>[RS]<\/b><\/span>$/,
+        '<span>' + lConfig + ' <b>' + (mirrorMode ? 'S' : 'R') + '</b></span>'
+      );
+    }
+  };
+
+  const elementToMolecule = { H:'water',C:'methane',N:'ammonia',O:'water',Na:'nacl',Cl:'hcl',S:'h2so4',P:'h3po4',Fe:'fe2o3' };
+  window.setMoleculeByElement = function(elem){
+    const k = elementToMolecule[elem]; if (!k) return;
+    setMolecule(k);
+    document.querySelectorAll('.mol-elem-btn').forEach(b => {
+      const isActive = b.dataset.elem === elem;
+      b.classList.toggle('active', isActive);
+      b.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
+  };
+
+  window.toggleAutoRotate = function(){
+    autoRotate = !autoRotate; updateRotateBtn();
+  };
+  window.resetView = function(){
+    if (viewMode === '2d') {
+      zoom2d = 1.0; pan2d = { x:0, y:0 };
+      draw2DMolecule(anim2dEnabled ? t : _t2dFrozen);
+    } else {
+      rotX = 0.18; rotY = 0.35;
+      camera.position.set(0,0,DEFAULT_CAM_Z);
+      autoRotate = true; updateRotateBtn();
+    }
+  };
+  window.zoomBy = function(direction){
+    if (viewMode === '2d') {
+      const step = direction === -1 ? 0.15 : -0.15;
+      zoom2d = Math.max(0.3, Math.min(4.0, zoom2d + step));
+      draw2DMolecule(anim2dEnabled ? t : _t2dFrozen);
+    } else {
+      camera.position.z = Math.max(3, Math.min(20, camera.position.z + direction * 1.1));
+    }
+  };
+  window.toggleLabels = function(){
+    labelsVisible = !labelsVisible;
+    document.getElementById('vc-labels').classList.toggle('active', labelsVisible);
+    refreshLabels();
+    if (viewMode === '2d') draw2DMolecule(anim2dEnabled ? t : _t2dFrozen);
+  };
+  window.toggleFullscreen = function(){
+    const el = document.getElementById('canvas-wrap');
+    if (!document.fullscreenElement) (el.requestFullscreen || (()=>{})).call(el);
+    else (document.exitFullscreen || (()=>{})).call(document);
+  };
+  window.toggle2DAnim = function(){
+    anim2dEnabled = !anim2dEnabled;
+    const btn = document.getElementById('vc-2d-play');
+    const icon = document.getElementById('vc-2d-play-icon');
+    if (btn) btn.classList.toggle('active', anim2dEnabled);
+    if (icon) icon.innerHTML = anim2dEnabled
+      ? '<rect x="4.5" y="3" width="2.5" height="10" fill="currentColor"/><rect x="9" y="3" width="2.5" height="10" fill="currentColor"/>'
+      : '<path d="M5 3l8 5-8 5V3z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" fill="currentColor"/>';
+    if (!anim2dEnabled) {
+      _t2dFrozen = t;
+      if (viewMode === '2d') draw2DMolecule(_t2dFrozen);
+    }
+  };
+  window.setViewerMode = function(mode){
+    if (mode !== '2d' && mode !== '3d') return;
+    viewMode = mode;
+    const is3d = mode === '3d';
+    canvas.style.display     = is3d ? 'block' : 'none';
+    viewer2d.style.display   = is3d ? 'none'  : 'block';
+    document.getElementById('mode-btn-3d').classList.toggle('active', is3d);
+    document.getElementById('mode-btn-2d').classList.toggle('active', !is3d);
+    document.getElementById('vc-rotate').style.display = is3d ? '' : 'none';
+    document.getElementById('av-view').textContent = is3d ? '3d' : '2d';
+    if (!is3d) {
+      setTimeout(() => { resize2d(); draw2DMolecule(anim2dEnabled ? t : _t2dFrozen); }, 20);
+    } else {
+      setTimeout(resize, 20);
+    }
+  };
+
+  // ── Keyboard ──
+  window.addEventListener('keydown', e => {
+    if (e.target.matches('input,textarea')) return;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const k = e.key.toLowerCase();
+    if (k === ' ') { e.preventDefault(); toggleAutoRotate(); }
+    else if (k === 'r') resetView();
+    else if (k === 'l') toggleLabels();
+    else if (k === 'f') toggleFullscreen();
+    else if (k === 't') toggleTheme();
+    else if (k === '+' || k === '=') zoomBy(-1);
+    else if (k === '-' || k === '_') zoomBy(1);
+    else if (k === '2') setViewerMode(viewMode === '2d' ? '3d' : '2d');
+    else if (k === 'p') toggle2DAnim();
+  });
+
+  window.addEventListener('atomurus:themechange', () => {
+    refreshLabels();
+    if (viewMode === '2d') draw2DMolecule(anim2dEnabled ? t : _t2dFrozen);
+  });
+
+  // ── Resize / Animate ──
+  function resize(){
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w/h;
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', () => { resize(); if (viewMode === '2d') { resize2d(); draw2DMolecule(anim2dEnabled ? t : _t2dFrozen); } });
+  resize(); resize2d();
+
+  let _docHidden = false;
+  document.addEventListener('visibilitychange', () => { _docHidden = document.hidden; });
+
+  let _last2dFrame = 0;
+  function animate(){
+    requestAnimationFrame(animate);
+    if (_docHidden) return;
+    if (!isDragging && (Math.abs(rotVelX) > 1e-4 || Math.abs(rotVelY) > 1e-4)) {
+      rotY += rotVelY; rotX += rotVelX;
+      rotVelX *= ROT_DAMPING; rotVelY *= ROT_DAMPING;
+    }
+    t += 0.016;
+    if (autoRotate && !isDragging && Math.abs(rotVelX) < 1e-4 && Math.abs(rotVelY) < 1e-4) {
+      rotY += 0.004;
+    }
+    currentGroup.rotation.y = rotY;
+    currentGroup.rotation.x = rotX;
+    renderer.render(scene, camera);
+
+    // 2D animation drive
+    if (anim2dEnabled && viewMode === '2d') {
+      const now = performance.now();
+      if (now - _last2dFrame >= 33) { _last2dFrame = now; draw2DMolecule(t); }
+    }
+  }
+
+  // Initial state (supports deep-link: ?mol=ethanol, ?mol=chfclbr, etc.)
+  let initialMol = 'water';
+  try {
+    const qMol = new URLSearchParams(location.search).get('mol');
+    if (qMol && molData[qMol]) initialMol = qMol;
+  } catch (_) {}
+  setMolecule(initialMol, true);
+  animate();
+
+  // Re-render molecule strings when user switches language (and retry until I18N is ready)
+  (function wireI18n(){
+    if (window.I18N && window.I18N.onChange) {
+      window.I18N.onChange(function () {
+        if (currentMolecule) window.setMolecule(currentMolecule, true);
+      });
+      // Re-apply now in case I18N loaded after our initial setMolecule
+      if (currentMolecule) window.setMolecule(currentMolecule, true);
+    } else {
+      setTimeout(wireI18n, 50);
+    }
+  })();
+})();
+</script>
+<script type="text/javascript">
+    aclib.runAutoTag({
+        zoneId: 'o42jwt5vja',
+    });
+</script>
+</body>
+</html>

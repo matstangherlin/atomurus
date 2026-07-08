@@ -1,0 +1,22 @@
+{
+  "name": "Hanzi Logic - Mandarim por Logica",
+  "short_name": "Hanzi Logic",
+  "description": "Aplicativo em portugues para aprender mandarim por Pinyin, tons, frases, Hanzi e radicais.",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#e33b32",
+  "background_color": "#f7f7f4",
+  "categories": ["education", "productivity"],
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
+<style>html.lang-pt-pending [data-i18n],html.lang-pt-pending [data-i18n-html],html.lang-pt-pending [data-i18n-attr],html.lang-pt-pending [data-page-field]{visibility:hidden!important}html[data-theme="dark"] #icon-theme-light,html[data-theme="light"] #icon-theme-dark{display:none!important}html[data-theme="dark"] #icon-theme-dark,html[data-theme="light"] #icon-theme-light{display:block!important}</style>
+<script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var KEY='atomurus-lang';var p=new URLSearchParams(location.search).get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem(KEY);if(l!=='pt'&&l!=='en'){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}try{localStorage.setItem(KEY,l);}catch(e){}if(l==='pt'){document.documentElement.lang='pt-BR';document.documentElement.classList.add('lang-pt-pending');setTimeout(function(){document.documentElement.classList.remove('lang-pt-pending');},120);}else{document.documentElement.lang='en-US';}}catch(e){}})();</script>
+<meta name="google-adsense-account" content="ca-pub-9495821870733084">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9495821870733084" crossorigin="anonymous" fetchpriority="low"></script>
+<script src="cookie-consent.js?v=202605281652" defer></script>
+<meta charset="UTF-8">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1E6A50" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E0D0C" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Atomurus">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="assets/atomurus-logo.png?v=202605281652">
+<link rel="apple-touch-icon" href="assets/atomurus-logo.png?v=202605281652">
+<title data-i18n="config.metaTitle">Configurações — Atomurus Laboratório de Química</title>
+<meta name="description" data-i18n-attr="content:config.metaDesc" content="Personalize sua experiência no Atomurus: alterne entre tema claro/escuro, idioma (Português / Inglês) e preferências de visualização.">
+<meta property="og:image" content="https://atomurus.com/assets/og-site.png?v=202606030">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://atomurus.com/assets/og-site.png?v=202606030">
+<link rel="canonical" href="https://atomurus.com/config?lang=pt-BR">
+<link rel="alternate" hreflang="en" href="https://atomurus.com/config?lang=en">
+<link rel="alternate" hreflang="pt-BR" href="https://atomurus.com/config?lang=pt-BR">
+<link rel="alternate" hreflang="x-default" href="https://atomurus.com/config">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": "https://atomurus.com/config#webpage",
+      "name": "Settings — Atomurus",
+      "description": "Customize your Atomurus experience: switch between light/dark theme, language (English / Portuguese) and display preferences.",
+      "url": "https://atomurus.com/config",
+      "inLanguage": ["en", "pt-BR"],
+      "isPartOf": { "@id": "https://atomurus.com/#website" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type":"ListItem","position":1,"name":"Atomurus","item":"https://atomurus.com/"},
+        {"@type":"ListItem","position":2,"name":"Settings","item":"https://atomurus.com/config"}
+      ]
+    }
+  ]
+}
+</script>
+<link rel="preload" href="/assets/fonts/inter-tight-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/jetbrains-mono-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/instrument-serif-400-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202606101200">
+<link rel="stylesheet" href="periodic-table.css?v=202605281652">
+<link rel="stylesheet" href="atomurus-lab-console.css?v=202605281652">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>
+<script src="lazy-ads.js?v=202605281652" defer></script>
+<script src="recaptcha.js?v=202605281652" defer></script>
+<script src="i18n.js?v=202605281652" defer></script>
+<script src="meta-i18n.js?v=202605281652" defer></script>
+<style>
+  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100vh; overflow: hidden; }
+  body { display: flex; }
+  .sidebar { width: 220px; flex-shrink: 0; display: flex; flex-direction: column; overflow: hidden; padding-bottom: 22px; }
+  .sidebar > .logo-wrap, .sidebar > .sidebar-foot { flex-shrink: 0; }
+  .sidebar-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; }
+  .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+  .sidebar-scroll::-webkit-scrollbar-thumb { background: var(--lc-rule); }
+  .main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; overflow: hidden; padding-bottom: 22px; }
+  .content { flex: 1 1 auto; overflow-y: auto; padding: 24px 28px 60px; max-width: 100%; }
+  .nav-expandable .nav-row { display: flex; align-items: center; gap: 10px; padding: 5px 14px 5px 12px; cursor: pointer; font-size: 12.5px; color: var(--text-2); user-select: none; border-left: 2px solid transparent; }
+  .nav-expandable .nav-row:hover { background: var(--lc-surface); color: var(--lc-ink); }
+  .nav-chevron { margin-left: auto; width: 11px; height: 11px; opacity: .45; transition: transform .2s; flex-shrink: 0; }
+  .nav-expandable.open .nav-chevron { transform: rotate(90deg); opacity: .75; }
+  .nav-children { display: none; margin: 2px 0 4px 26px; }
+  .nav-expandable.open .nav-children { display: block; }
+  .nav-children .nav-item { padding: 4px 8px; font-size: 12px; }
+  .settings-grid { max-width: 880px; }
+  /* Tweak settings cards to the lab-console aesthetic — square corners, monospace section titles */
+  .settings-section { border-radius: 4px; }
+  .settings-section-title { font-family: 'JetBrains Mono', monospace; letter-spacing: .14em; }
+  .toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--lc-ink); color: var(--lc-paper); padding: 10px 20px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .08em; opacity: 0; transition: all .25s; pointer-events: none; z-index: 999; }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  /* Mobile drawer-specific tweaks for this page (sidebar drawer pattern lives
+     in atomurus-lab-console.css and applies automatically). */
+  @media (max-width: 760px) {
+    body { height: 100dvh; overflow: hidden; }
+    .main { padding-bottom: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="mobile-overlay" id="mobile-overlay" onclick="toggleMobileSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+  <a class="logo-wrap" href="index.html" style="text-decoration:none;color:inherit;">
+    <div class="logo-mark"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.5" fill="currentColor"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/></svg></div>
+    <div><div class="logo-text">Atomurus</div><div class="logo-tag">v1.11</div></div>
+  </a>
+  <div class="sidebar-scroll">
+    <div class="nav-section" style="margin-bottom:6px;">
+      <a class="nav-item" href="index.html" style="opacity:.7;font-size:12px;"><svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M2 8L8 2l6 6M3 7v7h10V7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><span data-i18n="ptable.navHome">Home</span></a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label"><span class="nl-no">00</span><span data-i18n="ptable.navLabelLab">Laboratory</span></div>
+      <a class="nav-item" href="periodic-table.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" fill="currentColor" opacity=".9"/><rect x="9" y="1" width="6" height="6" rx="1.5" fill="currentColor" opacity=".5"/><rect x="1" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity=".5"/><rect x="9" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity=".3"/></svg><span data-i18n="common.nav.periodic">Periodic Table</span></a>
+      <div class="nav-expandable">
+        <div class="nav-row" onclick="this.parentNode.classList.toggle('open')">
+          <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="1.5" fill="currentColor"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/></svg>
+          <span data-i18n="common.nav.visualizador">Visualizador</span>
+          <svg class="nav-chevron" viewBox="0 0 11 11" fill="none"><path d="M3.5 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="nav-children">
+          <a class="nav-item" href="viewer/atomic-models.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="1.5" fill="currentColor"/></svg><span data-i18n="common.nav.atomicModels">Modelos Atômicos</span></a>
+          <a class="nav-item" href="viewer/molecules.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="4" cy="4" r="2" fill="currentColor"/></svg><span data-i18n="common.nav.molecules">Moléculas</span></a>
+          <a class="nav-item" href="viewer/allotropes.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none"><polygon points="8,2 14,6 12,13 4,13 2,6" stroke="currentColor" stroke-width="1.2" fill="none"/></svg><span data-i18n="common.nav.allotropes">Alótropos</span></a>
+          <a class="nav-item" href="viewer/isomerism/constitutional/function.pt.html">
+            <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
+              <circle cx="4" cy="8" r="2" fill="currentColor" opacity=".85"/>
+              <circle cx="12" cy="8" r="2" fill="currentColor" opacity=".85"/>
+              <line x1="4" y1="8" x2="4" y2="3.5" stroke="currentColor" stroke-width="1.1"/>
+              <line x1="12" y1="8" x2="12" y2="3.5" stroke="currentColor" stroke-width="1.1"/>
+              <line x1="4" y1="8" x2="4" y2="12.5" stroke="currentColor" stroke-width="1.1"/>
+              <line x1="12" y1="8" x2="12" y2="12.5" stroke="currentColor" stroke-width="1.1"/>
+              <line x1="8" y1="1" x2="8" y2="15" stroke="currentColor" stroke-width="1" stroke-dasharray="2,1.5" opacity=".5"/>
+            </svg>
+            <span data-i18n="common.nav.isomerism">Isomeria</span>
+          </a>
+        </div>
+      </div>
+      <a class="nav-item" href="calculators.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="2" y="1" width="12" height="14" rx="2" stroke="currentColor" stroke-width="1.3" fill="none"/></svg><span data-i18n="common.nav.calc">Calculators</span></a>
+    </div>
+  </div>
+  <div class="sidebar-foot">
+    <a class="nav-item active" href="config.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.2" stroke="currentColor" stroke-width="1.3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M2.93 2.93l1.06 1.06M12.01 12.01l1.06 1.06M2.93 13.07l1.06-1.06M12.01 3.99l1.06-1.06" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg><span data-i18n="common.nav.settings">Settings</span></a>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <button class="mobile-menu-btn" onclick="toggleMobileSidebar()" aria-label="Open menu">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><line x1="2" y1="4.5" x2="14" y2="4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="2" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="2" y1="11.5" x2="14" y2="11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+    </button>
+    <div class="breadcrumb">
+      <a href="index.html" style="color:inherit;text-decoration:none" data-i18n="ptable.bcWorkspace">Workspace</a>
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="opacity:.35"><path d="M3.5 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      <span data-i18n="config.title">Settings</span>
+    </div>
+    <div style="flex:1"></div>
+    <button class="theme-btn" data-i18n-toggle aria-label="Switch language" title="Switch language" style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;width:auto;min-width:32px;padding:0 8px;">
+      <span data-i18n-toggle-label>PT</span>
+    </button>
+    <button class="theme-btn" onclick="setTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark')" title="Toggle theme" aria-label="Toggle theme" style="margin-left:4px;">
+      <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 1v1M7.5 13v1M1 7.5H0M15 7.5h-1M2.93 2.93l.7.7M11.37 11.37l.7.7M2.93 12.07l.7-.7M11.37 3.63l.7-.7M7.5 5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+
+  <div class="data-strip">
+    <span class="ds-k">scope</span><span class="ds-v">CONFIG.SETTINGS</span>
+    <span class="ds-sep"></span>
+    <span class="ds-k">section</span><span class="ds-v" data-i18n="config.kicker">System</span>
+    <span class="ds-sep"></span>
+    <span class="ds-k">storage</span><span class="ds-v">localStorage · device</span>
+    <span class="ds-spacer"></span>
+    <span class="ds-k">sync</span><span class="ds-v ds-hi">live</span>
+  </div>
+
+  <div class="content">
+
+    <div class="ph-kicker" data-i18n="config.kicker">System</div>
+    <h1 class="ph-title" data-i18n="config.title">Settings</h1>
+    <p class="ph-desc" data-i18n="config.desc">Customize your Atomurus experience — theme, display and study preferences.</p>
+
+    <div class="settings-grid">
+
+      <!-- Appearance -->
+      <div class="settings-section">
+        <div class="settings-section-title">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.3"/><path d="M7 3v4l2.5 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          <span data-i18n="config.appearance">Appearance</span>
+        </div>
+        <div class="settings-row">
+          <div class="settings-row-info">
+            <div class="settings-row-label" data-i18n="config.theme">Theme</div>
+            <div class="settings-row-desc" data-i18n="config.themeDesc">Switch between light and dark mode.</div>
+          </div>
+          <div class="settings-segmented" id="theme-seg">
+            <button class="seg-btn" onclick="setTheme('light')" data-val="light" data-i18n="config.themeLight">☀ Light</button>
+            <button class="seg-btn" onclick="setTheme('dark')" data-val="dark" data-i18n="config.themeDark">☽ Dark</button>
+          </div>
+        </div>
+        <div class="settings-row">
+          <div class="settings-row-info">
+            <div class="settings-row-label" data-i18n="config.elsize">Element size</div>
+            <div class="settings-row-desc" data-i18n="config.elsizeDesc">Adjust the card size in the periodic table.</div>
+          </div>
+          <div class="settings-segmented" id="size-seg">
+            <button class="seg-btn" onclick="setElSize('sm')" data-val="sm" data-i18n="config.compact">Compact</button>
+            <button class="seg-btn" onclick="setElSize('md')" data-val="md" data-i18n="config.defaultLbl">Default</button>
+            <button class="seg-btn" onclick="setElSize('lg')" data-val="lg" data-i18n="config.large">Large</button>
+          </div>
+        </div>
+        <div class="settings-row">
+          <div class="settings-row-info">
+            <div class="settings-row-label" data-i18n="config.anim">Animations</div>
+            <div class="settings-row-desc" data-i18n="config.animDesc">Enable or disable hover animations and transitions.</div>
+          </div>
+          <button class="settings-toggle active" onclick="toggleSetting(this,'atomurus-anim')" id="toggle-anim"><div class="toggle-knob"></div></button>
+        </div>
+        <div class="settings-row">
+          <div class="settings-row-info">
+            <div class="settings-row-label" data-i18n="config.fontsize">Font size</div>
+            <div class="settings-row-desc" data-i18n="config.fontsizeDesc">Adjust the font size across the entire site.</div>
+          </div>
+          <div class="settings-segmented" id="font-seg">
+            <button class="seg-btn" onclick="setFontSize('sm')" data-val="sm">A⁻</button>
+            <button class="seg-btn" onclick="setFontSize('md')" data-val="md">A</button>
+            <button class="seg-btn" onclick="setFontSize('lg')" data-val="lg">A⁺</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Periodic Table -->
+      <div class="settings-section">
+        <div class="settings-section-title">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" fill="currentColor" opacity=".8"/><rect x="8" y="1" width="5" height="5" rx="1" fill="currentColor" opacity=".5"/><rect x="1" y="8" width="5" height="5" rx="1" fill="currentColor" opacity=".5"/><rect x="8" y="8" width="5" height="5" rx="1" fill="currentColor" opacity=".3"/></svg>
+          <span data-i18n="config.ptable">Periodic Table</span>
+        </div>
+        <div class="settings-row">
+          <div class="settings-row-info">
+            <div class="settings-row-label" data-i18n="config.viewmode">View mode</div>
+            <div class="settings-row-desc" data-i18n="config.viewmodeDesc">By color category, or heatmap by physical property.</div>
+          </div>
+          <select class="settings-select" onchange="savePref('atomurus-heatmap',this.value)" id="heatmap-select">
+            <option value="category" data-i18n="config.viewCategory">By Category</option>
+            <option value="electronegativity" data-i18n="config.viewEneg">Electronegativity</option>
+            <option value="atomic_radius" data-i18n="config.viewRadius">Atomic Radius</option>
+            <option value="ionization" data-i18n="config.viewIonization">Ionization Energy</option>
+            <option value="state" data-i18n="config.viewState">Physical State</option>
+          </select>
+        </div>
+        <div class="settings-row">
+          <div class="settings-row-info">
+            <div class="settings-row-label" data-i18n="config.fblock">Show lanthanides/actinides</div>
+            <div class="settings-row-desc" data-i18n="config.fblockDesc">Show or hide the separate f-block rows below the table.</div>
+          </div>
+          <button class="settings-toggle active" onclick="toggleSetting(this,'atomurus-fblock')" id="toggle-fblock"><div class="toggle-knob"></div></button>
+        </div>
+        <div class="settings-row">
+          <div class="settings-row-info">
+            <div class="settings-row-label" data-i18n="config.mass">Show atomic mass</div>
+            <div class="settings-row-desc" data-i18n="config.massDesc">Display atomic mass on each table card.</div>
+          </div>
+          <button class="settings-toggle" onclick="toggleSetting(this,'atomurus-mass')" id="toggle-mass"><div class="toggle-knob"></div></button>
+        </div>
+      </div>
+
+      <!-- Language -->
+      <div class="settings-section">
+        <div class="settings-section-title">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M1.5 5h11M1.5 9h11M7 1.5c-2 2-2 9 0 11M7 1.5c2 2 2 9 0 11" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+          <span data-i18n="config.langSection">Language</span>
+        </div>
+        <div class="settings-row">
+          <div class="settings-row-info">
+            <div class="settings-row-label" data-i18n="config.langLabel">Interface language</div>
+            <div class="settings-row-desc" data-i18n="config.langDesc">Change the language of the entire interface.</div>
+          </div>
+          <select class="settings-select" onchange="setLanguage(this.value)" id="lang-select">
+            <option value="en" data-i18n="config.langOptEn">🇺🇸 English</option>
+            <option value="pt" data-i18n="config.langOptPt">🇧🇷 Portuguese</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Pages -->
+      <div class="settings-section">
+        <div class="settings-section-title">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 1h6l3 3v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" fill="none"/><path d="M9 1v3h3" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" fill="none"/></svg>
+          <span data-i18n="config.pages">Pages</span>
+        </div>
+        <a href="about.html" class="settings-link-row">
+          <div class="settings-row-info">
+            <div class="settings-row-label" data-i18n="config.pageAbout">About</div>
+            <div class="settings-row-desc" data-i18n="config.pageAboutDesc">Mission, what Atomurus offers, why it's open, technologies used.</div>
+          </div>
+          <svg class="link-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="privacy.html" class="settings-link-row">
+          <div class="settings-row-info">
+            <div class="settings-row-label" data-i18n="config.pagePrivacy">Privacy Policy</div>
+            <div class="settings-row-desc" data-i18n="config.pagePrivacyDesc">No accounts, localStorage details, analytics, ads, cookies, GDPR/LGPD.</div>
+          </div>
+          <svg class="link-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="terms.html" class="settings-link-row">
+          <div class="settings-row-info">
+            <div class="settings-row-label" data-i18n="config.pageTerms">Terms of Use</div>
+            <div class="settings-row-desc" data-i18n="config.pageTermsDesc">Educational purpose, no warranty, acceptable use, IP, third-party libs.</div>
+          </div>
+          <svg class="link-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="contact.html" class="settings-link-row">
+          <div class="settings-row-info">
+            <div class="settings-row-label" data-i18n="config.pageContact">Contact</div>
+            <div class="settings-row-desc" data-i18n="config.pageContactDesc">Bug reports, scientific corrections, partnerships and feedback.</div>
+          </div>
+          <svg class="link-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+
+      <!-- Privacy & Data -->
+      <div class="settings-section">
+        <div class="settings-section-title">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1l5 2v4c0 3.3-2.2 5.6-5 6-2.8-.4-5-2.7-5-6V3l5-2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" fill="none"/></svg>
+          <span data-i18n="config.privacySection">Privacy &amp; Data</span>
+        </div>
+        <div class="settings-row">
+          <div class="settings-row-info">
+            <div class="settings-row-label" data-i18n="config.clearcache">Clear site cache</div>
+            <div class="settings-row-desc" data-i18n="config.clearcacheDesc">Removes theme, language, preferences, search history and cookie consent. Reloads the page.</div>
+          </div>
+          <button class="seg-btn" style="border:1px solid var(--lc-rule);background:var(--lc-bg);padding:7px 14px;border-radius:4px;font-family:'JetBrains Mono',monospace;letter-spacing:.06em" onclick="clearSiteCache()" data-i18n="config.clearcacheBtn">Clear</button>
+        </div>
+      </div>
+
+      <!-- About -->
+      <div class="settings-section">
+        <div class="settings-section-title">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.3"/><path d="M7 6v4M7 4.5v.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          <span data-i18n="config.about">About Atomurus</span>
+        </div>
+        <div class="settings-about">
+          <div class="about-logo">
+            <div class="logo-mark" style="width:40px;height:40px;border-radius:4px;background:var(--lc-ink);display:flex;align-items:center;justify-content:center">
+              <svg width="22" height="22" viewBox="0 0 16 16" fill="none">
+                <circle cx="8" cy="8" r="2.5" fill="var(--lc-green-soft)"/>
+                <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="var(--lc-green-soft)" stroke-width="1.1" fill="none"/>
+                <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="var(--lc-green-soft)" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/>
+                <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="var(--lc-green-soft)" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/>
+              </svg>
+            </div>
+            <div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--lc-ink)">Atomurus</div>
+              <div style="font-size:11px;color:var(--accent);font-weight:600;letter-spacing:.5px">atomurus.com</div>
+            </div>
+          </div>
+          <p class="about-desc" data-i18n="config.aboutText">Interactive chemistry app with dynamic periodic table, atomic models, virtual lab and calculators. Built for high school students and science enthusiasts.</p>
+          <div class="about-stats">
+            <div class="about-stat"><span class="about-stat-val">118</span><span class="about-stat-lbl" data-i18n="config.statEl">IUPAC Elements</span></div>
+            <div class="about-stat"><span class="about-stat-val">2026</span><span class="about-stat-lbl" data-i18n="config.statYear">Updated data</span></div>
+            <div class="about-stat"><span class="about-stat-val">10+</span><span class="about-stat-lbl" data-i18n="config.statMod">Planned modules</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<div class="lc-statusbar">
+  <span><span class="lc-st-dot"></span> ready</span>
+  <span class="lc-st-sep">·</span>
+  <span data-i18n="config.title">settings</span>
+  <span class="lc-st-spacer"></span>
+  <a href="periodic-table.html">→ periodic-table</a>
+  <span class="lc-st-sep">·</span>
+  <a href="about.html">→ about</a>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function toggleMobileSidebar(){
+  var s=document.getElementById('sidebar'),o=document.getElementById('mobile-overlay');
+  if(!s||!o)return;
+  var open=s.classList.contains('mobile-open');
+  s.classList.toggle('mobile-open',!open);
+  o.classList.toggle('show',!open);
+}
+function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},1800)}
+function t(k){ return (window.I18N && I18N.t('config.' + k)) || k; }
+function setTheme(v){
+  document.documentElement.setAttribute('data-theme',v);
+  localStorage.setItem('atomurus-theme',v);
+  document.querySelectorAll('#theme-seg .seg-btn').forEach(function(b){b.classList.toggle('active',b.dataset.val===v)});
+  showToast(v==='dark'?t('themeDarkMsg'):t('themeLightMsg'));
+}
+function setElSize(v){
+  localStorage.setItem('atomurus-elsize',v);
+  document.querySelectorAll('#size-seg .seg-btn').forEach(function(b){b.classList.toggle('active',b.dataset.val===v)});
+  showToast(t('saved'));
+}
+function setFontSize(v){
+  localStorage.setItem('atomurus-fontsize',v);
+  var sizes={sm:'14px',md:'16px',lg:'19px'};
+  document.documentElement.style.fontSize=sizes[v]||'16px';
+  document.querySelectorAll('#font-seg .seg-btn').forEach(function(b){b.classList.toggle('active',b.dataset.val===v)});
+  showToast(t('saved'));
+}
+function toggleSetting(btn,key){
+  btn.classList.toggle('active');
+  localStorage.setItem(key,btn.classList.contains('active')?'1':'0');
+  showToast(t('saved'));
+}
+function savePref(key,val){ localStorage.setItem(key,val); showToast(t('saved')); }
+function clearSiteCache(){
+  if(!confirm(t('clearcacheConfirm'))) return;
+  try { localStorage.clear(); } catch(e){}
+  try { sessionStorage.clear(); } catch(e){}
+  try { if (window.indexedDB && indexedDB.databases) indexedDB.databases().then(function(dbs){ dbs.forEach(function(db){ try{ indexedDB.deleteDatabase(db.name); }catch(e){} }); }); } catch(e){}
+  try { if (window.caches && caches.keys) caches.keys().then(function(keys){ keys.forEach(function(k){ caches.delete(k); }); }); } catch(e){}
+  try { if (navigator.serviceWorker && navigator.serviceWorker.getRegistrations) navigator.serviceWorker.getRegistrations().then(function(regs){ regs.forEach(function(r){ r.unregister(); }); }); } catch(e){}
+  showToast(t('clearcacheDone'));
+  setTimeout(function(){ location.reload(); }, 900);
+}
+function setLanguage(lang){
+  if (window.I18N) I18N.setLang(lang);
+  showToast(t(lang==='en' ? 'langSetEn' : 'langSetPt'));
+}
+
+(function(){
+  var theme=localStorage.getItem('atomurus-theme')||'light';
+  document.documentElement.setAttribute('data-theme',theme);
+  document.querySelectorAll('#theme-seg .seg-btn').forEach(function(b){b.classList.toggle('active',b.dataset.val===theme)});
+  var sz=localStorage.getItem('atomurus-elsize')||'md';
+  document.querySelectorAll('#size-seg .seg-btn').forEach(function(b){b.classList.toggle('active',b.dataset.val===sz)});
+  var fs=localStorage.getItem('atomurus-fontsize')||'md';
+  var sizes={sm:'14px',md:'16px',lg:'19px'};
+  document.documentElement.style.fontSize=sizes[fs]||'16px';
+  document.querySelectorAll('#font-seg .seg-btn').forEach(function(b){b.classList.toggle('active',b.dataset.val===fs)});
+  var anim=localStorage.getItem('atomurus-anim'); if(anim==='0')document.getElementById('toggle-anim').classList.remove('active');
+  var fblock=localStorage.getItem('atomurus-fblock'); if(fblock==='0')document.getElementById('toggle-fblock').classList.remove('active');
+  var mass=localStorage.getItem('atomurus-mass'); if(mass==='1')document.getElementById('toggle-mass').classList.add('active');
+  var hm=localStorage.getItem('atomurus-heatmap'); if(hm)document.getElementById('heatmap-select').value=hm;
+  var langSel=document.getElementById('lang-select');
+  function wireLangSync(){ if (!window.I18N || !langSel) return; langSel.value = I18N.lang; I18N.onChange(function(lang){ langSel.value = lang; }); }
+  if (window.I18N) wireLangSync(); else document.addEventListener('DOMContentLoaded', wireLangSync);
+})();
+</script>
+<script type="text/javascript">
+    aclib.runAutoTag({
+        zoneId: 'o42jwt5vja',
+    });
+</script>
+</body>
+</html>

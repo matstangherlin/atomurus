@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
+<meta name="google-adsense-account" content="ca-pub-9495821870733084">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9495821870733084" crossorigin="anonymous" fetchpriority="low"></script>
+<style>html.lang-pt-pending [data-i18n],html.lang-pt-pending [data-i18n-html],html.lang-pt-pending [data-i18n-attr],html.lang-pt-pending [data-page-field]{visibility:hidden!important}html[data-theme="dark"] #icon-theme-light,html[data-theme="light"] #icon-theme-dark{display:none!important}html[data-theme="dark"] #icon-theme-dark,html[data-theme="light"] #icon-theme-light{display:block!important}</style>
+<script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var KEY='atomurus-lang';var p=new URLSearchParams(location.search).get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem(KEY);if(l!=='pt'&&l!=='en'){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}try{localStorage.setItem(KEY,l);}catch(e){}if(l==='pt'){document.documentElement.lang='pt-BR';document.documentElement.classList.add('lang-pt-pending');setTimeout(function(){document.documentElement.classList.remove('lang-pt-pending');},120);}else{document.documentElement.lang='en-US';}}catch(e){}})();</script>
+<script src="../cookie-consent.js?v=202605281652" defer></script>
+<meta charset="UTF-8">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1E6A50" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E0D0C" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Atomurus">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="../assets/atomurus-logo.png?v=202605281652">
+<link rel="apple-touch-icon" href="../assets/atomurus-logo.png?v=202605281652">
+<title data-i18n="ptable.subMetaHeatmap">Mapa de Calor da Tabela Periódica: 118 Elementos por Propriedade | Atomurus</title>
+<meta name="description" data-i18n-attr="content:ptable.subDescHeatmap" content="Mapa de calor interativo da tabela periódica: visualize eletronegatividade, raio atômico, energia de ionização e outras propriedades dos 118 elementos.">
+<meta property="og:title" content="Heatmap — Atomurus Periodic Table" data-i18n-attr="content:ptable.subMetaHeatmap">
+<meta property="og:description" content="Heatmap of the periodic table. Choose a physical property below to visualize the distribution across the 118 elements." data-i18n-attr="content:ptable.subDescHeatmap">
+<meta property="og:image" content="https://atomurus.com/assets/og-periodic-table-app.png?v=202606030">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://atomurus.com/periodic-table/heatmap?lang=pt-BR">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Atomurus">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Heatmap — Atomurus Periodic Table" data-i18n-attr="content:ptable.subMetaHeatmap">
+<meta name="twitter:description" content="Heatmap of the periodic table. Choose a physical property below to visualize the distribution across the 118 elements." data-i18n-attr="content:ptable.subDescHeatmap">
+<meta name="twitter:image" content="https://atomurus.com/assets/og-periodic-table-app.png?v=202606030">
+<link rel="canonical" href="https://atomurus.com/periodic-table/heatmap?lang=pt-BR">
+<link rel="alternate" hreflang="en" href="https://atomurus.com/periodic-table/heatmap?lang=en">
+<link rel="alternate" hreflang="pt-BR" href="https://atomurus.com/periodic-table/heatmap?lang=pt-BR">
+<link rel="alternate" hreflang="x-default" href="https://atomurus.com/periodic-table/heatmap">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": ["WebPage", "LearningResource"],
+      "@id": "https://atomurus.com/periodic-table/heatmap#webpage",
+      "name": "Periodic Table Heatmap — Atomurus",
+      "description": "Interactive heatmap of the periodic table: visualize electronegativity, atomic radius, ionization energy and other properties across the 118 elements.",
+      "url": "https://atomurus.com/periodic-table/heatmap",
+      "inLanguage": ["en", "pt-BR"],
+      "learningResourceType": "Interactive Resource",
+      "educationalLevel": ["secondary education", "higher education"],
+      "isPartOf": { "@id": "https://atomurus.com/#website" },
+      "publisher": { "@id": "https://atomurus.com/#org" },
+      "isAccessibleForFree": true,
+      "about": { "@id": "https://atomurus.com/periodic-table#dataset" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type":"ListItem","position":1,"name":"Atomurus","item":"https://atomurus.com/"},
+        {"@type":"ListItem","position":2,"name":"Periodic Table","item":"https://atomurus.com/periodic-table"},
+        {"@type":"ListItem","position":3,"name":"Heatmap","item":"https://atomurus.com/periodic-table/heatmap"}
+      ]
+    }
+  ]
+}
+</script>
+<link rel="preload" href="/assets/fonts/inter-tight-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/jetbrains-mono-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/instrument-serif-400-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/dm-serif-display-400-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/dm-sans-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202606101200">
+
+<link rel="stylesheet" href="../periodic-table.css?v=202605281652">
+<link rel="stylesheet" href="../atomurus-lab-console.css?v=202605281652">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>
+<script src="../lazy-ads.js?v=202605281652" defer></script>
+<!-- reCAPTCHA v3 -->
+<script src="../recaptcha.js?v=202605281652" defer></script>
+<!-- i18n (EN default, PT fallback) — precedes periodic-table.js so I18N is defined before its initLang runs -->
+<script src="../i18n.js?v=202605281652" defer></script>
+<script src="../share-button.js?v=202605281652" defer></script>
+<script src="../page-share-init.js?v=202605281652" defer></script>
+<script>
+  (function() {
+    var fs = localStorage.getItem('atomurus-fontsize') || 'md';
+    var fsSizes = { sm: '14px', md: '16px', lg: '19px' };
+    document.documentElement.style.fontSize = fsSizes[fs] || '16px';
+    var sz = localStorage.getItem('atomurus-elsize') || 'md';
+    var szValues = {
+      sm: { cell: '50px', sym: '16px' },
+      md: { cell: '62px', sym: '22px' },
+      lg: { cell: '76px', sym: '28px' }
+    };
+    document.documentElement.style.setProperty('--el-cell', szValues[sz].cell);
+    document.documentElement.style.setProperty('--el-sym-size', szValues[sz].sym);
+  })();
+</script>
+</head>
+<body data-pt-tab="heatmap">
+
+<!-- ════════════ SIDEBAR ════════════ -->
+<aside class="sidebar">
+
+  <a class="logo-wrap" href="../index.html" title="Atomurus home" style="text-decoration:none;color:inherit;">
+    <div class="logo-mark">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="2.5" fill="currentColor"/>
+        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/>
+        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/>
+        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/>
+      </svg>
+    </div>
+    <div>
+      <div class="logo-text">Atomurus</div>
+      <div class="logo-tag">v1.11</div>
+    </div>
+  </a>
+
+  <!-- ── Scrollable middle: only this part of the sidebar scrolls ── -->
+  <div class="sidebar-scroll">
+
+  <!-- Home link -->
+  <div class="nav-section" style="margin-bottom:6px;">
+    <a class="nav-item nav-home" href="../index.html" style="opacity:.7;font-size:12px;">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
+        <path d="M2 8L8 2l6 6M3 7v7h10V7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <span data-i18n="ptable.navHome">Home</span>
+    </a>
+  </div>
+
+  <!-- Lab section -->
+  <div class="nav-section">
+    <div class="nav-label"><span class="nl-no">00</span><span data-i18n="ptable.navLabelLab">Laboratory</span></div>
+
+    <a class="nav-item active" href="#" onclick="return showPage('periodic', this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
+        <rect x="1" y="1" width="6" height="6" rx="1.5" fill="currentColor" opacity=".9"/>
+        <rect x="9" y="1" width="6" height="6" rx="1.5" fill="currentColor" opacity=".5"/>
+        <rect x="1" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity=".5"/>
+        <rect x="9" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity=".3"/>
+      </svg>
+      <span data-i18n="common.nav.periodic">Periodic Table</span>
+    </a>
+
+
+    <div class="nav-expandable" data-expand="visualizador">
+      <div class="nav-row" onclick="toggleNavGroup('visualizador')" role="button" tabindex="0" aria-expanded="false">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
+          <circle cx="8" cy="8" r="1.5" fill="currentColor"/>
+          <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/>
+          <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/>
+          <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/>
+        </svg>
+        <span data-i18n="common.nav.visualizador">Visualizador</span>
+        <svg class="nav-chevron" viewBox="0 0 11 11" fill="none"><path d="M3.5 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="nav-children">
+        <a class="nav-item" href="../viewer/atomic-models.html">
+          <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="1.5" fill="currentColor"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/></svg>
+          <span data-i18n="common.nav.atomicModels">Modelos Atômicos</span>
+        </a>
+        <a class="nav-item" href="../viewer/molecules.html">
+          <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="4" cy="4" r="2" fill="currentColor"/><circle cx="12" cy="6" r="2" fill="currentColor" opacity=".7"/><circle cx="8" cy="12" r="2" fill="currentColor" opacity=".5"/><line x1="4" y1="4" x2="12" y2="6" stroke="currentColor" stroke-width="1"/><line x1="12" y1="6" x2="8" y2="12" stroke="currentColor" stroke-width="1"/><line x1="4" y1="4" x2="8" y2="12" stroke="currentColor" stroke-width="1"/></svg>
+          <span data-i18n="common.nav.molecules">Moléculas</span>
+        </a>
+        <a class="nav-item" href="../viewer/allotropes.html">
+          <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><polygon points="8,2 14,6 12,13 4,13 2,6" stroke="currentColor" stroke-width="1.2" fill="none"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/></svg>
+          <span data-i18n="common.nav.allotropes">Alótropos</span>
+        </a>
+        <a class="nav-item" href="../viewer/isomerism/constitutional/function.html">
+          <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="4" cy="8" r="2" fill="currentColor" opacity=".85"/><circle cx="12" cy="8" r="2" fill="currentColor" opacity=".85"/><line x1="4" y1="8" x2="4" y2="3.5" stroke="currentColor" stroke-width="1.1"/><line x1="12" y1="8" x2="12" y2="3.5" stroke="currentColor" stroke-width="1.1"/><line x1="4" y1="8" x2="4" y2="12.5" stroke="currentColor" stroke-width="1.1"/><line x1="12" y1="8" x2="12" y2="12.5" stroke="currentColor" stroke-width="1.1"/><line x1="8" y1="1" x2="8" y2="15" stroke="currentColor" stroke-width="1" stroke-dasharray="2,1.5" opacity=".5"/></svg>
+          <span data-i18n="common.nav.isomerism">Isomerism</span>
+        </a>
+      </div>
+    </div>
+
+    <a class="nav-item" href="../calculators.html">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
+        <rect x="2" y="1" width="12" height="14" rx="2" stroke="currentColor" stroke-width="1.3" fill="none"/>
+        <line x1="5" y1="5" x2="11" y2="5" stroke="currentColor" stroke-width="1.1"/>
+        <line x1="5" y1="8" x2="11" y2="8" stroke="currentColor" stroke-width="1"/>
+        <line x1="5" y1="11" x2="9" y2="11" stroke="currentColor" stroke-width="1"/>
+      </svg>
+      <span data-i18n="common.nav.calc">Calculators</span>
+    </a>
+    <a class="nav-item" href="../explore.html">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
+        <rect x="1" y="1" width="6" height="6" rx="1.3" stroke="currentColor" stroke-width="1.1" fill="none"/>
+        <rect x="9" y="1" width="6" height="6" rx="1.3" stroke="currentColor" stroke-width="1.1" fill="none"/>
+        <rect x="1" y="9" width="6" height="6" rx="1.3" stroke="currentColor" stroke-width="1.1" fill="none"/>
+        <circle cx="12" cy="12" r="2.6" stroke="currentColor" stroke-width="1.3" fill="none"/>
+        <line x1="14" y1="14" x2="15.5" y2="15.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+      </svg>
+      <span data-i18n="common.nav.explore">Explore</span>
+    </a>
+  </div>
+
+
+  </div><!-- /.sidebar-scroll -->
+
+  <!-- Pinned settings (pinned to the footer) -->
+  <div class="sidebar-foot">
+    <a class="nav-item" href="../config.html">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="2.2" stroke="currentColor" stroke-width="1.3"/>
+        <path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M2.93 2.93l1.06 1.06M12.01 12.01l1.06 1.06M2.93 13.07l1.06-1.06M12.01 3.99l1.06-1.06" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+      <span data-i18n="common.nav.settings">Settings</span>
+    </a>
+  </div>
+
+</aside>
+
+<!-- Mobile sidebar overlay -->
+<div class="mobile-overlay" id="mobile-overlay" onclick="toggleMobileSidebar()"></div>
+
+<!-- ════════════ MAIN ════════════ -->
+<main class="main">
+
+  <!-- Mobile scroll hint for periodic table -->
+  <div class="mobile-scroll-hint" id="mobile-scroll-hint" style="display:none;margin:8px 16px 0;">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span data-i18n="ptable.mobileScrollHint">Swipe to see the whole table</span>
+  </div>
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <!-- Mobile hamburger -->
+    <button class="mobile-menu-btn" onclick="toggleMobileSidebar()"
+            data-i18n-attr="aria-label:ptable.mobileMenuLabel"
+            aria-label="Open menu">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <line x1="2" y1="4.5" x2="14" y2="4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        <line x1="2" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        <line x1="2" y1="11.5" x2="14" y2="11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <div class="breadcrumb">
+      <span data-i18n="ptable.bcWorkspace">Workspace</span>
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="opacity:.35">
+        <path d="M3.5 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+      <span id="bc-current" data-i18n="ptable.bcCurrent">Periodic Table</span>
+    </div>
+
+    <div class="search-box">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+        <circle cx="5.5" cy="5.5" r="4" stroke="var(--text-3)" stroke-width="1.4"/>
+        <line x1="8.7" y1="8.7" x2="11.5" y2="11.5" stroke="var(--text-3)" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+      <input id="search-input" type="text" placeholder="Search element (name or Z)…"
+             data-i18n-attr="placeholder:ptable.searchPlaceholder"
+             oninput="doSearch(this.value)" autocomplete="off">
+    </div>
+
+    <!-- Language toggle -->
+    <button class="theme-btn" data-i18n-toggle
+            data-i18n-attr="aria-label:common.langToggle; title:common.langToggle"
+            aria-label="Switch language" title="Switch language"
+            style="margin-left:8px;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;width:auto;min-width:32px;padding:0 8px;">
+      <span data-i18n-toggle-label>PT</span>
+    </button>
+
+    <!-- Theme toggle — top right -->
+    <button class="theme-btn" id="theme-btn-topbar" onclick="toggleTheme()"
+            data-i18n-attr="title:common.themeToggle; aria-label:common.themeToggle"
+            title="Toggle theme" aria-label="Toggle theme" style="margin-left:4px;">
+      <svg id="theme-icon" width="15" height="15" viewBox="0 0 15 15" fill="none">
+        <path d="M7.5 1v1M7.5 13v1M1 7.5H0M15 7.5h-1M2.93 2.93l.7.7M11.37 11.37l.7.7M2.93 12.07l.7-.7M11.37 3.63l.7-.7M7.5 5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+    </button>
+
+  </div><!-- end topbar -->
+
+  <!-- data strip -->
+  <div class="data-strip" id="data-strip">
+    <span class="ds-k" data-i18n="ptable.dsScope">scope</span><span class="ds-v" id="ds-scope">PERIODIC.TBL</span>
+    <span class="ds-sep"></span>
+    <span class="ds-k" data-i18n="ptable.dsElements">elements</span><span class="ds-v">118 / 118</span>
+    <span class="ds-sep"></span>
+    <span class="ds-k" data-i18n="ptable.dsGrp">grp</span><span class="ds-v">1–18</span>
+    <span class="ds-sep"></span>
+    <span class="ds-k" data-i18n="ptable.dsPrd">prd</span><span class="ds-v">1–7</span>
+    <span class="ds-sep"></span>
+    <span class="ds-k" data-i18n="ptable.dsColormap">colormap</span><span class="ds-v" id="ds-colormap" data-i18n="ptable.dsColormapVal">category</span>
+    <span class="ds-spacer"></span>
+    <span class="ds-k" data-i18n="ptable.dsSelected">selected</span><span class="ds-v ds-hi" id="ds-selected">—</span>
+  </div>
+
+  <!-- ── PERIODIC TABLE PAGE ── -->
+  <div id="pg-periodic">
+    <div class="content" id="ct-periodic">
+
+      <!-- Page header -->
+      <div style="margin-bottom:4px;">
+        <div class="ph-kicker" data-i18n="ptable.subKickerHeatmap">Visualization</div>
+        <h1 class="ph-title" data-i18n="ptable.subTitleHeatmap">Periodic Heatmap</h1>
+        <p class="ph-desc" data-i18n="ptable.subDescHeatmap">Heatmap of the periodic table. Choose a physical property below to visualize the distribution across the 118 elements.</p>
+      </div>
+
+      <!-- Tabs (each tab is its own page now). Relative paths work in file:// and on Netlify (pretty_urls strips .html). -->
+      <nav class="pt-tabs" id="pt-tabs" aria-label="Periodic Table views">
+        <a class="pt-tab" href="../periodic-table.html" data-tab="tabela">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="4.5" height="4.5" rx="1" fill="currentColor" opacity=".9"/><rect x="7.5" y="1" width="4.5" height="4.5" rx="1" fill="currentColor" opacity=".5"/><rect x="1" y="7.5" width="4.5" height="4.5" rx="1" fill="currentColor" opacity=".5"/><rect x="7.5" y="7.5" width="4.5" height="4.5" rx="1" fill="currentColor" opacity=".3"/></svg>
+          <span data-i18n="ptable.tabTable">Table</span>
+        </a>
+        <a class="pt-tab active" href="heatmap.html" data-tab="heatmap">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="5" width="11" height="3" rx="1" fill="currentColor" opacity=".3"/><rect x="1" y="2" width="11" height="3" rx="1" fill="currentColor" opacity=".6"/><rect x="1" y="8" width="11" height="3" rx="1" fill="currentColor" opacity=".15"/></svg>
+          <span data-i18n="ptable.tabHeatmap">Heatmap</span>
+        </a>
+        <a class="pt-tab" href="trends.html" data-tab="grupos">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M1 12L4 5l3 4 2-3 3 6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+          <span data-i18n="ptable.tabTrends">Trends</span>
+        </a>
+        <a class="pt-tab" href="compare.html" data-tab="comparar">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="2" width="4.5" height="9" rx="1" stroke="currentColor" stroke-width="1.1" fill="none"/><rect x="7.5" y="2" width="4.5" height="9" rx="1" stroke="currentColor" stroke-width="1.1" fill="none"/><line x1="5.5" y1="6.5" x2="7.5" y2="6.5" stroke="currentColor" stroke-width="1.1"/></svg>
+          <span data-i18n="ptable.tabCompare">Compare</span>
+        </a>
+        <a class="pt-tab" href="isotopes.html" data-tab="isotopos">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="1.1" fill="none"/><circle cx="6.5" cy="6.5" r="2" fill="currentColor" opacity=".7"/><circle cx="6.5" cy="2" r="1.2" fill="currentColor" opacity=".4"/><circle cx="10.3" cy="8.8" r="1.2" fill="currentColor" opacity=".4"/><circle cx="2.7" cy="8.8" r="1.2" fill="currentColor" opacity=".4"/></svg>
+          <span data-i18n="ptable.tabIsotopes">Isotopes</span>
+        </a>
+      </nav>
+
+      <!-- Tab: Tabela -->
+      <div id="tab-tabela" class="tab-content active">
+        <!-- Legend -->
+        <div class="legend" id="legend">
+          <div class="legend-item" data-cat="nonmetal"   onclick="filterCat('nonmetal')">
+            <div class="legend-dot" style="background:var(--c-nonmetal);border-color:var(--c-nonmetal-b)"></div>
+            <span data-i18n="ptable.legendNonmetal">Diatomic Nonmetals</span>
+          </div>
+          <div class="legend-item" data-cat="noble"      onclick="filterCat('noble')">
+            <div class="legend-dot" style="background:var(--c-noble);border-color:var(--c-noble-b)"></div>
+            <span data-i18n="ptable.legendNoble">Noble Gases</span>
+          </div>
+          <div class="legend-item" data-cat="alkali"     onclick="filterCat('alkali')">
+            <div class="legend-dot" style="background:var(--c-alkali);border-color:var(--c-alkali-b)"></div>
+            <span data-i18n="ptable.legendAlkali">Alkali Metals</span>
+          </div>
+          <div class="legend-item" data-cat="alkaline"   onclick="filterCat('alkaline')">
+            <div class="legend-dot" style="background:var(--c-alkaline);border-color:var(--c-alkaline-b)"></div>
+            <span data-i18n="ptable.legendAlkaline">Alkaline Earth Metals</span>
+          </div>
+          <div class="legend-item" data-cat="metalloid"  onclick="filterCat('metalloid')">
+            <div class="legend-dot" style="background:var(--c-metalloid);border-color:var(--c-metalloid-b)"></div>
+            <span data-i18n="ptable.legendMetalloid">Metalloids</span>
+          </div>
+          <div class="legend-item" data-cat="polyatomic" onclick="filterCat('polyatomic')">
+            <div class="legend-dot" style="background:var(--c-polyatomic);border-color:var(--c-polyatomic-b)"></div>
+            <span data-i18n="ptable.legendPolyatomic">Polyatomic Nonmetals</span>
+          </div>
+          <div class="legend-item" data-cat="posttrans"  onclick="filterCat('posttrans')">
+            <div class="legend-dot" style="background:var(--c-posttrans);border-color:var(--c-posttrans-b)"></div>
+            <span data-i18n="ptable.legendPosttrans">Post-Transition Metals</span>
+          </div>
+          <div class="legend-item" data-cat="transition" onclick="filterCat('transition')">
+            <div class="legend-dot" style="background:var(--c-transition);border-color:var(--c-transition-b)"></div>
+            <span data-i18n="ptable.legendTransition">Transition Metals</span>
+          </div>
+          <div class="legend-item" data-cat="lanthanide" onclick="filterCat('lanthanide')">
+            <div class="legend-dot" style="background:var(--c-lanthanide);border-color:var(--c-lanthanide-b)"></div>
+            <span data-i18n="ptable.legendLanthanide">Lanthanides</span>
+          </div>
+          <div class="legend-item" data-cat="actinide"   onclick="filterCat('actinide')">
+            <div class="legend-dot" style="background:var(--c-actinide);border-color:var(--c-actinide-b)"></div>
+            <span data-i18n="ptable.legendActinide">Actinides</span>
+          </div>
+          <div class="legend-clear" onclick="clearFilter()" title="Clear selection" data-i18n-attr="title:ptable.legendClearTitle" id="legend-clear-btn" style="display:none">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+              <path d="M1 1l8 8M9 1L1 9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+            </svg>
+            Clear selection
+          </div>
+        </div>
+
+        <!-- Download bar -->
+        <div class="dl-bar" id="dl-bar">
+          <button class="dl-btn active" id="dl-png-btn" onclick="dlSwitch('png')" title="Download as PNG" data-i18n-attr="title:ptable.dlPngTitle">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="8.5" rx="1.5" stroke="currentColor" stroke-width="1.3" fill="none"/><path d="M1 7l3-3 2.5 2.5L9 4l3 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="6.5" y1="10" x2="6.5" y2="12.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M4 11.5l2.5 1 2.5-1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+            PNG
+          </button>
+          <button class="dl-btn" id="dl-pdf-btn" onclick="dlSwitch('pdf')" title="Download as PDF" data-i18n-attr="title:ptable.dlPdfTitle">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1.5" y="1" width="8" height="11" rx="1.2" stroke="currentColor" stroke-width="1.3" fill="none"/><path d="M4 1v3.5h5.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/><line x1="3.5" y1="6.5" x2="8" y2="6.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/><line x1="3.5" y1="8.5" x2="8" y2="8.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+            PDF
+          </button>
+          <div class="dl-divider"></div>
+          <button class="dl-action" id="dl-action-btn" onclick="downloadTable()">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="6" y1="1" x2="6" y2="8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M2.5 6l3.5 3.5 3.5-3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="1" y1="11" x2="11" y2="11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            <span id="dl-action-label" data-i18n="ptable.dlActionPng">Download PNG</span>
+          </button>
+          <div class="dl-divider"></div>
+          <button class="dl-btn" id="fs-btn" onclick="toggleFullTable()" title="Fullscreen (ESC to exit)" aria-label="Fullscreen" data-i18n-attr="title:ptable.dlFullscreenTitle; aria-label:ptable.dlFullscreen">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M1.5 4.5V1.5h3M8.5 1.5h3v3M11.5 8.5v3h-3M4.5 11.5h-3v-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="ptable.dlFullscreen">Fullscreen</span>
+          </button>
+        </div>
+
+        <!-- Mobile quick-filter bar removed — using the normal .legend filter on all viewports -->
+
+        <!-- Heatmap legend (TOPO) — só visível no tab heatmap. Movido pra cima da
+             tabela em v9.1 para deixar o controle mais acessível e dinâmico:
+             usuário troca o colormap e vê a transição das células sem rolar. -->
+        <div class="heatmap-legend heatmap-legend-top" id="heatmap-legend" style="display:none">
+          <div class="heatmap-scale">
+            <span class="hm-low" data-i18n="ptable.hmLow">Low</span>
+            <div class="heatmap-gradient"></div>
+            <span class="hm-high" data-i18n="ptable.hmHigh">High</span>
+          </div>
+          <select class="hm-select" id="hm-select" onchange="applyHeatmap(this.value)">
+            <option value="electronegativity" data-i18n="ptable.hmOptElectronegativity">Electronegativity (Pauling)</option>
+            <option value="radius" data-i18n="ptable.hmOptRadius">Atomic Radius (pm)</option>
+            <option value="melt" data-i18n="ptable.hmOptMelt">Melting Point (°C)</option>
+            <option value="boil" data-i18n="ptable.hmOptBoil">Boiling Point (°C)</option>
+            <option value="density" data-i18n="ptable.hmOptDensity">Density</option>
+            <option value="mass" data-i18n="ptable.hmOptMass">Atomic Mass (u)</option>
+          </select>
+        </div>
+
+        <!-- Table -->
+        <div class="table-wrap-outer">
+          <div class="table-wrap" id="table-wrap">
+            <div class="table-with-connector" id="table-with-connector">
+              <div class="ptable" id="ptable"></div>
+              <svg class="fblock-connector-svg" id="fblock-connector-svg"></svg>
+            </div>
+          </div>
+          <!-- Zoom controls (mobile only) -->
+          <div class="mobile-zoom-controls" id="mobile-zoom-controls" style="display:none">
+            <button class="mzc-btn" onclick="mobileZoom(-1)" title="Decrease">−</button>
+            <span class="mzc-scale-label" id="mzc-label">68%</span>
+            <button class="mzc-btn" onclick="mobileZoom(+1)" title="Increase">+</button>
+          </div>
+        </div><!-- /.table-wrap-outer -->
+      </div>
+
+      <!-- Tab: Comparar -->
+      <div id="tab-comparar" class="tab-content">
+        <div class="compare-wrap">
+          <div style="margin-bottom:8px">
+            <h2 style="font-size:18px;color:var(--text-1);margin-bottom:4px" data-i18n="ptable.cmpTitle">Element Comparator</h2>
+            <p style="font-size:13px;color:var(--text-2)" data-i18n="ptable.cmpDesc">Select one or two elements to view their properties.</p>
+          </div>
+          <div class="compare-selectors">
+            <!-- Slot 1 -->
+            <div class="cmp-slot" id="cmp-slot-1" data-slot="1">
+              <div class="cmp-slot-lbl" data-i18n="ptable.cmpEl1">Element 1</div>
+              <button class="cmp-slot-pick" id="cmp-pick-1" onclick="openCompPicker(1)">
+                <span class="cmp-slot-empty-icon">＋</span>
+                <span class="cmp-slot-empty-txt" data-i18n="ptable.cmpSelectEl">Select element</span>
+              </button>
+              <div class="cmp-slot-filled" id="cmp-filled-1" style="display:none">
+                <button class="cmp-slot-clear" onclick="clearCompSlot(1)" title="Clear selection" aria-label="Remove" data-i18n-attr="title:ptable.legendClearTitle; aria-label:ptable.cmpRemoveAria">×</button>
+                <button class="cmp-slot-card" onclick="openCompPicker(1)" id="cmp-card-1">
+                  <span class="cmp-z" id="cmp-z-1"></span>
+                  <span class="cmp-sym" id="cmp-sym-1"></span>
+                  <span class="cmp-nm" id="cmp-nm-1"></span>
+                </button>
+                <div class="bohr-wrap cmp-bohr-wrap">
+                  <canvas id="bohr-comp-1" width="160" height="160" style="display:block;border-radius:50%;"></canvas>
+                </div>
+              </div>
+            </div>
+            <!-- Slot 2 -->
+            <div class="cmp-slot" id="cmp-slot-2" data-slot="2">
+              <div class="cmp-slot-lbl" data-i18n="ptable.cmpEl2">Element 2</div>
+              <button class="cmp-slot-pick" id="cmp-pick-2" onclick="openCompPicker(2)">
+                <span class="cmp-slot-empty-icon">＋</span>
+                <span class="cmp-slot-empty-txt" data-i18n="ptable.cmpSelectEl">Select element</span>
+              </button>
+              <div class="cmp-slot-filled" id="cmp-filled-2" style="display:none">
+                <button class="cmp-slot-clear" onclick="clearCompSlot(2)" title="Clear selection" aria-label="Remove" data-i18n-attr="title:ptable.legendClearTitle; aria-label:ptable.cmpRemoveAria">×</button>
+                <button class="cmp-slot-card" onclick="openCompPicker(2)" id="cmp-card-2">
+                  <span class="cmp-z" id="cmp-z-2"></span>
+                  <span class="cmp-sym" id="cmp-sym-2"></span>
+                  <span class="cmp-nm" id="cmp-nm-2"></span>
+                </button>
+                <div class="bohr-wrap cmp-bohr-wrap">
+                  <canvas id="bohr-comp-2" width="160" height="160" style="display:block;border-radius:50%;"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Empty hint when nothing selected -->
+          <div class="cmp-empty-state" id="cmp-empty-state">
+            <span class="cmp-empty-state-icon">⌕</span>
+            <p data-i18n="ptable.cmpEmpty">Pick an element above to view its properties.</p>
+          </div>
+          <!-- Results — shows partial data with 1 element, full comparison with 2 -->
+          <div id="compare-result" style="display:none">
+            <table class="compare-table">
+              <thead>
+                <tr>
+                  <th style="width:34%" data-i18n="ptable.cmpProperty">Property</th>
+                  <th id="comp-th-1" style="width:33%">—</th>
+                  <th id="comp-th-2" style="width:33%">—</th>
+                </tr>
+              </thead>
+              <tbody id="comp-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Element picker overlay (shared by both slots) -->
+      <div class="cmp-picker-overlay" id="cmp-picker-overlay" onclick="closeCompPickerBg(event)">
+        <div class="cmp-picker" role="dialog" aria-modal="true" aria-labelledby="cmp-picker-title">
+          <div class="cmp-picker-head">
+            <div>
+              <div class="cmp-picker-title" id="cmp-picker-title" data-i18n="ptable.cmpPickerTitle">Select Element</div>
+              <div class="cmp-picker-sub" data-i18n="ptable.cmpPickerSub">Click the desired element · ESC to cancel</div>
+            </div>
+            <input type="text" class="cmp-picker-search" id="cmp-picker-search" placeholder="Search by name, symbol, Z…" data-i18n-attr="placeholder:ptable.cmpPickerSearch" oninput="filterCompPicker()">
+            <button class="cmp-picker-close" onclick="closeCompPicker()" aria-label="Close" data-i18n-attr="aria-label:ptable.cmpPickerClose">×</button>
+          </div>
+          <div class="cmp-picker-grid" id="cmp-picker-grid"></div>
+        </div>
+      </div>
+
+      <!-- Tab: Trends -->
+      <div id="tab-grupos" class="tab-content">
+        <div class="compare-wrap">
+          <div style="margin-bottom:8px">
+            <h2 style="font-size:18px;color:var(--text-1);margin-bottom:4px" data-i18n="ptable.trTitle">Periodic Trends</h2>
+            <p style="font-size:13px;color:var(--text-2)" data-i18n="ptable.trDesc">Visualize how properties vary across the Periodic Table.</p>
+          </div>
+          <div class="trend-controls">
+            <select class="hm-select" id="trend-prop" onchange="renderTrendChart()">
+              <option value="en" data-i18n="ptable.trOptEn">Electronegativity</option>
+              <option value="radius" data-i18n="ptable.trOptRadius">Atomic Radius</option>
+              <option value="melt" data-i18n="ptable.trOptMelt">Melting Point</option>
+              <option value="boil" data-i18n="ptable.trOptBoil">Boiling Point</option>
+              <option value="mass" data-i18n="ptable.trOptMass">Atomic Mass</option>
+              <option value="density" data-i18n="ptable.hmOptDensity">Density</option>
+            </select>
+            <select class="hm-select" id="trend-group" onchange="renderTrendChart()">
+              <option value="all" data-i18n="ptable.trGroupAll">All Elements (Z ≤ 36)</option>
+              <option value="g1" data-i18n="ptable.trGroupG1">Group 1 (Alkali Metals)</option>
+              <option value="g2" data-i18n="ptable.trGroupG2">Group 2 (Alkaline Earth)</option>
+              <option value="g17" data-i18n="ptable.trGroupG17">Group 17 (Halogens)</option>
+              <option value="g18" data-i18n="ptable.trGroupG18">Group 18 (Noble Gases)</option>
+            </select>
+          </div>
+          <div class="trend-chart-wrap">
+            <canvas id="trend-chart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Isotopes -->
+      <div id="tab-isotopos" class="tab-content">
+        <div class="iso-wrap">
+          <div>
+            <div style="margin-bottom:16px">
+              <input type="text" id="iso-search" placeholder="Search element..." data-i18n-attr="placeholder:ptable.isoSearchPlaceholder" class="hm-select" style="width:100%" onkeyup="filterIsoList()">
+            </div>
+            <div class="iso-list" id="iso-list" style="max-height:500px;overflow-y:auto"></div>
+          </div>
+          <div id="iso-details-pane" style="display:none">
+            <div class="iso-details">
+              <div style="display:flex;align-items:center;gap:16px">
+                <div class="el-card" id="iso-card-vis" style="width:80px;height:80px;border-radius:12px;background:var(--surface);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center">
+                  <span id="iso-z" style="font-family:'DM Mono';font-size:10px;color:var(--text-3)"></span>
+                  <span id="iso-sym" style="font-family:'DM Serif Display';font-size:32px;color:var(--text-1)"></span>
+                </div>
+                <div class="bohr-wrap">
+                  <canvas id="bohr-iso" width="80" height="80" style="display:block;border-radius:50%;"></canvas>
+                </div>
+                <div>
+                  <h2 id="iso-name" style="font-size:24px;color:var(--text-1);margin-bottom:4px"></h2>
+                  <p id="iso-desc" style="font-size:13px;color:var(--text-2)"></p>
+                </div>
+              </div>
+              
+              <h3 style="font-size:14px;color:var(--text-1);margin:24px 0 12px" data-i18n="ptable.isoMainTitle">Main Isotopes</h3>
+              <div class="compare-table" style="width:100%">
+                <table style="width:100%;border-collapse:collapse;text-align:left">
+                  <thead>
+                    <tr style="border-bottom:1px solid var(--border-soft);background:rgba(0,0,0,0.02)">
+                      <th style="padding:10px;font-size:12px;color:var(--text-2);font-weight:600" data-i18n="ptable.isoColIso">Isotope</th>
+                      <th style="padding:10px;font-size:12px;color:var(--text-2);font-weight:600" data-i18n="ptable.isoColAb">Natural Abundance</th>
+                      <th style="padding:10px;font-size:12px;color:var(--text-2);font-weight:600" data-i18n="ptable.isoColHalf">Half-Life</th>
+                      <th style="padding:10px;font-size:12px;color:var(--text-2);font-weight:600" data-i18n="ptable.isoColDecay">Decay</th>
+                    </tr>
+                  </thead>
+                  <tbody id="iso-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── OTHER PAGES ── -->
+  <div id="pg-other" class="dev-wrap">
+    <div class="dev-card">
+      <div class="dev-icon">🔬</div>
+      <div class="dev-title" id="dev-title" data-i18n="ptable.devTitle">Module in Development</div>
+      <div class="dev-sub" data-i18n="ptable.devSub">This feature will be released in the next Atomurus version.</div>
+    </div>
+  </div>
+
+  <!-- ── SETTINGS PAGE ── -->
+  <div id="pg-settings" style="display:none;flex:1;overflow-y:auto;">
+    <div class="content">
+      <div class="ph-kicker" data-i18n="config.kicker">System</div>
+      <h1 class="ph-title" data-i18n="config.title">Settings</h1>
+      <p class="ph-desc" data-i18n="config.desc">Customize your Atomurus experience — theme, display and study preferences.</p>
+
+      <div class="settings-grid">
+
+        <!-- Appearance -->
+        <div class="settings-section">
+          <div class="settings-section-title">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.3"/><path d="M7 3v4l2.5 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg> <span data-i18n="config.appearance">Appearance</span> </div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label" data-i18n="config.theme">Theme</div>
+              <div class="settings-row-desc" data-i18n="config.themeDesc">Switch between light and dark mode.</div>
+            </div>
+            <div class="settings-segmented" id="theme-seg">
+              <button class="seg-btn" onclick="setTheme('light')" data-val="light" data-i18n="config.themeLight">☀ Light</button>
+              <button class="seg-btn" onclick="setTheme('dark')" data-val="dark" data-i18n="config.themeDark">☽ Dark</button>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label" data-i18n="config.elsize">Element size</div>
+              <div class="settings-row-desc" data-i18n="config.elsizeDesc">Adjust the card size in the periodic table.</div>
+            </div>
+            <div class="settings-segmented">
+              <button class="seg-btn" onclick="setElSize('sm')" data-i18n="config.compact">Compact</button>
+              <button class="seg-btn active" onclick="setElSize('md')" data-i18n="config.defaultLbl">Default</button>
+              <button class="seg-btn" onclick="setElSize('lg')" data-i18n="config.large">Large</button>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label" data-i18n="config.anim">Animations</div>
+              <div class="settings-row-desc" data-i18n="config.animDesc">Enable or disable hover animations and transitions.</div>
+            </div>
+            <button class="settings-toggle active" onclick="toggleAnimations(this)" id="toggle-anim">
+              <div class="toggle-knob"></div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Periodic Table -->
+        <div class="settings-section">
+          <div class="settings-section-title">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" fill="currentColor" opacity=".8"/><rect x="8" y="1" width="5" height="5" rx="1" fill="currentColor" opacity=".5"/><rect x="1" y="8" width="5" height="5" rx="1" fill="currentColor" opacity=".5"/><rect x="8" y="8" width="5" height="5" rx="1" fill="currentColor" opacity=".3"/></svg> <span data-i18n="config.ptable">Periodic Table</span> </div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label" data-i18n="config.viewmode">View mode</div>
+              <div class="settings-row-desc" data-i18n="config.viewmodeDesc">By color category, or heatmap by physical property.</div>
+            </div>
+            <select class="settings-select" onchange="setHeatmap(this.value)" id="heatmap-select">
+              <option value="category" data-i18n="config.viewCategory">By Category</option>
+              <option value="electronegativity" data-i18n="config.viewEneg">Electronegativity</option>
+              <option value="atomic_radius" data-i18n="config.viewRadius">Atomic Radius</option>
+              <option value="ionization" data-i18n="config.viewIonization">Ionization Energy</option>
+              <option value="state" data-i18n="config.viewState">Physical State</option>
+            </select>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label" data-i18n="config.fblock">Show lanthanides/actinides</div>
+              <div class="settings-row-desc" data-i18n="config.fblockDesc">Show or hide the separate f-block rows below the table.</div>
+            </div>
+            <button class="settings-toggle active" onclick="setFblock(!this.classList.contains('active'), this)" id="toggle-fblock">
+              <div class="toggle-knob"></div>
+            </button>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label" data-i18n="config.mass">Show atomic mass</div>
+              <div class="settings-row-desc" data-i18n="config.massDesc">Display atomic mass on each table card.</div>
+            </div>
+            <button class="settings-toggle" onclick="toggleMass(this)" id="toggle-mass">
+              <div class="toggle-knob"></div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Language -->
+        <div class="settings-section">
+          <div class="settings-section-title">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M1.5 5h11M1.5 9h11M7 1.5c-2 2-2 9 0 11M7 1.5c2 2 2 9 0 11" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg> <span data-i18n="config.langSection">Language</span> </div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label" data-i18n="config.langLabel">Interface language</div>
+              <div class="settings-row-desc" data-i18n="config.langDesc">Change the language of the entire interface.</div>
+            </div>
+            <select class="settings-select" onchange="if(window.I18N)I18N.setLang(this.value);else setLanguage(this.value);" id="lang-select">
+              <option value="en" data-i18n="config.langOptEn">🇺🇸 English</option>
+              <option value="pt" data-i18n="config.langOptPt">🇧🇷 Portuguese</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Download PDF -->
+        <div class="settings-section">
+          <div class="settings-section-title">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v9M4 8l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 12h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg> <span data-i18n="config.pdf">Download Table as PDF</span> </div>
+          <div class="settings-pdf-grid">
+            <button class="settings-pdf-btn" onclick="downloadTablePDF('a4-light')">
+              <span class="pdf-icon">📄</span>
+              <span class="pdf-label" data-i18n="config.pdfA4">A4 Light</span>
+              <span class="pdf-desc" data-i18n="config.pdfA4d">Home / school printing</span>
+            </button>
+            <button class="settings-pdf-btn" onclick="downloadTablePDF('a3-light')">
+              <span class="pdf-icon">🗒</span>
+              <span class="pdf-label" data-i18n="config.pdfA3">A3 Light</span>
+              <span class="pdf-desc" data-i18n="config.pdfA3d">Classroom poster</span>
+            </button>
+            <button class="settings-pdf-btn" onclick="downloadTablePDF('dark')">
+              <span class="pdf-icon">🌙</span>
+              <span class="pdf-label" data-i18n="config.pdfDark">Dark</span>
+              <span class="pdf-desc" data-i18n="config.pdfDarkd">Premium visual for presentations</span>
+            </button>
+            <button class="settings-pdf-btn" onclick="downloadTablePDF('complete')">
+              <span class="pdf-icon">📊</span>
+              <span class="pdf-label" data-i18n="config.pdfFull">Full Data</span>
+              <span class="pdf-desc" data-i18n="config.pdfFulld">Mass, electron config & EN in each cell</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- About -->
+        <div class="settings-section">
+          <div class="settings-section-title">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.3"/><path d="M7 6v4M7 4.5v.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg> <span data-i18n="config.about">About Atomurus</span> </div>
+          <div class="settings-about">
+            <div class="about-logo">
+              <div class="logo-mark" style="width:40px;height:40px;border-radius:12px;">
+                <svg width="22" height="22" viewBox="0 0 16 16" fill="none">
+                  <circle cx="8" cy="8" r="2.5" fill="white"/>
+                  <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="white" stroke-width="1.1" fill="none"/>
+                  <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="white" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/>
+                  <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="white" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/>
+                </svg>
+              </div>
+              <div>
+                <div style="font-family:'DM Serif Display',serif;font-size:18px;color:var(--text-1)">Atomurus</div>
+                <div style="font-size:11px;color:var(--accent);font-weight:600;letter-spacing:.5px">atomurus.com</div>
+              </div>
+            </div>
+            <p class="about-desc" data-i18n="config.aboutText">Interactive chemistry app with dynamic periodic table, atomic models, virtual lab and calculators. Built for high school students and science enthusiasts.</p>
+            <div class="about-stats">
+              <div class="about-stat"><span class="about-stat-val">118</span><span class="about-stat-lbl" data-i18n="config.statEl">IUPAC Elements</span></div>
+              <div class="about-stat"><span class="about-stat-val">2026</span><span class="about-stat-lbl" data-i18n="config.statYear">Updated data</span></div>
+              <div class="about-stat"><span class="about-stat-val">10+</span><span class="about-stat-lbl" data-i18n="config.statMod">Planned modules</span></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ════════════ ELEMENT MODAL ════════════ -->
+<div class="overlay" id="overlay" onclick="overlayClick(event)">
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="m-nm">
+
+    <div class="modal-l" id="modal-l">
+      <div class="modal-z"  id="m-z"></div>
+      <div class="modal-sym" id="m-sym"></div>
+      <div class="modal-nm"  id="m-nm"></div>
+      <div class="modal-mass-wrap">
+        <div class="modal-mass-lbl" data-i18n="ptable.mAtomicMass">Atomic Mass</div>
+        <div class="modal-mass-val" id="m-mass"></div>
+      </div>
+      <div class="modal-cat" id="m-cat"></div>
+    </div>
+
+    <div class="modal-r">
+      <!-- Modal v2: nav (prev/next/compare) on left, Explore + close on right -->
+      <div class="modal-corner-actions">
+        <div class="modal-nav-group">
+          <button class="modal-nav-btn" id="m-nav-prev" onclick="navElement(-1)"
+                  aria-label="Elemento anterior" title="Elemento anterior (←)"
+                  data-i18n-attr="aria-label:ptable.mNavPrev; title:ptable.mNavPrevTitle">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="modal-nav-btn" id="m-nav-next" onclick="navElement(1)"
+                  aria-label="Próximo elemento" title="Próximo elemento (→)"
+                  data-i18n-attr="aria-label:ptable.mNavNext; title:ptable.mNavNextTitle">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="modal-nav-btn modal-nav-btn-wide" id="m-nav-compare" onclick="addCurrentToCompare()"
+                  aria-label="Comparar este elemento" title="Comparar este elemento"
+                  data-i18n-attr="aria-label:ptable.mNavCompare; title:ptable.mNavCompare">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="2" width="4.5" height="9" rx="1" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="7.5" y="2" width="4.5" height="9" rx="1" stroke="currentColor" stroke-width="1.2" fill="none"/><line x1="5.5" y1="6.5" x2="7.5" y2="6.5" stroke="currentColor" stroke-width="1.2"/></svg>
+            <span data-i18n="ptable.mNavCompareLbl">Comparar</span>
+          </button>
+        </div>
+        <div class="modal-action-group">
+          <a class="modal-cta-corner" id="m-explore-link" href="#" data-i18n="ptable.mExplore">Explorar ↗</a>
+          <button class="modal-close-corner" onclick="closeModal()" aria-label="Fechar (ESC)" title="Fechar (ESC)"
+                  data-i18n-attr="aria-label:ptable.mCloseAria; title:ptable.mCloseTitle">✕</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="m-section-lbl" data-i18n="ptable.mDescription">Description</div>
+        <div class="m-desc" id="m-desc"></div>
+      </div>
+
+      <div>
+        <div class="m-section-lbl" data-i18n="ptable.mDiscovery">Discovery</div>
+        <div class="m-meta-grid">
+          <div class="m-meta-item">
+            <div class="m-meta-lbl" data-i18n="ptable.mDiscoverer">Discoverer</div>
+            <div class="m-meta-val" id="m-disc"></div>
+          </div>
+          <div class="m-meta-item">
+            <div class="m-meta-lbl" data-i18n="ptable.mYear">Year</div>
+            <div class="m-meta-val" id="m-year"></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="m-section-lbl" data-i18n="ptable.mProperties">Propertys</div>
+        <div class="m-props-grid">
+          <div class="m-prop">
+            <span class="m-prop-lbl" data-i18n="ptable.mEn">Electronegativity</span>
+            <span class="m-prop-val" id="m-en"></span>
+          </div>
+          <div class="m-prop">
+            <span class="m-prop-lbl" data-i18n="ptable.mState">Physical State</span>
+            <span class="m-prop-val" id="m-state"></span>
+          </div>
+          <div class="m-prop">
+            <span class="m-prop-lbl" data-i18n="ptable.mPeriod">Period</span>
+            <span class="m-prop-val" id="m-period"></span>
+          </div>
+          <div class="m-prop">
+            <span class="m-prop-lbl" data-i18n="ptable.mGroup">Group</span>
+            <span class="m-prop-val" id="m-group"></span>
+          </div>
+          <div class="m-prop">
+            <span class="m-prop-lbl" data-i18n="ptable.mMelt">Melting Point</span>
+            <span class="m-prop-val" id="m-melt"></span>
+          </div>
+          <div class="m-prop">
+            <span class="m-prop-lbl" data-i18n="ptable.mBoil">Boiling Point</span>
+            <span class="m-prop-val" id="m-boil"></span>
+          </div>
+          <div class="m-prop">
+            <span class="m-prop-lbl" data-i18n="ptable.mDensity">Density</span>
+            <span class="m-prop-val" id="m-density"></span>
+          </div>
+          <div class="m-prop">
+            <span class="m-prop-lbl" data-i18n="ptable.mRadius">Atomic Radius</span>
+            <span class="m-prop-val" id="m-radius"></span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="m-section-lbl" data-i18n="ptable.mOxidation">Oxidation States</div>
+        <div class="m-oxidation-row" id="m-oxidation"></div>
+      </div>
+
+      <div>
+        <div class="m-section-lbl" data-i18n="ptable.mValence">Valence Electrons</div>
+        <div class="m-valence-row">
+          <div class="m-valence-track"><div class="m-valence-fill" id="m-valence-fill"></div></div>
+          <span class="m-valence-num" id="m-valence-num"></span>
+        </div>
+      </div>
+
+      <div>
+        <div class="m-section-lbl" data-i18n="ptable.mEconfig">Electron Configuration</div>
+        <div class="m-econfig" id="m-econfig"></div>
+      </div>
+
+      <div>
+        <div class="m-section-lbl" data-i18n="ptable.mShells">Shell Distribution</div>
+        <div class="m-shells" id="m-shells"></div>
+      </div>
+
+      <div>
+        <div class="m-section-lbl" data-i18n="ptable.mOccurrence">Where Found</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;" id="m-occurrence"></div>
+      </div>
+
+      <div>
+        <div class="m-section-lbl" data-i18n="ptable.mApps">Real Applications</div>
+        <div class="m-apps" id="m-apps"></div>
+      </div>
+
+      <div id="m-funfact-wrap">
+        <div class="m-section-lbl" data-i18n="ptable.mFunfact">Fun Fact</div>
+        <div class="m-funfact" id="m-funfact"></div>
+      </div>
+
+      <!-- Bohr model section (dedicated panel near the bottom of the inspector) -->
+      <div class="m-bohr-section">
+        <div class="m-section-lbl" data-i18n="ptable.mBohrSection">Bohr Model</div>
+        <div class="bohr-frame">
+          <div class="bohr-wrap bohr-wrap-main" id="bohr-wrap-main">
+            <canvas id="bohr-canvas" width="200" height="200" style="display:block;border-radius:50%;"></canvas>
+          </div>
+          <div class="bohr-controls">
+            <button class="bohr-ctrl-btn" title="Pausar / Animar" data-i18n-attr="title:ptable.bohrCtrlTitle" onclick="handleBohrClick('bohr-canvas'); event.stopPropagation();">
+              <svg viewBox="0 0 16 16" fill="currentColor" id="bohr-play-icon">
+                <rect x="5" y="4" width="2" height="8" rx=".5"/>
+                <rect x="9" y="4" width="2" height="8" rx=".5"/>
+              </svg>
+            </button>
+          </div>
+          <div class="bohr-status" id="bohr-status" data-i18n="ptable.mBohrStatus">original state · Bohr</div>
+        </div>
+      </div>
+
+      <div class="modal-foot">
+        <button class="modal-dl-btn" onclick="downloadElement('png')">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M6 1v7M3 6l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M1 10h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+          </svg>
+          <span>PNG</span>
+        </button>
+        <button class="modal-dl-btn" onclick="downloadElement('pdf')" style="margin-left:6px;">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M6 1v7M3 6l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M1 10h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+          </svg>
+          <span>PDF</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../elements-data.js?v=202605281652"></script>
+<script src="../elements-data-en.js?v=202605281652"></script>
+<script src="../periodic-table.js?v=202605281652" defer></script>
+
+<!-- ── Download libs ── -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script type="text/javascript">
+    aclib.runAutoTag({
+        zoneId: 'o42jwt5vja',
+    });
+</script>
+</body>
+</html>
+
+
+
+

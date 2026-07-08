@@ -1,0 +1,9 @@
+{
+  "name": "atomurus-site",
+  "private": true,
+  "type": "commonjs",
+  "description": "Atomurus static site - Netlify build scripts (bump-version, build-i18n) run as CommonJS",
+  "dependencies": {
+    "@netlify/identity": "1.2.0"
+  }
+}

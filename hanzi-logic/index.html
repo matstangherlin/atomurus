@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#e33b32">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Hanzi Logic">
+  <meta name="description" content="Hanzi Logic: app em portugues para aprender mandarim por sistema, pinyin, tons, frases, caracteres e radicais.">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icon.svg">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./styles.css">
+  <title>Hanzi Logic - Mandarim por Logica</title>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="./index.html" aria-label="Hanzi Logic">
+        <span class="brand-mark" aria-hidden="true">汉</span>
+        <span class="brand-copy">
+          <strong>Hanzi Logic</strong>
+          <small>Mandarim por sistema</small>
+        </span>
+      </a>
+
+      <div class="topbar-center" aria-label="Resumo do progresso">
+        <span>Rota atual</span>
+        <strong id="currentPhaseLabel">01 - Sistema</strong>
+        <span class="top-progress"><i id="totalProgressBar"></i></span>
+        <b id="totalProgressText">0%</b>
+      </div>
+
+      <div class="topbar-actions">
+        <span class="vibe-pill">Notion workspace + China red</span>
+        <button class="icon-button" type="button" data-action="resetDaily" aria-label="Reiniciar rotina de hoje" title="Reiniciar rotina de hoje">
+          <span aria-hidden="true">↺</span>
+        </button>
+      </div>
+    </header>
+
+    <aside class="left-rail">
+      <section class="rail-section">
+        <p class="eyebrow">Mapa de aprendizado</p>
+        <nav class="phase-list" id="phaseList" aria-label="Fases do curso"></nav>
+      </section>
+
+      <section class="rail-section routine-panel">
+        <p class="eyebrow">Rotina diaria</p>
+        <div id="routineList"></div>
+      </section>
+
+      <section class="mentor-note">
+        <p class="eyebrow">Nota do mentor</p>
+        <p id="mentorNote">Domine Pinyin e tons antes de tentar decorar muitos caracteres. Essa base muda tudo.</p>
+      </section>
+
+      <footer class="rail-footer">
+        <span>v0.1.0</span>
+        <span>PT-BR</span>
+      </footer>
+    </aside>
+
+    <main class="workspace">
+      <section class="session-board home-board" aria-labelledby="sessionTitle">
+        <div class="home-intro">
+          <p class="eyebrow">Rota diaria - 1h20 total</p>
+          <h1 id="sessionTitle">Sua trilha de hoje</h1>
+          <p id="dailySummary">Complete pequenas missoes em sequencia e use as abas para estudar livremente quando quiser.</p>
+          <div class="home-actions">
+            <button class="primary-button" type="button" data-action="startNextMission">Continuar rota</button>
+            <button class="ghost-button" type="button" data-action="setTab" data-tab="sistema">Estudo livre</button>
+          </div>
+        </div>
+        <div class="daily-home" id="dailyFocus"></div>
+      </section>
+
+      <section class="lesson-header">
+        <div>
+          <p class="eyebrow" id="phaseKicker">Fase 1</p>
+          <h2 id="lessonTitle">Entender o Sistema Chines</h2>
+          <p id="lessonSubtitle">Pare de ver desenhos aleatorios e comece a ver estrutura.</p>
+        </div>
+        <div class="lesson-metrics" aria-label="Metas desta fase">
+          <span><b id="phaseDuration">1 semana</b> duracao</span>
+          <span><b id="phaseTarget">Sistema</b> foco</span>
+        </div>
+      </section>
+
+      <nav class="lesson-tabs" id="lessonTabs" aria-label="Areas de estudo"></nav>
+
+      <section class="lesson-pane" id="lessonPane" aria-live="polite"></section>
+    </main>
+
+    <aside class="right-rail">
+      <section class="library-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">Minha biblioteca</p>
+            <h2>Primeiras pecas</h2>
+          </div>
+          <span id="libraryCount">0</span>
+        </div>
+        <label class="search-box">
+          <span>Buscar</span>
+          <input id="vocabSearch" type="search" autocomplete="off" placeholder="hanzi, pinyin ou sentido">
+        </label>
+        <div class="vocab-grid" id="vocabGrid"></div>
+      </section>
+
+      <section class="goal-panel">
+        <p class="eyebrow">Proxima meta</p>
+        <strong>100 caracteres</strong>
+        <span id="characterGoalText">12 desbloqueados</span>
+      </section>
+    </aside>
+
+    <nav class="mobile-tabs" aria-label="Navegacao rapida">
+      <button type="button" data-action="setTab" data-tab="sistema">Hoje</button>
+      <button type="button" data-action="setTab" data-tab="pinyin">Sons</button>
+      <button type="button" data-action="setTab" data-tab="sobrevivencia">Frases</button>
+      <button type="button" data-action="setTab" data-tab="caracteres">Hanzi</button>
+      <button type="button" data-action="setTab" data-tab="conversa">IA</button>
+    </nav>
+  </div>
+
+  <script src="./app.js" defer></script>
+<script type="text/javascript">
+    aclib.runAutoTag({
+        zoneId: 'o42jwt5vja',
+    });
+</script>
+</body>
+</html>

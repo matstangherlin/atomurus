@@ -1,0 +1,270 @@
+{
+  "overview": {
+    "en": {
+      "defTitle": "What is an isomer?",
+      "defText": "Compounds with the <b>same molecular formula</b> but different arrangement of atoms (constitutional) or different spatial arrangement with the same connectivity (stereoisomers).",
+      "treeTitle": "Classification map",
+      "treeConst": "Constitutional — different connectivity",
+      "treeEsp": "Spatial — same connectivity, different 3D arrangement",
+      "tableTitle": "Quick reference",
+      "tableHeadType": "Type",
+      "tableHeadChanges": "What changes",
+      "tableHeadExample": "Example",
+      "tableHeadLab": "In the lab",
+      "rowFuncao": "Function",
+      "rowFuncaoCh": "Functional group",
+      "rowFuncaoEx": "C₂H₆O: ethanol vs ether",
+      "rowFuncaoLab": "IR, functional tests",
+      "rowCadeia": "Chain",
+      "rowCadeiaCh": "Carbon skeleton",
+      "rowCadeiaEx": "C₄H₁₀: n-butane vs isobutane",
+      "rowCadeiaLab": "GC retention time",
+      "rowPosicao": "Position",
+      "rowPosicaoCh": "Position of substituent / double bond",
+      "rowPosicaoEx": "C₄H₈: 1-butene vs 2-butene",
+      "rowPosicaoLab": "¹H NMR (vinyl region)",
+      "rowMetameria": "Metamerism",
+      "rowMetameriaCh": "Alkyl groups on heteroatom",
+      "rowMetameriaEx": "C₄H₁₀O: methyl-propyl vs diethyl ether",
+      "rowMetameriaLab": "GC, IR",
+      "rowTautomeria": "Tautomerism",
+      "rowTautomeriaCh": "Rapid equilibrium (keto ⇌ enol)",
+      "rowTautomeriaEx": "Acetone ⇌ enol (same flask)",
+      "rowTautomeriaLab": "NMR (minor enol peak)",
+      "rowGeometrica": "Geometric",
+      "rowGeometricaCh": "cis/trans or E/Z around C=C",
+      "rowGeometricaEx": "cis- vs trans-2-butene",
+      "rowGeometricaLab": "NMR, b.p., chromatography",
+      "rowOptica": "Optical",
+      "rowOpticaCh": "Chiral center (4 different groups)",
+      "rowOpticaEx": "R- vs S-CHFClBr",
+      "rowOpticaLab": "Polarimeter",
+      "tautomerWarning": "<b>Note on tautomerism:</b> tautomers are <b>not</b> two separate bottles in the lab — they interconvert in solution. Constitutional and spatial isomers are usually isolable compounds.",
+      "startBtn": "Start with functional isomerism (C1) →"
+    },
+    "pt": {
+      "defTitle": "O que é um isômero?",
+      "defText": "Compostos com a <b>mesma fórmula molecular</b>, mas arranjo diferente dos átomos (constitucional) ou disposição espacial diferente com a mesma conectividade (estereoisômeros).",
+      "treeTitle": "Mapa de classificação",
+      "treeConst": "Constitucional — conectividade diferente",
+      "treeEsp": "Espacial — mesma conectividade, arranjo 3D diferente",
+      "tableTitle": "Referência rápida",
+      "tableHeadType": "Tipo",
+      "tableHeadChanges": "O que muda",
+      "tableHeadExample": "Exemplo",
+      "tableHeadLab": "No laboratório",
+      "rowFuncao": "Função",
+      "rowFuncaoCh": "Grupo funcional",
+      "rowFuncaoEx": "C₂H₆O: etanol vs éter",
+      "rowFuncaoLab": "IV, testes funcionais",
+      "rowCadeia": "Cadeia",
+      "rowCadeiaCh": "Esqueleto carbônico",
+      "rowCadeiaEx": "C₄H₁₀: n-butano vs isobutano",
+      "rowCadeiaLab": "CG (tempo de retenção)",
+      "rowPosicao": "Posição",
+      "rowPosicaoCh": "Posição do substituinte / dupla",
+      "rowPosicaoEx": "C₄H₈: 1-buteno vs 2-buteno",
+      "rowPosicaoLab": "RMN ¹H (região vinílica)",
+      "rowMetameria": "Metameria",
+      "rowMetameriaCh": "Cadeias no heteroátomo",
+      "rowMetameriaEx": "C₄H₁₀O: éter metil-propílico vs etílico",
+      "rowMetameriaLab": "CG, IV",
+      "rowTautomeria": "Tautomeria",
+      "rowTautomeriaCh": "Equilíbrio rápido (ceto ⇌ enol)",
+      "rowTautomeriaEx": "Acetona ⇌ enol (mesmo frasco)",
+      "rowTautomeriaLab": "RMN (pico enol minoritário)",
+      "rowGeometrica": "Geométrica",
+      "rowGeometricaCh": "cis/trans ou E/Z na dupla C=C",
+      "rowGeometricaEx": "cis- vs trans-2-buteno",
+      "rowGeometricaLab": "RMN, P.e., cromatografia",
+      "rowOptica": "Óptica",
+      "rowOpticaCh": "Centro quiral (4 grupos diferentes)",
+      "rowOpticaEx": "R- vs S-CHFClBr",
+      "rowOpticaLab": "Polarímetro",
+      "tautomerWarning": "<b>Nota sobre tautomeria:</b> tautomeros <b>não</b> são dois frascos separados no laboratório — interconvertem-se em solução. Isômeros constitucionais e espaciais costumam ser compostos isoláveis.",
+      "startBtn": "Começar pela isomeria de função (C1) →"
+    }
+  },
+  "funcao": {
+    "en": {
+      "aFormula": "C₂H₆O",
+      "aFormulaSub": "condensed: C₂H₅OH",
+      "bFormula": "C₂H₆O",
+      "bFormulaSub": "condensed: CH₃OCH₃",
+      "aFact": "<b>Functional group:</b> —OH · Family: alcohols<br><b>B.p.:</b> 78 °C · <b>Solubility in H₂O:</b> miscible · <b>Dipole:</b> polar (H-bonding)",
+      "bFact": "<b>Functional group:</b> —O— · Family: ethers<br><b>B.p.:</b> −24 °C · <b>Solubility in H₂O:</b> very low · <b>Dipole:</b> weakly polar",
+      "goldRule": "<b>Golden rule:</b> same molecular formula C₂H₆O, but the atoms are connected differently (different functional groups).",
+      "inPractice": "<b>In the lab:</b> IR shows —OH stretch (~3300 cm⁻¹) in ethanol vs strong C—O—C band in ether; simple functional tests (e.g. Lucas) distinguish alcohol from ether.",
+      "mol3d": "View ethanol in 3D (Molecules viewer) →"
+    },
+    "pt": {
+      "aFormula": "C₂H₆O",
+      "aFormulaSub": "condensada: C₂H₅OH",
+      "bFormula": "C₂H₆O",
+      "bFormulaSub": "condensada: CH₃OCH₃",
+      "aFact": "<b>Grupo funcional:</b> —OH · Família: álcoois<br><b>P.e.:</b> 78 °C · <b>Solubilidade em H₂O:</b> miscível · <b>Dipolo:</b> polar (ponte H)",
+      "bFact": "<b>Grupo funcional:</b> —O— · Família: éteres<br><b>P.e.:</b> −24 °C · <b>Solubilidade em H₂O:</b> muito baixa · <b>Dipolo:</b> fracamente polar",
+      "goldRule": "<b>Regra de ouro:</b> mesma fórmula molecular C₂H₆O, mas os átomos estão ligados de forma diferente (grupos funcionais distintos).",
+      "inPractice": "<b>Na prática:</b> a IV mostra faixa —OH (~3300 cm⁻¹) no etanol vs banda C—O—C no éter; testes funcionais simples (ex.: Lucas) distinguem álcool de éter.",
+      "mol3d": "Ver etanol em 3D (visualizador Moléculas) →"
+    }
+  },
+  "cadeia": {
+    "en": {
+      "aName": "n-Butane",
+      "aNameSub": "IUPAC: butane",
+      "bName": "Isobutane",
+      "bNameSub": "IUPAC: 2-methylpropane",
+      "aFact": "<b>Chain:</b> linear · 4C in sequence<br><b>B.p.:</b> −1 °C · <b>Density (liq.):</b> ~0.60 g/mL",
+      "bFact": "<b>Chain:</b> branched · 3C + 1 methyl<br><b>B.p.:</b> −12 °C · lower surface contact → weaker London forces",
+      "goldRule": "<b>Golden rule:</b> same formula C₄H₁₀; only the carbon skeleton differs (linear vs branched).",
+      "inPractice": "<b>In the lab:</b> gas chromatography (GC) — branched isomers usually elute before linear ones (lower b.p.)."
+    },
+    "pt": {
+      "aName": "n-Butano",
+      "aNameSub": "IUPAC: butano",
+      "bName": "Isobutano",
+      "bNameSub": "IUPAC: 2-metilpropano",
+      "aFact": "<b>Cadeia:</b> linear · 4C em sequência<br><b>P.e.:</b> −1 °C · <b>Densidade (liq.):</b> ~0,60 g/mL",
+      "bFact": "<b>Cadeia:</b> ramificada · 3C + 1 metil<br><b>P.e.:</b> −12 °C · menor contato → forças de London mais fracas",
+      "goldRule": "<b>Regra de ouro:</b> mesma fórmula C₄H₁₀; só o esqueleto carbônico muda (linear vs ramificado).",
+      "inPractice": "<b>Na prática:</b> cromatografia gasosa (CG) — ramificados geralmente eluem antes dos lineares (P.e. menor)."
+    }
+  },
+  "posicao": {
+    "en": {
+      "aFact": "<b>Double bond:</b> C1=C2 · end of chain<br><b>B.p.:</b> −6 °C",
+      "bFact": "<b>Double bond:</b> C2=C3 · center of chain<br><b>B.p.:</b> 3.7 °C (cis) / 0.9 °C (trans)",
+      "goldRule": "<b>Golden rule:</b> same skeleton and functional group; the <b>position</b> of the double bond (or substituent) along the chain differs.",
+      "inPractice": "<b>In the lab:</b> ¹H NMR — vinyl protons appear at different chemical shifts for 1-butene vs 2-butene.",
+      "linkGeometric": "→ 2-butene also has <a href=\"../spatial/geometric.html\">geometric isomerism (E1)</a>: cis vs trans around the same double bond."
+    },
+    "pt": {
+      "aFact": "<b>Dupla ligação:</b> C1=C2 · extremidade<br><b>P.e.:</b> −6 °C",
+      "bFact": "<b>Dupla ligação:</b> C2=C3 · centro da cadeia<br><b>P.e.:</b> 3,7 °C (cis) / 0,9 °C (trans)",
+      "goldRule": "<b>Regra de ouro:</b> mesmo esqueleto e grupo funcional; a <b>posição</b> da dupla (ou substituinte) na cadeia é diferente.",
+      "inPractice": "<b>Na prática:</b> RMN ¹H — prótons vinílicos em deslocamentos diferentes para 1-buteno vs 2-buteno.",
+      "linkGeometric": "→ o 2-buteno também tem <a href=\"../spatial/geometric.html\">isomeria geométrica (E1)</a>: cis vs trans na mesma dupla."
+    }
+  },
+  "metameria": {
+    "en": {
+      "aFact": "<b>Chains on O:</b> methyl (1C) + propyl (3C)<br><b>B.p.:</b> −10.8 °C",
+      "bFact": "<b>Chains on O:</b> ethyl (2C) + ethyl (2C)<br><b>B.p.:</b> 34.6 °C",
+      "goldRule": "<b>Golden rule:</b> same functional group (ether); alkyl groups attached to the heteroatom differ in size (1C+3C vs 2C+2C).",
+      "inPractice": "<b>In the lab:</b> GC and IR distinguish ethers; some textbooks treat metamerism as a special case of chain isomerism around O.",
+      "footnote": "In some curricula, metamerism is grouped with chain isomerism for ethers and amines."
+    },
+    "pt": {
+      "aFact": "<b>Cadeias no O:</b> metil (1C) + propil (3C)<br><b>P.e.:</b> −10,8 °C",
+      "bFact": "<b>Cadeias no O:</b> etil (2C) + etil (2C)<br><b>P.e.:</b> 34,6 °C",
+      "goldRule": "<b>Regra de ouro:</b> mesmo grupo funcional (éter); cadeias no heteroátomo diferem em tamanho (1C+3C vs 2C+2C).",
+      "inPractice": "<b>Na prática:</b> CG e IV distinguem éteres; em alguns livros a metameria é caso especial de cadeia no O.",
+      "footnote": "Em alguns currículos, metameria é agrupada à isomeria de cadeia em éteres e aminas."
+    }
+  },
+  "tautomeria": {
+    "en": {
+      "aFact": "<b>Keto form:</b> C=O · ~99.99% at equilibrium<br><b>K ≈ 10⁶</b> (keto favored)",
+      "bFact": "<b>Enol form:</b> C=C + —OH · &lt;0.01%<br>H migrated from α-carbon to oxygen",
+      "goldRule": "<b>Do not confuse:</b> tautomers are in <b>dynamic equilibrium</b> — not isolable like constitutional/spatial isomers in separate flasks.",
+      "inPractice": "<b>In the lab:</b> NMR may show a tiny enol signal; equilibrium shifts with solvent and temperature.",
+      "glucoseTitle": "Biochemistry link: glucose",
+      "glucoseText": "Open-chain glucose and cyclic forms (α/β anomers) are related by tautomeric-like ring–chain equilibria — a bridge between organic chemistry and biochemistry.",
+      "notStatic": "<b>Not the same as</b> constitutional or spatial isomerism: you cannot pour “pure enol acetone” as a stable reagent."
+    },
+    "pt": {
+      "aFact": "<b>Forma ceto:</b> C=O · ~99,99% no equilíbrio<br><b>K ≈ 10⁶</b> (ceto favorecido)",
+      "bFact": "<b>Forma enol:</b> C=C + —OH · &lt;0,01%<br>H migrado do C α para o oxigênio",
+      "goldRule": "<b>Não confundir:</b> tautomeros estão em <b>equilíbrio dinâmico</b> — não são isoláveis como isômeros constitucionais/espaciais em frascos separados.",
+      "inPractice": "<b>Na prática:</b> RMN pode mostrar sinal enol minoritário; equilíbrio depende de solvente e temperatura.",
+      "glucoseTitle": "Ligação com bioquímica: glicose",
+      "glucoseText": "Glicose em cadeia aberta e formas cíclicas (anômeros α/β) relacionam-se por equilíbrios tipo tautomeria — ponte entre química orgânica e bioquímica.",
+      "notStatic": "<b>Diferente de</b> isomeria constitucional ou espacial: não se obtém “enol puro da acetona” como reagente estável."
+    }
+  },
+  "geometrica": {
+    "en": {
+      "aFact": "<b>cis:</b> identical groups on same side of C=C<br><b>B.p.:</b> 3.7 °C · <b>Dipole:</b> nonzero (polar)",
+      "bFact": "<b>trans:</b> identical groups on opposite sides<br><b>B.p.:</b> 0.9 °C · <b>Dipole:</b> ~0 (more symmetric)",
+      "goldRule": "<b>Golden rule:</b> geometric isomerism requires a <b>C=C double bond</b> (no free rotation) and <b>two different substituents on each sp² carbon</b>. For four different groups, use <b>E/Z (CIP)</b> instead of cis/trans.",
+      "inPractice": "<b>In the lab:</b> distinguish by b.p., NMR coupling constants (J), and sometimes dipole moment.",
+      "linkPosition": "← Position isomerism (C3) compares <b>where</b> the double bond sits (1-butene vs 2-butene); geometric compares <b>cis vs trans</b> within 2-butene.",
+      "diastereomerNote": "<b>Diastereomers:</b> cis and trans are stereoisomers that are <b>not</b> mirror images — related to optical isomerism (E2) but not enantiomers."
+    },
+    "pt": {
+      "aFact": "<b>cis:</b> grupos idênticos no mesmo lado da dupla<br><b>P.e.:</b> 3,7 °C · <b>Dipolo:</b> ≠ 0 (polar)",
+      "bFact": "<b>trans:</b> grupos em lados opostos<br><b>P.e.:</b> 0,9 °C · <b>Dipolo:</b> ~0 (mais simétrico)",
+      "goldRule": "<b>Regra de ouro:</b> isomeria geométrica exige <b>dupla C=C</b> (sem rotação livre) e <b>dois substituintes diferentes em cada carbono sp²</b>. Com quatro grupos distintos, use <b>E/Z (CIP)</b> em vez de cis/trans.",
+      "inPractice": "<b>Na prática:</b> distinguir por P.e., constantes de acoplamento na RMN (J) e, às vezes, momento dipolar.",
+      "linkPosition": "← A isomeria de posição (C3) compara <b>onde</b> está a dupla (1-buteno vs 2-buteno); a geométrica compara <b>cis vs trans</b> no 2-buteno.",
+      "diastereomerNote": "<b>Diastereoisômeros:</b> cis e trans são estereoisômeros que <b>não</b> são imagens especulares — ligados à óptica (E2), mas não enantiômeros."
+    }
+  },
+  "optica": {
+    "en": {
+      "aFact": "<b>R (Rectus):</b> Br→Cl→F clockwise, H back · [α]<sub>D</sub> + (example)",
+      "bFact": "<b>S (Sinister):</b> Br→Cl→F counterclockwise, H back · [α]<sub>D</sub> − (example)",
+      "goldRule": "<b>Golden rule:</b> a stereogenic center needs <b>four different groups</b> bonded to the same atom (usually carbon). No plane of symmetry in the individual enantiomer.",
+      "inPractice": "<b>In the lab:</b> polarimeter — enantiomers rotate plane-polarized light in opposite directions; racemic mixture gives [α] = 0.",
+      "cipTitle": "CIP priority (this example)",
+      "cipSteps": "1. Assign priorities: Br (1) &gt; Cl (2) &gt; F (3) &gt; H (4).<br>2. Orient lowest priority (H) <b>away</b> from you (dash).<br>3. Trace 1→2→3: clockwise = R, counterclockwise = S.",
+      "mesoTitle": "Meso compound (extension)",
+      "mesoText": "A molecule can have stereocenters yet be <b>optically inactive</b> if it has an internal plane of symmetry (e.g. meso-tartaric acid).",
+      "racemicTitle": "Racemic mixture",
+      "racemicText": "Equimolar R + S → no net rotation ([α] = 0) even though each enantiomer is chiral.",
+      "diastereomerTitle": "Link to geometric isomerism",
+      "diastereomerText": "cis/trans alkenes are <b>diastereomers</b> (E1), not mirror-image pairs. See <a href=\"geometric.html\">geometric isomerism</a>."
+    },
+    "pt": {
+      "aFact": "<b>R (Rectus):</b> Br→Cl→F horário, H para trás · [α]<sub>D</sub> + (exemplo)",
+      "bFact": "<b>S (Sinister):</b> Br→Cl→F anti-horário, H para trás · [α]<sub>D</sub> − (exemplo)",
+      "goldRule": "<b>Regra de ouro:</b> centro estereogênico precisa de <b>quatro grupos diferentes</b> no mesmo átomo (geralmente carbono). Sem plano de simetria no enantiômero isolado.",
+      "inPractice": "<b>Na prática:</b> polarímetro — enantiômeros desviam luz polarizada em sentidos opostos; mistura racêmica dá [α] = 0.",
+      "cipTitle": "Prioridade CIP (este exemplo)",
+      "cipSteps": "1. Prioridades: Br (1) &gt; Cl (2) &gt; F (3) &gt; H (4).<br>2. Menor prioridade (H) <b>para trás</b> (tracejado).<br>3. Percorrer 1→2→3: horário = R, anti-horário = S.",
+      "mesoTitle": "Composto meso (extensão)",
+      "mesoText": "Molécula pode ter centros estereogênicos e ser <b>opticamente inativa</b> se tiver plano de simetria interno (ex.: ácido tartárico meso).",
+      "racemicTitle": "Mistura racêmica",
+      "racemicText": "R + S em quantidades equimolares → rotação líquida nula ([α] = 0) apesar da quiralidade individual.",
+      "diastereomerTitle": "Ligação com isomeria geométrica",
+      "diastereomerText": "alcenos cis/trans são <b>diastereoisômeros</b> (E1), não pares espelho. Ver <a href=\"geometric.html\">isomeria geométrica</a>."
+    }
+  },
+  "quiz": {
+    "en": {
+      "title": "Quick check: classify the isomerism",
+      "q1": "C₂H₆O: ethanol vs dimethyl ether",
+      "q1a": "Function",
+      "q1b": "Chain",
+      "q1c": "Metamerism",
+      "q2": "C₄H₁₀: n-butane vs isobutane",
+      "q2a": "Chain",
+      "q2b": "Position",
+      "q2c": "Geometric",
+      "q3": "cis- vs trans-2-butene",
+      "q3a": "Geometric",
+      "q3b": "Position",
+      "q3c": "Optical",
+      "feedbackCorrect": "Correct!",
+      "feedbackWrong": "Not quite — review the map above."
+    },
+    "pt": {
+      "title": "Teste rápido: classifique a isomeria",
+      "q1": "C₂H₆O: etanol vs éter dimetílico",
+      "q1a": "Função",
+      "q1b": "Cadeia",
+      "q1c": "Metameria",
+      "q2": "C₄H₁₀: n-butano vs isobutano",
+      "q2a": "Cadeia",
+      "q2b": "Posição",
+      "q2c": "Geométrica",
+      "q3": "cis- vs trans-2-buteno",
+      "q3a": "Geométrica",
+      "q3b": "Posição",
+      "q3c": "Óptica",
+      "feedbackCorrect": "Correto!",
+      "feedbackWrong": "Quase — revise o mapa acima."
+    }
+  }
+}

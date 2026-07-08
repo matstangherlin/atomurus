@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Atomurus — Visual Identity Exploration · Three Futures</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..700&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans+Condensed:wght@300;400;500;600;700&family=Sora:wght@200;300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<style>
+/* ============================================================
+   ATOMURUS — DESIGN EXPLORATION BOARD
+   Global "studio canvas" + shared scaffolding
+   Three concepts are scoped under .art.c1 / .c2 / .c3
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --canvas:#0d0d10;
+  --canvas-2:#141418;
+  --studio-ink:#e9e7e2;
+  --studio-dim:#8a877f;
+  --studio-line:rgba(255,255,255,.08);
+  --studio-accent:#c7b299;
+}
+html{scroll-behavior:smooth}
+body{
+  background:
+    radial-gradient(1200px 700px at 80% -10%, rgba(120,110,140,.10), transparent 60%),
+    radial-gradient(900px 600px at 0% 100%, rgba(90,120,130,.08), transparent 55%),
+    var(--canvas);
+  color:var(--studio-ink);
+  font-family:"Sora",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+
+/* studio faint grid */
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
+  background-size:40px 40px;
+  mask:radial-gradient(circle at 50% 30%,#000 0%,transparent 85%);
+}
+
+/* ---------- BOARD MASTHEAD ---------- */
+.board-top{
+  position:relative;z-index:3;
+  max-width:1320px;margin:0 auto;padding:54px 40px 0;
+}
+.board-kicker{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  font-size:11px;letter-spacing:.42em;text-transform:uppercase;color:var(--studio-dim);
+  font-weight:500;
+}
+.board-kicker .dot{width:6px;height:6px;border-radius:50%;background:var(--studio-accent);box-shadow:0 0 12px var(--studio-accent)}
+.board-title{
+  font-family:"Fraunces",serif;font-weight:300;font-optical-sizing:144;
+  font-size:clamp(38px,6.4vw,90px);line-height:.96;letter-spacing:-.02em;
+  margin:26px 0 0;color:#f6f4ee;
+}
+.board-title em{font-style:italic;font-weight:400;color:var(--studio-accent)}
+.board-sub{
+  max-width:680px;margin:26px 0 0;color:#b8b5ad;font-weight:300;
+  font-size:clamp(15px,1.5vw,18px);line-height:1.65;
+}
+.board-meta{
+  display:flex;flex-wrap:wrap;gap:38px;margin:42px 0 0;
+  padding:26px 0;border-top:1px solid var(--studio-line);border-bottom:1px solid var(--studio-line);
+}
+.board-meta div{min-width:120px}
+.board-meta dt{font-size:10.5px;letter-spacing:.28em;text-transform:uppercase;color:var(--studio-dim);margin-bottom:8px}
+.board-meta dd{font-size:14px;color:#dad7cf;font-weight:400;line-height:1.5}
+.board-meta dd b{font-weight:600;color:#fff}
+
+/* concept index strip */
+.index-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:34px 0 0}
+.index-card{
+  border:1px solid var(--studio-line);border-radius:14px;padding:22px 22px 24px;
+  background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,0));
+  transition:transform .4s cubic-bezier(.2,.7,.2,1),border-color .4s,background .4s;
+  position:relative;overflow:hidden;
+}
+.index-card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.2)}
+.index-card .n{font-family:"Fraunces",serif;font-size:46px;font-weight:300;line-height:1;color:var(--studio-accent);opacity:.85}
+.index-card h3{font-size:18px;font-weight:600;margin:14px 0 6px;letter-spacing:-.01em}
+.index-card p{font-size:12.5px;color:var(--studio-dim);line-height:1.55;font-weight:300}
+.index-card .swatches{display:flex;gap:6px;margin-top:16px}
+.index-card .swatches span{width:24px;height:24px;border-radius:6px;border:1px solid rgba(255,255,255,.12)}
+.index-card .go{position:absolute;top:22px;right:22px;font-size:11px;letter-spacing:.2em;color:var(--studio-dim);text-transform:uppercase}
+
+/* ---------- CONCEPT SECTION SHELL ---------- */
+.concept{position:relative;z-index:2;max-width:1320px;margin:0 auto;padding:90px 40px 30px}
+.concept-head{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;flex-wrap:wrap;margin-bottom:30px}
+.concept-head .lhs{display:flex;align-items:baseline;gap:22px;flex-wrap:wrap}
+.concept-head .big-n{font-family:"Fraunces",serif;font-weight:200;font-size:clamp(54px,9vw,120px);line-height:.8;color:#fff;letter-spacing:-.03em}
+.concept-head h2{font-family:"Fraunces",serif;font-weight:400;font-size:clamp(22px,3vw,34px);letter-spacing:-.01em;color:#f3f1ea}
+.concept-head .thesis{max-width:430px;color:var(--studio-dim);font-size:13.5px;line-height:1.6;font-weight:300}
+.concept-head .thesis b{color:#cfccc4;font-weight:500}
+
+/* artboard + spec layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:28px;align-items:start}
+@media(max-width:1080px){.layout{grid-template-columns:1fr}}
+
+/* the device frame holding the mockup */
+.artboard{
+  border-radius:18px;overflow:hidden;position:relative;
+  box-shadow:0 50px 100px -40px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.06);
+}
+.chrome{
+  display:flex;align-items:center;gap:14px;padding:11px 18px;
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.05em;
+  border-bottom:1px solid rgba(0,0,0,.2);
+}
+.chrome .dots{display:flex;gap:7px}
+.chrome .dots i{width:10px;height:10px;border-radius:50%;display:block;opacity:.85}
+.chrome .url{
+  flex:1;text-align:center;padding:5px 14px;border-radius:8px;
+  background:rgba(0,0,0,.18);max-width:340px;margin:0 auto;
+}
+.art{position:relative;overflow:hidden}
+.art .screen{min-height:560px}
+
+/* spec sheet sidebar */
+.spec{position:sticky;top:24px;display:flex;flex-direction:column;gap:14px}
+.spec-block{
+  border:1px solid var(--studio-line);border-radius:13px;padding:18px 18px 20px;
+  background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,0));
+}
+.spec-block h4{
+  font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--studio-dim);
+  margin-bottom:14px;display:flex;align-items:center;gap:8px;font-weight:600;
+}
+.spec-block h4::before{content:"";width:14px;height:1px;background:var(--studio-accent)}
+.spec-row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-top:1px dashed rgba(255,255,255,.07);font-size:12.5px}
+.spec-row:first-of-type{border-top:0}
+.spec-row .k{color:var(--studio-dim);font-weight:300}
+.spec-row .v{color:#dedbd3;text-align:right;font-weight:400}
+.spec-pal{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.spec-pal .sw{aspect-ratio:1;border-radius:7px;border:1px solid rgba(255,255,255,.1);position:relative}
+.spec-pal .sw span{position:absolute;bottom:4px;left:5px;font-size:8px;font-family:"IBM Plex Mono",monospace;color:rgba(255,255,255,.65);letter-spacing:0}
+.spec-list{list-style:none;display:flex;flex-direction:column;gap:9px}
+.spec-list li{font-size:12.5px;color:#cbc8c0;line-height:1.45;font-weight:300;padding-left:16px;position:relative}
+.spec-list li::before{content:"";position:absolute;left:0;top:7px;width:5px;height:5px;border-radius:1px;background:var(--studio-accent);transform:rotate(45deg)}
+.type-spec{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:#cbc8c0;line-height:1.7}
+.type-spec b{color:#fff}
+
+/* board footer */
+.board-foot{
+  position:relative;z-index:2;max-width:1320px;margin:60px auto 0;padding:40px 40px 80px;
+  border-top:1px solid var(--studio-line);
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;
+  color:var(--studio-dim);font-size:12px;letter-spacing:.04em;
+}
+.board-foot .sig{font-family:"Fraunces",serif;font-style:italic;font-size:17px;color:#cfccc4}
+
+/* floating concept switcher */
+.switch{position:fixed;right:22px;top:50%;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;gap:10px}
+.switch a{
+  width:42px;height:42px;border-radius:11px;display:grid;place-items:center;
+  font-family:"Fraunces",serif;font-size:15px;
+  background:rgba(20,20,24,.7);backdrop-filter:blur(10px);
+  border:1px solid var(--studio-line);color:#bcb9b1;transition:.3s;
+}
+.switch a:hover{border-color:var(--studio-accent);color:#fff;transform:scale(1.08)}
+.switch .tag{writing-mode:vertical-rl;font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.3em;color:var(--studio-dim);text-transform:uppercase;margin-top:6px;align-self:center}
+@media(max-width:760px){.switch{display:none}}
+
+.reveal{opacity:0;transform:translateY(26px);transition:opacity 1s cubic-bezier(.2,.7,.2,1),transform 1s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+
+/* shared periodic-table grid engine (re-skinned per concept) */
+.ptable{display:grid;grid-template-columns:repeat(18,1fr);gap:3px}
+.ptable.fblock{margin-top:6px}
+.cell{
+  aspect-ratio:1/1;border-radius:3px;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;cursor:pointer;
+  position:relative;user-select:none;transition:transform .18s ease,background .25s ease,box-shadow .25s ease,color .2s;
+}
+.cell .num{font-size:6px;line-height:1;opacity:.65;position:absolute;top:3px;left:4px}
+.cell .sym{font-size:11px;font-weight:600;line-height:1}
+@media(max-width:520px){.cell .sym{font-size:8px}.cell .num{display:none}}
+
+/* ============================================================
+   CONCEPT 01 — SCIENTIFIC EDITORIAL / MUSEUM / NATURE
+   Warm paper, ink serif, engraved specimen plate
+   ============================================================ */
+.c1{
+  --paper:#efe7d8;--paper-2:#f6f0e4;--ink:#211d16;--ink-soft:#4a4337;
+  --rule:#cdbfa6;--ox:#8a3a2c;--gold:#a37b3e;--viridian:#3c5a4e;
+  background:
+    radial-gradient(800px 500px at 88% 6%, rgba(163,123,62,.10), transparent 60%),
+    var(--paper);
+  color:var(--ink);
+  font-family:"Newsreader",Georgia,serif;
+}
+.c1 .chrome{background:#e3d9c6;color:#6f6450}
+.c1 .chrome .dots i{background:#b7a987}
+.c1 .chrome .url{background:#efe7d8;color:#6f6450}
+.c1 .screen{
+  background:
+    linear-gradient(180deg,var(--paper-2),var(--paper));
+  padding:0;
+}
+/* nav */
+.c1 nav{
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  padding:20px 38px;border-bottom:1.5px solid var(--ink);
+}
+.c1 .brand1{display:flex;align-items:baseline;gap:12px}
+.c1 .brand1 .mk{font-family:"Fraunces",serif;font-weight:600;font-size:23px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink)}
+.c1 .brand1 .iss{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--ox);font-family:"IBM Plex Mono",monospace}
+.c1 .navlinks{display:flex;gap:22px;flex-wrap:wrap}
+.c1 .navlinks a{font-size:13px;color:var(--ink-soft);letter-spacing:.01em;position:relative;padding-bottom:2px}
+.c1 .navlinks a:hover{color:var(--ox)}
+.c1 .navlinks a::after{content:"";position:absolute;left:0;bottom:-1px;width:0;height:1px;background:var(--ox);transition:width .3s}
+.c1 .navlinks a:hover::after{width:100%}
+.c1 .nav-cta{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;border:1.5px solid var(--ink);padding:9px 16px;border-radius:2px;color:var(--ink);transition:.25s}
+.c1 .nav-cta:hover{background:var(--ink);color:var(--paper)}
+@media(max-width:680px){.c1 .navlinks{display:none}}
+/* hero - editorial masthead */
+.c1 .hero1{display:grid;grid-template-columns:1.15fr .85fr;border-bottom:1.5px solid var(--ink)}
+@media(max-width:820px){.c1 .hero1{grid-template-columns:1fr}}
+.c1 .hero1 .lead{padding:46px 38px 40px;border-right:1.5px solid var(--ink)}
+@media(max-width:820px){.c1 .hero1 .lead{border-right:0;border-bottom:1.5px solid var(--ink)}}
+.c1 .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.34em;text-transform:uppercase;color:var(--ox);display:flex;gap:12px;align-items:center}
+.c1 .eyebrow::before{content:"";width:30px;height:1px;background:var(--ox)}
+.c1 .hero1 h1{
+  font-family:"Fraunces",serif;font-weight:300;font-optical-sizing:144;
+  font-size:clamp(40px,6.4vw,76px);line-height:.96;letter-spacing:-.02em;color:var(--ink);
+  margin:22px 0 0;
+}
+.c1 .hero1 h1 em{font-style:italic;color:var(--ox);font-weight:400}
+.c1 .deck{margin:26px 0 0;font-size:17px;line-height:1.62;color:var(--ink-soft);max-width:46ch;font-weight:300}
+.c1 .dropcol{margin:26px 0 0;column-count:2;column-gap:30px;font-size:13.5px;line-height:1.66;color:var(--ink-soft);text-align:justify}
+@media(max-width:560px){.c1 .dropcol{column-count:1}}
+.c1 .dropcol p:first-child::first-letter{
+  font-family:"Fraunces",serif;font-weight:400;float:left;font-size:62px;line-height:.72;
+  padding:6px 10px 0 0;color:var(--ox);
+}
+.c1 .hero-cta{display:flex;gap:16px;margin:30px 0 0;align-items:center;flex-wrap:wrap}
+.c1 .btn-ink{
+  font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+  background:var(--ink);color:var(--paper);padding:14px 24px;border-radius:2px;
+  display:inline-flex;align-items:center;gap:10px;transition:.25s;border:1.5px solid var(--ink);
+}
+.c1 .btn-ink:hover{background:var(--ox);border-color:var(--ox)}
+.c1 .btn-link{font-style:italic;font-size:15px;color:var(--ink);border-bottom:1px solid var(--rule);padding-bottom:2px}
+.c1 .btn-link:hover{color:var(--ox);border-color:var(--ox)}
+/* hero figure - specimen plate */
+.c1 .hero1 .plate{padding:34px 30px;display:flex;flex-direction:column;background:repeating-linear-gradient(180deg,transparent,transparent 27px,rgba(205,191,166,.25) 27px,rgba(205,191,166,.25) 28px)}
+.c1 .figtop{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--ink);padding-bottom:8px;margin-bottom:18px}
+.c1 .figtop .fno{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ox)}
+.c1 .figtop .ftitle{font-style:italic;font-size:13px;color:var(--ink-soft)}
+/* the editorial specimen card */
+.c1 .specimen{
+  border:1.5px solid var(--ink);border-radius:3px;background:var(--paper-2);
+  padding:18px;position:relative;box-shadow:6px 6px 0 rgba(33,29,22,.12);
+}
+.c1 .specimen .corner{position:absolute;width:7px;height:7px;border:1.5px solid var(--ox)}
+.c1 .specimen .corner.tl{top:6px;left:6px;border-right:0;border-bottom:0}
+.c1 .specimen .corner.tr{top:6px;right:6px;border-left:0;border-bottom:0}
+.c1 .specimen .corner.bl{bottom:6px;left:6px;border-right:0;border-top:0}
+.c1 .specimen .corner.br{bottom:6px;right:6px;border-left:0;border-top:0}
+.c1 .specimen .topline{display:flex;justify-content:space-between;align-items:flex-start}
+.c1 .specimen .cat{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--ox)}
+.c1 .specimen .z{font-family:"Fraunces",serif;font-size:18px;color:var(--ink-soft)}
+.c1 .specimen .symbol{font-family:"Fraunces",serif;font-weight:300;font-size:90px;line-height:.9;color:var(--ink);text-align:center;margin:4px 0 2px}
+.c1 .specimen .name{text-align:center;font-style:italic;font-size:20px;color:var(--ink)}
+.c1 .specimen .grid2{display:grid;grid-template-columns:1fr 1fr;gap:2px 18px;margin-top:14px;border-top:1px solid var(--rule);padding-top:12px}
+.c1 .specimen .grid2 div{display:flex;justify-content:space-between;font-size:11px;padding:3px 0;border-bottom:1px dotted var(--rule)}
+.c1 .specimen .grid2 .lab{color:var(--ink-soft);font-style:italic}
+.c1 .specimen .grid2 .val{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--ink)}
+.c1 .caption{font-style:italic;font-size:12px;color:var(--ink-soft);margin-top:14px;line-height:1.5;border-left:2px solid var(--ox);padding-left:12px}
+/* engraved periodic specimen plate section */
+.c1 .plate-sec{padding:44px 38px;border-bottom:1.5px solid var(--ink)}
+.c1 .sec-head{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid var(--ink);padding-bottom:14px;margin-bottom:22px;flex-wrap:wrap;gap:14px}
+.c1 .sec-head h2{font-family:"Fraunces",serif;font-weight:400;font-size:28px;letter-spacing:-.01em}
+.c1 .sec-head h2 em{font-style:italic;color:var(--ox)}
+.c1 .sec-head .meta{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft)}
+.c1 .ptwrap{border:1.5px solid var(--ink);padding:16px;border-radius:3px;background:var(--paper-2)}
+.c1 .ptable .cell{background:rgba(255,255,255,.35);border:1px solid var(--rule);color:var(--ink);border-radius:2px}
+.c1 .ptable .cell .sym{font-family:"Fraunces",serif;font-weight:500}
+.c1 .ptable .cell::after{content:"";position:absolute;inset:0;background:var(--c,#777);opacity:.16;border-radius:2px;transition:opacity .25s}
+.c1 .ptable .cell:hover{transform:translateY(-2px);box-shadow:2px 2px 0 var(--ink);z-index:2}
+.c1 .ptable .cell:hover::after{opacity:.34}
+.c1 .ptable .cell.sel{background:var(--ink);color:var(--paper)}
+.c1 .ptable .cell.sel::after{opacity:0}
+.c1 .legend1{display:flex;gap:16px;flex-wrap:wrap;margin-top:16px;font-size:10.5px;color:var(--ink-soft)}
+.c1 .legend1 span{display:flex;align-items:center;gap:6px;font-style:italic}
+.c1 .legend1 i{width:11px;height:11px;border-radius:2px;border:1px solid var(--rule)}
+/* tools index - editorial table of contents */
+.c1 .toc{padding:44px 38px}
+.c1 .toc h2{font-family:"Fraunces",serif;font-weight:400;font-size:26px;margin-bottom:6px}
+.c1 .toc .sub{font-style:italic;color:var(--ink-soft);font-size:14px;margin-bottom:24px}
+.c1 .toc-list{border-top:1.5px solid var(--ink)}
+.c1 .toc-item{display:grid;grid-template-columns:48px 1fr auto;gap:18px;align-items:baseline;padding:16px 4px;border-bottom:1px solid var(--rule);transition:background .25s,padding-left .25s}
+.c1 .toc-item:hover{background:rgba(163,123,62,.08);padding-left:12px}
+.c1 .toc-item .no{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ox)}
+.c1 .toc-item .ti{font-family:"Fraunces",serif;font-size:19px;color:var(--ink)}
+.c1 .toc-item .ti small{display:block;font-family:"Newsreader",serif;font-style:italic;font-size:12.5px;color:var(--ink-soft);margin-top:3px;font-weight:300}
+.c1 .toc-item .pg{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-soft)}
+/* editorial closing band */
+.c1 .colophon{padding:40px 38px;border-top:1.5px solid var(--ink);display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px;align-items:flex-end;background:var(--paper-2)}
+.c1 .colophon .seal{width:62px;height:62px;border-radius:50%;border:1.5px solid var(--ink);display:grid;place-items:center;font-family:"Fraunces",serif;font-size:11px;text-align:center;line-height:1.1;color:var(--ox);letter-spacing:.04em}
+.c1 .colophon .ctext{font-style:italic;font-size:13px;color:var(--ink-soft);max-width:40ch}
+
+/* ============================================================
+   CONCEPT 02 — PRECISION INSTRUMENTS / CONTROL ROOM
+   Dark panel, phosphor readouts, monospace telemetry
+   ============================================================ */
+.c2{
+  --panel:#0a0e0c;--panel-2:#0f1714;--panel-3:#13201b;
+  --etch:#1d2a24;--hair:rgba(120,200,160,.16);
+  --phos:#5fe6a0;--phos-dim:#2f8a63;--amber:#e8a33d;--cyan:#58c7e0;--red:#e0594a;
+  --txt:#bfd6cb;--txt-dim:#6f8a7e;
+  background:
+    radial-gradient(700px 400px at 50% -8%, rgba(95,230,160,.06), transparent 60%),
+    var(--panel);
+  color:var(--txt);
+  font-family:"IBM Plex Mono",monospace;
+}
+.c2 .chrome{background:#0c1310;color:var(--phos-dim);border-bottom:1px solid var(--etch)}
+.c2 .chrome .dots i{background:#27463a}
+.c2 .chrome .url{background:#0a0e0c;color:var(--phos-dim);border:1px solid var(--etch)}
+.c2 .screen{
+  background:
+    repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.22) 3px,rgba(0,0,0,.22) 4px),
+    linear-gradient(180deg,var(--panel-2),var(--panel));
+  position:relative;
+}
+.c2 .screen::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(120%_90% at 50% 0%,transparent 55%,rgba(0,0,0,.4));z-index:1}
+.c2 .screen>*{position:relative;z-index:2}
+/* status rail */
+.c2 .statusbar{
+  display:flex;align-items:center;gap:0;border-bottom:1px solid var(--etch);
+  font-family:"IBM Plex Sans Condensed",sans-serif;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+}
+.c2 .statusbar .seg{padding:9px 16px;border-right:1px solid var(--etch);color:var(--txt-dim);white-space:nowrap}
+.c2 .statusbar .seg b{color:var(--phos);font-weight:600}
+.c2 .statusbar .seg.live{color:var(--amber)}
+.c2 .statusbar .rec{display:inline-flex;align-items:center;gap:7px;color:var(--red)}
+.c2 .statusbar .rec i{width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 8px var(--red);animation:blink 1.4s steps(2) infinite}
+@keyframes blink{50%{opacity:.2}}
+.c2 .statusbar .spacer{flex:1;border-right:1px solid var(--etch)}
+.c2 .statusbar .clock{margin-left:auto;color:var(--phos)}
+/* nav */
+.c2 nav{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-bottom:1px solid var(--etch);gap:18px;flex-wrap:wrap}
+.c2 .brand2{display:flex;align-items:center;gap:12px}
+.c2 .brand2 .glyph{width:30px;height:30px;border:1px solid var(--phos);border-radius:4px;display:grid;place-items:center;color:var(--phos);position:relative}
+.c2 .brand2 .glyph::before,.c2 .brand2 .glyph::after{content:"";position:absolute;background:var(--phos-dim)}
+.c2 .brand2 .glyph::before{width:1px;height:100%;left:50%}
+.c2 .brand2 .glyph::after{height:1px;width:100%;top:50%}
+.c2 .brand2 .glyph b{position:relative;z-index:2;font-size:13px;background:var(--panel-2);padding:0 2px}
+.c2 .brand2 .nm{font-family:"IBM Plex Sans Condensed",sans-serif;font-weight:700;font-size:18px;letter-spacing:.22em;color:#dff0e8}
+.c2 .brand2 .ver{font-size:10px;color:var(--txt-dim);letter-spacing:.1em}
+.c2 .tabs{display:flex;gap:2px;flex-wrap:wrap}
+.c2 .tabs a{font-family:"IBM Plex Sans Condensed",sans-serif;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-dim);padding:7px 12px;border:1px solid transparent;border-radius:3px;transition:.2s}
+.c2 .tabs a:hover{color:var(--phos);border-color:var(--etch);background:var(--panel-3)}
+.c2 .tabs a.on{color:var(--panel);background:var(--phos);font-weight:600}
+@media(max-width:760px){.c2 .tabs{display:none}}
+/* hero console */
+.c2 .hero2{display:grid;grid-template-columns:1fr 360px;gap:0;border-bottom:1px solid var(--etch)}
+@media(max-width:880px){.c2 .hero2{grid-template-columns:1fr}}
+.c2 .hero2 .main{padding:40px 26px 36px;border-right:1px solid var(--etch);position:relative}
+@media(max-width:880px){.c2 .hero2 .main{border-right:0;border-bottom:1px solid var(--etch)}}
+.c2 .coord{position:absolute;font-size:9px;color:var(--phos-dim);letter-spacing:.1em}
+.c2 .coord.a{top:12px;right:14px}.c2 .coord.b{bottom:12px;left:14px}
+.c2 .hero2 .label{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--amber);display:flex;align-items:center;gap:10px}
+.c2 .hero2 .label::before{content:"▸";color:var(--phos)}
+.c2 .hero2 h1{
+  font-family:"IBM Plex Sans Condensed",sans-serif;font-weight:700;
+  font-size:clamp(34px,5.6vw,62px);line-height:.98;letter-spacing:-.01em;color:#eafff5;
+  margin:18px 0 0;text-transform:uppercase;
+}
+.c2 .hero2 h1 .accent{color:var(--phos);text-shadow:0 0 26px rgba(95,230,160,.35)}
+.c2 .hero2 .sub{margin:18px 0 0;font-size:14px;line-height:1.7;color:var(--txt);max-width:52ch}
+.c2 .hero2 .sub b{color:var(--phos)}
+/* gauges row */
+.c2 .gauges{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:28px 0 0}
+.c2 .gauge{border:1px solid var(--etch);border-radius:5px;padding:13px;background:var(--panel-3);position:relative;overflow:hidden}
+.c2 .gauge .gl{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--txt-dim)}
+.c2 .gauge .gv{font-size:26px;color:var(--phos);margin:6px 0 2px;font-weight:500}
+.c2 .gauge .gu{font-size:9px;color:var(--txt-dim);letter-spacing:.1em}
+.c2 .gauge .bar{height:3px;background:var(--etch);border-radius:2px;margin-top:9px;overflow:hidden}
+.c2 .gauge .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--phos-dim),var(--phos));box-shadow:0 0 8px rgba(95,230,160,.5)}
+.c2 .gauge.amb .gv{color:var(--amber)}.c2 .gauge.amb .bar i{background:linear-gradient(90deg,#7a5418,var(--amber));box-shadow:0 0 8px rgba(232,163,61,.5)}
+.c2 .gauge.cy .gv{color:var(--cyan)}.c2 .gauge.cy .bar i{background:linear-gradient(90deg,#1c5666,var(--cyan));box-shadow:0 0 8px rgba(88,199,224,.5)}
+/* cta + scope */
+.c2 .hero-cta2{display:flex;gap:14px;margin:26px 0 0;align-items:center;flex-wrap:wrap}
+.c2 .btn-phos{
+  font-family:"IBM Plex Sans Condensed",sans-serif;font-weight:600;font-size:14px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--panel);background:var(--phos);padding:13px 22px;border-radius:4px;
+  display:inline-flex;gap:10px;align-items:center;transition:.2s;box-shadow:0 0 0 rgba(95,230,160,0);
+}
+.c2 .btn-phos:hover{box-shadow:0 0 26px rgba(95,230,160,.5);transform:translateY(-1px)}
+.c2 .btn-out2{font-family:"IBM Plex Sans Condensed",sans-serif;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--phos);border:1px solid var(--phos-dim);padding:13px 18px;border-radius:4px;transition:.2s}
+.c2 .btn-out2:hover{background:var(--panel-3);border-color:var(--phos)}
+/* side instrument: oscilloscope + selected element readout */
+.c2 .hero2 .side{padding:24px 20px;display:flex;flex-direction:column;gap:16px}
+.c2 .scope{border:1px solid var(--etch);border-radius:6px;background:#06100c;padding:12px;position:relative;overflow:hidden}
+.c2 .scope .scl{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--txt-dim);display:flex;justify-content:space-between}
+.c2 .scope svg{display:block;width:100%;height:78px;margin-top:6px}
+.c2 .scope .gridlines{stroke:var(--etch);stroke-width:.5}
+.c2 .scope .trace{fill:none;stroke:var(--phos);stroke-width:1.6;filter:drop-shadow(0 0 4px rgba(95,230,160,.7))}
+.c2 .readout{border:1px solid var(--etch);border-radius:6px;background:var(--panel-3);padding:14px}
+.c2 .readout .rl{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;display:flex;justify-content:space-between}
+.c2 .readout .rsym{font-family:"IBM Plex Sans Condensed",sans-serif;font-weight:700;font-size:54px;color:var(--phos);line-height:.9;text-shadow:0 0 22px rgba(95,230,160,.4)}
+.c2 .readout .rname{font-size:13px;color:#dff0e8;letter-spacing:.06em;margin-top:2px}
+.c2 .readout .rgrid{margin-top:12px;display:flex;flex-direction:column;gap:0}
+.c2 .readout .rrow{display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-top:1px dotted var(--etch)}
+.c2 .readout .rrow .k{color:var(--txt-dim)}.c2 .readout .rrow .v{color:var(--phos)}
+/* periodic console */
+.c2 .console-sec{padding:34px 22px;border-bottom:1px solid var(--etch)}
+.c2 .c2head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px}
+.c2 .c2head h2{font-family:"IBM Plex Sans Condensed",sans-serif;font-weight:700;font-size:22px;letter-spacing:.14em;text-transform:uppercase;color:#dff0e8}
+.c2 .c2head h2 span{color:var(--phos)}
+.c2 .c2head .hint{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--txt-dim)}
+.c2 .ptable .cell{background:var(--panel-3);border:1px solid var(--etch);color:var(--txt-dim);border-radius:2px}
+.c2 .ptable .cell .sym{color:var(--c,#5fe6a0);font-weight:600}
+.c2 .ptable .cell .num{color:var(--txt-dim)}
+.c2 .ptable .cell:hover{transform:none;border-color:var(--c,#5fe6a0);box-shadow:0 0 12px -2px var(--c,#5fe6a0);z-index:2}
+.c2 .ptable .cell:hover .sym{text-shadow:0 0 10px var(--c,#5fe6a0)}
+.c2 .ptable .cell.sel{background:var(--c,#5fe6a0);border-color:var(--c,#5fe6a0)}
+.c2 .ptable .cell.sel .sym,.c2 .ptable .cell.sel .num{color:#06100c;text-shadow:none}
+/* module grid */
+.c2 .modules{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px}
+@media(max-width:760px){.c2 .modules{grid-template-columns:repeat(2,1fr)}}
+.c2 .mod{border:1px solid var(--etch);border-radius:5px;padding:14px;background:var(--panel-3);transition:.25s;position:relative}
+.c2 .mod:hover{border-color:var(--phos-dim);background:#13251d}
+.c2 .mod .mtag{font-size:9px;letter-spacing:.16em;color:var(--txt-dim);display:flex;justify-content:space-between}
+.c2 .mod .mtag b{color:var(--phos)}
+.c2 .mod h3{font-family:"IBM Plex Sans Condensed",sans-serif;font-weight:600;font-size:15px;letter-spacing:.06em;color:#dff0e8;margin:10px 0 6px;text-transform:uppercase}
+.c2 .mod p{font-size:11px;line-height:1.5;color:var(--txt-dim)}
+.c2 .mod .led{position:absolute;top:14px;right:14px;width:6px;height:6px;border-radius:50%;background:var(--phos);box-shadow:0 0 8px var(--phos)}
+.c2 .mod.amb .led{background:var(--amber);box-shadow:0 0 8px var(--amber)}
+.c2 .mod.cy .led{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+
+/* ============================================================
+   CONCEPT 03 — FUTURE OF EXPLORATION / IMMERSIVE / ELEGANT
+   Deep space, luminous restraint, spatial glass
+   ============================================================ */
+.c3{
+  --void:#06080f;--void-2:#0a0e1a;--deep:#0e1426;
+  --glass:rgba(255,255,255,.04);--glass-line:rgba(170,200,240,.12);
+  --plat:#eef2fb;--mist:#9aa6c4;--mist-dim:#5d6a8a;
+  --aura:#86e6d6;--aura-2:#9db4ff;--aura-3:#c9a8ff;
+  background:
+    radial-gradient(1000px 700px at 78% -10%, rgba(157,180,255,.14), transparent 58%),
+    radial-gradient(900px 700px at 8% 110%, rgba(134,230,214,.10), transparent 55%),
+    linear-gradient(180deg,var(--void-2),var(--void));
+  color:var(--plat);
+  font-family:"Sora",sans-serif;
+}
+.c3 .chrome{background:#0a0e1a;color:var(--mist-dim);border-bottom:1px solid rgba(255,255,255,.05)}
+.c3 .chrome .dots i{background:#27314f}
+.c3 .chrome .url{background:#06080f;color:var(--mist)}
+.c3 .screen{position:relative;overflow:hidden}
+/* starfield + horizon */
+.c3 .screen::before{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    radial-gradient(1px 1px at 20% 30%,rgba(255,255,255,.5),transparent),
+    radial-gradient(1px 1px at 70% 20%,rgba(255,255,255,.4),transparent),
+    radial-gradient(1px 1px at 40% 70%,rgba(255,255,255,.35),transparent),
+    radial-gradient(1.4px 1.4px at 85% 60%,rgba(200,220,255,.55),transparent),
+    radial-gradient(1px 1px at 55% 45%,rgba(255,255,255,.3),transparent),
+    radial-gradient(1px 1px at 12% 80%,rgba(255,255,255,.4),transparent),
+    radial-gradient(1.2px 1.2px at 92% 18%,rgba(255,255,255,.4),transparent);
+}
+.c3 .screen::after{
+  content:"";position:absolute;left:-10%;right:-10%;bottom:-40%;height:70%;z-index:0;pointer-events:none;
+  background:radial-gradient(60% 100% at 50% 0%,rgba(134,230,214,.12),transparent 70%);
+}
+.c3 .screen>*{position:relative;z-index:2}
+/* nav */
+.c3 nav{display:flex;align-items:center;justify-content:space-between;padding:22px 34px;gap:20px}
+.c3 .brand3{display:flex;align-items:center;gap:13px}
+.c3 .brand3 .orb{width:30px;height:30px;border-radius:50%;position:relative;background:radial-gradient(circle at 35% 30%,#cfe6ff,#5d6a8a 70%);box-shadow:0 0 22px rgba(157,180,255,.5)}
+.c3 .brand3 .orb::after{content:"";position:absolute;inset:-5px;border-radius:50%;border:1px solid rgba(157,180,255,.4);transform:rotate(-22deg) scaleY(.42)}
+.c3 .brand3 .nm{font-size:20px;font-weight:500;letter-spacing:.32em;color:var(--plat)}
+.c3 .nav3{display:flex;gap:30px;align-items:center}
+.c3 .nav3 a{font-size:13.5px;color:var(--mist);font-weight:300;letter-spacing:.02em;transition:.25s}
+.c3 .nav3 a:hover{color:var(--plat)}
+.c3 .enter{
+  font-size:13px;font-weight:400;letter-spacing:.08em;color:var(--void);
+  background:linear-gradient(120deg,var(--aura),var(--aura-2));
+  padding:11px 22px;border-radius:100px;transition:.3s;
+  box-shadow:0 6px 24px -6px rgba(134,230,214,.6);
+}
+.c3 .enter:hover{transform:translateY(-1px);box-shadow:0 10px 30px -6px rgba(157,180,255,.7)}
+@media(max-width:760px){.c3 .nav3 a:not(.enter){display:none}}
+/* hero immersive */
+.c3 .hero3{display:grid;grid-template-columns:1.05fr .95fr;gap:30px;align-items:center;padding:54px 34px 60px;min-height:480px}
+@media(max-width:880px){.c3 .hero3{grid-template-columns:1fr;text-align:center}}
+.c3 .hero3 .eye{font-size:11px;letter-spacing:.38em;text-transform:uppercase;color:var(--aura);font-weight:400}
+.c3 .hero3 h1{
+  font-weight:200;font-size:clamp(42px,6.8vw,82px);line-height:1.02;letter-spacing:-.025em;
+  margin:22px 0 0;color:var(--plat);
+}
+.c3 .hero3 h1 b{font-weight:500;background:linear-gradient(120deg,var(--aura),var(--aura-2) 55%,var(--aura-3));-webkit-background-clip:text;background-clip:text;color:transparent}
+.c3 .hero3 h1 .ser{font-family:"Instrument Serif",serif;font-weight:400;font-style:italic;letter-spacing:0}
+.c3 .hero3 .lede{margin:26px 0 0;font-size:17px;line-height:1.66;color:var(--mist);font-weight:300;max-width:50ch}
+@media(max-width:880px){.c3 .hero3 .lede{margin-left:auto;margin-right:auto}}
+.c3 .hero-cta3{display:flex;gap:18px;margin:34px 0 0;align-items:center;flex-wrap:wrap}
+@media(max-width:880px){.c3 .hero-cta3{justify-content:center}}
+.c3 .btn-aura{
+  font-size:14px;font-weight:400;letter-spacing:.04em;color:var(--void);
+  background:linear-gradient(120deg,#d9fff7,var(--aura) 50%,var(--aura-2));
+  padding:15px 30px;border-radius:100px;display:inline-flex;gap:10px;align-items:center;transition:.3s;
+  box-shadow:0 10px 36px -10px rgba(134,230,214,.7);
+}
+.c3 .btn-aura:hover{transform:translateY(-2px);box-shadow:0 16px 44px -10px rgba(157,180,255,.8)}
+.c3 .btn-ghost3{font-size:14px;font-weight:300;color:var(--plat);display:inline-flex;gap:9px;align-items:center;padding:15px 8px;border-bottom:1px solid rgba(255,255,255,.16);transition:.25s}
+.c3 .btn-ghost3:hover{border-color:var(--aura);color:var(--aura)}
+.c3 .stats3{display:flex;gap:30px;margin:42px 0 0;flex-wrap:wrap}
+@media(max-width:880px){.c3 .stats3{justify-content:center}}
+.c3 .stats3 div .v{font-weight:300;font-size:30px;color:var(--plat);letter-spacing:-.01em}
+.c3 .stats3 div .k{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--mist-dim);margin-top:4px}
+/* orbital atom visual */
+.c3 .atomwrap{position:relative;aspect-ratio:1/1;display:grid;place-items:center;max-width:430px;margin:0 auto;width:100%}
+.c3 .atomwrap .halo{position:absolute;inset:8%;border-radius:50%;background:radial-gradient(circle,rgba(157,180,255,.18),transparent 62%)}
+.c3 .orbit{position:absolute;border:1px solid rgba(170,200,240,.16);border-radius:50%;inset:0}
+.c3 .orbit.o1{inset:10%;transform:rotate(0deg) scaleY(.4);animation:spin 16s linear infinite}
+.c3 .orbit.o2{inset:10%;transform:rotate(60deg) scaleY(.4);animation:spin 22s linear infinite reverse}
+.c3 .orbit.o3{inset:10%;transform:rotate(-60deg) scaleY(.4);animation:spin 28s linear infinite}
+.c3 .orbit .e{position:absolute;top:50%;left:-4px;width:9px;height:9px;border-radius:50%;background:var(--aura);box-shadow:0 0 14px var(--aura);margin-top:-4px}
+.c3 .orbit.o2 .e{background:var(--aura-2);box-shadow:0 0 14px var(--aura-2)}
+.c3 .orbit.o3 .e{background:var(--aura-3);box-shadow:0 0 14px var(--aura-3)}
+@keyframes spin{to{transform:rotate(var(--r,0deg)) scaleY(.4) rotateZ(360deg)}}
+.c3 .nucleus{width:64px;height:64px;border-radius:50%;background:radial-gradient(circle at 36% 32%,#eafff9,var(--aura) 45%,#2b6f8f 90%);box-shadow:0 0 50px rgba(134,230,214,.6),inset 0 0 18px rgba(255,255,255,.4);position:relative;z-index:3}
+.c3 .atom-tag{position:absolute;font-family:"Sora",sans-serif;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--mist);background:var(--glass);border:1px solid var(--glass-line);backdrop-filter:blur(8px);padding:6px 11px;border-radius:8px}
+.c3 .atom-tag.t1{top:6%;right:2%}.c3 .atom-tag.t2{bottom:10%;left:0%}
+.c3 .atom-tag b{color:var(--aura);display:block;font-size:13px;letter-spacing:.04em;margin-top:2px}
+/* spatial periodic lattice */
+.c3 .lattice-sec{padding:48px 34px;border-top:1px solid rgba(255,255,255,.05)}
+.c3 .c3head{text-align:center;margin-bottom:30px}
+.c3 .c3head .eye{font-size:11px;letter-spacing:.36em;text-transform:uppercase;color:var(--aura);font-weight:400}
+.c3 .c3head h2{font-weight:200;font-size:clamp(28px,4vw,44px);letter-spacing:-.02em;margin-top:14px;color:var(--plat)}
+.c3 .c3head h2 b{font-family:"Instrument Serif",serif;font-style:italic;font-weight:400}
+.c3 .c3head p{color:var(--mist);font-weight:300;font-size:14.5px;margin-top:12px;max-width:54ch;margin-left:auto;margin-right:auto;line-height:1.6}
+.c3 .latgrid{display:grid;grid-template-columns:1fr 280px;gap:26px;align-items:center}
+@media(max-width:880px){.c3 .latgrid{grid-template-columns:1fr}}
+.c3 .lattice{perspective:1400px}
+.c3 .lattice .tilt{transform:rotateX(34deg) rotateZ(-2deg);transform-style:preserve-3d;transition:transform .6s ease}
+.c3 .lattice:hover .tilt{transform:rotateX(24deg) rotateZ(0deg)}
+.c3 .ptable .cell{background:var(--glass);border:1px solid var(--glass-line);color:var(--mist);border-radius:4px;backdrop-filter:blur(3px)}
+.c3 .ptable .cell .sym{color:var(--c,#9db4ff);font-weight:500}
+.c3 .ptable .cell .num{color:var(--mist-dim)}
+.c3 .ptable .cell:hover{transform:translateZ(18px) translateY(-2px);border-color:var(--c,#9db4ff);box-shadow:0 14px 28px -10px var(--c,#9db4ff),0 0 18px -6px var(--c,#9db4ff);z-index:5}
+.c3 .ptable .cell.sel{background:linear-gradient(150deg,var(--c,#9db4ff),transparent);border-color:var(--c,#9db4ff)}
+.c3 .ptable .cell.sel .sym{color:#fff}
+/* floating element detail card */
+.c3 .detail3{
+  border:1px solid var(--glass-line);border-radius:18px;padding:24px;
+  background:linear-gradient(160deg,rgba(157,180,255,.10),rgba(255,255,255,.02));
+  backdrop-filter:blur(16px);box-shadow:0 30px 60px -30px rgba(0,0,0,.7);position:relative;overflow:hidden;
+}
+.c3 .detail3::before{content:"";position:absolute;top:-40%;right:-30%;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(134,230,214,.3),transparent 70%)}
+.c3 .detail3 .dcat{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--aura);position:relative}
+.c3 .detail3 .dsym{font-weight:200;font-size:78px;line-height:.9;color:var(--plat);margin:6px 0 0;position:relative}
+.c3 .detail3 .dname{font-family:"Instrument Serif",serif;font-style:italic;font-size:26px;color:var(--mist);position:relative}
+.c3 .detail3 .dz{position:absolute;top:24px;right:24px;font-weight:200;font-size:42px;color:rgba(255,255,255,.16)}
+.c3 .detail3 .drows{margin-top:18px;display:flex;flex-direction:column;gap:0;position:relative}
+.c3 .detail3 .drow{display:flex;justify-content:space-between;font-size:12.5px;padding:8px 0;border-top:1px solid rgba(255,255,255,.07)}
+.c3 .detail3 .drow .k{color:var(--mist-dim);font-weight:300}
+.c3 .detail3 .drow .v{color:var(--plat);font-weight:400}
+/* feature constellation */
+.c3 .constell{padding:52px 34px 60px;border-top:1px solid rgba(255,255,255,.05)}
+.c3 .feat3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px}
+@media(max-width:880px){.c3 .feat3{grid-template-columns:1fr}}
+.c3 .fcard{
+  border:1px solid var(--glass-line);border-radius:16px;padding:26px 24px;
+  background:linear-gradient(170deg,rgba(255,255,255,.035),rgba(255,255,255,0));
+  transition:.4s cubic-bezier(.2,.7,.2,1);position:relative;overflow:hidden;
+}
+.c3 .fcard:hover{transform:translateY(-6px);border-color:rgba(170,200,240,.3);background:linear-gradient(170deg,rgba(157,180,255,.10),rgba(255,255,255,.01))}
+.c3 .fcard .fi{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;margin-bottom:18px;background:rgba(134,230,214,.10);border:1px solid var(--glass-line)}
+.c3 .fcard .fi svg{width:24px;height:24px}
+.c3 .fcard h3{font-weight:400;font-size:19px;letter-spacing:-.01em;color:var(--plat);margin-bottom:8px}
+.c3 .fcard p{font-size:13.5px;line-height:1.6;color:var(--mist);font-weight:300}
+.c3 .fcard .arrow{margin-top:18px;font-size:12px;letter-spacing:.1em;color:var(--aura);display:inline-flex;gap:8px;align-items:center}
+.c3 .closing3{margin-top:46px;text-align:center;padding:46px 20px;border:1px solid var(--glass-line);border-radius:22px;background:linear-gradient(180deg,rgba(157,180,255,.06),transparent)}
+.c3 .closing3 h2{font-weight:200;font-size:clamp(26px,3.6vw,40px);letter-spacing:-.02em}
+.c3 .closing3 h2 b{font-family:"Instrument Serif",serif;font-style:italic;font-weight:400;color:var(--aura)}
+.c3 .closing3 p{color:var(--mist);font-weight:300;margin:14px auto 26px;max-width:46ch;line-height:1.6;font-size:14.5px}
+
+/* small responsive fixups for board chrome */
+@media(max-width:680px){
+  .board-top{padding:34px 20px 0}
+  .concept{padding:60px 18px 20px}
+  .index-strip{grid-template-columns:1fr}
+  .board-foot{padding:30px 20px 60px}
+}
+</style>
+</head>
+<body>
+
+<!-- ========================= BOARD MASTHEAD ========================= -->
+<header class="board-top">
+  <div class="board-kicker">
+    <span class="dot"></span>
+    <span>Atomurus</span><span>·</span><span>Visual Identity Exploration</span><span>·</span><span>Confidential</span>
+  </div>
+  <h1 class="board-title">Three Futures for<br><em>Atomurus</em></h1>
+  <p class="board-sub">A creative exploration board presenting three radically distinct visual identities for the Atomurus digital chemistry laboratory. The goal is not the final design — it is to feel the difference between three possible directions before committing to one.</p>
+
+  <dl class="board-meta">
+    <div><dt>Project</dt><dd><b>Atomurus</b> — Digital Chemistry Laboratory</dd></div>
+    <div><dt>Deliverable</dt><dd>Concept Board · 3 Directions</dd></div>
+    <div><dt>Date</dt><dd>14 June 2026 · Rev. A</dd></div>
+    <div><dt>Discipline</dt><dd>Brand · Product · Editorial</dd></div>
+    <div><dt>Status</dt><dd>For Direction Review</dd></div>
+  </dl>
+
+  <div class="index-strip">
+    <a class="index-card" href="#c1">
+      <span class="go">View ↘</span>
+      <div class="n">01</div>
+      <h3>The Scientific Journal</h3>
+      <p>Editorial, museum-grade, Nature-inspired. Ink on paper, engraved specimens, the authority of a printed publication.</p>
+      <div class="swatches"><span style="background:#efe7d8"></span><span style="background:#211d16"></span><span style="background:#8a3a2c"></span><span style="background:#a37b3e"></span><span style="background:#3c5a4e"></span></div>
+    </a>
+    <a class="index-card" href="#c2">
+      <span class="go">View ↘</span>
+      <div class="n">02</div>
+      <h3>The Control Room</h3>
+      <p>Precision instruments, CERN consoles, NASA mission control. Phosphor readouts, telemetry, calibrated authority.</p>
+      <div class="swatches"><span style="background:#0a0e0c"></span><span style="background:#13201b"></span><span style="background:#5fe6a0"></span><span style="background:#e8a33d"></span><span style="background:#58c7e0"></span></div>
+    </a>
+    <a class="index-card" href="#c3">
+      <span class="go">View ↘</span>
+      <div class="n">03</div>
+      <h3>The Observatory</h3>
+      <p>The future of exploration. Immersive, spatial, luminous restraint. Wonder rendered with elegance — never cyberpunk.</p>
+      <div class="swatches"><span style="background:#06080f"></span><span style="background:#0e1426"></span><span style="background:#86e6d6"></span><span style="background:#9db4ff"></span><span style="background:#c9a8ff"></span></div>
+    </a>
+  </div>
+</header>
+
+<!-- floating switcher -->
+<nav class="switch" aria-label="Concept switcher">
+  <a href="#top">▲</a>
+  <a href="#c1">01</a>
+  <a href="#c2">02</a>
+  <a href="#c3">03</a>
+  <span class="tag">Directions</span>
+</nav>
+
+<!-- ========================= CONCEPT 01 ========================= -->
+<section class="concept reveal" id="c1">
+  <div class="concept-head">
+    <div class="lhs">
+      <div class="big-n">01</div>
+      <div>
+        <h2>The Scientific Journal</h2>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--studio-dim);margin-top:8px">Editorial · Museum · Nature · Apple Books</div>
+      </div>
+    </div>
+    <p class="thesis">Atomurus as a <b>printed scientific publication</b> brought to life. Authority through typography and whitespace, discovery through reading. Every element is a <b>specimen</b>; every tool, a chapter.</p>
+  </div>
+
+  <div class="layout">
+    <!-- ARTBOARD -->
+    <div class="artboard">
+      <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">atomurus.io — A Reading Room for Matter</div></div>
+      <div class="art c1">
+        <div class="screen">
+          <!-- NAV -->
+          <nav>
+            <div class="brand1"><span class="mk">Atomurus</span><span class="iss">Issue Nº 06 · MMXXVI</span></div>
+            <div class="navlinks">
+              <a>Periodic Table</a><a>Trends</a><a>Comparison</a><a>Isotopes</a><a>Atomic Models</a><a>Molecules</a><a>Journal</a>
+            </div>
+            <a class="nav-cta">Enter</a>
+          </nav>
+
+          <!-- HERO -->
+          <div class="hero1">
+            <div class="lead">
+              <div class="eyebrow">A Digital Laboratory</div>
+              <h1>The Elements,<br><em>Examined.</em></h1>
+              <p class="deck">Atomurus is a reading room for matter — an interactive periodic table, atomic models, and molecular studies, composed with the care of a scientific journal.</p>
+              <div class="dropcol">
+                <p>Since antiquity the search for the fundamental constituents of nature has been written down, catalogued, and revised. Atomurus continues that tradition in a living document — one you can open, turn, and explore at the resolution of a single electron.</p>
+                <p>Here the periodic table is not a widget but a printed plate; trends are not charts but arguments; and every isotope carries the weight of its own quiet history.</p>
+              </div>
+              <div class="hero-cta">
+                <a class="btn-ink">Enter the Reading Room <span>→</span></a>
+                <a class="btn-link">Browse the Journal</a>
+              </div>
+            </div>
+            <div class="plate">
+              <div class="figtop"><span class="fno">Fig. 01</span><span class="ftitle">Specimen of the day — selected element</span></div>
+              <div class="specimen" id="c1-spec">
+                <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+                <div class="topline"><span class="cat" data-f="cat">Nonmetal</span><span class="z" data-f="z">6</span></div>
+                <div class="symbol" data-f="sym">C</div>
+                <div class="name" data-f="name">Carbon</div>
+                <div class="grid2">
+                  <div><span class="lab">Atomic mass</span><span class="val" data-f="mass">12.011</span></div>
+                  <div><span class="lab">Group</span><span class="val" data-f="group">14</span></div>
+                  <div><span class="lab">Period</span><span class="val" data-f="period">2</span></div>
+                  <div><span class="lab">Series</span><span class="val" data-f="series">p-block</span></div>
+                </div>
+              </div>
+              <p class="caption">The element of life and of the pencil's mark. Hover any cell in the table below to draw a new specimen onto this plate.</p>
+            </div>
+          </div>
+
+          <!-- PERIODIC SPECIMEN PLATE -->
+          <div class="plate-sec">
+            <div class="sec-head">
+              <h2>The Periodic <em>Arrangement</em></h2>
+              <span class="meta">Plate II · 118 elements · engraved</span>
+            </div>
+            <div class="ptwrap">
+              <div class="ptable" id="c1-pt"></div>
+              <div class="ptable fblock" id="c1-ptf"></div>
+              <div class="legend1">
+                <span><i style="background:rgba(168,85,63,.28)"></i>Alkali</span>
+                <span><i style="background:rgba(190,130,60,.28)"></i>Alkaline earth</span>
+                <span><i style="background:rgba(124,138,106,.32)"></i>Transition</span>
+                <span><i style="background:rgba(62,92,115,.28)"></i>Nonmetal</span>
+                <span><i style="background:rgba(138,111,160,.28)"></i>Halogen</span>
+                <span><i style="background:rgba(154,92,122,.28)"></i>Noble gas</span>
+                <span><i style="background:rgba(122,110,140,.28)"></i>Lanthanide</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- TABLE OF CONTENTS / TOOLS -->
+          <div class="toc">
+            <h2>In This Volume</h2>
+            <p class="sub">Nine instruments for the study of matter, set as chapters.</p>
+            <div class="toc-list">
+              <div class="toc-item"><span class="no">I.</span><span class="ti">Interactive Periodic Table<small>Browse, filter, and read all 118 elements in depth</small></span><span class="pg">p. 01</span></div>
+              <div class="toc-item"><span class="no">II.</span><span class="ti">Periodic Trends<small>Atomic radius, electronegativity & ionisation, plotted</small></span><span class="pg">p. 18</span></div>
+              <div class="toc-item"><span class="no">III.</span><span class="ti">Element Comparison<small>Set any two elements side by side, property for property</small></span><span class="pg">p. 32</span></div>
+              <div class="toc-item"><span class="no">IV.</span><span class="ti">Isotopes Explorer<small>Half-lives, decay modes & natural abundance</small></span><span class="pg">p. 47</span></div>
+              <div class="toc-item"><span class="no">V.</span><span class="ti">2D &amp; 3D Atomic Models<small>Bohr diagrams and orbital geometry, rendered</small></span><span class="pg">p. 61</span></div>
+              <div class="toc-item"><span class="no">VI.</span><span class="ti">Molecular Visualizers<small>Rotate, measure & inspect molecular structures</small></span><span class="pg">p. 74</span></div>
+              <div class="toc-item"><span class="no">VII.</span><span class="ti">Chemistry Calculators<small>Molar mass, stoichiometry & solution chemistry</small></span><span class="pg">p. 88</span></div>
+              <div class="toc-item"><span class="no">VIII.</span><span class="ti">Educational Articles<small>Long-form essays on the science behind the elements</small></span><span class="pg">p. 99</span></div>
+            </div>
+          </div>
+
+          <!-- COLOPHON -->
+          <div class="colophon">
+            <div style="display:flex;gap:20px;align-items:center">
+              <div class="seal">ATO<br>MVRVS</div>
+              <p class="ctext">Set in Fraunces &amp; Newsreader. Printed for the curious. A standing invitation to look more closely at the material world.</p>
+            </div>
+            <a class="btn-ink">Begin Your Exploration <span>→</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SPEC SHEET -->
+    <aside class="spec">
+      <div class="spec-block">
+        <h4>Typography</h4>
+        <p class="type-spec"><b>Display</b> — Fraunces (Light, optical 144)<br><b>Body</b> — Newsreader, justified<br><b>Caption / data</b> — IBM Plex Mono<br><br>High-contrast serif sets a literary, authoritative voice. Italics carry emphasis; small-caps carry structure.</p>
+      </div>
+      <div class="spec-block">
+        <h4>Palette</h4>
+        <div class="spec-pal">
+          <div class="sw" style="background:#efe7d8"><span>paper</span></div>
+          <div class="sw" style="background:#211d16"><span>ink</span></div>
+          <div class="sw" style="background:#8a3a2c"><span>ox</span></div>
+          <div class="sw" style="background:#a37b3e"><span>gold</span></div>
+          <div class="sw" style="background:#3c5a4e"><span>viri</span></div>
+        </div>
+      </div>
+      <div class="spec-block">
+        <h4>Layout philosophy</h4>
+        <ul class="spec-list">
+          <li>Editorial grid with hard ink rules and baseline rhythm</li>
+          <li>Asymmetric two-column hero, like a journal opener</li>
+          <li>Figures, captions &amp; footnotes carry meaning</li>
+          <li>Generous margins; reading over scanning</li>
+        </ul>
+      </div>
+      <div class="spec-block">
+        <h4>Periodic integration</h4>
+        <ul class="spec-list">
+          <li>Table as an engraved "specimen plate"</li>
+          <li>Hover draws the element onto Fig. 01</li>
+          <li>Watercolour category washes, not blocks</li>
+        </ul>
+      </div>
+      <div class="spec-block">
+        <h4>Motion</h4>
+        <ul class="spec-list">
+          <li>Restrained — pages settle, ink doesn't bounce</li>
+          <li>Underlines draw on hover; cells lift like paper</li>
+          <li>Page-turn fades between sections</li>
+        </ul>
+      </div>
+      <div class="spec-block">
+        <h4>Signature details</h4>
+        <ul class="spec-list">
+          <li>Drop caps &amp; running issue number</li>
+          <li>"Fig." labels &amp; corner registration marks</li>
+          <li>Wax-seal monogram colophon</li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ========================= CONCEPT 02 ========================= -->
+<section class="concept reveal" id="c2">
+  <div class="concept-head">
+    <div class="lhs">
+      <div class="big-n">02</div>
+      <div>
+        <h2>The Control Room</h2>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--studio-dim);margin-top:8px">Instruments · CERN · NASA · Observatory</div>
+      </div>
+    </div>
+    <p class="thesis">Atomurus as <b>real laboratory instrumentation</b>. The user isn't browsing a site — they are <b>at the console</b>, reading live telemetry off the periodic system. Precision is the entire personality.</p>
+  </div>
+
+  <div class="layout">
+    <div class="artboard">
+      <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">atomurus.io/console — ELEMENT ANALYSIS</div></div>
+      <div class="art c2">
+        <div class="screen">
+          <!-- STATUS RAIL -->
+          <div class="statusbar">
+            <span class="seg"><span class="rec"><i></i>REC</span></span>
+            <span class="seg">SYS <b>NOMINAL</b></span>
+            <span class="seg">ELEMENTS <b>118</b> LOADED</span>
+            <span class="seg live">PERIODIC ARRAY · CALIBRATED</span>
+            <span class="spacer"></span>
+            <span class="seg clock" id="c2-clock">UTC 00:00:00</span>
+          </div>
+          <!-- NAV -->
+          <nav>
+            <div class="brand2">
+              <span class="glyph"><b>A</b></span>
+              <div><div class="nm">ATOMURUS</div><div class="ver">LAB CONSOLE · v4.0</div></div>
+            </div>
+            <div class="tabs">
+              <a class="on">TABLE</a><a>TRENDS</a><a>COMPARE</a><a>ISOTOPES</a><a>MODELS</a><a>MOLECULES</a><a>CALC</a><a>DOCS</a>
+            </div>
+            <a class="btn-out2">LOG IN</a>
+          </nav>
+
+          <!-- HERO CONSOLE -->
+          <div class="hero2">
+            <div class="main">
+              <span class="coord a">X:148.20 · Y:032.7</span>
+              <span class="coord b">CH-01 / GAIN 0.84</span>
+              <div class="label">Operator Console</div>
+              <h1>Element<br><span class="accent">Analysis</span> Console</h1>
+              <p class="sub">Direct instrumentation for the periodic system. <b>Select. Measure. Compare.</b> Every element streams live property data the moment you point at it — exactly as a benchtop analyser would.</p>
+
+              <div class="gauges">
+                <div class="gauge"><div class="gl">Known Elements</div><div class="gv">118</div><div class="gu">Z = 1 → 118</div><div class="bar"><i style="width:100%"></i></div></div>
+                <div class="gauge amb"><div class="gl">Stable Isotopes</div><div class="gv">251</div><div class="gu">indexed</div><div class="bar"><i style="width:78%"></i></div></div>
+                <div class="gauge cy"><div class="gl">Instruments</div><div class="gv">09</div><div class="gu">online</div><div class="bar"><i style="width:90%"></i></div></div>
+              </div>
+
+              <div class="hero-cta2">
+                <a class="btn-phos">▸ INITIALIZE SESSION</a>
+                <a class="btn-out2">CALIBRATION DOCS</a>
+              </div>
+            </div>
+            <div class="side">
+              <div class="scope">
+                <div class="scl"><span>SIGNAL · IONISATION ENERGY</span><span>kJ/mol</span></div>
+                <svg viewBox="0 0 280 80" preserveAspectRatio="none">
+                  <line class="gridlines" x1="0" y1="20" x2="280" y2="20"/>
+                  <line class="gridlines" x1="0" y1="40" x2="280" y2="40"/>
+                  <line class="gridlines" x1="0" y1="60" x2="280" y2="60"/>
+                  <line class="gridlines" x1="70" y1="0" x2="70" y2="80"/>
+                  <line class="gridlines" x1="140" y1="0" x2="140" y2="80"/>
+                  <line class="gridlines" x1="210" y1="0" x2="210" y2="80"/>
+                  <polyline class="trace" points="0,70 14,18 26,62 40,55 52,48 64,40 76,30 88,22 100,10 100,72 114,40 126,66 138,60 150,54 162,46 174,38 186,28 198,16 210,8 210,70 224,42 236,64 248,58 260,52 272,46 280,40"/>
+                </svg>
+              </div>
+              <div class="readout" id="c2-read">
+                <div class="rl"><span>SELECTED ELEMENT</span><span data-f="cat">TRANSITION</span></div>
+                <div class="rsym" data-f="sym">Fe</div>
+                <div class="rname" data-f="name">IRON</div>
+                <div class="rgrid">
+                  <div class="rrow"><span class="k">ATOMIC NO.</span><span class="v" data-f="z">26</span></div>
+                  <div class="rrow"><span class="k">MASS u</span><span class="v" data-f="mass">55.845</span></div>
+                  <div class="rrow"><span class="k">GROUP</span><span class="v" data-f="group">08</span></div>
+                  <div class="rrow"><span class="k">PERIOD</span><span class="v" data-f="period">04</span></div>
+                  <div class="rrow"><span class="k">BLOCK</span><span class="v" data-f="series">d-block</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PERIODIC CONSOLE -->
+          <div class="console-sec">
+            <div class="c2head">
+              <h2>PERIODIC <span>ARRAY</span> · LIVE</h2>
+              <span class="hint">▸ HOVER A CELL TO ROUTE IT TO THE READOUT</span>
+            </div>
+            <div class="ptable" id="c2-pt"></div>
+            <div class="ptable fblock" id="c2-ptf"></div>
+
+            <div class="modules">
+              <div class="mod"><span class="led"></span><div class="mtag"><span>INSTR-02</span><b>RDY</b></div><h3>Periodic Trends</h3><p>Plot radius, electronegativity &amp; ionisation across the array.</p></div>
+              <div class="mod amb"><span class="led"></span><div class="mtag"><span>INSTR-03</span><b>RDY</b></div><h3>Comparison</h3><p>Route two elements to a differential property panel.</p></div>
+              <div class="mod cy"><span class="led"></span><div class="mtag"><span>INSTR-04</span><b>RDY</b></div><h3>Isotopes</h3><p>Decay modes, half-lives &amp; abundance telemetry.</p></div>
+              <div class="mod"><span class="led"></span><div class="mtag"><span>INSTR-05</span><b>RDY</b></div><h3>Atomic Models</h3><p>2D Bohr &amp; 3D orbital render with shell occupancy.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SPEC -->
+    <aside class="spec">
+      <div class="spec-block">
+        <h4>Typography</h4>
+        <p class="type-spec"><b>Display</b> — IBM Plex Sans Condensed 700<br><b>Telemetry</b> — IBM Plex Mono<br><br>Condensed sans reads like engraved panel labels; monospace makes every number feel measured and trustworthy.</p>
+      </div>
+      <div class="spec-block">
+        <h4>Palette</h4>
+        <div class="spec-pal">
+          <div class="sw" style="background:#0a0e0c"><span>panel</span></div>
+          <div class="sw" style="background:#13201b"><span>etch</span></div>
+          <div class="sw" style="background:#5fe6a0"><span>phos</span></div>
+          <div class="sw" style="background:#e8a33d"><span>amber</span></div>
+          <div class="sw" style="background:#58c7e0"><span>cyan</span></div>
+        </div>
+      </div>
+      <div class="spec-block">
+        <h4>Layout philosophy</h4>
+        <ul class="spec-list">
+          <li>Modular instrument dock; everything is a panel</li>
+          <li>Persistent status rail &amp; live clock</li>
+          <li>Data density framed by hairlines, not cards</li>
+          <li>Coordinate ticks &amp; registration marks</li>
+        </ul>
+      </div>
+      <div class="spec-block">
+        <h4>Periodic integration</h4>
+        <ul class="spec-list">
+          <li>Table is a live console; cells are channels</li>
+          <li>Hover routes element to the readout instrument</li>
+          <li>Phosphor categories with selective glow</li>
+        </ul>
+      </div>
+      <div class="spec-block">
+        <h4>Motion</h4>
+        <ul class="spec-list">
+          <li>Oscilloscope trace &amp; blinking REC indicator</li>
+          <li>Ticking UTC clock; gauges settle on load</li>
+          <li>Cells light their channel colour on focus</li>
+        </ul>
+      </div>
+      <div class="spec-block">
+        <h4>Signature details</h4>
+        <ul class="spec-list">
+          <li>CRT scanlines &amp; vignette</li>
+          <li>Crosshair brand glyph &amp; INSTR-0x labels</li>
+          <li>"SYS NOMINAL" mission-control language</li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ========================= CONCEPT 03 ========================= -->
+<section class="concept reveal" id="c3">
+  <div class="concept-head">
+    <div class="lhs">
+      <div class="big-n">03</div>
+      <div>
+        <h2>The Observatory</h2>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--studio-dim);margin-top:8px">Immersive · Spatial · Luminous · Future</div>
+      </div>
+    </div>
+    <p class="thesis">Atomurus as the <b>future of scientific exploration</b> — spatial, immersive, quietly luminous. Wonder rendered with the elegance of an observatory at night, never the noise of cyberpunk.</p>
+  </div>
+
+  <div class="layout">
+    <div class="artboard">
+      <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">atomurus.io — The Architecture of Matter</div></div>
+      <div class="art c3">
+        <div class="screen">
+          <!-- NAV -->
+          <nav>
+            <div class="brand3"><span class="orb"></span><span class="nm">ATOMURUS</span></div>
+            <div class="nav3">
+              <a>Explore</a><a>Elements</a><a>Models</a><a>Molecules</a><a>Learn</a>
+              <a class="enter">Enter the Lab</a>
+            </div>
+          </nav>
+
+          <!-- HERO -->
+          <div class="hero3">
+            <div>
+              <div class="eye">The Architecture of Matter</div>
+              <h1>Step inside<br>the <span class="ser">elements.</span><br><b>Witness structure.</b></h1>
+              <p class="lede">An immersive laboratory where every atom is a place you can go — explore the periodic table in dimension, model orbitals, and watch molecules turn in space.</p>
+              <div class="hero-cta3">
+                <a class="btn-aura">Enter the Laboratory →</a>
+                <a class="btn-ghost3">▷ Take the tour</a>
+              </div>
+              <div class="stats3">
+                <div><div class="v">118</div><div class="k">Elements</div></div>
+                <div><div class="v">3,300+</div><div class="k">Isotopes</div></div>
+                <div><div class="v">09</div><div class="k">Instruments</div></div>
+              </div>
+            </div>
+            <div class="atomwrap">
+              <div class="halo"></div>
+              <div class="orbit o1" style="--r:0deg"><span class="e"></span></div>
+              <div class="orbit o2" style="--r:60deg"><span class="e"></span></div>
+              <div class="orbit o3" style="--r:-60deg"><span class="e"></span></div>
+              <div class="nucleus"></div>
+              <span class="atom-tag t1">Now exploring<b>Helium · He</b></span>
+              <span class="atom-tag t2">Electron shells<b>1s²</b></span>
+            </div>
+          </div>
+
+          <!-- SPATIAL LATTICE -->
+          <div class="lattice-sec">
+            <div class="c3head">
+              <div class="eye">The Periodic System</div>
+              <h2>Every element, <b>in dimension</b></h2>
+              <p>Tilt into the periodic lattice and select any element to summon its profile. Hover a cell to feel it rise from the plane.</p>
+            </div>
+            <div class="latgrid">
+              <div class="lattice">
+                <div class="tilt">
+                  <div class="ptable" id="c3-pt"></div>
+                  <div class="ptable fblock" id="c3-ptf"></div>
+                </div>
+              </div>
+              <div class="detail3" id="c3-detail">
+                <div class="dz" data-f="z">79</div>
+                <div class="dcat" data-f="cat">Transition Metal</div>
+                <div class="dsym" data-f="sym">Au</div>
+                <div class="dname" data-f="name">Gold</div>
+                <div class="drows">
+                  <div class="drow"><span class="k">Atomic mass</span><span class="v" data-f="mass">196.967 u</span></div>
+                  <div class="drow"><span class="k">Group · Period</span><span class="v" data-f="gp">11 · 6</span></div>
+                  <div class="drow"><span class="k">Block</span><span class="v" data-f="series">d-block</span></div>
+                  <div class="drow"><span class="k">State at 25°C</span><span class="v" data-f="state">Solid</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- FEATURE CONSTELLATION -->
+          <div class="constell">
+            <div class="c3head">
+              <div class="eye">Instruments of Discovery</div>
+              <h2>Tools that feel like <b>exploration</b></h2>
+            </div>
+            <div class="feat3">
+              <div class="fcard">
+                <div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="#86e6d6" stroke-width="1.4"><circle cx="12" cy="12" r="3"/><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(-60 12 12)"/></svg></div>
+                <h3>2D &amp; 3D Atomic Models</h3>
+                <p>Spin Bohr diagrams and electron orbitals in real space — see why an atom holds its shape.</p>
+                <span class="arrow">Open instrument →</span>
+              </div>
+              <div class="fcard">
+                <div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="#9db4ff" stroke-width="1.4"><circle cx="6" cy="9" r="2.4"/><circle cx="17" cy="6" r="2.4"/><circle cx="15" cy="17" r="2.4"/><path d="M8 10l7-3M16 8l-1 6"/></svg></div>
+                <h3>Molecular Visualizers</h3>
+                <p>Rotate, measure and inspect molecular structures — from water to caffeine — with full geometry.</p>
+                <span class="arrow">Open instrument →</span>
+              </div>
+              <div class="fcard">
+                <div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="#c9a8ff" stroke-width="1.4"><path d="M4 20V8M10 20V4M16 20v-9M22 20V6"/><path d="M3 20h20"/></svg></div>
+                <h3>Periodic Trends</h3>
+                <p>Watch radius, electronegativity and ionisation flow across the table as living gradients.</p>
+                <span class="arrow">Open instrument →</span>
+              </div>
+            </div>
+
+            <div class="closing3">
+              <h2>The most beautiful way to <b>study matter.</b></h2>
+              <p>Comparison, isotopes, calculators and a library of essays — every Atomurus instrument, gathered under one sky.</p>
+              <a class="btn-aura">Enter the Laboratory →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SPEC -->
+    <aside class="spec">
+      <div class="spec-block">
+        <h4>Typography</h4>
+        <p class="type-spec"><b>Display</b> — Sora (ExtraLight → Medium)<br><b>Accent</b> — Instrument Serif, italic<br><br>Airy geometric sans with wide tracking for calm futurism; a single italic serif adds wonder without nostalgia.</p>
+      </div>
+      <div class="spec-block">
+        <h4>Palette</h4>
+        <div class="spec-pal">
+          <div class="sw" style="background:#06080f"><span>void</span></div>
+          <div class="sw" style="background:#0e1426"><span>deep</span></div>
+          <div class="sw" style="background:#86e6d6"><span>aura</span></div>
+          <div class="sw" style="background:#9db4ff"><span>halo</span></div>
+          <div class="sw" style="background:#c9a8ff"><span>nebu</span></div>
+        </div>
+      </div>
+      <div class="spec-block">
+        <h4>Layout philosophy</h4>
+        <ul class="spec-list">
+          <li>Full-bleed, spatial, layered depth &amp; parallax</li>
+          <li>Generous negative space — let it breathe</li>
+          <li>Glass surfaces float above a starfield</li>
+          <li>Composition orbits a single focal atom</li>
+        </ul>
+      </div>
+      <div class="spec-block">
+        <h4>Periodic integration</h4>
+        <ul class="spec-list">
+          <li>Table tilts into 3D space (perspective lattice)</li>
+          <li>Cells rise on hover; selection floats a glass profile</li>
+          <li>Luminous category tints, never neon blocks</li>
+        </ul>
+      </div>
+      <div class="spec-block">
+        <h4>Motion</h4>
+        <ul class="spec-list">
+          <li>Slow orbital electrons; nothing is hurried</li>
+          <li>Lattice eases its tilt on hover</li>
+          <li>Aurora light blooms softly behind glass</li>
+        </ul>
+      </div>
+      <div class="spec-block">
+        <h4>Signature details</h4>
+        <ul class="spec-list">
+          <li>Live orbital nucleus as the brand anchor</li>
+          <li>Frosted-glass element profile cards</li>
+          <li>Starfield horizon &amp; aurora bloom</li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ========================= FOOTER ========================= -->
+<footer class="board-foot">
+  <span>Atomurus — Visual Identity Exploration · Three Futures · Rev. A · 14 June 2026</span>
+  <span class="sig">Prepared for direction review — choose one, and we refine.</span>
+</footer>
+
+<script>
+/* ============================================================
+   PERIODIC DATA  (118 elements)
+   n=number s=symbol nm=name m=mass(u) g=group(col) p=period(row)
+   c=category  f=fblock-row flag
+   ============================================================ */
+const CAT={ag:"Alkali Metal",ae:"Alkaline Earth",tm:"Transition Metal",ptm:"Post-transition Metal",ml:"Metalloid",nm:"Nonmetal",hl:"Halogen",ng:"Noble Gas",ln:"Lanthanide",an:"Actinide",un:"Unknown"};
+const BLOCK={ag:"s-block",ae:"s-block",tm:"d-block",ptm:"p-block",ml:"p-block",nm:"p-block",hl:"p-block",ng:"p-block",ln:"f-block",an:"f-block",un:"d-block"};
+const E=[
+ {n:1,s:"H",nm:"Hydrogen",m:1.008,g:1,p:1,c:"nm"},
+ {n:2,s:"He",nm:"Helium",m:4.003,g:18,p:1,c:"ng"},
+ {n:3,s:"Li",nm:"Lithium",m:6.94,g:1,p:2,c:"ag"},
+ {n:4,s:"Be",nm:"Beryllium",m:9.012,g:2,p:2,c:"ae"},
+ {n:5,s:"B",nm:"Boron",m:10.81,g:13,p:2,c:"ml"},
+ {n:6,s:"C",nm:"Carbon",m:12.011,g:14,p:2,c:"nm"},
+ {n:7,s:"N",nm:"Nitrogen",m:14.007,g:15,p:2,c:"nm"},
+ {n:8,s:"O",nm:"Oxygen",m:15.999,g:16,p:2,c:"nm"},
+ {n:9,s:"F",nm:"Fluorine",m:18.998,g:17,p:2,c:"hl"},
+ {n:10,s:"Ne",nm:"Neon",m:20.180,g:18,p:2,c:"ng"},
+ {n:11,s:"Na",nm:"Sodium",m:22.990,g:1,p:3,c:"ag"},
+ {n:12,s:"Mg",nm:"Magnesium",m:24.305,g:2,p:3,c:"ae"},
+ {n:13,s:"Al",nm:"Aluminium",m:26.982,g:13,p:3,c:"ptm"},
+ {n:14,s:"Si",nm:"Silicon",m:28.085,g:14,p:3,c:"ml"},
+ {n:15,s:"P",nm:"Phosphorus",m:30.974,g:15,p:3,c:"nm"},
+ {n:16,s:"S",nm:"Sulfur",m:32.06,g:16,p:3,c:"nm"},
+ {n:17,s:"Cl",nm:"Chlorine",m:35.45,g:17,p:3,c:"hl"},
+ {n:18,s:"Ar",nm:"Argon",m:39.948,g:18,p:3,c:"ng"},
+ {n:19,s:"K",nm:"Potassium",m:39.098,g:1,p:4,c:"ag"},
+ {n:20,s:"Ca",nm:"Calcium",m:40.078,g:2,p:4,c:"ae"},
+ {n:21,s:"Sc",nm:"Scandium",m:44.956,g:3,p:4,c:"tm"},
+ {n:22,s:"Ti",nm:"Titanium",m:47.867,g:4,p:4,c:"tm"},
+ {n:23,s:"V",nm:"Vanadium",m:50.942,g:5,p:4,c:"tm"},
+ {n:24,s:"Cr",nm:"Chromium",m:51.996,g:6,p:4,c:"tm"},
+ {n:25,s:"Mn",nm:"Manganese",m:54.938,g:7,p:4,c:"tm"},
+ {n:26,s:"Fe",nm:"Iron",m:55.845,g:8,p:4,c:"tm"},
+ {n:27,s:"Co",nm:"Cobalt",m:58.933,g:9,p:4,c:"tm"},
+ {n:28,s:"Ni",nm:"Nickel",m:58.693,g:10,p:4,c:"tm"},
+ {n:29,s:"Cu",nm:"Copper",m:63.546,g:11,p:4,c:"tm"},
+ {n:30,s:"Zn",nm:"Zinc",m:65.38,g:12,p:4,c:"tm"},
+ {n:31,s:"Ga",nm:"Gallium",m:69.723,g:13,p:4,c:"ptm"},
+ {n:32,s:"Ge",nm:"Germanium",m:72.630,g:14,p:4,c:"ml"},
+ {n:33,s:"As",nm:"Arsenic",m:74.922,g:15,p:4,c:"ml"},
+ {n:34,s:"Se",nm:"Selenium",m:78.971,g:16,p:4,c:"nm"},
+ {n:35,s:"Br",nm:"Bromine",m:79.904,g:17,p:4,c:"hl"},
+ {n:36,s:"Kr",nm:"Krypton",m:83.798,g:18,p:4,c:"ng"},
+ {n:37,s:"Rb",nm:"Rubidium",m:85.468,g:1,p:5,c:"ag"},
+ {n:38,s:"Sr",nm:"Strontium",m:87.62,g:2,p:5,c:"ae"},
+ {n:39,s:"Y",nm:"Yttrium",m:88.906,g:3,p:5,c:"tm"},
+ {n:40,s:"Zr",nm:"Zirconium",m:91.224,g:4,p:5,c:"tm"},
+ {n:41,s:"Nb",nm:"Niobium",m:92.906,g:5,p:5,c:"tm"},
+ {n:42,s:"Mo",nm:"Molybdenum",m:95.95,g:6,p:5,c:"tm"},
+ {n:43,s:"Tc",nm:"Technetium",m:98,g:7,p:5,c:"tm"},
+ {n:44,s:"Ru",nm:"Ruthenium",m:101.07,g:8,p:5,c:"tm"},
+ {n:45,s:"Rh",nm:"Rhodium",m:102.906,g:9,p:5,c:"tm"},
+ {n:46,s:"Pd",nm:"Palladium",m:106.42,g:10,p:5,c:"tm"},
+ {n:47,s:"Ag",nm:"Silver",m:107.868,g:11,p:5,c:"tm"},
+ {n:48,s:"Cd",nm:"Cadmium",m:112.414,g:12,p:5,c:"tm"},
+ {n:49,s:"In",nm:"Indium",m:114.818,g:13,p:5,c:"ptm"},
+ {n:50,s:"Sn",nm:"Tin",m:118.710,g:14,p:5,c:"ptm"},
+ {n:51,s:"Sb",nm:"Antimony",m:121.760,g:15,p:5,c:"ml"},
+ {n:52,s:"Te",nm:"Tellurium",m:127.60,g:16,p:5,c:"ml"},
+ {n:53,s:"I",nm:"Iodine",m:126.904,g:17,p:5,c:"hl"},
+ {n:54,s:"Xe",nm:"Xenon",m:131.293,g:18,p:5,c:"ng"},
+ {n:55,s:"Cs",nm:"Caesium",m:132.905,g:1,p:6,c:"ag"},
+ {n:56,s:"Ba",nm:"Barium",m:137.327,g:2,p:6,c:"ae"},
+ {n:57,s:"La",nm:"Lanthanum",m:138.905,g:3,p:6,c:"ln"},
+ {n:72,s:"Hf",nm:"Hafnium",m:178.49,g:4,p:6,c:"tm"},
+ {n:73,s:"Ta",nm:"Tantalum",m:180.948,g:5,p:6,c:"tm"},
+ {n:74,s:"W",nm:"Tungsten",m:183.84,g:6,p:6,c:"tm"},
+ {n:75,s:"Re",nm:"Rhenium",m:186.207,g:7,p:6,c:"tm"},
+ {n:76,s:"Os",nm:"Osmium",m:190.23,g:8,p:6,c:"tm"},
+ {n:77,s:"Ir",nm:"Iridium",m:192.217,g:9,p:6,c:"tm"},
+ {n:78,s:"Pt",nm:"Platinum",m:195.084,g:10,p:6,c:"tm"},
+ {n:79,s:"Au",nm:"Gold",m:196.967,g:11,p:6,c:"tm"},
+ {n:80,s:"Hg",nm:"Mercury",m:200.592,g:12,p:6,c:"tm"},
+ {n:81,s:"Tl",nm:"Thallium",m:204.38,g:13,p:6,c:"ptm"},
+ {n:82,s:"Pb",nm:"Lead",m:207.2,g:14,p:6,c:"ptm"},
+ {n:83,s:"Bi",nm:"Bismuth",m:208.980,g:15,p:6,c:"ptm"},
+ {n:84,s:"Po",nm:"Polonium",m:209,g:16,p:6,c:"ml"},
+ {n:85,s:"At",nm:"Astatine",m:210,g:17,p:6,c:"hl"},
+ {n:86,s:"Rn",nm:"Radon",m:222,g:18,p:6,c:"ng"},
+ {n:87,s:"Fr",nm:"Francium",m:223,g:1,p:7,c:"ag"},
+ {n:88,s:"Ra",nm:"Radium",m:226,g:2,p:7,c:"ae"},
+ {n:89,s:"Ac",nm:"Actinium",m:227,g:3,p:7,c:"an"},
+ {n:104,s:"Rf",nm:"Rutherfordium",m:267,g:4,p:7,c:"tm"},
+ {n:105,s:"Db",nm:"Dubnium",m:268,g:5,p:7,c:"tm"},
+ {n:106,s:"Sg",nm:"Seaborgium",m:269,g:6,p:7,c:"tm"},
+ {n:107,s:"Bh",nm:"Bohrium",m:270,g:7,p:7,c:"tm"},
+ {n:108,s:"Hs",nm:"Hassium",m:269,g:8,p:7,c:"tm"},
+ {n:109,s:"Mt",nm:"Meitnerium",m:278,g:9,p:7,c:"un"},
+ {n:110,s:"Ds",nm:"Darmstadtium",m:281,g:10,p:7,c:"un"},
+ {n:111,s:"Rg",nm:"Roentgenium",m:282,g:11,p:7,c:"un"},
+ {n:112,s:"Cn",nm:"Copernicium",m:285,g:12,p:7,c:"tm"},
+ {n:113,s:"Nh",nm:"Nihonium",m:286,g:13,p:7,c:"ptm"},
+ {n:114,s:"Fl",nm:"Flerovium",m:289,g:14,p:7,c:"ptm"},
+ {n:115,s:"Mc",nm:"Moscovium",m:290,g:15,p:7,c:"ptm"},
+ {n:116,s:"Lv",nm:"Livermorium",m:293,g:16,p:7,c:"ptm"},
+ {n:117,s:"Ts",nm:"Tennessine",m:294,g:17,p:7,c:"hl"},
+ {n:118,s:"Og",nm:"Oganesson",m:294,g:18,p:7,c:"ng"},
+ /* f-block detached rows */
+ {n:58,s:"Ce",nm:"Cerium",m:140.116,g:4,p:1,c:"ln",f:1},
+ {n:59,s:"Pr",nm:"Praseodymium",m:140.908,g:5,p:1,c:"ln",f:1},
+ {n:60,s:"Nd",nm:"Neodymium",m:144.242,g:6,p:1,c:"ln",f:1},
+ {n:61,s:"Pm",nm:"Promethium",m:145,g:7,p:1,c:"ln",f:1},
+ {n:62,s:"Sm",nm:"Samarium",m:150.36,g:8,p:1,c:"ln",f:1},
+ {n:63,s:"Eu",nm:"Europium",m:151.964,g:9,p:1,c:"ln",f:1},
+ {n:64,s:"Gd",nm:"Gadolinium",m:157.25,g:10,p:1,c:"ln",f:1},
+ {n:65,s:"Tb",nm:"Terbium",m:158.925,g:11,p:1,c:"ln",f:1},
+ {n:66,s:"Dy",nm:"Dysprosium",m:162.500,g:12,p:1,c:"ln",f:1},
+ {n:67,s:"Ho",nm:"Holmium",m:164.930,g:13,p:1,c:"ln",f:1},
+ {n:68,s:"Er",nm:"Erbium",m:167.259,g:14,p:1,c:"ln",f:1},
+ {n:69,s:"Tm",nm:"Thulium",m:168.934,g:15,p:1,c:"ln",f:1},
+ {n:70,s:"Yb",nm:"Ytterbium",m:173.045,g:16,p:1,c:"ln",f:1},
+ {n:71,s:"Lu",nm:"Lutetium",m:174.967,g:17,p:1,c:"ln",f:1},
+ {n:90,s:"Th",nm:"Thorium",m:232.038,g:4,p:2,c:"an",f:1},
+ {n:91,s:"Pa",nm:"Protactinium",m:231.036,g:5,p:2,c:"an",f:1},
+ {n:92,s:"U",nm:"Uranium",m:238.029,g:6,p:2,c:"an",f:1},
+ {n:93,s:"Np",nm:"Neptunium",m:237,g:7,p:2,c:"an",f:1},
+ {n:94,s:"Pu",nm:"Plutonium",m:244,g:8,p:2,c:"an",f:1},
+ {n:95,s:"Am",nm:"Americium",m:243,g:9,p:2,c:"an",f:1},
+ {n:96,s:"Cm",nm:"Curium",m:247,g:10,p:2,c:"an",f:1},
+ {n:97,s:"Bk",nm:"Berkelium",m:247,g:11,p:2,c:"an",f:1},
+ {n:98,s:"Cf",nm:"Californium",m:251,g:12,p:2,c:"an",f:1},
+ {n:99,s:"Es",nm:"Einsteinium",m:252,g:13,p:2,c:"an",f:1},
+ {n:100,s:"Fm",nm:"Fermium",m:257,g:14,p:2,c:"an",f:1},
+ {n:101,s:"Md",nm:"Mendelevium",m:258,g:15,p:2,c:"an",f:1},
+ {n:102,s:"No",nm:"Nobelium",m:259,g:16,p:2,c:"an",f:1},
+ {n:103,s:"Lr",nm:"Lawrencium",m:266,g:17,p:2,c:"an",f:1}
+];
+
+/* category colour maps per concept (set as --c on each cell) */
+const PAL={
+ c1:{ag:"#a8553f",ae:"#be823c",tm:"#7c8a6a",ptm:"#5e7e7a",ml:"#4f6e84",nm:"#3e5c73",hl:"#8a6fa0",ng:"#9a5c7a",ln:"#7a6e8c",an:"#8c6e66",un:"#8a8a82"},
+ c2:{ag:"#e8b85e",ae:"#e0c06a",tm:"#e0a24a",ptm:"#9fe08a",ml:"#4fd6c2",nm:"#5fe6a0",hl:"#7fe0b0",ng:"#58c7e0",ln:"#b58ce0",an:"#c79bd0",un:"#7fa890"},
+ c3:{ag:"#e08a9a",ae:"#e0a887",tm:"#7fd0e0",ptm:"#8fbfe0",ml:"#8fe0c8",nm:"#a8c8f0",hl:"#c4a8f0",ng:"#e0b0e0",ln:"#b0b8f0",an:"#c8b0e0",un:"#9fb0c0"}
+};
+
+function buildTable(mainId,fId,concept,onSelect){
+  const main=document.getElementById(mainId), fb=document.getElementById(fId);
+  if(!main) return;
+  const pal=PAL[concept];
+  E.forEach(el=>{
+    const cell=document.createElement("div");
+    cell.className="cell";
+    cell.dataset.cat=el.c;
+    cell.style.setProperty("--c",pal[el.c]);
+    if(el.f){ cell.style.gridColumn=el.g; cell.style.gridRow=el.p; }
+    else { cell.style.gridColumn=el.g; cell.style.gridRow=el.p; }
+    cell.innerHTML=`<span class="num">${el.n}</span><span class="sym">${el.s}</span>`;
+    const handler=()=>{
+      const tgt = el.f?fb:main;
+      main.querySelectorAll(".cell.sel").forEach(c=>c.classList.remove("sel"));
+      if(fb) fb.querySelectorAll(".cell.sel").forEach(c=>c.classList.remove("sel"));
+      cell.classList.add("sel");
+      onSelect(el);
+    };
+    cell.addEventListener("mouseenter",handler);
+    cell.addEventListener("click",handler);
+    (el.f?fb:main).appendChild(cell);
+  });
+}
+
+/* ---- concept 01: specimen plate ---- */
+buildTable("c1-pt","c1-ptf","c1",el=>{
+  const box=document.getElementById("c1-spec");
+  box.querySelector('[data-f=sym]').textContent=el.s;
+  box.querySelector('[data-f=name]').textContent=el.nm;
+  box.querySelector('[data-f=z]').textContent=el.n;
+  box.querySelector('[data-f=cat]').textContent=CAT[el.c];
+  box.querySelector('[data-f=mass]').textContent=el.m;
+  box.querySelector('[data-f=group]').textContent=el.f?"—":el.g;
+  box.querySelector('[data-f=period]').textContent=el.f?(el.c==="ln"?6:7):el.p;
+  box.querySelector('[data-f=series]').textContent=BLOCK[el.c];
+});
+
+/* ---- concept 02: console readout ---- */
+buildTable("c2-pt","c2-ptf","c2",el=>{
+  const box=document.getElementById("c2-read");
+  box.querySelector('[data-f=sym]').textContent=el.s;
+  box.querySelector('[data-f=name]').textContent=el.nm.toUpperCase();
+  box.querySelector('[data-f=z]').textContent=String(el.n).padStart(2,"0");
+  box.querySelector('[data-f=cat]').textContent=CAT[el.c].toUpperCase();
+  box.querySelector('[data-f=mass]').textContent=el.m;
+  box.querySelector('[data-f=group]').textContent=el.f?"--":String(el.g).padStart(2,"0");
+  box.querySelector('[data-f=period]').textContent=String(el.f?(el.c==="ln"?6:7):el.p).padStart(2,"0");
+  box.querySelector('[data-f=series]').textContent=BLOCK[el.c];
+});
+
+/* ---- concept 03: floating detail ---- */
+buildTable("c3-pt","c3-ptf","c3",el=>{
+  const box=document.getElementById("c3-detail");
+  box.querySelector('[data-f=sym]').textContent=el.s;
+  box.querySelector('[data-f=name]').textContent=el.nm;
+  box.querySelector('[data-f=z]').textContent=el.n;
+  box.querySelector('[data-f=cat]').textContent=CAT[el.c];
+  box.querySelector('[data-f=mass]').textContent=el.m+" u";
+  box.querySelector('[data-f=gp]').textContent=(el.f?"—":el.g)+" · "+(el.f?(el.c==="ln"?6:7):el.p);
+  box.querySelector('[data-f=series]').textContent=BLOCK[el.c];
+  const gas=["H","He","N","O","F","Ne","Cl","Ar","Kr","Xe","Rn","Og"];
+  const liq=["Hg","Br"];
+  box.querySelector('[data-f=state]').textContent=gas.includes(el.s)?"Gas":(liq.includes(el.s)?"Liquid":"Solid");
+});
+
+/* live UTC clock for concept 02 */
+function tick(){
+  const c=document.getElementById("c2-clock");
+  if(c){ const d=new Date(); c.textContent="UTC "+d.toISOString().substr(11,8); }
+}
+setInterval(tick,1000); tick();
+
+/* scroll reveal */
+const io=new IntersectionObserver((es)=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target);} }),{threshold:.06});
+document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
+</script>
+<script type="text/javascript">
+    aclib.runAutoTag({
+        zoneId: 'o42jwt5vja',
+    });
+</script>
+</body>
+</html>

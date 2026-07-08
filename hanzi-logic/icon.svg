@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#e33b32"/>
+  <rect x="58" y="58" width="396" height="396" rx="72" fill="none" stroke="#fff7f4" stroke-width="24" opacity=".42"/>
+  <text x="256" y="315" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, Noto Sans CJK SC, sans-serif" font-size="238" font-weight="800" fill="#fff7f4">汉</text>
+</svg>
