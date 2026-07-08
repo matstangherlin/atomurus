@@ -50,3 +50,11 @@ You do not need a database for login credentials. Use one only for application d
 6. Reload `/app` and confirm the account remains signed in.
 7. Test forgot password. The `/login#recovery_token=...` callback should show the new-password form.
 8. Click logout and confirm `/app` redirects back to `/login`.
+
+## Plans & trial
+
+See `BILLING.md` for pricing and entitlement rules.
+
+- New accounts receive **30 days of Pro** automatically from account creation time.
+- Mark a user as permanently paid in Identity app metadata: `{ "atomurus_plan": "paid" }`.
+- `/api/ads-config` and `/app` reflect Pro entitlements; ads turn off for Pro/trial/admin.

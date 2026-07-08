@@ -1,5 +1,5 @@
 import { getUser, refreshSession } from '@netlify/identity';
-import { json, options, publicUser } from '../lib/netlify-identity-utils.mjs';
+import { json, options, publicUser, PLAN_PRICING } from '../lib/netlify-identity-utils.mjs';
 
 export default async function handler(request) {
   if (request.method === 'OPTIONS') return options();
@@ -19,11 +19,52 @@ export default async function handler(request) {
   }
 
   const user = publicUser(identityUser);
-  const features = {
-    labWorkspace: true,
-    premiumLessons: user.plan === 'paid' || user.plan === 'admin',
-    adminConsole: user.role === 'admin'
-  };
+  const features = user.features || {};
+
+  const modules = [
+    {
+      id: 'study-workspace',
+      label: 'Study workspace',
+      description: 'Open the free lab: periodic table, models and calculators.',
+      href: '/periodic-table',
+      state: 'available'
+    },
+    {
+      id: 'favorites',
+      label: 'Favorites & history',
+      description: 'Save elements, molecules and calculator runs (Pro).',
+      href: user.isPro ? '/app#progress' : '/pricing',
+      state: features.favorites ? 'available' : 'locked'
+    },
+    {
+      id: 'premium-lessons',
+      label: 'Premium study tracks',
+      description: 'Guided chemistry paths for high school, ENEM and general chemistry.',
+      href: user.isPro ? '/app#tracks' : '/pricing',
+      state: features.premiumLessons ? 'coming' : 'locked'
+    },
+    {
+      id: 'ads-free',
+      label: 'Ad-free lab',
+      description: 'Remove AdSense and AdCash while your Pro plan or trial is active.',
+      href: '/pricing',
+      state: features.adsFree ? 'available' : 'locked'
+    },
+    {
+      id: 'export-pdf',
+      label: 'PDF export',
+      description: 'Export study sheets and table views without watermarks (Pro).',
+      href: user.isPro ? '/periodic-table' : '/pricing',
+      state: features.exportPdf ? 'available' : 'locked'
+    },
+    {
+      id: 'admin-console',
+      label: 'Admin console',
+      description: 'Internal operators only.',
+      href: '/app',
+      state: features.adminConsole ? 'available' : 'hidden'
+    }
+  ];
 
   return json(200, {
     ok: true,
@@ -31,28 +72,29 @@ export default async function handler(request) {
     access: {
       role: user.role,
       plan: user.plan,
+      planSource: user.planSource,
+      isPro: user.isPro,
+      adsFree: user.adsFree,
+      trialEndsAt: user.trialEndsAt,
       features
     },
+    pricing: PLAN_PRICING,
     dashboard: {
-      title: 'Atomurus private workspace',
-      status: user.plan,
-      modules: [
-        {
-          id: 'study-workspace',
-          label: 'Study workspace',
-          state: 'available'
-        },
-        {
-          id: 'premium-lessons',
-          label: 'Premium lessons',
-          state: features.premiumLessons ? 'available' : 'locked'
-        },
-        {
-          id: 'admin-console',
-          label: 'Admin console',
-          state: features.adminConsole ? 'available' : 'hidden'
-        }
-      ]
+      title: 'Atomurus Pro workspace',
+      status: user.planSource === 'trial' ? 'trial' : user.plan,
+      upgradeUrl: '/pricing',
+      modules,
+      nextSteps: user.isPro
+        ? [
+            'Explore the periodic table without ads.',
+            'Bookmark this workspace and return after each study session.',
+            'Premium tracks and AI tutor ship next in the roadmap.'
+          ]
+        : [
+            'Start a free account to unlock 30 days of Pro.',
+            'Compare Free vs Pro on the pricing page.',
+            'Checkout (Stripe / Mercado Pago) connects next.'
+          ]
     }
   });
 }

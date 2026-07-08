@@ -100,6 +100,25 @@ function assertHomePreviewPayload() {
   }
 }
 
+function assertPricingSurface() {
+  if (!fs.existsSync(path.join(ROOT, 'pricing.html'))) {
+    fail('pricing.html is missing');
+  }
+  if (!fs.existsSync(path.join(ROOT, 'ads-gate.js'))) {
+    fail('ads-gate.js is missing');
+  }
+  if (!fs.existsSync(path.join(ROOT, 'netlify', 'lib', 'plan-access.mjs'))) {
+    fail('netlify/lib/plan-access.mjs is missing');
+  }
+  if (!fs.existsSync(path.join(ROOT, 'netlify', 'functions', 'ads-config.mjs'))) {
+    fail('netlify/functions/ads-config.mjs is missing');
+  }
+  const netlify = read('netlify.toml');
+  if (!netlify.includes('/api/ads-config') || !netlify.includes('/pricing')) {
+    fail('netlify.toml missing pricing/ads-config routes');
+  }
+}
+
 function assertI18nNamespaceAssets() {
   const runtime = read('i18n.js');
   if (!runtime.includes('assets/i18n/')) {
@@ -127,6 +146,7 @@ function main() {
   assertReadme();
   assertHomePreviewPayload();
   assertI18nNamespaceAssets();
+  assertPricingSurface();
   console.log('Site validation passed');
 }
 

@@ -92,6 +92,11 @@
   to     = "/.netlify/functions/private-dashboard"
   status = 200
 
+[[redirects]]
+  from   = "/api/ads-config"
+  to     = "/.netlify/functions/ads-config"
+  status = 200
+
 # Auth pages. Explicit rewrites keep these stable alongside pretty URLs.
 [[redirects]]
   from   = "/login"
@@ -101,6 +106,11 @@
 [[redirects]]
   from   = "/app"
   to     = "/app.html"
+  status = 200
+
+[[redirects]]
+  from   = "/pricing"
+  to     = "/pricing.html"
   status = 200
 
 # Defense-in-depth while publish="." is still used.
@@ -267,6 +277,13 @@
 [[redirects]]
   from   = "/about"
   to     = "/about.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/pricing"
+  to     = "/pricing.pt.html"
   status = 200
   force  = true
   query  = { lang = "pt-BR" }

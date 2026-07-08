@@ -9,8 +9,9 @@
     "build:content": "node tools/build-element-content-chunks.js",
     "build:isomerism": "node tools/generate-isomerism-pt-variants.js",
     "build": "node tools/build-home-preview-data.js && node tools/build-i18n-assets.js && node tools/build-element-content-chunks.js && node tools/generate-isomerism-pt-variants.js && node bump-version.js && node build-i18n.js",
+    "test:plan": "node tools/test-plan-access.mjs",
     "validate": "node tools/validate-site.js",
-    "ci": "npm run build && npm run validate"
+    "ci": "npm run build && npm run test:plan && npm run validate"
   },
   "dependencies": {
     "@netlify/identity": "1.2.0"

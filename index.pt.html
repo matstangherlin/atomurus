@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR" data-theme="light">
 <head>
 <script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
@@ -6,8 +6,8 @@
 <script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var KEY='atomurus-lang';var p=new URLSearchParams(location.search).get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem(KEY);if(l!=='pt'&&l!=='en'){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}try{localStorage.setItem(KEY,l);}catch(e){}if(l==='pt'){document.documentElement.lang='pt-BR';document.documentElement.classList.add('lang-pt-pending');setTimeout(function(){document.documentElement.classList.remove('lang-pt-pending');},120);}else{document.documentElement.lang='en-US';}}catch(e){}})();</script>
 <script>(function(){if(/^#(confirmation_token|recovery_token)=/.test(location.hash)){location.replace('/login'+location.hash);}})();</script>
 <meta name="google-adsense-account" content="ca-pub-9495821870733084">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9495821870733084" crossorigin="anonymous" fetchpriority="low"></script>
-<script src="cookie-consent.js?v=202607080738" defer></script>
+<script src="ads-gate.js?v=202607081554" defer></script>
+<script src="cookie-consent.js?v=202607081554" defer></script>
 <meta charset="UTF-8">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1E6A50" media="(prefers-color-scheme: light)">
@@ -17,13 +17,13 @@
 <meta name="apple-mobile-web-app-title" content="Atomurus">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/png" href="assets/atomurus-logo.png?v=202607080738">
-<link rel="apple-touch-icon" href="assets/atomurus-logo.png?v=202607080738">
+<link rel="icon" type="image/png" href="assets/atomurus-logo.png?v=202607081554">
+<link rel="apple-touch-icon" href="assets/atomurus-logo.png?v=202607081554">
 <title data-i18n="home.metaTitle">Atomurus: Laboratório de Química Interativo — Tabela Periódica, Modelos 3D, Calculadoras e Artigos</title>
 <meta name="description" data-i18n-attr="content:home.metaDesc" content="Laboratório de química online gratuito: explore 118 elementos, tendências periódicas, mais de 40 modelos 3D atômicos, moleculares, de alótropos e isomeria, cinco calculadoras e artigos. Sem cadastro.">
 <meta property="og:title" content="Atomurus: Laboratório de Química Interativo — Tabela Periódica, Modelos 3D, Calculadoras e Artigos">
 <meta property="og:description" content="Laboratório de química online gratuito: explore 118 elementos, tendências periódicas, mais de 40 modelos 3D atômicos, moleculares, de alótropos e isomeria, cinco calculadoras e artigos. Sem cadastro.">
-<meta property="og:image" content="https://atomurus.com/assets/og-home.png?v=202607080738">
+<meta property="og:image" content="https://atomurus.com/assets/og-home.png?v=202607081554">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:url" content="https://atomurus.com/?lang=pt-BR">
@@ -34,7 +34,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Atomurus: Laboratório de Química Interativo — Tabela Periódica, Modelos 3D, Calculadoras e Artigos">
 <meta name="twitter:description" content="Laboratório de química online gratuito: explore 118 elementos, tendências periódicas, mais de 40 modelos 3D atômicos, moleculares, de alótropos e isomeria, cinco calculadoras e artigos. Sem cadastro.">
-<meta name="twitter:image" content="https://atomurus.com/assets/og-home.png?v=202607080738">
+<meta name="twitter:image" content="https://atomurus.com/assets/og-home.png?v=202607081554">
 <link rel="canonical" href="https://atomurus.com/?lang=pt-BR">
 <link rel="alternate" hreflang="en" href="https://atomurus.com/?lang=en">
 <link rel="alternate" hreflang="pt-BR" href="https://atomurus.com/?lang=pt-BR">
@@ -51,7 +51,7 @@
       "name": "Atomurus",
       "alternateName": "Atomurus Chemistry Laboratory",
       "url": "https://atomurus.com/",
-      "description": "Open and interactive chemistry laboratory — periodic table, 40+ 3D models, chemistry calculators, articles and more.",
+      "description": "Open and interactive chemistry laboratory â€” periodic table, 40+ 3D models, chemistry calculators, articles and more.",
       "inLanguage": ["en", "pt-BR", "es"],
       "publisher": { "@id": "https://atomurus.com/#org" },
       "potentialAction": {
@@ -71,12 +71,12 @@
       "url": "https://atomurus.com/",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://atomurus.com/assets/atomurus-logo.png?v=202607080738",
+        "url": "https://atomurus.com/assets/atomurus-logo.png?v=202607081554",
         "width": 512,
         "height": 512
       },
       "image": "https://atomurus.com/assets/og-home.png",
-      "description": "Open and interactive chemistry laboratory — periodic table with 118 elements, 3D atomic, molecular, allotrope and isomerism models, five calculators and chemistry articles.",
+      "description": "Open and interactive chemistry laboratory â€” periodic table with 118 elements, 3D atomic, molecular, allotrope and isomerism models, five calculators and chemistry articles.",
       "knowsAbout": [
         "Chemistry",
         "Periodic Table",
@@ -103,26 +103,26 @@
 <link rel="preload" href="/assets/fonts/inter-tight-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/jetbrains-mono-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/instrument-serif-400-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202607080738">
+<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202607081554">
 
 <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>
-<script src="lazy-ads.js?v=202607080738" defer></script>
+<script src="lazy-ads.js?v=202607081554" defer></script>
 
 <!-- reCAPTCHA v3 -->
-<script src="recaptcha.js?v=202607080738" defer></script>
+<script src="recaptcha.js?v=202607081554" defer></script>
 
-<link rel="stylesheet" href="atomurus-lab-console.css?v=202607080738">
-<script src="atomurus-mobile-nav.js?v=202607080738" defer></script>
-<!-- i18n (EN default, PT fallback) — must load before page scripts that use I18N.t -->
-<script src="i18n.js?v=202607080738" defer></script>
-<script src="share-button.js?v=202607080738" defer></script>
-<script src="page-share-init.js?v=202607080738" defer></script>
-<script src="meta-i18n.js?v=202607080738" defer></script>
+<link rel="stylesheet" href="atomurus-lab-console.css?v=202607081554">
+<script src="atomurus-mobile-nav.js?v=202607081554" defer></script>
+<!-- i18n (EN default, PT fallback) â€” must load before page scripts that use I18N.t -->
+<script src="i18n.js?v=202607081554" defer></script>
+<script src="share-button.js?v=202607081554" defer></script>
+<script src="page-share-init.js?v=202607081554" defer></script>
+<script src="meta-i18n.js?v=202607081554" defer></script>
 <!-- Compact preview payload for the landing-page mini periodic table -->
-<script src="home-preview-data.js?v=202607080738" defer></script>
+<script src="home-preview-data.js?v=202607081554" defer></script>
 
 <style>
-  /* Landing page only overrides — the page doesn't have a sidebar */
+  /* Landing page only overrides â€” the page doesn't have a sidebar */
   html, body { height: auto; overflow: visible; min-height: 100vh; }
   body { display: block; height: auto; overflow-x: hidden; padding-bottom: 22px; }
   /* hide the .sidebar/.main reset rules that don't apply here */
@@ -131,7 +131,7 @@
 
 <body class="lc-landing">
 
-<!-- ════════════ TOPNAV ════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â• TOPNAV â•â•â•â•â•â•â•â•â•â•â•â• -->
 <nav class="lc-topnav">
   <a class="lc-topnav-brand" href="index.html">
     <div class="lc-topnav-mark">
@@ -163,15 +163,15 @@
       <div class="lc-topnav-menu" role="menu" id="topnav-viewer-menu" aria-labelledby="topnav-viewer-trigger">
         <a href="viewer/atomic-models.html" role="menuitem">
           <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="1.5" fill="currentColor"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/></svg>
-          <span data-i18n="common.nav.atomicModels">Modelos Atômicos</span>
+          <span data-i18n="common.nav.atomicModels">Modelos AtÃ´micos</span>
         </a>
         <a href="viewer/molecules.html" role="menuitem">
           <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="4" cy="4" r="2" fill="currentColor"/><circle cx="12" cy="6" r="2" fill="currentColor" opacity=".7"/><circle cx="8" cy="12" r="2" fill="currentColor" opacity=".5"/><line x1="4" y1="4" x2="12" y2="6" stroke="currentColor" stroke-width="1"/><line x1="12" y1="6" x2="8" y2="12" stroke="currentColor" stroke-width="1"/><line x1="4" y1="4" x2="8" y2="12" stroke="currentColor" stroke-width="1"/></svg>
-          <span data-i18n="common.nav.molecules">Moléculas</span>
+          <span data-i18n="common.nav.molecules">MolÃ©culas</span>
         </a>
         <a href="viewer/allotropes.html" role="menuitem">
           <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><polygon points="8,2 14,6 12,13 4,13 2,6" stroke="currentColor" stroke-width="1.2" fill="none"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/></svg>
-          <span data-i18n="common.nav.allotropes">Alótropos</span>
+          <span data-i18n="common.nav.allotropes">AlÃ³tropos</span>
         </a>
         <a href="viewer/isomerism/constitutional/function.html" role="menuitem">
           <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
@@ -193,6 +193,9 @@
     <a class="lc-topnav-link" href="explore.html">
       <span class="lc-tn-no">04</span> <span data-i18n="common.nav.explore">Explore</span>
     </a>
+    <a class="lc-topnav-link" href="pricing.html">
+      <span class="lc-tn-no">05</span> <span data-i18n="common.nav.pricing">Pricing</span>
+    </a>
   </div>
 
   <div class="lc-topnav-spacer"></div>
@@ -205,9 +208,9 @@
       <line x1="7.2" y1="7.2" x2="10" y2="10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
     </svg>
     <input class="lc-tn-search-input" id="quick-search" type="text"
-           placeholder="search element, symbol or Z…" autocomplete="off"
+           placeholder="search element, symbol or Zâ€¦" autocomplete="off"
            data-i18n-attr="placeholder:common.searchPlaceholder">
-    <span class="lc-kbd" aria-hidden="true">⌘K</span>
+    <span class="lc-kbd" aria-hidden="true">âŒ˜K</span>
   </div>
 
   <button class="lc-topnav-btn lc-topnav-lang" data-i18n-toggle
@@ -229,15 +232,15 @@
     </svg>
   </button>
 
-  <a class="lc-topnav-cta" href="periodic-table.html" aria-label="Open lab" data-i18n-attr="aria-label:common.openLab">
-    <span data-i18n="common.openLab">Open lab</span>
+  <a class="lc-topnav-cta" href="login.html" aria-label="Account">
+    <span data-i18n="pricing.ctaAccount">Account</span>
     <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
       <path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
   </a>
 </nav>
 
-<!-- ════════════ DATA STRIP ════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â• DATA STRIP â•â•â•â•â•â•â•â•â•â•â•â• -->
 <div class="data-strip">
   <span class="ds-k" data-i18n="home.strip.workspace">workspace</span><span class="ds-v" data-i18n="home.strip.workspaceVal">ATOMURUS / LAB</span>
   <span class="ds-sep"></span>
@@ -245,17 +248,17 @@
   <span class="ds-sep"></span>
   <span class="ds-k" data-i18n="home.strip.modules">modules</span><span class="ds-v" data-i18n="home.strip.modulesVal">4 live</span>
   <span class="ds-sep"></span>
-  <span class="ds-k" data-i18n="home.strip.lastSync">last sync</span><span class="ds-v" id="ds-time" data-i18n="home.strip.loading">— ms ago</span>
+  <span class="ds-k" data-i18n="home.strip.lastSync">last sync</span><span class="ds-v" id="ds-time" data-i18n="home.strip.loading">â€” ms ago</span>
   <span class="ds-spacer"></span>
-  <span class="ds-k" data-i18n="home.strip.data">data</span><span class="ds-v ds-hi" data-i18n="home.strip.dataVal">IUPAC 2024 · CODATA 2022</span>
+  <span class="ds-k" data-i18n="home.strip.data">data</span><span class="ds-v ds-hi" data-i18n="home.strip.dataVal">IUPAC 2024 Â· CODATA 2022</span>
 </div>
 
-<!-- ════════════ HERO ════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â• HERO â•â•â•â•â•â•â•â•â•â•â•â• -->
 <header class="lc-hero">
   <div class="lc-hero-left">
     <div class="lc-hero-kicker">
       <span data-i18n="home.hero.welcome">welcome to atomurus</span>
-      <span class="pill" data-i18n="home.hero.version">v1.11 · 2026</span>
+      <span class="pill" data-i18n="home.hero.version">v1.11 Â· 2026</span>
     </div>
 
     <h1 class="lc-hero-title">
@@ -269,7 +272,7 @@
     <div class="lc-hero-actions">
       <a class="lc-btn-primary" href="periodic-table.html">
         <span data-i18n="home.hero.ctaPrimary">Open periodic table</span>
-        <span class="lc-kbd">↵</span>
+        <span class="lc-kbd">â†µ</span>
       </a>
       <a class="lc-btn-ghost" href="viewer/atomic-models.html">
         <span data-i18n="home.hero.ctaGhost">Viewer</span>
@@ -293,7 +296,7 @@
         <div class="lc-hero-stat-l" data-i18n="home.hero.statCalc">Calculators</div>
       </div>
       <div class="lc-hero-stat">
-        <div class="lc-hero-stat-n"><em>∞</em></div>
+        <div class="lc-hero-stat-n"><em>âˆž</em></div>
         <div class="lc-hero-stat-l" data-i18n="home.hero.statCuriosity">Curiosity</div>
       </div>
     </div>
@@ -307,28 +310,28 @@
         <div class="dots">
           <span class="dot ok"></span><span class="dot"></span><span class="dot"></span>
         </div>
-        <span data-i18n="home.hero.previewHead">periodic.tbl · live</span>
+        <span data-i18n="home.hero.previewHead">periodic.tbl Â· live</span>
       </div>
 
       <div class="lc-preview-grid" id="preview-grid"></div>
 
       <div class="lc-preview-foot">
-        <span data-i18n="home.hero.previewFootL">grp 1–18 · prd 1–7</span>
-        <span class="hi" data-i18n="home.hero.previewFootR">118 elements · IUPAC 2024</span>
+        <span data-i18n="home.hero.previewFootL">grp 1â€“18 Â· prd 1â€“7</span>
+        <span class="hi" data-i18n="home.hero.previewFootR">118 elements Â· IUPAC 2024</span>
       </div>
     </div>
   </div>
 </header>
 
-<!-- ════════════ MODULES ════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â• MODULES â•â•â•â•â•â•â•â•â•â•â•â• -->
 <section class="lc-modules">
   <div class="lc-modules-head">
     <div class="lc-modules-h-left">
-      <span class="lc-modules-kicker" data-i18n="home.modules.kicker">§ 01 · modules</span>
+      <span class="lc-modules-kicker" data-i18n="home.modules.kicker">Â§ 01 Â· modules</span>
       <h2 class="lc-modules-title" data-i18n="home.modules.title">Four instruments. One workspace.</h2>
     </div>
     <div class="lc-modules-h-right" data-i18n-html="home.modules.headRightHtml">
-      <span class="hi">4</span> live · <span class="hi">40+</span> models
+      <span class="hi">4</span> live Â· <span class="hi">40+</span> models
     </div>
   </div>
 
@@ -337,8 +340,8 @@
     <a class="lc-mod-card lc-bracket" href="periodic-table.html">
       <span class="lc-br-bl"></span><span class="lc-br-br"></span>
       <div class="lc-mod-head">
-        <span class="lc-mod-no" data-i18n="home.modules.card1.no">01 — Reference</span>
-        <span class="lc-mod-status live" data-i18n="home.modules.status">● live</span>
+        <span class="lc-mod-no" data-i18n="home.modules.card1.no">01 â€” Reference</span>
+        <span class="lc-mod-status live" data-i18n="home.modules.status">â— live</span>
       </div>
       <div class="lc-mod-icon">
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
@@ -359,8 +362,8 @@
     <a class="lc-mod-card lc-bracket" href="viewer/atomic-models.html">
       <span class="lc-br-bl"></span><span class="lc-br-br"></span>
       <div class="lc-mod-head">
-        <span class="lc-mod-no" data-i18n="home.modules.card2.no">02 — Visualization</span>
-        <span class="lc-mod-status live" data-i18n="home.modules.status">● live</span>
+        <span class="lc-mod-no" data-i18n="home.modules.card2.no">02 â€” Visualization</span>
+        <span class="lc-mod-status live" data-i18n="home.modules.status">â— live</span>
       </div>
       <div class="lc-mod-icon">
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
@@ -381,8 +384,8 @@
     <a class="lc-mod-card lc-bracket" href="calculators.html">
       <span class="lc-br-bl"></span><span class="lc-br-br"></span>
       <div class="lc-mod-head">
-        <span class="lc-mod-no" data-i18n="home.modules.card3.no">03 — Compute</span>
-        <span class="lc-mod-status live" data-i18n="home.modules.status">● live</span>
+        <span class="lc-mod-no" data-i18n="home.modules.card3.no">03 â€” Compute</span>
+        <span class="lc-mod-status live" data-i18n="home.modules.status">â— live</span>
       </div>
       <div class="lc-mod-icon">
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
@@ -407,8 +410,8 @@
     <a class="lc-mod-card lc-mod-card-wide lc-bracket" href="explore.html">
       <span class="lc-br-bl"></span><span class="lc-br-br"></span>
       <div class="lc-mod-head">
-        <span class="lc-mod-no" data-i18n="home.modules.card4.no">04 — Knowledge</span>
-        <span class="lc-mod-status live" data-i18n="home.modules.status">● live</span>
+        <span class="lc-mod-no" data-i18n="home.modules.card4.no">04 â€” Knowledge</span>
+        <span class="lc-mod-status live" data-i18n="home.modules.status">â— live</span>
       </div>
       <div class="lc-mod-icon">
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
@@ -428,17 +431,17 @@
   </div>
 </section>
 
-<!-- ════════════ MANIFEST ════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â• MANIFEST â•â•â•â•â•â•â•â•â•â•â•â• -->
 <section class="lc-manifest">
   <div class="lc-manifest-grid">
-    <div class="lc-manifest-label" data-i18n="home.manifest.kicker">§ 02 — Manifesto</div>
+    <div class="lc-manifest-label" data-i18n="home.manifest.kicker">Â§ 02 â€” Manifesto</div>
     <p class="lc-manifest-body" data-i18n-html="home.manifest.bodyHtml">
-      Most chemistry tools talk <em>about</em> matter. Atomurus shows it happening — from element data to 3D structures, calculations and articles, with the right typography for study and the right amount of nothing in between. <em>Built for studying, not for impressing.</em>
+      Most chemistry tools talk <em>about</em> matter. Atomurus shows it happening â€” from element data to 3D structures, calculations and articles, with the right typography for study and the right amount of nothing in between. <em>Built for studying, not for impressing.</em>
     </p>
   </div>
 </section>
 
-<!-- ════════════ FOOTER ════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â• FOOTER â•â•â•â•â•â•â•â•â•â•â•â• -->
 <footer class="lc-footer">
   <div class="lc-footer-inner">
     <div class="lc-footer-col lc-footer-brand">
@@ -498,29 +501,29 @@
   </div>
   <div class="lc-footer-bottom">
     <span><span class="lc-st-dot" style="width:6px;height:6px;border-radius:50%;background:#1E6A50;display:inline-block"></span> <span data-i18n="common.footer.systemNominal">system nominal</span></span>
-    <span data-i18n="common.footer.copy">© 2026 Atomurus · v1.11</span>
+    <span data-i18n="common.footer.copy">Â© 2026 Atomurus Â· v1.11</span>
   </div>
 </footer>
 
-<!-- ════════════ STATUS BAR ════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â• STATUS BAR â•â•â•â•â•â•â•â•â•â•â•â• -->
 <div class="lc-statusbar">
   <span><span class="lc-st-dot"></span> <span data-i18n="home.status.ready">ready</span></span>
-  <span class="lc-st-sep">·</span>
+  <span class="lc-st-sep">Â·</span>
   <span data-i18n="home.status.workspace">workspace home</span>
-  <span class="lc-st-sep">·</span>
+  <span class="lc-st-sep">Â·</span>
   <span data-i18n="home.status.modulesReg">4 modules registered</span>
   <span class="lc-st-spacer"></span>
-  <a href="periodic-table.html">→ periodic-table</a>
-  <span class="lc-st-sep">·</span>
-  <a href="viewer/atomic-models.html">→ 3d-viewer</a>
-  <span class="lc-st-sep">·</span>
-  <a href="calculators.html">→ calculators</a>
-  <span class="lc-st-sep">·</span>
-  <a href="explore.html">→ explore</a>
+  <a href="periodic-table.html">â†’ periodic-table</a>
+  <span class="lc-st-sep">Â·</span>
+  <a href="viewer/atomic-models.html">â†’ 3d-viewer</a>
+  <span class="lc-st-sep">Â·</span>
+  <a href="calculators.html">â†’ calculators</a>
+  <span class="lc-st-sep">Â·</span>
+  <a href="explore.html">â†’ explore</a>
 </div>
 
 <script>
-// ── theme
+// â”€â”€ theme
 function toggleTheme() {
   const html = document.documentElement;
   const isDark = html.getAttribute('data-theme') === 'dark';
@@ -542,7 +545,7 @@ function updateThemeIcons() {
   if (tBtn) tBtn.addEventListener('click', toggleTheme);
 })();
 
-// ── topnav dropdown a11y (Visualizador menu)
+// â”€â”€ topnav dropdown a11y (Visualizador menu)
 (function(){
   const dd = document.getElementById('topnav-viewer-trigger');
   if (!dd) return;
@@ -572,7 +575,7 @@ function updateThemeIcons() {
   });
 })();
 
-// ── live timestamp
+// â”€â”€ live timestamp
 function tickTime() {
   const t = new Date();
   const hh = String(t.getHours()).padStart(2,'0');
@@ -581,15 +584,15 @@ function tickTime() {
   const suffix = (window.I18N && I18N.t('home.strip.timeSuffix')) || 'local';
   const el = document.getElementById('ds-time');
   el.textContent = `${hh}:${mm}:${ss} ${suffix}`;
-  // The placeholder "— ms ago" carries data-i18n; remove it after first tick
+  // The placeholder "â€” ms ago" carries data-i18n; remove it after first tick
   // so the language switcher doesn't overwrite the live clock on re-apply.
   if (el.hasAttribute('data-i18n')) el.removeAttribute('data-i18n');
 }
 tickTime(); setInterval(tickTime, 1000);
 if (window.I18N) I18N.onChange(tickTime);
 
-// ── Preview mini-grid (118 elements, sourced from home-preview-data.js)
-//    Map periodic-table category keys → compact preview keys
+// â”€â”€ Preview mini-grid (118 elements, sourced from home-preview-data.js)
+//    Map periodic-table category keys â†’ compact preview keys
 const CAT_KEY = {
   alkali:'ak', alkaline:'aa', transition:'tr', posttrans:'pt',
   metalloid:'mt', nonmetal:'nm', polyatomic:'nm', noble:'nb',
@@ -618,7 +621,7 @@ function buildPreview(){
   // Rows 1-7 = main table, 8 = visual gap (single spanning cell), 9-10 = f-block
   for (let r = 1; r <= 10; r++) {
     if (r === 8) {
-      // One element spanning all 18 columns — fixes the row height to 10px exactly,
+      // One element spanning all 18 columns â€” fixes the row height to 10px exactly,
       // no matter how the grid sizing behaves with aspect-ratio'd cells.
       const gap = document.createElement('div');
       gap.className = 'lc-preview-gap';
@@ -634,17 +637,17 @@ function buildPreview(){
         d.style.background = bg;
         d.style.color = fg;
         // La (z=57) and Ac (z=89) sit at col 3 / rows 6-7 in the main table.
-        // Display the f-block range instead of the element symbol — same
+        // Display the f-block range instead of the element symbol â€” same
         // convention used by the full periodic table.
         if (cells[k].z === 57) {
-          d.innerHTML = `<span class="z" style="font-size:.85em;line-height:1;">57–71</span>`;
-          d.title = 'Lanthanides (57–71)';
+          d.innerHTML = `<span class="z" style="font-size:.85em;line-height:1;">57â€“71</span>`;
+          d.title = 'Lanthanides (57â€“71)';
         } else if (cells[k].z === 89) {
-          d.innerHTML = `<span class="z" style="font-size:.85em;line-height:1;">89–103</span>`;
-          d.title = 'Actinides (89–103)';
+          d.innerHTML = `<span class="z" style="font-size:.85em;line-height:1;">89â€“103</span>`;
+          d.title = 'Actinides (89â€“103)';
         } else {
           d.innerHTML = `<span class="z">${cells[k].z}</span>${cells[k].sym}`;
-          d.title = cells[k].name + ' (' + cells[k].sym + ') · Z=' + cells[k].z;
+          d.title = cells[k].name + ' (' + cells[k].sym + ') Â· Z=' + cells[k].z;
         }
       } else {
         d.classList.add('empty');
@@ -654,12 +657,12 @@ function buildPreview(){
   }
 }
 // home-preview-data.js is loaded with defer, so HOME_PREVIEW_ELEMENTS isn't yet defined when
-// this inline script runs. Build on DOMContentLoaded — same firing point as
+// this inline script runs. Build on DOMContentLoaded â€” same firing point as
 // when defer scripts finish executing.
 if (typeof HOME_PREVIEW_ELEMENTS !== 'undefined') buildPreview();
 else document.addEventListener('DOMContentLoaded', buildPreview);
 
-// ── quick search: navigate to periodic-table.html with the symbol/Z as hash
+// â”€â”€ quick search: navigate to periodic-table.html with the symbol/Z as hash
 const qs = document.getElementById('quick-search');
 qs.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') {
@@ -667,7 +670,7 @@ qs.addEventListener('keydown', (e) => {
     if (v) location.href = 'periodic-table.html#q=' + encodeURIComponent(v);
   }
 });
-// ⌘K / Ctrl+K focuses the search
+// âŒ˜K / Ctrl+K focuses the search
 window.addEventListener('keydown', (e) => {
   if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
     e.preventDefault();
@@ -677,9 +680,7 @@ window.addEventListener('keydown', (e) => {
 });
 </script>
 <script type="text/javascript">
-    aclib.runAutoTag({
-        zoneId: 'o42jwt5vja',
-    });
+    atomurusRunAutoTag({ zoneId: 'o42jwt5vja' });
 </script>
 </body>
 </html>

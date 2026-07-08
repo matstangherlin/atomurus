@@ -34,6 +34,7 @@ const PAGES = [
   'privacy.html',
   'terms.html',
   'config.html',
+  'pricing.html',
   'viewer/allotropes.html',
   'viewer/molecules.html',
   'viewer/atomic-models.html',

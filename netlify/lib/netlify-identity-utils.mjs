@@ -1,4 +1,5 @@
 import { verifyRequestOrigin } from '@netlify/identity';
+export { accessForUser, publicUser, PLAN_PRICING, trialEndsAtForUser } from './plan-access.mjs';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -71,33 +72,6 @@ export function verifySameOrigin(request) {
   const ownOrigin = new URL(request.url).origin;
   const allowedOrigins = Array.from(new Set([ownOrigin, ...configuredOrigins()]));
   verifyRequestOrigin(request, { allowedOrigins });
-}
-
-export function accessForUser(user) {
-  const roles = Array.isArray(user?.roles) ? user.roles : [];
-  const app = user?.appMetadata || {};
-  const isAdmin = user?.role === 'admin' || roles.includes('admin');
-  const plan =
-    isAdmin ? 'admin' :
-    roles.includes('paid') || app.atomurus_plan === 'paid' || app.plan === 'paid' ? 'paid' :
-    'free';
-
-  return {
-    role: isAdmin ? 'admin' : 'member',
-    plan
-  };
-}
-
-export function publicUser(user) {
-  const access = accessForUser(user || {});
-  return {
-    id: user?.id || null,
-    email: user?.email || null,
-    emailConfirmed: Boolean(user?.confirmedAt),
-    lastSignInAt: user?.lastSignInAt || null,
-    role: access.role,
-    plan: access.plan
-  };
 }
 
 export function isIdentityConfigError(error) {
