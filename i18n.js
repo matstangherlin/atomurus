@@ -216,6 +216,17 @@
     return user.displayName || user.fullName || user.username || user.email || 'Workspace';
   }
 
+  function isPricingActionLink(link) {
+    if (!link) return false;
+    return Boolean(
+      link.closest('.price-card') ||
+      link.id === 'pricing-workspace-link' ||
+      link.id === 'pricing-create-account-link' ||
+      link.id === 'pricing-login-link' ||
+      link.id === 'pricing-trial-cta'
+    );
+  }
+
   function setAuthLabel(node, text, i18nKey) {
     if (!node) return;
     if (node.dataset.authGuestLabel == null) node.dataset.authGuestLabel = node.textContent || '';
@@ -234,15 +245,21 @@
     document.querySelectorAll('[data-auth-nav-link="common.nav.login"]').forEach(function (link) {
       link.setAttribute('href', signedIn ? '/app' : '/login');
       const label = link.querySelector('[data-i18n], span') || link;
-      setAuthLabel(label, signedIn ? 'Workspace' : (label.dataset.authGuestLabel || 'Login'), signedIn ? null : 'common.nav.login');
+      setAuthLabel(label, signedIn ? display : (label.dataset.authGuestLabel || 'Login'), signedIn ? null : 'common.nav.login');
     });
 
-    document.querySelectorAll('.lc-topnav-cta[href="login.html"], .lc-topnav-cta[href="/login"]').forEach(function (link) {
-      link.setAttribute('href', signedIn ? '/app' : '/login');
+    document.querySelectorAll('.lc-topnav-cta[href]').forEach(function (link) {
+      if (isPricingActionLink(link)) return;
+      if (link.dataset.authGuestHref == null) link.dataset.authGuestHref = link.getAttribute('href') || '/login';
+      link.setAttribute('href', signedIn ? '/app' : link.dataset.authGuestHref);
       const label = link.querySelector('span') || link;
-      setAuthLabel(label, signedIn ? display : (label.dataset.authGuestLabel || 'Account'), signedIn ? null : (label.dataset.authGuestI18n || 'pricing.ctaAccount'));
-      link.setAttribute('aria-label', signedIn ? ('Open workspace for ' + display) : 'Account');
-      link.setAttribute('title', signedIn ? ('Signed in as ' + display) : 'Account');
+      setAuthLabel(
+        label,
+        signedIn ? display : (label.dataset.authGuestLabel || 'Account'),
+        signedIn ? null : (label.dataset.authGuestI18n || 'pricing.ctaAccount')
+      );
+      link.setAttribute('aria-label', signedIn ? ('Open workspace for ' + display) : (label.dataset.authGuestLabel || 'Account'));
+      link.setAttribute('title', signedIn ? ('Signed in as ' + display) : (label.dataset.authGuestLabel || 'Account'));
     });
   }
 

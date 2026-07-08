@@ -306,6 +306,7 @@
     }
     [monthlyCta, annualCta].forEach(function (button) {
       if (!button) return;
+      button.disabled = false;
       button.textContent = checkoutLabelText;
       button.dataset.signedIn = state.signedIn ? 'true' : 'false';
     });
