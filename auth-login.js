@@ -345,11 +345,25 @@
     });
   }
 
+  function bindAuthButton(buttonId, handler) {
+    var button = $(buttonId);
+    if (!button || button.dataset.authClickBound === '1') return;
+    button.dataset.authClickBound = '1';
+    button.addEventListener('click', function (event) {
+      event.preventDefault();
+      void handler();
+    });
+  }
+
   function bindAuthForms() {
     bindAuthForm('auth-login-form', handleLoginSubmit);
     bindAuthForm('auth-signup-form', handleSignupSubmit);
     bindAuthForm('auth-password-form', handlePasswordResetSubmit);
     bindAuthForm('auth-reset-form', handleRecoverySubmit);
+    bindAuthButton('auth-login-submit', handleLoginSubmit);
+    bindAuthButton('auth-signup-submit', handleSignupSubmit);
+    bindAuthButton('auth-password-submit', handlePasswordResetSubmit);
+    bindAuthButton('auth-reset-submit', handleRecoverySubmit);
   }
 
   function bootAuth() {
