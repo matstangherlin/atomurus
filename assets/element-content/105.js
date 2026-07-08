@@ -1,0 +1,23 @@
+(function(){
+  var chunk = {
+  "pt": {
+    "overview": "D├║bnio ├® um superpesado sint├®tico que carrega o nome do laborat├│rio russo onde foi descoberto: o Instituto Unificado de Pesquisa Nuclear em Dubna, perto de Moscou. Junto com o rutherf├│rdio, foi piv├┤ da disputa Guerra Fria sobre quem batizaria os elementos transf├®rmicos. O acordo final da IUPAC, em 1997, equilibrou egos cient├¡ficos: rutherf├│rdio para os americanos, d├║bnio para os russos, seab├│rgio para o cientista vivo mais influente da s├¡ntese de transur├ónicos.",
+    "history": "Sintetizado pela primeira vez em 1968 em Dubna por Georgy Flerov, bombardeando amer├¡cio-243 com ├¡ons de ne├┤nio. Em 1970, o grupo de Berkeley confirmou a s├¡ntese de um is├│topo diferente, e reivindicou o nome \"hahnium\" em homenagem a Otto Hahn (descobridor da fiss├úo). Ap├│s d├®cadas de disputa, a IUPAC adotou \"d├║bnio\" em 1997 ÔÇö reconhecimento ao laborat├│rio sovi├®tico que sozinho descobriu seis dos transactin├¡deos da primeira d├®cada.",
+    "properties": "Sem observa├º├úo macrosc├│pica. Densidade estimada em 29,3 g/cm┬│ (um dos elementos mais densos teoricamente), ponto de fus├úo em torno de 1.477 ┬░C. Todos os 15 is├│topos conhecidos s├úo radioativos. O Db-268 ├® o mais est├ível (meia-vida cerca de 28 horas). Experimentos qu├¡micos sugerem comportamento similar ao t├óntalo (grupo 5): forma haletos vol├íteis, estado +5 dominante.",
+    "applications": "Nenhuma aplica├º├úo pr├ítica. Pesquisa exclusiva em qu├¡mica de transactin├¡deos. O Instituto de Dubna mant├®m produ├º├úo regular do elemento para experimentos comparativos com ni├│bio e t├óntalo, testando se as tend├¬ncias peri├│dicas se mant├¬m em massas t├úo grandes.",
+    "curiosity": "O laborat├│rio de Dubna, fundado em 1956 sob dire├º├úo sovi├®tica, foi por d├®cadas o principal rival de Berkeley na corrida pelos transur├ónicos. Sob lideran├ºa de Georgy Flerov e depois Yuri Oganessian, o instituto descobriu ou co-descobriu nada menos que 9 dos 15 elementos superpesados (Z 104ÔÇô118). Em 2017, Oganessian se tornou apenas a segunda pessoa viva a ter um elemento (Z 118) batizado em sua honra ÔÇö depois apenas de Seaborg. A \"Dubna sovi├®tica\" foi, sem competi├º├úo, o laborat├│rio mais produtivo da hist├│ria em descoberta de elementos novos."
+  },
+  "en": {
+    "overview": "Dubnium is a synthetic superheavy element that carries the name of the Russian laboratory where it was discovered: the Joint Institute for Nuclear Research in Dubna, near Moscow. Along with rutherfordium, it was a pivot of the Cold War dispute over who would name the transfermium elements. The IUPAC's final agreement, in 1997, balanced scientific egos: rutherfordium for the Americans, dubnium for the Russians, seaborgium for the most influential living scientist in transuranic synthesis.",
+    "history": "First synthesized in 1968 at Dubna by Georgy Flerov, bombarding americium-243 with neon ions. In 1970, the Berkeley group confirmed the synthesis of a different isotope, and claimed the name \"hahnium\" in honor of Otto Hahn (discoverer of fission). After decades of dispute, the IUPAC adopted \"dubnium\" in 1997 ÔÇö recognition to the Soviet laboratory that alone discovered six of the transactinides of the first decade.",
+    "properties": "No macroscopic observation. Estimated density 29.3 g/cm┬│ (one of the theoretically densest elements), melting point around 1,477 ┬░C. All 15 known isotopes are radioactive. Db-268 is the most stable (half-life about 28 hours). Chemical experiments suggest behavior similar to tantalum (group 5): forms volatile halides, dominant +5 state.",
+    "applications": "No practical applications. Exclusive use in transactinide chemistry research. The Dubna Institute maintains regular production of the element for comparative experiments with niobium and tantalum, testing whether periodic trends hold at such large masses.",
+    "curiosity": "The Dubna laboratory, founded in 1956 under Soviet direction, was for decades Berkeley's main rival in the race for transuranics. Under the leadership of Georgy Flerov and later Yuri Oganessian, the institute discovered or co-discovered no fewer than 9 of the 15 superheavy elements (Z 104ÔÇô118). In 2017, Oganessian became only the second living person to have an element (Z 118) named in his honor ÔÇö after only Seaborg. \"Soviet Dubna\" was, without competition, the most productive laboratory in history for discovering new elements."
+  }
+};
+  window.__ELEMENT_CONTENT_CHUNKS = window.__ELEMENT_CONTENT_CHUNKS || {};
+  window.__ELEMENT_CONTENT_CHUNKS[105] = chunk;
+  if (typeof window.__registerElementContentChunk === 'function') {
+    window.__registerElementContentChunk(105, chunk);
+  }
+})();

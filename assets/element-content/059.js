@@ -1,0 +1,23 @@
+(function(){
+  var chunk = {
+  "pt": {
+    "overview": "Praseod├¡mio ├® um lantan├¡deo prateado, macio e male├ível, cujos sais formam solu├º├Áes de um verde-amarelado caracter├¡stico ÔÇö da├¡ seu nome, \"g├¬meo verde\" em grego. Embora pouco conhecido fora da ind├║stria, est├í presente em ├¡m├ús de alto desempenho, lentes de vidro especial para soldadores e em ligas que v├úo de motores de aeronaves a pedras de isqueiro.",
+    "history": "Por d├®cadas, qu├¡micos acreditaram ter isolado um ├║nico elemento chamado \"did├¡mio\" do min├®rio cerita. Em 1885, o austr├¡aco Carl Auer von Welsbach mostrou que o did├¡mio era na verdade uma mistura de dois elementos novos ÔÇö separou-os por cristaliza├º├úo fracionada exaustiva e batizou-os de praseod├¡mio (\"g├¬meo verde\") e neod├¡mio (\"novo g├¬meo\"). Foi uma das separa├º├Áes mais dif├¡ceis da qu├¡mica do s├®culo XIX e demonstrou a similaridade quase brutal entre lantan├¡deos vizinhos.",
+    "properties": "Metal prateado-amarelado, macio o suficiente para ser cortado com faca, com densidade 6,77 g/cm┬│ e ponto de fus├úo de 931 ┬░C. Em ar, forma uma camada verde de ├│xido que descasca, expondo metal fresco ÔÇö por isso ├® guardado em ├│leo mineral. Seus ├¡ons Pr┬│Ôü║ em solu├º├úo t├¬m cor verde-clara distintiva. ├ë paramagn├®tico em todas as temperaturas acima de 1 K.",
+    "applications": "Liga com magn├®sio cria componentes leves e resistentes para motores aeron├íuticos. Vidro de did├¡mio (mistura Pr+Nd) ├® usado em ├│culos de soldadores e sopradores de vidro porque absorve seletivamente a luz amarela do s├│dio sem escurecer a vis├úo. Pequenas adi├º├Áes de praseod├¡mio nos ├¡m├ús Nd-Fe-B (de carros el├®tricos e turbinas e├│licas) aumentam coercividade. Pigmentos cer├ómicos amarelo-can├írio (PrZrSiOÔéä) coloram lou├ºas e azulejos.",
+    "curiosity": "Sopradores de vidro t├¬m um problema cl├íssico: a chama de s├│dio do ma├ºarico emite um amarelo t├úo intenso que ofusca a vista e mascara o ponto exato em que o vidro derretido come├ºa a colapsar. Lentes de did├¡mio resolvem isso de maneira elegante ÔÇö o praseod├¡mio absorve aquela faixa espec├¡fica do espectro e nada mais, deixando o vidro vis├¡vel em sua cor real. ├ë um filtro de banda t├úo preciso que ainda n├úo foi superado por nenhum vidro sint├®tico sem terras raras."
+  },
+  "en": {
+    "overview": "Praseodymium is a silvery, soft and malleable lanthanide whose salts form a characteristic yellow-green solution ÔÇö hence its name, \"green twin\" in Greek. Although little known outside industry, it shows up in high-performance magnets, special glass lenses for welders, and alloys ranging from aircraft engines to lighter flints.",
+    "history": "For decades, chemists believed they had isolated a single element called \"didymium\" from cerite ore. In 1885, the Austrian Carl Auer von Welsbach showed that didymium was in fact a mixture of two new elements ÔÇö separating them by exhaustive fractional crystallization and naming them praseodymium (\"green twin\") and neodymium (\"new twin\"). It was one of the most difficult separations of 19th-century chemistry and demonstrated the almost brutal similarity between neighboring lanthanides.",
+    "properties": "Silvery-yellow metal, soft enough to be cut with a knife, density 6.77 g/cm┬│, melts at 931 ┬░C. In air it forms a green oxide layer that flakes off, exposing fresh metal ÔÇö so it is stored under mineral oil. Its Pr┬│Ôü║ ions in solution have a distinctive light green color. It is paramagnetic at all temperatures above 1 K.",
+    "applications": "Alloyed with magnesium it produces lightweight, strong components for aircraft engines. Didymium glass (a Pr+Nd mix) is used in goggles for welders and glassblowers because it selectively absorbs the yellow sodium light without darkening overall vision. Small additions of praseodymium in Nd-Fe-B magnets (in electric cars and wind turbines) increase coercivity. Canary-yellow ceramic pigments (PrZrSiOÔéä) color tiles and tableware.",
+    "curiosity": "Glassblowers have a classic problem: the sodium flame of the torch emits a yellow so intense that it dazzles the eye and masks the precise moment when molten glass starts to collapse. Didymium lenses solve this elegantly ÔÇö praseodymium absorbs that specific band of the spectrum and nothing else, leaving the glass visible in its true color. It is a band filter so precise that no synthetic rare-earth-free glass has yet matched it."
+  }
+};
+  window.__ELEMENT_CONTENT_CHUNKS = window.__ELEMENT_CONTENT_CHUNKS || {};
+  window.__ELEMENT_CONTENT_CHUNKS[59] = chunk;
+  if (typeof window.__registerElementContentChunk === 'function') {
+    window.__registerElementContentChunk(59, chunk);
+  }
+})();

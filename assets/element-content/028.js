@@ -1,0 +1,23 @@
+(function(){
+  var chunk = {
+  "pt": {
+    "overview": "N├¡quel ├® um metal de transi├º├úo prateado, ferromagn├®tico e resistente ├á corros├úo. Faz parte do n├║cleo terrestre junto com ferro (cerca de 5%), mas em sua aplica├º├úo industrial mais conhecida est├í em a├ºos inoxid├íveis e moedas. Em conjunto com cromo, d├í ao a├ºo inox sua resist├¬ncia a manchas. Tamb├®m ├® central em baterias de alta densidade energ├®tica para ve├¡culos el├®tricos.",
+    "history": "Mineiros alem├úes do s├®culo XVII encontravam um min├®rio avermelhado que parecia conter cobre, mas n├úo rendia metal ├║til ÔÇö atribu├¡am isso a um dem├┤nio chamado \"Nickel\" (esp├¡rito travesso). Em 1751, o qu├¡mico sueco Axel Fredrik Cronstedt provou que era um elemento novo, mantendo o nome herdado da supersti├º├úo mineira. Tornou-se essencial em escala industrial no final do s├®culo XIX, quando a metalurgia de n├¡quel evoluiu.",
+    "properties": "Metal prateado-branco com tom levemente amarelado, duro, d├║ctil e male├ível. Ferromagn├®tico at├® 358 ┬░C. Ponto de fus├úo de 1.455 ┬░C. Resistente ├á corros├úo por ar, ├ígua e ├ícidos ÔÇö da├¡ seu uso em moedas. Forma compostos majoritariamente nos estados +2 e +3. Causa comum de alergia de pele em humanos: cerca de 10% das mulheres e 1% dos homens s├úo al├®rgicos ao n├¡quel (joias, fivelas de cinto, bot├Áes met├ílicos).",
+    "applications": "Cerca de 70% do n├¡quel ├® usado em a├ºos inoxid├íveis (especialmente o \"304\" ÔÇö 18% Cr, 8% Ni). Moedas em v├írios pa├¡ses cont├¬m n├¡quel (n├¡quel puro ou cupron├¡quel). Baterias de ├¡on-l├¡tio NMC (n├¡quel-mangan├¬s-cobalto) s├úo padr├úo em carros el├®tricos. Superligas de n├¡quel resistem a temperaturas extremas em turbinas de jatos e foguetes. Eletrodeposi├º├úo: revestimento de outros metais com n├¡quel para prote├º├úo contra corros├úo.",
+    "curiosity": "A regi├úo de Sudbury, no Canad├í, ├® uma das maiores fontes de n├¡quel do mundo ÔÇö e a raz├úo ├® um meteorito. H├í cerca de 1,85 bilh├úo de anos, um asteroide de aproximadamente 10 km bateu na atual Ont├írio, criando uma cratera de 200 km de di├ómetro. O impacto trouxe ou concentrou n├¡quel, cobre e platinoides em quantidades enormes. Hoje, a \"Sudbury Basin\" produz cerca de 20% do n├¡quel global ÔÇö meteorito virou fortuna mineira."
+  },
+  "en": {
+    "overview": "Nickel is a silvery transition metal, ferromagnetic and corrosion-resistant. It is part of Earth's core alongside iron (about 5%), but its most familiar industrial use is in stainless steels and coins. Together with chromium, it gives stainless steel its stain resistance. It is also central in high-energy-density batteries for electric vehicles.",
+    "history": "17th-century German miners found a reddish ore that seemed to contain copper but yielded no useful metal ÔÇö they blamed a mischievous demon called \"Nickel\" (prankster spirit). In 1751, Swedish chemist Axel Fredrik Cronstedt proved it was a new element, keeping the name inherited from mining superstition. It became industrially essential in the late 19th century when nickel metallurgy advanced.",
+    "properties": "Silvery-white metal with a faintly yellowish hue, hard, ductile and malleable. Ferromagnetic up to 358 ┬░C. Melting point: 1,455 ┬░C. Resistant to corrosion by air, water and acids ÔÇö hence its use in coins. Forms compounds mostly in the +2 and +3 states. A common cause of skin allergy in humans: about 10% of women and 1% of men are allergic to nickel (jewelry, belt buckles, metal buttons).",
+    "applications": "About 70% of nickel is used in stainless steels (especially \"304\" ÔÇö 18% Cr, 8% Ni). Coins in several countries contain nickel (pure nickel or cupronickel). Lithium-ion NMC batteries (nickel-manganese-cobalt) are standard in electric cars. Nickel superalloys withstand extreme temperatures in jet turbines and rockets. Electroplating: coating other metals with nickel for corrosion protection.",
+    "curiosity": "The Sudbury region in Canada is one of the world's largest nickel sources ÔÇö and the reason is a meteorite. About 1.85 billion years ago, an asteroid roughly 10 km wide hit what is now Ontario, creating a 200 km diameter crater. The impact brought or concentrated nickel, copper and platinum-group metals in enormous quantities. Today the \"Sudbury Basin\" produces about 20% of global nickel ÔÇö meteorite turned into mining fortune."
+  }
+};
+  window.__ELEMENT_CONTENT_CHUNKS = window.__ELEMENT_CONTENT_CHUNKS || {};
+  window.__ELEMENT_CONTENT_CHUNKS[28] = chunk;
+  if (typeof window.__registerElementContentChunk === 'function') {
+    window.__registerElementContentChunk(28, chunk);
+  }
+})();

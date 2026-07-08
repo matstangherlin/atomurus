@@ -1,0 +1,23 @@
+(function(){
+  var chunk = {
+  "pt": {
+    "overview": "Estanho ├® um metal p├│s-transi├º├úo prateado, macio e d├║ctil, usado pela humanidade h├í mais de 5.000 anos. Sua alian├ºa com o cobre formou o bronze, dando nome a uma era inteira da civiliza├º├úo. Hoje ├® mais conhecido como cobertura protetora em latas de conserva (\"folha-de-flandres\"), em soldas para eletr├┤nica e em ligas de peltre para utens├¡lios decorativos.",
+    "history": "Conhecido desde o in├¡cio da Idade do Bronze (cerca de 3.300 a.C.), quando se descobriu que adicionar estanho ao cobre criava um metal muito mais duro. Os fen├¡cios faziam com├®rcio de estanho da Cornualha (Inglaterra) e do antigo Brittany (Fran├ºa). O nome \"estanho\" vem do latim \"stannum\", e o s├¡mbolo Sn deriva dessa palavra. Foi um dos sete metais conhecidos pela alquimia cl├íssica, junto com ouro, prata, cobre, merc├║rio, ferro e chumbo.",
+    "properties": "Metal branco-prateado, macio, d├║ctil e male├ível ÔÇö pode ser martelado em folhas fin├¡ssimas. Funde a apenas 232 ┬░C, baixo para um metal. Tem duas formas alotr├│picas: estanho-╬▒ (\"estanho cinza\", em p├│, abaixo de 13 ┬░C) e estanho-╬▓ (\"estanho branco\", met├ílico, acima de 13 ┬░C). Resiste ├á corros├úo por ar e ├ígua, da├¡ sua aplica├º├úo em latas. Quando dobrado, emite um som caracter├¡stico chamado \"grito do estanho\" ÔÇö devido ├á reorganiza├º├úo cristalina.",
+    "applications": "Cobertura protetora em latas de conserva ÔÇö uma fina camada de estanho sobre a├ºo impede a corros├úo pelos alimentos ├ícidos (a famosa \"folha-de-flandres\"). Solda para eletr├┤nica (originalmente liga estanho-chumbo, agora estanho puro ou com prata por motivos de sa├║de). Bronze (estanho + cobre), peltre (estanho + antim├┤nio + cobre) para utens├¡lios decorativos. Chapas de vidro plano flutuam sobre banho de estanho l├¡quido durante a fabrica├º├úo industrial.",
+    "curiosity": "A \"peste do estanho\" ├® um fen├┤meno em que objetos de estanho met├ílico se transformam em p├│ cinzento quando submetidos a frio intenso por muito tempo. Acima de 13 ┬░C o estanho ├® est├ível (forma ╬▓), mas abaixo dessa temperatura ele tende a se converter na forma ╬▒, fr├ígil. Durante o cerco de Stalingrado em 1942, os bot├Áes de estanho dos uniformes dos soldados alem├úes desintegraram no frio extremo ÔÇö um problema log├¡stico real que contribuiu para a vulnerabilidade das tropas."
+  },
+  "en": {
+    "overview": "Tin is a silvery, soft and ductile post-transition metal, used by humanity for over 5,000 years. Its alloy with copper formed bronze, lending its name to an entire era of civilization. Today it is best known as the protective coating on tin cans, in electronic solders, and in pewter alloys for decorative ware.",
+    "history": "Known since the early Bronze Age (about 3,300 BCE), when it was discovered that adding tin to copper created a much harder metal. The Phoenicians traded tin from Cornwall (England) and ancient Brittany (France). The name \"tin\" is of Germanic origin, but the symbol Sn comes from the Latin \"stannum\". It was one of the seven metals known to classical alchemy, alongside gold, silver, copper, mercury, iron and lead.",
+    "properties": "Silvery-white metal, soft, ductile and malleable ÔÇö it can be hammered into very thin foils. Melts at just 232 ┬░C, low for a metal. Has two allotropic forms: ╬▒-tin (\"gray tin\", powdery, below 13 ┬░C) and ╬▓-tin (\"white tin\", metallic, above 13 ┬░C). Resistant to corrosion by air and water, hence its use in cans. When bent, it emits a characteristic sound called the \"tin cry\" ÔÇö due to crystal restructuring.",
+    "applications": "Protective coating on tin cans ÔÇö a thin layer of tin over steel prevents corrosion from acidic foods. Solder for electronics (originally tin-lead alloy, now pure tin or tin-silver due to health concerns). Bronze (tin + copper), pewter (tin + antimony + copper) for decorative items. Flat glass sheets float on a bath of liquid tin during industrial manufacturing.",
+    "curiosity": "\"Tin pest\" is a phenomenon in which metallic tin objects turn to gray powder when exposed to intense cold for long periods. Above 13 ┬░C tin is stable (╬▓ form), but below this temperature it tends to convert to the brittle ╬▒ form. During the siege of Stalingrad in 1942, the tin buttons on German soldiers' uniforms disintegrated in the extreme cold ÔÇö a real logistical problem that contributed to the troops' vulnerability."
+  }
+};
+  window.__ELEMENT_CONTENT_CHUNKS = window.__ELEMENT_CONTENT_CHUNKS || {};
+  window.__ELEMENT_CONTENT_CHUNKS[50] = chunk;
+  if (typeof window.__registerElementContentChunk === 'function') {
+    window.__registerElementContentChunk(50, chunk);
+  }
+})();

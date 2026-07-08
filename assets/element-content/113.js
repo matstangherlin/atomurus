@@ -1,0 +1,23 @@
+(function(){
+  var chunk = {
+  "pt": {
+    "overview": "Nih├┤nio ├® o primeiro elemento descoberto em um laborat├│rio asi├ítico ÔÇö sintetizado pela equipe japonesa do RIKEN, perto de T├│quio. Seu nome vem de \"Nihon\", uma das formas japonesas de chamar o pa├¡s (a outra ├® \"Nippon\"). ├ë um marco hist├│rico: depois de d├®cadas de descobertas dominadas por EUA, R├║ssia e Alemanha, a ├üsia entrou para o clube exclusivo de pa├¡ses que batizam elementos da tabela peri├│dica.",
+    "history": "Sintetizado a partir de 2003 pela equipe de Kosuke Morita no RIKEN, ao bombardear bismuto-209 com ├¡ons de zinco-70. Apenas tr├¬s ├ítomos foram observados em nove anos de experimentos cont├¡nuos ÔÇö taxa de descoberta de aproximadamente um ├ítomo a cada tr├¬s anos. Em paralelo, um grupo russo-americano (Dubna + Livermore) tamb├®m produziu nih├┤nio em 2003 como produto de decaimento do mosc├│vio (Z 115). Ap├│s disputa de preced├¬ncia, a IUPAC concedeu o cr├®dito de descoberta ao RIKEN em 2015. A escolha do nome \"nihonium\" homenageia o Jap├úo, dando ├á ├üsia seu primeiro elemento na tabela.",
+    "properties": "Sem observa├º├úo macrosc├│pica. Densidade estimada em 16 g/cm┬│, ponto de fus├úo talvez em torno de 430 ┬░C. Todos os 6 is├│topos conhecidos s├úo radioativos. O Nh-286 ├® o mais est├ível (meia-vida cerca de 10 segundos). Por analogia com o t├ílio (grupo 13), espera-se comportamento de metal p├│s-transi├º├úo ÔÇö mas previs├Áes relativ├¡sticas sugerem que nih├┤nio poderia ser surpreendentemente menos reativo que o t├ílio, devido a contra├º├úo da camada eletr├┤nica externa.",
+    "applications": "Nenhuma aplica├º├úo pr├ítica.",
+    "curiosity": "A descoberta do nih├┤nio foi celebrada no Jap├úo como evento de orgulho nacional. Quando a IUPAC anunciou o nome em 2016, o primeiro-ministro Shinzo Abe parabenizou a equipe pessoalmente, e a televis├úo japonesa transmitiu o an├║ncio em hor├írio nobre. O l├¡der da pesquisa, Kosuke Morita, dedicou a descoberta ├ás v├¡timas do tsunami de 2011, que devastou a regi├úo de Fukushima ÔÇö n├úo muito longe do RIKEN. A presen├ºa do Jap├úo na tabela peri├│dica passou a ser ensinada nas escolas como exemplo de perseveran├ºa cient├¡fica: 553 dias de aceleradores trabalhando 24 horas seguidas apenas para confirmar a exist├¬ncia de tr├¬s ├ítomos."
+  },
+  "en": {
+    "overview": "Nihonium is the first element discovered in an Asian laboratory ÔÇö synthesized by the Japanese team at RIKEN, near Tokyo. Its name comes from \"Nihon\", one of the Japanese ways to refer to the country (the other is \"Nippon\"). It is a historical milestone: after decades of discoveries dominated by the U.S., Russia and Germany, Asia joined the exclusive club of countries that name elements on the periodic table.",
+    "history": "Synthesized from 2003 onward by Kosuke Morita's team at RIKEN, by bombarding bismuth-209 with zinc-70 ions. Only three atoms were observed in nine years of continuous experiments ÔÇö a discovery rate of approximately one atom every three years. In parallel, a Russian-American group (Dubna + Livermore) also produced nihonium in 2003 as a decay product of moscovium (Z 115). After a precedence dispute, the IUPAC gave the discovery credit to RIKEN in 2015. The choice of \"nihonium\" honors Japan, giving Asia its first element on the table.",
+    "properties": "No macroscopic observation. Estimated density 16 g/cm┬│, melting point perhaps around 430 ┬░C. All 6 known isotopes are radioactive. Nh-286 is the most stable (half-life about 10 seconds). By analogy with thallium (group 13), post-transition metal behavior is expected ÔÇö but relativistic predictions suggest that nihonium could be surprisingly less reactive than thallium, due to contraction of the outer electronic shell.",
+    "applications": "No practical applications.",
+    "curiosity": "The discovery of nihonium was celebrated in Japan as a moment of national pride. When the IUPAC announced the name in 2016, Prime Minister Shinzo Abe personally congratulated the team, and Japanese television broadcast the announcement in prime time. The research leader, Kosuke Morita, dedicated the discovery to the victims of the 2011 tsunami, which devastated the Fukushima region ÔÇö not far from RIKEN. Japan's presence in the periodic table began to be taught in schools as an example of scientific perseverance: 553 days of accelerators working 24 hours straight just to confirm the existence of three atoms."
+  }
+};
+  window.__ELEMENT_CONTENT_CHUNKS = window.__ELEMENT_CONTENT_CHUNKS || {};
+  window.__ELEMENT_CONTENT_CHUNKS[113] = chunk;
+  if (typeof window.__registerElementContentChunk === 'function') {
+    window.__registerElementContentChunk(113, chunk);
+  }
+})();

@@ -1,0 +1,23 @@
+(function(){
+  var chunk = {
+  "pt": {
+    "overview": "Cobalto ├® um metal de transi├º├úo cinza-azulado, ferromagn├®tico como o ferro e o n├¡quel. Conhecido por s├®culos pelo pigmento azul intenso usado em vidros e cer├ómicas ÔÇö o \"azul cobalto\" ÔÇö hoje ├® mais estrat├®gico como componente de baterias de ├¡on-l├¡tio para carros el├®tricos. A maior parte da produ├º├úo mundial vem da Rep├║blica Democr├ítica do Congo, em condi├º├Áes de minera├º├úo frequentemente problem├íticas.",
+    "history": "Mineiros alem├úes medievais conheciam um mineral azul que envenenava trabalhadores sem produzir metal ÔÇö culpavam um esp├¡rito malicioso chamado \"Kobold\" (gnomo das montanhas). Em 1735 Georg Brandt provou que o \"kobold\" era um elemento novo, batizando-o de cobalto. Os eg├¡pcios, persas e chineses usavam compostos de cobalto h├í mil├¬nios em vidros e azulejos azuis, sem saber a qu├¡mica por tr├ís.",
+    "properties": "Metal cinza com tom azulado, duro, ferromagn├®tico at├® 1.121 ┬░C (acima dessa temperatura perde o magnetismo). Ponto de fus├úo de 1.495 ┬░C. Forma compostos coloridos intensos ÔÇö sais de Co(II) s├úo rosa em solu├º├úo aquosa, azuis quando anidros (princ├¡pio do \"vidro de cobalto\" e dos testes de umidade). ├ë radioativamente importante: cobalto-60, is├│topo sint├®tico, ├® usado em radioterapia e esteriliza├º├úo industrial.",
+    "applications": "Catodos de baterias de ├¡on-l├¡tio (especialmente em celulares e carros el├®tricos) s├úo o maior uso atual ÔÇö cerca de 50% da demanda. Pigmentos: azul cobalto em vidros, cer├ómicas e tintas a ├│leo. Superligas com cobalto suportam turbinas de avi├Áes em alta temperatura. Catalisadores para hidrocarbonetos e fabrica├º├úo de pl├ísticos. Cobalto-60 em equipamentos de radioterapia (substitu├¡do gradualmente por aceleradores lineares).",
+    "curiosity": "O \"azul\" das porcelanas chinesas Ming, dos vidros venezianos renascentistas e dos azulejos persas medievais ├® tudo cobalto. Quando a Europa come├ºou a produzir essa porcelana no s├®culo XVIII, o cobalto se tornou mat├®ria-prima estrat├®gica. Hoje o desafio ├® diferente: cerca de 70% do cobalto mundial vem do Congo, onde minera├º├úo artesanal envolve trabalho infantil e condi├º├Áes perigosas ÔÇö fato que tem pressionado fabricantes de carros el├®tricos a buscarem alternativas."
+  },
+  "en": {
+    "overview": "Cobalt is a bluish-gray transition metal, ferromagnetic like iron and nickel. Known for centuries by the intense blue pigment used in glass and ceramics ÔÇö \"cobalt blue\" ÔÇö today it is more strategic as a component of lithium-ion batteries for electric cars. Most world production comes from the Democratic Republic of the Congo, often under problematic mining conditions.",
+    "history": "Medieval German miners knew a blue mineral that poisoned workers without producing metal ÔÇö they blamed a malicious spirit called \"Kobold\" (mountain gnome). In 1735 Georg Brandt proved the \"kobold\" was a new element, naming it cobalt. Egyptians, Persians and Chinese had used cobalt compounds for millennia in blue glass and tiles, without knowing the chemistry behind them.",
+    "properties": "Gray metal with a bluish tone, hard, ferromagnetic up to 1,121 ┬░C (above that temperature it loses magnetism). Melting point: 1,495 ┬░C. Forms intensely colored compounds ÔÇö Co(II) salts are pink in aqueous solution, blue when anhydrous (the principle behind \"cobalt glass\" and humidity tests). It is radioactively important: cobalt-60, a synthetic isotope, is used in radiotherapy and industrial sterilization.",
+    "applications": "Lithium-ion battery cathodes (especially in phones and electric cars) are the largest current use ÔÇö about 50% of demand. Pigments: cobalt blue in glass, ceramics and oil paints. Cobalt superalloys withstand jet-engine turbines at high temperature. Catalysts for hydrocarbons and plastics manufacturing. Cobalt-60 in radiotherapy equipment (gradually replaced by linear accelerators).",
+    "curiosity": "The \"blue\" of Ming Chinese porcelain, Renaissance Venetian glass and medieval Persian tiles is all cobalt. When Europe began producing this porcelain in the 18th century, cobalt became a strategic raw material. Today the challenge is different: about 70% of world cobalt comes from the Congo, where artisanal mining involves child labor and dangerous conditions ÔÇö a fact that has pressured electric-car manufacturers to seek alternatives."
+  }
+};
+  window.__ELEMENT_CONTENT_CHUNKS = window.__ELEMENT_CONTENT_CHUNKS || {};
+  window.__ELEMENT_CONTENT_CHUNKS[27] = chunk;
+  if (typeof window.__registerElementContentChunk === 'function') {
+    window.__registerElementContentChunk(27, chunk);
+  }
+})();

@@ -1,0 +1,23 @@
+(function(){
+  var chunk = {
+  "pt": {
+    "overview": "Cromo ├® um metal de transi├º├úo prateado-azulado conhecido pela cor brilhante e alt├¡ssima resist├¬ncia ├á corros├úo. Sua aplica├º├úo mais conhecida ├® como camada protetora em a├ºo inoxid├ível, pe├ºas automotivas e revestimentos decorativos. Apesar do brilho atraente, alguns compostos de cromo est├úo entre os agentes cancer├¡genos mais documentados ÔÇö uma dualidade que define sua hist├│ria industrial.",
+    "history": "Descoberto em 1797 pelo qu├¡mico franc├¬s Louis-Nicolas Vauquelin a partir do mineral croco├¡ta, um cromato de chumbo. O nome vem do grego \"chroma\" (cor), porque seus compostos exibem cores intensas e variadas ÔÇö verde, amarelo, laranja, vermelho-sangue. Vauquelin notou que as esmeraldas e rubis devem suas cores a tra├ºos de cromo. Foi industrialmente usado a partir do s├®culo XIX em pigmentos e couro curtido.",
+    "properties": "Metal cinza-prateado com tom azulado, extremamente duro (o mais duro entre os metais comuns), com ponto de fus├úo de 1.907 ┬░C. Forma uma camada fin├¡ssima de ├│xido (CrÔééOÔéâ) que protege o metal interno da corros├úo ÔÇö o segredo do a├ºo inoxid├ível. Tem m├║ltiplos estados de oxida├º├úo (+2, +3, +6), cada um com propriedades qu├¡micas distintas. O Cr(VI) (cromo hexavalente) ├® altamente t├│xico e cancer├¡geno.",
+    "applications": "A aplica├º├úo dominante ├® o a├ºo inoxid├ível (geralmente 10-30% de cromo), usado em utens├¡lios de cozinha, eletrodom├®sticos, instrumentos cir├║rgicos, arquitetura e ind├║stria qu├¡mica. Cromagem decorativa de pe├ºas automotivas e banheiros. Pigmentos: amarelo cromo (PbCrOÔéä), verde ├│xido de cromo, vermelho-laranja molibdato de cromo. Curtimento de couro com cromo. Em ligas, aumenta dureza e resist├¬ncia a abras├úo.",
+    "curiosity": "O caso real que inspirou o filme \"Erin Brockovich\" (2000) envolveu contamina├º├úo de ├ígua por cromo hexavalente em Hinkley, Calif├│rnia, causada pela companhia Pacific Gas & Electric. Centenas de moradores desenvolveram c├óncer e outras doen├ºas. O processo resultou em uma das maiores indeniza├º├Áes de processo coletivo da hist├│ria americana ÔÇö US$ 333 milh├Áes em 1996. O caso transformou Cr(VI) em ├¡cone de polui├º├úo industrial."
+  },
+  "en": {
+    "overview": "Chromium is a silvery-blue transition metal known for its brilliant color and extremely high corrosion resistance. Its most familiar application is as a protective layer in stainless steel, automotive parts and decorative coatings. Despite its appealing shine, some chromium compounds are among the most documented carcinogens ÔÇö a duality that defines its industrial history.",
+    "history": "Discovered in 1797 by French chemist Louis-Nicolas Vauquelin from the mineral crocoite, a lead chromate. The name comes from the Greek \"chroma\" (color), because its compounds display intense and varied colors ÔÇö green, yellow, orange, blood-red. Vauquelin noted that emeralds and rubies owe their colors to traces of chromium. It was used industrially from the 19th century in pigments and leather tanning.",
+    "properties": "Silvery-gray metal with a bluish tone, extremely hard (the hardest of all common metals), with a melting point of 1,907 ┬░C. It forms a very thin oxide layer (CrÔééOÔéâ) that protects the inner metal from corrosion ÔÇö the secret behind stainless steel. It has multiple oxidation states (+2, +3, +6), each with distinct chemical properties. Cr(VI) (hexavalent chromium) is highly toxic and carcinogenic.",
+    "applications": "The dominant use is stainless steel (typically 10-30% chromium), found in kitchenware, appliances, surgical instruments, architecture and chemical industry. Decorative chrome plating on automotive parts and bathrooms. Pigments: chrome yellow (PbCrOÔéä), chromium oxide green, chrome-molybdate red-orange. Leather tanning with chromium. In alloys, it boosts hardness and abrasion resistance.",
+    "curiosity": "The real-life case that inspired the film \"Erin Brockovich\" (2000) involved water contamination by hexavalent chromium in Hinkley, California, caused by Pacific Gas & Electric. Hundreds of residents developed cancer and other illnesses. The lawsuit resulted in one of the largest class-action settlements in American history ÔÇö US$ 333 million in 1996. The case turned Cr(VI) into an icon of industrial pollution."
+  }
+};
+  window.__ELEMENT_CONTENT_CHUNKS = window.__ELEMENT_CONTENT_CHUNKS || {};
+  window.__ELEMENT_CONTENT_CHUNKS[24] = chunk;
+  if (typeof window.__registerElementContentChunk === 'function') {
+    window.__registerElementContentChunk(24, chunk);
+  }
+})();

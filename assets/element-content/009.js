@@ -1,0 +1,23 @@
+(function(){
+  var chunk = {
+  "pt": {
+    "overview": "Fl├║or ├® o elemento mais eletronegativo e reativo da tabela peri├│dica ÔÇö t├úo agressivo que ataca quase todos os materiais conhecidos, incluindo vidro, asbesto e at├® alguns metais nobres. Apesar dessa hostilidade extrema, formas est├íveis de fl├║or est├úo por toda parte na vida moderna: pasta de dente, geladeiras, panelas antiaderentes e medicamentos. ├ë um halog├¬nio fundamental tanto para a qu├¡mica industrial quanto para a sa├║de humana.",
+    "history": "A exist├¬ncia do fl├║or foi suspeitada por s├®culos, mas sua reatividade feroc├¡ssima resistiu a todas as tentativas de isolamento ÔÇö muitos qu├¡micos foram envenenados ou morreram tentando. Henri Moissan finalmente conseguiu isol├í-lo em 1886, em Paris, usando eletr├│lise a -50 ┬░C ÔÇö uma fa├ºanha que lhe rendeu o Pr├¬mio Nobel de Qu├¡mica em 1906. O nome vem do mineral \"fluorita\" (CaFÔéé), usado como fundente em metalurgia.",
+    "properties": "G├ís amarelo-p├ílido em condi├º├Áes normais, com odor pungente. ├ë o elemento mais eletronegativo da tabela peri├│dica (3,98 na escala de Pauling), o que explica sua reatividade explosiva. Reage com praticamente tudo ÔÇö incluindo gases nobres, ├ígua e materiais org├ónicos, frequentemente com explos├úo ou igni├º├úo espont├ónea. Forma o ├ónion fluoreto (FÔü╗), muito est├ível em compostos i├┤nicos.",
+    "applications": "O composto mais conhecido ├® o fluoreto de s├│dio (NaF) usado em creme dental e fluoreta├º├úo da ├ígua pot├ível para prevenir c├íries. O politetrafluoretileno (PTFE), conhecido como Teflon, reveste panelas antiaderentes e isola fios el├®tricos. Hidrofluorocarbonos substitu├¡ram os CFCs em geladeiras e ar-condicionado. Hexafluoreto de ur├ónio ├® central no enriquecimento de combust├¡vel nuclear. Fluoreto de hidrog├¬nio (HF) ataca vidro, sendo usado para grava├º├úo art├¡stica.",
+    "curiosity": "O fl├║or ├® t├úo reativo que os primeiros qu├¡micos que tentaram isol├í-lo no s├®culo XIX morreram ou ficaram permanentemente debilitados pelos vapores ÔÇö Humphry Davy, Joseph Louis Gay-Lussac e os irm├úos Knox foram todos envenenados. O grupo ficou conhecido como \"m├írtires do fl├║or\". Moissan teve sucesso usando equipamentos resfriados e fluorita sint├®tica como eletrodo, escapando dos destinos tr├ígicos dos antecessores."
+  },
+  "en": {
+    "overview": "Fluorine is the most electronegative and reactive element in the periodic table ÔÇö so aggressive it attacks almost every known material, including glass, asbestos and even some noble metals. Despite this extreme hostility, stable forms of fluorine are everywhere in modern life: toothpaste, refrigerators, non-stick pans and medicines. It is a halogen fundamental to both industrial chemistry and human health.",
+    "history": "The existence of fluorine was suspected for centuries, but its ferocious reactivity defied every isolation attempt ÔÇö many chemists were poisoned or died trying. Henri Moissan finally isolated it in 1886 in Paris using electrolysis at -50 ┬░C ÔÇö an achievement that earned him the 1906 Nobel Prize in Chemistry. The name comes from the mineral \"fluorite\" (CaFÔéé), used as a flux in metallurgy.",
+    "properties": "A pale yellow gas under normal conditions, with a pungent odor. It is the most electronegative element in the periodic table (3.98 on the Pauling scale), explaining its explosive reactivity. It reacts with virtually everything ÔÇö including noble gases, water and organic materials, often with explosion or spontaneous ignition. Forms the fluoride anion (FÔü╗), very stable in ionic compounds.",
+    "applications": "The best-known compound is sodium fluoride (NaF) used in toothpaste and drinking-water fluoridation to prevent cavities. Polytetrafluoroethylene (PTFE), known as Teflon, coats non-stick pans and insulates wires. Hydrofluorocarbons replaced CFCs in refrigerators and air conditioning. Uranium hexafluoride is central to nuclear fuel enrichment. Hydrogen fluoride (HF) etches glass and is used for artistic engraving.",
+    "curiosity": "Fluorine is so reactive that the first chemists who tried to isolate it in the 19th century died or were permanently disabled by the vapors ÔÇö Humphry Davy, Joseph Louis Gay-Lussac and the Knox brothers were all poisoned. The group became known as the \"fluorine martyrs\". Moissan succeeded by using cooled equipment and synthetic fluorite as an electrode, escaping the tragic fates of his predecessors."
+  }
+};
+  window.__ELEMENT_CONTENT_CHUNKS = window.__ELEMENT_CONTENT_CHUNKS || {};
+  window.__ELEMENT_CONTENT_CHUNKS[9] = chunk;
+  if (typeof window.__registerElementContentChunk === 'function') {
+    window.__registerElementContentChunk(9, chunk);
+  }
+})();

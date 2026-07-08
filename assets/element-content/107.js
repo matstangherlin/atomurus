@@ -1,0 +1,23 @@
+(function(){
+  var chunk = {
+  "pt": {
+    "overview": "B├│hrio ├® um superpesado sint├®tico batizado em homenagem ao f├¡sico dinamarqu├¬s Niels Bohr ÔÇö pai do modelo at├┤mico moderno, criador da teoria qu├óntica primitiva, e l├¡der espiritual da gera├º├úo que construiu a f├¡sica do s├®culo XX. Foi sintetizado em 1981 no laborat├│rio alem├úo GSI Darmstadt, marcando o in├¡cio de uma sequ├¬ncia de descobertas alem├ús que dariam ao instituto seis elementos na tabela peri├│dica.",
+    "history": "Sintetizado em 1981 por Peter Armbruster e Gottfried M├╝nzenberg no Centro de Pesquisa de ├ìons Pesados GSI em Darmstadt, Alemanha, bombardeando bismuto-209 com ├¡ons de cromo-54. O nome proposto foi \"nielsbohrium\", depois simplificado para \"bohrium\" pela IUPAC em 1997. Apenas seis ├ítomos foram observados no experimento original ÔÇö quantidade t├¡pica para a era dos superpesados sintetizados por \"fus├úo fria\".",
+    "properties": "Sem observa├º├úo macrosc├│pica. Densidade estimada em 37,1 g/cm┬│, ponto de fus├úo provavelmente acima de 2.500 ┬░C. Todos os 12 is├│topos conhecidos s├úo radioativos. O Bh-270 ├® o mais est├ível (meia-vida cerca de 1 minuto, exceptional para um superpesado). Experimentos qu├¡micos em 2000 mostraram que b├│hrio se comporta como o r├¬nio (grupo 7), formando oxicloretos vol├íteis ÔÇö confirmando que a tabela peri├│dica cl├íssica ainda prediz tend├¬ncias em elementos sintetizados com tantos pr├│tons.",
+    "applications": "Nenhuma aplica├º├úo pr├ítica. Pesquisa fundamental em qu├¡mica e estabilidade nuclear de elementos superpesados. O grupo do GSI continuou produzindo b├│hrio em experimentos posteriores para testar propriedades e procurar is├│topos com meia-vida mais longa.",
+    "curiosity": "Niels Bohr foi figura central n├úo apenas da f├¡sica, mas da hist├│ria moral do s├®culo XX: fugiu da Dinamarca ocupada pelos nazistas em 1943, ajudou cientistas judeus, trabalhou no Projeto Manhattan, e depois da guerra usou seu prest├¡gio para defender abertura e controle internacional de armas nucleares. O elemento b├│hrio ├® o ├║nico superpesado batizado em homenagem a um cientista cuja obra abrange tanto a f├¡sica pura quanto a ├®tica da ci├¬ncia ÔÇö uma escolha de nome com peso simb├│lico maior do que se imagina ├á primeira vista."
+  },
+  "en": {
+    "overview": "Bohrium is a synthetic superheavy element named in honor of the Danish physicist Niels Bohr ÔÇö father of the modern atomic model, creator of early quantum theory, and spiritual leader of the generation that built 20th-century physics. It was synthesized in 1981 at the German GSI Darmstadt laboratory, marking the start of a string of German discoveries that would give the institute six elements on the periodic table.",
+    "history": "Synthesized in 1981 by Peter Armbruster and Gottfried M├╝nzenberg at the GSI Center for Heavy Ion Research in Darmstadt, Germany, by bombarding bismuth-209 with chromium-54 ions. The proposed name was \"nielsbohrium\", later simplified to \"bohrium\" by the IUPAC in 1997. Only six atoms were observed in the original experiment ÔÇö a typical quantity for the era of superheavies synthesized by \"cold fusion\".",
+    "properties": "No macroscopic observation. Estimated density 37.1 g/cm┬│, melting point probably above 2,500 ┬░C. All 12 known isotopes are radioactive. Bh-270 is the most stable (half-life about 1 minute, exceptional for a superheavy). Chemical experiments in 2000 showed that bohrium behaves like rhenium (group 7), forming volatile oxychlorides ÔÇö confirming that the classical periodic table still predicts trends in elements synthesized with so many protons.",
+    "applications": "No practical applications. Fundamental research in chemistry and nuclear stability of superheavy elements. The GSI group continued producing bohrium in later experiments to test properties and search for isotopes with longer half-lives.",
+    "curiosity": "Niels Bohr was a central figure not only in physics but in the moral history of the 20th century: he fled Nazi-occupied Denmark in 1943, helped Jewish scientists, worked on the Manhattan Project, and after the war used his prestige to defend openness and international control of nuclear weapons. The element bohrium is the only superheavy named after a scientist whose work spans both pure physics and the ethics of science ÔÇö a name choice with more symbolic weight than appears at first glance."
+  }
+};
+  window.__ELEMENT_CONTENT_CHUNKS = window.__ELEMENT_CONTENT_CHUNKS || {};
+  window.__ELEMENT_CONTENT_CHUNKS[107] = chunk;
+  if (typeof window.__registerElementContentChunk === 'function') {
+    window.__registerElementContentChunk(107, chunk);
+  }
+})();

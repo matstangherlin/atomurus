@@ -1,0 +1,23 @@
+(function(){
+  var chunk = {
+  "pt": {
+    "overview": "Sam├írio ├® um metal lantan├¡deo prateado-amarelado, conhecido principalmente por seus ├¡m├ús permanentes sam├írio-cobalto (SmCo) ÔÇö segundos em for├ºa apenas aos ├¡m├ús de neod├¡mio, mas com vantagem decisiva: mant├¬m magnetismo at├® 350 ┬░C, contra apenas 80 ┬░C do neod├¡mio. Por isso s├úo usados em motores de avi├Áes militares, sat├®lites e equipamentos m├®dicos onde altas temperaturas matam outros ├¡m├ús.",
+    "history": "Descoberto em 1879 pelo qu├¡mico franc├¬s Paul ├ëmile Lecoq de Boisbaudran (o mesmo do g├ílio) no mineral samarsquita ÔÇö da├¡ o nome. Samarsquita foi nomeada em homenagem ao engenheiro russo Vasili Samarsky-Bykhovets, que coletou amostras no Cazaquist├úo em 1847. Sam├írio foi assim o primeiro elemento da hist├│ria nomeado indiretamente em homenagem a uma pessoa viva (embora pelo nome do mineral, n├úo diretamente).",
+    "properties": "Metal lantan├¡deo prateado-amarelado moderadamente macio, oxida em ar formando uma camada amarela protetora. Funde a 1.072 ┬░C. Densidade 7,52 g/cm┬│. Tem 7 is├│topos naturais ÔÇö tr├¬s deles s├úo alfa-radioativos com meia-vida t├úo longa (Sm-147 = 106 bilh├Áes de anos) que s├úo tratados como est├íveis para prop├│sitos pr├íticos. Forma compostos coloridos rosa-p├ílidos. Em chamas emite cor amarelo-claro.",
+    "applications": "├ìm├ús sam├írio-cobalto (SmCoÔéà e SmÔééCoÔéüÔéç) s├úo padr├úo em aplica├º├Áes de alta temperatura: motores de avi├Áes militares, sat├®lites, equipamentos m├®dicos em ambientes hostis. Catalisador em rea├º├Áes qu├¡micas industriais. Em reatores nucleares como veneno de n├¬utrons em hastes de controle. Em lasers especiais. Lentes ├│pticas de alta refra├º├úo com vidro dopado de sam├írio absorvem infravermelho.",
+    "curiosity": "A data├º├úo sam├írio-neod├¡mio (Sm-Nd) ├® uma das t├®cnicas mais precisas para datar rochas com mais de 1 bilh├úo de anos. O Sm-147 decai em Nd-143 com meia-vida t├úo longa que a rela├º├úo Nd/Sm em rochas pode revelar a idade exata da forma├º├úo. Cientistas usaram essa t├®cnica em rochas lunares trazidas pela Apollo, determinando que a Lua tem 4,42 bilh├Áes de anos ÔÇö mais nova que a Terra por cerca de 100 milh├Áes de anos, consistente com a teoria do impacto gigante."
+  },
+  "en": {
+    "overview": "Samarium is a silvery-yellowish lanthanide metal, best known for its samarium-cobalt (SmCo) permanent magnets ÔÇö second in strength only to neodymium magnets, but with a decisive advantage: they retain magnetism up to 350 ┬░C, versus only 80 ┬░C for neodymium. They are therefore used in military aircraft motors, satellites, and medical equipment where high temperatures destroy other magnets.",
+    "history": "Discovered in 1879 by French chemist Paul ├ëmile Lecoq de Boisbaudran (the same one who discovered gallium) in the mineral samarskite ÔÇö hence the name. Samarskite was named in honor of Russian engineer Vasili Samarsky-Bykhovets, who collected samples in Kazakhstan in 1847. Samarium was thus the first element in history indirectly named after a living person (though via the mineral name, not directly).",
+    "properties": "Silvery-yellowish lanthanide metal, moderately soft, oxidizes in air forming a protective yellow layer. Melts at 1,072 ┬░C. Density 7.52 g/cm┬│. Has 7 natural isotopes ÔÇö three of which are alpha-radioactive with such long half-lives (Sm-147 = 106 billion years) that they are treated as stable for practical purposes. Forms pale pink colored compounds. In flames it emits a pale yellow color.",
+    "applications": "Samarium-cobalt magnets (SmCoÔéà and SmÔééCoÔéüÔéç) are standard in high-temperature applications: military aircraft motors, satellites, medical equipment in hostile environments. Catalyst in industrial chemical reactions. In nuclear reactors as a neutron poison in control rods. In specialized lasers. High-refraction optical lenses with samarium-doped glass absorb infrared.",
+    "curiosity": "Samarium-neodymium (Sm-Nd) dating is one of the most accurate techniques for dating rocks over 1 billion years old. Sm-147 decays into Nd-143 with such a long half-life that the Nd/Sm ratio in rocks can reveal the exact age of formation. Scientists used this technique on lunar rocks brought by Apollo, determining that the Moon is 4.42 billion years old ÔÇö younger than Earth by about 100 million years, consistent with the giant-impact theory."
+  }
+};
+  window.__ELEMENT_CONTENT_CHUNKS = window.__ELEMENT_CONTENT_CHUNKS || {};
+  window.__ELEMENT_CONTENT_CHUNKS[62] = chunk;
+  if (typeof window.__registerElementContentChunk === 'function') {
+    window.__registerElementContentChunk(62, chunk);
+  }
+})();

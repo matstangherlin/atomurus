@@ -1,0 +1,23 @@
+(function(){
+  var chunk = {
+  "pt": {
+    "overview": "T├║lio ├® o segundo lantan├¡deo mais raro (depois do prom├®cio) e um dos elementos mais caros da tabela peri├│dica ÔÇö frequentemente vale mais que ouro por grama. Apesar disso, encontrou nichos valiosos: aparelhos port├íteis de raios-X para inspe├º├úo em campo (sem precisar de eletricidade), lasers cir├║rgicos e cristais oscilantes de alta precis├úo. Seu nome vem de Thule, terra m├¡tica do extremo norte na geografia cl├íssica.",
+    "history": "Descoberto em 1879 pelo sueco Per Teodor Cleve, que separou-o dos ├│xidos de ├®rbio. Cleve batizou-o em refer├¬ncia a Thule, lugar lend├írio citado por ge├│grafos gregos e romanos como o \"fim do mundo\" no Atl├óntico Norte ÔÇö provavelmente a Isl├óndia ou a Noruega. Foi uma maneira po├®tica de marcar o car├íter remoto e elusivo do elemento. T├║lio puro s├│ foi obtido em 1911, tr├¬s d├®cadas depois.",
+    "properties": "Metal prateado-cinzento, macio, male├ível e bastante reativo ÔÇö oxida em ar e reage lentamente com ├ígua fria, densidade 9,32 g/cm┬│. Funde a 1.545 ┬░C. Possui apenas um is├│topo est├ível (Tm-169), o que o torna invulgar entre lantan├¡deos. O Tm-170 (artificial, meia-vida 128 dias) emite raios gama de m├®dia energia ao decair ÔÇö exatamente a faixa ├║til para radiografias industriais.",
+    "applications": "Tm-170 em fontes port├íteis de raios X para radiografia industrial em locais remotos sem eletricidade (inspe├º├úo de soldas em oleodutos, pe├ºas aeroespaciais). Lasers de t├║lio (Tm:YAG, fibras dopadas) emitem em 2.000 nm para cirurgia urol├│gica e abla├º├úo de tecidos moles. Pesquisa em qubits para computa├º├úo qu├óntica usando ├¡ons aprisionados de t├║lio. Pequenas adi├º├Áes em supercondutores cer├ómicos de alta temperatura.",
+    "curiosity": "Antes da era dos detectores eletr├┤nicos port├íteis, t├®cnicos que precisavam radiografar soldas em oleodutos no ├ürtico ou em refinarias remotas levavam pastilhas de t├║lio-170 em recipientes blindados. Pendurada perto da pe├ºa, a pastilha emite raios gama por meses, expondo filme radiogr├ífico colocado do outro lado. Sem precisar de eletricidade, gerador ou tubo de raios-X ÔÇö apenas f├¡sica nuclear lenta, suficiente para inspecionar quil├┤metros de tubula├º├úo onde nada mais funcionaria."
+  },
+  "en": {
+    "overview": "Thulium is the second rarest lanthanide (after promethium) and one of the most expensive elements in the periodic table ÔÇö often worth more than gold by weight. Despite this, it has found valuable niches: portable X-ray devices for field inspection (with no electricity required), surgical lasers and high-precision oscillating crystals. Its name comes from Thule, the mythical northern land in classical geography.",
+    "history": "Discovered in 1879 by the Swede Per Teodor Cleve, who separated it from erbium oxides. Cleve named it in reference to Thule, a legendary place cited by Greek and Roman geographers as the \"end of the world\" in the North Atlantic ÔÇö probably Iceland or Norway. It was a poetic way to mark the remote and elusive character of the element. Pure thulium was only obtained in 1911, three decades later.",
+    "properties": "Silvery-gray metal, soft, malleable and quite reactive ÔÇö oxidizes in air and reacts slowly with cold water, density 9.32 g/cm┬│. Melts at 1,545 ┬░C. Has only one stable isotope (Tm-169), which makes it unusual among lanthanides. Tm-170 (artificial, half-life 128 days) emits medium-energy gamma rays on decay ÔÇö precisely the useful range for industrial radiography.",
+    "applications": "Tm-170 in portable X-ray sources for industrial radiography in remote locations without electricity (inspection of welds in pipelines, aerospace parts). Thulium lasers (Tm:YAG, doped fibers) emit at 2,000 nm for urological surgery and soft tissue ablation. Research on qubits for quantum computing using trapped thulium ions. Small additions in high-temperature ceramic superconductors.",
+    "curiosity": "Before the era of portable electronic detectors, technicians who needed to radiograph welds in pipelines in the Arctic or remote refineries carried thulium-170 pellets in shielded containers. Hung near the part, the pellet emits gamma rays for months, exposing radiographic film placed on the other side. No need for electricity, generator or X-ray tube ÔÇö just slow nuclear physics, enough to inspect kilometers of piping where nothing else would work."
+  }
+};
+  window.__ELEMENT_CONTENT_CHUNKS = window.__ELEMENT_CONTENT_CHUNKS || {};
+  window.__ELEMENT_CONTENT_CHUNKS[69] = chunk;
+  if (typeof window.__registerElementContentChunk === 'function') {
+    window.__registerElementContentChunk(69, chunk);
+  }
+})();

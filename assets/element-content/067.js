@@ -1,0 +1,23 @@
+(function(){
+  var chunk = {
+  "pt": {
+    "overview": "H├│lmio tem a propriedade magn├®tica mais extrema da tabela peri├│dica: nenhum outro elemento est├ível apresenta momento magn├®tico at├┤mico t├úo alto. Apesar disso, ├® usado principalmente longe de ├¡m├ús ÔÇö sua aplica├º├úo mais vis├¡vel ├® o laser cir├║rgico Ho:YAG, que pulveriza pedras nos rins sem cortar o paciente. Foi batizado em homenagem ├á cidade de Estocolmo (Holmia em latim).",
+    "history": "Identificado em 1878 simultaneamente por Marc Delafontaine e Jacques-Louis Soret em Genebra (que o chamaram \"elemento X\"), e independentemente em 1879 pelo sueco Per Teodor Cleve, em Uppsala. Cleve, que p├┤de isolar mais material, recebeu o cr├®dito da nomenclatura e o batizou de \"h├│lmio\" como refer├¬ncia velada a Estocolmo, sua cidade natal. H├│lmio puro s├│ foi obtido em 1911 ÔÇö d├®cadas depois da descoberta.",
+    "properties": "Metal prateado-branco, macio e male├ível, densidade 8,79 g/cm┬│, funde a 1.461 ┬░C. Tem o maior momento magn├®tico at├┤mico de qualquer elemento ocorrente naturalmente ÔÇö base de eletro├¡m├ús de pesquisa que geram os campos mais intensos do mundo. Em compostos s├│lidos, exibe ordens magn├®ticas complexas, como h├®lices magn├®ticas que mudam de dire├º├úo com a temperatura. Solu├º├Áes de Ho┬│Ôü║ t├¬m cor amarela-rosada.",
+    "applications": "P├│los magn├®ticos em eletro├¡m├ús de pesquisa (campos acima de 4 T) para experimentos de f├¡sica de alt├¡ssima energia. Lasers Ho:YAG (granada de ├¡trio-alum├¡nio dopada com h├│lmio) em urologia ÔÇö vaporizam c├ílculos renais e tratam hiperplasia prost├ítica sem cirurgia aberta. Lasers similares em odontologia e dermatologia. Barras de controle em reatores nucleares. Padr├úo de calibra├º├úo para espectrofot├┤metros UV-vis├¡vel.",
+    "curiosity": "O laser Ho:YAG revolucionou a urologia nos anos 1990: emite em 2.100 nm, comprimento de onda absorvido fortemente pela ├ígua. Como c├ílculos renais s├úo embebidos em ├ígua nos tecidos circundantes, a energia ├® depositada justamente na pedra, fragmentando-a em p├│ sem queimar o tecido adjacente. Antes desse laser, pacientes com c├ílculos grandes precisavam de cirurgia. Hoje o tratamento ├® ambulatorial, com flex├¡vel introduzido pela uretra."
+  },
+  "en": {
+    "overview": "Holmium has the most extreme magnetic property in the periodic table: no other stable element has such a high atomic magnetic moment. Despite this, it is mostly used far from magnets ÔÇö its most visible application is the Ho:YAG surgical laser, which pulverizes kidney stones without cutting the patient. It is named after the city of Stockholm (Holmia in Latin).",
+    "history": "Identified in 1878 simultaneously by Marc Delafontaine and Jacques-Louis Soret in Geneva (who called it \"element X\"), and independently in 1879 by the Swedish Per Teodor Cleve, in Uppsala. Cleve, who was able to isolate more material, was credited with the naming and chose \"holmium\" as a veiled reference to Stockholm, his hometown. Pure holmium was only obtained in 1911 ÔÇö decades after the discovery.",
+    "properties": "Silvery-white, soft and malleable metal, density 8.79 g/cm┬│, melts at 1,461 ┬░C. Has the largest atomic magnetic moment of any naturally occurring element ÔÇö the basis of research electromagnets generating the most intense fields in the world. In solid compounds it exhibits complex magnetic orders such as magnetic helices that change direction with temperature. Solutions of Ho┬│Ôü║ have a yellow-pink color.",
+    "applications": "Magnetic pole pieces in research electromagnets (fields above 4 T) for ultra-high-energy physics experiments. Ho:YAG (holmium-doped yttrium-aluminum garnet) lasers in urology ÔÇö vaporize kidney stones and treat prostate hyperplasia without open surgery. Similar lasers in dentistry and dermatology. Control rods in nuclear reactors. Calibration standard for UV-visible spectrophotometers.",
+    "curiosity": "The Ho:YAG laser revolutionized urology in the 1990s: it emits at 2,100 nm, a wavelength strongly absorbed by water. Since kidney stones are bathed in water from surrounding tissue, energy is deposited precisely on the stone, breaking it into powder without burning adjacent tissue. Before this laser, patients with large stones required surgery. Today the treatment is outpatient, with a flexible scope introduced through the urethra."
+  }
+};
+  window.__ELEMENT_CONTENT_CHUNKS = window.__ELEMENT_CONTENT_CHUNKS || {};
+  window.__ELEMENT_CONTENT_CHUNKS[67] = chunk;
+  if (typeof window.__registerElementContentChunk === 'function') {
+    window.__registerElementContentChunk(67, chunk);
+  }
+})();

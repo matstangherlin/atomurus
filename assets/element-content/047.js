@@ -1,0 +1,23 @@
+(function(){
+  var chunk = {
+  "pt": {
+    "overview": "Prata ├® o metal com a maior condutividade el├®trica e t├®rmica de todos os elementos ÔÇö s├│ perde para o ouro em maleabilidade entre os metais nobres. Brilhante e branca quando rec├®m-polida, escurece com o tempo formando sulfetos ao reagir com compostos de enxofre no ar. Usada por humanos h├í mil├¬nios em moedas, joalheria e talheres, hoje ├® insubstitu├¡vel em eletr├┤nicos de precis├úo e pain├®is solares.",
+    "history": "Conhecida desde a Antiguidade ÔÇö minas de prata em Laurion alimentaram o imp├®rio ateniense, e a prata espanhola das Am├®ricas (especialmente Potos├¡, na Bol├¡via) sustentou o com├®rcio global por s├®culos. O s├¡mbolo Ag vem do latim \"argentum\", que tamb├®m batizou a Argentina pela busca espanhola por prata na regi├úo do Rio da Prata. A palavra \"prata\" em v├írias l├¡nguas rom├ónicas vem desse mesmo \"argentum\".",
+    "properties": "Branco-prateado com o brilho met├ílico mais alto entre todos os elementos. ├ë o melhor condutor el├®trico e t├®rmico conhecido ÔÇö s├│ n├úo ├® mais usado em fia├º├úo porque o cobre ├® centenas de vezes mais barato. Extremamente male├ível e d├║ctil (uma grama pode ser estirada em um fio de 1,8 km). Reage com sulfetos atmosf├®ricos formando sulfeto de prata escuro ÔÇö o que d├í o \"escurecimento\" t├¡pico da prata antiga.",
+    "applications": "Joalheria, talheres e moedas tradicionais. Em eletr├┤nica ├® usada em contatos de alta confiabilidade, soldas e pastas condutivas. Pain├®is solares fotovoltaicos dependem de pasta de prata para coletar a corrente das c├®lulas. Em medicina, compostos de prata s├úo antibacterianos potentes ÔÇö usados em bandagens para queimaduras, filtros de ├ígua e revestimentos m├®dicos. Espelhos finos s├úo feitos com uma camada de prata aplicada sobre vidro.",
+    "curiosity": "Os antigos sabiam que comida e bebida estragavam mais devagar em recipientes de prata ÔÇö sem entender por qu├¬. Hoje sabemos: ├¡ons de prata destroem a membrana celular de bact├®rias e v├¡rus. Na guerra civil norte-americana, soldados punham moedas de prata em barris de ├ígua para mant├¬-la pot├ível. Esse efeito ├® a raz├úo pela qual filtros de ├ígua modernos costumam ter prata coloidal incorporada."
+  },
+  "en": {
+    "overview": "Silver is the metal with the highest electrical and thermal conductivity of all elements ÔÇö second only to gold in malleability among the noble metals. Bright and white when freshly polished, it tarnishes over time by forming sulfides when reacting with sulfur compounds in the air. Used by humans for millennia in coins, jewelry and cutlery, today it is irreplaceable in precision electronics and solar panels.",
+    "history": "Known since antiquity ÔÇö silver mines in Laurion fueled the Athenian empire, and Spanish silver from the Americas (especially Potos├¡, in Bolivia) sustained global trade for centuries. The symbol Ag comes from the Latin \"argentum\", which also gave its name to Argentina due to Spanish silver-seeking in the R├¡o de la Plata region. The word for silver in various Romance languages derives from this same \"argentum\".",
+    "properties": "Silvery white with the highest metallic luster among all elements. It is the best known electrical and thermal conductor ÔÇö it is not used more widely in wiring only because copper is hundreds of times cheaper. Extremely malleable and ductile (one gram can be drawn into a 1.8 km wire). It reacts with atmospheric sulfides to form dark silver sulfide ÔÇö the characteristic \"tarnish\" of antique silverware.",
+    "applications": "Jewelry, cutlery and traditional coinage. In electronics it is used in high-reliability contacts, solders and conductive pastes. Photovoltaic solar panels depend on silver paste to collect current from the cells. In medicine, silver compounds are powerful antibacterials ÔÇö used in burn dressings, water filters and medical coatings. Fine mirrors are made with a silver layer applied to glass.",
+    "curiosity": "The ancients knew that food and drink spoiled more slowly in silver containers ÔÇö without understanding why. Today we know: silver ions destroy the cell membrane of bacteria and viruses. In the American Civil War, soldiers dropped silver coins into water barrels to keep them drinkable. This effect is why modern water filters often have colloidal silver embedded in them."
+  }
+};
+  window.__ELEMENT_CONTENT_CHUNKS = window.__ELEMENT_CONTENT_CHUNKS || {};
+  window.__ELEMENT_CONTENT_CHUNKS[47] = chunk;
+  if (typeof window.__registerElementContentChunk === 'function') {
+    window.__registerElementContentChunk(47, chunk);
+  }
+})();

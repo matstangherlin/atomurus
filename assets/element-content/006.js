@@ -1,0 +1,23 @@
+(function(){
+  var chunk = {
+  "pt": {
+    "overview": "Carbono ├® a base da qu├¡mica org├ónica e de toda vida conhecida ÔÇö ├® o quarto elemento mais abundante no universo por massa, e o 15┬║ na crosta terrestre. Sua qu├¡mica especial vem da capacidade ├║nica de formar quatro liga├º├Áes covalentes e cadeias longas com outros ├ítomos de carbono, criando milh├Áes de compostos diferentes. Sem carbono n├úo existiriam prote├¡nas, DNA, a├º├║cares, pl├ísticos, combust├¡veis f├│sseis nem grafeno.",
+    "history": "Conhecido desde a Antiguidade nas formas de carv├úo e fuligem, foi reconhecido como elemento qu├¡mico distinto por Antoine Lavoisier em 1789, que demonstrou que o diamante e o grafite eram a mesma subst├óncia. As formas alotr├│picas se sucederam ao longo dos s├®culos: grafite (1779), diamante (j├í conhecido), fulerenos CÔéåÔéÇ por Kroto, Curl e Smalley em 1985 (Nobel 1996), e o grafeno isolado por Geim e Novoselov em 2004 (Nobel 2010).",
+    "properties": "Existe em formas alotr├│picas radicalmente diferentes: diamante (a subst├óncia natural mais dura), grafite (macio, condutor el├®trico), grafeno (folha plana de um ├ítomo de espessura), nanotubos (cilindros de grafeno), fulerenos (gaiolas esf├®ricas) e carbono amorfo. Sua tetraval├¬ncia permite cadeias lineares, ramificadas e an├®is. O carbono-14, is├│topo radioativo formado pela a├º├úo dos raios c├│smicos na atmosfera, ├® a base da data├º├úo arqueol├│gica.",
+    "applications": "O a├ºo carbono (ferro com 0,1% a 2% de carbono) ├® o material industrial mais usado da hist├│ria ÔÇö sua dureza depende exatamente do quanto de carbono est├í presente. Grafite forma o \"chumbo\" do l├ípis e os eletrodos de baterias de ├¡ons-l├¡tio. Diamante industrial corta praticamente qualquer material. Carbono ativado purifica ├ígua e ar. Fibra de carbono ├® central em aeronaves modernas, raquetes de t├¬nis e foguetes da SpaceX.",
+    "curiosity": "Diamante e grafite s├úo quimicamente id├¬nticos ÔÇö s├│ carbono ÔÇö mas t├¬m propriedades totalmente diferentes pela forma como os ├ítomos se arranjam. O grafeno, uma ├║nica camada de grafite, ├® 200 vezes mais forte que o a├ºo por unidade de peso, conduz eletricidade melhor que o cobre e ├® praticamente transparente. Em 2004, foi isolado pela primeira vez usando fita adesiva comum."
+  },
+  "en": {
+    "overview": "Carbon is the foundation of organic chemistry and all known life ÔÇö the fourth most abundant element in the universe by mass, and 15th in Earth's crust. Its special chemistry comes from a unique ability to form four covalent bonds and long chains with other carbon atoms, creating millions of different compounds. Without carbon there would be no proteins, DNA, sugars, plastics, fossil fuels or graphene.",
+    "history": "Known since antiquity as charcoal and soot, it was recognized as a distinct chemical element by Antoine Lavoisier in 1789, who showed that diamond and graphite were the same substance. The allotropes followed over centuries: graphite (1779), diamond (already known), CÔéåÔéÇ fullerenes by Kroto, Curl and Smalley in 1985 (Nobel 1996), and graphene isolated by Geim and Novoselov in 2004 (Nobel 2010).",
+    "properties": "It exists in radically different allotropic forms: diamond (the hardest natural substance), graphite (soft, electrically conductive), graphene (a flat one-atom-thick sheet), nanotubes (rolled-up graphene), fullerenes (spherical cages) and amorphous carbon. Its tetravalence allows linear chains, branched chains and rings. Carbon-14, the radioactive isotope formed by cosmic rays in the atmosphere, is the basis of archaeological dating.",
+    "applications": "Carbon steel (iron with 0.1%-2% carbon) is the most-used industrial material in history ÔÇö its hardness depends exactly on how much carbon is in it. Graphite makes pencil \"lead\" and lithium-ion battery electrodes. Industrial diamond cuts almost any material. Activated carbon purifies water and air. Carbon fiber is central to modern aircraft, tennis rackets and SpaceX rockets.",
+    "curiosity": "Diamond and graphite are chemically identical ÔÇö pure carbon ÔÇö yet have completely different properties because of how the atoms are arranged. Graphene, a single layer of graphite, is 200 times stronger than steel by weight, conducts electricity better than copper, and is nearly transparent. In 2004 it was first isolated using ordinary scotch tape."
+  }
+};
+  window.__ELEMENT_CONTENT_CHUNKS = window.__ELEMENT_CONTENT_CHUNKS || {};
+  window.__ELEMENT_CONTENT_CHUNKS[6] = chunk;
+  if (typeof window.__registerElementContentChunk === 'function') {
+    window.__registerElementContentChunk(6, chunk);
+  }
+})();

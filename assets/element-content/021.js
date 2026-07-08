@@ -1,0 +1,23 @@
+(function(){
+  var chunk = {
+  "pt": {
+    "overview": "Esc├óndio ├® um metal de transi├º├úo prateado, raro mas n├úo excessivamente ÔÇö o 35┬║ elemento mais abundante na crosta. Apesar disso, sua minera├º├úo ├® t├úo dispersa e t├®cnica que historicamente foi mais raro e caro que ouro. Combina leveza, alta resist├¬ncia mec├ónica e excelente comportamento em altas temperaturas, sendo cobi├ºado em ligas aeroespaciais. A China det├®m quase todo o suprimento estrat├®gico mundial atual.",
+    "history": "Previsto por Mendeleev em 1869 como \"ekaborium\" ÔÇö um elemento hipot├®tico abaixo do boro na tabela peri├│dica. Foi descoberto em 1879 pelo qu├¡mico sueco Lars Fredrik Nilson em Uppsala, no mineral euxenita. O nome vem de \"Scandinavia\" (Escandin├ívia), terra de Nilson. Foi outra previs├úo acertada de Mendeleev: massa at├┤mica, densidade e estado de oxida├º├úo preditos teoricamente bateram com os experimentais.",
+    "properties": "Metal cinza-prateado leve (densidade 2,99 g/cm┬│, quase a do alum├¡nio), male├ível, com ponto de fus├úo alto (1.541 ┬░C). Oxida-se em ar ├║mido formando uma camada amarelo-rosada. Reage com ├ígua lentamente. Quimicamente parecido com ├¡trio e os lantan├¡deos, embora classificado como metal de transi├º├úo. Tem apenas um is├│topo est├ível (Sc-45) e produz cores intensas em compostos por absor├º├úo UV.",
+    "applications": "Ligas alum├¡nio-esc├óndio (Al-Sc) s├úo at├® 50% mais resistentes que ligas convencionais e mant├¬m propriedades em altas temperaturas ÔÇö usadas em estruturas de aeronaves militares russas (MIG-29, Su-27) e cada vez mais em civis. L├ómpadas de iodeto met├ílico com esc├óndio produzem luz semelhante ├á solar usada em est├ídios e tomografia. Entre raras-terras, ├® usado em catalisadores para refino de petr├│leo e cer├ómicas avan├ºadas.",
+    "curiosity": "Por d├®cadas, a produ├º├úo mundial total de esc├óndio era t├úo pequena que cabia em uma ├║nica caminhonete. Em 2014, estima-se que apenas 15-25 toneladas foram produzidas globalmente ÔÇö comparado a milh├Áes de toneladas de ferro ou alum├¡nio. A escassez n├úo ├® geol├│gica (existem reservas suficientes) mas econ├┤mica: minerar esc├óndio em quantidade requer descobertas como subproduto de outras extra├º├Áes, e tudo isso por tr├ís de geopol├¡tica chinesa de raras-terras."
+  },
+  "en": {
+    "overview": "Scandium is a silvery transition metal, rare but not excessively so ÔÇö the 35th most abundant element in the crust. Despite that, its mining is so dispersed and technical that historically it has been rarer and more expensive than gold. It combines lightness, high mechanical strength, and excellent high-temperature behavior, making it coveted in aerospace alloys. China holds almost all the strategic supply today.",
+    "history": "Predicted by Mendeleev in 1869 as \"eka-boron\" ÔÇö a hypothetical element below boron in the periodic table. It was discovered in 1879 by Swedish chemist Lars Fredrik Nilson in Uppsala, in the mineral euxenite. The name comes from \"Scandinavia\", Nilson's homeland. It was another of Mendeleev's accurate predictions: atomic mass, density and oxidation state predicted theoretically matched the experimental values.",
+    "properties": "A light silvery-gray metal (density 2.99 g/cm┬│, almost that of aluminum), malleable, with a high melting point (1,541 ┬░C). It oxidizes in moist air, forming a yellow-pink layer. Reacts with water slowly. Chemically similar to yttrium and the lanthanides, although classified as a transition metal. Has only one stable isotope (Sc-45) and produces intense colors in compounds through UV absorption.",
+    "applications": "Aluminum-scandium alloys (Al-Sc) are up to 50% stronger than conventional alloys and retain their properties at high temperatures ÔÇö used in the structures of Russian military aircraft (MIG-29, Su-27) and increasingly in civilian planes. Metal-halide lamps with scandium produce sunlight-like light used in stadiums and tomography. Among rare earths, it is used in catalysts for oil refining and in advanced ceramics.",
+    "curiosity": "For decades, the total worldwide production of scandium was so small it could fit in a single pickup truck. In 2014, an estimated 15-25 tons were produced globally ÔÇö compared to millions of tons of iron or aluminum. The scarcity is not geological (sufficient reserves exist) but economic: mining scandium in quantity requires finding it as a byproduct of other extractions, all behind Chinese rare-earth geopolitics."
+  }
+};
+  window.__ELEMENT_CONTENT_CHUNKS = window.__ELEMENT_CONTENT_CHUNKS || {};
+  window.__ELEMENT_CONTENT_CHUNKS[21] = chunk;
+  if (typeof window.__registerElementContentChunk === 'function') {
+    window.__registerElementContentChunk(21, chunk);
+  }
+})();

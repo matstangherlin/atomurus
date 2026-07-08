@@ -176,11 +176,22 @@
       ? window.elContentFor(el.z) : null;
 
     if (!content) {
+      if (typeof window.loadElementContentFor === 'function' &&
+          anchor.getAttribute('data-content-requested') !== String(el.z)) {
+        anchor.setAttribute('data-content-requested', String(el.z));
+        window.loadElementContentFor(el.z).then(function () {
+          render();
+        }).catch(function (err) {
+          console.warn(err && err.message ? err.message : err);
+        });
+      }
       // No rich content yet for this element — make sure no leftover
       // container is hanging around from a previous render.
       if (container) container.remove();
       return;
     }
+
+    anchor.removeAttribute('data-content-requested');
 
     if (!container) {
       container = document.createElement('div');

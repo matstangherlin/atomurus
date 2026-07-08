@@ -21,7 +21,7 @@
 [build]
   publish      = "."
   functions    = "netlify/functions"
-  command      = "node bump-version.js && node build-i18n.js"
+  command      = "node tools/build-element-content-chunks.js && node tools/generate-isomerism-pt-variants.js && node bump-version.js && node build-i18n.js && node tools/validate-site.js"
 
 # Hide .html in URLs — /periodic-table/aurum serves periodic-table/aurum.html,
 # and /periodic-table/aurum.html is 301'd to /periodic-table/aurum.
@@ -147,7 +147,73 @@
   force  = true
 
 [[redirects]]
+  from   = "/add-*.js"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/fix-*.js"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/migrate-*.js"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/sync-*.js"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/enrich-*.js"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/patch.js"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/*.ps1"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/tools/*"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/.github/*"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
   from   = "/*.log"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/*.zip"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/*.bak*"
   to     = "/404.html"
   status = 404
   force  = true
@@ -329,6 +395,55 @@
   force  = true
   query  = { lang = "pt-BR" }
 
+[[redirects]]
+  from   = "/viewer/isomerism/constitutional/function"
+  to     = "/viewer/isomerism/constitutional/function.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/viewer/isomerism/constitutional/chain"
+  to     = "/viewer/isomerism/constitutional/chain.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/viewer/isomerism/constitutional/position"
+  to     = "/viewer/isomerism/constitutional/position.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/viewer/isomerism/constitutional/metamerism"
+  to     = "/viewer/isomerism/constitutional/metamerism.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/viewer/isomerism/constitutional/tautomerism"
+  to     = "/viewer/isomerism/constitutional/tautomerism.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/viewer/isomerism/spatial/geometric"
+  to     = "/viewer/isomerism/spatial/geometric.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/viewer/isomerism/spatial/optical"
+  to     = "/viewer/isomerism/spatial/optical.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
 # Explore hub + knowledge articles — PT variant (.pt.html). These are
 # fully pre-rendered per language (not data-i18n), so ?lang=pt-BR serves
 # the Portuguese file directly. EN is the default (.html, no redirect needed).
@@ -470,7 +585,7 @@
     # Disable MIME-sniffing
     X-Content-Type-Options = "nosniff"
     # HTTPS-only in production. No preload yet, so future subdomain choices stay flexible.
-    Strict-Transport-Security = "max-age=31536000"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
     # Only send the origin (not the full URL) when navigating to other sites
     Referrer-Policy = "strict-origin-when-cross-origin"
     # Block features we don't use

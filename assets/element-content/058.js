@@ -1,0 +1,23 @@
+(function(){
+  var chunk = {
+  "pt": {
+    "overview": "C├®rio ├® o mais abundante de todos os lantan├¡deos ÔÇö mais comum na crosta que cobre. Foi o primeiro lantan├¡deo descoberto e ├® o ├║nico que forma compostos est├íveis em estado de oxida├º├úo +4, propriedade que o torna catalisador ├║nico. Aparece em conversores catal├¡ticos automotivos, polimento de vidros ├│pticos, pedras de isqueiro e fluidos catal├¡ticos de refinarias.",
+    "history": "Descoberto em 1803 simultaneamente por dois grupos independentes: J├Âns Jacob Berzelius e Wilhelm Hisinger na Su├®cia, e Martin Heinrich Klaproth na Alemanha. O nome veio em homenagem ao asteroide Ceres (descoberto em 1801 por Giuseppe Piazzi) ÔÇö astronomia influenciando qu├¡mica, padr├úo da ├®poca. Foi um dos primeiros lantan├¡deos isolados, mas s├│ em 1875 o americano William Hillebrand obteve c├®rio met├ílico puro por eletr├│lise.",
+    "properties": "Metal prateado-branco, d├║ctil e relativamente macio. Funde a 798 ┬░C. Densidade 6,77 g/cm┬│. Oxida muito rapidamente em ar, podendo at├® queimar espontaneamente quando arranhado. Tem propriedade ├║nica entre lantan├¡deos: forma o ├¡on CeÔü┤Ôü║ est├ível (n├úo apenas o t├¡pico Ce┬│Ôü║), o que o torna oxidante poderoso em qu├¡mica anal├¡tica. Pirof├│rico ÔÇö descargas de part├¡culas de c├®rio podem inflamar.",
+    "applications": "Conversores catal├¡ticos automotivos cont├¬m ├│xido de c├®rio (CeOÔéé), que armazena e libera oxig├¬nio para otimizar a combust├úo e reduzir emiss├Áes. Polimento de vidros ├│pticos: ├│xido de c├®rio (\"rouge de joalheiro\") ├® o agente padr├úo para polimento fino de lentes e telas. Pedra de isqueiro de mischmetal (50% c├®rio + 25% lant├ónio + outros). Fluido catal├¡tico de craqueamento em refinarias de petr├│leo. Vidros UV-bloqueio (LCD, ├│culos).",
+    "curiosity": "Quando uma pedra de isqueiro raspa no metal, o que produz a fa├¡sca n├úo ├® fric├º├úo comum: s├úo part├¡culas microsc├│picas de c├®rio que se incendeiam espontaneamente ao serem expostas ao ar ÔÇö uma rea├º├úo de pirof├│foro. O c├®rio met├ílico ├® t├úo reativo que part├¡culas de p├│ podem inflamar apenas pelo contato com oxig├¬nio ├á temperatura ambiente. ├ë essa qu├¡mica peculiar ÔÇö descoberta h├í mais de um s├®culo ÔÇö que faz isqueiros funcionarem at├® hoje."
+  },
+  "en": {
+    "overview": "Cerium is the most abundant of all lanthanides ÔÇö more common in the crust than copper. It was the first lanthanide discovered and the only one that forms stable compounds in the +4 oxidation state, a property that makes it a unique catalyst. It appears in automotive catalytic converters, polishing of optical glass, lighter flints and refinery catalytic fluids.",
+    "history": "Discovered in 1803 simultaneously by two independent groups: J├Âns Jacob Berzelius and Wilhelm Hisinger in Sweden, and Martin Heinrich Klaproth in Germany. The name comes from the asteroid Ceres (discovered in 1801 by Giuseppe Piazzi) ÔÇö astronomy influencing chemistry, the pattern of the era. It was among the first lanthanides isolated, but only in 1875 did American William Hillebrand obtain pure metallic cerium by electrolysis.",
+    "properties": "Silvery-white metal, ductile and relatively soft. Melts at 798 ┬░C. Density 6.77 g/cm┬│. Oxidizes very rapidly in air and can even burn spontaneously when scratched. It has a unique property among lanthanides: it forms the stable CeÔü┤Ôü║ ion (not just the typical Ce┬│Ôü║), making it a powerful oxidant in analytical chemistry. Pyrophoric ÔÇö discharges of cerium particles can ignite.",
+    "applications": "Automotive catalytic converters contain cerium oxide (CeOÔéé), which stores and releases oxygen to optimize combustion and reduce emissions. Optical glass polishing: cerium oxide (\"jeweler's rouge\") is the standard agent for fine polishing of lenses and screens. Mischmetal lighter flints (50% cerium + 25% lanthanum + others). Fluid catalytic cracking in oil refineries. UV-blocking glass (LCD, eyewear).",
+    "curiosity": "When a lighter flint scrapes against metal, what produces the spark is not ordinary friction: it is microscopic cerium particles that spontaneously ignite when exposed to air ÔÇö a pyrophoric reaction. Metallic cerium is so reactive that powder particles can ignite simply by contact with oxygen at room temperature. It is this peculiar chemistry ÔÇö discovered over a century ago ÔÇö that makes lighters work to this day."
+  }
+};
+  window.__ELEMENT_CONTENT_CHUNKS = window.__ELEMENT_CONTENT_CHUNKS || {};
+  window.__ELEMENT_CONTENT_CHUNKS[58] = chunk;
+  if (typeof window.__registerElementContentChunk === 'function') {
+    window.__registerElementContentChunk(58, chunk);
+  }
+})();

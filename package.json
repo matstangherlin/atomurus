@@ -3,6 +3,13 @@
   "private": true,
   "type": "commonjs",
   "description": "Atomurus static site - Netlify build scripts (bump-version, build-i18n) run as CommonJS",
+  "scripts": {
+    "build:content": "node tools/build-element-content-chunks.js",
+    "build:isomerism": "node tools/generate-isomerism-pt-variants.js",
+    "build": "node tools/build-element-content-chunks.js && node tools/generate-isomerism-pt-variants.js && node bump-version.js && node build-i18n.js",
+    "validate": "node tools/validate-site.js",
+    "ci": "npm run build && npm run validate"
+  },
   "dependencies": {
     "@netlify/identity": "1.2.0"
   }

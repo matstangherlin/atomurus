@@ -1,0 +1,23 @@
+(function(){
+  var chunk = {
+  "pt": {
+    "overview": "T├®rbio ├® um lantan├¡deo prateado discreto, mas indispens├ível: ele faz a cor verde das telas que vemos todo dia e o magnetismo das ligas que se deformam quando expostas a um campo magn├®tico ÔÇö base de sonares submarinos modernos e atuadores de precis├úo. ├ë tamb├®m um dos quatro elementos batizados em homenagem ├á pequena vila sueca de Ytterby, junto com ├¡trio, ├®rbio e it├®rbio.",
+    "history": "Descoberto em 1843 pelo qu├¡mico sueco Carl Gustaf Mosander durante a an├ílise da \"yttria\" extra├¡da de minerais de Ytterby. Mosander mostrou que o que se acreditava ser um ├║nico ├│xido eram, na verdade, tr├¬s fra├º├Áes com propriedades diferentes ÔÇö terras amarela, rosa e branca. O nome veio diretamente da vila de Ytterby (junto com ├¡trio, ├®rbio e it├®rbio), provavelmente o maior tributo onom├ístico que um lugar j├í recebeu da tabela peri├│dica.",
+    "properties": "Metal prateado-cinza, d├║ctil e moderadamente reativo ÔÇö oxida lentamente em ar. Densidade 8,23 g/cm┬│, funde a 1.356 ┬░C. Compostos de Tb┬│Ôü║ emitem luz verde brilhante quando excitados por UV ou raios-X ÔÇö base de f├│sforos de tela. A liga Terfenol-D (Tb-Dy-Fe) tem a maior magnetostric├º├úo ├á temperatura ambiente de qualquer material conhecido: muda de comprimento em at├® 0,2% quando submetida a um campo magn├®tico.",
+    "applications": "F├│sforos verdes em l├ómpadas fluorescentes compactas e telas de LED indispens├íveis para produzir cor verde pura. Terfenol-D em sonares navais, alto-falantes submarinos e atuadores microm├®tricos para ind├║stria de precis├úo. Pequenas dosagens em ├¡m├ús Nd-Fe-B aumentam a resist├¬ncia t├®rmica ÔÇö crucial para motores de carros el├®tricos. Detectores de raios-X m├®dicos e c├®lulas combust├¡veis de ├│xido s├│lido.",
+    "curiosity": "A vila de Ytterby, na ilha de Resar├Â (perto de Estocolmo), tem hoje cerca de 800 habitantes e um pequeno museu ÔÇö mas ├® o lugar mais \"produtivo\" do mundo em termos de descobertas de elementos qu├¡micos. Quatro elementos levam diretamente o nome dela (Y, Tb, Er, Yb), e a mina pr├│xima rendeu ainda outros quatro descobertos l├í (Ho, Tm, Sc, Gd). Nenhum outro ponto geogr├ífico do planeta nomeia tantos pontos da tabela peri├│dica."
+  },
+  "en": {
+    "overview": "Terbium is an unassuming silvery lanthanide, but indispensable: it produces the green color of the screens we look at every day and the magnetism of alloys that deform under a magnetic field ÔÇö the basis of modern submarine sonars and precision actuators. It is also one of the four elements named after the tiny Swedish village of Ytterby, along with yttrium, erbium and ytterbium.",
+    "history": "Discovered in 1843 by the Swedish chemist Carl Gustaf Mosander while analyzing the \"yttria\" extracted from minerals of Ytterby. Mosander showed that what was believed to be a single oxide was actually three fractions with different properties ÔÇö yellow, pink and white earths. The name came directly from the village of Ytterby (along with yttrium, erbium and ytterbium), probably the largest naming tribute any place has ever received from the periodic table.",
+    "properties": "Silvery-gray metal, ductile and moderately reactive ÔÇö oxidizes slowly in air. Density 8.23 g/cm┬│, melts at 1,356 ┬░C. Tb┬│Ôü║ compounds emit bright green light when excited by UV or X-rays ÔÇö the basis of display phosphors. The Terfenol-D alloy (Tb-Dy-Fe) has the highest magnetostriction at room temperature of any known material: changes length by up to 0.2% when placed in a magnetic field.",
+    "applications": "Green phosphors in compact fluorescent lamps and LED screens are indispensable to produce pure green color. Terfenol-D in naval sonars, underwater loudspeakers and micrometer actuators for precision industry. Small doses in Nd-Fe-B magnets increase thermal resistance ÔÇö crucial for electric-car motors. Medical X-ray detectors and solid oxide fuel cells.",
+    "curiosity": "The village of Ytterby, on the island of Resar├Â (near Stockholm), now has about 800 residents and a small museum ÔÇö but it is the most \"productive\" place in the world in terms of chemical element discoveries. Four elements are named directly after it (Y, Tb, Er, Yb), and the nearby mine also yielded four others discovered there (Ho, Tm, Sc, Gd). No other geographic point on the planet gives its name to so many points of the periodic table."
+  }
+};
+  window.__ELEMENT_CONTENT_CHUNKS = window.__ELEMENT_CONTENT_CHUNKS || {};
+  window.__ELEMENT_CONTENT_CHUNKS[65] = chunk;
+  if (typeof window.__registerElementContentChunk === 'function') {
+    window.__registerElementContentChunk(65, chunk);
+  }
+})();

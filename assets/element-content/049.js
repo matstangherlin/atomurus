@@ -1,0 +1,23 @@
+(function(){
+  var chunk = {
+  "pt": {
+    "overview": "├ìndio ├® um metal p├│s-transi├º├úo cinza-prateado, macio o bastante para ser cortado com a unha. Apesar de raro, sua aplica├º├úo moderna mais reconhecida est├í em todas as telas de smartphone, tablet e TV: ├│xido de ├¡ndio-estanho (ITO) ├® o revestimento transparente e condutor que faz telas sens├¡veis ao toque funcionarem. Sem ├¡ndio, a era dos touchscreens n├úo existiria como a conhecemos.",
+    "history": "Descoberto em 1863 por Ferdinand Reich e Hieronymous Theodor Richter em Freiberg, Alemanha, usando espectroscopia em minerais de zinco. O nome vem da linha espectral azul-├¡ndigo caracter├¡stica que identificaram. Por d├®cadas foi curiosidade laboratorial, e s├│ ap├│s a Segunda Guerra come├ºou aplica├º├Áes industriais. A explos├úo de demanda veio em 1970-2000 com telas LCD e depois touchscreens.",
+    "properties": "Metal prateado branco, muito macio (pode ser riscado com a unha), male├ível, com ponto de fus├úo de apenas 156 ┬░C. Densidade 7,31 g/cm┬│. Forma uma camada protetora de ├│xido que resiste ├á oxida├º├úo a temperatura ambiente. Emite \"grito\" quando dobrado (igual estanho). ├ë raro mas amplamente distribu├¡do ÔÇö quase todo o ├¡ndio comercial ├® subproduto da extra├º├úo de zinco. Tem dois is├│topos naturais, sendo o In-115 fracamente radioativo.",
+    "applications": "├ôxido de ├¡ndio-estanho (ITO) ├® a aplica├º├úo dominante ÔÇö revestimento transparente e condutor em telas LCD, OLED, touchscreens, pain├®is solares e janelas eletrocr├┤micas. Solda em microeletr├┤nica (├¡ndio puro funde a 156 ┬░C, ideal para juntas sens├¡veis). Ligas para veda├º├úo a baixa temperatura. Espelhos refletores em telesc├│pios (alternativa ├á prata). Em produ├º├úo semicondutora (arsenieto e nitreto de ├¡ndio).",
+    "curiosity": "A produ├º├úo global anual de ├¡ndio ├® t├úo pequena (~900 toneladas em 2024) que se prev├¬ escassez cr├¡tica at├® 2050 ÔÇö e literalmente cada smartphone do mundo depende dele. O setor da reciclagem de telas tornou-se estrat├®gico, com algumas empresas extraindo ├¡ndio de pain├®is LCD descartados. Cientistas est├úo buscando alternativas (grafeno, nanofios de prata) mas at├® agora nenhuma atinge a combina├º├úo de transpar├¬ncia, condutividade e durabilidade do ITO."
+  },
+  "en": {
+    "overview": "Indium is a silvery-gray post-transition metal, soft enough to be cut with a fingernail. Although rare, its most recognizable modern application is in every smartphone, tablet and TV screen: indium-tin oxide (ITO) is the transparent, conducting coating that makes touchscreens work. Without indium, the touchscreen era would not exist as we know it.",
+    "history": "Discovered in 1863 by Ferdinand Reich and Hieronymous Theodor Richter in Freiberg, Germany, using spectroscopy on zinc minerals. The name comes from the characteristic indigo-blue spectral line they identified. For decades it was a laboratory curiosity, and only after World War II did industrial applications begin. The demand explosion came in 1970-2000 with LCD screens and later touchscreens.",
+    "properties": "A bright silvery-white metal, very soft (can be scratched with a fingernail), malleable, with a melting point of just 156 ┬░C. Density 7.31 g/cm┬│. Forms a protective oxide layer that resists oxidation at room temperature. Emits a \"cry\" when bent (like tin). Rare but widely distributed ÔÇö virtually all commercial indium is a byproduct of zinc extraction. Has two natural isotopes, with In-115 being weakly radioactive.",
+    "applications": "Indium-tin oxide (ITO) is the dominant application ÔÇö transparent conductive coating on LCD, OLED, touchscreens, solar panels and electrochromic windows. Solder in microelectronics (pure indium melts at 156 ┬░C, ideal for sensitive joints). Low-temperature sealing alloys. Reflective mirrors in telescopes (alternative to silver). In semiconductor production (indium arsenide and nitride).",
+    "curiosity": "Global annual indium production is so small (~900 tons in 2024) that critical shortages are predicted by 2050 ÔÇö and literally every smartphone in the world depends on it. Screen-recycling has become a strategic sector, with some companies extracting indium from discarded LCD panels. Scientists are searching for alternatives (graphene, silver nanowires) but so far none match the combination of transparency, conductivity and durability of ITO."
+  }
+};
+  window.__ELEMENT_CONTENT_CHUNKS = window.__ELEMENT_CONTENT_CHUNKS || {};
+  window.__ELEMENT_CONTENT_CHUNKS[49] = chunk;
+  if (typeof window.__registerElementContentChunk === 'function') {
+    window.__registerElementContentChunk(49, chunk);
+  }
+})();
