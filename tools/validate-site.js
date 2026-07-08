@@ -86,12 +86,27 @@ function assertReadme() {
   }
 }
 
+function assertHomePreviewPayload() {
+  const payloadPath = path.join(ROOT, 'home-preview-data.js');
+  if (!fs.existsSync(payloadPath)) {
+    fail('home-preview-data.js is missing');
+  }
+  const html = read('index.html');
+  if (html.includes('elements-data.js')) {
+    fail('index.html still depends on elements-data.js');
+  }
+  if (!html.includes('home-preview-data.js')) {
+    fail('index.html is not loading home-preview-data.js');
+  }
+}
+
 function main() {
   assertRootNoForbiddenArchives();
   assertDeployGuards();
   assertElementContentLoader();
   assertIsomerismVariants();
   assertReadme();
+  assertHomePreviewPayload();
   console.log('Site validation passed');
 }
 
