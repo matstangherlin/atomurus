@@ -17,6 +17,7 @@
     if (!node) return;
     if (message) node.textContent = message;
     node.classList.add('show');
+    if (node.scrollIntoView) node.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }
 
   function setBusy(button, busy, busyLabel) {
@@ -154,149 +155,183 @@
     }
   }
 
-  function initLogin() {
-    var form = $('auth-login-form');
-    if (!form) return;
+  async function handleLoginSubmit() {
     var button = $('auth-login-submit');
     var errBox = $('auth-login-err');
+    if (button && button.disabled) return;
+    hide(errBox);
 
-    form.addEventListener('submit', async function (event) {
-      event.preventDefault();
-      if (button && button.disabled) return; // block double submit
-      hide(errBox);
-
-      var identifier = ($('auth-email').value || '').trim();
-      var password = $('auth-password').value || '';
-      setBusy(button, true, t('auth.entering', 'Entering…'));
-      try {
-        await postJson('/api/auth/login', { identifier: identifier, password: password });
-        window.location.assign('/app');
-      } catch (_err) {
-        show(errBox, t('auth.loginError', 'Invalid email or password.'));
-        setBusy(button, false);
-      }
-    });
+    var identifier = ($('auth-email').value || '').trim();
+    var password = $('auth-password').value || '';
+    setBusy(button, true, t('auth.entering', 'Entering…'));
+    try {
+      await postJson('/api/auth/login', { identifier: identifier, password: password });
+      window.location.assign('/app');
+    } catch (_err) {
+      show(errBox, t('auth.loginError', 'Invalid email or password.'));
+      setBusy(button, false);
+    }
   }
 
-  function initSignup() {
+  async function handleSignupSubmit() {
     var form = $('auth-signup-form');
-    if (!form) return;
     var button = $('auth-signup-submit');
     var okBox = $('auth-signup-ok');
     var errBox = $('auth-signup-err');
+    if (!form || (button && button.disabled)) return;
+    hide(okBox);
+    hide(errBox);
 
-    form.addEventListener('submit', async function (event) {
-      event.preventDefault();
-      if (button && button.disabled) return;
-      hide(okBox);
-      hide(errBox);
-
-      var fullName = ($('auth-signup-name').value || '').trim();
-      var username = ($('auth-signup-username').value || '').trim().toLowerCase();
-      var email = ($('auth-signup-email').value || '').trim();
-      var password = $('auth-signup-password').value || '';
-      var passwordConfirm = $('auth-signup-password-confirm').value || '';
-      if (fullName.length < 2) {
-        show(errBox, t('auth.nameInvalid', 'Enter your name with at least 2 characters.'));
+    var fullName = ($('auth-signup-name').value || '').trim();
+    var username = ($('auth-signup-username').value || '').trim().toLowerCase();
+    var email = ($('auth-signup-email').value || '').trim();
+    var password = $('auth-signup-password').value || '';
+    var passwordConfirm = $('auth-signup-password-confirm').value || '';
+    if (fullName.length < 2) {
+      show(errBox, t('auth.nameInvalid', 'Enter your name with at least 2 characters.'));
+      return;
+    }
+    if (!validUsername(username)) {
+      show(errBox, t('auth.usernameInvalid', 'Choose a username with 3 to 30 letters, numbers, dot, underscore or hyphen.'));
+      return;
+    }
+    var passwordError = passwordPolicyError(password);
+    if (passwordError) {
+      show(errBox, t('auth.passwordWeak', passwordError));
+      return;
+    }
+    if (password !== passwordConfirm) {
+      show(errBox, t('auth.passwordMismatch', 'Password confirmation does not match.'));
+      return;
+    }
+    setBusy(button, true, t('auth.creating', 'Creating...'));
+    try {
+      var data = await postJson('/api/auth/signup', {
+        fullName: fullName,
+        username: username,
+        email: email,
+        password: password,
+        passwordConfirm: passwordConfirm
+      });
+      if (data.signedIn && !data.needsConfirmation) {
+        window.location.assign('/app');
         return;
       }
-      if (!validUsername(username)) {
-        show(errBox, t('auth.usernameInvalid', 'Choose a username with 3 to 30 letters, numbers, dot, underscore or hyphen.'));
-        return;
-      }
-      var passwordError = passwordPolicyError(password);
-      if (passwordError) {
-        show(errBox, t('auth.passwordWeak', passwordError));
-        return;
-      }
-      if (password !== passwordConfirm) {
-        show(errBox, t('auth.passwordMismatch', 'Password confirmation does not match.'));
-        return;
-      }
-      setBusy(button, true, t('auth.creating', 'Creating...'));
-      try {
-        var data = await postJson('/api/auth/signup', {
-          fullName: fullName,
-          username: username,
-          email: email,
-          password: password,
-          passwordConfirm: passwordConfirm
-        });
-        if (data.signedIn && !data.needsConfirmation) {
-          window.location.assign('/app');
-          return;
-        }
-        show(okBox, t('auth.signupOk', 'Account created. Check your email if confirmation is required, then sign in.'));
-        form.reset();
-        setMode('login');
-      } catch (err) {
-        show(errBox, err && err.message ? err.message : t('auth.signupError', 'Could not create this account. Try signing in or use another email.'));
-      } finally {
-        setBusy(button, false);
-      }
-    });
+      show(okBox, t('auth.signupOk', 'Account created. Check your email if confirmation is required, then sign in.'));
+      form.reset();
+      setMode('login');
+    } catch (err) {
+      show(errBox, err && err.message ? err.message : t('auth.signupError', 'Could not create this account. Try signing in or use another email.'));
+    } finally {
+      setBusy(button, false);
+    }
   }
 
-  function initPasswordReset() {
-    var form = $('auth-password-form');
+  async function handlePasswordResetSubmit() {
     var panel = $('auth-password-panel');
-    if (!form || !panel) return;
     var button = $('auth-password-submit');
     var errBox = $('auth-password-err');
+    if (!panel || (button && button.disabled)) return;
+    hide(errBox);
 
-    form.addEventListener('submit', async function (event) {
-      event.preventDefault();
-      if (button && button.disabled) return;
-      hide(errBox);
-
-      var token = panel.dataset.recoveryToken || '';
-      var recoveryType = panel.dataset.recoveryType || 'recovery';
-      var password = $('auth-new-password').value || '';
-      setBusy(button, true, t('auth.saving', 'Saving...'));
-      try {
-        await postJson('/api/auth/reset', { token: token, password: password, type: recoveryType });
-        window.location.assign('/app');
-      } catch (err) {
-        show(errBox, err && err.message ? err.message : t('auth.resetError', 'Password reset link is invalid or expired.'));
-      } finally {
-        setBusy(button, false);
-      }
-    });
+    var token = panel.dataset.recoveryToken || '';
+    var recoveryType = panel.dataset.recoveryType || 'recovery';
+    var password = $('auth-new-password').value || '';
+    setBusy(button, true, t('auth.saving', 'Saving...'));
+    try {
+      await postJson('/api/auth/reset', { token: token, password: password, type: recoveryType });
+      window.location.assign('/app');
+    } catch (err) {
+      show(errBox, err && err.message ? err.message : t('auth.resetError', 'Password reset link is invalid or expired.'));
+    } finally {
+      setBusy(button, false);
+    }
   }
 
-  function initRecovery() {
-    var form = $('auth-reset-form');
-    if (!form) return;
+  async function handleRecoverySubmit() {
     var button = $('auth-reset-submit');
     var okBox = $('auth-reset-ok');
     var errBox = $('auth-reset-err');
+    if (button && button.disabled) return;
+    hide(okBox);
+    hide(errBox);
 
-    form.addEventListener('submit', async function (event) {
-      event.preventDefault();
-      if (button && button.disabled) return;
-      hide(okBox);
-      hide(errBox);
-
-      var email = ($('auth-reset-email').value || '').trim();
-      setBusy(button, true, t('auth.sending', 'Sending…'));
-      try {
-        await postJson('/api/auth/recover', { email: email });
-        show(okBox);
-      } catch (_err) {
-        show(errBox);
-      } finally {
-        setBusy(button, false);
-      }
-    });
+    var email = ($('auth-reset-email').value || '').trim();
+    setBusy(button, true, t('auth.sending', 'Sending…'));
+    try {
+      await postJson('/api/auth/recover', { email: email });
+      show(okBox);
+    } catch (_err) {
+      show(errBox);
+    } finally {
+      setBusy(button, false);
+    }
   }
 
-  document.addEventListener('DOMContentLoaded', function () {
+  function bindAuthForms() {
+    document.addEventListener('submit', function (event) {
+      var form = event.target;
+      if (!form || !form.id) return;
+      if (form.id === 'auth-login-form') {
+        event.preventDefault();
+        void handleLoginSubmit();
+      } else if (form.id === 'auth-signup-form') {
+        event.preventDefault();
+        void handleSignupSubmit();
+      } else if (form.id === 'auth-password-form') {
+        event.preventDefault();
+        void handlePasswordResetSubmit();
+      } else if (form.id === 'auth-reset-form') {
+        event.preventDefault();
+        void handleRecoverySubmit();
+      }
+    });
+
+    var loginButton = $('auth-login-submit');
+    if (loginButton) {
+      loginButton.addEventListener('click', function (event) {
+        event.preventDefault();
+        void handleLoginSubmit();
+      });
+    }
+
+    var signupButton = $('auth-signup-submit');
+    if (signupButton) {
+      signupButton.addEventListener('click', function (event) {
+        event.preventDefault();
+        void handleSignupSubmit();
+      });
+    }
+
+    var resetButton = $('auth-password-submit');
+    if (resetButton) {
+      resetButton.addEventListener('click', function (event) {
+        event.preventDefault();
+        void handlePasswordResetSubmit();
+      });
+    }
+
+    var recoverButton = $('auth-reset-submit');
+    if (recoverButton) {
+      recoverButton.addEventListener('click', function (event) {
+        event.preventDefault();
+        void handleRecoverySubmit();
+      });
+    }
+  }
+
+  function bootAuth() {
+    if (bootAuth.done) return;
+    bootAuth.done = true;
     bindModeLinks();
     setMode(currentMode(), { skipHistory: true });
-    initAuthCallbacks();
-    initLogin();
-    initSignup();
-    initPasswordReset();
-    initRecovery();
-  });
+    bindAuthForms();
+    void initAuthCallbacks();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootAuth);
+  } else {
+    bootAuth();
+  }
 })();

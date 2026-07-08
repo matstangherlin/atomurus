@@ -320,41 +320,53 @@ async function resolveLoginEmail(identifier) {
   return String(profile.email).toLowerCase();
 }
 
-async function assertUsernameAvailable(username) {
-  const existing = await getProfileByUsername(username);
-  if (existing?.id) {
-    const err = new Error('This username is already in use.');
-    err.status = 409;
-    err.code = 'username_taken';
-    throw err;
-  }
-}
-
 async function getProfileByUsername(username) {
-  if (!username) return null;
+  if (!username || !serviceRoleKey()) return null;
   const cfg = supabaseConfig();
+  if (!cfg) return null;
   const url = `${cfg.url}/rest/v1/profiles?select=id,email,username&username=eq.${encodeURIComponent(username)}&limit=1`;
   const res = await fetch(url, {
     method: 'GET',
     headers: serviceHeaders()
   });
+  if (res.status === 404) return null;
   const data = await parseSupabaseResponse(res);
   return Array.isArray(data) ? (data[0] || null) : null;
 }
 
+async function assertUsernameAvailable(username) {
+  try {
+    const existing = await getProfileByUsername(username);
+    if (existing?.id) {
+      const err = new Error('This username is already in use.');
+      err.status = 409;
+      err.code = 'username_taken';
+      throw err;
+    }
+  } catch (err) {
+    if (err?.code === 'username_taken') throw err;
+    // Signup should still work if the profiles table is not ready yet.
+    if (err?.status && err.status < 500) throw err;
+  }
+}
+
 async function saveProfileIdentity({ userId, email, username, fullName }) {
-  if (!userId) return;
-  const cfg = supabaseConfig();
-  const url = `${cfg.url}/rest/v1/profiles?id=eq.${encodeURIComponent(userId)}`;
-  const res = await fetch(url, {
-    method: 'PATCH',
-    headers: serviceHeaders({ Prefer: 'return=minimal' }),
-    body: JSON.stringify({
-      email,
-      username,
-      full_name: fullName,
-      updated_at: new Date().toISOString()
-    })
-  });
-  await parseSupabaseResponse(res);
+  if (!userId || !serviceRoleKey()) return;
+  try {
+    const cfg = supabaseConfig();
+    const url = `${cfg.url}/rest/v1/profiles?id=eq.${encodeURIComponent(userId)}`;
+    const res = await fetch(url, {
+      method: 'PATCH',
+      headers: serviceHeaders({ Prefer: 'return=minimal' }),
+      body: JSON.stringify({
+        email,
+        username,
+        full_name: fullName,
+        updated_at: new Date().toISOString()
+      })
+    });
+    await parseSupabaseResponse(res);
+  } catch (_err) {
+    // Profile metadata is optional for the first signup path.
+  }
 }
