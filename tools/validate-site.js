@@ -100,6 +100,22 @@ function assertHomePreviewPayload() {
   }
 }
 
+function assertI18nNamespaceAssets() {
+  const runtime = read('i18n.js');
+  if (!runtime.includes('assets/i18n/')) {
+    fail('i18n.js is not loading namespace chunks from assets/i18n/');
+  }
+  if (!runtime.includes('ensureNamespace(') || !runtime.includes('collectNamespaces(')) {
+    fail('i18n.js is not using the namespace-loading runtime');
+  }
+  ['common', 'home', 'el'].forEach((ns) => {
+    const relPath = path.join('assets', 'i18n', `${ns}.js`);
+    if (!fs.existsSync(path.join(ROOT, relPath))) {
+      fail(`Missing i18n namespace chunk: ${relPath}`);
+    }
+  });
+}
+
 function main() {
   assertRootNoForbiddenArchives();
   assertDeployGuards();
@@ -107,6 +123,7 @@ function main() {
   assertIsomerismVariants();
   assertReadme();
   assertHomePreviewPayload();
+  assertI18nNamespaceAssets();
   console.log('Site validation passed');
 }
 

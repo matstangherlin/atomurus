@@ -21,7 +21,7 @@
 [build]
   publish      = "."
   functions    = "netlify/functions"
-  command      = "node tools/build-home-preview-data.js && node tools/build-element-content-chunks.js && node tools/generate-isomerism-pt-variants.js && node bump-version.js && node build-i18n.js && node tools/validate-site.js"
+  command      = "node tools/build-home-preview-data.js && node tools/build-i18n-assets.js && node tools/build-element-content-chunks.js && node tools/generate-isomerism-pt-variants.js && node bump-version.js && node build-i18n.js && node tools/validate-site.js"
 
 # Hide .html in URLs — /periodic-table/aurum serves periodic-table/aurum.html,
 # and /periodic-table/aurum.html is 301'd to /periodic-table/aurum.

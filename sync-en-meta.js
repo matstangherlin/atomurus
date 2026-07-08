@@ -22,7 +22,7 @@ const fs   = require('fs');
 const path = require('path');
 
 const ROOT = __dirname;
-const I18N_PATH = path.join(ROOT, 'i18n.js');
+const I18N_SOURCE_PATH = path.join(ROOT, 'tools', 'i18n-dict-source.js');
 
 // Same set as build-i18n.js — pages with data-i18n on title/meta-desc.
 const PAGES = [
@@ -48,41 +48,9 @@ const PAGES = [
   'periodic-table/isotopes.html',
 ];
 
-// ── Literal extractor (copy of build-i18n.js helper) ───────────────
-function extractLiteral(code, declMarker) {
-  const start = code.indexOf(declMarker);
-  if (start < 0) return null;
-  let i = start + declMarker.length;
-  while (i < code.length && code[i] !== '{' && code[i] !== '[') i++;
-  if (i >= code.length) return null;
-  const open = code[i], close = open === '{' ? '}' : ']';
-  const litStart = i;
-  let depth = 0, s = 0;
-  for (; i < code.length; i++) {
-    const c = code[i], n = code[i + 1];
-    if (s === 4) { if (c === '\n') s = 0; continue; }
-    if (s === 5) { if (c === '*' && n === '/') { s = 0; i++; } continue; }
-    if (s === 1) { if (c === '\\') { i++; continue; } if (c === "'") s = 0; continue; }
-    if (s === 2) { if (c === '\\') { i++; continue; } if (c === '"') s = 0; continue; }
-    if (s === 3) { if (c === '\\') { i++; continue; } if (c === '`') s = 0; continue; }
-    if (c === '/' && n === '/') { s = 4; i++; continue; }
-    if (c === '/' && n === '*') { s = 5; i++; continue; }
-    if (c === "'") { s = 1; continue; }
-    if (c === '"') { s = 2; continue; }
-    if (c === '`') { s = 3; continue; }
-    if (c === open) depth++;
-    else if (c === close) { depth--; if (depth === 0) return code.slice(litStart, i + 1); }
-  }
-  return null;
-}
-
 function loadDict() {
-  const code = fs.readFileSync(I18N_PATH, 'utf8');
-  const lit  = extractLiteral(code, 'const DICT = ');
-  if (!lit) throw new Error('DICT not found in i18n.js');
-  /* eslint-disable no-eval */
-  return eval('(' + lit + ')');
-  /* eslint-enable no-eval */
+  delete require.cache[require.resolve(I18N_SOURCE_PATH)];
+  return require(I18N_SOURCE_PATH).DICT;
 }
 
 function resolveKey(dict, lang, key) {

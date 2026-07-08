@@ -22,7 +22,7 @@ const fs   = require('fs');
 const path = require('path');
 
 const ROOT = __dirname;
-const I18N_PATH = path.join(ROOT, 'i18n.js');
+const I18N_SOURCE_PATH = path.join(ROOT, 'tools', 'i18n-dict-source.js');
 
 // Main pages that get pre-rendered variants. Element pages and viewer
 // sub-pages are out of scope for this first pass.
@@ -104,11 +104,8 @@ function extractLiteral(code, declMarker) {
 }
 
 function loadDict() {
-  const code = fs.readFileSync(I18N_PATH, 'utf8');
-  const literal = extractLiteral(code, 'const DICT = ');
-  if (!literal) throw new Error('DICT not found in i18n.js');
-  // eslint-disable-next-line no-eval
-  return eval('(' + literal + ')');
+  delete require.cache[require.resolve(I18N_SOURCE_PATH)];
+  return require(I18N_SOURCE_PATH).DICT;
 }
 
 function loadElementsContext(dict) {
