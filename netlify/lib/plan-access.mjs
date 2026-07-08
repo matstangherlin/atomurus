@@ -90,9 +90,17 @@ export function accessForUser(user) {
 
 export function publicUser(user) {
   const access = accessForUser(user || {});
+  const userMeta = user?.userMetadata || user?.user_metadata || {};
+  const username = user?.username || userMeta.username || null;
+  const fullName = user?.fullName || user?.name || userMeta.full_name || userMeta.name || null;
+  const email = user?.email || null;
+  const displayName = fullName || username || (email ? String(email).split('@')[0] : null);
   return {
     id: user?.id || null,
-    email: user?.email || null,
+    email,
+    username,
+    fullName,
+    displayName,
     emailConfirmed: Boolean(user?.confirmedAt || user?.email_confirmed_at),
     lastSignInAt: user?.lastSignInAt || null,
     createdAt: user?.createdAt || user?.created_at || null,

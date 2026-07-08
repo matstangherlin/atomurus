@@ -207,6 +207,45 @@
     }
   }
 
+  function authState() {
+    return window.__ATOMURUS_ADS__ || null;
+  }
+
+  function authDisplayName(user) {
+    if (!user) return 'Workspace';
+    return user.displayName || user.fullName || user.username || user.email || 'Workspace';
+  }
+
+  function setAuthLabel(node, text, i18nKey) {
+    if (!node) return;
+    if (node.dataset.authGuestLabel == null) node.dataset.authGuestLabel = node.textContent || '';
+    if (i18nKey && node.dataset.authGuestI18n == null) node.dataset.authGuestI18n = i18nKey;
+    if (i18nKey) node.setAttribute('data-i18n', i18nKey);
+    else node.removeAttribute('data-i18n');
+    node.textContent = text;
+  }
+
+  function syncAuthNav() {
+    const state = authState();
+    const signedIn = Boolean(state && state.ready && state.signedIn);
+    const user = state && state.user ? state.user : null;
+    const display = authDisplayName(user);
+
+    document.querySelectorAll('[data-auth-nav-link="common.nav.login"]').forEach(function (link) {
+      link.setAttribute('href', signedIn ? '/app' : '/login');
+      const label = link.querySelector('[data-i18n], span') || link;
+      setAuthLabel(label, signedIn ? 'Workspace' : (label.dataset.authGuestLabel || 'Login'), signedIn ? null : 'common.nav.login');
+    });
+
+    document.querySelectorAll('.lc-topnav-cta[href="login.html"], .lc-topnav-cta[href="/login"]').forEach(function (link) {
+      link.setAttribute('href', signedIn ? '/app' : '/login');
+      const label = link.querySelector('span') || link;
+      setAuthLabel(label, signedIn ? display : (label.dataset.authGuestLabel || 'Account'), signedIn ? null : (label.dataset.authGuestI18n || 'pricing.ctaAccount'));
+      link.setAttribute('aria-label', signedIn ? ('Open workspace for ' + display) : 'Account');
+      link.setAttribute('title', signedIn ? ('Signed in as ' + display) : 'Account');
+    });
+  }
+
   function apply(root) {
     root = root || document;
     if (root === document) ensureAuthNav();
@@ -224,6 +263,7 @@
     });
     document.documentElement.lang = HTML_LANG[I18N.lang] || I18N.lang;
     localizeLinks(root);
+    if (root === document) syncAuthNav();
   }
 
   function setLang(lang) {
@@ -270,6 +310,9 @@
     try { localStorage.setItem(STORAGE_KEY, I18N.lang); } catch (_) {}
     apply();
     document.documentElement.classList.remove('lang-pt-pending');
+    document.addEventListener('atomurus-ads-ready', function () {
+      syncAuthNav();
+    });
     window.addEventListener('storage', function (e) {
       if (e.key === STORAGE_KEY && e.newValue && e.newValue !== I18N.lang) {
         if (SUPPORTED.indexOf(e.newValue) !== -1) setLang(e.newValue);

@@ -81,7 +81,9 @@
     if ($('aside-plan')) $('aside-plan').textContent = planLabel(user);
     if ($('aside-role')) $('aside-role').textContent = user.role || 'member';
     if (!node) return;
+    var displayName = user.displayName || user.fullName || user.username || user.email || 'member';
     node.innerHTML = [
+      card('name', displayName),
       card('email', user.email || 'unknown'),
       card('plan', planLabel(user)),
       card('ads', user.adsFree ? 'off (pro)' : 'on'),
