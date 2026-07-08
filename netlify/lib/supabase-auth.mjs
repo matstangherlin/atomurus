@@ -117,13 +117,9 @@ function redirectBase() {
 export async function supabaseSignup(email, password, profile = {}) {
   const fullName = String(profile.fullName || profile.name || '').trim();
   const username = String(profile.username || '').trim().toLowerCase();
-  if (!serviceRoleKey()) {
-    const err = new Error('Account creation needs SUPABASE_SERVICE_ROLE_KEY for username login.');
-    err.status = 500;
-    err.code = 'supabase_service_role_missing';
-    throw err;
+  if (serviceRoleKey()) {
+    await assertUsernameAvailable(username);
   }
-  await assertUsernameAvailable(username);
   const res = await fetch(authUrl('/signup'), {
     method: 'POST',
     headers: anonHeaders(),
@@ -141,12 +137,14 @@ export async function supabaseSignup(email, password, profile = {}) {
   const data = await parseSupabaseResponse(res);
   const session = sessionFromPayload(data);
   const user = session?.user || normalizeSupabaseUser(data.user || data);
-  await saveProfileIdentity({
-    userId: user?.id,
-    email,
-    username,
-    fullName
-  });
+  if (serviceRoleKey()) {
+    await saveProfileIdentity({
+      userId: user?.id,
+      email,
+      username,
+      fullName
+    });
+  }
   const needsConfirmation = !user?.confirmedAt && !session;
   return {
     user,
