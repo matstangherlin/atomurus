@@ -4,11 +4,12 @@
   "type": "commonjs",
   "description": "Atomurus static site - Netlify build scripts (bump-version, build-i18n) run as CommonJS",
   "scripts": {
+    "build:critical-css": "node tools/build-critical-css.js",
     "build:home-preview": "node tools/build-home-preview-data.js",
     "build:i18n-assets": "node tools/build-i18n-assets.js",
     "build:content": "node tools/build-element-content-chunks.js",
     "build:isomerism": "node tools/generate-isomerism-pt-variants.js",
-    "build": "node tools/build-home-preview-data.js && node tools/build-i18n-assets.js && node tools/build-element-content-chunks.js && node tools/generate-isomerism-pt-variants.js && node bump-version.js && node build-i18n.js",
+    "build": "node tools/build-critical-css.js && node tools/build-home-preview-data.js && node tools/build-i18n-assets.js && node tools/build-element-content-chunks.js && node tools/generate-isomerism-pt-variants.js && node tools/patch-perf-async-css.js && node bump-version.js && node build-i18n.js",
     "test:plan": "node tools/test-plan-access.mjs",
     "test:auth": "node tools/test-auth-provider.mjs",
     "test:billing": "node tools/test-billing-geo.mjs",

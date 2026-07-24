@@ -152,6 +152,16 @@ function assertPerfGuards() {
   if (!fs.existsSync(path.join(ROOT, 'ensure-elements-en.js'))) {
     fail('ensure-elements-en.js is missing');
   }
+  if (!fs.existsSync(path.join(ROOT, 'assets', 'critical-lab.css'))) {
+    fail('assets/critical-lab.css is missing — run npm run build:critical-css');
+  }
+  if (!index.includes('critical-lab.css')) {
+    fail('index.html is not loading critical-lab.css');
+  }
+  if (!/atomurus-lab-console\.css[^>]*media=["']print["']/.test(index) &&
+      !/media=["']print["'][^>]*atomurus-lab-console\.css/.test(index)) {
+    fail('index.html is not loading atomurus-lab-console.css asynchronously');
+  }
 
   const molecules = read('viewer/molecules.html');
   if (/cdnjs\.cloudflare\.com\/ajax\/libs\/three\.js/.test(molecules)) {
