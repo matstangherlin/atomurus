@@ -16,6 +16,7 @@
     "supabase:stop": "supabase stop",
     "supabase:db:push": "supabase db push",
     "validate": "node tools/validate-site.js",
+    "warm:cache": "node tools/warm-edge-cache.js",
     "ci": "npm run build && npm run test:plan && npm run test:auth && npm run test:billing && npm run validate"
   },
   "dependencies": {

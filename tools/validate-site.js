@@ -138,6 +138,35 @@ function assertI18nNamespaceAssets() {
   });
 }
 
+function assertPerfGuards() {
+  const index = read('index.html');
+  if (/acscdn\.com\/script\/aclib\.js/.test(index)) {
+    fail('index.html still loads AdCash eagerly in <head>');
+  }
+  if (!index.includes('ads-gate.js')) {
+    fail('index.html is missing ads-gate.js');
+  }
+  if (!fs.existsSync(path.join(ROOT, 'viewer', 'load-three.js'))) {
+    fail('viewer/load-three.js is missing');
+  }
+  if (!fs.existsSync(path.join(ROOT, 'ensure-elements-en.js'))) {
+    fail('ensure-elements-en.js is missing');
+  }
+
+  const molecules = read('viewer/molecules.html');
+  if (/cdnjs\.cloudflare\.com\/ajax\/libs\/three\.js/.test(molecules)) {
+    fail('viewer/molecules.html still loads three.min.js eagerly');
+  }
+  if (!molecules.includes('atomurusBootViewer') || !molecules.includes('load-three.js')) {
+    fail('viewer/molecules.html is not using lazy Three.js boot');
+  }
+
+  const ptable = read('periodic-table.html');
+  if (/elements-data-en\.js/.test(ptable) && !/ensure-elements-en\.js/.test(ptable)) {
+    fail('periodic-table.html still loads elements-data-en.js eagerly');
+  }
+}
+
 function main() {
   assertRootNoForbiddenArchives();
   assertDeployGuards();
@@ -147,6 +176,7 @@ function main() {
   assertHomePreviewPayload();
   assertI18nNamespaceAssets();
   assertPricingSurface();
+  assertPerfGuards();
   console.log('Site validation passed');
 }
 

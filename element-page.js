@@ -262,6 +262,12 @@
     render();
   }
   if (window.I18N && I18N.onChange) {
-    I18N.onChange(render);
+    I18N.onChange(function (lang) {
+      if (lang === 'en' && typeof window.__ATOMURUS_ENSURE_ELEMENTS_EN === 'function') {
+        window.__ATOMURUS_ENSURE_ELEMENTS_EN().then(render).catch(function () { render(); });
+        return;
+      }
+      render();
+    });
   }
 })();

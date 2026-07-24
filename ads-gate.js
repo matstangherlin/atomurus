@@ -1,17 +1,27 @@
 // ───────────────────────────────────────────────────────────────────
-// Atomurus — Ad entitlement gate
+// Atomurus — Ad entitlement gate + deferred third-party ad loaders
 // ───────────────────────────────────────────────────────────────────
 // Fetches /api/ads-config (cookie session). Pro / trial / admin → ads off.
 // Anonymous and free accounts keep monetization scripts.
 //
+// Performance:
+//   • AdSense loads only after entitlement says ads are on (not in every HTML head).
+//   • AdCash (aclib.js) loads after first interaction or a short idle delay —
+//     it must NOT sit as the first blocking <script> in <head>.
+//
 // Usage:
-//   <script src="ads-gate.js" defer></script> early in <head>
-//   Replace bare aclib.runAutoTag(...) with atomurusRunAutoTag(...)
-//   Or call window.atomurusWhenAdsAllowed(fn)
+//   <script src="ads-gate.js?v=…"></script> early in <head> (sync, small)
+//   Call window.atomurusRunAutoTag({ zoneId: '…' }) anywhere (queued until ready)
 // ───────────────────────────────────────────────────────────────────
 
 (function () {
   'use strict';
+
+  var ADCASH_SRC = 'https://acscdn.com/script/aclib.js';
+  var ADSENSE_SRC =
+    'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9495821870733084';
+  var DEFAULT_ZONE = 'o42jwt5vja';
+  var ADCASH_IDLE_MS = 3500;
 
   var state = {
     ready: false,
@@ -26,6 +36,11 @@
   window.__ATOMURUS_ADS__ = state;
 
   var waiters = [];
+  var autoTagQueue = window.__ATOMURUS_AUTOTAG_Q || [];
+  window.__ATOMURUS_AUTOTAG_Q = autoTagQueue;
+
+  var aclibPromise = null;
+  var aclibLoadScheduled = false;
 
   function notify() {
     state.ready = true;
@@ -39,11 +54,9 @@
   }
 
   function neutralizeThirdPartyAds() {
-    // Stop AdCash if the script tag already ran.
     window.aclib = window.aclib || {};
     window.aclib.runAutoTag = function () {};
 
-    // Soft-stop AdSense auto ads where possible.
     try {
       (window.adsbygoogle = window.adsbygoogle || []).pauseAdRequests = 1;
     } catch (_err) {}
@@ -57,7 +70,7 @@
       document.head.appendChild(style);
     }
 
-    document.querySelectorAll('script#aclib').forEach(function (el) {
+    document.querySelectorAll('script#aclib, script[src*="acscdn.com/script/aclib"]').forEach(function (el) {
       try { el.remove(); } catch (_err) {}
     });
   }
@@ -69,11 +82,90 @@
     window.__ATOMURUS_ADSENSE_LOADER__ = true;
     var s = document.createElement('script');
     s.async = true;
-    s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9495821870733084';
+    s.src = ADSENSE_SRC;
     s.crossOrigin = 'anonymous';
     s.setAttribute('fetchpriority', 'low');
     document.head.appendChild(s);
   }
+
+  function ensureAclib() {
+    if (!state.adsEnabled) {
+      return Promise.resolve(null);
+    }
+    if (window.aclib && typeof window.aclib.runAutoTag === 'function' && !window.aclib.__atomurusStub) {
+      return Promise.resolve(window.aclib);
+    }
+    if (aclibPromise) return aclibPromise;
+
+    aclibPromise = new Promise(function (resolve, reject) {
+      var existing = document.querySelector('script#aclib, script[src*="acscdn.com/script/aclib"]');
+      if (existing && window.aclib && typeof window.aclib.runAutoTag === 'function' && !window.aclib.__atomurusStub) {
+        resolve(window.aclib);
+        return;
+      }
+
+      var s = document.createElement('script');
+      s.id = 'aclib';
+      s.async = true;
+      s.src = ADCASH_SRC;
+      s.setAttribute('fetchpriority', 'low');
+      s.onload = function () {
+        resolve(window.aclib || null);
+      };
+      s.onerror = function () {
+        reject(new Error('Failed to load AdCash'));
+      };
+      document.head.appendChild(s);
+    }).catch(function () {
+      return null;
+    });
+
+    return aclibPromise;
+  }
+
+  function flushAutoTagQueue() {
+    if (!state.adsEnabled || !autoTagQueue.length) return;
+    ensureAclib().then(function (aclib) {
+      if (!aclib || typeof aclib.runAutoTag !== 'function' || aclib.__atomurusStub) return;
+      while (autoTagQueue.length) {
+        var opts = autoTagQueue.shift();
+        try {
+          aclib.runAutoTag(opts || { zoneId: DEFAULT_ZONE });
+        } catch (_err) {}
+      }
+    });
+  }
+
+  function scheduleAclibLoad() {
+    if (!state.adsEnabled || aclibLoadScheduled) return;
+    aclibLoadScheduled = true;
+
+    var fired = false;
+    function trigger() {
+      if (fired) return;
+      fired = true;
+      events.forEach(function (evt) {
+        window.removeEventListener(evt, trigger);
+      });
+      flushAutoTagQueue();
+      // Even with an empty queue, warm AdCash after intent so late calls are fast.
+      ensureAclib();
+    }
+
+    var events = ['scroll', 'click', 'touchstart', 'keydown', 'pointerdown'];
+    events.forEach(function (evt) {
+      window.addEventListener(evt, trigger, { once: true, passive: true });
+    });
+    setTimeout(trigger, ADCASH_IDLE_MS);
+  }
+
+  // Early stub so inline footer calls never throw before boot finishes.
+  window.aclib = window.aclib || {
+    __atomurusStub: true,
+    runAutoTag: function (opts) {
+      window.atomurusRunAutoTag(opts);
+    }
+  };
 
   window.atomurusWhenAdsAllowed = function (fn) {
     if (typeof fn !== 'function') return;
@@ -87,11 +179,14 @@
   };
 
   window.atomurusRunAutoTag = function (opts) {
-    window.atomurusWhenAdsAllowed(function () {
-      if (window.aclib && typeof window.aclib.runAutoTag === 'function') {
-        window.aclib.runAutoTag(opts || { zoneId: 'o42jwt5vja' });
-      }
-    });
+    autoTagQueue.push(opts || { zoneId: DEFAULT_ZONE });
+    if (!state.ready) return;
+    if (!state.adsEnabled) {
+      autoTagQueue.length = 0;
+      return;
+    }
+    scheduleAclibLoad();
+    flushAutoTagQueue();
   };
 
   async function boot() {
@@ -116,8 +211,14 @@
       state.adsEnabled = true;
     }
 
-    if (!state.adsEnabled) neutralizeThirdPartyAds();
-    else loadAdSenseIfNeeded();
+    if (!state.adsEnabled) {
+      autoTagQueue.length = 0;
+      neutralizeThirdPartyAds();
+    } else {
+      loadAdSenseIfNeeded();
+      // AdCash stays deferred until interaction / idle — never on the critical path.
+      scheduleAclibLoad();
+    }
     notify();
   }
 
