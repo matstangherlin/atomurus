@@ -49,11 +49,14 @@ function assertDeployGuards() {
     }
   });
 
-  ['/tools/*', '/*.zip', '/*.bak*', '/*.md', '/supabase/*', '/package.json'].forEach((needle) => {
+  ['/tools/*', '/*.zip', '/*.bak*', '/MELHORIAS.md', '/supabase/*', '/package.json'].forEach((needle) => {
     if (!netlify.includes(needle)) {
       fail(`Missing netlify.toml block redirect: ${needle}`);
     }
   });
+  if (!netlify.includes('scrub-publish-tree.js')) {
+    fail('netlify.toml build command must scrub internal files before publish');
+  }
 }
 
 function assertElementContentLoader() {

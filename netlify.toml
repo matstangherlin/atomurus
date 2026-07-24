@@ -32,7 +32,7 @@
 [build]
   publish      = "."
   functions    = "netlify/functions"
-  command      = "npm run build && npm run validate"
+  command      = "npm run build && npm run validate && node tools/scrub-publish-tree.js"
 
 # Hide .html in URLs — /periodic-table/aurum serves periodic-table/aurum.html,
 # and /periodic-table/aurum.html is 301'd to /periodic-table/aurum.
@@ -265,7 +265,62 @@
   force  = true
 
 # Internal docs / tooling that must never be public with publish="."
-# (.netlifyignore alone has proven insufficient for *.md on this site.)
+# Extension globs like /*.md are unreliable on Netlify — list known files
+# and also scrub them from the publish tree in the build command.
+[[redirects]]
+  from   = "/BILLING.md"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/MAILGUN-SETUP.md"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/MELHORIAS.md"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/NETLIFY-IDENTITY-SETUP.md"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/PLANO-SEGURANCA-LOGIN.md"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/README.md"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/RECAPTCHA-SETUP.md"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/SUPABASE-SETUP.md"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/hanzi-logic/PROJECT.md"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
 [[redirects]]
   from   = "/*.md"
   to     = "/404.html"
@@ -292,6 +347,12 @@
 
 [[redirects]]
   from   = "/.env.example"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/propostas/*"
   to     = "/404.html"
   status = 404
   force  = true
