@@ -26,32 +26,33 @@ export default async function handler(request) {
       state: 'available'
     },
     {
-      id: 'favorites',
-      label: 'Favorites & history',
-      description: 'Save elements, molecules and calculator runs (Pro).',
-      href: user.isPro ? '/app#progress' : '/pricing',
-      state: features.favorites ? 'available' : 'locked'
-    },
-    {
-      id: 'premium-lessons',
-      label: 'Premium study tracks',
-      description: 'Guided chemistry paths for high school, ENEM and general chemistry.',
-      href: user.isPro ? '/app#tracks' : '/pricing',
-      state: features.premiumLessons ? 'coming' : 'locked'
-    },
-    {
       id: 'ads-free',
       label: 'Ad-free lab',
       description: 'Remove AdSense and AdCash while your Pro plan or trial is active.',
-      href: '/pricing',
+      href: features.adsFree ? '/periodic-table' : '/pricing',
       state: features.adsFree ? 'available' : 'locked'
     },
     {
       id: 'export-pdf',
       label: 'PDF export',
-      description: 'Export study sheets and table views without watermarks (Pro).',
+      description: 'Export table views and study sheets from the periodic table (Pro).',
       href: user.isPro ? '/periodic-table' : '/pricing',
       state: features.exportPdf ? 'available' : 'locked'
+    },
+    {
+      id: 'favorites',
+      label: 'Favorites & history',
+      description: 'Save elements, molecules and calculator runs — shipping next.',
+      href: '/pricing',
+      // Entitlement bit exists for Pro, but UI/storage is not live yet — stay honest.
+      state: features.favorites ? 'coming' : 'locked'
+    },
+    {
+      id: 'premium-lessons',
+      label: 'Premium study tracks',
+      description: 'Guided chemistry paths for high school, ENEM and general chemistry.',
+      href: '/pricing',
+      state: features.premiumLessons ? 'coming' : 'locked'
     },
     {
       id: 'admin-console',
@@ -86,13 +87,13 @@ export default async function handler(request) {
         nextSteps: user.isPro
           ? [
               'Explore the periodic table without ads.',
-              'Bookmark this workspace and return after each study session.',
-              'Premium tracks and AI tutor ship next in the roadmap.'
+              'Use PDF export from the periodic table when you need study sheets.',
+              'Favorites and premium tracks are next on the roadmap.'
             ]
           : [
-              'Start a free account to unlock 30 days of Pro.',
+              'Create an account to unlock 30 days of Pro (ads-free) automatically.',
               'Compare Free vs Pro on the pricing page.',
-              'Checkout (Stripe / Mercado Pago) connects next.'
+              'Subscribe with Stripe when the trial ends — checkout is live.'
             ]
       }
     },
