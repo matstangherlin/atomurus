@@ -2,7 +2,6 @@
 # publish = "." is used.
 .env
 .env.*
-!.env.example
 .git/
 .agents/
 .codex/
@@ -18,3 +17,9 @@ sitemap.zip
 # Internal docs, plans and backups — never publish (publish=".")
 *.md
 *.bak*
+
+# Repo / backend scaffolding — not part of the public site
+supabase/
+package.json
+package-lock.json
+propostas/

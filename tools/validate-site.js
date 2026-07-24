@@ -43,13 +43,13 @@ function assertDeployGuards() {
   const ignore = read('.netlifyignore');
   const netlify = read('netlify.toml');
 
-  ['*.md', '*.bak*', '*.zip', 'tools/', 'scripts/'].forEach((needle) => {
+  ['*.md', '*.bak*', '*.zip', 'tools/', 'scripts/', 'supabase/', 'package.json'].forEach((needle) => {
     if (!ignore.includes(needle)) {
       fail(`Missing .netlifyignore guard: ${needle}`);
     }
   });
 
-  ['/tools/*', '/*.zip', '/*.bak*'].forEach((needle) => {
+  ['/tools/*', '/*.zip', '/*.bak*', '/*.md', '/supabase/*', '/package.json'].forEach((needle) => {
     if (!netlify.includes(needle)) {
       fail(`Missing netlify.toml block redirect: ${needle}`);
     }
