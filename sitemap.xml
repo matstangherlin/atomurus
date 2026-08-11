@@ -146,6 +146,24 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://atomurus.com/about"/>
   </url>
   <url>
+    <loc>https://atomurus.com/pricing</loc>
+    <lastmod>2026-06-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atomurus.com/pricing?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://atomurus.com/pricing?lang=pt-BR"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atomurus.com/pricing"/>
+  </url>
+  <url>
+    <loc>https://atomurus.com/pricing?lang=pt-BR</loc>
+    <lastmod>2026-06-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atomurus.com/pricing?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://atomurus.com/pricing?lang=pt-BR"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atomurus.com/pricing"/>
+  </url>
+  <url>
     <loc>https://atomurus.com/contact</loc>
     <lastmod>2026-06-10</lastmod>
     <changefreq>monthly</changefreq>
@@ -241,6 +259,16 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://atomurus.com/explore/what-is-an-atom"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://atomurus.com/explore/what-is-an-atom?lang=pt-BR"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atomurus.com/explore/what-is-an-atom"/>
+  </url>
+  <url>
+    <loc>https://atomurus.com/explore/what-is-an-atom?lang=pt-BR</loc>
+    <lastmod>2026-06-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atomurus.com/explore/what-is-an-atom"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://atomurus.com/explore/what-is-an-atom?lang=pt-BR"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://atomurus.com/explore/what-is-an-atom"/>
   </url>
   <url>
@@ -249,6 +277,16 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://atomurus.com/explore/what-are-isotopes"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://atomurus.com/explore/what-are-isotopes?lang=pt-BR"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atomurus.com/explore/what-are-isotopes"/>
+  </url>
+  <url>
+    <loc>https://atomurus.com/explore/what-are-isotopes?lang=pt-BR</loc>
+    <lastmod>2026-06-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atomurus.com/explore/what-are-isotopes"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://atomurus.com/explore/what-are-isotopes?lang=pt-BR"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://atomurus.com/explore/what-are-isotopes"/>
   </url>
   <url>
@@ -257,6 +295,16 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://atomurus.com/explore/what-is-radioactivity"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://atomurus.com/explore/what-is-radioactivity?lang=pt-BR"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atomurus.com/explore/what-is-radioactivity"/>
+  </url>
+  <url>
+    <loc>https://atomurus.com/explore/what-is-radioactivity?lang=pt-BR</loc>
+    <lastmod>2026-06-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atomurus.com/explore/what-is-radioactivity"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://atomurus.com/explore/what-is-radioactivity?lang=pt-BR"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://atomurus.com/explore/what-is-radioactivity"/>
   </url>
   <url>
@@ -265,6 +313,16 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://atomurus.com/explore/what-is-chemical-bonding"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://atomurus.com/explore/what-is-chemical-bonding?lang=pt-BR"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atomurus.com/explore/what-is-chemical-bonding"/>
+  </url>
+  <url>
+    <loc>https://atomurus.com/explore/what-is-chemical-bonding?lang=pt-BR</loc>
+    <lastmod>2026-06-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atomurus.com/explore/what-is-chemical-bonding"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://atomurus.com/explore/what-is-chemical-bonding?lang=pt-BR"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://atomurus.com/explore/what-is-chemical-bonding"/>
   </url>
   <url>
@@ -273,6 +331,16 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://atomurus.com/explore/chernobyl-disaster"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://atomurus.com/explore/chernobyl-disaster?lang=pt-BR"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atomurus.com/explore/chernobyl-disaster"/>
+  </url>
+  <url>
+    <loc>https://atomurus.com/explore/chernobyl-disaster?lang=pt-BR</loc>
+    <lastmod>2026-06-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atomurus.com/explore/chernobyl-disaster"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://atomurus.com/explore/chernobyl-disaster?lang=pt-BR"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://atomurus.com/explore/chernobyl-disaster"/>
   </url>
   <url>

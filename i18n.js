@@ -82,7 +82,16 @@
   }
 
   function loadChunkData(ns) {
-    const url = new URL(ns + '.json', CHUNK_BASE_URL).toString();
+    // Cache-bust the JSON chunk with the same ?v= used on the i18n.js script tag,
+    // so translation updates never get stuck in the browser cache.
+    var ver = '';
+    try {
+      var tag = document.querySelector('script[src*="i18n.js"]');
+      var src = tag ? tag.getAttribute('src') : '';
+      var m = src.match(/[?&]v=([^&]+)/);
+      if (m) ver = m[1];
+    } catch (e) {}
+    const url = new URL(ns + '.json' + (ver ? '?v=' + ver : ''), CHUNK_BASE_URL).toString();
     const xhr = new XMLHttpRequest();
     xhr.open('GET', url, false);
     xhr.send(null);
@@ -120,7 +129,12 @@
       const key = pair.slice(idx + 1).trim();
       if (!attr || !key) return;
       const val = translate(key);
-      if (val != null) el.setAttribute(attr, val);
+      if (val == null) return;
+      if (attr === 'textContent') {
+        el.textContent = val;
+      } else {
+        el.setAttribute(attr, val);
+      }
     });
   }
 

@@ -2,11 +2,11 @@
 <html lang="pt-BR" data-theme="light">
 <head>
 <meta name="google-adsense-account" content="ca-pub-9495821870733084">
-<script src="../ads-gate.js?v=202607240244"></script>
+<script src="../ads-gate.js?v=202608041630"></script>
 
 <style>html.lang-pt-pending [data-i18n],html.lang-pt-pending [data-i18n-html],html.lang-pt-pending [data-i18n-attr],html.lang-pt-pending [data-page-field]{visibility:hidden!important}html[data-theme="dark"] #icon-theme-light,html[data-theme="light"] #icon-theme-dark{display:none!important}html[data-theme="dark"] #icon-theme-dark,html[data-theme="light"] #icon-theme-light{display:block!important}</style>
 <script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var KEY='atomurus-lang';var p=new URLSearchParams(location.search).get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem(KEY);if(l!=='pt'&&l!=='en'){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}try{localStorage.setItem(KEY,l);}catch(e){}if(l==='pt'){document.documentElement.lang='pt-BR';document.documentElement.classList.add('lang-pt-pending');setTimeout(function(){document.documentElement.classList.remove('lang-pt-pending');},120);}else{document.documentElement.lang='en-US';}}catch(e){}})();</script>
-<script src="../cookie-consent.js?v=202607240244" defer></script>
+<script src="../cookie-consent.js?v=202608041630" defer></script>
 <meta charset="UTF-8">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1E6A50" media="(prefers-color-scheme: light)">
@@ -16,15 +16,17 @@
 <meta name="apple-mobile-web-app-title" content="Atomurus">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/png" href="../assets/atomurus-logo.png?v=202607240244">
-<link rel="apple-touch-icon" href="../assets/atomurus-logo.png?v=202607240244">
+<link rel="icon" type="image/png" href="../assets/atomurus-logo.png?v=202608041630">
+<link rel="apple-touch-icon" href="../assets/atomurus-logo.png?v=202608041630">
 <title data-i18n="molecules.metaTitle">Moléculas: Visualizador 3D Interativo — H₂O, CO₂, CH₄ | Atomurus</title>
 <meta name="description" content="Visualizador 3D interativo de moléculas: água (H₂O), gás carbônico (CO₂), metano (CH₄), amônia (NH₃), sal (NaCl), ácido sulfúrico e outras." data-i18n-attr="content:molecules.metaDesc">
-<meta property="og:image" content="https://atomurus.com/assets/og-molecules.png?v=202607240244">
+<meta property="og:title" data-i18n-attr="content:molecules.metaTitle" content="Moléculas: Visualizador 3D Interativo — H₂O, CO₂, CH₄ | Atomurus">
+<meta property="og:description" data-i18n-attr="content:molecules.metaDesc" content="Visualizador 3D interativo de moléculas: água (H₂O), gás carbônico (CO₂), metano (CH₄), amônia (NH₃), sal (NaCl), ácido sulfúrico e outras.">
+<meta property="og:image" content="https://atomurus.com/assets/og-molecules.png?v=202608041630">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://atomurus.com/assets/og-molecules.png?v=202607240244">
+<meta name="twitter:image" content="https://atomurus.com/assets/og-molecules.png?v=202608041630">
 <link rel="canonical" href="https://atomurus.com/viewer/molecules?lang=pt-BR">
 <link rel="alternate" hreflang="en" href="https://atomurus.com/viewer/molecules?lang=en">
 <link rel="alternate" hreflang="pt-BR" href="https://atomurus.com/viewer/molecules?lang=pt-BR">
@@ -60,7 +62,7 @@
 
 <link rel="preload" href="/assets/fonts/inter-tight-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/instrument-serif-400-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202607240244">
+<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202608041630">
 
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -258,6 +260,16 @@ body{
 .pill:hover{border-color:var(--viewer-pill-active-border);color:var(--viewer-pill-text-hover)}
 .pill.active{border-color:var(--viewer-pill-active-border);background:var(--viewer-pill-active-bg);color:var(--viewer-pill-active-text)}
 .pill.sm{padding:6px 12px;font-size:11.5px}
+.mol-search{
+  width:100%;padding:9px 12px;margin-bottom:14px;
+  border:1px solid var(--viewer-pill-border);border-radius:10px;
+  background:var(--surface-2);color:var(--text-1);
+  font-family:'DM Mono',monospace;font-size:11.5px;outline:none;
+  transition:border-color .18s, box-shadow .18s;
+}
+.mol-search:focus{border-color:var(--viewer-pill-active-border);box-shadow:0 0 0 3px rgba(30,106,80,.12)}
+.mol-search::placeholder{color:var(--viewer-text-3)}
+.mol-search-none{font-family:'DM Mono',monospace;font-size:11px;color:var(--viewer-text-3);padding:4px 2px 12px}
 
 .canvas-wrap{position:relative}
 canvas#viewer3d{width:100%;height:460px;display:block;cursor:grab;background:var(--canvas-bg-1);transition:background .25s}
@@ -317,6 +329,7 @@ canvas#viewer2d-full{display:none;width:100%;height:460px;background:var(--canva
 }
 .info-name{font-size:14px;font-weight:700;color:var(--viewer-text-1);margin-bottom:2px}
 .info-desc{font-size:12px;color:var(--viewer-text-2);line-height:1.4}
+.info-stats{margin-top:6px;font-family:'DM Mono',monospace;font-size:10.5px;color:var(--viewer-text-3);letter-spacing:.02em;line-height:1.5}
 .info-meta{display:flex;gap:14px;font-size:11px;color:var(--viewer-text-3);margin-top:4px;flex-wrap:wrap;font-family:'DM Mono',monospace}
 .info-meta span b{color:var(--viewer-text-2);font-weight:600}
 .info-hint{font-size:11px;color:var(--viewer-text-3);letter-spacing:.4px;text-align:right;font-family:'DM Mono',monospace}
@@ -378,16 +391,19 @@ html[data-theme="dark"] .chiral-rs-item{background:rgba(255,255,255,0.04)}
   canvas#viewer3d,canvas#viewer2d-full{height:380px}
 }
 </style>
-<script src="../i18n.js?v=202607240244" defer></script>
-<script src="../share-button.js?v=202607240244" defer></script>
-<script src="../page-share-init.js?v=202607240244" defer></script>
+<script src="../i18n.js?v=202608041630" defer></script>
+<script src="../share-button.js?v=202608041630" defer></script>
+<script src="../page-share-init.js?v=202608041630" defer></script>
 <style id="lc-statusbar-spacing-applied">
   .main, body.lc-app-main { padding-bottom: 22px; }
 </style>
-<link rel="stylesheet" href="/assets/critical-lab.css?v=202607240244">
-<link rel="stylesheet" href="../atomurus-lab-console.css?v=202607240244" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="../atomurus-lab-console.css?v=202607240244"></noscript>
-<script src="../lazy-ads.js?v=202607240244" defer></script>
+<link rel="stylesheet" href="/assets/critical-lab.css?v=202608041630">
+<style>html.lc-loading body{visibility:hidden}</style>
+<script>document.documentElement.classList.add('lc-loading');setTimeout(function(){document.documentElement.classList.remove('lc-loading')},4000);</script>
+<link rel="preload" href="../atomurus-lab-console.css?v=202608041630" as="style">
+<link rel="stylesheet" href="../atomurus-lab-console.css?v=202608041630" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
+<noscript><link rel="stylesheet" href="../atomurus-lab-console.css?v=202608041630"></noscript>
+<script src="../lazy-ads.js?v=202608041630" defer></script>
 </head>
 <body>
 
@@ -549,6 +565,7 @@ html[data-theme="dark"] .chiral-rs-item{background:rgba(255,255,255,0.04)}
 
       <div class="viewer">
         <div class="panel">
+          <input type="search" class="mol-search" data-i18n-attr="placeholder:molecules.searchPh" placeholder="Search molecule, formula or element…" aria-label="Search molecules">
           <div class="panel-label" data-i18n="molecules.panelByElement">By element</div>
           <div class="pill-row">
             <button class="pill sm mol-elem-btn" data-elem="H"  onclick="setMoleculeByElement('H')">H → H₂O</button>
@@ -587,7 +604,26 @@ html[data-theme="dark"] .chiral-rs-item{background:rgba(255,255,255,0.04)}
             <button class="pill mol-btn"        data-mol="lacticacid"      onclick="setMolecule('lacticacid')">C₃H₆O₃ — Lactic acid</button>
             <button class="pill mol-btn"        data-mol="alanine"         onclick="setMolecule('alanine')">C₃H₇NO₂ — Alanine</button>
             <button class="pill mol-btn"        data-mol="glyceraldehyde"  onclick="setMolecule('glyceraldehyde')">C₃H₆O₃ — Glyceraldehyde</button>
+            <button class="pill mol-btn"        data-mol="n2"  onclick="setMolecule('n2')" data-i18n="molecules.mol.n2.name">N₂ — Nitrogênio</button>
+            <button class="pill mol-btn"        data-mol="o2"  onclick="setMolecule('o2')" data-i18n="molecules.mol.o2.name">O₂ — Oxigênio</button>
+            <button class="pill mol-btn"        data-mol="benzene"  onclick="setMolecule('benzene')" data-i18n="molecules.mol.benzene.name">C₆H₆ — Benzeno</button>
+            <button class="pill mol-btn"        data-mol="methanol"  onclick="setMolecule('methanol')" data-i18n="molecules.mol.methanol.name">CH₃OH — Metanol</button>
+            <button class="pill mol-btn"        data-mol="aceticacid"  onclick="setMolecule('aceticacid')" data-i18n="molecules.mol.aceticacid.name">C₂H₄O₂ — Ácido Acético</button>
+            <button class="pill mol-btn"        data-mol="h2o2"  onclick="setMolecule('h2o2')" data-i18n="molecules.mol.h2o2.name">H₂O₂ — Peróxido de Hidrogênio</button>
+            <button class="pill mol-btn"        data-mol="ethylene"  onclick="setMolecule('ethylene')" data-i18n="molecules.mol.ethylene.name">C₂H₄ — Etileno</button>
+            <button class="pill mol-btn"        data-mol="acetylene"  onclick="setMolecule('acetylene')" data-i18n="molecules.mol.acetylene.name">C₂H₂ — Acetileno</button>
+            <button class="pill mol-btn"        data-mol="formaldehyde"  onclick="setMolecule('formaldehyde')" data-i18n="molecules.mol.formaldehyde.name">CH₂O — Formaldeído</button>
+            <button class="pill mol-btn"        data-mol="co"  onclick="setMolecule('co')" data-i18n="molecules.mol.co.name">CO — Monóxido de Carbono</button>
+            <button class="pill mol-btn"        data-mol="so2"  onclick="setMolecule('so2')" data-i18n="molecules.mol.so2.name">SO₂ — Dióxido de Enxofre</button>
+            <button class="pill mol-btn"        data-mol="hno3"  onclick="setMolecule('hno3')" data-i18n="molecules.mol.hno3.name">HNO₃ — Ácido Nítrico</button>
+            <button class="pill mol-btn"        data-mol="propane"  onclick="setMolecule('propane')" data-i18n="molecules.mol.propane.name">C₃H₈ — Propano</button>
+            <button class="pill mol-btn"        data-mol="cyclohexane"  onclick="setMolecule('cyclohexane')" data-i18n="molecules.mol.cyclohexane.name">C₆H₁₂ — Cicloexano</button>
+            <button class="pill mol-btn"        data-mol="hcn"  onclick="setMolecule('hcn')" data-i18n="molecules.mol.hcn.name">HCN — Cianeto de Hidrogênio</button>
+            <button class="pill mol-btn"        data-mol="cs2"  onclick="setMolecule('cs2')" data-i18n="molecules.mol.cs2.name">CS₂ — Dissulfeto de Carbono</button>
+            <button class="pill mol-btn"        data-mol="pcl3"  onclick="setMolecule('pcl3')" data-i18n="molecules.mol.pcl3.name">PCl₃ — Tricloreto de Fósforo</button>
+            <button class="pill mol-btn"        data-mol="sf6"  onclick="setMolecule('sf6')" data-i18n="molecules.mol.sf6.name">SF₆ — Hexafluoreto de Enxofre</button>
           </div>
+          <div class="mol-search-none" style="display:none" data-i18n="molecules.searchNone">No molecule matches your search.</div>
         </div>
 
         <div class="canvas-wrap" id="canvas-wrap">
@@ -631,6 +667,7 @@ html[data-theme="dark"] .chiral-rs-item{background:rgba(255,255,255,0.04)}
           <div>
             <div id="model-name" class="info-name" data-i18n="molecules.mol.water.name">H₂O — Water</div>
             <div id="model-desc" class="info-desc" data-i18n="molecules.mol.water.desc">Bent geometry (104.5°) · Polar · Hydrogen bonds</div>
+            <div id="model-stats" class="info-stats"></div>
             <div class="info-meta" id="info-meta"></div>
           </div>
           <div class="info-hint" data-i18n="molecules.infoHint">drag · scroll · or use controls</div>
@@ -724,7 +761,7 @@ function toggleNavGroup(name){
 })();
 </script>
 
-<script src="load-three.js?v=202607240244"></script>
+<script src="load-three.js?v=202608041630"></script>
 <script>
 atomurusBootViewer(document.getElementById('viewer3d'), function () {
 (function(){
@@ -861,6 +898,39 @@ atomurusBootViewer(document.getElementById('viewer3d'), function () {
     0xb3ff3a:'F',
     0xa62929:'Br'
   };
+
+  // Dynamic lab data: formula, molar mass and elemental composition derived
+  // straight from the 3D atom data (same values as the periodic table).
+  const ATOMIC_MASS = { H:1.008, He:4.003, C:12.011, N:14.007, O:15.999, F:18.998, Ne:20.180, Na:22.990, Mg:24.305, Al:26.982, Si:28.085, P:30.974, S:32.06, Cl:35.45, K:39.098, Ca:40.078, Fe:55.845, Cu:63.546, Zn:65.38, Br:79.904, Ag:107.868, I:126.904, Ba:137.327, Pt:195.084, Au:196.967, Hg:200.592, Pb:207.2 };
+  const SUB_DIGITS = ['₀','₁','₂','₃','₄','₅','₆','₇','₈','₉'];
+  function subNum(n){ return String(n).split('').map(d => SUB_DIGITS[+d] || d).join(''); }
+  // A few formulas whose conventional order differs from the alphabetical fallback.
+  const FORMULA_OVERRIDE = { ammonia:'NH₃', so2:'SO₂', nacl:'NaCl', h2so4:'H₂SO₄', h3po4:'H₃PO₄', hcn:'HCN', pcl3:'PCl₃', sf6:'SF₆' };
+  function computeMolStats(key, md){
+    if (!md || !md.atoms || !md.atoms.length) return '';
+    const counts = {};
+    md.atoms.forEach(a => {
+      const el = COLOR_TO_ELEMENT[a.color] || '';
+      if (el) counts[el] = (counts[el] || 0) + 1;
+    });
+    const els = Object.keys(counts);
+    if (!els.length) return '';
+    let total = 0;
+    els.forEach(el => { total += (ATOMIC_MASS[el] || 0) * counts[el]; });
+    if (!total) return '';
+    const order = { C:0, H:1 };
+    els.sort((a,b) => {
+      const oa = order[a] !== undefined ? order[a] : 10;
+      const ob = order[b] !== undefined ? order[b] : 10;
+      return (oa - ob) || (a < b ? -1 : 1);
+    });
+    let formula = FORMULA_OVERRIDE[key] || '';
+    if (!formula) {
+      els.forEach(el => { formula += el + (counts[el] > 1 ? subNum(counts[el]) : ''); });
+    }
+    const parts = els.map(el => el + ' ' + ((ATOMIC_MASS[el] * counts[el]) / total * 100).toFixed(1) + '%');
+    return formula + ' · MM ' + total.toFixed(2) + ' g/mol · ' + parts.join(' · ');
+  }
 
   // ── Molecule data ──
   const molData = {
@@ -1038,7 +1108,157 @@ atomurusBootViewer(document.getElementById('viewer3d'), function () {
         {pos:[1.9,-0.5,0],r:0.30,color:0xee3333},
         {pos:[3.0,-0.7,0],r:0.20,color:0xdddddd}
       ],
-      bonds:[[0,1,2],[0,2],[0,3],[3,4],[3,5],[5,6],[3,7],[7,8],[7,9],[7,10],[10,11]]}
+      bonds:[[0,1,2],[0,2],[0,3],[3,4],[3,5],[5,6],[3,7],[7,8],[7,9],[7,10],[10,11]]},
+    n2:{name:'N₂ — Nitrogênio',desc:'Linear · Ligação tripla N≡N · 78% do ar',
+      draw2d:{atoms:[{x:-1.2,y:0,label:'N'},{x:1.2,y:0,label:'N'}],bonds:[{a:0,b:1,order:3}]},
+      atoms:[{pos:[-0.8,0,0],r:0.33,color:0x3399ff},{pos:[0.8,0,0],r:0.33,color:0x3399ff}],
+      bonds:[[0,1,3]]},
+    o2:{name:'O₂ — Oxigênio',desc:'Linear · Ligação dupla O=O · Essencial à respiração',
+      draw2d:{atoms:[{x:-1.2,y:0,label:'O'},{x:1.2,y:0,label:'O'}],bonds:[{a:0,b:1,order:2}]},
+      atoms:[{pos:[-0.8,0,0],r:0.33,color:0xee3333},{pos:[0.8,0,0],r:0.33,color:0xee3333}],
+      bonds:[[0,1,2]]},
+    benzene:{name:'C₆H₆ — Benzeno',desc:'Aromático · Anel hexagonal plano · Ressonância',
+      draw2d:{atoms:[
+        {x:0,y:-1.6,label:'C'},{x:1.4,y:-0.8,label:'C'},{x:1.4,y:0.8,label:'C'},
+        {x:0,y:1.6,label:'C'},{x:-1.4,y:0.8,label:'C'},{x:-1.4,y:-0.8,label:'C'},
+        {x:0,y:-2.8,label:'H'},{x:2.4,y:-1.4,label:'H'},{x:2.4,y:1.4,label:'H'},
+        {x:0,y:2.8,label:'H'},{x:-2.4,y:1.4,label:'H'},{x:-2.4,y:-1.4,label:'H'}
+      ],bonds:[
+        {a:0,b:1,order:2},{a:1,b:2,order:1},{a:2,b:3,order:2},{a:3,b:4,order:1},{a:4,b:5,order:2},{a:5,b:0,order:1},
+        {a:0,b:6,order:1},{a:1,b:7,order:1},{a:2,b:8,order:1},{a:3,b:9,order:1},{a:4,b:10,order:1},{a:5,b:11,order:1}
+      ]},
+      atoms:[
+        {pos:[1.2,0,0],r:0.35,color:0x666666},{pos:[0.6,1.039,0],r:0.35,color:0x666666},
+        {pos:[-0.6,1.039,0],r:0.35,color:0x666666},{pos:[-1.2,0,0],r:0.35,color:0x666666},
+        {pos:[-0.6,-1.039,0],r:0.35,color:0x666666},{pos:[0.6,-1.039,0],r:0.35,color:0x666666},
+        {pos:[2.1,0,0],r:0.20,color:0xdddddd},{pos:[1.05,1.819,0],r:0.20,color:0xdddddd},
+        {pos:[-1.05,1.819,0],r:0.20,color:0xdddddd},{pos:[-2.1,0,0],r:0.20,color:0xdddddd},
+        {pos:[-1.05,-1.819,0],r:0.20,color:0xdddddd},{pos:[1.05,-1.819,0],r:0.20,color:0xdddddd}
+      ],
+      bonds:[[0,1,2],[1,2],[2,3,2],[3,4],[4,5,2],[5,0],[0,6],[1,7],[2,8],[3,9],[4,10],[5,11]]},
+    methanol:{name:'CH₃OH — Metanol',desc:'Menor álcool · Polar · Combustível e solvente',
+      draw2d:{atoms:[{x:-1.4,y:0,label:'C'},{x:0.4,y:0,label:'O'},{x:1.8,y:-0.7,label:'H'},{x:-1.4,y:1.5,label:'H'},{x:-2.8,y:0,label:'H'},{x:-1.4,y:-1.5,label:'H'}],bonds:[{a:0,b:1,order:1},{a:1,b:2,order:1},{a:0,b:3,order:1},{a:0,b:4,order:1},{a:0,b:5,order:1}]},
+      atoms:[
+        {pos:[-1.3,0,0],r:0.35,color:0x666666},{pos:[0.1,0,0],r:0.30,color:0xee3333},
+        {pos:[1.1,0,0],r:0.20,color:0xdddddd},{pos:[-1.95,0.9,0],r:0.20,color:0xdddddd},
+        {pos:[-1.95,-0.45,0.78],r:0.20,color:0xdddddd},{pos:[-1.95,-0.45,-0.78],r:0.20,color:0xdddddd}
+      ],
+      bonds:[[0,1],[1,2],[0,3],[0,4],[0,5]]},
+    aceticacid:{name:'C₂H₄O₂ — Ácido Acético',desc:'Vinagre · Grupo carboxila COOH · Ácido fraco',
+      draw2d:{atoms:[{x:-2,y:0,label:'C'},{x:0,y:0,label:'C'},{x:0,y:1.7,label:'O'},{x:1.8,y:-0.5,label:'O'},{x:3.2,y:-1.2,label:'H'},{x:-2,y:1.5,label:'H'},{x:-3.5,y:0,label:'H'},{x:-2,y:-1.5,label:'H'}],bonds:[{a:0,b:1,order:1},{a:1,b:2,order:2},{a:1,b:3,order:1},{a:3,b:4,order:1},{a:0,b:5,order:1},{a:0,b:6,order:1},{a:0,b:7,order:1}]},
+      atoms:[
+        {pos:[-1.3,0,0],r:0.35,color:0x666666},{pos:[0.1,0,0],r:0.35,color:0x666666},
+        {pos:[0.1,1.3,0],r:0.30,color:0xee3333},{pos:[1.35,-0.5,0],r:0.30,color:0xee3333},
+        {pos:[2.2,-1.0,0],r:0.20,color:0xdddddd},{pos:[-1.95,0.9,0],r:0.20,color:0xdddddd},
+        {pos:[-1.95,-0.45,0.78],r:0.20,color:0xdddddd},{pos:[-1.95,-0.45,-0.78],r:0.20,color:0xdddddd}
+      ],
+      bonds:[[0,1],[1,2,2],[1,3],[3,4],[0,5],[0,6],[0,7]]},
+    h2o2:{name:'H₂O₂ — Peróxido de Hidrogênio',desc:'O–O em zigue-zague · Antisséptico e alvejante · Reativo',
+      draw2d:{atoms:[{x:-1.2,y:0,label:'O'},{x:1.2,y:0,label:'O'},{x:-2.0,y:-1.2,label:'H'},{x:2.0,y:1.2,label:'H'}],bonds:[{a:0,b:1,order:1},{a:0,b:2,order:1},{a:1,b:3,order:1}]},
+      atoms:[{pos:[0.5,0,0],r:0.30,color:0xee3333},{pos:[-0.5,0,0],r:0.30,color:0xee3333},{pos:[1.0,0.9,0],r:0.20,color:0xdddddd},{pos:[-1.0,-0.9,0],r:0.20,color:0xdddddd}],
+      bonds:[[0,1],[0,2],[1,3]]},
+    ethylene:{name:'C₂H₄ — Etileno',desc:'Plano · Dupla C=C · Hormônio do amadurecimento',
+      draw2d:{atoms:[{x:-1.4,y:0,label:'C'},{x:1.4,y:0,label:'C'},{x:2.3,y:1.2,label:'H'},{x:2.3,y:-1.2,label:'H'},{x:-2.3,y:1.2,label:'H'},{x:-2.3,y:-1.2,label:'H'}],bonds:[{a:0,b:1,order:2},{a:1,b:2,order:1},{a:1,b:3,order:1},{a:0,b:4,order:1},{a:0,b:5,order:1}]},
+      atoms:[
+        {pos:[-0.7,0,0],r:0.35,color:0x666666},{pos:[0.7,0,0],r:0.35,color:0x666666},
+        {pos:[1.4,0.9,0],r:0.20,color:0xdddddd},{pos:[1.4,-0.9,0],r:0.20,color:0xdddddd},
+        {pos:[-1.4,0.9,0],r:0.20,color:0xdddddd},{pos:[-1.4,-0.9,0],r:0.20,color:0xdddddd}
+      ],
+      bonds:[[0,1,2],[1,2],[1,3],[0,4],[0,5]]},
+    acetylene:{name:'C₂H₂ — Acetileno',desc:'Linear · Tripla C≡C · Gás de solda',
+      draw2d:{atoms:[{x:-1.2,y:0,label:'C'},{x:1.2,y:0,label:'C'},{x:-2.4,y:0,label:'H'},{x:2.4,y:0,label:'H'}],bonds:[{a:0,b:1,order:3},{a:0,b:2,order:1},{a:1,b:3,order:1}]},
+      atoms:[
+        {pos:[-0.6,0,0],r:0.35,color:0x666666},{pos:[0.6,0,0],r:0.35,color:0x666666},
+        {pos:[-1.6,0,0],r:0.20,color:0xdddddd},{pos:[1.6,0,0],r:0.20,color:0xdddddd}
+      ],
+      bonds:[[0,1,3],[0,2],[1,3]]},
+    formaldehyde:{name:'CH₂O — Formaldeído',desc:'Plano · Carbonila C=O · Conservante',
+      draw2d:{atoms:[{x:-1.0,y:0,label:'C'},{x:1.0,y:0,label:'O'},{x:-1.9,y:1.2,label:'H'},{x:-1.9,y:-1.2,label:'H'}],bonds:[{a:0,b:1,order:2},{a:0,b:2,order:1},{a:0,b:3,order:1}]},
+      atoms:[
+        {pos:[-0.65,0,0],r:0.35,color:0x666666},{pos:[0.65,0,0],r:0.30,color:0xee3333},
+        {pos:[-1.3,0.95,0],r:0.20,color:0xdddddd},{pos:[-1.3,-0.95,0],r:0.20,color:0xdddddd}
+      ],
+      bonds:[[0,1,2],[0,2],[0,3]]},
+    co:{name:'CO — Monóxido de Carbono',desc:'Linear · Tripla · Tóxico, inodoro',
+      draw2d:{atoms:[{x:-1.0,y:0,label:'C'},{x:1.0,y:0,label:'O'}],bonds:[{a:0,b:1,order:3}]},
+      atoms:[{pos:[-0.6,0,0],r:0.35,color:0x666666},{pos:[0.6,0,0],r:0.30,color:0xee3333}],
+      bonds:[[0,1,3]]},
+    so2:{name:'SO₂ — Dióxido de Enxofre',desc:'Angular (119°) · Ressonância · Poluente',
+      draw2d:{atoms:[{x:0,y:0,label:'S'},{x:-1.6,y:1.2,label:'O'},{x:1.6,y:1.2,label:'O'}],bonds:[{a:0,b:1,order:2},{a:0,b:2,order:2}]},
+      atoms:[
+        {pos:[0,0,0],r:0.40,color:0xffcc33},
+        {pos:[-1.1,0.7,0],r:0.30,color:0xee3333},{pos:[1.1,0.7,0],r:0.30,color:0xee3333}
+      ],
+      bonds:[[0,1,2],[0,2,2]]},
+    hno3:{name:'HNO₃ — Ácido Nítrico',desc:'Trigonal plana em torno do N · Ácido forte',
+      draw2d:{atoms:[{x:0,y:0,label:'N'},{x:0,y:1.7,label:'O'},{x:-1.6,y:-0.8,label:'O'},{x:1.6,y:-0.8,label:'O'},{x:2.9,y:-1.5,label:'H'}],bonds:[{a:0,b:1,order:2},{a:0,b:2,order:2},{a:0,b:3,order:1},{a:3,b:4,order:1}]},
+      atoms:[
+        {pos:[0,0,0],r:0.33,color:0x3399ff},
+        {pos:[0,1.25,0],r:0.30,color:0xee3333},{pos:[-1.08,-0.62,0],r:0.30,color:0xee3333},
+        {pos:[1.08,-0.62,0],r:0.30,color:0xee3333},{pos:[1.95,-1.35,0],r:0.20,color:0xdddddd}
+      ],
+      bonds:[[0,1,2],[0,2,2],[0,3],[3,4]]},
+    propane:{name:'C₃H₈ — Propano',desc:'Alcano · 3 carbonos · Gás de cozinha',
+      draw2d:{atoms:[{x:-2.2,y:0,label:'C'},{x:0,y:0,label:'C'},{x:2.2,y:0,label:'C'},{x:-3.6,y:0,label:'H'},{x:-2.2,y:1.5,label:'H'},{x:-2.2,y:-1.5,label:'H'},{x:0,y:1.5,label:'H'},{x:0,y:-1.5,label:'H'},{x:3.6,y:0,label:'H'},{x:2.2,y:1.5,label:'H'},{x:2.2,y:-1.5,label:'H'}],bonds:[{a:0,b:1,order:1},{a:1,b:2,order:1},{a:0,b:3,order:1},{a:0,b:4,order:1},{a:0,b:5,order:1},{a:1,b:6,order:1},{a:1,b:7,order:1},{a:2,b:8,order:1},{a:2,b:9,order:1},{a:2,b:10,order:1}]},
+      atoms:[
+        {pos:[-1.4,0,0],r:0.35,color:0x666666},{pos:[0,0,0],r:0.35,color:0x666666},{pos:[1.4,0,0],r:0.35,color:0x666666},
+        {pos:[-2.05,0.9,0],r:0.20,color:0xdddddd},{pos:[-2.05,-0.45,0.78],r:0.20,color:0xdddddd},{pos:[-2.05,-0.45,-0.78],r:0.20,color:0xdddddd},
+        {pos:[0,0.95,0],r:0.20,color:0xdddddd},{pos:[0,-0.95,0],r:0.20,color:0xdddddd},
+        {pos:[2.05,0.9,0],r:0.20,color:0xdddddd},{pos:[2.05,-0.45,0.78],r:0.20,color:0xdddddd},{pos:[2.05,-0.45,-0.78],r:0.20,color:0xdddddd}
+      ],
+      bonds:[[0,1],[1,2],[0,3],[0,4],[0,5],[1,6],[1,7],[2,8],[2,9],[2,10]]},
+    cyclohexane:{name:'C₆H₁₂ — Cicloexano',desc:'Cicloalcano · Conformação cadeira',
+      draw2d:{atoms:[
+        {x:0,y:1.6,label:'C'},{x:-1.386,y:0.8,label:'C'},{x:-1.386,y:-0.8,label:'C'},
+        {x:0,y:-1.6,label:'C'},{x:1.386,y:-0.8,label:'C'},{x:1.386,y:0.8,label:'C'},
+        {x:0,y:2.7,label:'H'},{x:-2.338,y:1.35,label:'H'},{x:-2.338,y:-1.35,label:'H'},
+        {x:0,y:-2.7,label:'H'},{x:2.338,y:-1.35,label:'H'},{x:2.338,y:1.35,label:'H'},
+        {x:-1.15,y:1.992,label:'H'},{x:-2.3,y:0,label:'H'},{x:-1.15,y:-1.992,label:'H'},
+        {x:1.15,y:-1.992,label:'H'},{x:2.3,y:0,label:'H'},{x:1.15,y:1.992,label:'H'}
+      ],bonds:[
+        {a:0,b:1,order:1},{a:1,b:2,order:1},{a:2,b:3,order:1},{a:3,b:4,order:1},{a:4,b:5,order:1},{a:5,b:0,order:1},
+        {a:0,b:6,order:1},{a:0,b:12,order:1},{a:1,b:7,order:1},{a:1,b:13,order:1},
+        {a:2,b:8,order:1},{a:2,b:14,order:1},{a:3,b:9,order:1},{a:3,b:15,order:1},
+        {a:4,b:10,order:1},{a:4,b:16,order:1},{a:5,b:11,order:1},{a:5,b:17,order:1}
+      ]},
+      atoms:[
+        {pos:[1.2,0,0],r:0.35,color:0x666666},{pos:[0.6,1.039,0],r:0.35,color:0x666666},
+        {pos:[-0.6,1.039,0],r:0.35,color:0x666666},{pos:[-1.2,0,0],r:0.35,color:0x666666},
+        {pos:[-0.6,-1.039,0],r:0.35,color:0x666666},{pos:[0.6,-1.039,0],r:0.35,color:0x666666},
+        {pos:[2.1,0,0],r:0.20,color:0xdddddd},{pos:[1.2,0,0.9],r:0.20,color:0xdddddd},
+        {pos:[1.05,1.819,0],r:0.20,color:0xdddddd},{pos:[0.6,1.039,-0.9],r:0.20,color:0xdddddd},
+        {pos:[-1.05,1.819,0],r:0.20,color:0xdddddd},{pos:[-0.6,1.039,0.9],r:0.20,color:0xdddddd},
+        {pos:[-2.1,0,0],r:0.20,color:0xdddddd},{pos:[-1.2,0,-0.9],r:0.20,color:0xdddddd},
+        {pos:[-1.05,-1.819,0],r:0.20,color:0xdddddd},{pos:[-0.6,-1.039,0.9],r:0.20,color:0xdddddd},
+        {pos:[1.05,-1.819,0],r:0.20,color:0xdddddd},{pos:[0.6,-1.039,-0.9],r:0.20,color:0xdddddd}
+      ],
+      bonds:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,0],[0,6],[0,7],[1,8],[1,9],[2,10],[2,11],[3,12],[3,13],[4,14],[4,15],[5,16],[5,17]]},
+    hcn:{name:'HCN — Cianeto de Hidrogênio',desc:'Linear · Tripla C≡N · Tóxico, cheiro de amêndoas',
+      draw2d:{atoms:[{x:-1.4,y:0,label:'H'},{x:0,y:0,label:'C'},{x:1.4,y:0,label:'N'}],bonds:[{a:0,b:1,order:1},{a:1,b:2,order:3}]},
+      atoms:[{pos:[-0.9,0,0],r:0.20,color:0xdddddd},{pos:[-0.1,0,0],r:0.35,color:0x666666},{pos:[0.9,0,0],r:0.33,color:0x3399ff}],
+      bonds:[[0,1],[1,2,3]]},
+    cs2:{name:'CS₂ — Dissulfeto de Carbono',desc:'Linear · Dupla C=S · Solvente industrial',
+      draw2d:{atoms:[{x:-1.4,y:0,label:'S'},{x:0,y:0,label:'C'},{x:1.4,y:0,label:'S'}],bonds:[{a:0,b:1,order:2},{a:1,b:2,order:2}]},
+      atoms:[{pos:[-1.2,0,0],r:0.40,color:0xffcc33},{pos:[0,0,0],r:0.35,color:0x666666},{pos:[1.2,0,0],r:0.40,color:0xffcc33}],
+      bonds:[[0,1,2],[1,2,2]]},
+    pcl3:{name:'PCl₃ — Tricloreto de Fósforo',desc:'Pirâmide trigonal · Ácido de Lewis',
+      draw2d:{atoms:[{x:0,y:0.7,label:'P'},{x:0,y:-1.3,label:'Cl'},{x:-1.4,y:-0.5,label:'Cl'},{x:1.4,y:-0.5,label:'Cl'}],bonds:[{a:0,b:1,order:1},{a:0,b:2,order:1},{a:0,b:3,order:1}]},
+      atoms:[
+        {pos:[0,0.4,0],r:0.40,color:0xff8833},
+        {pos:[0,-0.5,1.0],r:0.38,color:0x44dd44},
+        {pos:[-0.95,-0.5,-0.5],r:0.38,color:0x44dd44},
+        {pos:[0.95,-0.5,-0.5],r:0.38,color:0x44dd44}
+      ],
+      bonds:[[0,1],[0,2],[0,3]]},
+    sf6:{name:'SF₆ — Hexafluoreto de Enxofre',desc:'Octaédrica · Muito estável · Isolante elétrico',
+      draw2d:{atoms:[{x:0,y:0,label:'S'},{x:0,y:1.6,label:'F'},{x:0,y:-1.6,label:'F'},{x:1.7,y:0,label:'F'},{x:-1.7,y:0,label:'F'},{x:0.6,y:0.9,label:'F'},{x:-0.6,y:-0.9,label:'F'}],bonds:[{a:0,b:1,order:1},{a:0,b:2,order:1},{a:0,b:3,order:1},{a:0,b:4,order:1},{a:0,b:5,order:1},{a:0,b:6,order:1}]},
+      atoms:[
+        {pos:[0,0,0],r:0.40,color:0xffcc33},
+        {pos:[0,1.1,0],r:0.26,color:0xb3ff3a},{pos:[0,-1.1,0],r:0.26,color:0xb3ff3a},
+        {pos:[1.1,0,0],r:0.26,color:0xb3ff3a},{pos:[-1.1,0,0],r:0.26,color:0xb3ff3a},
+        {pos:[0,0,1.1],r:0.26,color:0xb3ff3a},{pos:[0,0,-1.1],r:0.26,color:0xb3ff3a}
+      ],
+      bonds:[[0,1],[0,2],[0,3],[0,4],[0,5],[0,6]]}
   };
 
   let trackedAtoms = [];
@@ -1434,6 +1654,8 @@ atomurusBootViewer(document.getElementById('viewer3d'), function () {
     descEl.setAttribute('data-i18n', 'molecules.mol.' + key + '.desc');
     nameEl.textContent = tName;
     descEl.textContent = tDesc;
+    const statsEl = document.getElementById('model-stats');
+    if (statsEl) statsEl.textContent = computeMolStats(key, md);
     const lConfig = _i18nTr('molecules.metaConfig', 'config.');
     const configLabel = md.chiral ? '<span>' + lConfig + ' <b>R</b></span>' : '';
     document.getElementById('info-meta').innerHTML =
@@ -1635,8 +1857,35 @@ atomurusBootViewer(document.getElementById('viewer3d'), function () {
 })();
 });
 </script>
+<script>
+// Molecule / element quick search in the sidebar panel.
+(function () {
+  var inp = document.querySelector('.mol-search');
+  if (!inp) return;
+  var none = document.querySelector('.mol-search-none');
+  var SUB = { '₀': '0', '₁': '1', '₂': '2', '₃': '3', '₄': '4', '₅': '5', '₆': '6', '₇': '7', '₈': '8', '₉': '9' };
+  function norm(s) {
+    return String(s || '').toLowerCase()
+      .replace(/[₀-₉]/g, function (c) { return SUB[c] || c; })
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+  function apply() {
+    var q = norm(inp.value.trim());
+    var any = false;
+    document.querySelectorAll('.mol-btn, .mol-elem-btn').forEach(function (b) {
+      var hit = !q || norm(b.textContent).indexOf(q) !== -1;
+      b.style.display = hit ? '' : 'none';
+      if (hit) any = true;
+    });
+    if (none) none.style.display = (q && !any) ? '' : 'none';
+  }
+  inp.addEventListener('input', apply);
+  // re-run after i18n swaps text so filtering stays correct
+  if (window.I18N && window.I18N.onChange) window.I18N.onChange(apply);
+})();
+</script>
 <script type="text/javascript">
-    atomurusRunAutoTag({
+    (window.atomurusRunAutoTag||function(){})({
         zoneId: 'o42jwt5vja',
     });
 </script>

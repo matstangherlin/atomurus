@@ -2,10 +2,10 @@
 <html lang="en-US" data-theme="light">
 <head>
 <style>html.lang-pt-pending [data-i18n],html.lang-pt-pending [data-i18n-html],html.lang-pt-pending [data-i18n-attr],html.lang-pt-pending [data-page-field]{visibility:hidden!important}html[data-theme="dark"] #icon-theme-light,html[data-theme="light"] #icon-theme-dark{display:none!important}html[data-theme="dark"] #icon-theme-dark,html[data-theme="light"] #icon-theme-light{display:block!important}</style>
-<script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var q=new URLSearchParams(location.search);var p=q.get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem('atomurus-lang');var path=location.pathname;var isPt=/\.pt\.html$/i.test(path);if(!l&&isPt)l='pt';if(!l){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}if(l==='pt'){document.documentElement.lang='pt-BR';document.documentElement.classList.add('lang-pt-pending');setTimeout(function(){document.documentElement.classList.remove('lang-pt-pending');},120);}else{document.documentElement.lang='en-US';}localStorage.setItem('atomurus-lang',l);var u=new URL(location.href);if(l==='pt'&&!isPt){if(/\.html$/i.test(path))u.pathname=path.replace(/\.html$/i,'.pt.html');u.searchParams.set('lang','pt-BR');if(u.href!==location.href)location.replace(u.href);}else if(l==='en'&&isPt){u.pathname=path.replace(/\.pt\.html$/i,'.html');u.searchParams.set('lang','en');if(u.href!==location.href)location.replace(u.href);}}catch(e){}})();</script>
+<script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var q=new URLSearchParams(location.search);var p=q.get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem('atomurus-lang');var path=location.pathname;var isPt=/\.pt\.html$/i.test(path)||/\.pt$/i.test(path);if(!l&&isPt)l='pt';if(!l){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}if(l==='pt'){document.documentElement.lang='pt-BR';document.documentElement.classList.add('lang-pt-pending');setTimeout(function(){document.documentElement.classList.remove('lang-pt-pending');},120);}else{document.documentElement.lang='en-US';}localStorage.setItem('atomurus-lang',l);var u=new URL(location.href);if(l==='pt'&&!isPt){if(/\.html$/i.test(path)){u.pathname=path.replace(/\.html$/i,'.pt.html');}else if(path.charAt(path.length-1)!=='/'){u.pathname=path+'.pt.html';}u.searchParams.set('lang','pt-BR');if(u.href!==location.href)location.replace(u.href);}else if(l==='en'&&isPt){if(/\.pt\.html$/i.test(path)){u.pathname=path.replace(/\.pt\.html$/i,'.html');}else{u.pathname=path.replace(/\.pt$/i,'');}u.searchParams.set('lang','en');if(u.href!==location.href)location.replace(u.href);}}catch(e){}})();</script>
 <meta name="google-adsense-account" content="ca-pub-9495821870733084">
-<script src="ads-gate.js?v=202607240244"></script>
-<script src="cookie-consent.js?v=202607240244" defer></script>
+<script src="ads-gate.js?v=202608041630"></script>
+<script src="cookie-consent.js?v=202608041630" defer></script>
 <meta charset="UTF-8">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1E6A50" media="(prefers-color-scheme: light)">
@@ -15,13 +15,13 @@
 <meta name="apple-mobile-web-app-title" content="Atomurus">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/png" href="assets/atomurus-logo.png?v=202607240244">
-<link rel="apple-touch-icon" href="assets/atomurus-logo.png?v=202607240244">
+<link rel="icon" type="image/png" href="assets/atomurus-logo.png?v=202608041630">
+<link rel="apple-touch-icon" href="assets/atomurus-logo.png?v=202608041630">
 <title>Explore â€” Chemistry articles and knowledge | Atomurus</title>
 <meta name="description" content="Explore chemistry articles, history and concepts on Atomurus: what the periodic table is, what isomerism is, the Bhopal disaster and much more. In-depth content to study and research.">
 <meta property="og:title" content="Explore â€” Chemistry articles and knowledge | Atomurus">
 <meta property="og:description" content="Chemistry articles, history and concepts â€” from the periodic table to major industrial accidents. In-depth content to study and research.">
-<meta property="og:image" content="https://atomurus.com/assets/og-explore.png?v=202607240244">
+<meta property="og:image" content="https://atomurus.com/assets/og-explore.png?v=202608041630">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:url" content="https://atomurus.com/explore">
@@ -30,7 +30,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Explore â€” Chemistry articles and knowledge | Atomurus">
 <meta name="twitter:description" content="Chemistry articles, history and concepts â€” from the periodic table to major industrial accidents.">
-<meta name="twitter:image" content="https://atomurus.com/assets/og-explore.png?v=202607240244">
+<meta name="twitter:image" content="https://atomurus.com/assets/og-explore.png?v=202608041630">
 <link rel="canonical" href="https://atomurus.com/explore">
 <link rel="alternate" hreflang="en" href="https://atomurus.com/explore">
 <link rel="alternate" hreflang="pt-BR" href="https://atomurus.com/explore?lang=pt-BR">
@@ -75,16 +75,19 @@
 </script>
 <link rel="preload" href="/assets/fonts/inter-tight-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/instrument-serif-400-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202607240244">
+<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202608041630">
 <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>
-<script src="lazy-ads.js?v=202607240244" defer></script>
-<script src="recaptcha.js?v=202607240244" defer></script>
-<script src="i18n.js?v=202607240244" defer></script>
-<script src="meta-i18n.js?v=202607240244" defer></script>
-<link rel="stylesheet" href="/assets/critical-lab.css?v=202607240244">
-<link rel="stylesheet" href="atomurus-lab-console.css?v=202607240244" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="atomurus-lab-console.css?v=202607240244"></noscript>
-<script src="atomurus-mobile-nav.js?v=202607240244" defer></script>
+<script src="lazy-ads.js?v=202608041630" defer></script>
+<script src="recaptcha.js?v=202608041630" defer></script>
+<script src="i18n.js?v=202608041630" defer></script>
+<script src="meta-i18n.js?v=202608041630" defer></script>
+<link rel="stylesheet" href="/assets/critical-lab.css?v=202608041630">
+<style>html.lc-loading body{visibility:hidden}</style>
+<script>document.documentElement.classList.add('lc-loading');setTimeout(function(){document.documentElement.classList.remove('lc-loading')},4000);</script>
+<link rel="preload" href="atomurus-lab-console.css?v=202608041630" as="style">
+<link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
+<noscript><link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630"></noscript>
+<script src="atomurus-mobile-nav.js?v=202608041630" defer></script>
 <style>
   *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100vh; overflow: hidden; }
@@ -644,7 +647,7 @@
       <span data-i18n="common.nav.explore">Explore</span>
     </div>
 
-    <button class="theme-btn" onclick="location.href='explore?lang=pt-BR'"
+    <button class="theme-btn" onclick="location.href='explore.html?lang=pt-BR'"
             data-i18n-attr="aria-label:common.langToggle; title:common.langToggle"
             aria-label="Switch language" title="Switch language"
             style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;width:auto;min-width:32px;padding:0 8px;">
@@ -997,7 +1000,7 @@
 </script>
 
 <script type="text/javascript">
-    atomurusRunAutoTag({ zoneId: 'o42jwt5vja' });
+    (window.atomurusRunAutoTag||function(){})({ zoneId: 'o42jwt5vja' });
 </script>
 </body>
 </html>

@@ -2,11 +2,11 @@
 <html lang="en-US" data-theme="light">
 <head>
 <meta name="google-adsense-account" content="ca-pub-9495821870733084">
-<script src="../ads-gate.js?v=202607240244"></script>
+<script src="../ads-gate.js?v=202608041630"></script>
 
 <style>html.lang-pt-pending [data-i18n],html.lang-pt-pending [data-i18n-html],html.lang-pt-pending [data-i18n-attr],html.lang-pt-pending [data-page-field]{visibility:hidden!important}html[data-theme="dark"] #icon-theme-light,html[data-theme="light"] #icon-theme-dark{display:none!important}html[data-theme="dark"] #icon-theme-dark,html[data-theme="light"] #icon-theme-light{display:block!important}</style>
 <script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var KEY='atomurus-lang';var p=new URLSearchParams(location.search).get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem(KEY);if(l!=='pt'&&l!=='en'){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}try{localStorage.setItem(KEY,l);}catch(e){}if(l==='pt'){document.documentElement.lang='pt-BR';document.documentElement.classList.add('lang-pt-pending');setTimeout(function(){document.documentElement.classList.remove('lang-pt-pending');},120);}else{document.documentElement.lang='en-US';}}catch(e){}})();</script>
-<script src="../cookie-consent.js?v=202607240244" defer></script>
+<script src="../cookie-consent.js?v=202608041630" defer></script>
 <meta charset="UTF-8">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1E6A50" media="(prefers-color-scheme: light)">
@@ -16,14 +16,16 @@
 <meta name="apple-mobile-web-app-title" content="Atomurus">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/png" href="../assets/atomurus-logo.png?v=202607240244">
+<link rel="icon" type="image/png" href="../assets/atomurus-logo.png?v=202608041630">
 <title data-i18n="allotropes.metaTitle">Allotropes: Graphite, Diamond, Graphene and Fullerene in 3D | Atomurus</title>
 <meta name="description" content="Explore carbon allotropes (graphite, diamond, graphene, fullerene, nanotubes), oxygen (O₂, ozone), sulfur and phosphorus in interactive 3D models." data-i18n-attr="content:allotropes.metaDesc">
-<meta property="og:image" content="https://atomurus.com/assets/og-allotropes.png?v=202607240244">
+<meta property="og:title" data-i18n-attr="content:allotropes.metaTitle" content="Allotropes: Graphite, Diamond, Graphene and Fullerene in 3D | Atomurus">
+<meta property="og:description" data-i18n-attr="content:allotropes.metaDesc" content="Explore carbon allotropes (graphite, diamond, graphene, fullerene, nanotubes), oxygen (O₂, ozone), sulfur and phosphorus in interactive 3D models.">
+<meta property="og:image" content="https://atomurus.com/assets/og-allotropes.png?v=202608041630">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://atomurus.com/assets/og-allotropes.png?v=202607240244">
+<meta name="twitter:image" content="https://atomurus.com/assets/og-allotropes.png?v=202608041630">
 <link rel="canonical" href="https://atomurus.com/viewer/allotropes">
 <link rel="alternate" hreflang="en" href="https://atomurus.com/viewer/allotropes?lang=en">
 <link rel="alternate" hreflang="pt-BR" href="https://atomurus.com/viewer/allotropes?lang=pt-BR">
@@ -59,7 +61,7 @@
 
 <link rel="preload" href="/assets/fonts/inter-tight-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/instrument-serif-400-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202607240244">
+<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202608041630">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
@@ -195,6 +197,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg-gradient);color:var(--
 .viewer{background:var(--viewer-bg);border-radius:16px;overflow:hidden;box-shadow:var(--shadow-lg);border:1px solid var(--viewer-border);margin-bottom:20px;transition:background .25s,border-color .25s}
 .panel{padding:20px 24px 8px}
 .panel-label{font-size:11px;color:var(--viewer-text-3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;transition:color .25s}
+.allo-search{
+  width:100%;padding:9px 12px;margin-bottom:14px;
+  border:1px solid var(--viewer-pill-border);border-radius:10px;
+  background:var(--surface-2);color:var(--text-1);
+  font-family:'DM Mono',monospace;font-size:11.5px;outline:none;
+  transition:border-color .18s, box-shadow .18s;
+}
+.allo-search:focus{border-color:var(--viewer-pill-active-border);box-shadow:0 0 0 3px rgba(30,106,80,.12)}
+.allo-search::placeholder{color:var(--viewer-text-3)}
+.allo-search-none{font-family:'DM Mono',monospace;font-size:11px;color:var(--viewer-text-3);padding:4px 2px 12px}
 .pill-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
 .pill{padding:7px 14px;border-radius:20px;border:1px solid var(--viewer-pill-border);background:transparent;color:var(--viewer-pill-text);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;letter-spacing:.3px;cursor:pointer;transition:all .18s}
 .pill:hover{border-color:var(--viewer-pill-purple-active-border);color:var(--viewer-pill-text-hover)}
@@ -217,6 +229,7 @@ canvas#viewer3d{width:100%;height:460px;display:block;cursor:grab;background:var
 .info-bar{padding:16px 24px;border-top:1px solid var(--viewer-rule);display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--viewer-info-bg);flex-wrap:wrap;transition:background .25s,border-color .25s}
 .info-name{font-size:14px;font-weight:700;color:var(--viewer-text-1);margin-bottom:2px}
 .info-desc{font-size:12px;color:var(--viewer-text-2);line-height:1.4}
+.info-stats{margin-top:6px;font-family:'DM Mono',monospace;font-size:10.5px;color:var(--viewer-text-3);letter-spacing:.02em;line-height:1.5}
 .info-hint{font-size:11px;color:var(--viewer-text-3);letter-spacing:.4px;text-align:right;font-family:'DM Mono',monospace}
 
 .av-substrip{display:flex;align-items:center;gap:10px;padding:9px 0;margin-bottom:14px;border-bottom:1px solid var(--border-soft);font-family:'DM Mono',monospace;font-size:10.5px;color:var(--text-3);letter-spacing:.04em;flex-wrap:wrap}
@@ -248,16 +261,19 @@ canvas#viewer3d{width:100%;height:460px;display:block;cursor:grab;background:var
 }
 </style>
 
-<script src="../i18n.js?v=202607240244" defer></script>
-<script src="../share-button.js?v=202607240244" defer></script>
-<script src="../page-share-init.js?v=202607240244" defer></script>
+<script src="../i18n.js?v=202608041630" defer></script>
+<script src="../share-button.js?v=202608041630" defer></script>
+<script src="../page-share-init.js?v=202608041630" defer></script>
 <style id="lc-statusbar-spacing-applied">
   .main, body.lc-app-main { padding-bottom: 22px; }
 </style>
-<link rel="stylesheet" href="/assets/critical-lab.css?v=202607240244">
-<link rel="stylesheet" href="../atomurus-lab-console.css?v=202607240244" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="../atomurus-lab-console.css?v=202607240244"></noscript>
-<script src="../lazy-ads.js?v=202607240244" defer></script>
+<link rel="stylesheet" href="/assets/critical-lab.css?v=202608041630">
+<style>html.lc-loading body{visibility:hidden}</style>
+<script>document.documentElement.classList.add('lc-loading');setTimeout(function(){document.documentElement.classList.remove('lc-loading')},4000);</script>
+<link rel="preload" href="../atomurus-lab-console.css?v=202608041630" as="style">
+<link rel="stylesheet" href="../atomurus-lab-console.css?v=202608041630" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
+<noscript><link rel="stylesheet" href="../atomurus-lab-console.css?v=202608041630"></noscript>
+<script src="../lazy-ads.js?v=202608041630" defer></script>
 </head>
 <body>
 
@@ -416,6 +432,7 @@ canvas#viewer3d{width:100%;height:460px;display:block;cursor:grab;background:var
 
       <div class="viewer">
         <div class="panel">
+          <input type="search" class="allo-search" data-i18n-attr="placeholder:allotropes.searchPh" placeholder="Search element or allotrope…" aria-label="Search allotropes">
           <div class="panel-label" data-i18n="allotropes.panelElement">Element</div>
           <div class="pill-row">
             <button class="pill purple active allo-elem-btn" data-elem="carbon"     onclick="setAlloElement('carbon')"     data-i18n="allotropes.elem.carbon.label">Carbon</button>
@@ -425,6 +442,7 @@ canvas#viewer3d{width:100%;height:460px;display:block;cursor:grab;background:var
           </div>
           <div class="panel-label" data-i18n="allotropes.panelAllotrope">Allotrope</div>
           <div class="pill-row" id="allo-variants"></div>
+          <div class="allo-search-none" style="display:none" data-i18n="allotropes.searchNone">No allotrope matches your search.</div>
         </div>
 
         <div class="canvas-wrap" id="canvas-wrap">
@@ -450,6 +468,7 @@ canvas#viewer3d{width:100%;height:460px;display:block;cursor:grab;background:var
           <div>
             <div id="model-name" class="info-name" data-i18n="allotropes.allo.graphite.name">Graphite — Carbon</div>
             <div id="model-desc" class="info-desc" data-i18n="allotropes.allo.graphite.desc">AB-stacked hexagonal layers (graphene) · sp² · Electrical conductor</div>
+            <div id="model-stats" class="info-stats"></div>
           </div>
           <div class="info-hint" data-i18n="allotropes.infoHint">drag · scroll · or use controls</div>
         </div>
@@ -512,7 +531,7 @@ function toggleNavGroup(name){
 })();
 </script>
 
-<script src="load-three.js?v=202607240244"></script>
+<script src="load-three.js?v=202608041630"></script>
 <script>
 atomurusBootViewer(document.getElementById('viewer3d'), function () {
 (function(){
@@ -814,6 +833,29 @@ atomurusBootViewer(document.getElementById('viewer3d'), function () {
     return (window.I18N && window.I18N.t) ? window.I18N.t(k, { fallback: fb }) : fb;
   }
 
+  // Per-allotrope molecular formula + dynamic molar mass.
+  const alloFormula = {
+    graphite:'C', diamond:'C', fullerene:'C₆₀', graphene:'C', nanotube:'C',
+    o2:'O₂', ozone:'O₃',
+    s_rhombic:'S₈', s_mono:'S₈',
+    p_white:'P₄', p_red:'P', p_black:'P'
+  };
+  const ATOMIC_MASS = { H:1.008, He:4.003, C:12.011, N:14.007, O:15.999, F:18.998, Ne:20.180, Na:22.990, Mg:24.305, Al:26.982, Si:28.085, P:30.974, S:32.06, Cl:35.45, K:39.098, Ca:40.078, Fe:55.845, Cu:63.546, Zn:65.38, Br:79.904, Ag:107.868, I:126.904, Ba:137.327, Pt:195.084, Au:196.967, Hg:200.592, Pb:207.2 };
+  function computeAlloStats(formula){
+    const flat = String(formula || '').replace(/[₀-₉]/g, c => String('₀₁₂₃₄₅₆₇₈₉'.indexOf(c)));
+    const re = /([A-Z][a-z]?)(\d*)/g;
+    const counts = {};
+    let total = 0, cur, ok = true;
+    while ((cur = re.exec(flat))) {
+      const el = cur[1], n = cur[2] ? parseInt(cur[2], 10) : 1;
+      if (!ATOMIC_MASS[el]) { ok = false; break; }
+      counts[el] = (counts[el] || 0) + n;
+    }
+    if (!ok || !Object.keys(counts).length) return '';
+    Object.keys(counts).forEach(el => { total += ATOMIC_MASS[el] * counts[el]; });
+    return formula + ' · MM ' + total.toFixed(2) + ' g/mol';
+  }
+
   window.setAlloElement = function(elem){
     if (!alloElements[elem]) return;
     currentElement = elem;
@@ -848,6 +890,8 @@ atomurusBootViewer(document.getElementById('viewer3d'), function () {
     descEl.setAttribute('data-i18n', 'allotropes.allo.' + key + '.desc');
     nameEl.textContent = tName;
     descEl.textContent = tDesc;
+    const statsEl = document.getElementById('model-stats');
+    if (statsEl) statsEl.textContent = computeAlloStats(alloFormula[key] || '');
     document.getElementById('av-allo').textContent = tShort;
     if (!skipBtn) {
       document.querySelectorAll('.allo-btn').forEach(b => b.classList.toggle('active', b.dataset.allo === key));
@@ -911,6 +955,58 @@ atomurusBootViewer(document.getElementById('viewer3d'), function () {
   setAlloElement('carbon');
   animate();
 
+  // Allotrope / element quick search.
+  (function initAlloSearch(){
+    const inp = document.querySelector('.allo-search');
+    if (!inp) return;
+    const none = document.querySelector('.allo-search-none');
+    const SUBSCRIPT = '₀₁₂₃₄₅₆₇₈₉';
+    function norm(s){
+      return String(s || '').toLowerCase()
+        .replace(/[₀-₉]/g, c => String(SUBSCRIPT.indexOf(c)))
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    }
+    function allKeys(){
+      const out = [];
+      Object.keys(alloElements).forEach(el => alloElements[el].forEach(v => out.push({ el, v })));
+      return out;
+    }
+    function apply(){
+      const q = norm(inp.value.trim());
+      const matches = [];
+      if (q) {
+        allKeys().forEach(item => {
+          const v = item.v;
+          const hay = norm(_i18nTr('allotropes.allo.' + v + '.short', alloVariantLabels[v])) + ' ' +
+                      norm(_i18nTr('allotropes.allo.' + v + '.name', alloMeta[v].name)) + ' ' +
+                      norm(alloFormula[v] || '');
+          if (hay.indexOf(q) !== -1) matches.push(item);
+        });
+      }
+      document.querySelectorAll('.allo-elem-btn').forEach(b => {
+        const el = b.dataset.elem;
+        const elHay = norm(_i18nTr('allotropes.elem.' + el + '.label', el));
+        const show = !q || elHay.indexOf(q) !== -1 || matches.some(m => m.el === el);
+        b.style.display = show ? '' : 'none';
+      });
+      if (q && matches.length) {
+        if (none) none.style.display = 'none';
+        const matchedEls = matches.map(m => m.el);
+        const targetEl = matchedEls.indexOf(currentElement) !== -1 ? currentElement : matchedEls[0];
+        if (targetEl !== currentElement) setAlloElement(targetEl);
+        if (!matches.some(m => m.v === currentAllotrope)) setAllotrope(matches[0].v);
+        document.querySelectorAll('.allo-btn').forEach(b => {
+          b.style.display = matches.some(m => m.v === b.dataset.allo) ? '' : 'none';
+        });
+      } else {
+        if (none) none.style.display = (q && !matches.length) ? '' : 'none';
+        document.querySelectorAll('.allo-btn').forEach(b => { b.style.display = ''; });
+      }
+    }
+    inp.addEventListener('input', apply);
+    if (window.I18N && window.I18N.onChange) window.I18N.onChange(apply);
+  })();
+
   // Re-render dynamic strings when user switches language (retry until I18N is ready)
   (function wireI18n(){
     if (window.I18N && window.I18N.onChange) {
@@ -926,7 +1022,7 @@ atomurusBootViewer(document.getElementById('viewer3d'), function () {
 });
 </script>
 <script type="text/javascript">
-    atomurusRunAutoTag({
+    (window.atomurusRunAutoTag||function(){})({
         zoneId: 'o42jwt5vja',
     });
 </script>

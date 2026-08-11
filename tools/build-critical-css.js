@@ -42,7 +42,12 @@ const mobileNav = sliceBetween(
 
 parts.push(`@media (max-width: 760px) {\n${mobileNav}\n}`);
 
+// FOUC guard: hide <body> while the full design stylesheet (atomurus-lab-console.css)
+// loads async. The class is set by scripts/fix-fouc-lab-css.js and removed on load.
+const foucGuard = 'html.lc-loading body{visibility:hidden}\n';
+
 let out = `*,*::before,*::after{box-sizing:border-box}\nhtml,body{margin:0}\n` +
+  foucGuard +
   parts.filter(Boolean).join('\n\n') + '\n';
 
 fs.mkdirSync(path.dirname(OUT), { recursive: true });

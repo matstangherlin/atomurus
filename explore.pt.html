@@ -2,11 +2,11 @@
 <html lang="pt-BR" data-theme="light">
 <head>
 <style>html.lang-pt-pending [data-i18n],html.lang-pt-pending [data-i18n-html],html.lang-pt-pending [data-i18n-attr],html.lang-pt-pending [data-page-field]{visibility:hidden!important}html[data-theme="dark"] #icon-theme-light,html[data-theme="light"] #icon-theme-dark{display:none!important}html[data-theme="dark"] #icon-theme-dark,html[data-theme="light"] #icon-theme-light{display:block!important}</style>
-<script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var q=new URLSearchParams(location.search);var p=q.get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem('atomurus-lang');var path=location.pathname;var isPt=/\.pt\.html$/i.test(path);if(!l&&isPt)l='pt';if(!l){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}if(l==='pt'){document.documentElement.lang='pt-BR';document.documentElement.classList.add('lang-pt-pending');setTimeout(function(){document.documentElement.classList.remove('lang-pt-pending');},120);}else{document.documentElement.lang='en-US';}localStorage.setItem('atomurus-lang',l);var u=new URL(location.href);if(l==='pt'&&!isPt){if(/\.html$/i.test(path))u.pathname=path.replace(/\.html$/i,'.pt.html');u.searchParams.set('lang','pt-BR');if(u.href!==location.href)location.replace(u.href);}else if(l==='en'&&isPt){u.pathname=path.replace(/\.pt\.html$/i,'.html');u.searchParams.set('lang','en');if(u.href!==location.href)location.replace(u.href);}}catch(e){}})();</script>
+<script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var q=new URLSearchParams(location.search);var p=q.get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem('atomurus-lang');var path=location.pathname;var isPt=/\.pt\.html$/i.test(path)||/\.pt$/i.test(path);if(!l&&isPt)l='pt';if(!l){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}if(l==='pt'){document.documentElement.lang='pt-BR';document.documentElement.classList.add('lang-pt-pending');setTimeout(function(){document.documentElement.classList.remove('lang-pt-pending');},120);}else{document.documentElement.lang='en-US';}localStorage.setItem('atomurus-lang',l);var u=new URL(location.href);if(l==='pt'&&!isPt){if(/\.html$/i.test(path)){u.pathname=path.replace(/\.html$/i,'.pt.html');}else if(path.charAt(path.length-1)!=='/'){u.pathname=path+'.pt.html';}u.searchParams.set('lang','pt-BR');if(u.href!==location.href)location.replace(u.href);}else if(l==='en'&&isPt){if(/\.pt\.html$/i.test(path)){u.pathname=path.replace(/\.pt\.html$/i,'.html');}else{u.pathname=path.replace(/\.pt$/i,'');}u.searchParams.set('lang','en');if(u.href!==location.href)location.replace(u.href);}}catch(e){}})();</script>
 <meta name="google-adsense-account" content="ca-pub-9495821870733084">
-<script src="ads-gate.js?v=202607240244"></script>
+<script src="ads-gate.js?v=202608041630"></script>
 
-<script src="cookie-consent.js?v=202607240244" defer></script>
+<script src="cookie-consent.js?v=202608041630" defer></script>
 <meta charset="UTF-8">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1E6A50" media="(prefers-color-scheme: light)">
@@ -16,13 +16,13 @@
 <meta name="apple-mobile-web-app-title" content="Atomurus">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/png" href="assets/atomurus-logo.png?v=202607240244">
-<link rel="apple-touch-icon" href="assets/atomurus-logo.png?v=202607240244">
+<link rel="icon" type="image/png" href="assets/atomurus-logo.png?v=202608041630">
+<link rel="apple-touch-icon" href="assets/atomurus-logo.png?v=202608041630">
 <title>Explorar — Artigos e conhecimento de química | Atomurus</title>
 <meta name="description" content="Explore artigos, histórias e conceitos de química no Atomurus: o que é a tabela periódica, o que é isomeria, o desastre de Bhopal e muito mais. Conteúdo aprofundado para estudar e pesquisar.">
 <meta property="og:title" content="Explorar — Artigos e conhecimento de química | Atomurus">
 <meta property="og:description" content="Artigos, histórias e conceitos de química — da tabela periódica a grandes acidentes industriais. Conteúdo aprofundado para estudar e pesquisar.">
-<meta property="og:image" content="https://atomurus.com/assets/og-explore.png?v=202607240244">
+<meta property="og:image" content="https://atomurus.com/assets/og-explore.png?v=202608041630">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:url" content="https://atomurus.com/explore?lang=pt-BR">
@@ -31,7 +31,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Explorar — Artigos e conhecimento de química | Atomurus">
 <meta name="twitter:description" content="Artigos, histórias e conceitos de química — da tabela periódica a grandes acidentes industriais.">
-<meta name="twitter:image" content="https://atomurus.com/assets/og-explore.png?v=202607240244">
+<meta name="twitter:image" content="https://atomurus.com/assets/og-explore.png?v=202608041630">
 <link rel="canonical" href="https://atomurus.com/explore?lang=pt-BR">
 <link rel="alternate" hreflang="en" href="https://atomurus.com/explore">
 <link rel="alternate" hreflang="pt-BR" href="https://atomurus.com/explore?lang=pt-BR">
@@ -71,16 +71,19 @@
 </script>
 <link rel="preload" href="/assets/fonts/inter-tight-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/instrument-serif-400-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202607240244">
+<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202608041630">
 <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>
-<script src="lazy-ads.js?v=202607240244" defer></script>
-<script src="recaptcha.js?v=202607240244" defer></script>
-<script src="i18n.js?v=202607240244" defer></script>
-<script src="meta-i18n.js?v=202607240244" defer></script>
-<link rel="stylesheet" href="/assets/critical-lab.css?v=202607240244">
-<link rel="stylesheet" href="atomurus-lab-console.css?v=202607240244" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="atomurus-lab-console.css?v=202607240244"></noscript>
-<script src="atomurus-mobile-nav.js?v=202607240244" defer></script>
+<script src="lazy-ads.js?v=202608041630" defer></script>
+<script src="recaptcha.js?v=202608041630" defer></script>
+<script src="i18n.js?v=202608041630" defer></script>
+<script src="meta-i18n.js?v=202608041630" defer></script>
+<link rel="stylesheet" href="/assets/critical-lab.css?v=202608041630">
+<style>html.lc-loading body{visibility:hidden}</style>
+<script>document.documentElement.classList.add('lc-loading');setTimeout(function(){document.documentElement.classList.remove('lc-loading')},4000);</script>
+<link rel="preload" href="atomurus-lab-console.css?v=202608041630" as="style">
+<link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
+<noscript><link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630"></noscript>
+<script src="atomurus-mobile-nav.js?v=202608041630" defer></script>
 <style>
   *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100vh; overflow: hidden; }
@@ -640,7 +643,7 @@
       <span data-i18n="common.nav.explore">Explore</span>
     </div>
 
-    <button class="theme-btn" onclick="location.href='explore?lang=en'"
+    <button class="theme-btn" onclick="location.href='explore.html?lang=en'"
             data-i18n-attr="aria-label:common.langToggle; title:common.langToggle"
             aria-label="Mudar idioma" title="Mudar idioma"
             style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;width:auto;min-width:32px;padding:0 8px;">
@@ -717,7 +720,52 @@
   </div>
 
   <div class="ex-card-grid" id="ex-articles">
-    <a class="ex-card" data-cat="historia seguranca" data-search="bhopal isocianato de metila mic union carbide acidente desastre tragedia madre teresa calcuta 1984 seguranca quimica industrial india" href="explore/bhopal-disaster?lang=pt-BR">
+    <a class="ex-card" data-cat="conceitos" data-search="atomo o que e um atomo estrutura atomica proton neutron eletron nucleo camada eletronica numero atomico massa atomica particulas subatomicas dalton thomson rutherford bohr modelo quantico ion cation anion elemento materia quimica basica" href="explore/what-is-an-atom.html?lang=pt-BR">
+      <div class="ex-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="2.2" fill="currentColor"/><ellipse cx="10" cy="10" rx="8.5" ry="3.6" stroke="currentColor" stroke-width="1.2" fill="none"/><ellipse cx="10" cy="10" rx="8.5" ry="3.6" stroke="currentColor" stroke-width="1.2" fill="none" transform="rotate(60 10 10)"/><ellipse cx="10" cy="10" rx="8.5" ry="3.6" stroke="currentColor" stroke-width="1.2" fill="none" transform="rotate(120 10 10)"/></svg></div>
+      <div class="ex-card-body">
+        <div class="ex-card-kicker">conceitos</div>
+        <div class="ex-card-title">O que é um Átomo</div>
+        <div class="ex-card-desc">Prótons, nêutrons e elétrons, e os modelos de Dalton ao quântico — o bloco de construção de toda a matéria.</div>
+      </div>
+    </a>
+
+    <a class="ex-card" data-cat="conceitos" data-search="isotopos o que sao isotopos estaveis radioativos radioisotopos massa atomica neutrons massa atomica relativa carbono-14 carbono-12 deuterio tritio uranio-235 uranio-238 meia-vida datacao por carbono medicina nuclear abundancia media ponderada" href="explore/what-are-isotopes.html?lang=pt-BR">
+      <div class="ex-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="6.5" stroke="currentColor" stroke-width="1.2" fill="none" opacity=".55"/><circle cx="7.6" cy="10" r="2.1" fill="currentColor"/><circle cx="11.8" cy="8.4" r="2.1" fill="currentColor" opacity=".75"/><circle cx="11.6" cy="11.8" r="2.1" fill="currentColor" opacity=".5"/></svg></div>
+      <div class="ex-card-body">
+        <div class="ex-card-kicker">conceitos</div>
+        <div class="ex-card-title">O que são Isótopos</div>
+        <div class="ex-card-desc">Mesmo elemento, nêutrons diferentes — isótopos estáveis e radioativos, e por que as massas atômicas são decimais.</div>
+      </div>
+    </a>
+
+    <a class="ex-card" data-cat="conceitos" data-search="radioatividade decaimento radioativo meia-vida radiacao alfa beta gama henri becquerel marie curie pierre curie rutherford isotopos quimica nuclear uranio radio polonio radiacao ionizante sievert becquerel datacao por carbono medicina nuclear" href="explore/what-is-radioactivity.html?lang=pt-BR">
+      <div class="ex-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><ellipse cx="10" cy="10" rx="8" ry="3.4" stroke="currentColor" stroke-width="1.2" opacity=".55"/><circle cx="10" cy="10" r="2.4" fill="currentColor"/><circle cx="16.4" cy="6.6" r="1.3" fill="currentColor" opacity=".8"/><circle cx="4.6" cy="14" r="1.1" fill="currentColor" opacity=".55"/></svg></div>
+      <div class="ex-card-body">
+        <div class="ex-card-kicker">conceitos</div>
+        <div class="ex-card-title">O que é Radioatividade</div>
+        <div class="ex-card-desc">Como átomos instáveis decaem — Becquerel, Marie Curie, radiações alfa, beta e gama, e meia-vida.</div>
+      </div>
+    </a>
+
+    <a class="ex-card" data-cat="conceitos" data-search="ligacao quimica ionica covalente metalica regra do octeto eletrons de valencia configuracao eletronica eletronegatividade polaridade ligacao covalente polar estrutura molecular vsepr lewis agua cloreto de sodio metano forcas intermoleculares ligacao de hidrogenio" href="explore/what-is-chemical-bonding.html?lang=pt-BR">
+      <div class="ex-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="5.5" cy="10" r="3" fill="currentColor" opacity=".9"/><circle cx="14.5" cy="10" r="3" fill="currentColor" opacity=".55"/><line x1="8.5" y1="10" x2="11.5" y2="10" stroke="currentColor" stroke-width="1.7"/></svg></div>
+      <div class="ex-card-body">
+        <div class="ex-card-kicker">conceitos</div>
+        <div class="ex-card-title">O que é Ligação Química</div>
+        <div class="ex-card-desc">Por que os átomos se ligam e como os elétrons formam ligações iônicas, covalentes e metálicas — a cola de toda a matéria.</div>
+      </div>
+    </a>
+
+    <a class="ex-card" data-cat="historia seguranca" data-search="chernobyl desastre reator rbmk explosao 1986 contaminacao radioativa zona de exclusao pripyat liquidadores sarcofago cesio-137 iodo-131 estroncio-90 seguranca nuclear ucrânia uniao sovietica fusao radiacao precipitacao radioativa" href="explore/chernobyl-disaster.html?lang=pt-BR">
+      <div class="ex-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><g fill="currentColor" opacity=".85"><polygon points="10,2.8 7.7,8.2 12.3,8.2"/><polygon points="10,2.8 7.7,8.2 12.3,8.2" transform="rotate(120 10 10)"/><polygon points="10,2.8 7.7,8.2 12.3,8.2" transform="rotate(240 10 10)"/></g><circle cx="10" cy="10" r="1.8" fill="currentColor"/></svg></div>
+      <div class="ex-card-body">
+        <div class="ex-card-kicker">história · segurança</div>
+        <div class="ex-card-title">O Desastre de Chernobyl</div>
+        <div class="ex-card-desc">O reator RBMK falho, a explosão de 1986 e a precipitação radioativa que reformulou a segurança nuclear.</div>
+      </div>
+    </a>
+
+    <a class="ex-card" data-cat="historia seguranca" data-search="bhopal isocianato de metila mic union carbide acidente desastre tragedia madre teresa calcuta 1984 seguranca quimica industrial india" href="explore/bhopal-disaster.html?lang=pt-BR">
       <div class="ex-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2l8 14H2L10 2z" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linejoin="round"/><line x1="10" y1="8" x2="10" y2="12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="10" cy="14" r=".9" fill="currentColor"/></svg></div>
       <div class="ex-card-body">
         <div class="ex-card-kicker">história · segurança</div>
@@ -726,7 +774,7 @@
       </div>
     </a>
 
-    <a class="ex-card" data-cat="conceitos" data-search="tabela periodica elementos quimicos mendeleev moseley numero atomico periodos grupos blocos tendencias periodicas lei periodica configuracao eletronica" href="explore/what-is-the-periodic-table?lang=pt-BR">
+    <a class="ex-card" data-cat="conceitos" data-search="tabela periodica elementos quimicos mendeleev moseley numero atomico periodos grupos blocos tendencias periodicas lei periodica configuracao eletronica" href="explore/what-is-the-periodic-table.html?lang=pt-BR">
       <div class="ex-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="1.5" y="1.5" width="7" height="7" rx="1.5" fill="currentColor" opacity=".9"/><rect x="11.5" y="1.5" width="7" height="7" rx="1.5" fill="currentColor" opacity=".5"/><rect x="1.5" y="11.5" width="7" height="7" rx="1.5" fill="currentColor" opacity=".5"/><rect x="11.5" y="11.5" width="7" height="7" rx="1.5" fill="currentColor" opacity=".3"/></svg></div>
       <div class="ex-card-body">
         <div class="ex-card-kicker">conceitos</div>
@@ -735,7 +783,7 @@
       </div>
     </a>
 
-    <a class="ex-card" data-cat="conceitos" data-search="isomeria isomeros isomeria plana constitucional cadeia posicao funcao metameria tautomeria estereoisomeria espacial geometrica cis trans optica quiralidade enantiomeros quimica organica" href="explore/what-is-isomerism?lang=pt-BR">
+    <a class="ex-card" data-cat="conceitos" data-search="isomeria isomeros isomeria plana constitucional cadeia posicao funcao metameria tautomeria estereoisomeria espacial geometrica cis trans optica quiralidade enantiomeros quimica organica" href="explore/what-is-isomerism.html?lang=pt-BR">
       <div class="ex-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="5" cy="10" r="2.5" fill="currentColor" opacity=".85"/><circle cx="15" cy="10" r="2.5" fill="currentColor" opacity=".85"/><line x1="10" y1="1" x2="10" y2="19" stroke="currentColor" stroke-width="1" stroke-dasharray="2,1.5" opacity=".5"/></svg></div>
       <div class="ex-card-body">
         <div class="ex-card-kicker">conceitos</div>
@@ -950,7 +998,7 @@
 </script>
 
 <script type="text/javascript">
-    atomurusRunAutoTag({
+    (window.atomurusRunAutoTag||function(){})({
         zoneId: 'o42jwt5vja',
     });
 </script>

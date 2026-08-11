@@ -71,9 +71,9 @@
     if (kicker) kicker.textContent = W.element + ' ' + el.z + ' · ' + cat;
 
     // Update BOTH the visible H1 (.lc-el-name) and the legacy hidden mirror
-    // (.wrap h1). The previous version only queried `.wrap h1` (hidden), so
-    // the visible title never changed when the language toggled.
-    document.querySelectorAll('.lc-el-name, .wrap h1').forEach(function (h1) {
+    // (.wrap .el-mirror-name). The previous version only queried `.wrap h1`
+    // (hidden), so the visible title never changed when the language toggled.
+    document.querySelectorAll('.lc-el-name, .wrap .el-mirror-name').forEach(function (h1) {
       // h1 structure: "<name> <span>SYM</span>" — replace the first non-empty
       // text node and keep the symbol span intact.
       var replaced = false;

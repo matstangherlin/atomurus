@@ -64,6 +64,7 @@
       geoUSD: 'International pricing',
       periodMonthly: 'Monthly',
       periodAnnual: 'Annual',
+      asideLogin: 'Login',
       billedMonthly: 'billed monthly',
       billedAnnual: 'billed annually',
       trialBadge: '1 month of Pro free on every new account',
@@ -128,6 +129,7 @@
       geoUSD: 'preço internacional',
       periodMonthly: 'Mensal',
       periodAnnual: 'Anual',
+      asideLogin: 'Entrar',
       billedMonthly: 'cobrado por mês',
       billedAnnual: 'cobrado por ano',
       trialBadge: '1 mês de Pro grátis em toda conta nova',
@@ -267,6 +269,8 @@
       button.classList.toggle('active', button.getAttribute('data-currency') === currency);
     });
     document.querySelectorAll('[data-period]').forEach(function (button) {
+      var label = button.getAttribute('data-period') === 'monthly' ? t('periodMonthly') : t('periodAnnual');
+      if (button.textContent !== label) button.textContent = label;
       button.classList.toggle('active', button.getAttribute('data-period') === period);
     });
   }
@@ -301,7 +305,7 @@
       asidePrimary.href = state.signedIn ? '/app' : '/signup';
     }
     if (asideSecondary) {
-      asideSecondary.textContent = state.signedIn ? ('→ ' + t('signedIn') + displayName(user)) : '→ Login';
+      asideSecondary.textContent = state.signedIn ? ('→ ' + t('signedIn') + displayName(user)) : ('→ ' + t('asideLogin'));
       asideSecondary.href = state.signedIn ? '/app' : '/login';
     }
     [monthlyCta, annualCta].forEach(function (button) {

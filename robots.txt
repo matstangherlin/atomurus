@@ -1,5 +1,9 @@
 User-agent: *
 Allow: /
 Disallow: /netlify/
+Disallow: /propostas/
+Disallow: /hanzi-logic/
+Disallow: /tools/
+Disallow: /scripts/
 
 Sitemap: https://atomurus.com/sitemap.xml

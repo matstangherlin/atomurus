@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#F0EDE6">
+<title>Atomurus — Lab Clean · Tabela Periódica (protótipo)</title>
+<meta name="description" content="Protótipo da tabela periódica redesenhada: command bar única, chips de filtro e painel lateral de elemento.">
+<meta property="og:title" content="Atomurus — Lab Clean · Tabela Periódica (protótipo)">
+<meta property="og:description" content="Protótipo da tabela periódica redesenhada: command bar única, chips de filtro e painel lateral de elemento.">
+<link rel="icon" href="../../assets/atomurus-logo.png">
+<link rel="stylesheet" href="../../assets/fonts/fonts.css">
+<link rel="stylesheet" href="lab.css">
+<script src="../../elements-data.js" defer></script>
+<script src="lab.js" defer></script>
+</head>
+<body class="app">
+
+  <!-- backdrop para sidebar mobile + drawer -->
+  <div class="sb-overlay"></div>
+
+  <div class="app-shell">
+
+    <!-- ═══ SIDEBAR — simples, dois níveis, colapsável ═══ -->
+    <aside class="sidebar">
+      <a class="sb-brand" href="index.html" title="Voltar ao painel do protótipo">
+        <span class="sb-logo" aria-hidden="true">
+          <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.5" fill="currentColor"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/></svg>
+        </span>
+        <span class="sb-name">Atomurus<small>Lab Clean · protótipo</small></span>
+      </a>
+
+      <div class="sb-group">
+        <div class="sb-label">Laboratório</div>
+        <a class="sb-item active" href="periodic-table.html">
+          <svg class="icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" fill="currentColor" opacity=".9"/><rect x="9" y="1" width="6" height="6" rx="1.5" fill="currentColor" opacity=".5"/><rect x="1" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity=".5"/><rect x="9" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity=".3"/></svg>
+          <span>Tabela Periódica</span>
+          <span class="sb-badge">118</span>
+        </a>
+        <a class="sb-item" href="trends.html">
+          <svg class="icon" viewBox="0 0 16 16" fill="none"><path d="M1 12L4 5l3 4 2-3 3 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+          <span>Visões &amp; tendências</span>
+          <span class="sb-badge">4</span>
+        </a>
+        <a class="sb-item" href="compare.html">
+          <svg class="icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="5" height="10" rx="1.2" stroke="currentColor" stroke-width="1.3" fill="none"/><rect x="10" y="3" width="5" height="10" rx="1.2" stroke="currentColor" stroke-width="1.3" fill="none"/><line x1="6" y1="8" x2="10" y2="8" stroke="currentColor" stroke-width="1.2"/></svg>
+          <span>Comparador</span>
+          <span class="sb-badge">4</span>
+        </a>
+      </div>
+
+      <div class="sb-group">
+        <div class="sb-label">Recursos</div>
+        <a class="sb-item" href="viewer3d.html">
+          <svg class="icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="1.5" fill="currentColor"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/></svg>
+          <span>Visualizador 3D</span>
+        </a>
+        <a class="sb-item" href="../../calculators.html">
+          <svg class="icon" viewBox="0 0 16 16" fill="none"><rect x="2" y="1" width="12" height="14" rx="2" stroke="currentColor" stroke-width="1.3" fill="none"/><line x1="5" y1="5" x2="11" y2="5" stroke="currentColor" stroke-width="1.1"/><line x1="5" y1="8" x2="11" y2="8" stroke="currentColor" stroke-width="1"/><line x1="5" y1="11" x2="9" y2="11" stroke="currentColor" stroke-width="1"/></svg>
+          <span>Calculadoras</span>
+        </a>
+        <a class="sb-item" href="../../explore.html">
+          <svg class="icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.3" stroke="currentColor" stroke-width="1.1" fill="none"/><rect x="9" y="1" width="6" height="6" rx="1.3" stroke="currentColor" stroke-width="1.1" fill="none"/><rect x="1" y="9" width="6" height="6" rx="1.3" stroke="currentColor" stroke-width="1.1" fill="none"/><circle cx="12" cy="12" r="2.6" stroke="currentColor" stroke-width="1.3" fill="none"/><line x1="14" y1="14" x2="15.5" y2="15.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          <span>Explorar</span>
+        </a>
+      </div>
+
+      <div class="sb-foot">
+        <a class="sb-item" href="../../config.html">
+          <svg class="icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.2" stroke="currentColor" stroke-width="1.3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M2.93 2.93l1.06 1.06M12.01 12.01l1.06 1.06M2.93 13.07l1.06-1.06M12.01 3.99l1.06-1.06" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          <span>Configurações</span>
+        </a>
+        <button class="sb-item" id="sb-rail-btn" title="Recolher sidebar">
+          <svg class="icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.3" fill="none"/><line x1="10" y1="2" x2="10" y2="14" stroke="currentColor" stroke-width="1.2"/><path d="M6.5 6l-2 2 2 2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Recolher</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ═══ MAIN ═══ -->
+    <div class="main">
+
+      <!-- COMMAND BAR — a única barra de ações -->
+      <div class="commandbar">
+        <button class="icon-btn" id="sb-menu-btn" aria-label="Abrir menu">
+          <svg class="icon" viewBox="0 0 16 16" fill="none"><line x1="2" y1="4.5" x2="14" y2="4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="2" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="2" y1="11.5" x2="14" y2="11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </button>
+
+        <div class="cb-title">Tabela Periódica<small>118 elementos · IUPAC 2024</small></div>
+
+        <div class="cb-search">
+          <svg class="icon" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.4"/><line x1="10.5" y1="10.5" x2="14" y2="14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          <input id="search-input" type="text" placeholder="Buscar elemento (nome, símbolo ou Z)…" autocomplete="off">
+          <kbd>/</kbd>
+        </div>
+
+        <div class="cb-spacer"></div>
+
+        <!-- Visão -->
+        <div class="dropdown">
+          <button class="cb-seg dd-trigger" aria-label="Mudar visão da tabela" title="Visão da tabela">
+            <span class="dd-label-view" id="view-label" style="padding:5px 10px;display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600">
+              <svg class="icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.2" fill="currentColor" opacity=".85"/><rect x="9" y="1" width="6" height="6" rx="1.2" fill="currentColor" opacity=".5"/><rect x="1" y="9" width="6" height="6" rx="1.2" fill="currentColor" opacity=".5"/><rect x="9" y="9" width="6" height="6" rx="1.2" fill="currentColor" opacity=".3"/></svg>
+              <b id="view-label-text">Categoria</b>
+              <svg class="icon" viewBox="0 0 12 12" fill="none" style="width:11px;height:11px"><path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </button>
+          <div class="dropdown-menu">
+            <div class="dd-label">Colorir a tabela por</div>
+            <button class="dd-item active" data-view="category">
+              <svg class="icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.2" fill="currentColor" opacity=".85"/><rect x="9" y="1" width="6" height="6" rx="1.2" fill="currentColor" opacity=".5"/><rect x="1" y="9" width="6" height="6" rx="1.2" fill="currentColor" opacity=".5"/><rect x="9" y="9" width="6" height="6" rx="1.2" fill="currentColor" opacity=".3"/></svg>
+              Categoria <small style="margin-left:auto">famílias</small>
+            </button>
+            <div class="dd-sep"></div>
+            <div class="dd-label">Mapa de calor</div>
+            <button class="dd-item" data-view="heatmap" data-heat="electronegativity">
+              <svg class="icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="5" width="11" height="3" rx="1" fill="currentColor" opacity=".3"/><rect x="1" y="2" width="11" height="3" rx="1" fill="currentColor" opacity=".6"/><rect x="1" y="8" width="11" height="3" rx="1" fill="currentColor" opacity=".15"/></svg>
+              Eletronegatividade
+            </button>
+            <button class="dd-item" data-view="heatmap" data-heat="atomic_radius">
+              <svg class="icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="3.2" stroke="currentColor" stroke-width="1.2" opacity=".6"/><circle cx="8" cy="8" r="1" fill="currentColor"/></svg>
+              Raio atômico
+            </button>
+            <button class="dd-item" data-view="heatmap" data-heat="ionization">
+              <svg class="icon" viewBox="0 0 16 16" fill="none"><path d="M8 2v4M5 5l2.5 2L10 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 12h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+              Energia de ionização
+            </button>
+          </div>
+        </div>
+
+        <!-- Exportar -->
+        <div class="dropdown">
+          <button class="icon-btn dd-trigger" aria-label="Exportar tabela" title="Exportar">
+            <svg class="icon" viewBox="0 0 16 16" fill="none"><line x1="8" y1="1.5" x2="8" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3.5 7l4.5 4.5L12.5 7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="1.5" y1="14" x2="14.5" y2="14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          </button>
+          <div class="dropdown-menu">
+            <div class="dd-label">Exportar tabela</div>
+            <button class="dd-item"><svg class="icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="11" height="8.5" rx="1.5" stroke="currentColor" stroke-width="1.3" fill="none"/><path d="M1 7l3-3 2.5 2.5L9 4l3 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg> Imagem PNG <small style="margin-left:auto">claro</small></button>
+            <button class="dd-item"><svg class="icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="11" height="8.5" rx="1.5" stroke="currentColor" stroke-width="1.3" fill="none"/><path d="M1 7l3-3 2.5 2.5L9 4l3 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg> Imagem PNG <small style="margin-left:auto">escuro</small></button>
+            <div class="dd-sep"></div>
+            <button class="dd-item"><svg class="icon" viewBox="0 0 16 16" fill="none"><rect x="2" y="1" width="9" height="13" rx="1.4" stroke="currentColor" stroke-width="1.3" fill="none"/><path d="M5 1v4h6" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/><line x1="4.5" y1="8" x2="9.5" y2="8" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/><line x1="4.5" y1="10.5" x2="8" y2="10.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg> PDF A4 <small style="margin-left:auto">impressão</small></button>
+            <button class="dd-item"><svg class="icon" viewBox="0 0 16 16" fill="none"><rect x="2" y="1" width="9" height="13" rx="1.4" stroke="currentColor" stroke-width="1.3" fill="none"/><path d="M5 1v4h6" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/><line x1="4.5" y1="8" x2="9.5" y2="8" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/><line x1="4.5" y1="10.5" x2="8" y2="10.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg> PDF A3 <small style="margin-left:auto">pôster</small></button>
+          </div>
+        </div>
+
+        <!-- Modo foco -->
+        <button class="icon-btn" id="focus-btn" aria-label="Modo foco" title="Modo foco — somente a tabela">
+          <svg class="icon" viewBox="0 0 16 16" fill="none"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+
+        <!-- Tema -->
+        <button class="icon-btn" id="theme-fab" aria-label="Alternar tema" title="Tema claro/escuro">
+          <svg class="icon" viewBox="0 0 16 16" fill="none"><path d="M8 1v1M8 14v1M1 8H0M16 8h-1M2.9 2.9l.7.7M12.4 12.4l.7.7M2.9 13.1l.7-.7M12.4 3.6l.7-.7M8 5a3 3 0 1 0 0 6 3 3 0 0 0 0-6z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <!-- CONTEÚDO -->
+      <div class="content">
+
+        <div class="page-head">
+          <div class="eyebrow">Laboratório · módulo principal</div>
+          <h1>Os 118 elementos da matéria</h1>
+          <p>Selecione um elemento para ver propriedades, modelo atômico e aplicações. Use os chips para filtrar por família.</p>
+        </div>
+
+        <!-- Chips de filtro (legenda compacta) -->
+        <div class="chips" id="chips"></div>
+        <button class="chips-collapse" id="chips-collapse" title="Mostrar/ocultar filtros">
+          <svg class="icon" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M5 8h6M7.5 12h1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Filtros
+        </button>
+
+        <!-- Trilha de comparação -->
+        <div class="pin-strip" id="pin-strip">
+          <span class="ps-title">Comparar:</span>
+          <span id="pin-list" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"></span>
+          <button class="btn sm primary ps-go" id="pin-go" style="display:none">Comparar →</button>
+        </div>
+
+        <!-- Palco da tabela -->
+        <div class="ptable-stage">
+          <div class="ptable-scroll">
+            <div id="ptable" style="display:flex;flex-direction:column;gap:8px;align-items:center"></div>
+          </div>
+
+          <div class="ptable-foot">
+            <span>elementos <b class="f-count">118 / 118</b></span>
+            <span class="sep"></span>
+            <span>filtro <b class="f-filter">todas</b></span>
+            <span class="sep"></span>
+            <span>selecionado <b class="f-selected">—</b></span>
+            <span class="sep"></span>
+            <span>grp <b>1–18</b> · prd <b>1–7</b></span>
+            <div class="f-right">
+              <span class="f-hint">Dica: <b>clique</b> no elemento · <b>/</b> para buscar · <b>Esc</b> fecha o painel</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ DRAWER DO ELEMENTO — contexto sem perder a tabela ═══ -->
+  <div class="drawer-backdrop"></div>
+  <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Detalhes do elemento">
+    <div class="drawer-head">
+      <div class="dw-badge" id="dw-badge">
+        <span class="dz" id="dw-z">006</span>
+        <span class="dsym" id="dw-sym">C</span>
+        <span class="dname" id="dw-name">Carbono</span>
+      </div>
+      <div class="dw-info">
+        <h2 id="dw-name-lg">Carbono</h2>
+        <span class="dw-cat" id="dw-cat">Poliatômicos</span>
+        <div class="dw-nav-arrows" style="margin-top:10px">
+          <button class="icon-btn" id="dw-prev" aria-label="Elemento anterior" title="Anterior">
+            <svg class="icon" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <span id="dw-pos">006 / 118</span>
+          <button class="icon-btn" id="dw-next" aria-label="Próximo elemento" title="Próximo">
+            <svg class="icon" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+      <button class="dw-close" id="dw-close" aria-label="Fechar painel">
+        <svg class="icon" viewBox="0 0 16 16" fill="none"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <nav class="drawer-nav" aria-label="Abas do elemento">
+      <button class="dw-tab active" data-panel="dw-panel-overview">Visão geral</button>
+      <button class="dw-tab" data-panel="dw-panel-props">Propriedades</button>
+      <button class="dw-tab" data-panel="dw-panel-model">Modelo atômico</button>
+      <button class="dw-tab" data-panel="dw-panel-uses">Aplicações</button>
+    </nav>
+
+    <div class="drawer-body">
+      <!-- Visão geral -->
+      <div class="dw-panel active" id="dw-panel-overview">
+        <p class="dw-desc" id="ov-desc">—</p>
+
+        <div class="dw-section-title">Dados essenciais</div>
+        <div class="prop-grid">
+          <div class="prop"><div class="pk">Massa atômica</div><div class="pv mono" id="ov-mass">—</div></div>
+          <div class="prop"><div class="pk">Eletronegatividade</div><div class="pv mono" id="ov-en">—</div></div>
+          <div class="prop"><div class="pk">Estado a 298 K</div><div class="pv" id="ov-state">—</div></div>
+          <div class="prop"><div class="pk">Grupo / Período</div><div class="pv mono" id="ov-gp">—</div></div>
+        </div>
+
+        <div class="dw-section-title">Descoberta</div>
+        <div class="prop-grid">
+          <div class="prop"><div class="pk">Ano</div><div class="pv mono" id="ov-year">—</div></div>
+          <div class="prop"><div class="pk">Descoberto por</div><div class="pv" id="ov-disc">—</div></div>
+        </div>
+      </div>
+
+      <!-- Propriedades -->
+      <div class="dw-panel" id="dw-panel-props">
+        <div class="prop-grid">
+          <div class="prop"><div class="pk">Estado físico</div><div class="pv" id="pr-state">—</div></div>
+          <div class="prop"><div class="pk">Eletronegatividade</div><div class="pv mono" id="pr-en">—</div></div>
+          <div class="prop"><div class="pk">Grupo</div><div class="pv mono" id="pr-group">—</div></div>
+          <div class="prop"><div class="pk">Período</div><div class="pv mono" id="pr-period">—</div></div>
+          <div class="prop full"><div class="pk">Configuração eletrônica (camadas)</div><div class="pv mono" id="pr-config">—</div></div>
+          <div class="prop full"><div class="pk">Família</div><div class="pv" id="pr-cat">—</div></div>
+        </div>
+      </div>
+
+      <!-- Modelo atômico -->
+      <div class="dw-panel" id="dw-panel-model">
+        <div class="dw-section-title">Modelo de Bohr</div>
+        <div class="bohr-wrap"><span id="bohr-svg"></span></div>
+        <p class="dw-desc" style="margin-top:12px">
+          Distribuição em camadas calculada a partir do número atômico. O núcleo contém
+          <b id="model-nucleus">—</b> prótons; cada camada comporta até 2, 8, 18, 32 elétrons.
+        </p>
+      </div>
+
+      <!-- Aplicações -->
+      <div class="dw-panel" id="dw-panel-uses">
+        <div class="dw-section-title">Onde aparece</div>
+        <p class="dw-desc" id="uses-text">—</p>
+        <div class="dw-section-title">Em uma frase</div>
+        <p class="dw-desc" id="uses-desc">—</p>
+      </div>
+    </div>
+
+    <!-- barra de ações fixa -->
+    <div class="drawer-sticky">
+      <button class="btn" id="dw-pin">
+        <svg class="icon" viewBox="0 0 16 16" fill="none"><path d="M13 4l-1.5-1.5a1 1 0 0 0-1.4 0L8.8 3.8 4.6 8 3 11l3-1.5 4.2-4.3 1.3-1.3a1 1 0 0 0 0-1.4z" fill="currentColor"/><path d="M5 13h6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        <span id="dw-pin-label">Fixar para comparar</span>
+      </button>
+      <button class="btn primary" id="dw-compare" style="display:none">Comparar <b id="dw-cmp-count">0</b> →</button>
+      <span class="ds-spacer"></span>
+      <a class="btn ghost" id="dw-3d" href="viewer3d.html" title="Abrir modelo 3D">3D</a>
+    </div>
+  </aside>
+
+</body>
+</html>
