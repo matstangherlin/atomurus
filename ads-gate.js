@@ -20,7 +20,7 @@
   var ADCASH_SRC = 'https://acscdn.com/script/aclib.js';
   var ADSENSE_SRC =
     'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9495821870733084';
-  var DEFAULT_ZONE = 'm6nczy4t6b';
+  var DEFAULT_ZONE = '6p1sooifu8';
   var ADCASH_IDLE_MS = 3500;
 
   var state = {
