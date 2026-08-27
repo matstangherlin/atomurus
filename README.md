@@ -8,7 +8,7 @@ Atomurus is a static chemistry site published on Netlify. The project mixes hand
 - The Netlify build runs `bump-version.js` and `build-i18n.js`, plus the helper scripts in `tools/`.
 - Runtime translations are handled by `i18n.js`.
 - Element pages use `elements-data.js`, `elements-data-en.js`, `element-page.js` and generated chunks in `assets/element-content/`.
-- Authentication and contact endpoints live under `netlify/functions/`.
+- Authentication uses **Supabase Auth** through Netlify Functions. The browser API is `auth-client.js` (`window.AtomurusAuth`). See `SUPABASE-SETUP.md`.
 
 ## Build Flow
 
@@ -23,7 +23,7 @@ Netlify runs the same flow through [`netlify.toml`](netlify.toml).
 
 - `npm run build` regenerates derived artifacts.
 - `npm run validate` checks deploy guards, generated PT variants, chunk output and required docs.
-- `npm run ci` runs build + validation together.
+- `npm run ci` runs build, auth/plan/billing tests, and validation.
 
 ## Language Model
 

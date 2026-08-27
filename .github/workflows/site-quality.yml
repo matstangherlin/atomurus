@@ -25,5 +25,8 @@ jobs:
       - name: Build generated artifacts
         run: npm run build
 
+      - name: Run unit tests
+        run: npm run test:plan && npm run test:auth && npm run test:billing
+
       - name: Validate site
         run: npm run validate

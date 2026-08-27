@@ -1,18 +1,18 @@
-# Supabase setup for Atomurus
+# Atomurus setup for Supabase Auth
 
-Atomurus can use **Supabase Auth** for email/password accounts. When `SUPABASE_URL` and `SUPABASE_ANON_KEY` are set in Netlify, the site automatically switches from Netlify Identity to Supabase.
+Atomurus uses **Supabase Auth** as the only authentication backend. Netlify hosts the site and runs Functions; it does not decide who is signed in.
 
-Set `AUTH_PROVIDER=supabase` to force Supabase, or `AUTH_PROVIDER=netlify-identity` to keep Identity even if Supabase vars exist.
+Set `SUPABASE_URL` and `SUPABASE_ANON_KEY` in Netlify (and in local `.env` for `netlify dev`). The service role key stays server-only.
 
 ## 1. Create the Supabase project
 
 1. Create a project at [supabase.com](https://supabase.com).
 2. Copy **Project URL** and **anon public key** from **Project Settings → API**.
-3. Keep the **service role key** server-only (billing webhooks later). Auth functions use only the anon key.
+3. Keep the **service role key** in Netlify Functions only. Never put it in HTML, `auth-client.js`, or any browser script.
 
 ## 2. Repo + local CLI
 
-The repo now includes `supabase/config.toml` and these scripts:
+The repo includes `supabase/config.toml` and these scripts:
 
 - `npm run supabase:start`
 - `npm run supabase:stop`
@@ -28,9 +28,9 @@ In **Site configuration → Environment variables** (and in local `.env` for `ne
 |----------|----------|-------|
 | `SUPABASE_URL` | Yes | `https://xxxx.supabase.co` |
 | `SUPABASE_ANON_KEY` | Yes | Public anon key |
-| `SUPABASE_SERVICE_ROLE_KEY` | Yes for username login | Server-only key used to reserve unique usernames and resolve username login |
-| `AUTH_PROVIDER` | No | `supabase` or `netlify-identity` |
+| `SUPABASE_SERVICE_ROLE_KEY` | Yes for username login and billing metadata | Server-only |
 | `AUTH_SITE_URL` | No | Canonical site URL for email redirects (`https://atomurus.com`) |
+| `AUTH_PASSWORD_REDIRECT` | No | Password recovery landing URL (`https://atomurus.com/reset-password`) |
 | `AUTH_ALLOWED_ORIGINS` | No | Comma-separated extra origins for CORS checks |
 | `ALLOWED_ORIGIN` | No | Legacy single-origin allowlist |
 
@@ -39,78 +39,78 @@ In **Site configuration → Environment variables** (and in local `.env` for `ne
 1. **Authentication → Providers → Email**: enable email signups.
 2. **Authentication → URL configuration**:
    - Site URL: `https://atomurus.com`
-   - Redirect URLs: `https://atomurus.com/login`, `http://localhost:8888/login`
-3. **Authentication → Email templates** (optional): confirmation/recovery links can use `{{ .SiteURL }}/login?token_hash={{ .TokenHash }}&type=signup` (or recovery).
+   - Redirect URLs: `https://atomurus.com/login`, `https://atomurus.com/reset-password`, `http://localhost:8888/login`, `http://localhost:8888/reset-password`
+3. **Authentication → Email templates**: prefer `token_hash` links:
+   - Confirm: `{{ .SiteURL }}/login?token_hash={{ .TokenHash }}&type=signup`
+   - Recovery: `{{ .SiteURL }}/reset-password?token_hash={{ .TokenHash }}&type=recovery`
 
-The frontend accepts:
-
-- Netlify Identity: `#confirmation_token`, `#recovery_token`
-- Supabase: `?token_hash=...&type=signup|recovery` (query or hash)
+The frontend also accepts implicit hash callbacks (`#access_token` + `#refresh_token`) and exchanges them through `POST /api/auth/establish` so tokens become HttpOnly cookies.
 
 ## 5. Database schema
 
-Run `supabase/migrations/001_profiles.sql` and `supabase/migrations/002_profile_identity.sql` in the Supabase SQL editor (or via Supabase CLI).
+Run the SQL in `supabase/migrations/` (or `npm run supabase:db:push`):
 
-This creates:
+- `001_profiles.sql` — profiles + study items + RLS
+- `002_profile_identity.sql` — username / full name
+- `003_profiles_insert_own.sql` — self-insert policy
+- `004_rls_with_check.sql` — update policies with `WITH CHECK`
 
-- `profiles` — one row per user, auto trial end (+30 days)
-- `profiles.username` — unique public login name
-- `profiles.full_name` — full natural name from signup
-- `study_items` — favorites/history (Pro workspace, next step)
-- RLS policies so users only read/write their own rows
-- Trigger `on_auth_user_created` after signup
+RLS keeps `user A` from reading or writing `user B` rows even if someone calls PostgREST directly with a user JWT.
 
-## 6. Routes (unchanged API surface)
+## 6. Routes
 
-- `POST /api/auth/signup` — create account with full name, username, email and password
-- `POST /api/auth/login` — accepts email or username
+Public:
+
+- `/login`
+- `/signup`
+- `/forgot-password`
+- `/reset-password`
+
+Protected (HTML stays hidden until `/api/auth/me` succeeds):
+
+- `/app`
+
+API:
+
+- `POST /api/auth/signup`
+- `POST /api/auth/login` — email or username
 - `GET /api/auth/me`
 - `POST /api/auth/refresh`
 - `POST /api/auth/logout`
 - `POST /api/auth/recover`
 - `POST /api/auth/reset`
 - `POST /api/auth/confirm`
+- `POST /api/auth/establish`
 - `GET /api/private/dashboard`
 
-Supabase sessions use HttpOnly cookies:
+The browser talks to these Functions through `auth-client.js` (`window.AtomurusAuth`). Pages should call `auth.getCurrentUser()` / `auth.getSession()`, not Supabase or cookies directly.
+
+Sessions use HttpOnly cookies:
 
 - Production: `__Host-atm_access`, `__Host-atm_refresh`
-- Local dev: `atm_access`, `atm_refresh`
+- Local `netlify dev`: `atm_access`, `atm_refresh`
 
 ## 7. Plans & billing metadata
 
 Trial and Pro logic live in `netlify/lib/plan-access.mjs`.
 
-Stripe webhook sync writes **app metadata** in Supabase. The expected shape is:
-
-```json
-{
-  "atomurus_plan": "paid",
-  "subscription_status": "active",
-  "subscription_interval": "annual",
-  "subscription_currency": "usd",
-  "atomurus_plan_key": "pro_annual_usd",
-  "stripe_customer_id": "cus_123",
-  "stripe_subscription_id": "sub_123"
-}
-```
-
-Use the service role key only in server-side webhook functions — never in the browser.
+Stripe webhook sync writes **app metadata** in Supabase. Use the service role key only in server-side webhook functions.
 
 ## 8. Smoke test
 
 1. Set env vars and deploy (or `netlify dev`).
 2. Open `/login` → **Create account**.
-3. Confirm email if required; link should land on `/login` and redirect to `/app`.
+3. Confirm email if required; the link should land on `/login` and enter `/app`.
 4. Reload `/app` — session should persist.
-5. Test **Forgot password** → set new password → sign in.
-6. Open `/pricing` and confirm trial/Pro badges on `/app`.
-7. Pro users: ads off via `/api/ads-config`.
+5. Open `/app` in a new tab — still signed in.
+6. Test **Forgot password** → `/reset-password` → new password → workspace.
+7. Logout, then click Back — `/app` must not show the private workspace.
+8. Open `/pricing` and confirm trial/Pro badges on `/app`.
+
+Automated coverage: `npm run test:auth`.
 
 ## 9. Migration from Netlify Identity
 
-- Existing Identity users do **not** migrate automatically.
-- For a clean cutover: enable Supabase vars, deploy, and ask new signups to use Supabase.
-- Or keep `AUTH_PROVIDER=netlify-identity` until you export users and import into Supabase.
+Netlify Identity is no longer a supported auth backend in this repo. Existing Identity users do not migrate automatically; they need a Supabase account.
 
-See also: `NETLIFY-IDENTITY-SETUP.md`, `BILLING.md`.
+See also: `BILLING.md`.
