@@ -30,6 +30,11 @@ export function isAuthConfigError(error) {
   return error?.name === 'MissingIdentityError' || error?.code === 'auth_not_configured';
 }
 
+function isRejectedSession(error) {
+  const status = Number(error?.status || 0);
+  return status >= 400 && status < 500;
+}
+
 function normalizeIdentityUser(user) {
   if (!user) return null;
   return {
@@ -103,7 +108,22 @@ export async function authLogin(identifier, password) {
 
 export async function authSession(request) {
   if (authProviderName() === 'supabase') {
-    return supabaseSessionFromRequest(request);
+    const tokens = readSessionTokens(request);
+    try {
+      const session = await supabaseSessionFromRequest(request);
+      if (session?.user) return session;
+      return {
+        user: null,
+        cookieHeaders: (tokens.accessToken || tokens.refreshToken)
+          ? clearSessionCookieHeaders()
+          : (session?.cookieHeaders || [])
+      };
+    } catch (err) {
+      if (isRejectedSession(err)) {
+        return { user: null, cookieHeaders: clearSessionCookieHeaders() };
+      }
+      throw err;
+    }
   }
 
   try {
@@ -119,10 +139,28 @@ export async function authSession(request) {
 export async function authRefresh(request) {
   if (authProviderName() === 'supabase') {
     const { accessToken, refreshToken } = readSessionTokens(request);
-    const refreshed = await supabaseRefresh(refreshToken);
-    if (refreshed) return refreshed;
-    const user = await supabaseGetUser(accessToken);
-    return user ? { user, cookieHeaders: [] } : null;
+    let refreshed = null;
+
+    if (refreshToken) {
+      try {
+        refreshed = await supabaseRefresh(refreshToken);
+      } catch (err) {
+        if (!isRejectedSession(err)) throw err;
+      }
+    }
+    if (refreshed?.user) return refreshed;
+
+    let user = null;
+    if (accessToken) {
+      try {
+        user = await supabaseGetUser(accessToken);
+      } catch (err) {
+        if (!isRejectedSession(err)) throw err;
+      }
+    }
+    if (user) return { user, cookieHeaders: [] };
+
+    return { user: null, cookieHeaders: clearSessionCookieHeaders() };
   }
 
   try {
