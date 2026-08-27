@@ -63,10 +63,10 @@ export default async function handler(request) {
   } catch (err) {
     const status = statusFromError(err, 500);
     if (isAuthConfigError(err) || status >= 500) {
-      console.error('[auth-login] Auth request failed:', err.message);
+      console.error('[auth-login] Auth provider request failed:', err.message);
       return json(500, { ok: false, error: 'Authentication unavailable' });
     }
-    console.warn(`[auth-login] Rejected login for ${identifierRaw} from ${ip}: ${status}`);
+    console.warn(`[auth-login] Rejected credential attempt from ${ip}: ${status}`);
     return json(401, { ok: false, error: 'Invalid email or password' });
   }
 }
