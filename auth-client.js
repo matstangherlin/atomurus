@@ -252,13 +252,19 @@
 
   async function requireSession(options) {
     options = options || {};
-    var snapshot = await getSession();
+    var snapshot;
+    try {
+      snapshot = await getSession();
+    } catch (err) {
+      if (err.status === 0 || err.code === 'network' || err.status >= 500) throw err;
+      snapshot = { ready: true, signedIn: false, user: null, error: err.code || null };
+    }
     if (!snapshot.signedIn) {
       if (options.redirect !== false) redirectToLogin(options.next);
-      var err = new Error('Sign in required');
-      err.status = 401;
-      err.code = 'session_expired';
-      throw err;
+      var missing = new Error('Sign in required');
+      missing.status = 401;
+      missing.code = 'session_expired';
+      throw missing;
     }
     return snapshot;
   }

@@ -142,7 +142,8 @@
     var error = $('app-error');
     if (loading) loading.style.display = 'none';
     if (error) error.classList.add('show');
-    markReady();
+    document.documentElement.classList.remove('auth-pending');
+    document.documentElement.classList.add('auth-error');
   }
 
   function initLogout() {
@@ -179,7 +180,7 @@
       markReady();
       client.startRefreshTimer();
     } catch (err) {
-      if (err && (err.status === 401 || err.code === 'session_expired')) {
+        if (err && (err.status === 401 || err.status === 404 || err.code === 'session_expired')) {
         client.redirectToLogin('/app');
         return;
       }
