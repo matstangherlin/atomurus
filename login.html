@@ -14,9 +14,9 @@
 <meta name="robots" content="noindex,nofollow">
 <link rel="icon" type="image/png" href="assets/atomurus-logo.png?v=202608041630">
 <link rel="apple-touch-icon" href="assets/atomurus-logo.png?v=202608041630">
-<title>Login â€” Atomurus</title>
+  <title>Login — Atomurus</title>
 <meta name="description" content="Atomurus login and account creation with email and password.">
-<meta property="og:title" content="Login â€” Atomurus">
+<meta property="og:title" content="Login — Atomurus">
 <meta property="og:description" content="Atomurus login and account creation with email and password.">
 <link rel="canonical" href="https://atomurus.com/login">
 <link rel="preload" href="/assets/fonts/inter-tight-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
@@ -25,67 +25,230 @@
 <script src="auth-client.js?v=202608041630"></script>
 <script src="ads-gate.js?v=202608041630"></script>
 <script src="cookie-consent.js?v=202608041630" defer></script>
-<script src="i18n.js?v=202608041630" defer></script>
+<script src="i18n.js?v=202608272240" defer></script>
 <script src="meta-i18n.js?v=202608041630" defer></script>
 <link rel="stylesheet" href="/assets/critical-lab.css?v=202608041630">
-<style>html.lc-loading body{visibility:hidden}</style>
-<script>document.documentElement.classList.add('lc-loading');setTimeout(function(){document.documentElement.classList.remove('lc-loading')},4000);</script>
-<link rel="preload" href="atomurus-lab-console.css?v=202608041630" as="style">
-<link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
-<noscript><link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630"></noscript>
+<link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630">
 <script src="atomurus-mobile-nav.js?v=202608041630" defer></script>
 <style>
-  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+  /* Login must stay readable on the default light cream theme.
+     Hardcoded white/glass text previously vanished on --lc-bg. */
+  *,*::before,*::after { box-sizing: border-box; }
   html, body { min-height: 100vh; }
-  body { display: block; overflow-x: hidden; padding-bottom: 22px; }
-  .auth-shell { width:min(1120px, calc(100% - 32px)); margin:32px auto 20px; display:grid; grid-template-columns:280px minmax(0, 1fr); gap:26px; align-items:start; }
-  .auth-rail, .auth-stage { border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.02); backdrop-filter:blur(10px); }
-  .auth-rail { border-radius:18px; padding:22px 18px; position:sticky; top:18px; }
-  .auth-stage { border-radius:22px; padding:28px; }
-  .auth-rail-kicker { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; color:#d7d3c7; font-size:11px; letter-spacing:.22em; text-transform:uppercase; }
-  .auth-rail-title { font:400 clamp(24px,4vw,34px)/1.02 "Instrument Serif",serif; color:#fff; margin-bottom:12px; }
-  .auth-rail-copy { color:rgba(255,255,255,.72); font-size:14px; line-height:1.65; margin-bottom:18px; }
-  .auth-rail-list { display:grid; gap:10px; margin-bottom:18px; }
-  .auth-rail-stat { border:1px solid rgba(255,255,255,.08); border-radius:14px; padding:12px 13px; }
-  .auth-rail-stat .lbl { display:block; color:#8c877b; font-size:10px; letter-spacing:.2em; text-transform:uppercase; margin-bottom:4px; }
-  .auth-rail-stat .v { color:#f3f0e7; font-size:13px; line-height:1.5; }
-  .auth-rail-links { display:grid; gap:8px; }
-  .auth-rail-links a { color:#d0cbbc; text-decoration:none; font-size:13px; letter-spacing:.04em; }
-  .auth-stage-head { display:flex; gap:16px; justify-content:space-between; align-items:flex-start; margin-bottom:24px; }
-  .auth-stage-kicker { color:#22c97a; font:600 11px/1 "JetBrains Mono",monospace; letter-spacing:.2em; text-transform:uppercase; margin-bottom:10px; }
-  .auth-stage-title { color:#fff; font:400 clamp(34px,6vw,56px)/.95 "Instrument Serif",serif; letter-spacing:-.03em; margin-bottom:10px; }
-  .auth-stage-desc { color:rgba(255,255,255,.72); max-width:640px; font-size:15px; line-height:1.7; }
-  .auth-panel { display:none; }
-  .auth-panel.active { display:block; }
-  .auth-panel h2 { color:#fff; font-size:35px; line-height:1; margin-bottom:12px; }
-  .auth-panel p.auth-panel-copy { color:rgba(255,255,255,.72); font-size:15px; line-height:1.7; margin-bottom:20px; max-width:640px; }
-  .auth-panel .lc-form { max-width:640px; }
-  .auth-inline-actions { display:flex; flex-wrap:wrap; gap:12px; margin:16px 0 4px; align-items:center; }
-  .auth-inline-link { color:#b8b2a3; text-decoration:none; font-size:13px; letter-spacing:.03em; padding-bottom:1px; border-bottom:1px solid rgba(255,255,255,.16); }
-  .auth-inline-link:hover { color:#fff; }
-  .auth-subtle-box { margin-top:18px; border-top:1px solid rgba(255,255,255,.08); padding-top:16px; }
-  .auth-subtle-box .hint { color:#847f73; font-size:11px; letter-spacing:.18em; text-transform:uppercase; margin-bottom:8px; }
-  .auth-subtle-box .actions { display:flex; flex-wrap:wrap; gap:16px; }
-  .auth-subtle-btn { display:inline-flex; align-items:center; gap:8px; color:#d3cebf; text-decoration:none; font-size:13px; }
-  .auth-subtle-btn svg { opacity:.72; }
-  .auth-primary-btn { width:auto; min-width:220px; }
-  .auth-fineprint { color:#847f73; font-size:11px; line-height:1.6; margin-top:10px; }
-  .auth-panel .lc-form .feedback { margin-top:14px; }
+  body { display: block; overflow-x: hidden; padding-bottom: 22px; color: var(--lc-ink, #14120E); background: var(--lc-bg, #F2EFE7); }
+  .auth-shell {
+    width: min(1120px, calc(100% - 32px));
+    margin: 32px auto 20px;
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+    gap: 26px;
+    align-items: start;
+    color: var(--lc-ink, #14120E);
+  }
+  .auth-rail, .auth-stage {
+    border: 1px solid var(--lc-rule, #D8D2BF);
+    background: var(--lc-paper, #F8F5EC);
+    color: var(--lc-ink, #14120E);
+  }
+  .auth-rail { border-radius: 18px; padding: 22px 18px; position: sticky; top: 18px; }
+  .auth-stage { border-radius: 22px; padding: 28px; }
+  .auth-rail-kicker {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+    color: var(--lc-ink-2, #58544A);
+    font-size: 11px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+  }
+  .auth-rail-kicker .pill {
+    font-family: var(--lc-mono, ui-monospace, monospace);
+    font-size: 10px;
+    letter-spacing: .14em;
+    color: var(--lc-green, #1E6A50);
+    border: 1px solid color-mix(in oklab, var(--lc-green, #1E6A50) 40%, var(--lc-rule, #D8D2BF));
+    padding: 3px 8px;
+    border-radius: 999px;
+  }
+  .auth-rail-title {
+    font: 400 clamp(24px, 4vw, 34px)/1.08 "Instrument Serif", Georgia, serif;
+    color: var(--lc-ink, #14120E);
+    margin: 0 0 12px;
+  }
+  .auth-rail-copy {
+    color: var(--lc-ink-2, #58544A);
+    font-size: 14px;
+    line-height: 1.65;
+    margin: 0 0 18px;
+  }
+  .auth-rail-list { display: grid; gap: 10px; margin-bottom: 18px; }
+  .auth-rail-stat {
+    border: 1px solid var(--lc-rule, #D8D2BF);
+    border-radius: 14px;
+    padding: 12px 13px;
+    background: var(--lc-bg, #F2EFE7);
+  }
+  .auth-rail-stat .lbl {
+    display: block;
+    color: var(--lc-ink-2, #58544A);
+    font-size: 10px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .auth-rail-stat .v { color: var(--lc-ink, #14120E); font-size: 13px; line-height: 1.5; }
+  .auth-rail-links { display: grid; gap: 8px; }
+  .auth-rail-links a {
+    color: var(--lc-green, #1E6A50);
+    text-decoration: none;
+    font-size: 13px;
+    letter-spacing: .04em;
+  }
+  .auth-rail-links a:hover { text-decoration: underline; }
+  .auth-stage-head { display: flex; gap: 16px; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+  .auth-stage-kicker {
+    color: var(--lc-green, #1E6A50);
+    font: 600 11px/1 var(--lc-mono, ui-monospace, monospace);
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .auth-stage-title {
+    color: var(--lc-ink, #14120E);
+    font: 400 clamp(34px, 6vw, 56px)/.95 "Instrument Serif", Georgia, serif;
+    letter-spacing: -.03em;
+    margin: 0 0 10px;
+  }
+  .auth-stage-desc {
+    color: var(--lc-ink-2, #58544A);
+    max-width: 640px;
+    font-size: 15px;
+    line-height: 1.7;
+    margin: 0;
+  }
+  .auth-panel { display: none; }
+  .auth-panel.active { display: block; }
+  .auth-panel h2 {
+    color: var(--lc-ink, #14120E);
+    font-size: 32px;
+    line-height: 1.1;
+    margin: 0 0 12px;
+  }
+  .auth-panel p.auth-panel-copy {
+    color: var(--lc-ink-2, #58544A);
+    font-size: 15px;
+    line-height: 1.7;
+    margin: 0 0 20px;
+    max-width: 640px;
+  }
+  .auth-panel .lc-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 8px;
+    max-width: 640px;
+  }
+  .auth-panel .lc-form .field { display: flex; flex-direction: column; gap: 6px; }
+  .auth-panel .lc-form label {
+    font-family: var(--lc-mono, ui-monospace, monospace);
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--lc-ink-2, #58544A);
+  }
+  .auth-panel .lc-form input {
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid var(--lc-rule, #D8D2BF);
+    border-radius: 4px;
+    background: var(--lc-bg, #F2EFE7);
+    color: var(--lc-ink, #14120E);
+    font-family: var(--lc-sans, system-ui, sans-serif);
+    font-size: 15px;
+    width: 100%;
+  }
+  .auth-panel .lc-form input::placeholder { color: var(--lc-ink-3, #8E8978); }
+  .auth-panel .lc-form button[type=submit],
+  .auth-primary-btn {
+    align-self: flex-start;
+    width: auto;
+    min-width: 220px;
+    height: 42px;
+    padding: 0 22px;
+    background: var(--lc-ink, #14120E);
+    border: 1px solid var(--lc-ink, #14120E);
+    color: var(--lc-paper, #F8F5EC);
+    font-family: var(--lc-sans, system-ui, sans-serif);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  [data-theme="dark"] .auth-panel .lc-form button[type=submit],
+  [data-theme="dark"] .auth-primary-btn {
+    background: var(--lc-green, #34A872);
+    border-color: var(--lc-green, #34A872);
+    color: var(--lc-bg, #0E0D0C);
+  }
+  .auth-inline-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0 4px; align-items: center; }
+  .auth-inline-link {
+    color: var(--lc-green, #1E6A50);
+    text-decoration: none;
+    font-size: 13px;
+    letter-spacing: .03em;
+    padding-bottom: 1px;
+    border-bottom: 1px solid color-mix(in oklab, var(--lc-green, #1E6A50) 45%, transparent);
+  }
+  .auth-inline-link:hover { color: var(--lc-ink, #14120E); }
+  .auth-subtle-box { margin-top: 18px; border-top: 1px solid var(--lc-rule, #D8D2BF); padding-top: 16px; }
+  .auth-subtle-box .hint {
+    color: var(--lc-ink-2, #58544A);
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .auth-subtle-box .actions { display: flex; flex-wrap: wrap; gap: 16px; }
+  .auth-subtle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--lc-ink, #14120E);
+    text-decoration: none;
+    font-size: 13px;
+  }
+  .auth-subtle-btn svg { opacity: .8; }
+  .auth-fineprint {
+    color: var(--lc-ink-2, #58544A);
+    font-size: 12px;
+    line-height: 1.6;
+    margin-top: 10px;
+  }
+  .auth-panel .lc-form .feedback { margin-top: 14px; }
   .auth-panel .lc-form .feedback.show {
-    display:block !important;
-    font-size:13px;
-    line-height:1.55;
-    font-family:"JetBrains Mono",monospace;
+    display: block !important;
+    font-size: 13px;
+    line-height: 1.55;
+    font-family: var(--lc-mono, ui-monospace, monospace);
+    padding: 12px 14px;
+    border-radius: 4px;
   }
   .auth-panel .lc-form .feedback.err.show {
-    background:rgba(176,58,46,.24);
-    border:1px solid #e88278;
-    color:#ffd4ce;
+    background: color-mix(in oklab, #B03A2E 12%, var(--lc-paper, #F8F5EC));
+    border: 1px solid color-mix(in oklab, #B03A2E 35%, var(--lc-rule, #D8D2BF));
+    color: #8a2a20;
   }
+  [data-theme="dark"] .auth-panel .lc-form .feedback.err.show { color: #e88278; }
   .auth-panel .lc-form .feedback.ok.show {
-    background:rgba(34,201,122,.16);
-    border:1px solid #5fd39b;
-    color:#b7f7d7;
+    background: var(--lc-green-soft, #DEE9DF);
+    border: 1px solid color-mix(in oklab, var(--lc-green, #1E6A50) 35%, var(--lc-rule, #D8D2BF));
+    color: var(--lc-green, #1E6A50);
   }
   .auth-password-wrap { position: relative; }
   .auth-password-wrap input { padding-right: 72px; width: 100%; }
@@ -96,17 +259,17 @@
     transform: translateY(-50%);
     background: transparent;
     border: 0;
-    color: #b8b2a3;
+    color: var(--lc-ink-2, #58544A);
     cursor: pointer;
     font-size: 12px;
     letter-spacing: .04em;
     padding: 4px 2px;
   }
-  .auth-toggle-password:hover { color: #fff; }
+  .auth-toggle-password:hover { color: var(--lc-ink, #14120E); }
   @media (max-width: 920px) {
-    .auth-shell { grid-template-columns:1fr; }
-    .auth-rail { position:static; }
-    .auth-stage { padding:22px 18px; }
+    .auth-shell { grid-template-columns: 1fr; }
+    .auth-rail { position: static; }
+    .auth-stage { padding: 22px 18px; }
   }
 </style>
 </head>
@@ -157,149 +320,149 @@
       <span>auth.access</span>
       <span class="pill">live</span>
     </div>
-    <h1 class="auth-rail-title">Your chemistry workspace starts here.</h1>
-    <p class="auth-rail-copy">The public lab stays open for everyone. Create an optional account only when you want the private workspace, saved access and future study progress.</p>
+    <h1 class="auth-rail-title" data-i18n="common.auth.railTitle">Your chemistry workspace starts here.</h1>
+    <p class="auth-rail-copy" data-i18n="common.auth.railCopy">The public lab stays open for everyone. Create an optional account only when you want the private workspace, saved access and future study progress.</p>
     <div class="auth-rail-list">
-      <div class="auth-rail-stat"><span class="lbl">login</span><span class="v">email or username</span></div>
-      <div class="auth-rail-stat"><span class="lbl">session</span><span class="v">secure HttpOnly cookie</span></div>
-      <div class="auth-rail-stat"><span class="lbl">provider</span><span class="v">managed authentication</span></div>
+      <div class="auth-rail-stat"><span class="lbl" data-i18n="common.auth.statLogin">login</span><span class="v" data-i18n="common.auth.statLoginVal">email or username</span></div>
+      <div class="auth-rail-stat"><span class="lbl" data-i18n="common.auth.statSession">session</span><span class="v" data-i18n="common.auth.statSessionVal">secure HttpOnly cookie</span></div>
+      <div class="auth-rail-stat"><span class="lbl" data-i18n="common.auth.statProvider">provider</span><span class="v" data-i18n="common.auth.statProviderVal">managed authentication</span></div>
     </div>
     <div class="auth-rail-links">
-      <a href="privacy.html">→ Privacy</a>
-      <a href="terms.html">→ Terms</a>
-      <a href="pricing.html">→ Pricing</a>
+      <a href="privacy.html">→ <span data-i18n="common.footer.privacy">Privacy</span></a>
+      <a href="terms.html">→ <span data-i18n="common.footer.terms">Terms</span></a>
+      <a href="pricing.html">→ <span data-i18n="common.footer.pricing">Pricing</span></a>
     </div>
   </aside>
 
   <article class="auth-stage">
     <div class="auth-stage-head">
       <div>
-        <div class="auth-stage-kicker">secure account flow</div>
-        <div class="auth-stage-title">Atomurus Account</div>
-        <p class="auth-stage-desc">Use a clean login by default. If you do not have an account yet, create one in a dedicated step. If you lost access, recover it in a separate flow.</p>
+        <div class="auth-stage-kicker" data-i18n="common.auth.pageKicker">secure account flow</div>
+        <div class="auth-stage-title" data-i18n="common.auth.pageTitle">Atomurus Account</div>
+        <p class="auth-stage-desc" data-i18n="common.auth.pageDesc">Use a clean login by default. If you do not have an account yet, create one in a dedicated step. If you lost access, recover it in a separate flow.</p>
       </div>
     </div>
 
     <section class="auth-panel active" id="auth-panel-login" data-auth-panel="login">
-      <h2>Login</h2>
-      <p class="auth-panel-copy">Use the email or unique username from your Atomurus account plus your password. Failed attempts return a generic message and are rate-limited for safety.</p>
+      <h2 data-i18n="common.auth.loginTitle">Login</h2>
+      <p class="auth-panel-copy" data-i18n="common.auth.loginCopy">Use the email or unique username from your Atomurus account plus your password. Failed attempts return a generic message and are rate-limited for safety.</p>
 
       <form class="lc-form" id="auth-login-form" novalidate>
       <div class="field">
-        <label for="auth-email">Email or username</label>
+        <label for="auth-email" data-i18n="common.auth.emailOrUsername">Email or username</label>
         <input id="auth-email" name="identifier" type="text" required autocomplete="username" maxlength="200">
       </div>
       <div class="field">
-        <label for="auth-password">Password</label>
+        <label for="auth-password" data-i18n="common.auth.password">Password</label>
         <div class="auth-password-wrap">
           <input id="auth-password" name="password" type="password" required minlength="8" autocomplete="current-password">
-          <button class="auth-toggle-password" type="button" data-password-toggle="auth-password" aria-pressed="false" aria-label="Show password">Show</button>
+          <button class="auth-toggle-password" type="button" data-password-toggle="auth-password" aria-pressed="false" data-i18n="common.auth.showPassword" data-i18n-attr="aria-label:common.auth.showPassword" aria-label="Show password">Show</button>
         </div>
       </div>
       <button class="auth-primary-btn" type="submit" id="auth-login-submit">
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5h8M6.5 3l3.5 3.5L6.5 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span>Sign in</span>
+        <span data-i18n="common.auth.signIn">Sign in</span>
       </button>
       <div class="auth-inline-actions">
-        <a class="auth-inline-link" href="/signup" data-auth-route="signup">Create account</a>
-        <a class="auth-inline-link" href="/forgot-password" data-auth-route="recover">Forgot password</a>
+        <a class="auth-inline-link" href="/signup" data-auth-route="signup" data-i18n="common.auth.createAccount">Create account</a>
+        <a class="auth-inline-link" href="/forgot-password" data-auth-route="recover" data-i18n="common.auth.forgotPassword">Forgot password</a>
       </div>
-      <div class="feedback ok" id="auth-login-ok" aria-live="polite">Email confirmed. You can sign in now.</div>
-      <div class="feedback err" id="auth-login-err" role="alert" aria-live="polite">Invalid email or password.</div>
+      <div class="feedback ok" id="auth-login-ok" aria-live="polite" data-i18n="common.auth.confirmed">Email confirmed. You can sign in now.</div>
+      <div class="feedback err" id="auth-login-err" role="alert" aria-live="polite" data-i18n="common.auth.loginError">Invalid email or password.</div>
       </form>
     </section>
 
     <section class="auth-panel" id="auth-panel-signup" data-auth-panel="signup">
-      <h2>Create account</h2>
-      <p class="auth-panel-copy">Create your Atomurus account with full name, unique username, email and password. If email confirmation is enabled, check your inbox before the first sign-in.</p>
+      <h2 data-i18n="common.auth.signupTitle">Create account</h2>
+      <p class="auth-panel-copy" data-i18n="common.auth.signupCopy">Create your Atomurus account with full name, unique username, email and password. If email confirmation is enabled, check your inbox before the first sign-in.</p>
 
       <form class="lc-form" id="auth-signup-form" novalidate>
       <div class="field">
-        <label for="auth-signup-name">Full name</label>
+        <label for="auth-signup-name" data-i18n="common.auth.fullName">Full name</label>
         <input id="auth-signup-name" name="fullName" type="text" required autocomplete="name" maxlength="120" placeholder="Matheus Stan Gherlin">
       </div>
       <div class="field">
-        <label for="auth-signup-username">Username</label>
+        <label for="auth-signup-username" data-i18n="common.auth.username">Username</label>
         <input id="auth-signup-username" name="username" type="text" required autocomplete="username" maxlength="30" pattern="^[a-z0-9](?:[a-z0-9._-]{1,28}[a-z0-9])?$" placeholder="matheusstan">
       </div>
       <div class="field">
-        <label for="auth-signup-email">Email</label>
+        <label for="auth-signup-email" data-i18n="common.auth.email">Email</label>
         <input id="auth-signup-email" name="email" type="email" required autocomplete="email" maxlength="200">
       </div>
       <div class="field">
-        <label for="auth-signup-password">Password</label>
+        <label for="auth-signup-password" data-i18n="common.auth.password">Password</label>
         <div class="auth-password-wrap">
           <input id="auth-signup-password" name="password" type="password" required minlength="9" autocomplete="new-password">
-          <button class="auth-toggle-password" type="button" data-password-toggle="auth-signup-password" aria-pressed="false" aria-label="Show password">Show</button>
+          <button class="auth-toggle-password" type="button" data-password-toggle="auth-signup-password" aria-pressed="false" data-i18n="common.auth.showPassword" data-i18n-attr="aria-label:common.auth.showPassword" aria-label="Show password">Show</button>
         </div>
       </div>
       <div class="field">
-        <label for="auth-signup-password-confirm">Repeat password</label>
+        <label for="auth-signup-password-confirm" data-i18n="common.auth.repeatPassword">Repeat password</label>
         <div class="auth-password-wrap">
           <input id="auth-signup-password-confirm" name="passwordConfirm" type="password" required minlength="9" autocomplete="new-password">
-          <button class="auth-toggle-password" type="button" data-password-toggle="auth-signup-password-confirm" aria-pressed="false" aria-label="Show password">Show</button>
+          <button class="auth-toggle-password" type="button" data-password-toggle="auth-signup-password-confirm" aria-pressed="false" data-i18n="common.auth.showPassword" data-i18n-attr="aria-label:common.auth.showPassword" aria-label="Show password">Show</button>
         </div>
       </div>
       <button class="auth-primary-btn" type="submit" id="auth-signup-submit">
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 2v9M2 6.5h9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-        <span>Create account</span>
+        <span data-i18n="common.auth.createAccount">Create account</span>
       </button>
-      <div class="auth-fineprint">Use your full natural name and a unique public username. Passwords must have at least 9 characters and one special character, and are never stored in raw form by Atomurus.</div>
-      <div class="feedback ok" id="auth-signup-ok" aria-live="polite">Account created. Check your email if confirmation is required, then sign in.</div>
-      <div class="feedback err" id="auth-signup-err" role="alert" aria-live="polite">Could not create this account. Try signing in or use another email.</div>
+      <div class="auth-fineprint" data-i18n="common.auth.fineprint">Use your full natural name and a unique public username. Passwords must have at least 9 characters and one special character, and are never stored in raw form by Atomurus.</div>
+      <div class="feedback ok" id="auth-signup-ok" aria-live="polite" data-i18n="common.auth.signupOk">Account created. Check your email if confirmation is required, then sign in.</div>
+      <div class="feedback err" id="auth-signup-err" role="alert" aria-live="polite" data-i18n="common.auth.signupError">Could not create this account. Try signing in or use another email.</div>
       </form>
 
       <div class="auth-subtle-box">
-        <div class="hint">Already registered?</div>
+        <div class="hint" data-i18n="common.auth.alreadyRegistered">Already registered?</div>
         <div class="actions">
-          <a class="auth-subtle-btn" href="/login" data-auth-route="login"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6.5 2.5 10 6 6.5 9.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Go to login</a>
+          <a class="auth-subtle-btn" href="/login" data-auth-route="login"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6.5 2.5 10 6 6.5 9.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="common.auth.goToLogin">Go to login</span></a>
         </div>
       </div>
     </section>
 
     <section class="auth-panel" id="auth-panel-recover" data-auth-panel="recover">
-      <h2>Forgot your password?</h2>
-      <p class="auth-panel-copy">Enter the email tied to your account. If it has access, the authentication provider sends a recovery link. For privacy, the page never reveals whether the email exists.</p>
+      <h2 data-i18n="common.auth.recoverTitle">Forgot your password?</h2>
+      <p class="auth-panel-copy" data-i18n="common.auth.recoverCopy">Enter the email tied to your account. If it has access, the authentication provider sends a recovery link. For privacy, the page never reveals whether the email exists.</p>
 
       <form class="lc-form" id="auth-reset-form" novalidate>
       <div class="field">
-        <label for="auth-reset-email">Recovery email</label>
+        <label for="auth-reset-email" data-i18n="common.auth.recoveryEmail">Recovery email</label>
         <input id="auth-reset-email" name="email" type="email" autocomplete="email" maxlength="200">
       </div>
       <button class="auth-primary-btn" type="submit" id="auth-reset-submit">
         <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M1 7l5 5 7-10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span>Send recovery email</span>
+        <span data-i18n="common.auth.sendRecovery">Send recovery email</span>
       </button>
-      <div class="feedback ok" id="auth-reset-ok">If this email has access, the authentication provider will send recovery instructions.</div>
-      <div class="feedback err" id="auth-reset-err">Could not send right now. Please try again later.</div>
+      <div class="feedback ok" id="auth-reset-ok" data-i18n="common.auth.recoverOk">If this email has access, the authentication provider will send recovery instructions.</div>
+      <div class="feedback err" id="auth-reset-err" data-i18n="common.auth.recoverError">Could not send right now. Please try again later.</div>
       </form>
 
       <div class="auth-subtle-box">
-        <div class="hint">Remembered it?</div>
+        <div class="hint" data-i18n="common.auth.remembered">Remembered it?</div>
         <div class="actions">
-          <a class="auth-subtle-btn" href="/login" data-auth-route="login"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6.5 2.5 10 6 6.5 9.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Back to login</a>
-          <a class="auth-subtle-btn" href="/signup" data-auth-route="signup"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v8M2 6h8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg> Create account</a>
+          <a class="auth-subtle-btn" href="/login" data-auth-route="login"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6.5 2.5 10 6 6.5 9.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="common.auth.backToLogin">Back to login</span></a>
+          <a class="auth-subtle-btn" href="/signup" data-auth-route="signup"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v8M2 6h8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span data-i18n="common.auth.createAccount">Create account</span></a>
         </div>
       </div>
     </section>
 
     <section class="auth-panel" id="auth-password-panel" data-auth-panel="reset" hidden>
-      <h2>Set new password</h2>
-      <p class="auth-panel-copy">Choose a new password to finish the recovery flow. After saving it, you will enter the workspace.</p>
+      <h2 data-i18n="common.auth.resetTitle">Set new password</h2>
+      <p class="auth-panel-copy" data-i18n="common.auth.resetCopy">Choose a new password to finish the recovery flow. After saving it, you will enter the workspace.</p>
 
       <form class="lc-form" id="auth-password-form" novalidate>
         <div class="field">
-          <label for="auth-new-password">New password</label>
+          <label for="auth-new-password" data-i18n="common.auth.newPassword">New password</label>
           <div class="auth-password-wrap">
             <input id="auth-new-password" name="password" type="password" required minlength="9" autocomplete="new-password">
-            <button class="auth-toggle-password" type="button" data-password-toggle="auth-new-password" aria-pressed="false" aria-label="Show password">Show</button>
+            <button class="auth-toggle-password" type="button" data-password-toggle="auth-new-password" aria-pressed="false" data-i18n="common.auth.showPassword" data-i18n-attr="aria-label:common.auth.showPassword" aria-label="Show password">Show</button>
           </div>
         </div>
         <button class="auth-primary-btn" type="submit" id="auth-password-submit">
           <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M1 7l5 5 7-10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span>Save password</span>
+          <span data-i18n="common.auth.savePassword">Save password</span>
         </button>
-        <div class="feedback err" id="auth-password-err">Password reset link is invalid or expired.</div>
+        <div class="feedback err" id="auth-password-err" data-i18n="common.auth.resetError">Password reset link is invalid or expired.</div>
       </form>
     </section>
   </article>
@@ -364,18 +527,18 @@
   </div>
   <div class="lc-footer-bottom">
     <span><span class="lc-st-dot" style="width:6px;height:6px;border-radius:50%;background:#1E6A50;display:inline-block"></span> <span data-i18n="common.footer.systemNominal">system nominal</span></span>
-    <span data-i18n="common.footer.copy">Â© 2026 Atomurus Â· v1.11</span>
+    <span data-i18n="common.footer.copy">© 2026 Atomurus · v1.11</span>
   </div>
 </footer>
 
 <div class="lc-statusbar">
   <span><span class="lc-st-dot"></span> ready</span>
-  <span class="lc-st-sep">Â·</span>
+  <span class="lc-st-sep">·</span>
   <span>auth / login</span>
   <span class="lc-st-spacer"></span>
-  <a href="index.html">â†’ home</a>
-  <span class="lc-st-sep">Â·</span>
-  <a href="periodic-table.html">â†’ periodic-table</a>
+  <a href="index.html">→ home</a>
+  <span class="lc-st-sep">·</span>
+  <a href="periodic-table.html">→ periodic-table</a>
 </div>
 
 <script>
