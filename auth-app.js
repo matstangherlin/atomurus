@@ -5,6 +5,10 @@
     return document.getElementById(id);
   }
 
+  function auth() {
+    return window.AtomurusAuth;
+  }
+
   function escapeHtml(value) {
     return String(value == null ? '' : value)
       .replace(/&/g, '&amp;')
@@ -16,7 +20,7 @@
   async function fetchJson(url, options) {
     var res = await fetch(url, Object.assign({
       credentials: 'include',
-      headers: { 'Accept': 'application/json' }
+      headers: { Accept: 'application/json' }
     }, options || {}));
     var data = await res.json().catch(function () { return {}; });
     if (!res.ok || data.ok === false) {
@@ -26,26 +30,6 @@
       throw err;
     }
     return data;
-  }
-
-  function refreshSession() {
-    return fetchJson('/api/auth/refresh', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: '{}'
-    });
-  }
-
-  async function withRefresh(request) {
-    try {
-      return await request();
-    } catch (err) {
-      if (err.status === 401) {
-        await refreshSession();
-        return request();
-      }
-      throw err;
-    }
   }
 
   function card(label, value) {
@@ -73,6 +57,11 @@
     if (user.plan === 'admin') return 'admin';
     if (user.isPro) return 'pro';
     return user.plan || 'free';
+  }
+
+  function markReady() {
+    document.documentElement.classList.remove('auth-pending');
+    document.documentElement.classList.add('auth-ready');
   }
 
   function renderAccount(data) {
@@ -153,19 +142,19 @@
     var error = $('app-error');
     if (loading) loading.style.display = 'none';
     if (error) error.classList.add('show');
+    markReady();
   }
 
   function initLogout() {
     async function doLogout(event) {
       if (event) event.preventDefault();
-      try {
-        await fetchJson('/api/auth/logout', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: '{}'
-        });
-      } catch (_err) {}
-      window.location.assign('/login');
+      var client = auth();
+      if (client) {
+        try { await client.logout(); } catch (_err) {}
+        client.redirectToLogin('/app');
+        return;
+      }
+      window.location.replace('/login');
     }
     var btn = $('app-logout');
     var aside = $('app-logout-aside');
@@ -173,23 +162,46 @@
     if (aside) aside.addEventListener('click', doLogout);
   }
 
-  async function boot() {
-    initLogout();
+  async function loadWorkspace() {
+    var client = auth();
+    if (!client) {
+      window.location.replace('/login');
+      return;
+    }
     try {
-      var me = await withRefresh(function () { return fetchJson('/api/auth/me'); });
+      await client.requireSession({ next: '/app' });
+      var me = { user: client.getCurrentUser() };
       renderAccount(me);
-      var dash = await withRefresh(function () { return fetchJson('/api/private/dashboard'); });
+      var dash = await fetchJson('/api/private/dashboard');
       renderDashboard(dash);
       var loading = $('app-loading');
       if (loading) loading.style.display = 'none';
+      markReady();
+      client.startRefreshTimer();
     } catch (err) {
-      if (err.status === 401) {
-        window.location.replace('/login');
+      if (err && (err.status === 401 || err.code === 'session_expired')) {
+        client.redirectToLogin('/app');
         return;
       }
       showError();
     }
   }
+
+  function boot() {
+    initLogout();
+    void loadWorkspace();
+  }
+
+  window.addEventListener('pageshow', function (event) {
+    if (!event.persisted) return;
+    var client = auth();
+    if (!client) return;
+    client.getSession().then(function (session) {
+      if (!session.signedIn) client.redirectToLogin('/app');
+    }).catch(function () {
+      client.redirectToLogin('/app');
+    });
+  });
 
   document.addEventListener('DOMContentLoaded', boot);
 })();

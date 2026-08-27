@@ -22,6 +22,7 @@
 <link rel="preload" href="/assets/fonts/inter-tight-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/instrument-serif-400-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/fonts/fonts.css?v=202608041630">
+<script src="auth-client.js?v=202608041630"></script>
 <script src="ads-gate.js?v=202608041630"></script>
 <script src="cookie-consent.js?v=202608041630" defer></script>
 <script src="i18n.js?v=202608041630" defer></script>
@@ -86,6 +87,22 @@
     border:1px solid #5fd39b;
     color:#b7f7d7;
   }
+  .auth-password-wrap { position: relative; }
+  .auth-password-wrap input { padding-right: 72px; width: 100%; }
+  .auth-toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: 0;
+    color: #b8b2a3;
+    cursor: pointer;
+    font-size: 12px;
+    letter-spacing: .04em;
+    padding: 4px 2px;
+  }
+  .auth-toggle-password:hover { color: #fff; }
   @media (max-width: 920px) {
     .auth-shell { grid-template-columns:1fr; }
     .auth-rail { position:static; }
@@ -174,7 +191,10 @@
       </div>
       <div class="field">
         <label for="auth-password">Password</label>
-        <input id="auth-password" name="password" type="password" required minlength="8" autocomplete="current-password">
+        <div class="auth-password-wrap">
+          <input id="auth-password" name="password" type="password" required minlength="8" autocomplete="current-password">
+          <button class="auth-toggle-password" type="button" data-password-toggle="auth-password" aria-pressed="false" aria-label="Show password">Show</button>
+        </div>
       </div>
       <button class="auth-primary-btn" type="submit" id="auth-login-submit">
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5h8M6.5 3l3.5 3.5L6.5 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -208,11 +228,17 @@
       </div>
       <div class="field">
         <label for="auth-signup-password">Password</label>
-        <input id="auth-signup-password" name="password" type="password" required minlength="9" autocomplete="new-password">
+        <div class="auth-password-wrap">
+          <input id="auth-signup-password" name="password" type="password" required minlength="9" autocomplete="new-password">
+          <button class="auth-toggle-password" type="button" data-password-toggle="auth-signup-password" aria-pressed="false" aria-label="Show password">Show</button>
+        </div>
       </div>
       <div class="field">
         <label for="auth-signup-password-confirm">Repeat password</label>
-        <input id="auth-signup-password-confirm" name="passwordConfirm" type="password" required minlength="9" autocomplete="new-password">
+        <div class="auth-password-wrap">
+          <input id="auth-signup-password-confirm" name="passwordConfirm" type="password" required minlength="9" autocomplete="new-password">
+          <button class="auth-toggle-password" type="button" data-password-toggle="auth-signup-password-confirm" aria-pressed="false" aria-label="Show password">Show</button>
+        </div>
       </div>
       <button class="auth-primary-btn" type="submit" id="auth-signup-submit">
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 2v9M2 6.5h9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
@@ -264,7 +290,10 @@
       <form class="lc-form" id="auth-password-form" novalidate>
         <div class="field">
           <label for="auth-new-password">New password</label>
-          <input id="auth-new-password" name="password" type="password" required minlength="8" autocomplete="new-password">
+          <div class="auth-password-wrap">
+            <input id="auth-new-password" name="password" type="password" required minlength="9" autocomplete="new-password">
+            <button class="auth-toggle-password" type="button" data-password-toggle="auth-new-password" aria-pressed="false" aria-label="Show password">Show</button>
+          </div>
         </div>
         <button class="auth-primary-btn" type="submit" id="auth-password-submit">
           <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M1 7l5 5 7-10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>

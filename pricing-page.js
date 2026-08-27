@@ -202,6 +202,9 @@
   }
 
   function activeState() {
+    if (window.__ATOMURUS_AUTH__ && window.__ATOMURUS_AUTH__.ready) {
+      return Object.assign({}, window.__ATOMURUS_ADS__ || {}, window.__ATOMURUS_AUTH__);
+    }
     return window.__ATOMURUS_ADS__ || { ready: false, signedIn: false, user: null, pricingContext: null };
   }
 
@@ -373,6 +376,9 @@
     hydrateCopy(selectedCurrency());
     bind();
     document.addEventListener('atomurus-ads-ready', function () {
+      hydrateCopy(selectedCurrency());
+    });
+    document.addEventListener('atomurus-auth-change', function () {
       hydrateCopy(selectedCurrency());
     });
     if (window.I18N && typeof window.I18N.onChange === 'function') {

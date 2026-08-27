@@ -1,4 +1,5 @@
 import { authRecover } from '../lib/auth-provider.mjs';
+import { logAuthEvent } from '../lib/auth-log.mjs';
 import {
   clientIp,
   createRateLimit,
@@ -38,13 +39,15 @@ export default async function handler(request) {
 
   const ip = clientIp(request);
   if (!hitRecovery(`${ip}:${email}`)) {
+    logAuthEvent('auth-recover', { ok: false, errorType: 'rate_limited' });
     return json(429, { ok: false, error: 'Too many attempts. Try again later.' });
   }
 
   try {
     await authRecover(email);
+    logAuthEvent('auth-recover', { ok: true });
   } catch (err) {
-    console.warn('[auth-recover] Recovery request failed:', err.message);
+    logAuthEvent('auth-recover', { ok: false, errorType: 'provider_error', level: 'warn' });
   }
 
   return json(200, { ok: true });

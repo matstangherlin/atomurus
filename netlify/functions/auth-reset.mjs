@@ -1,6 +1,6 @@
 import { authReset, isAuthConfigError, isAuthConfigured } from '../lib/auth-provider.mjs';
+import { logAuthEvent } from '../lib/auth-log.mjs';
 import {
-  isIdentityConfigError,
   json,
   jsonWithCookies,
   options,
@@ -38,19 +38,28 @@ export default async function handler(request) {
   const type = String(body.type || 'recovery').trim();
   const password = String(body.password || '');
   const passwordError = passwordPolicyError(password);
-  if (!token || token.length > 2048 || passwordError) {
-    return json(400, { ok: false, error: passwordError || 'Use a valid password.' });
+  if (passwordError) {
+    return json(400, { ok: false, error: passwordError });
+  }
+  if (token && token.length > 2048) {
+    return json(400, { ok: false, error: 'Use a valid password.' });
   }
 
   try {
-    const result = await authReset(token, password, type);
+    const result = await authReset(token, password, type, request);
+    logAuthEvent('auth-reset', { ok: true, usedToken: Boolean(token) });
     return jsonWithCookies(200, { ok: true, user: publicUser(result.user) }, result.cookieHeaders);
   } catch (err) {
     const status = statusFromError(err, 500);
-    if (isAuthConfigError(err) || isIdentityConfigError(err) || status >= 500) {
-      console.error('[auth-reset] Auth request failed:', err.message);
+    if (isAuthConfigError(err) || status >= 500) {
+      logAuthEvent('auth-reset', { ok: false, errorType: 'unavailable', level: 'error' });
       return json(500, { ok: false, error: 'Password reset is unavailable.' });
     }
-    return json(400, { ok: false, error: 'Password reset link is invalid or expired.' });
+    logAuthEvent('auth-reset', { ok: false, errorType: err?.code || 'invalid_token' });
+    return json(status === 401 ? 401 : 400, {
+      ok: false,
+      error: status === 401 ? 'Session expired' : 'Password reset link is invalid or expired.',
+      code: err?.code || null
+    });
   }
 }

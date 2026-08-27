@@ -6,17 +6,15 @@
 #   MAILGUN_API_KEY      = <private Mailgun API key>   # contact form — NEVER in client code
 #   MAILGUN_DOMAIN       = sandboxXXXX.mailgun.org      # or mg.atomurus.com (verified domain)
 #   CONTACT_TO           = contato@atomurus.com         # inbox that receives form messages
-#   Netlify Identity must be enabled in Project configuration > Identity.
-#
-# OPTIONAL ENVIRONMENT VARIABLES:
 #   SUPABASE_URL         = https://<project>.supabase.co
 #   SUPABASE_ANON_KEY    = <supabase anon key>
-#   SUPABASE_SERVICE_ROLE_KEY = <supabase service role key> # required for profile sync + billing webhook metadata writes
-#   AUTH_PROVIDER        = supabase | netlify-identity
+#
+# OPTIONAL ENVIRONMENT VARIABLES:
+#   SUPABASE_SERVICE_ROLE_KEY = <supabase service role key> # server-only: username lookup, billing metadata
 #   AUTH_SITE_URL        = https://atomurus.com
 #   ALLOWED_ORIGIN       = https://atomurus.com   # lock CORS to your domain
 #   AUTH_ALLOWED_ORIGINS = https://atomurus.com,https://www.atomurus.com
-#   AUTH_PASSWORD_REDIRECT = https://atomurus.com/login
+#   AUTH_PASSWORD_REDIRECT = https://atomurus.com/reset-password
 #   STRIPE_SECRET_KEY    = sk_live_...
 #   STRIPE_WEBHOOK_SECRET = whsec_...
 #   STRIPE_PRICE_MONTHLY_BRL = price_...
@@ -57,7 +55,7 @@
   to     = "/.netlify/functions/contact-send"
   status = 200
 
-# Auth API (Supabase HttpOnly atm_* cookies, or Netlify Identity nf_jwt/nf_refresh)
+# Auth API (Supabase HttpOnly atm_* cookies)
 [[redirects]]
   from   = "/api/auth/login"
   to     = "/.netlify/functions/auth-login"
@@ -99,6 +97,11 @@
   status = 200
 
 [[redirects]]
+  from   = "/api/auth/establish"
+  to     = "/.netlify/functions/auth-establish"
+  status = 200
+
+[[redirects]]
   from   = "/api/private/dashboard"
   to     = "/.netlify/functions/private-dashboard"
   status = 200
@@ -136,6 +139,11 @@
 
 [[redirects]]
   from   = "/login/reset"
+  to     = "/login.html?mode=reset"
+  status = 200
+
+[[redirects]]
+  from   = "/reset-password"
   to     = "/login.html?mode=reset"
   status = 200
 
@@ -741,6 +749,30 @@
 # Auth pages and API responses may reveal account state, so do not cache them.
 [[headers]]
   for = "/login"
+  [headers.values]
+    Cache-Control = "no-store, max-age=0"
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/signup"
+  [headers.values]
+    Cache-Control = "no-store, max-age=0"
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/forgot-password"
+  [headers.values]
+    Cache-Control = "no-store, max-age=0"
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/reset-password"
+  [headers.values]
+    Cache-Control = "no-store, max-age=0"
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/login/reset"
   [headers.values]
     Cache-Control = "no-store, max-age=0"
     X-Robots-Tag = "noindex, nofollow"

@@ -114,64 +114,97 @@ function redirectBase() {
   return 'https://atomurus.com';
 }
 
+export function classifySupabaseAuthError(err) {
+  const code = String(err?.code || '').toLowerCase();
+  const message = String(err?.message || '').toLowerCase();
+  if (code === 'email_not_confirmed' || message.includes('email not confirmed')) {
+    err.status = 401;
+    err.code = 'email_not_confirmed';
+    err.publicMessage = 'Confirm your email before signing in.';
+    return err;
+  }
+  if (code === 'over_email_send_rate_limit' || message.includes('rate limit')) {
+    err.status = 429;
+    err.code = 'rate_limited';
+    err.publicMessage = 'Too many attempts. Try again later.';
+    return err;
+  }
+  if (code === 'user_already_exists' || message.includes('already registered') || message.includes('already exists')) {
+    err.status = 409;
+    err.code = 'user_exists';
+    err.publicMessage = 'This email already has an account. Sign in or reset your password.';
+    return err;
+  }
+  return err;
+}
+
 export async function supabaseSignup(email, password, profile = {}) {
-  const fullName = String(profile.fullName || profile.name || '').trim();
-  const username = String(profile.username || '').trim().toLowerCase();
-  if (serviceRoleKey()) {
-    await assertUsernameAvailable(username);
-  }
-  const res = await fetch(authUrl('/signup'), {
-    method: 'POST',
-    headers: anonHeaders(),
-    body: JSON.stringify({
-      email,
-      password,
-      data: {
-        atomurus_signup_source: 'login_page',
-        name: fullName || undefined,
-        full_name: fullName || undefined,
-        username: username || undefined
-      }
-    })
-  });
-  const data = await parseSupabaseResponse(res);
-  const session = sessionFromPayload(data);
-  const user = session?.user || normalizeSupabaseUser(data.user || data);
-  if (serviceRoleKey()) {
-    await saveProfileIdentity({
-      userId: user?.id,
-      email,
-      username,
-      fullName
+  try {
+    const fullName = String(profile.fullName || profile.name || '').trim();
+    const username = String(profile.username || '').trim().toLowerCase();
+    if (serviceRoleKey()) {
+      await assertUsernameAvailable(username);
+    }
+    const redirectTo = encodeURIComponent(`${redirectBase()}/login`);
+    const res = await fetch(authUrl(`/signup?redirect_to=${redirectTo}`), {
+      method: 'POST',
+      headers: anonHeaders(),
+      body: JSON.stringify({
+        email,
+        password,
+        data: {
+          atomurus_signup_source: 'login_page',
+          name: fullName || undefined,
+          full_name: fullName || undefined,
+          username: username || undefined
+        }
+      })
     });
+    const data = await parseSupabaseResponse(res);
+    const session = sessionFromPayload(data);
+    const user = session?.user || normalizeSupabaseUser(data.user || data);
+    if (serviceRoleKey()) {
+      await saveProfileIdentity({
+        userId: user?.id,
+        email,
+        username,
+        fullName
+      });
+    }
+    const needsConfirmation = !user?.confirmedAt && !session;
+    return {
+      user,
+      needsConfirmation,
+      signedIn: Boolean(session),
+      cookieHeaders: session ? sessionCookieHeaders(session.accessToken, session.refreshToken, session.expiresIn) : []
+    };
+  } catch (err) {
+    throw classifySupabaseAuthError(err);
   }
-  const needsConfirmation = !user?.confirmedAt && !session;
-  return {
-    user,
-    needsConfirmation,
-    signedIn: Boolean(session),
-    cookieHeaders: session ? sessionCookieHeaders(session.accessToken, session.refreshToken, session.expiresIn) : []
-  };
 }
 
 export async function supabaseLogin(identifier, password) {
-  const email = await resolveLoginEmail(identifier);
-  const res = await fetch(authUrl('/token?grant_type=password'), {
-    method: 'POST',
-    headers: anonHeaders(),
-    body: JSON.stringify({ email, password })
-  });
-  const data = await parseSupabaseResponse(res);
-  const session = sessionFromPayload(data);
-  if (!session) {
-    const err = new Error('Invalid email or password');
-    err.status = 401;
-    throw err;
+  try {
+    const email = await resolveLoginEmail(identifier);
+    const res = await fetch(authUrl('/token?grant_type=password'), {
+      method: 'POST',
+      headers: anonHeaders(),
+      body: JSON.stringify({ email, password })
+    });
+    const data = await parseSupabaseResponse(res);
+    const session = sessionFromPayload(data);
+    if (!session) {
+      const err = new Error('Invalid email or password');
+      err.status = 401;
+      throw err;
+    }
+    return {
+      user: session.user,
+      cookieHeaders: sessionCookieHeaders(session.accessToken, session.refreshToken, session.expiresIn)
+    };
+  } catch (err) {
+    throw classifySupabaseAuthError(err);
   }
-  return {
-    user: session.user,
-    cookieHeaders: sessionCookieHeaders(session.accessToken, session.refreshToken, session.expiresIn)
-  };
 }
 
 export async function supabaseGetUser(accessToken) {
@@ -217,13 +250,42 @@ export async function supabaseLogout(accessToken) {
 }
 
 export async function supabaseRecover(email) {
-  const redirectTo = `${redirectBase()}/login`;
+  const redirectTo = String(process.env.AUTH_PASSWORD_REDIRECT || `${redirectBase()}/reset-password`).replace(/\/$/, '');
   const res = await fetch(authUrl('/recover'), {
     method: 'POST',
     headers: anonHeaders(),
     body: JSON.stringify({ email, redirect_to: redirectTo })
   });
   await parseSupabaseResponse(res);
+}
+
+export async function supabaseEstablishSession(accessToken, refreshToken) {
+  const user = await supabaseGetUser(accessToken);
+  if (!user || !refreshToken) {
+    const err = new Error('Invalid session');
+    err.status = 401;
+    throw err;
+  }
+  return {
+    user,
+    cookieHeaders: sessionCookieHeaders(accessToken, refreshToken, DEFAULT_ACCESS_TTL)
+  };
+}
+
+export async function supabaseUpdatePassword(accessToken, password) {
+  if (!accessToken) {
+    const err = new Error('Session expired');
+    err.status = 401;
+    err.code = 'session_expired';
+    throw err;
+  }
+  const res = await fetch(authUrl('/user'), {
+    method: 'PUT',
+    headers: anonHeaders({ Authorization: `Bearer ${accessToken}` }),
+    body: JSON.stringify({ password })
+  });
+  const data = await parseSupabaseResponse(res);
+  return normalizeSupabaseUser(data.user || data);
 }
 
 export async function supabaseVerifyToken(token, type = 'signup') {

@@ -1,0 +1,339 @@
+(function () {
+  'use strict';
+
+  if (window.AtomurusAuth) return;
+
+  var PUBLIC_AUTH_PATHS = {
+    '/login': true,
+    '/signup': true,
+    '/forgot-password': true,
+    '/reset-password': true,
+    '/login/reset': true
+  };
+  var PROTECTED_PREFIXES = ['/app'];
+  var listeners = [];
+  var verified = false;
+  var refreshTimer = null;
+
+  var state = {
+    ready: false,
+    signedIn: false,
+    user: null,
+    error: null
+  };
+
+  function copyState() {
+    return {
+      ready: state.ready,
+      signedIn: state.signedIn,
+      user: state.user,
+      error: state.error
+    };
+  }
+
+  function emit() {
+    window.__ATOMURUS_AUTH__ = copyState();
+    var snapshot = copyState();
+    document.dispatchEvent(new CustomEvent('atomurus-auth-change', { detail: snapshot }));
+    listeners.slice().forEach(function (fn) {
+      try { fn(snapshot); } catch (_err) {}
+    });
+  }
+
+  function setState(patch) {
+    var key;
+    for (key in patch) {
+      if (Object.prototype.hasOwnProperty.call(patch, key)) state[key] = patch[key];
+    }
+    emit();
+  }
+
+  function pathnameOf(value) {
+    var raw = String(value || '').split('?')[0].split('#')[0];
+    if (!raw || raw === '/') return '/';
+    return raw.replace(/\/+$/, '') || '/';
+  }
+
+  function isPublicAuthPath(pathname) {
+    return Boolean(PUBLIC_AUTH_PATHS[pathnameOf(pathname)]);
+  }
+
+  function isProtectedPath(pathname) {
+    var path = pathnameOf(pathname);
+    return PROTECTED_PREFIXES.some(function (prefix) {
+      return path === prefix || path.indexOf(prefix + '/') === 0;
+    });
+  }
+
+  function safeNextPath(raw, fallback) {
+    var value = String(raw || '').trim();
+    fallback = fallback || '/app';
+    if (!value || value.charAt(0) !== '/' || value.indexOf('//') === 0 || value.indexOf('\\') !== -1) return fallback;
+    if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(value)) return fallback;
+    if (isPublicAuthPath(value)) return fallback;
+    return value;
+  }
+
+  function currentPath() {
+    return pathnameOf(location.pathname);
+  }
+
+  function queryParam(name) {
+    try {
+      return new URLSearchParams(location.search).get(name) || '';
+    } catch (_err) {
+      return '';
+    }
+  }
+
+  function loginUrl(nextPath) {
+    var next = safeNextPath(nextPath || currentPath());
+    if (!next || next === '/app') return '/login';
+    return '/login?next=' + encodeURIComponent(next);
+  }
+
+  function redirectAfterLogin() {
+    location.replace(safeNextPath(queryParam('next'), '/app'));
+  }
+
+  function redirectToLogin(nextPath) {
+    location.replace(loginUrl(nextPath || currentPath()));
+  }
+
+  async function request(url, options) {
+    var opts = options || {};
+    var headers = Object.assign({ Accept: 'application/json' }, opts.headers || {});
+    var res;
+    try {
+      res = await fetch(url, Object.assign({
+        credentials: 'include'
+      }, opts, { headers: headers }));
+    } catch (_err) {
+      var networkErr = new Error('network');
+      networkErr.status = 0;
+      networkErr.code = 'network';
+      throw networkErr;
+    }
+    var data = await res.json().catch(function () { return {}; });
+    if (!res.ok || data.ok === false) {
+      var err = new Error(data.error || 'Request failed');
+      err.status = res.status;
+      err.code = data.code;
+      err.payload = data;
+      throw err;
+    }
+    return data;
+  }
+
+  function applyUser(user, ready) {
+    verified = true;
+    setState({
+      ready: ready !== false,
+      signedIn: Boolean(user),
+      user: user || null,
+      error: null
+    });
+  }
+
+  function ingestPublicSession(user, signedIn) {
+    if (verified) return copyState();
+    setState({
+      ready: true,
+      signedIn: Boolean(signedIn && user),
+      user: user || null,
+      error: null
+    });
+    return copyState();
+  }
+
+  async function getSession() {
+    try {
+      var data = await request('/api/auth/me');
+      applyUser(data.user, true);
+      return copyState();
+    } catch (err) {
+      if (err.status === 401) {
+        applyUser(null, true);
+        return copyState();
+      }
+      if (err.code === 'network') {
+        setState({ ready: true, error: 'network' });
+        throw err;
+      }
+      setState({ ready: true, error: err.code || 'unavailable' });
+      throw err;
+    }
+  }
+
+  async function refreshSession() {
+    var data = await request('/api/auth/refresh', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: '{}'
+    });
+    applyUser(data.user, true);
+    return copyState();
+  }
+
+  async function login(identifier, password) {
+    var data = await request('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ identifier: identifier, password: password })
+    });
+    applyUser(data.user, true);
+    return data;
+  }
+
+  async function signup(payload) {
+    var data = await request('/api/auth/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (data.signedIn && data.user) applyUser(data.user, true);
+    else if (data.user && !data.needsConfirmation) applyUser(data.user, true);
+    else {
+      verified = true;
+      setState({ ready: true, signedIn: false, user: null, error: null });
+    }
+    return data;
+  }
+
+  async function logout() {
+    try {
+      await request('/api/auth/logout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: '{}'
+      });
+    } catch (_err) {}
+    applyUser(null, true);
+    return copyState();
+  }
+
+  async function recoverPassword(email) {
+    return request('/api/auth/recover', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email })
+    });
+  }
+
+  async function resetPassword(payload) {
+    var data = await request('/api/auth/reset', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload || {})
+    });
+    if (data.user) applyUser(data.user, true);
+    return data;
+  }
+
+  async function confirmEmail(token, type) {
+    var data = await request('/api/auth/confirm', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: token, type: type || 'signup' })
+    });
+    if (data.user) applyUser(data.user, true);
+    return data;
+  }
+
+  async function establishSession(accessToken, refreshToken) {
+    var data = await request('/api/auth/establish', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ accessToken: accessToken, refreshToken: refreshToken })
+    });
+    applyUser(data.user, true);
+    return data;
+  }
+
+  async function requireSession(options) {
+    options = options || {};
+    var snapshot = await getSession();
+    if (!snapshot.signedIn) {
+      if (options.redirect !== false) redirectToLogin(options.next);
+      var err = new Error('Sign in required');
+      err.status = 401;
+      err.code = 'session_expired';
+      throw err;
+    }
+    return snapshot;
+  }
+
+  async function requireGuest(options) {
+    options = options || {};
+    var snapshot = await getSession();
+    if (snapshot.signedIn && options.redirect !== false) redirectAfterLogin();
+    return snapshot;
+  }
+
+  function getCurrentUser() {
+    return state.user;
+  }
+
+  function getState() {
+    return copyState();
+  }
+
+  function isVerified() {
+    return verified;
+  }
+
+  function onChange(fn) {
+    if (typeof fn !== 'function') return function () {};
+    listeners.push(fn);
+    return function () {
+      listeners = listeners.filter(function (item) { return item !== fn; });
+    };
+  }
+
+  function stopRefreshTimer() {
+    if (refreshTimer) {
+      clearInterval(refreshTimer);
+      refreshTimer = null;
+    }
+  }
+
+  function startRefreshTimer() {
+    stopRefreshTimer();
+    if (!isProtectedPath(currentPath())) return;
+    refreshTimer = setInterval(function () {
+      if (!state.signedIn) return;
+      refreshSession().catch(function (err) {
+        if (err && err.status === 401) redirectToLogin(currentPath());
+      });
+    }, 10 * 60 * 1000);
+  }
+
+  window.AtomurusAuth = {
+    login: login,
+    logout: logout,
+    signup: signup,
+    getSession: getSession,
+    getCurrentUser: getCurrentUser,
+    refreshSession: refreshSession,
+    recoverPassword: recoverPassword,
+    resetPassword: resetPassword,
+    confirmEmail: confirmEmail,
+    establishSession: establishSession,
+    requireSession: requireSession,
+    requireGuest: requireGuest,
+    redirectToLogin: redirectToLogin,
+    redirectAfterLogin: redirectAfterLogin,
+    loginUrl: loginUrl,
+    safeNextPath: safeNextPath,
+    isPublicAuthPath: isPublicAuthPath,
+    isProtectedPath: isProtectedPath,
+    ingestPublicSession: ingestPublicSession,
+    getState: getState,
+    onChange: onChange,
+    isVerified: isVerified,
+    startRefreshTimer: startRefreshTimer,
+    stopRefreshTimer: stopRefreshTimer
+  };
+
+  window.__ATOMURUS_AUTH__ = copyState();
+})();

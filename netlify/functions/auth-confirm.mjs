@@ -1,6 +1,6 @@
 import { authConfirm, isAuthConfigError, isAuthConfigured } from '../lib/auth-provider.mjs';
+import { logAuthEvent } from '../lib/auth-log.mjs';
 import {
-  isIdentityConfigError,
   json,
   jsonWithCookies,
   options,
@@ -41,13 +41,15 @@ export default async function handler(request) {
 
   try {
     const result = await authConfirm(token, type);
+    logAuthEvent('auth-confirm', { ok: true, type });
     return jsonWithCookies(200, { ok: true, user: publicUser(result.user) }, result.cookieHeaders);
   } catch (err) {
     const status = statusFromError(err, 500);
-    if (isAuthConfigError(err) || isIdentityConfigError(err) || status >= 500) {
-      console.error('[auth-confirm] Auth request failed:', err.message);
+    if (isAuthConfigError(err) || status >= 500) {
+      logAuthEvent('auth-confirm', { ok: false, errorType: 'unavailable', level: 'error' });
       return json(500, { ok: false, error: 'Email confirmation is unavailable.' });
     }
+    logAuthEvent('auth-confirm', { ok: false, errorType: 'invalid_token', type });
     return json(400, { ok: false, error: 'Email confirmation link is invalid or expired.' });
   }
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en-US" data-theme="light">
+<html lang="en-US" data-theme="light" class="auth-pending">
 <head>
 <style>html.lang-pt-pending [data-i18n],html.lang-pt-pending [data-i18n-html],html.lang-pt-pending [data-i18n-attr],html.lang-pt-pending [data-page-field]{visibility:hidden!important}html[data-theme="dark"] #icon-theme-light,html[data-theme="light"] #icon-theme-dark{display:none!important}html[data-theme="dark"] #icon-theme-dark,html[data-theme="light"] #icon-theme-light{display:block!important}</style>
 <script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var KEY='atomurus-lang';var p=new URLSearchParams(location.search).get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem(KEY);if(l!=='pt'&&l!=='en'){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}try{localStorage.setItem(KEY,l);}catch(e){}if(l==='pt'){document.documentElement.lang='pt-BR';document.documentElement.classList.add('lang-pt-pending');setTimeout(function(){document.documentElement.classList.remove('lang-pt-pending');},120);}else{document.documentElement.lang='en-US';}}catch(e){}})();</script>
@@ -22,6 +22,7 @@
 <link rel="preload" href="/assets/fonts/inter-tight-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/instrument-serif-400-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/fonts/fonts.css?v=202608041630">
+<script src="auth-client.js?v=202608041630"></script>
 <script src="ads-gate.js?v=202608041630"></script>
 <script src="cookie-consent.js?v=202608041630" defer></script>
 <script src="i18n.js?v=202608041630" defer></script>
@@ -71,6 +72,9 @@
   .app-pill.coming { color: var(--lc-ink-2); border-color: var(--lc-rule); }
   .app-pill.locked { color: #8a2a20; border-color: color-mix(in oklab, #B03A2E 35%, transparent); }
   [data-theme="dark"] .app-pill.locked { color: #e88278; }
+  html.auth-pending .app-private { visibility: hidden; }
+  html.auth-pending #app-loading { display: block; }
+  html.auth-ready .app-private { visibility: visible; }
   a.app-module-row { text-decoration: none; color: inherit; }
   a.app-module-row:hover { border-color: color-mix(in oklab, var(--lc-green) 35%, transparent); }
   .app-upgrade {
@@ -171,6 +175,7 @@
     <div class="app-statebox" id="app-loading">Checking session and loading your private workspace…</div>
     <div class="app-statebox err" id="app-error" role="alert">Could not load your private workspace. Please try again in a moment.</div>
     <div class="app-upgrade" id="app-upgrade" role="status"></div>
+    <div class="app-private">
 
     <h2 id="account"><span class="h-no">§ 01</span> Account</h2>
     <p>Identity confirmed by <code>/api/auth/me</code>. Plan and ads entitlement are decided on the server.</p>
@@ -184,6 +189,7 @@
     <p>Availability comes from <code>/api/private/dashboard</code>. Locked items open Pricing until Pro is active.</p>
     <div class="lc-doc-cards" id="app-modules"></div>
 
+    </div>
   </article>
 </div>
 

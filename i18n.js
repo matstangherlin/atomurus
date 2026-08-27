@@ -222,6 +222,11 @@
   }
 
   function authState() {
+    if (window.__ATOMURUS_AUTH__ && window.__ATOMURUS_AUTH__.ready) return window.__ATOMURUS_AUTH__;
+    if (window.AtomurusAuth && typeof window.AtomurusAuth.getState === 'function') {
+      var managed = window.AtomurusAuth.getState();
+      if (managed && managed.ready) return managed;
+    }
     return window.__ATOMURUS_ADS__ || null;
   }
 
@@ -342,6 +347,9 @@
     apply();
     document.documentElement.classList.remove('lang-pt-pending');
     document.addEventListener('atomurus-ads-ready', function () {
+      syncAuthNav();
+    });
+    document.addEventListener('atomurus-auth-change', function () {
       syncAuthNav();
     });
     window.addEventListener('storage', function (e) {

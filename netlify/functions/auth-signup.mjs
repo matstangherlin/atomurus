@@ -1,4 +1,5 @@
 import { authSignup, isAuthConfigError, isAuthConfigured } from '../lib/auth-provider.mjs';
+import { logAuthEvent } from '../lib/auth-log.mjs';
 import {
   clientIp,
   createRateLimit,
@@ -26,6 +27,7 @@ export default async function handler(request) {
   }
 
   if (!isAuthConfigured()) {
+    logAuthEvent('auth-signup', { ok: false, errorType: 'auth_not_configured', level: 'error' });
     return json(500, { ok: false, error: 'Account creation is unavailable.' });
   }
 
@@ -63,11 +65,17 @@ export default async function handler(request) {
 
   const ip = clientIp(request);
   if (!hitIp(`ip:${ip}`) || !hitEmail(`email:${email}`)) {
+    logAuthEvent('auth-signup', { ok: false, errorType: 'rate_limited' });
     return json(429, { ok: false, error: 'Too many attempts. Try again later.' });
   }
 
   try {
     const result = await authSignup(email, password, { fullName, username });
+    logAuthEvent('auth-signup', {
+      ok: true,
+      needsConfirmation: Boolean(result.needsConfirmation),
+      signedIn: Boolean(result.signedIn)
+    });
     return jsonWithCookies(
       200,
       {
@@ -81,13 +89,14 @@ export default async function handler(request) {
   } catch (err) {
     const status = statusFromError(err, 500);
     if (isAuthConfigError(err) || status >= 500) {
-      console.error('[auth-signup] Auth request failed:', err.message);
+      logAuthEvent('auth-signup', { ok: false, errorType: 'unavailable', level: 'error' });
       return json(500, { ok: false, error: 'Account creation is unavailable.' });
     }
-    console.warn(`[auth-signup] Rejected signup for ${email} from ${ip}: ${status}`);
+    logAuthEvent('auth-signup', { ok: false, errorType: err?.code || 'rejected', status });
     return json(status >= 400 && status < 500 ? status : 400, {
       ok: false,
-      error: err?.message || 'Could not create this account. Try signing in or use another email.'
+      error: err?.publicMessage || err?.message || 'Could not create this account. Try signing in or use another email.',
+      code: err?.code || null
     });
   }
 }

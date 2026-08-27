@@ -205,6 +205,16 @@
           state.isPro = Boolean(data.user.isPro);
           state.plan = data.user.plan || 'free';
         }
+        if (window.AtomurusAuth && typeof window.AtomurusAuth.ingestPublicSession === 'function') {
+          window.AtomurusAuth.ingestPublicSession(state.user, state.signedIn);
+        } else if (!window.__ATOMURUS_AUTH__ || !window.__ATOMURUS_AUTH__.ready) {
+          window.__ATOMURUS_AUTH__ = {
+            ready: true,
+            signedIn: state.signedIn,
+            user: state.user
+          };
+          document.dispatchEvent(new CustomEvent('atomurus-auth-change', { detail: window.__ATOMURUS_AUTH__ }));
+        }
       }
     } catch (_err) {
       // Network/function failure → keep ads (don't accidentally wipe revenue).

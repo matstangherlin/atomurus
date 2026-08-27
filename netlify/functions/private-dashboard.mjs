@@ -1,6 +1,6 @@
-import { authSession } from '../lib/auth-provider.mjs';
 import { resolvePricingContext } from '../lib/geo-pricing.mjs';
 import { json, jsonWithCookies, options, publicUser, PLAN_PRICING } from '../lib/netlify-identity-utils.mjs';
+import { requireUser } from '../lib/require-user.mjs';
 
 export default async function handler(request) {
   if (request.method === 'OPTIONS') return options();
@@ -8,12 +8,11 @@ export default async function handler(request) {
     return json(405, { ok: false, error: 'Method not allowed' });
   }
 
-  const session = await authSession(request);
-  if (!session?.user) {
-    return json(401, { ok: false, error: 'Session expired', code: 'session_expired' });
-  }
+  const auth = await requireUser(request);
+  if (auth.response) return auth.response;
 
-  const user = publicUser(session.user);
+  const session = auth.session;
+  const user = publicUser(auth.user);
   const features = user.features || {};
   const pricingContext = resolvePricingContext(request);
 

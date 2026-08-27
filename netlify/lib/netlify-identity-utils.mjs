@@ -1,5 +1,7 @@
 export { accessForUser, publicUser, PLAN_PRICING, trialEndsAtForUser } from './plan-access.mjs';
 
+// HTTP helpers for Netlify Functions. Filename is historical; auth itself is Supabase-only.
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function noStoreHeaders() {
