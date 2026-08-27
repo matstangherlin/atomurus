@@ -10,7 +10,11 @@ export default async function handler(request) {
 
   const session = await authSession(request);
   if (!session?.user) {
-    return json(401, { ok: false, error: 'Session expired', code: 'session_expired' });
+    return jsonWithCookies(
+      401,
+      { ok: false, error: 'Session expired', code: 'session_expired' },
+      session?.cookieHeaders || []
+    );
   }
 
   const user = publicUser(session.user);
