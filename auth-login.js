@@ -151,10 +151,14 @@
     return new URLSearchParams(location.hash.slice(1)).get(name) || '';
   }
 
-  function clearHash() {
-    if (history && history.replaceState) {
-      history.replaceState(null, document.title, location.pathname + location.search);
-    }
+  function clearAuthCallbackParams() {
+    if (!history || !history.replaceState) return;
+    var params = new URLSearchParams(location.search);
+    ['token_hash', 'type', 'confirmation_token', 'recovery_token'].forEach(function (name) {
+      params.delete(name);
+    });
+    var query = params.toString();
+    history.replaceState(null, document.title, location.pathname + (query ? '?' + query : ''));
   }
 
   function currentMode() {
@@ -226,10 +230,10 @@
           token: confirmationToken,
           type: callbackType || 'signup'
         });
-        clearHash();
+        clearAuthCallbackParams();
         enterApp();
       } catch (_err) {
-        clearHash();
+        clearAuthCallbackParams();
         show(loginErr, t('auth.confirmError', 'Email confirmation link is invalid or expired.'));
       }
       return true;
@@ -241,7 +245,7 @@
         panel.dataset.recoveryToken = recoveryToken;
         panel.dataset.recoveryType = callbackType || 'recovery';
         setMode('reset', { skipHistory: true });
-        clearHash();
+        clearAuthCallbackParams();
         if (panel.scrollIntoView) panel.scrollIntoView({ block: 'start' });
       }
       return true;
