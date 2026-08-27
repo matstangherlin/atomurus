@@ -3,6 +3,8 @@ import { readFileSync } from 'node:fs';
 import { accessCookieName, refreshCookieName, allSessionCookieNames } from '../netlify/lib/auth-cookies.mjs';
 import { authProviderName, authRefresh, isAuthConfigured } from '../netlify/lib/auth-provider.mjs';
 import { isPublicAuthPath, isProtectedPath, loginUrl, safeNextPath } from '../netlify/lib/auth-redirect.mjs';
+import { hasSessionCookieHeader } from '../netlify/lib/session-cookie-flag.mjs';
+import { appGateDecision } from '../netlify/lib/app-gate.mjs';
 import { logAuthEvent } from '../netlify/lib/auth-log.mjs';
 import { classifySupabaseAuthError, normalizeSupabaseUser } from '../netlify/lib/supabase-auth.mjs';
 
@@ -90,9 +92,11 @@ assert.equal(safeNextPath('https://evil.com', ''), '');
 assert.equal(loginUrl('/pricing'), '/login?next=%2Fpricing');
 assert.equal(loginUrl('/app'), '/login?next=%2Fapp');
 assert.equal(loginUrl('/app?section=billing'), '/login?next=%2Fapp%3Fsection%3Dbilling');
+assert.equal(loginUrl('/app', 'https://atomurus.invalid', 'pt-BR'), '/login?next=%2Fapp&lang=pt-BR');
 assert.equal(isPublicAuthPath('/login'), true);
 assert.equal(isPublicAuthPath('/reset-password'), true);
 assert.equal(isProtectedPath('/app'), true);
+assert.equal(isProtectedPath('/app.html'), true);
 assert.equal(isProtectedPath('/periodic-table'), false);
 
 const unconfirmed = classifySupabaseAuthError(Object.assign(new Error('Email not confirmed'), {
@@ -140,7 +144,56 @@ assert.doesNotMatch(loginBoot, /withRefresh\s*\(/);
 const authClient = readFileSync(new URL('../auth-client.js', import.meta.url), 'utf8');
 assert.match(authClient, /encodeURIComponent\(next\)/);
 assert.match(authClient, /url\.origin !== location\.origin/);
+assert.match(authClient, /sessionPromise/);
+assert.match(authClient, /options\.force/);
+assert.match(authClient, /isProtectedPath\(location\.pathname\)/);
 assert.doesNotMatch(authClient, /withRefresh\s*\(/);
+
+const authApp = readFileSync(new URL('../auth-app.js', import.meta.url), 'utf8');
+assert.match(authApp, /getSession\(\{\s*force:\s*true\s*\}\)/);
+assert.doesNotMatch(authApp, /startRefreshTimer\s*\(/);
+
+const appHtml = readFileSync(new URL('../app.html', import.meta.url), 'utf8');
+assert.match(appHtml, /requireSession\(\{\s*next:/);
+assert.doesNotMatch(appHtml, /html\.lc-loading body/);
+assert.doesNotMatch(appHtml, /classList\.add\(['"]lc-loading['"]\)/);
+
+const netlifyToml = readFileSync(new URL('../netlify.toml', import.meta.url), 'utf8');
+assert.match(netlifyToml, /function = "protect-app"/);
+assert.match(netlifyToml, /path = "\/app"/);
+
+const supabaseConfig = readFileSync(new URL('../supabase/config.toml', import.meta.url), 'utf8');
+assert.match(supabaseConfig, /atomurus\.com\/reset-password/);
+assert.match(supabaseConfig, /localhost:8888\/reset-password/);
+
+assert.equal(hasSessionCookieHeader(''), false);
+assert.equal(hasSessionCookieHeader('atm_access='), false);
+assert.equal(hasSessionCookieHeader('atm_access=; atm_refresh='), false);
+assert.equal(hasSessionCookieHeader('theme=light'), false);
+assert.equal(hasSessionCookieHeader('atm_access=live-token'), true);
+assert.equal(hasSessionCookieHeader('__Host-atm_refresh=live-refresh'), true);
+
+const unsignedApp = appGateDecision('https://atomurus.com/app', '');
+assert.equal(unsignedApp.action, 'redirect');
+assert.equal(unsignedApp.location, '/login?next=%2Fapp');
+
+const unsignedBilling = appGateDecision('https://atomurus.com/app?section=billing', '');
+assert.equal(unsignedBilling.action, 'redirect');
+assert.equal(unsignedBilling.location, '/login?next=%2Fapp%3Fsection%3Dbilling');
+
+const unsignedLang = appGateDecision('https://atomurus.com/app?lang=pt-BR', '');
+assert.equal(unsignedLang.action, 'redirect');
+assert.equal(unsignedLang.location, '/login?next=%2Fapp%3Flang%3Dpt-BR&lang=pt-BR');
+
+const unsignedHtml = appGateDecision('https://atomurus.com/app.html', '');
+assert.equal(unsignedHtml.action, 'redirect');
+assert.equal(unsignedHtml.location, '/login?next=%2Fapp');
+
+const signedApp = appGateDecision('https://atomurus.com/app', 'atm_access=stale-token');
+assert.equal(signedApp.action, 'next');
+
+const publicPage = appGateDecision('https://atomurus.com/pricing', '');
+assert.equal(publicPage.action, 'next');
 
 const rls = readFileSync(new URL('../supabase/migrations/004_rls_with_check.sql', import.meta.url), 'utf8');
 assert.match(rls, /with check \(auth\.uid\(\) = id\)/i);

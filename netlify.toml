@@ -30,6 +30,7 @@
 [build]
   publish      = "."
   functions    = "netlify/functions"
+  edge_functions = "netlify/edge-functions"
   command      = "npm run build && npm run validate && node tools/scrub-publish-tree.js"
 
 # Hide .html in URLs — /periodic-table/aurum serves periodic-table/aurum.html,
@@ -40,6 +41,20 @@
 
 [functions]
   node_bundler = "esbuild"
+
+# Unsigned /app never receives app.html. Cookie presence is the only check
+# here; stale atm_* cookies still fall through to /api/auth/me in the browser.
+[[edge_functions]]
+  path = "/app"
+  function = "protect-app"
+
+[[edge_functions]]
+  path = "/app.html"
+  function = "protect-app"
+
+[[edge_functions]]
+  path = "/app/*"
+  function = "protect-app"
 
 # Pretty URL for the reCAPTCHA verifier:
 #   POST /api/recaptcha-verify  →  /.netlify/functions/recaptcha-verify

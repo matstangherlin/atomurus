@@ -21,7 +21,8 @@ export function isPublicAuthPath(pathname) {
 }
 
 export function isProtectedPath(pathname) {
-  const path = normalizePathname(pathname);
+  let path = normalizePathname(pathname);
+  if (path === '/app.html') path = '/app';
   return PROTECTED_PATHS.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
 }
 
@@ -77,7 +78,10 @@ export function safeNextPath(raw, fallback = '/app', origin = DEFAULT_ORIGIN) {
   return `${url.pathname}${url.search}`;
 }
 
-export function loginUrl(nextPath, origin = DEFAULT_ORIGIN) {
+export function loginUrl(nextPath, origin = DEFAULT_ORIGIN, lang = '') {
   const next = safeNextPath(nextPath, '/app', origin);
-  return `/login?next=${encodeURIComponent(next)}`;
+  let url = `/login?next=${encodeURIComponent(next)}`;
+  const language = String(lang || '').trim();
+  if (language) url += `&lang=${encodeURIComponent(language)}`;
+  return url;
 }

@@ -14,6 +14,7 @@
   var listeners = [];
   var verified = false;
   var refreshTimer = null;
+  var sessionPromise = null;
 
   var state = {
     ready: false,
@@ -60,6 +61,7 @@
 
   function isProtectedPath(pathname) {
     var path = pathnameOf(pathname);
+    if (path === '/app.html') path = '/app';
     return PROTECTED_PREFIXES.some(function (prefix) {
       return path === prefix || path.indexOf(prefix + '/') === 0;
     });
@@ -183,6 +185,7 @@
 
   function ingestPublicSession(user, signedIn) {
     if (verified) return copyState();
+    if (isProtectedPath(location.pathname)) return copyState();
     setState({
       ready: true,
       signedIn: Boolean(signedIn && user),
@@ -192,22 +195,37 @@
     return copyState();
   }
 
-  async function getSession() {
-    try {
-      var data = await request('/api/auth/me');
-      applyUser(data.user, true);
+  async function getSession(options) {
+    options = options || {};
+    if (sessionPromise) return sessionPromise;
+    if (!options.force && verified && state.ready && !state.error) {
       return copyState();
-    } catch (err) {
-      if (err.status === 401) {
-        applyUser(null, true);
+    }
+
+    var run = (async function () {
+      try {
+        var data = await request('/api/auth/me');
+        applyUser(data.user, true);
         return copyState();
-      }
-      if (err.code === 'network') {
-        setState({ ready: true, error: 'network' });
+      } catch (err) {
+        if (err.status === 401) {
+          applyUser(null, true);
+          return copyState();
+        }
+        if (err.code === 'network') {
+          setState({ ready: true, error: 'network' });
+          throw err;
+        }
+        setState({ ready: true, error: err.code || 'unavailable' });
         throw err;
       }
-      setState({ ready: true, error: err.code || 'unavailable' });
-      throw err;
+    })();
+
+    sessionPromise = run;
+    try {
+      return await run;
+    } finally {
+      if (sessionPromise === run) sessionPromise = null;
     }
   }
 

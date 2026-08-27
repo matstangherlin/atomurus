@@ -19,7 +19,13 @@ enabled = true
 site_url = "https://atomurus.com"
 additional_redirect_urls = [
   "https://atomurus.com/login",
-  "http://localhost:8888/login"
+  "https://atomurus.com/reset-password",
+  "https://www.atomurus.com/login",
+  "https://www.atomurus.com/reset-password",
+  "http://localhost:8888/login",
+  "http://localhost:8888/reset-password",
+  "https://**--216y56y.netlify.app/login",
+  "https://**--216y56y.netlify.app/reset-password"
 ]
 jwt_expiry = 3600
 enable_signup = true

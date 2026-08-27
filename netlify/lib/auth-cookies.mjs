@@ -1,5 +1,8 @@
-const ACCESS_BASE = 'atm_access';
-const REFRESH_BASE = 'atm_refresh';
+import {
+  ACCESS_COOKIE_BASE as ACCESS_BASE,
+  REFRESH_COOKIE_BASE as REFRESH_BASE,
+  SESSION_COOKIE_NAMES
+} from './session-cookie-flag.mjs';
 
 function isSecureContext() {
   // Local `netlify dev` is HTTP; deployed Netlify (prod + previews) is HTTPS.
@@ -15,12 +18,7 @@ export function refreshCookieName() {
 }
 
 export function allSessionCookieNames() {
-  return [
-    ACCESS_BASE,
-    REFRESH_BASE,
-    `__Host-${ACCESS_BASE}`,
-    `__Host-${REFRESH_BASE}`
-  ];
+  return SESSION_COOKIE_NAMES.slice();
 }
 
 function serializeCookie(name, value, maxAge) {

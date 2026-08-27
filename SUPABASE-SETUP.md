@@ -39,7 +39,16 @@ In **Site configuration → Environment variables** (and in local `.env` for `ne
 1. **Authentication → Providers → Email**: enable email signups.
 2. **Authentication → URL configuration**:
    - Site URL: `https://atomurus.com`
-   - Redirect URLs: `https://atomurus.com/login`, `https://atomurus.com/reset-password`, `http://localhost:8888/login`, `http://localhost:8888/reset-password`
+   - Redirect URLs (hosted dashboard; `supabase/config.toml` only applies to local CLI):
+     - `https://atomurus.com/login`
+     - `https://atomurus.com/reset-password`
+     - `https://www.atomurus.com/login`
+     - `https://www.atomurus.com/reset-password`
+     - `http://localhost:8888/login`
+     - `http://localhost:8888/reset-password`
+     - `https://**--216y56y.netlify.app/login`
+     - `https://**--216y56y.netlify.app/reset-password`
+   Dashboard: https://supabase.com/dashboard/project/ylofdottauzcqcifnnpm/auth/url-configuration
 3. **Authentication → Email templates**: prefer `token_hash` links:
    - Confirm: `{{ .SiteURL }}/login?token_hash={{ .TokenHash }}&type=signup`
    - Recovery: `{{ .SiteURL }}/reset-password?token_hash={{ .TokenHash }}&type=recovery`
@@ -66,7 +75,7 @@ Public:
 - `/forgot-password`
 - `/reset-password`
 
-Protected (HTML stays hidden until `/api/auth/me` succeeds):
+Protected (edge cookie gate redirects unsigned visitors to `/login?next=` before `app.html`; stale cookies still fall through to `/api/auth/me`):
 
 - `/app`
 

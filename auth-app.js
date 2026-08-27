@@ -182,7 +182,6 @@
       var loading = $('app-loading');
       if (loading) loading.style.display = 'none';
       markReady();
-      client.startRefreshTimer();
     } catch (err) {
         if (err && (err.status === 401 || err.status === 404 || err.code === 'session_expired')) {
         client.redirectToLogin(workspaceNext());
@@ -201,10 +200,11 @@
     if (!event.persisted) return;
     var client = auth();
     if (!client) return;
-    client.getSession().then(function (session) {
-      if (!session.signedIn) client.redirectToLogin(location.pathname + location.search);
-    }).catch(function () {
-      client.redirectToLogin(location.pathname + location.search);
+    client.getSession({ force: true }).then(function (session) {
+      if (!session.signedIn) client.redirectToLogin(workspaceNext());
+    }).catch(function (err) {
+      if (err && (err.status === 0 || err.code === 'network' || err.status >= 500)) return;
+      client.redirectToLogin(workspaceNext());
     });
   });
 
