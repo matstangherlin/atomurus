@@ -28,26 +28,6 @@
     return data;
   }
 
-  function refreshSession() {
-    return fetchJson('/api/auth/refresh', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: '{}'
-    });
-  }
-
-  async function withRefresh(request) {
-    try {
-      return await request();
-    } catch (err) {
-      if (err.status === 401) {
-        await refreshSession();
-        return request();
-      }
-      throw err;
-    }
-  }
-
   function card(label, value) {
     return '<div class="lc-doc-card"><div class="lbl">' +
       escapeHtml(label) +
@@ -165,7 +145,7 @@
           body: '{}'
         });
       } catch (_err) {}
-      window.location.assign('/login');
+      window.location.replace('/login');
     }
     var btn = $('app-logout');
     var aside = $('app-logout-aside');
@@ -176,9 +156,9 @@
   async function boot() {
     initLogout();
     try {
-      var me = await withRefresh(function () { return fetchJson('/api/auth/me'); });
+      var me = await fetchJson('/api/auth/me');
       renderAccount(me);
-      var dash = await withRefresh(function () { return fetchJson('/api/private/dashboard'); });
+      var dash = await fetchJson('/api/private/dashboard');
       renderDashboard(dash);
       var loading = $('app-loading');
       if (loading) loading.style.display = 'none';

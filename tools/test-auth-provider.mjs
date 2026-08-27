@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
 import { accessCookieName, refreshCookieName } from '../netlify/lib/auth-cookies.mjs';
-import { authProviderName, isAuthConfigured } from '../netlify/lib/auth-provider.mjs';
+import { authProviderName, authRefresh, isAuthConfigured } from '../netlify/lib/auth-provider.mjs';
 import { normalizeSupabaseUser } from '../netlify/lib/supabase-auth.mjs';
 
 const original = { ...process.env };
+const originalFetch = globalThis.fetch;
 
 function restoreEnv() {
   for (const key of Object.keys(process.env)) {
@@ -62,5 +63,37 @@ const user = normalizeSupabaseUser({
 assert.equal(user.email, 'a@b.com');
 assert.equal(user.confirmedAt, '2026-01-02T00:00:00Z');
 assert.equal(user.appMetadata.atomurus_plan, 'paid');
+
+try {
+  restoreEnv();
+  Object.assign(process.env, {
+    AUTH_PROVIDER: 'supabase',
+    SUPABASE_URL: 'https://demo.supabase.co',
+    SUPABASE_ANON_KEY: 'anon',
+    NETLIFY_DEV: 'true'
+  });
+
+  globalThis.fetch = async () => ({
+    ok: false,
+    status: 400,
+    text: async () => JSON.stringify({ message: 'Invalid Refresh Token' })
+  });
+
+  const request = {
+    headers: {
+      get(name) {
+        return String(name).toLowerCase() === 'cookie' ? 'atm_refresh=expired-refresh-token' : null;
+      }
+    }
+  };
+
+  const expired = await authRefresh(request);
+  assert.equal(expired.user, null);
+  assert.equal(expired.cookieHeaders.length, 4);
+  assert.ok(expired.cookieHeaders.every((header) => header.includes('Max-Age=0')));
+} finally {
+  globalThis.fetch = originalFetch;
+  restoreEnv();
+}
 
 console.log('test-auth-provider: ok');
