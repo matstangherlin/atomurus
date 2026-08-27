@@ -1,6 +1,8 @@
 (function () {
   'use strict';
 
+  var booted = false;
+
   function $(id) {
     return document.getElementById(id);
   }
@@ -72,13 +74,11 @@
     return '';
   }
 
-  async function postJson(url, payload) {
-    var res = await fetch(url, {
-      method: 'POST',
+  async function requestJson(url, options) {
+    var res = await fetch(url, Object.assign({
       credentials: 'include',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify(payload)
-    });
+      headers: { 'Accept': 'application/json' }
+    }, options || {}));
     var data = await res.json().catch(function () { return {}; });
     if (!res.ok || data.ok === false) {
       var err = new Error(data.error || 'Request failed');
@@ -87,6 +87,14 @@
       throw err;
     }
     return data;
+  }
+
+  async function postJson(url, payload) {
+    return requestJson(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload)
+    });
   }
 
   function friendlyLoginError(err) {
@@ -103,17 +111,44 @@
     return t('auth.loginError', 'Invalid email or password.');
   }
 
+  function searchParam(name) {
+    return new URLSearchParams(location.search).get(name) || '';
+  }
+
+  function safeNextPath(raw) {
+    var value = String(raw || '').trim();
+    if (!value || value.charAt(0) !== '/' || value.slice(0, 2) === '//' || value.indexOf('\\') !== -1) return '';
+    try {
+      var decoded = decodeURIComponent(value);
+      if (decoded.slice(0, 2) === '//' || decoded.indexOf('\\') !== -1) return '';
+      var url = new URL(value, location.origin);
+      if (url.origin !== location.origin) return '';
+      var normalizedPath = (url.pathname || '/').replace(/\/+$/, '') || '/';
+      if (
+        normalizedPath === '/login' ||
+        normalizedPath === '/signup' ||
+        normalizedPath === '/forgot-password' ||
+        normalizedPath === '/login/reset'
+      ) {
+        return '';
+      }
+      return url.pathname + url.search + url.hash;
+    } catch (_err) {
+      return '';
+    }
+  }
+
+  function nextPath() {
+    return safeNextPath(searchParam('next'));
+  }
+
   function enterApp() {
-    window.location.assign('/app');
+    window.location.assign(nextPath() || '/app');
   }
 
   function hashParam(name) {
     if (!location.hash || location.hash.length < 2) return '';
     return new URLSearchParams(location.hash.slice(1)).get(name) || '';
-  }
-
-  function searchParam(name) {
-    return new URLSearchParams(location.search).get(name) || '';
   }
 
   function clearHash() {
@@ -132,6 +167,19 @@
     return 'login';
   }
 
+  function routeForMode(mode) {
+    if (mode === 'signup') return '/signup';
+    if (mode === 'recover') return '/forgot-password';
+    if (mode === 'reset') return '/login/reset';
+    return '/login';
+  }
+
+  function authRouteWithNext(mode) {
+    var path = routeForMode(mode);
+    var next = nextPath();
+    return next ? path + '?next=' + encodeURIComponent(next) : path;
+  }
+
   function setMode(mode, options) {
     options = options || {};
     document.querySelectorAll('[data-auth-panel]').forEach(function (panel) {
@@ -145,12 +193,8 @@
       if (active) tab.setAttribute('aria-current', 'page');
       else tab.removeAttribute('aria-current');
     });
-    if (!options.skipHistory) {
-      var nextPath = '/login';
-      if (mode === 'signup') nextPath = '/signup';
-      if (mode === 'recover') nextPath = '/forgot-password';
-      if (mode === 'reset') nextPath = '/login/reset';
-      if (history && history.replaceState) history.replaceState(null, document.title, nextPath);
+    if (!options.skipHistory && history && history.replaceState) {
+      history.replaceState(null, document.title, authRouteWithNext(mode));
     }
   }
 
@@ -188,7 +232,7 @@
         clearHash();
         show(loginErr, t('auth.confirmError', 'Email confirmation link is invalid or expired.'));
       }
-      return;
+      return true;
     }
 
     if (recoveryToken) {
@@ -199,6 +243,22 @@
         setMode('reset', { skipHistory: true });
         clearHash();
         if (panel.scrollIntoView) panel.scrollIntoView({ block: 'start' });
+      }
+      return true;
+    }
+
+    return false;
+  }
+
+  async function redirectExistingSession() {
+    var mode = currentMode();
+    if (mode !== 'login' && mode !== 'signup') return;
+    try {
+      await requestJson('/api/auth/me');
+      enterApp();
+    } catch (err) {
+      if (!err || err.status !== 401) {
+        // Keep the auth page usable if the session probe is temporarily unavailable.
       }
     }
   }
@@ -265,9 +325,12 @@
         enterApp();
         return;
       }
-      show(okBox, t('auth.signupOk', 'Account created. Check your email if confirmation is required, then sign in.'));
       form.reset();
       setMode('login');
+      show(
+        $('auth-login-ok'),
+        t('auth.signupOk', 'Account created. Check your email if confirmation is required, then sign in.')
+      );
     } catch (err) {
       show(errBox, friendlySignupError(err && err.message ? err.message : t('auth.signupError', 'Could not create this account. Try signing in or use another email.')));
     } finally {
@@ -285,6 +348,11 @@
     var token = panel.dataset.recoveryToken || '';
     var recoveryType = panel.dataset.recoveryType || 'recovery';
     var password = $('auth-new-password').value || '';
+    var passwordError = passwordPolicyError(password);
+    if (passwordError) {
+      show(errBox, t('auth.passwordWeak', passwordError));
+      return;
+    }
     setBusy(button, true, t('auth.saving', 'Saving...'));
     try {
       await postJson('/api/auth/reset', { token: token, password: password, type: recoveryType });
@@ -347,11 +415,15 @@
     bindAuthButton('auth-reset-submit', handleRecoverySubmit);
   }
 
-  function bootAuth() {
-    bindModeLinks();
+  async function bootAuth() {
+    if (!booted) {
+      booted = true;
+      bindModeLinks();
+      bindAuthForms();
+    }
     setMode(currentMode(), { skipHistory: true });
-    bindAuthForms();
-    void initAuthCallbacks();
+    var handledCallback = await initAuthCallbacks();
+    if (!handledCallback) await redirectExistingSession();
   }
 
   window.AtomurusAuth = {
@@ -374,8 +446,12 @@
     boot: bootAuth
   };
 
-  bootAuth();
-  document.addEventListener('DOMContentLoaded', bootAuth);
-  window.addEventListener('load', bootAuth);
-  window.addEventListener('pageshow', bootAuth);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { void bootAuth(); }, { once: true });
+  } else {
+    void bootAuth();
+  }
+  window.addEventListener('pageshow', function (event) {
+    if (event.persisted) void bootAuth();
+  });
 })();
