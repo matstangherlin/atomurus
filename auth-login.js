@@ -83,20 +83,6 @@
     if (!res.ok || data.ok === false) {
       var err = new Error(data.error || 'Request failed');
       err.status = res.status;
-      throw err;
-    }
-    return data;
-  }
-
-  async function fetchJson(url, options) {
-    var res = await fetch(url, Object.assign({
-      credentials: 'include',
-      headers: { 'Accept': 'application/json' }
-    }, options || {}));
-    var data = await res.json().catch(function () { return {}; });
-    if (!res.ok || data.ok === false) {
-      var err = new Error(data.error || 'Request failed');
-      err.status = res.status;
       err.code = data.code;
       throw err;
     }
@@ -117,12 +103,7 @@
     return t('auth.loginError', 'Invalid email or password.');
   }
 
-  async function ensureSession() {
-    await fetchJson('/api/auth/me');
-  }
-
-  async function enterApp() {
-    await ensureSession();
+  function enterApp() {
     window.location.assign('/app');
   }
 
@@ -202,7 +183,7 @@
           type: callbackType || 'signup'
         });
         clearHash();
-        await enterApp();
+        enterApp();
       } catch (_err) {
         clearHash();
         show(loginErr, t('auth.confirmError', 'Email confirmation link is invalid or expired.'));
@@ -233,13 +214,9 @@
     setBusy(button, true, t('auth.entering', 'Entering…'));
     try {
       await postJson('/api/auth/login', { identifier: identifier, password: password });
-      await enterApp();
+      enterApp();
     } catch (err) {
-      if (err && err.status === 401 && err.message && err.message.indexOf('session') !== -1) {
-        show(errBox, t('auth.sessionNotSaved', 'Signed in, but the browser did not keep your session. Disable blockers for this site and try again.'));
-      } else {
-        show(errBox, friendlyLoginError(err));
-      }
+      show(errBox, friendlyLoginError(err));
       setBusy(button, false);
     }
   }
@@ -285,7 +262,7 @@
         passwordConfirm: passwordConfirm
       });
       if (data.signedIn && !data.needsConfirmation) {
-        await enterApp();
+        enterApp();
         return;
       }
       show(okBox, t('auth.signupOk', 'Account created. Check your email if confirmation is required, then sign in.'));
@@ -311,7 +288,7 @@
     setBusy(button, true, t('auth.saving', 'Saving...'));
     try {
       await postJson('/api/auth/reset', { token: token, password: password, type: recoveryType });
-      await enterApp();
+      enterApp();
     } catch (err) {
       show(errBox, err && err.message ? err.message : t('auth.resetError', 'Password reset link is invalid or expired.'));
     } finally {
