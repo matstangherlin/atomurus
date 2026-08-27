@@ -1,7 +1,10 @@
 import assert from 'node:assert/strict';
-import { accessCookieName, refreshCookieName } from '../netlify/lib/auth-cookies.mjs';
-import { authProviderName, isAuthConfigured } from '../netlify/lib/auth-provider.mjs';
-import { normalizeSupabaseUser } from '../netlify/lib/supabase-auth.mjs';
+import { readFileSync } from 'node:fs';
+import { accessCookieName, refreshCookieName, allSessionCookieNames } from '../netlify/lib/auth-cookies.mjs';
+import { authProviderName, authRefresh, isAuthConfigured } from '../netlify/lib/auth-provider.mjs';
+import { isPublicAuthPath, isProtectedPath, loginUrl, safeNextPath } from '../netlify/lib/auth-redirect.mjs';
+import { logAuthEvent } from '../netlify/lib/auth-log.mjs';
+import { classifySupabaseAuthError, normalizeSupabaseUser } from '../netlify/lib/supabase-auth.mjs';
 
 const original = { ...process.env };
 
@@ -23,8 +26,8 @@ function withEnv(overrides, fn) {
 }
 
 withEnv({ AUTH_PROVIDER: 'netlify-identity', SUPABASE_URL: '', SUPABASE_ANON_KEY: '' }, () => {
-  assert.equal(authProviderName(), 'netlify-identity');
-  assert.equal(isAuthConfigured(), true);
+  assert.equal(authProviderName(), 'supabase');
+  assert.equal(isAuthConfigured(), false);
 });
 
 withEnv({ AUTH_PROVIDER: '', SUPABASE_URL: 'https://demo.supabase.co', SUPABASE_ANON_KEY: 'anon' }, () => {
@@ -40,6 +43,7 @@ withEnv({ AUTH_PROVIDER: 'supabase', SUPABASE_URL: '', SUPABASE_ANON_KEY: '' }, 
 withEnv({ NETLIFY_DEV: 'true' }, () => {
   assert.equal(accessCookieName(), 'atm_access');
   assert.equal(refreshCookieName(), 'atm_refresh');
+  assert.ok(allSessionCookieNames().includes('atm_access'));
 });
 
 withEnv({ NETLIFY_DEV: '', CONTEXT: 'production' }, () => {
@@ -62,5 +66,86 @@ const user = normalizeSupabaseUser({
 assert.equal(user.email, 'a@b.com');
 assert.equal(user.confirmedAt, '2026-01-02T00:00:00Z');
 assert.equal(user.appMetadata.atomurus_plan, 'paid');
+
+assert.equal(safeNextPath('/pricing'), '/pricing');
+assert.equal(safeNextPath('/app'), '/app');
+assert.equal(safeNextPath('https://evil.example/phish'), '/app');
+assert.equal(safeNextPath('//evil.example'), '/app');
+assert.equal(safeNextPath('/login'), '/app');
+assert.equal(safeNextPath('/signup?next=/app'), '/app');
+assert.equal(loginUrl('/pricing'), '/login?next=%2Fpricing');
+assert.equal(loginUrl('/app'), '/login');
+assert.equal(isPublicAuthPath('/login'), true);
+assert.equal(isPublicAuthPath('/reset-password'), true);
+assert.equal(isProtectedPath('/app'), true);
+assert.equal(isProtectedPath('/periodic-table'), false);
+
+const unconfirmed = classifySupabaseAuthError(Object.assign(new Error('Email not confirmed'), {
+  status: 400,
+  code: 'email_not_confirmed'
+}));
+assert.equal(unconfirmed.code, 'email_not_confirmed');
+assert.equal(unconfirmed.status, 401);
+
+const logs = [];
+const originalWarn = console.warn;
+console.warn = (line) => logs.push(String(line));
+try {
+  logAuthEvent('auth-login', {
+    ok: false,
+    email: 'a@b.com',
+    access_token: 'secret-token',
+    password: 'hunter2',
+    refresh_token: 'refresh-secret',
+    errorType: 'invalid_credentials'
+  });
+} finally {
+  console.warn = originalWarn;
+}
+assert.equal(logs.length, 1);
+assert.match(logs[0], /invalid_credentials/);
+assert.doesNotMatch(logs[0], /secret-token|hunter2|refresh-secret|access_token|password/);
+
+for (const file of ['auth-client.js', 'auth-login.js', 'auth-app.js', 'ads-gate.js', 'login.html', 'app.html']) {
+  const source = readFileSync(new URL(`../${file}`, import.meta.url), 'utf8');
+  assert.doesNotMatch(source, /SERVICE_ROLE|service_role|SUPABASE_SERVICE/);
+}
+
+const rls = readFileSync(new URL('../supabase/migrations/004_rls_with_check.sql', import.meta.url), 'utf8');
+assert.match(rls, /with check \(auth\.uid\(\) = id\)/i);
+assert.match(rls, /with check \(auth\.uid\(\) = user_id\)/i);
+
+const originalFetch = globalThis.fetch;
+try {
+  restoreEnv();
+  Object.assign(process.env, {
+    AUTH_PROVIDER: 'supabase',
+    SUPABASE_URL: 'https://demo.supabase.co',
+    SUPABASE_ANON_KEY: 'anon',
+    NETLIFY_DEV: 'true'
+  });
+
+  globalThis.fetch = async () => ({
+    ok: false,
+    status: 400,
+    text: async () => JSON.stringify({ message: 'Invalid Refresh Token' })
+  });
+
+  const request = {
+    headers: {
+      get(name) {
+        return String(name).toLowerCase() === 'cookie' ? 'atm_refresh=expired-refresh-token' : null;
+      }
+    }
+  };
+
+  const expired = await authRefresh(request);
+  assert.equal(expired.user, null);
+  assert.equal(expired.cookieHeaders.length, 4);
+  assert.ok(expired.cookieHeaders.every((header) => header.includes('Max-Age=0')));
+} finally {
+  globalThis.fetch = originalFetch;
+  restoreEnv();
+}
 
 console.log('test-auth-provider: ok');
