@@ -152,10 +152,10 @@
       var client = auth();
       if (client) {
         try { await client.logout(); } catch (_err) {}
-        client.redirectToLogin('/app');
+        client.redirectToLogin(location.pathname + location.search);
         return;
       }
-      window.location.replace('/login');
+      window.location.replace('/login?next=' + encodeURIComponent('/app'));
     }
     var btn = $('app-logout');
     var aside = $('app-logout-aside');
@@ -163,14 +163,18 @@
     if (aside) aside.addEventListener('click', doLogout);
   }
 
+  function workspaceNext() {
+    return location.pathname + location.search;
+  }
+
   async function loadWorkspace() {
     var client = auth();
     if (!client) {
-      window.location.replace('/login');
+      window.location.replace('/login?next=' + encodeURIComponent('/app'));
       return;
     }
     try {
-      await client.requireSession({ next: '/app' });
+      await client.requireSession({ next: workspaceNext() });
       var me = { user: client.getCurrentUser() };
       renderAccount(me);
       var dash = await fetchJson('/api/private/dashboard');
@@ -181,7 +185,7 @@
       client.startRefreshTimer();
     } catch (err) {
         if (err && (err.status === 401 || err.status === 404 || err.code === 'session_expired')) {
-        client.redirectToLogin('/app');
+        client.redirectToLogin(workspaceNext());
         return;
       }
       showError();
@@ -198,9 +202,9 @@
     var client = auth();
     if (!client) return;
     client.getSession().then(function (session) {
-      if (!session.signedIn) client.redirectToLogin('/app');
+      if (!session.signedIn) client.redirectToLogin(location.pathname + location.search);
     }).catch(function () {
-      client.redirectToLogin('/app');
+      client.redirectToLogin(location.pathname + location.search);
     });
   });
 

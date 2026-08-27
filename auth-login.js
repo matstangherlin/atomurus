@@ -119,10 +119,38 @@
     return new URLSearchParams(location.search).get(name) || '';
   }
 
-  function clearHash() {
-    if (history && history.replaceState) {
-      history.replaceState(null, document.title, location.pathname + location.search);
+  function pickParam(name) {
+    return hashParam(name) || searchParam(name) || '';
+  }
+
+  function stripSensitiveAuthParams() {
+    if (!history || !history.replaceState) return;
+    var url = new URL(location.href);
+    [
+      'token_hash',
+      'confirmation_token',
+      'recovery_token',
+      'type',
+      'access_token',
+      'refresh_token',
+      'error',
+      'error_code',
+      'error_description',
+      'code'
+    ].forEach(function (key) {
+      url.searchParams.delete(key);
+    });
+    var client = auth();
+    var next = url.searchParams.get('next');
+    if (next) {
+      var safe = client ? client.safeNextPath(next, '') : '';
+      if (safe) url.searchParams.set('next', safe);
+      else url.searchParams.delete('next');
     }
+    var lang = url.searchParams.get('lang') || searchParam('lang');
+    if (lang) url.searchParams.set('lang', lang);
+    else url.searchParams.delete('lang');
+    history.replaceState(null, document.title, url.pathname + url.search);
   }
 
   function currentMode() {
@@ -133,6 +161,25 @@
     if (path === '/reset-password' || path === '/login/reset') return 'reset';
     if (mode === 'signup' || mode === 'recover' || mode === 'reset') return mode;
     return 'login';
+  }
+
+  function preservedAuthQuery() {
+    var params = [];
+    var lang = searchParam('lang');
+    if (lang) params.push('lang=' + encodeURIComponent(lang));
+    var client = auth();
+    var rawNext = searchParam('next');
+    var next = rawNext ? (client ? client.safeNextPath(rawNext, '') : '') : '';
+    if (next) params.push('next=' + encodeURIComponent(next));
+    return params.length ? '?' + params.join('&') : '';
+  }
+
+  function authScreenPath(mode) {
+    var path = '/login';
+    if (mode === 'signup') path = '/signup';
+    if (mode === 'recover') path = '/forgot-password';
+    if (mode === 'reset') path = '/reset-password';
+    return path + preservedAuthQuery();
   }
 
   function setMode(mode, options) {
@@ -148,16 +195,8 @@
       if (active) tab.setAttribute('aria-current', 'page');
       else tab.removeAttribute('aria-current');
     });
-    if (!options.skipHistory) {
-      var nextPath = '/login';
-      if (mode === 'signup') nextPath = '/signup';
-      if (mode === 'recover') nextPath = '/forgot-password';
-      if (mode === 'reset') nextPath = '/reset-password';
-      var nextQuery = searchParam('next');
-      if (nextQuery && (mode === 'login' || mode === 'signup')) {
-        nextPath += (nextPath.indexOf('?') === -1 ? '?' : '&') + 'next=' + encodeURIComponent(nextQuery);
-      }
-      if (history && history.replaceState) history.replaceState(null, document.title, nextPath);
+    if (!options.skipHistory && history && history.replaceState) {
+      history.replaceState(null, document.title, authScreenPath(mode));
     }
   }
 
@@ -193,19 +232,19 @@
     var client = auth();
     if (!client) return false;
 
-    var accessToken = hashParam('access_token');
-    var refreshToken = hashParam('refresh_token');
-    var tokenHash = hashParam('token_hash') || searchParam('token_hash');
-    var callbackType = hashParam('type') || searchParam('type');
-    var confirmationToken = hashParam('confirmation_token') || (tokenHash && callbackType === 'signup' ? tokenHash : '');
-    var recoveryToken = hashParam('recovery_token') || (tokenHash && (callbackType === 'recovery' || callbackType === 'invite') ? tokenHash : '');
+    var accessToken = pickParam('access_token');
+    var refreshToken = pickParam('refresh_token');
+    var tokenHash = pickParam('token_hash');
+    var callbackType = pickParam('type');
+    var confirmationToken = pickParam('confirmation_token') || (tokenHash && callbackType === 'signup' ? tokenHash : '');
+    var recoveryToken = pickParam('recovery_token') || (tokenHash && (callbackType === 'recovery' || callbackType === 'invite') ? tokenHash : '');
     var loginOk = $('auth-login-ok');
     var loginErr = $('auth-login-err');
 
     if (accessToken && refreshToken) {
       try {
         await client.establishSession(accessToken, refreshToken);
-        clearHash();
+        stripSensitiveAuthParams();
         if (callbackType === 'recovery') {
           var panel = $('auth-password-panel');
           if (panel) {
@@ -219,7 +258,7 @@
         client.redirectAfterLogin();
         return true;
       } catch (_err) {
-        clearHash();
+        stripSensitiveAuthParams();
         show(loginErr, t('common.auth.confirmError', 'Email confirmation link is invalid or expired.'));
         return true;
       }
@@ -231,11 +270,11 @@
       hide(loginErr);
       try {
         await client.confirmEmail(confirmationToken, callbackType || 'signup');
-        clearHash();
+        stripSensitiveAuthParams();
         show(loginOk, t('common.auth.confirmed', 'Email confirmed. Entering your workspace…'));
         client.redirectAfterLogin();
       } catch (_err) {
-        clearHash();
+        stripSensitiveAuthParams();
         show(loginErr, t('common.auth.confirmError', 'Email confirmation link is invalid or expired.'));
       }
       return true;
@@ -247,8 +286,10 @@
         resetPanel.dataset.recoveryToken = recoveryToken;
         resetPanel.dataset.recoveryType = callbackType || 'recovery';
         setMode('reset', { skipHistory: true });
-        clearHash();
+        stripSensitiveAuthParams();
         if (resetPanel.scrollIntoView) resetPanel.scrollIntoView({ block: 'start' });
+      } else {
+        stripSensitiveAuthParams();
       }
       return true;
     }
@@ -326,9 +367,15 @@
         auth().redirectAfterLogin();
         return;
       }
-      show(okBox, t('common.auth.signupOk', 'Account created. Check your email if confirmation is required, then sign in.'));
       form.reset();
       setMode('login');
+      hide(okBox);
+      hide(errBox);
+      hide($('auth-login-err'));
+      show(
+        $('auth-login-ok'),
+        t('common.auth.signupOk', 'Account created. Check your email if confirmation is required, then sign in.')
+      );
     } catch (err) {
       show(errBox, friendlySignupError(err && err.message ? err.message : t('common.auth.signupError', 'Could not create this account. Try signing in or use another email.')));
     } finally {
@@ -410,32 +457,53 @@
     bindAuthForm('auth-reset-form', handleRecoverySubmit);
   }
 
+  var authPageBound = false;
+  var authPageBooted = false;
+  var signedInCheckInFlight = false;
+
   async function maybeRedirectSignedIn() {
     var client = auth();
     if (!client) return;
     if (currentMode() === 'reset') return;
+    if (signedInCheckInFlight) return;
+    signedInCheckInFlight = true;
     try {
       var session = await client.getSession();
-      if (session.signedIn) client.redirectAfterLogin();
-    } catch (_err) {}
+      if (session && session.signedIn) client.redirectAfterLogin();
+    } catch (err) {
+      if (err && (err.status === 401 || err.code === 'session_expired')) return;
+      // Network / 5xx must not block the login page.
+    } finally {
+      signedInCheckInFlight = false;
+    }
   }
 
-  function bootAuth() {
-    if (document.documentElement.dataset.authPageBooted === '1') return;
-    document.documentElement.dataset.authPageBooted = '1';
+  function bindAuthPage() {
+    if (authPageBound) return;
+    authPageBound = true;
     bindModeLinks();
-    setMode(currentMode(), { skipHistory: true });
     bindAuthForms();
     bindPasswordToggles();
-    void (async function () {
-      var handledCallback = await initAuthCallbacks();
-      if (!handledCallback) await maybeRedirectSignedIn();
-    })();
+  }
+
+  async function startAuthPage() {
+    if (authPageBooted) return;
+    authPageBooted = true;
+    bindAuthPage();
+    setMode(currentMode(), { skipHistory: true });
+    var handledCallback = await initAuthCallbacks();
+    if (!handledCallback) await maybeRedirectSignedIn();
+  }
+
+  function onPageShow(event) {
+    if (!event || event.persisted !== true) return;
+    void maybeRedirectSignedIn();
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', bootAuth);
+    document.addEventListener('DOMContentLoaded', startAuthPage);
   } else {
-    bootAuth();
+    void startAuthPage();
   }
+  window.addEventListener('pageshow', onPageShow);
 })();

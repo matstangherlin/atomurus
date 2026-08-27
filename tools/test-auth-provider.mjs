@@ -69,12 +69,27 @@ assert.equal(user.appMetadata.atomurus_plan, 'paid');
 
 assert.equal(safeNextPath('/pricing'), '/pricing');
 assert.equal(safeNextPath('/app'), '/app');
+assert.equal(safeNextPath('/app?section=billing'), '/app?section=billing');
+assert.equal(safeNextPath('/app?section=account'), '/app?section=account');
 assert.equal(safeNextPath('https://evil.example/phish'), '/app');
+assert.equal(safeNextPath('https://evil.example'), '/app');
 assert.equal(safeNextPath('//evil.example'), '/app');
+assert.equal(safeNextPath('//evil.com'), '/app');
+assert.equal(safeNextPath('%2F%2Fevil.com'), '/app');
+assert.equal(safeNextPath('/%2F%2Fevil.com'), '/app');
+assert.equal(safeNextPath('/%252F%252Fevil.com'), '/app');
+assert.equal(safeNextPath('\\\\evil.com'), '/app');
+assert.equal(safeNextPath('/\\\\evil.com'), '/app');
 assert.equal(safeNextPath('/login'), '/app');
+assert.equal(safeNextPath('/signup'), '/app');
 assert.equal(safeNextPath('/signup?next=/app'), '/app');
+assert.equal(safeNextPath('/forgot-password'), '/app');
+assert.equal(safeNextPath('/login/reset'), '/app');
+assert.equal(safeNextPath('/reset-password'), '/app');
+assert.equal(safeNextPath('https://evil.com', ''), '');
 assert.equal(loginUrl('/pricing'), '/login?next=%2Fpricing');
-assert.equal(loginUrl('/app'), '/login');
+assert.equal(loginUrl('/app'), '/login?next=%2Fapp');
+assert.equal(loginUrl('/app?section=billing'), '/login?next=%2Fapp%3Fsection%3Dbilling');
 assert.equal(isPublicAuthPath('/login'), true);
 assert.equal(isPublicAuthPath('/reset-password'), true);
 assert.equal(isProtectedPath('/app'), true);
@@ -105,11 +120,27 @@ try {
 assert.equal(logs.length, 1);
 assert.match(logs[0], /invalid_credentials/);
 assert.doesNotMatch(logs[0], /secret-token|hunter2|refresh-secret|access_token|password/);
+assert.doesNotMatch(logs[0], /a@b\.com/);
 
 for (const file of ['auth-client.js', 'auth-login.js', 'auth-app.js', 'ads-gate.js', 'login.html', 'app.html']) {
   const source = readFileSync(new URL(`../${file}`, import.meta.url), 'utf8');
   assert.doesNotMatch(source, /SERVICE_ROLE|service_role|SUPABASE_SERVICE/);
 }
+
+const loginBoot = readFileSync(new URL('../auth-login.js', import.meta.url), 'utf8');
+assert.match(loginBoot, /stripSensitiveAuthParams/);
+assert.match(loginBoot, /authPageBooted/);
+assert.match(loginBoot, /event\.persisted !== true/);
+assert.match(loginBoot, /auth-login-ok[\s\S]*signupOk|signupOk[\s\S]*auth-login-ok/);
+assert.match(loginBoot, /forgot-password\?|authScreenPath/);
+assert.match(loginBoot, /handlePasswordResetSubmit[\s\S]*passwordPolicyError\(password\)/);
+assert.doesNotMatch(loginBoot, /addEventListener\(['"]load['"]/);
+assert.doesNotMatch(loginBoot, /withRefresh\s*\(/);
+
+const authClient = readFileSync(new URL('../auth-client.js', import.meta.url), 'utf8');
+assert.match(authClient, /encodeURIComponent\(next\)/);
+assert.match(authClient, /url\.origin !== location\.origin/);
+assert.doesNotMatch(authClient, /withRefresh\s*\(/);
 
 const rls = readFileSync(new URL('../supabase/migrations/004_rls_with_check.sql', import.meta.url), 'utf8');
 assert.match(rls, /with check \(auth\.uid\(\) = id\)/i);

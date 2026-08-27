@@ -65,7 +65,13 @@ export default async function handler(request) {
 
   const ip = clientIp(request);
   if (!hitIp(`ip:${ip}`) || !hitEmail(`email:${email}`)) {
-    logAuthEvent('auth-signup', { ok: false, errorType: 'rate_limited' });
+    logAuthEvent('auth-signup', {
+      ok: false,
+      errorType: 'rate_limited',
+      ip,
+      status: 429,
+      summary: `Rejected account creation attempt from ${ip}: 429`
+    });
     return json(429, { ok: false, error: 'Too many attempts. Try again later.' });
   }
 
@@ -92,7 +98,13 @@ export default async function handler(request) {
       logAuthEvent('auth-signup', { ok: false, errorType: 'unavailable', level: 'error' });
       return json(500, { ok: false, error: 'Account creation is unavailable.' });
     }
-    logAuthEvent('auth-signup', { ok: false, errorType: err?.code || 'rejected', status });
+    logAuthEvent('auth-signup', {
+      ok: false,
+      errorType: err?.code || 'rejected',
+      ip,
+      status,
+      summary: `Rejected account creation attempt from ${ip}: ${status}`
+    });
     return json(status >= 400 && status < 500 ? status : 400, {
       ok: false,
       error: err?.publicMessage || err?.message || 'Could not create this account. Try signing in or use another email.',

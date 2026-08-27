@@ -57,18 +57,30 @@ export default async function handler(request) {
   const ip = clientIp(request);
   const rateKey = isEmail ? `email:${email}` : `username:${username}`;
   if (!hitIp(`ip:${ip}`) || !hitEmail(rateKey)) {
-    logAuthEvent('auth-login', { ok: false, errorType: 'rate_limited', identifierType: isEmail ? 'email' : 'username' });
+    logAuthEvent('auth-login', {
+      ok: false,
+      errorType: 'rate_limited',
+      ip,
+      status: 429,
+      summary: `Rejected credential attempt from ${ip}: 429`
+    });
     return json(429, { ok: false, error: 'Too many attempts. Try again later.' });
   }
 
   try {
     const result = await authLogin(identifierRaw, password);
-    logAuthEvent('auth-login', { ok: true, identifierType: isEmail ? 'email' : 'username' });
+    logAuthEvent('auth-login', { ok: true, identifierType: isEmail ? 'email' : 'username', ip });
     return jsonWithCookies(200, { ok: true, user: publicUser(result.user) }, result.cookieHeaders);
   } catch (err) {
     const status = statusFromError(err, 500);
     if (err?.code === 'email_not_confirmed') {
-      logAuthEvent('auth-login', { ok: false, errorType: 'email_not_confirmed', identifierType: isEmail ? 'email' : 'username' });
+      logAuthEvent('auth-login', {
+        ok: false,
+        errorType: 'email_not_confirmed',
+        ip,
+        status: 401,
+        summary: `Rejected credential attempt from ${ip}: 401`
+      });
       return json(401, {
         ok: false,
         error: err.publicMessage || 'Confirm your email before signing in.',
@@ -76,14 +88,22 @@ export default async function handler(request) {
       });
     }
     if (isAuthConfigError(err) || status >= 500) {
-      logAuthEvent('auth-login', { ok: false, errorType: 'unavailable', level: 'error' });
+      logAuthEvent('auth-login', {
+        ok: false,
+        errorType: 'unavailable',
+        ip,
+        status: 500,
+        level: 'error',
+        summary: `Rejected credential attempt from ${ip}: 500`
+      });
       return json(500, { ok: false, error: 'Authentication unavailable' });
     }
     logAuthEvent('auth-login', {
       ok: false,
       errorType: 'invalid_credentials',
-      identifierType: isEmail ? 'email' : 'username',
-      status
+      ip,
+      status: 401,
+      summary: `Rejected credential attempt from ${ip}: 401`
     });
     return json(401, { ok: false, error: 'Invalid email or password' });
   }

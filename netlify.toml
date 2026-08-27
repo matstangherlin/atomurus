@@ -129,22 +129,22 @@
 
 [[redirects]]
   from   = "/signup"
-  to     = "/login.html?mode=signup"
+  to     = "/login.html"
   status = 200
 
 [[redirects]]
   from   = "/forgot-password"
-  to     = "/login.html?mode=recover"
+  to     = "/login.html"
   status = 200
 
 [[redirects]]
   from   = "/login/reset"
-  to     = "/login.html?mode=reset"
+  to     = "/login.html"
   status = 200
 
 [[redirects]]
   from   = "/reset-password"
-  to     = "/login.html?mode=reset"
+  to     = "/login.html"
   status = 200
 
 [[redirects]]

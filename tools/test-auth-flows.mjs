@@ -234,10 +234,20 @@ await withAuthEnv(async () => {
 });
 
 await withAuthEnv(async () => {
-  // 6. login e retorno à URL original
+  // 6. login e retorno à URL original + open-redirect blocked
   assert.equal(safeNextPath('/pricing'), '/pricing');
+  assert.equal(safeNextPath('/app'), '/app');
+  assert.equal(safeNextPath('/app?section=billing'), '/app?section=billing');
   assert.equal(safeNextPath('/login'), '/app');
+  assert.equal(safeNextPath('/signup'), '/app');
+  assert.equal(safeNextPath('/forgot-password'), '/app');
+  assert.equal(safeNextPath('/login/reset'), '/app');
   assert.equal(safeNextPath('https://evil.test'), '/app');
+  assert.equal(safeNextPath('https://evil.example'), '/app');
+  assert.equal(safeNextPath('//evil.com'), '/app');
+  assert.equal(safeNextPath('%2F%2Fevil.com'), '/app');
+  assert.equal(safeNextPath('/%2F%2Fevil.com'), '/app');
+  assert.equal(safeNextPath('\\\\evil.com'), '/app');
 });
 
 await withAuthEnv(async () => {
@@ -418,6 +428,44 @@ await withAuthEnv(async () => {
   const json = await readJson(res);
   assert.equal(res.status, 401);
   assert.equal(json.code, 'email_not_confirmed');
+});
+
+await withAuthEnv(async () => {
+  const lines = [];
+  console.warn = (line) => lines.push(String(line));
+  installSupabaseMock([{
+    match: (url, method) => method === 'POST' && url.includes('/token?grant_type=password'),
+    respond: async () => jsonRes(400, { error: 'invalid_grant', msg: 'Invalid login credentials' })
+  }]);
+  const res = await loginHandler(cookieRequest('https://atomurus.com/api/auth/login', {
+    method: 'POST',
+    headers: { 'x-forwarded-for': '203.0.113.9' },
+    body: { identifier: 'alice@atomurus.com', password: 'Wrong#Pass99' }
+  }));
+  assert.equal(res.status, 401);
+  const blob = lines.join('\n');
+  assert.match(blob, /Rejected credential attempt from 203\.0\.113\.9: 401/);
+  assert.doesNotMatch(blob, /alice@atomurus\.com/);
+  assert.doesNotMatch(blob, /Wrong#Pass99/);
+});
+
+await withAuthEnv(async () => {
+  let called = false;
+  installSupabaseMock([{
+    match: () => {
+      called = true;
+      return true;
+    },
+    respond: async () => jsonRes(500, {})
+  }]);
+  const res = await resetHandler(cookieRequest('https://atomurus.com/api/auth/reset', {
+    method: 'POST',
+    body: { token: 'token-hash', password: 'short', type: 'recovery' }
+  }));
+  const json = await readJson(res);
+  assert.equal(res.status, 400);
+  assert.match(json.error, /9 characters/);
+  assert.equal(called, false);
 });
 
 console.log('test-auth-flows: ok');

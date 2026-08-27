@@ -65,17 +65,61 @@
     });
   }
 
+  function fullyDecode(value) {
+    var current = String(value || '');
+    var i;
+    for (i = 0; i < 5; i += 1) {
+      try {
+        var next = decodeURIComponent(current.replace(/\+/g, '%20'));
+        if (next === current) break;
+        current = next;
+      } catch (_err) {
+        break;
+      }
+    }
+    return current;
+  }
+
+  function hasBackslash(value) {
+    return String(value || '').indexOf('\\') !== -1 || /%5c/i.test(String(value || ''));
+  }
+
+  // Keep in sync with netlify/lib/auth-redirect.mjs
   function safeNextPath(raw, fallback) {
+    if (fallback === undefined) fallback = '/app';
     var value = String(raw || '').trim();
-    fallback = fallback || '/app';
-    if (!value || value.charAt(0) !== '/' || value.indexOf('//') === 0 || value.indexOf('\\') !== -1) return fallback;
-    if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(value)) return fallback;
-    if (isPublicAuthPath(value)) return fallback;
-    return value;
+    if (!value) return fallback;
+    if (hasBackslash(value)) return fallback;
+
+    var decoded = fullyDecode(value);
+    if (hasBackslash(decoded)) return fallback;
+    if (value.charAt(0) !== '/' || value.indexOf('//') === 0 || decoded.indexOf('//') === 0) return fallback;
+    if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(value) || /^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(decoded)) return fallback;
+
+    var url;
+    try {
+      url = new URL(value, location.origin);
+    } catch (_err) {
+      return fallback;
+    }
+    if (url.origin !== location.origin) return fallback;
+    if (url.username || url.password) return fallback;
+    if (url.pathname.indexOf('//') === 0) return fallback;
+
+    var decodedPath = fullyDecode(url.pathname);
+    if (decodedPath.indexOf('//') === 0 || hasBackslash(decodedPath)) return fallback;
+    if (isPublicAuthPath(url.pathname) || isPublicAuthPath(decodedPath)) return fallback;
+
+    return url.pathname + url.search;
   }
 
   function currentPath() {
     return pathnameOf(location.pathname);
+  }
+
+  function currentNextCandidate() {
+    if (isPublicAuthPath(location.pathname)) return '/app';
+    return location.pathname + location.search;
   }
 
   function queryParam(name) {
@@ -87,9 +131,11 @@
   }
 
   function loginUrl(nextPath) {
-    var next = safeNextPath(nextPath || currentPath());
-    if (!next || next === '/app') return '/login';
-    return '/login?next=' + encodeURIComponent(next);
+    var next = safeNextPath(nextPath || currentNextCandidate(), '/app');
+    var url = '/login?next=' + encodeURIComponent(next);
+    var lang = queryParam('lang');
+    if (lang) url += '&lang=' + encodeURIComponent(lang);
+    return url;
   }
 
   function redirectAfterLogin() {
@@ -97,7 +143,7 @@
   }
 
   function redirectToLogin(nextPath) {
-    location.replace(loginUrl(nextPath || currentPath()));
+    location.replace(loginUrl(nextPath || currentNextCandidate()));
   }
 
   async function request(url, options) {
@@ -309,7 +355,7 @@
     refreshTimer = setInterval(function () {
       if (!state.signedIn) return;
       refreshSession().catch(function (err) {
-        if (err && err.status === 401) redirectToLogin(currentPath());
+        if (err && err.status === 401) redirectToLogin(currentNextCandidate());
       });
     }, 10 * 60 * 1000);
   }
