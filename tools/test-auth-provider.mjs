@@ -7,6 +7,7 @@ import { hasSessionCookieHeader } from '../netlify/lib/session-cookie-flag.mjs';
 import { appGateDecision } from '../netlify/lib/app-gate.mjs';
 import { logAuthEvent } from '../netlify/lib/auth-log.mjs';
 import { classifySupabaseAuthError, normalizeSupabaseUser } from '../netlify/lib/supabase-auth.mjs';
+import protectApp from '../netlify/edge-functions/protect-app.js';
 
 const original = { ...process.env };
 
@@ -194,6 +195,21 @@ assert.equal(signedApp.action, 'next');
 
 const publicPage = appGateDecision('https://atomurus.com/pricing', '');
 assert.equal(publicPage.action, 'next');
+
+const edgeUnsigned = await protectApp(
+  new Request('https://atomurus.com/app?section=billing'),
+  { next: async () => new Response('workspace', { status: 200 }) }
+);
+assert.equal(edgeUnsigned.status, 302);
+assert.equal(edgeUnsigned.headers.get('Location'), '/login?next=%2Fapp%3Fsection%3Dbilling');
+assert.match(edgeUnsigned.headers.get('Cache-Control') || '', /no-store/);
+
+const edgeSigned = await protectApp(
+  new Request('https://atomurus.com/app', { headers: { cookie: 'atm_access=stale-token' } }),
+  { next: async () => new Response('workspace', { status: 200 }) }
+);
+assert.equal(edgeSigned.status, 200);
+assert.equal(await edgeSigned.text(), 'workspace');
 
 const rls = readFileSync(new URL('../supabase/migrations/004_rls_with_check.sql', import.meta.url), 'utf8');
 assert.match(rls, /with check \(auth\.uid\(\) = id\)/i);
