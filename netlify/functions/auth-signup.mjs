@@ -81,10 +81,10 @@ export default async function handler(request) {
   } catch (err) {
     const status = statusFromError(err, 500);
     if (isAuthConfigError(err) || status >= 500) {
-      console.error('[auth-signup] Auth request failed:', err.message);
+      console.error('[auth-signup] Auth provider request failed:', err.message);
       return json(500, { ok: false, error: 'Account creation is unavailable.' });
     }
-    console.warn(`[auth-signup] Rejected signup for ${email} from ${ip}: ${status}`);
+    console.warn(`[auth-signup] Rejected account creation attempt from ${ip}: ${status}`);
     return json(status >= 400 && status < 500 ? status : 400, {
       ok: false,
       error: err?.message || 'Could not create this account. Try signing in or use another email.'
