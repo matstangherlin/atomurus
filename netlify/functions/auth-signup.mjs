@@ -1,8 +1,13 @@
 import { authSignup, isAuthConfigError, isAuthConfigured } from '../lib/auth-provider.mjs';
 import { logAuthEvent } from '../lib/auth-log.mjs';
 import {
+  consumeAuthLimits,
+  hashIdentifier,
+  signupEmailLimiter,
+  signupIpLimiter
+} from '../lib/auth-rate-limit.mjs';
+import {
   clientIp,
-  createRateLimit,
   json,
   jsonWithCookies,
   normalizeEmail,
@@ -12,13 +17,11 @@ import {
   publicUser,
   readJsonBody,
   statusFromError,
+  tooManyRequests,
   validEmail,
   validUsername,
   verifySameOrigin
 } from '../lib/netlify-identity-utils.mjs';
-
-const hitIp = createRateLimit({ windowMs: 60 * 60 * 1000, limit: 20 });
-const hitEmail = createRateLimit({ windowMs: 60 * 60 * 1000, limit: 4 });
 
 export default async function handler(request) {
   if (request.method === 'OPTIONS') return options();
@@ -64,15 +67,20 @@ export default async function handler(request) {
   }
 
   const ip = clientIp(request);
-  if (!hitIp(`ip:${ip}`) || !hitEmail(`email:${email}`)) {
+  const limited = consumeAuthLimits([
+    { limiter: signupIpLimiter, key: `ip:${ip}` },
+    { limiter: signupEmailLimiter, key: hashIdentifier(email) }
+  ]);
+  if (!limited.allowed) {
     logAuthEvent('auth-signup', {
       ok: false,
+      event: 'auth_signup_rate_limited',
       errorType: 'rate_limited',
       ip,
       status: 429,
       summary: `Rejected account creation attempt from ${ip}: 429`
     });
-    return json(429, { ok: false, error: 'Too many attempts. Try again later.' });
+    return tooManyRequests(limited.retryAfter);
   }
 
   try {

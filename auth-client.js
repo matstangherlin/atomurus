@@ -15,6 +15,7 @@
   var verified = false;
   var refreshTimer = null;
   var sessionPromise = null;
+  var sync = null;
 
   var state = {
     ready: false,
@@ -183,6 +184,40 @@
     });
   }
 
+  function publishSync(type) {
+    if (sync && typeof sync.publish === 'function') sync.publish(type);
+  }
+
+  function hidePrivateWorkspace() {
+    try {
+      document.documentElement.classList.remove('auth-ready');
+      document.documentElement.classList.add('auth-pending');
+    } catch (_err) {}
+  }
+
+  function handleRemoteAuth(_event, action) {
+    if (action === 'sign-out') {
+      stopRefreshTimer();
+      applyUser(null, true);
+      hidePrivateWorkspace();
+      if (isProtectedPath(location.pathname)) redirectToLogin(currentNextCandidate());
+      return;
+    }
+    if (action === 'revalidate') {
+      getSession({ force: true }).then(function (snapshot) {
+        if (snapshot.signedIn && isPublicAuthPath(location.pathname)) redirectAfterLogin();
+      }).catch(function () {});
+    }
+  }
+
+  function bindAuthSync() {
+    if (sync) return;
+    var factory = window.AtomurusAuthSync;
+    if (!factory || typeof factory.createAuthSync !== 'function') return;
+    sync = factory.createAuthSync();
+    sync.subscribe(handleRemoteAuth);
+  }
+
   function ingestPublicSession(user, signedIn) {
     if (verified) return copyState();
     if (isProtectedPath(location.pathname)) return copyState();
@@ -246,6 +281,7 @@
       body: JSON.stringify({ identifier: identifier, password: password })
     });
     applyUser(data.user, true);
+    publishSync('signed-in');
     return data;
   }
 
@@ -255,9 +291,13 @@
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-    if (data.signedIn && data.user) applyUser(data.user, true);
-    else if (data.user && !data.needsConfirmation) applyUser(data.user, true);
-    else {
+    if (data.signedIn && data.user) {
+      applyUser(data.user, true);
+      publishSync('signed-in');
+    } else if (data.user && !data.needsConfirmation) {
+      applyUser(data.user, true);
+      publishSync('signed-in');
+    } else {
       verified = true;
       setState({ ready: true, signedIn: false, user: null, error: null });
     }
@@ -272,7 +312,9 @@
         body: '{}'
       });
     } catch (_err) {}
+    stopRefreshTimer();
     applyUser(null, true);
+    publishSync('signed-out');
     return copyState();
   }
 
@@ -290,7 +332,10 @@
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload || {})
     });
-    if (data.user) applyUser(data.user, true);
+    if (data.user) {
+      applyUser(data.user, true);
+      publishSync('signed-in');
+    }
     return data;
   }
 
@@ -300,7 +345,10 @@
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token: token, type: type || 'signup' })
     });
-    if (data.user) applyUser(data.user, true);
+    if (data.user) {
+      applyUser(data.user, true);
+      publishSync('signed-in');
+    }
     return data;
   }
 
@@ -311,6 +359,7 @@
       body: JSON.stringify({ accessToken: accessToken, refreshToken: refreshToken })
     });
     applyUser(data.user, true);
+    publishSync('signed-in');
     return data;
   }
 
@@ -405,5 +454,6 @@
     stopRefreshTimer: stopRefreshTimer
   };
 
+  bindAuthSync();
   window.__ATOMURUS_AUTH__ = copyState();
 })();

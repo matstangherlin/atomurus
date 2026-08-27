@@ -1,12 +1,15 @@
 import { authConfirm, isAuthConfigError, isAuthConfigured } from '../lib/auth-provider.mjs';
 import { logAuthEvent } from '../lib/auth-log.mjs';
+import { confirmIpLimiter } from '../lib/auth-rate-limit.mjs';
 import {
+  clientIp,
   json,
   jsonWithCookies,
   options,
   publicUser,
   readJsonBody,
   statusFromError,
+  tooManyRequests,
   verifySameOrigin
 } from '../lib/netlify-identity-utils.mjs';
 
@@ -24,6 +27,11 @@ export default async function handler(request) {
     verifySameOrigin(request);
   } catch (_err) {
     return json(403, { ok: false, error: 'Forbidden' });
+  }
+
+  const limited = confirmIpLimiter.hit(`ip:${clientIp(request)}`);
+  if (!limited.allowed) {
+    return tooManyRequests(limited.retryAfter);
   }
 
   let body;

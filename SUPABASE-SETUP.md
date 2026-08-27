@@ -99,6 +99,10 @@ Sessions use HttpOnly cookies:
 - Production: `__Host-atm_access`, `__Host-atm_refresh`
 - Local `netlify dev`: `atm_access`, `atm_refresh`
 
+Auth endpoints apply **best-effort in-memory rate limits per Function isolate** (`netlify/lib/auth-rate-limit.mjs`). That Map is not a global/distributed limiter. Identifiers are stored as SHA-256 prefixes (`identifier:<hash>`), never as raw email. A shared store (Redis/Upstash) is the future step if cross-instance limits become required.
+
+Cross-tab session hints use `BroadcastChannel` (`auth-sync.js`) with a `localStorage` fallback. Those messages never carry tokens, cookies, or user fields; `/api/auth/me` remains the source of truth.
+
 ## 7. Plans & billing metadata
 
 Trial and Pro logic live in `netlify/lib/plan-access.mjs`.

@@ -1,18 +1,17 @@
 import { authEstablish, isAuthConfigError, isAuthConfigured } from '../lib/auth-provider.mjs';
 import { logAuthEvent } from '../lib/auth-log.mjs';
+import { establishIpLimiter } from '../lib/auth-rate-limit.mjs';
 import {
   clientIp,
-  createRateLimit,
   json,
   jsonWithCookies,
   options,
   publicUser,
   readJsonBody,
   statusFromError,
+  tooManyRequests,
   verifySameOrigin
 } from '../lib/netlify-identity-utils.mjs';
-
-const hitEstablish = createRateLimit({ windowMs: 15 * 60 * 1000, limit: 20 });
 
 export default async function handler(request) {
   if (request.method === 'OPTIONS') return options();
@@ -30,8 +29,9 @@ export default async function handler(request) {
     return json(403, { ok: false, error: 'Forbidden' });
   }
 
-  if (!hitEstablish(`ip:${clientIp(request)}`)) {
-    return json(429, { ok: false, error: 'Too many attempts. Try again later.' });
+  const limited = establishIpLimiter.hit(`ip:${clientIp(request)}`);
+  if (!limited.allowed) {
+    return tooManyRequests(limited.retryAfter);
   }
 
   let body;

@@ -1,17 +1,21 @@
 import { authRecover } from '../lib/auth-provider.mjs';
 import { logAuthEvent } from '../lib/auth-log.mjs';
 import {
+  consumeAuthLimits,
+  hashIdentifier,
+  recoverEmailLimiter,
+  recoverIpLimiter
+} from '../lib/auth-rate-limit.mjs';
+import {
   clientIp,
-  createRateLimit,
   json,
   normalizeEmail,
   options,
   readJsonBody,
+  tooManyRequests,
   validEmail,
   verifySameOrigin
 } from '../lib/netlify-identity-utils.mjs';
-
-const hitRecovery = createRateLimit({ windowMs: 60 * 60 * 1000, limit: 5 });
 
 export default async function handler(request) {
   if (request.method === 'OPTIONS') return options();
@@ -38,16 +42,30 @@ export default async function handler(request) {
   }
 
   const ip = clientIp(request);
-  if (!hitRecovery(`${ip}:${email}`)) {
-    logAuthEvent('auth-recover', { ok: false, errorType: 'rate_limited' });
-    return json(429, { ok: false, error: 'Too many attempts. Try again later.' });
+  const limited = consumeAuthLimits([
+    { limiter: recoverIpLimiter, key: `ip:${ip}` },
+    { limiter: recoverEmailLimiter, key: hashIdentifier(email) }
+  ]);
+  if (!limited.allowed) {
+    logAuthEvent('auth-recover', {
+      ok: false,
+      event: 'auth_recovery_rate_limited',
+      errorType: 'rate_limited',
+      ip,
+      status: 429
+    });
+    return tooManyRequests(limited.retryAfter);
   }
 
   try {
     await authRecover(email);
-    logAuthEvent('auth-recover', { ok: true });
+    logAuthEvent('auth-recover', {
+      ok: true,
+      event: 'auth_recovery_requested',
+      ip
+    });
   } catch (err) {
-    logAuthEvent('auth-recover', { ok: false, errorType: 'provider_error', level: 'warn' });
+    logAuthEvent('auth-recover', { ok: false, errorType: 'provider_error', ip, level: 'warn' });
   }
 
   return json(200, { ok: true });

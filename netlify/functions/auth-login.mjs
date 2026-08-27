@@ -1,8 +1,13 @@
 import { authLogin, isAuthConfigError, isAuthConfigured } from '../lib/auth-provider.mjs';
 import { logAuthEvent } from '../lib/auth-log.mjs';
 import {
+  consumeAuthLimits,
+  hashIdentifier,
+  loginIdentifierLimiter,
+  loginIpLimiter
+} from '../lib/auth-rate-limit.mjs';
+import {
   clientIp,
-  createRateLimit,
   json,
   jsonWithCookies,
   normalizeEmail,
@@ -11,13 +16,11 @@ import {
   publicUser,
   readJsonBody,
   statusFromError,
+  tooManyRequests,
   validEmail,
   validUsername,
   verifySameOrigin
 } from '../lib/netlify-identity-utils.mjs';
-
-const hitIp = createRateLimit({ windowMs: 15 * 60 * 1000, limit: 40 });
-const hitEmail = createRateLimit({ windowMs: 15 * 60 * 1000, limit: 6 });
 
 export default async function handler(request) {
   if (request.method === 'OPTIONS') return options();
@@ -55,21 +58,30 @@ export default async function handler(request) {
   }
 
   const ip = clientIp(request);
-  const rateKey = isEmail ? `email:${email}` : `username:${username}`;
-  if (!hitIp(`ip:${ip}`) || !hitEmail(rateKey)) {
+  const limited = consumeAuthLimits([
+    { limiter: loginIpLimiter, key: `ip:${ip}` },
+    { limiter: loginIdentifierLimiter, key: hashIdentifier(isEmail ? email : username) }
+  ]);
+  if (!limited.allowed) {
     logAuthEvent('auth-login', {
       ok: false,
+      event: 'auth_login_rate_limited',
       errorType: 'rate_limited',
       ip,
       status: 429,
       summary: `Rejected credential attempt from ${ip}: 429`
     });
-    return json(429, { ok: false, error: 'Too many attempts. Try again later.' });
+    return tooManyRequests(limited.retryAfter);
   }
 
   try {
     const result = await authLogin(identifierRaw, password);
-    logAuthEvent('auth-login', { ok: true, identifierType: isEmail ? 'email' : 'username', ip });
+    logAuthEvent('auth-login', {
+      ok: true,
+      event: 'auth_login_success',
+      identifierType: isEmail ? 'email' : 'username',
+      ip
+    });
     return jsonWithCookies(200, { ok: true, user: publicUser(result.user) }, result.cookieHeaders);
   } catch (err) {
     const status = statusFromError(err, 500);

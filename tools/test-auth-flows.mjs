@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import { authConfirm, authLogin, authLogout, authRecover, authRefresh, authReset, authSession, authSignup } from '../netlify/lib/auth-provider.mjs';
 import { isProtectedPath, safeNextPath } from '../netlify/lib/auth-redirect.mjs';
+import { loginIdentifierLimiter, resetAuthRateLimiters } from '../netlify/lib/auth-rate-limit.mjs';
+import { resetRefreshFlights } from '../netlify/lib/supabase-auth.mjs';
 import loginHandler from '../netlify/functions/auth-login.mjs';
 import meHandler from '../netlify/functions/auth-me.mjs';
 import logoutHandler from '../netlify/functions/auth-logout.mjs';
@@ -466,6 +468,186 @@ await withAuthEnv(async () => {
   assert.equal(res.status, 400);
   assert.match(json.error, /9 characters/);
   assert.equal(called, false);
+});
+
+await withAuthEnv(async () => {
+  resetAuthRateLimiters();
+  installSupabaseMock([{
+    match: (url, method) => method === 'POST' && url.endsWith('/recover'),
+    respond: async () => jsonRes(200, {})
+  }]);
+
+  for (let i = 0; i < 10; i += 1) {
+    const res = await recoverHandler(cookieRequest('https://atomurus.com/api/auth/recover', {
+      method: 'POST',
+      headers: { 'x-forwarded-for': '198.51.100.20' },
+      body: { email: `spray${i}@atomurus.com` }
+    }));
+    assert.equal(res.status, 200);
+  }
+  const ipBlocked = await recoverHandler(cookieRequest('https://atomurus.com/api/auth/recover', {
+    method: 'POST',
+    headers: { 'x-forwarded-for': '198.51.100.20' },
+    body: { email: 'still-more@atomurus.com' }
+  }));
+  assert.equal(ipBlocked.status, 429);
+  assert.ok(Number(ipBlocked.headers.get('Retry-After')) >= 1);
+  assert.match(ipBlocked.headers.get('Cache-Control') || '', /no-store/);
+  const ipJson = await readJson(ipBlocked);
+  assert.equal(ipJson.ok, false);
+  assert.doesNotMatch(JSON.stringify(ipJson), /spray0@atomurus\.com/);
+});
+
+await withAuthEnv(async () => {
+  resetAuthRateLimiters();
+  const lines = [];
+  console.warn = (line) => lines.push(String(line));
+  installSupabaseMock([{
+    match: (url, method) => method === 'POST' && url.endsWith('/recover'),
+    respond: async () => jsonRes(200, {})
+  }]);
+
+  for (let i = 0; i < 5; i += 1) {
+    const res = await recoverHandler(cookieRequest('https://atomurus.com/api/auth/recover', {
+      method: 'POST',
+      headers: { 'x-forwarded-for': `198.51.100.${30 + i}` },
+      body: { email: 'same-account@atomurus.com' }
+    }));
+    assert.equal(res.status, 200);
+  }
+  const emailBlocked = await recoverHandler(cookieRequest('https://atomurus.com/api/auth/recover', {
+    method: 'POST',
+    headers: { 'x-forwarded-for': '198.51.100.99' },
+    body: { email: 'same-account@atomurus.com' }
+  }));
+  assert.equal(emailBlocked.status, 429);
+  assert.ok(Number(emailBlocked.headers.get('Retry-After')) >= 1);
+  assert.match(emailBlocked.headers.get('Cache-Control') || '', /no-store/);
+  const blob = lines.join('\n');
+  assert.match(blob, /auth_recovery_rate_limited/);
+  assert.doesNotMatch(blob, /same-account@atomurus\.com/);
+});
+
+await withAuthEnv(async () => {
+  resetAuthRateLimiters();
+  installSupabaseMock([{
+    match: (url, method) => method === 'POST' && url.endsWith('/recover'),
+    respond: async () => jsonRes(200, {})
+  }]);
+  const known = await recoverHandler(cookieRequest('https://atomurus.com/api/auth/recover', {
+    method: 'POST',
+    headers: { 'x-forwarded-for': '198.51.100.40' },
+    body: { email: 'alice@atomurus.com' }
+  }));
+  const unknown = await recoverHandler(cookieRequest('https://atomurus.com/api/auth/recover', {
+    method: 'POST',
+    headers: { 'x-forwarded-for': '198.51.100.41' },
+    body: { email: 'missing@atomurus.com' }
+  }));
+  const knownJson = await readJson(known);
+  const unknownJson = await readJson(unknown);
+  assert.equal(known.status, 200);
+  assert.equal(unknown.status, 200);
+  assert.deepEqual(knownJson, unknownJson);
+});
+
+await withAuthEnv(async () => {
+  resetAuthRateLimiters();
+  installSupabaseMock([{
+    match: (url, method) => method === 'POST' && url.includes('/token?grant_type=password'),
+    respond: async () => jsonRes(400, { error: 'invalid_grant', msg: 'Invalid login credentials' })
+  }]);
+  const res = await loginHandler(cookieRequest('https://atomurus.com/api/auth/login', {
+    method: 'POST',
+    headers: { 'x-forwarded-for': '203.0.113.80' },
+    body: { identifier: 'alice@atomurus.com', password: 'Wrong#Pass99' }
+  }));
+  assert.equal(res.status, 401);
+  assert.equal(loginIdentifierLimiter.keys().some((key) => key.includes('@') || key.includes('alice')), false);
+  assert.ok(loginIdentifierLimiter.keys().every((key) => key.startsWith('identifier:')));
+});
+
+await withAuthEnv(async () => {
+  resetAuthRateLimiters();
+  installSupabaseMock([{
+    match: (url, method) => method === 'POST' && url.includes('/token?grant_type=password'),
+    respond: async () => jsonRes(400, { error: 'invalid_grant', msg: 'Invalid login credentials' })
+  }]);
+  for (let i = 0; i < 6; i += 1) {
+    const res = await loginHandler(cookieRequest('https://atomurus.com/api/auth/login', {
+      method: 'POST',
+      headers: { 'x-forwarded-for': `203.0.113.${100 + i}` },
+      body: { identifier: 'rate.limit@atomurus.com', password: 'Wrong#Pass99' }
+    }));
+    assert.equal(res.status, 401);
+  }
+  const blocked = await loginHandler(cookieRequest('https://atomurus.com/api/auth/login', {
+    method: 'POST',
+    headers: { 'x-forwarded-for': '203.0.113.120' },
+    body: { identifier: 'rate.limit@atomurus.com', password: 'Wrong#Pass99' }
+  }));
+  assert.equal(blocked.status, 429);
+  assert.ok(Number(blocked.headers.get('Retry-After')) >= 1);
+  assert.match(blocked.headers.get('Cache-Control') || '', /no-store/);
+});
+
+await withAuthEnv(async () => {
+  resetAuthRateLimiters();
+  installSupabaseMock([{
+    match: (url, method) => method === 'POST' && url.includes('/signup'),
+    respond: async () => jsonRes(200, { user: demoUser({ email: 'new@atomurus.com', email_confirmed_at: null }) })
+  }]);
+  for (let i = 0; i < 4; i += 1) {
+    const res = await signupHandler(cookieRequest('https://atomurus.com/api/auth/signup', {
+      method: 'POST',
+      headers: { 'x-forwarded-for': `198.51.100.${60 + i}` },
+      body: {
+        fullName: 'New Atom',
+        username: `newatom${i}`,
+        email: 'new@atomurus.com',
+        password: 'Correct#Pass',
+        passwordConfirm: 'Correct#Pass'
+      }
+    }));
+    assert.equal(res.status, 200);
+  }
+  const blocked = await signupHandler(cookieRequest('https://atomurus.com/api/auth/signup', {
+    method: 'POST',
+    headers: { 'x-forwarded-for': '198.51.100.70' },
+    body: {
+      fullName: 'New Atom',
+      username: 'newatomx',
+      email: 'new@atomurus.com',
+      password: 'Correct#Pass',
+      passwordConfirm: 'Correct#Pass'
+    }
+  }));
+  assert.equal(blocked.status, 429);
+  assert.ok(Number(blocked.headers.get('Retry-After')) >= 1);
+});
+
+await withAuthEnv(async () => {
+  resetRefreshFlights();
+  let refreshCalls = 0;
+  installSupabaseMock([
+    {
+      match: (url, method) => method === 'GET' && url.endsWith('/user'),
+      respond: async () => jsonRes(401, { message: 'expired' })
+    },
+    {
+      match: (url, method) => method === 'POST' && url.includes('/token?grant_type=refresh_token'),
+      respond: async () => {
+        refreshCalls += 1;
+        await new Promise((resolve) => setTimeout(resolve, 25));
+        return jsonRes(200, sessionBody());
+      }
+    }
+  ]);
+  const req = sessionRequest({ cookie: 'atm_access=dead; atm_refresh=refresh-live' });
+  const [first, second] = await Promise.all([authSession(req), authSession(req)]);
+  assert.equal(refreshCalls, 1);
+  assert.equal(first.user.email, 'alice@atomurus.com');
+  assert.equal(second.user.email, 'alice@atomurus.com');
 });
 
 console.log('test-auth-flows: ok');

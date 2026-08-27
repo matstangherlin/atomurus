@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import {
   clearSessionCookieHeaders,
   readSessionTokens,
@@ -207,6 +208,21 @@ export async function supabaseLogin(identifier, password) {
   }
 }
 
+// Same-isolate single-flight for refresh_token grants.
+// This Map is NOT a distributed lock: two Function instances can still
+// race. Supabase rotates refresh tokens, so a sibling isolate may see
+// an invalid/reused token and clear cookies. Shared storage would be
+// required to close that gap. Keys are SHA-256 prefixes, never the token.
+const refreshFlights = new Map();
+
+function refreshFlightKey(refreshToken) {
+  return createHash('sha256').update(String(refreshToken || '')).digest('hex').slice(0, 16);
+}
+
+export function resetRefreshFlights() {
+  refreshFlights.clear();
+}
+
 export async function supabaseGetUser(accessToken) {
   if (!accessToken) return null;
   const res = await fetch(authUrl('/user'), {
@@ -218,8 +234,7 @@ export async function supabaseGetUser(accessToken) {
   return normalizeSupabaseUser(data.user || data);
 }
 
-export async function supabaseRefresh(refreshToken) {
-  if (!refreshToken) return null;
+async function supabaseRefreshOnce(refreshToken) {
   const res = await fetch(authUrl('/token?grant_type=refresh_token'), {
     method: 'POST',
     headers: anonHeaders(),
@@ -233,6 +248,21 @@ export async function supabaseRefresh(refreshToken) {
     user: session.user,
     cookieHeaders: sessionCookieHeaders(session.accessToken, session.refreshToken, session.expiresIn)
   };
+}
+
+export async function supabaseRefresh(refreshToken) {
+  if (!refreshToken) return null;
+  const flightKey = refreshFlightKey(refreshToken);
+  const existing = refreshFlights.get(flightKey);
+  if (existing) return existing;
+
+  const flight = supabaseRefreshOnce(refreshToken);
+  refreshFlights.set(flightKey, flight);
+  try {
+    return await flight;
+  } finally {
+    if (refreshFlights.get(flightKey) === flight) refreshFlights.delete(flightKey);
+  }
 }
 
 export async function supabaseLogout(accessToken) {

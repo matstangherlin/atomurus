@@ -1,3 +1,5 @@
+import { createAuthRateLimiter } from './auth-rate-limit.mjs';
+
 export { accessForUser, publicUser, PLAN_PRICING, trialEndsAtForUser } from './plan-access.mjs';
 
 // HTTP helpers for Netlify Functions. Filename is historical; auth itself is Supabase-only.
@@ -13,10 +15,17 @@ export function noStoreHeaders() {
   };
 }
 
-export function json(status, payload) {
+export function json(status, payload, extraHeaders = {}) {
   return new Response(JSON.stringify(payload), {
     status,
-    headers: noStoreHeaders()
+    headers: Object.assign({}, noStoreHeaders(), extraHeaders)
+  });
+}
+
+export function tooManyRequests(retryAfterSec, error = 'Too many attempts. Try again later.') {
+  const retryAfter = Math.max(1, Math.ceil(Number(retryAfterSec) || 1));
+  return json(429, { ok: false, error, code: 'rate_limited' }, {
+    'Retry-After': String(retryAfter)
   });
 }
 
@@ -167,22 +176,13 @@ export function statusFromError(error, fallback = 500) {
   return Number.isFinite(status) ? status : fallback;
 }
 
-export function createRateLimit({ windowMs, limit }) {
-  const attempts = new Map();
-
-  function prune(list, now) {
-    return list.filter((time) => now - time < windowMs);
+export function createRateLimit({ windowMs, limit, maxKeys = 1000 }) {
+  const limiter = createAuthRateLimiter({ windowMs, limit, maxKeys });
+  function hit(key) {
+    return limiter.hit(String(key || '')).allowed;
   }
-
-  return function hit(key) {
-    const now = Date.now();
-    const list = prune(attempts.get(key) || [], now);
-    if (list.length >= limit) {
-      attempts.set(key, list);
-      return false;
-    }
-    list.push(now);
-    attempts.set(key, list);
-    return true;
-  };
+  hit.size = () => limiter.size();
+  hit.reset = () => limiter.reset();
+  hit.keys = () => limiter.keys();
+  return hit;
 }

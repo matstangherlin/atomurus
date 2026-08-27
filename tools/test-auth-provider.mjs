@@ -127,7 +127,7 @@ assert.match(logs[0], /invalid_credentials/);
 assert.doesNotMatch(logs[0], /secret-token|hunter2|refresh-secret|access_token|password/);
 assert.doesNotMatch(logs[0], /a@b\.com/);
 
-for (const file of ['auth-client.js', 'auth-login.js', 'auth-app.js', 'ads-gate.js', 'login.html', 'app.html']) {
+for (const file of ['auth-client.js', 'auth-login.js', 'auth-app.js', 'auth-sync.js', 'ads-gate.js', 'login.html', 'app.html']) {
   const source = readFileSync(new URL(`../${file}`, import.meta.url), 'utf8');
   assert.doesNotMatch(source, /SERVICE_ROLE|service_role|SUPABASE_SERVICE/);
 }
@@ -148,14 +148,28 @@ assert.match(authClient, /url\.origin !== location\.origin/);
 assert.match(authClient, /sessionPromise/);
 assert.match(authClient, /options\.force/);
 assert.match(authClient, /isProtectedPath\(location\.pathname\)/);
+assert.match(authClient, /publishSync\('signed-out'\)/);
+assert.match(authClient, /publishSync\('signed-in'\)/);
+assert.match(authClient, /action === 'revalidate'/);
 assert.doesNotMatch(authClient, /withRefresh\s*\(/);
+
+const authSync = readFileSync(new URL('../auth-sync.js', import.meta.url), 'utf8');
+assert.doesNotMatch(authSync, /access_token|refresh_token|password|email/);
+
+const protectAppSrc = readFileSync(new URL('../netlify/edge-functions/protect-app.js', import.meta.url), 'utf8');
+assert.match(protectAppSrc, /appGateDecision/);
+assert.doesNotMatch(protectAppSrc, /jwt|Bearer|supabase/i);
 
 const authApp = readFileSync(new URL('../auth-app.js', import.meta.url), 'utf8');
 assert.match(authApp, /getSession\(\{\s*force:\s*true\s*\}\)/);
 assert.doesNotMatch(authApp, /startRefreshTimer\s*\(/);
 
+const loginHtml = readFileSync(new URL('../login.html', import.meta.url), 'utf8');
+assert.match(loginHtml, /auth-sync\.js/);
+
 const appHtml = readFileSync(new URL('../app.html', import.meta.url), 'utf8');
 assert.match(appHtml, /requireSession\(\{\s*next:/);
+assert.match(appHtml, /auth-sync\.js/);
 assert.doesNotMatch(appHtml, /html\.lc-loading body/);
 assert.doesNotMatch(appHtml, /classList\.add\(['"]lc-loading['"]\)/);
 
