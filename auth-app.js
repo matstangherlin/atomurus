@@ -28,6 +28,11 @@
     return data;
   }
 
+  function loginUrl() {
+    var next = (window.location.pathname || '/app') + (window.location.search || '') + (window.location.hash || '');
+    return '/login?next=' + encodeURIComponent(next);
+  }
+
   function card(label, value) {
     return '<div class="lc-doc-card"><div class="lbl">' +
       escapeHtml(label) +
@@ -92,7 +97,7 @@
       box.style.display = 'block';
       return;
     }
-    box.innerHTML = '<strong>Free account.</strong> Start the included 30-day Pro trial path from Pricing, then keep studying without ads. <a href="/pricing">Compare Free vs Pro</a> · <a href="/login">Create account</a>';
+    box.innerHTML = '<strong>Free account.</strong> Start the included 30-day Pro trial path from Pricing, then keep studying without ads. <a href="/pricing">Compare Free vs Pro</a> · <a href="/signup">Create account</a>';
     box.classList.add('warn');
     box.classList.remove('ok');
     box.style.display = 'block';
@@ -164,12 +169,12 @@
       if (loading) loading.style.display = 'none';
     } catch (err) {
       if (err.status === 401) {
-        window.location.replace('/login');
+        window.location.replace(loginUrl());
         return;
       }
       showError();
     }
   }
 
-  document.addEventListener('DOMContentLoaded', boot);
+  document.addEventListener('DOMContentLoaded', boot, { once: true });
 })();
