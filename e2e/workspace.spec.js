@@ -209,6 +209,16 @@ test('mobile 390x844: bottom nav, drawer, no horizontal overflow', async ({ page
   expect(Math.max(...tops) - Math.min(...tops)).toBeLessThan(8);
   await expect(page.locator('#app-study')).toContainText(/1 card is due today|1 card vence hoje/);
   await expect(page.locator('#app-study')).not.toContainText(/1 cards are due|1 cards vencem/);
+  const destCards = page.locator('.ws-dest-card');
+  await expect(destCards).toHaveCount(3);
+  const destLayout = await destCards.evaluateAll((els) => els.map((el) => {
+    const box = el.getBoundingClientRect();
+    return { left: box.left, top: box.top, right: box.right, bottom: box.bottom };
+  }));
+  expect(destLayout.every((box, i) => destLayout.every((other, j) => {
+    if (i === j) return true;
+    return box.bottom <= other.top + 1 || other.bottom <= box.top + 1;
+  }))).toBeTruthy();
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 2);
   expect(overflow).toBeFalsy();
   await saveShot(page, 'mobile-overview');
