@@ -225,8 +225,11 @@ test('Pro isomerism 2D overlays the stage without hiding WebGL', async ({ page }
       stage && getComputedStyle(stage).display !== 'none' &&
       c && getComputedStyle(c).visibility === 'visible' &&
       s2 && stage.contains(s2) &&
+      getComputedStyle(s2).position === 'absolute' &&
       getComputedStyle(s2).visibility === 'visible' &&
-      s2.querySelector('svg')
+      s2.querySelector('svg') &&
+      Math.abs(s2.getBoundingClientRect().top - stage.getBoundingClientRect().top) < 8 &&
+      Math.abs(s2.getBoundingClientRect().height - stage.getBoundingClientRect().height) < 8
     );
   })).toBe(true);
   await saveShot(page, 'pro-isomerism-mode-2d');

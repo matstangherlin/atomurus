@@ -182,6 +182,8 @@ assert.match(iso3d, /isExplorePage/);
 assert.match(iso3d, /classList.toggle\('is-2d'/);
 assert.doesNotMatch(iso3d, /stageEl\.style\.display = 'none'/);
 assert.match(iso3d, /stage\.appendChild\(stage2d\)/);
+assert.match(iso3d, /ensureModeStyles/);
+assert.match(iso3d, /iso-3d-mode-css/);
 
 const calculators = read('calculators.html');
 assert.match(calculators, /Open Reaction Workbench/);

@@ -14,6 +14,20 @@
 (function () {
   'use strict';
 
+  function ensureModeStyles() {
+    if (document.getElementById('iso-3d-mode-css')) return;
+    var s = document.createElement('style');
+    s.id = 'iso-3d-mode-css';
+    s.textContent =
+      '.iso-3d-stage{overflow:hidden}' +
+      '.iso-3d-stage2d{position:absolute!important;inset:0!important;top:0!important;right:0!important;bottom:0!important;left:0!important;' +
+      'width:auto!important;height:auto!important;z-index:2;display:flex!important;align-items:center;justify-content:center;' +
+      'padding:12px;box-sizing:border-box;visibility:hidden;pointer-events:none}' +
+      '.iso-3d-panel.is-2d .iso-3d-stage2d{visibility:visible!important;pointer-events:auto!important}' +
+      '.iso-3d-panel.is-2d .iso-3d-stage canvas{pointer-events:none}';
+    document.head.appendChild(s);
+  }
+
   var MOL = {
     // C2H6O — functional
     ethanol: { hl: [2,3], atoms: [
@@ -510,6 +524,8 @@
     if (panel.querySelector('.iso-3d-foot')) return;
     var stage = panel.querySelector('.iso-3d-stage');
     if (!stage) return;
+    ensureModeStyles();
+    stage.style.overflow = 'hidden';
     var head = panel.querySelector('.iso-3d-head');
     if (head && !head.querySelector('.iso-3d-badge')) {
       var badge = document.createElement('span');

@@ -6419,10 +6419,11 @@ p.stub { display: none !important; }
   color: var(--lc-green, #1E6A50);
   font-weight: 600;
 }
-.iso-3d-stage {
+      '.iso-3d-stage {
   position: relative;
   width: 100%;
   height: 300px;
+  overflow: hidden;
   background: #F6F3EC;
 }
 [data-theme="dark"] .iso-3d-stage { background: #151412; }
