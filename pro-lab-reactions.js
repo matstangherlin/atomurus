@@ -89,7 +89,7 @@
     var row = el('div', 'ws-lab-scenario ws-solver-qty');
     row.setAttribute('data-formula', species.formula);
     var formula = el('div', 'ws-solver-qty-formula');
-    formula.textContent = species.formula;
+    formula.textContent = species.formulaDisplay || species.formula;
     row.appendChild(formula);
 
     var kind = optionSelect('kind', [
@@ -226,33 +226,95 @@
     }
   }
 
+  function faultMessage(ctx, t, fault) {
+    var info = ctx.logic && ctx.logic.uxError ? ctx.logic.uxError(fault) : null;
+    if (info && info.kind === 'solver') return ctx.t(info.bodyKey);
+    var msg = fault && ((fault.body && fault.body.error) || fault.message);
+    if (msg && String(msg).indexOf('\n    at ') === -1 && String(msg) !== 'Request failed') return String(msg);
+    if (info && info.bodyKey) return ctx.t(info.bodyKey);
+    return t('errGenericBody');
+  }
+
   function resultBlock(t, data) {
     var wrap = el('div', 'ws-solver-result');
     var kicker = el('p', 'ws-kicker');
-    kicker.textContent = t('theoreticalYield');
+    kicker.textContent = t('targetAmount');
     wrap.appendChild(kicker);
     var headline = el('p', 'ws-solver-headline');
+    headline.id = 'ws-lab-target-amount';
     var target = data.target || data.theoreticalYield || {};
-    headline.textContent = (target.formula || '') + '  ·  ' +
+    headline.textContent = (target.formulaDisplay || target.formula || '') + '  ·  ' +
       (target.amountDisplay || ((target.amount != null ? target.amount : target.grams) + ' ' + (target.unit || 'g')));
     wrap.appendChild(headline);
 
+    var unspecified = data.unspecifiedReactantsDisplay || data.unspecifiedReactants || [];
+    if (data.limitingAnalysisComplete && data.stoichiometricMixture) {
+      var mix = el('div', 'ws-solver-analysis');
+      mix.id = 'ws-lab-mixture';
+      var mixTitle = el('p', 'ws-kicker');
+      mixTitle.textContent = t('stoichiometricMixture');
+      var mixBody = el('p', 'ws-lede');
+      mixBody.textContent = t('stoichiometricMixtureBody');
+      mix.appendChild(mixTitle);
+      mix.appendChild(mixBody);
+      wrap.appendChild(mix);
+    } else if (data.limitingAnalysisComplete && data.limitingReagent) {
+      var limit = el('div', 'ws-solver-analysis');
+      limit.id = 'ws-lab-limiting';
+      var limitK = el('p', 'ws-kicker');
+      limitK.textContent = t('limitingReagent');
+      var limitV = el('p', 'ws-solver-headline');
+      limitV.textContent = data.limitingReagentDisplay || data.limitingReagent;
+      limit.appendChild(limitK);
+      limit.appendChild(limitV);
+      wrap.appendChild(limit);
+    } else if (!data.limitingAnalysisComplete && data.specifiedReactantCount > 1 && data.calculationBasis) {
+      var partial = el('div', 'ws-solver-analysis');
+      partial.id = 'ws-lab-partial';
+      var pk = el('p', 'ws-kicker');
+      pk.textContent = t('partialLimitingAnalysis');
+      var pb = el('p', 'ws-lede');
+      pb.textContent = t('mostRestrictive', '', {
+        formula: data.calculationBasis.formulaDisplay || data.calculationBasis.formula
+      });
+      var pc = el('p', 'ws-lede');
+      pc.textContent = t('unspecifiedExcess', '', { formula: unspecified.join(', ') });
+      partial.appendChild(pk);
+      partial.appendChild(pb);
+      partial.appendChild(pc);
+      wrap.appendChild(partial);
+    } else if (data.calculationBasis) {
+      var basis = el('div', 'ws-solver-analysis');
+      basis.id = 'ws-lab-basis';
+      var bk = el('p', 'ws-kicker');
+      bk.textContent = t('calculationBasis');
+      var bv = el('p', 'ws-solver-headline');
+      bv.textContent = data.calculationBasis.formulaDisplay || data.calculationBasis.formula;
+      var bn = el('p', 'ws-lede');
+      bn.id = 'ws-lab-basis-note';
+      bn.textContent = data.calculationBasis.assumption || t('excessAssumption');
+      basis.appendChild(bk);
+      basis.appendChild(bv);
+      basis.appendChild(bn);
+      wrap.appendChild(basis);
+    }
+
     var dl = el('dl', 'ws-lab-dl');
-    function add(k, v) {
+    function add(k, v, hint) {
       if (v == null || v === '') return;
       var dt = el('dt');
       dt.textContent = k;
+      if (hint) dt.title = hint;
       var dd = el('dd');
       dd.textContent = v;
       dl.appendChild(dt);
       dl.appendChild(dd);
     }
-    add(t('limitingReagent'), data.limitingReagent);
-    add(t('reactionExtent'), data.reactionExtentDisplay || data.reactionExtent);
+    add(t('reactionExtent'), data.reactionExtentDisplay || data.reactionExtent, t('reactionExtentHint'));
     add(t('theoreticalYield'), (data.theoreticalYield && data.theoreticalYield.gramsDisplay) || (target.grams != null ? String(target.grams) + ' g' : ''));
     if (data.percentYield != null) add(t('percentYield'), data.percentYieldDisplay || (String(data.percentYield) + '%'));
     (data.excess || []).forEach(function (row) {
-      add(row.formula + ' ' + t('excessRemaining'), row.remainingDisplay || (String(row.remainingGrams) + ' g'));
+      add((row.formulaDisplay || row.formula) + ' ' + t('excessRemaining'), row.remainingDisplay || (String(row.remainingGrams) + ' g'));
     });
     wrap.appendChild(dl);
     if (data.yieldNote) {
@@ -325,6 +387,12 @@
     balanceBtn.textContent = t('balanceEquation');
     node.appendChild(balanceBtn);
 
+    var eqHead = el('h2', 'ws-h2');
+    eqHead.id = 'ws-lab-balanced-heading';
+    eqHead.textContent = t('balancedEquation');
+    eqHead.hidden = true;
+    node.appendChild(eqHead);
+
     var eqOut = el('div', 'ws-eq');
     eqOut.id = 'ws-lab-balanced';
     eqOut.hidden = true;
@@ -342,7 +410,7 @@
     var stoich = el('section', 'ws-solver-stoich');
     stoich.id = 'ws-lab-stoich';
     stoich.hidden = true;
-    stoich.innerHTML = '<h2 class="ws-h2">' + esc(t('continueStoich')) + '</h2>';
+    stoich.innerHTML = '<h2 class="ws-h2" id="ws-lab-stoich-heading">' + esc(t('continueStoich')) + '</h2>';
     var qtyHost = el('div');
     qtyHost.id = 'ws-lab-quantities';
     stoich.appendChild(qtyHost);
@@ -360,6 +428,7 @@
     var actual = el('input', 'ws-input');
     actual.type = 'number';
     actual.id = 'ws-lab-actual';
+    actual.min = '0';
     actual.step = 'any';
     actual.setAttribute('aria-label', t('actualYield'));
     var actualUnit = optionSelect('actualUnit', [['g', 'g'], ['mg', 'mg'], ['kg', 'kg'], ['mol', 'mol']], 'g');
@@ -400,23 +469,21 @@
     function applyBalance(data) {
       balanced = data;
       showError(err, textarea, '');
+      eqHead.hidden = false;
       eqOut.hidden = false;
       eqActions.hidden = false;
       renderEquation(eqOut, data);
       live.textContent = data.balancedDisplay || data.balanced;
       stoich.hidden = false;
       qtyHost.textContent = '';
-      var saved = {};
-      Array.prototype.forEach.call(qtyHost.querySelectorAll('.ws-solver-qty'), function () {});
       (data.reactants || []).forEach(function (row) {
-        qtyHost.appendChild(quantityRow(t, row, saved[row.formula]));
+        qtyHost.appendChild(quantityRow(t, row, {}));
       });
       targetSelect.textContent = '';
-      (data.reactants || []).concat(data.products || []).forEach(function (row) {
+      (data.products || []).forEach(function (row) {
         var o = el('option');
         o.value = row.formula;
-        o.textContent = row.formula;
-        if (row.role === 'product' && !targetSelect.value) o.selected = true;
+        o.textContent = row.formulaDisplay || row.formula;
         targetSelect.appendChild(o);
       });
       if (data.products && data.products[0]) targetSelect.value = data.products[0].formula;
@@ -447,7 +514,7 @@
         applyBalance(data);
       }).catch(function (fault) {
         if (ctx.ui && ctx.ui.setBusy) ctx.ui.setBusy(balanceBtn, false);
-        showError(err, textarea, fault && fault.body && fault.body.error || (ctx.logic && ctx.logic.uxError ? ctx.t(ctx.logic.uxError(fault).bodyKey) : t('errGenericBody')));
+        showError(err, textarea, faultMessage(ctx, t, fault));
       });
     });
 
@@ -478,10 +545,12 @@
         copyRes.id = 'ws-lab-copy-result';
         copyRes.textContent = t('copy');
         copyRes.addEventListener('click', function () {
-          var text = (data.balancedDisplay || data.balanced || '') + '\n' +
-            t('limitingReagent') + ': ' + data.limitingReagent + '\n' +
-            t('theoreticalYield') + ': ' + ((data.theoreticalYield && data.theoreticalYield.gramsDisplay) || ((data.target && data.target.grams) || '') + ' g');
-          copyText(text, copyRes, t('copied'));
+          var bits = [data.balancedDisplay || data.balanced || ''];
+          if (data.limitingReagent) bits.push(t('limitingReagent') + ': ' + (data.limitingReagentDisplay || data.limitingReagent));
+          else if (data.stoichiometricMixture) bits.push(t('stoichiometricMixture'));
+          else if (data.calculationBasis) bits.push(t('calculationBasis') + ': ' + (data.calculationBasis.formulaDisplay || data.calculationBasis.formula));
+          bits.push(t('theoreticalYield') + ': ' + ((data.theoreticalYield && data.theoreticalYield.gramsDisplay) || ''));
+          copyText(bits.join('\n'), copyRes, t('copied'));
         });
         resultHost.appendChild(copyRes);
         var toggle = el('button', 'ws-btn ws-btn-sm');
@@ -500,7 +569,7 @@
         live.textContent = t('calculated');
       }).catch(function (fault) {
         if (ctx.ui && ctx.ui.setBusy) ctx.ui.setBusy(solveBtn, false);
-        live.textContent = fault && fault.body && fault.body.error || t('errGenericBody');
+        live.textContent = faultMessage(ctx, t, fault);
       });
     });
 
@@ -551,7 +620,14 @@
           }
           if ((state.quantities || []).length) solveBtn.click();
         }
-      } catch (_err) {}
+      } catch (_err) {
+        var unsupported = el('p', 'ws-lede');
+        unsupported.id = 'ws-lab-session-unsupported';
+        unsupported.setAttribute('role', 'status');
+        unsupported.textContent = t('sessionUnsupported');
+        if (err.parentNode) node.insertBefore(unsupported, err);
+        else node.appendChild(unsupported);
+      }
     }
   }
 

@@ -212,9 +212,24 @@
     return next;
   }
 
+  var SOLVER_ERROR_KEYS = {
+    ionic_unsupported: 'errIonicUnsupported',
+    ambiguous_equation: 'errAmbiguousEquation',
+    duplicate_element: 'errDuplicateElement',
+    duplicate_given_species: 'errDuplicateGivenSpecies',
+    duplicate_species: 'errDuplicateSpecies',
+    invalid_mode: 'errInvalidMode',
+    invalid_given_species: 'errInvalidGivenSpecies',
+    invalid_target_species: 'errInvalidTargetSpecies',
+    unknown_element: 'errUnknownElement'
+  };
+
   function uxError(err) {
     var status = err && err.status;
     var code = err && err.code;
+    if (code && SOLVER_ERROR_KEYS[code]) {
+      return { kind: 'solver', titleKey: 'errGenericTitle', bodyKey: SOLVER_ERROR_KEYS[code] };
+    }
     if (code === 'session_expired' || status === 401) {
       return { kind: 'session', titleKey: 'errSessionTitle', bodyKey: 'errSessionBody' };
     }

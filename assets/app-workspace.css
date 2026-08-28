@@ -1204,6 +1204,16 @@ html.auth-error .ws-auth-only { visibility: hidden; }
   font-size: clamp(24px, 3vw, 32px);
   margin: 8px 0 12px;
 }
+.ws-solver-analysis {
+  margin: 12px 0 16px;
+  padding: 12px 14px;
+  border: 1px solid var(--lc-rule, #D8D2BF);
+  border-radius: 10px;
+  max-width: 42rem;
+}
+.ws-solver-analysis .ws-kicker { margin: 0 0 4px; }
+.ws-solver-analysis .ws-solver-headline { font-size: 22px; margin: 0 0 6px; }
+.ws-solver-analysis .ws-lede { margin: 0; }
 .ws-solver-result { margin: 18px 0; }
 .ws-solver-steps {
   list-style: none;

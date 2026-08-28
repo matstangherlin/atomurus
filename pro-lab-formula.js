@@ -35,7 +35,13 @@
     var symbol = el('input', 'ws-input');
     symbol.name = 'symbol';
     symbol.maxLength = 2;
+    symbol.spellcheck = false;
+    symbol.autocomplete = 'off';
+    symbol.setAttribute('autocapitalize', 'off');
+    symbol.setAttribute('autocorrect', 'off');
     symbol.setAttribute('aria-label', t('symbol'));
+    symbol.setAttribute('title', t('errUnknownElement'));
+    symbol.placeholder = 'C';
     symbol.value = data.symbol || '';
     var value = el('input', 'ws-input');
     value.type = 'number';
@@ -238,7 +244,11 @@
       }).catch(function (fault) {
         if (ctx.ui && ctx.ui.setBusy) ctx.ui.setBusy(solve, false);
         err.hidden = false;
-        err.textContent = fault && fault.body && fault.body.error || t('errGenericBody');
+        err.textContent = (function () {
+          var info = ctx.logic && ctx.logic.uxError ? ctx.logic.uxError(fault) : null;
+          if (info && info.kind === 'solver') return ctx.t(info.bodyKey);
+          return (fault && fault.body && fault.body.error) || t('errGenericBody');
+        })();
       });
     });
 
@@ -285,7 +295,10 @@
           state.composition.forEach(function (row) { list.appendChild(compositionRow(t, row)); });
         }
         solve.click();
-      } catch (_err) {}
+      } catch (_err) {
+        err.hidden = false;
+        err.textContent = t('sessionUnsupported');
+      }
     }
   }
 

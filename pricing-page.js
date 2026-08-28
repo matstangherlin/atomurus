@@ -74,7 +74,7 @@
           items: [
             'Reaction balancing',
             'Stoichiometry',
-            'Limiting reagent',
+            'Limiting-reagent calculations',
             'Theoretical & percent yield',
             'Empirical formula solver',
             'Molecular formula solver',
@@ -217,7 +217,7 @@
           items: [
             'Balanceamento de reações',
             'Estequiometria',
-            'Reagente limitante',
+            'Cálculos de reagente limitante',
             'Rendimento teórico e percentual',
             'Solver de fórmula empírica',
             'Solver de fórmula molecular',

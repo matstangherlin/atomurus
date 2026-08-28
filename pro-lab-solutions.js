@@ -306,7 +306,11 @@
       }).catch(function (fault) {
         if (ctx.ui && ctx.ui.setBusy) ctx.ui.setBusy(solve, false);
         err.hidden = false;
-        err.textContent = fault && fault.body && fault.body.error || t('errGenericBody');
+        err.textContent = (function () {
+          var info = ctx.logic && ctx.logic.uxError ? ctx.logic.uxError(fault) : null;
+          if (info && info.kind === 'solver') return ctx.t(info.bodyKey);
+          return (fault && fault.body && fault.body.error) || t('errGenericBody');
+        })();
       });
     });
 
@@ -361,7 +365,10 @@
         }
         if (state.mode === 'mix') tools.querySelector('#ws-lab-sol-mode-mix').click();
         solve.click();
-      } catch (_err) {}
+      } catch (_err) {
+        err.hidden = false;
+        err.textContent = t('sessionUnsupported');
+      }
     }
   }
 
