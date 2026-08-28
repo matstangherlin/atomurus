@@ -192,6 +192,10 @@
     return href;
   }
 
+  function pickCountKey(n, oneKey, manyKey) {
+    return Number(n) === 1 ? oneKey : manyKey;
+  }
+
   function overviewSetCount(review) {
     if (!review) return 0;
     if (Array.isArray(review.sets)) return review.sets.length;
@@ -325,6 +329,7 @@
     focusLimitFromQuery: focusLimitFromQuery,
     insightsRangeFromQuery: insightsRangeFromQuery,
     insightsHref: insightsHref,
+    pickCountKey: pickCountKey,
     overviewSetCount: overviewSetCount,
     uxError: uxError,
     isTechnicalErrorText: isTechnicalErrorText,

@@ -12,7 +12,8 @@
       menu: 'Menu', workspaceTag: 'study workspace',
       greetingMorning: 'Good morning, {name}', greetingAfternoon: 'Good afternoon, {name}',
       greetingEvening: 'Good evening, {name}', greetingFallback: 'Ready for your next study session?',
-      dueHeroTitle: '{n} cards ready for review', dueHeroCopy: 'Keep your memory fresh with a quick session.',
+      dueHeroTitle: '{n} cards ready for review', dueHeroTitleOne: '{n} card ready for review',
+      dueHeroCopy: 'Keep your memory fresh with a quick session.',
       startReview: 'Start Smart Review', caughtUpTitle: "You're caught up.",
       caughtUpCopy: 'No cards are due right now.', openSets: 'Open Study Sets',
       dueToday: 'Due today', metricSets: 'Study Sets', metricCards: 'Flashcards', mastered: 'Mastered',
@@ -29,7 +30,7 @@
       createSet: 'Create Study Set', creating: 'Creating…', saving: 'Saving…', generating: 'Generating…',
       emptySetsTitle: 'No Study Sets yet', emptySetsBody: 'Group elements, molecules and notes into focused study collections.',
       firstSet: 'Create your first Study Set', study: 'Study',
-      cardsCount: '{n} cards', dueCount: '{n} due', masteredPct: '{n}% mastered', lastUpdated: 'Updated {when}',
+      cardsCount: '{n} cards', cardsCountOne: '{n} card', dueCount: '{n} due', dueCountOne: '{n} due', masteredPct: '{n}% mastered', lastUpdated: 'Updated {when}',
       startReviewSet: 'Start Review', addCard: 'Add Card', materials: 'Materials', flashcards: 'Flashcards',
       emptySetItems: 'Add saved library items to this set.', emptyCards: 'No flashcards yet.',
       front: 'Front', back: 'Back', saveCard: 'Save flashcard', edit: 'Edit', suspend: 'Suspend',
@@ -47,11 +48,11 @@
       deleteSet: 'Delete Study Set', deleteCardTitle: 'Delete this flashcard?', deleteCardBody: 'This cannot be undone.',
       deleteCard: 'Delete flashcard', deleteItemTitle: 'Remove saved item?', deleteItemBody: 'This removes it from your Library. Study Sets keep their own copies of generated cards.',
       remove: 'Remove',
-      reviewTitle: 'Smart Review', reviewReady: '{n} cards are ready.', reviewEstimate: 'Estimated session: ~{n} minutes',
+      reviewTitle: 'Smart Review', reviewReady: '{n} cards are ready.', reviewReadyOne: '{n} card is ready.', reviewEstimate: 'Estimated session: ~{n} minutes',
       reviewSeconds: '~20 seconds/card', startReviewCta: 'Start review',
       showAnswer: 'Show answer', again: 'Again', hard: 'Hard', good: 'Good', easy: 'Easy',
       reviewHint: 'Space reveal · 1 Again · 2 Hard · 3 Good · 4 Easy',
-      reviewOf: '{a} / {b}', reviewComplete: 'Review complete', reviewed: '{n} cards reviewed',
+      reviewOf: '{a} / {b}', reviewComplete: 'Review complete', reviewed: '{n} cards reviewed', reviewedOne: '{n} card reviewed',
       backOverview: 'Back to Overview', tryAgain: 'Try again',
       saveReviewErrTitle: "We couldn't save this review.", saveReviewErrBody: 'Your answer was not lost.',
       emptyReviewTitle: 'No cards due right now.', emptyReviewBody: 'Generate flashcards in a Study Set, then come back.',
@@ -127,7 +128,7 @@
       consistencyCopy: '{active} of the last {days} days',
       dueForecastTitle: 'Next 7 days', forecastToday: 'Today', forecastTomorrow: 'Tomorrow',
       needsAttention: 'Needs attention', startFocusReview: 'Start Focus Review',
-      lapsesCount: '{n} lapses', dueNowLabel: 'Due now',
+      lapsesCount: '{n} lapses', lapsesCountOne: '{n} lapse', dueNowLabel: 'Due now',
       emptyInsightsTitle: 'Your study insights will appear here.',
       emptyInsightsBody: 'Start reviewing flashcards to build your study history.',
       insightsError: "Study Insights couldn't load.",
@@ -136,7 +137,7 @@
       emptyFocusBody: 'Your cards are in good shape.',
       openSmartReview: 'Open Smart Review', dueReview: 'Due review',
       weakReview: 'Needs attention', reviewWeakCards: 'Review weak cards',
-      readyToStudy: 'Ready to study?', dueTodayHero: '{n} cards are due today.',
+      readyToStudy: 'Ready to study?', dueTodayHero: '{n} cards are due today.', dueTodayHeroOne: '{n} card is due today.',
       caughtUpExplore: 'Explore your Study Sets or review cards that need attention.',
       workspaceFreeTitle: 'Your chemistry workspace',
       publicLabRemainsFree: 'The public lab remains free.',
@@ -152,6 +153,7 @@
       deleteSessionBody: 'This cannot be undone.',
       sessionOpen: 'Open', moreActions: 'More',
       reviewCta: 'Review',
+      reviewShort: 'Review', labShort: 'Lab',
       stateNew: 'New', stateLearning: 'Learning', stateReview: 'Review',
       focusCards: '{n} cards',
       navGroupStudy: 'Study', navGroupLab: 'Lab', navGroupActivity: 'Activity',
@@ -183,7 +185,8 @@
       menu: 'Menu', workspaceTag: 'workspace de estudo',
       greetingMorning: 'Bom dia, {name}', greetingAfternoon: 'Boa tarde, {name}',
       greetingEvening: 'Boa noite, {name}', greetingFallback: 'Pronto para a próxima sessão?',
-      dueHeroTitle: '{n} cards prontos para revisar', dueHeroCopy: 'Mantenha a memória fresca com uma sessão rápida.',
+      dueHeroTitle: '{n} cards prontos para revisar', dueHeroTitleOne: '{n} card pronto para revisar',
+      dueHeroCopy: 'Mantenha a memória fresca com uma sessão rápida.',
       startReview: 'Começar Smart Review', caughtUpTitle: 'Você está em dia.',
       caughtUpCopy: 'Nenhum card vence agora.', openSets: 'Abrir Study Sets',
       dueToday: 'Para hoje', metricSets: 'Study Sets', metricCards: 'Flashcards', mastered: 'Dominados',
@@ -200,7 +203,7 @@
       createSet: 'Criar Study Set', creating: 'Criando…', saving: 'Salvando…', generating: 'Gerando…',
       emptySetsTitle: 'Nenhum Study Set ainda', emptySetsBody: 'Agrupe elementos, moléculas e notas em coleções de estudo.',
       firstSet: 'Criar seu primeiro Study Set', study: 'Estudar',
-      cardsCount: '{n} cards', dueCount: '{n} vencidos', masteredPct: '{n}% dominados', lastUpdated: 'Atualizado {when}',
+      cardsCount: '{n} cards', cardsCountOne: '{n} card', dueCount: '{n} vencidos', dueCountOne: '{n} vencido', masteredPct: '{n}% dominados', lastUpdated: 'Atualizado {when}',
       startReviewSet: 'Começar revisão', addCard: 'Adicionar card', materials: 'Materiais', flashcards: 'Flashcards',
       emptySetItems: 'Adicione itens da Biblioteca a este set.', emptyCards: 'Nenhum flashcard ainda.',
       front: 'Frente', back: 'Verso', saveCard: 'Salvar flashcard', edit: 'Editar', suspend: 'Suspender',
@@ -218,11 +221,11 @@
       deleteSet: 'Excluir Study Set', deleteCardTitle: 'Excluir este flashcard?', deleteCardBody: 'Isso não pode ser desfeito.',
       deleteCard: 'Excluir flashcard', deleteItemTitle: 'Remover item salvo?', deleteItemBody: 'Ele sai da Biblioteca. Cards já gerados nos Study Sets permanecem.',
       remove: 'Remover',
-      reviewTitle: 'Smart Review', reviewReady: '{n} cards estão prontos.', reviewEstimate: 'Sessão estimada: ~{n} minutos',
+      reviewTitle: 'Smart Review', reviewReady: '{n} cards estão prontos.', reviewReadyOne: '{n} card está pronto.', reviewEstimate: 'Sessão estimada: ~{n} minutos',
       reviewSeconds: '~20 segundos/card', startReviewCta: 'Começar revisão',
       showAnswer: 'Mostrar resposta', again: 'De novo', hard: 'Difícil', good: 'Bom', easy: 'Fácil',
       reviewHint: 'Espaço revela · 1 De novo · 2 Difícil · 3 Bom · 4 Fácil',
-      reviewOf: '{a} / {b}', reviewComplete: 'Revisão concluída', reviewed: '{n} cards revisados',
+      reviewOf: '{a} / {b}', reviewComplete: 'Revisão concluída', reviewed: '{n} cards revisados', reviewedOne: '{n} card revisado',
       backOverview: 'Voltar à visão geral', tryAgain: 'Tentar de novo',
       saveReviewErrTitle: 'Não foi possível salvar esta revisão.', saveReviewErrBody: 'Sua resposta não foi perdida.',
       emptyReviewTitle: 'Nenhum card vence agora.', emptyReviewBody: 'Gere flashcards em um Study Set e volte aqui.',
@@ -298,7 +301,7 @@
       consistencyCopy: '{active} dos últimos {days} dias',
       dueForecastTitle: 'Próximos 7 dias', forecastToday: 'Hoje', forecastTomorrow: 'Amanhã',
       needsAttention: 'Precisa de atenção', startFocusReview: 'Começar Focus Review',
-      lapsesCount: '{n} lapses', dueNowLabel: 'Vence agora',
+      lapsesCount: '{n} lapses', lapsesCountOne: '{n} lapse', dueNowLabel: 'Vence agora',
       emptyInsightsTitle: 'Seus insights de estudo aparecem aqui.',
       emptyInsightsBody: 'Comece a revisar flashcards para montar seu histórico.',
       insightsError: 'Não foi possível carregar os Insights de Estudo.',
@@ -307,7 +310,7 @@
       emptyFocusBody: 'Seus cards estão em boa forma.',
       openSmartReview: 'Abrir Smart Review', dueReview: 'Revisão vencida',
       weakReview: 'Precisa de atenção', reviewWeakCards: 'Revisar cards fracos',
-      readyToStudy: 'Pronto para estudar?', dueTodayHero: '{n} cards vencem hoje.',
+      readyToStudy: 'Pronto para estudar?', dueTodayHero: '{n} cards vencem hoje.', dueTodayHeroOne: '{n} card vence hoje.',
       caughtUpExplore: 'Explore seus Study Sets ou revise cards que precisam de atenção.',
       workspaceFreeTitle: 'Seu workspace de química',
       publicLabRemainsFree: 'O laboratório público continua gratuito.',
@@ -323,6 +326,7 @@
       deleteSessionBody: 'Isso não pode ser desfeito.',
       sessionOpen: 'Abrir', moreActions: 'Mais',
       reviewCta: 'Revisar',
+      reviewShort: 'Revisão', labShort: 'Lab',
       stateNew: 'Novo', stateLearning: 'Aprendendo', stateReview: 'Revisão',
       focusCards: '{n} cards',
       navGroupStudy: 'Estudo', navGroupLab: 'Lab', navGroupActivity: 'Atividade',
@@ -368,6 +372,12 @@
     }
     if (value == null) value = (FB[lang] && FB[lang][key]) || (FB.en[key]) || fallback || key;
     return logic().interpolate ? logic().interpolate(value, vars) : String(value);
+  }
+
+  function tCount(manyKey, oneKey, n) {
+    var count = Number(n) || 0;
+    var key = logic().pickCountKey ? logic().pickCountKey(count, oneKey, manyKey) : (count === 1 ? oneKey : manyKey);
+    return t(key, '', { n: count });
   }
 
   function escapeHtml(value) {
@@ -540,7 +550,7 @@
       if (aside) aside.addEventListener('click', doLogout);
     }
     if (bottom) {
-      var primary = [['overview', 'overview'], ['library', 'library'], ['review', 'review'], ['pro-lab', 'proLab'], ['account', 'account']];
+      var primary = [['overview', 'overview'], ['library', 'library'], ['review', 'reviewShort'], ['pro-lab', 'labShort'], ['account', 'account']];
       bottom.innerHTML = primary.map(function (pair) {
         return '<a class="' + (pair[0] === current ? 'is-active' : '') + '" href="/app?section=' + pair[0] + '">' + icon(pair[0]) + '<span>' + escapeHtml(t(pair[1])) + '</span></a>';
       }).join('');
@@ -703,7 +713,7 @@
     var total = (stats.again || 0) + (stats.hard || 0) + (stats.good || 0) + (stats.easy || 0);
     root.innerHTML = '<div class="ws-complete"><div class="ws-complete-check" aria-hidden="true">' + icon('review') + '</div>' +
       '<h2 class="ws-title">' + escapeHtml(t('reviewComplete')) + '</h2>' +
-      '<p>' + escapeHtml(t('reviewed', '', { n: total })) + '</p>' +
+      '<p>' + escapeHtml(tCount('reviewed', 'reviewedOne', total)) + '</p>' +
       '<div class="ws-metrics" style="grid-template-columns:repeat(4,minmax(0,1fr))">' +
       '<div class="ws-metric"><div class="ws-metric-value">' + escapeHtml(String(stats.good || 0)) + '</div><div class="ws-metric-label">' + escapeHtml(t('good')) + '</div></div>' +
       '<div class="ws-metric"><div class="ws-metric-value">' + escapeHtml(String(stats.easy || 0)) + '</div><div class="ws-metric-label">' + escapeHtml(t('easy')) + '</div></div>' +
@@ -878,7 +888,7 @@
     var hour = logic().greetingKey();
     var greet = t(hour === 'morning' ? 'greetingMorning' : hour === 'afternoon' ? 'greetingAfternoon' : 'greetingEvening', '', { name: name });
     var hero = dueNow
-      ? '<section class="ws-hero is-ready"><div><h2 class="ws-hero-title">' + escapeHtml(t('readyToStudy')) + '</h2><p class="ws-hero-copy">' + escapeHtml(t('dueTodayHero', '', { n: dueNow })) + '</p><a class="ws-btn ws-btn-primary" href="/app?section=review&start=1">' + escapeHtml(t('startReview')) + '</a></div></section>'
+      ? '<section class="ws-hero is-ready"><div><h2 class="ws-hero-title">' + escapeHtml(t('readyToStudy')) + '</h2><p class="ws-hero-copy">' + escapeHtml(tCount('dueTodayHero', 'dueTodayHeroOne', dueNow)) + '</p><a class="ws-btn ws-btn-primary" href="/app?section=review&start=1">' + escapeHtml(t('startReview')) + '</a></div></section>'
       : '<section class="ws-hero"><div><h2 class="ws-hero-title">' + escapeHtml(t('caughtUpTitle')) + '</h2><p class="ws-hero-copy">' + escapeHtml(t('caughtUpExplore')) + '</p><a class="ws-btn ws-btn-primary" href="' + escapeHtml(focusReviewHref()) + '">' + escapeHtml(t('startFocusReview')) + '</a> <a class="ws-btn ws-btn-secondary" href="/app?section=sets">' + escapeHtml(t('openSets')) + '</a></div></section>';
     var metrics = review
       ? '<div class="ws-metrics">' +
@@ -1265,8 +1275,8 @@
     var mastered = logic().masteredPercent(entry.masteredCount, entry.cardCount);
     var when = logic().relativeTime(entry.updatedAt, Date.now(), langIsPt() ? 'pt' : 'en');
     return '<article class="ws-set-card"><h3>' + escapeHtml(entry.title) + '</h3>' +
-      '<div class="ws-set-stats"><span>' + escapeHtml(t('cardsCount', '', { n: entry.cardCount || 0 })) + '</span>' +
-      '<span>' + escapeHtml(t('dueCount', '', { n: entry.dueCount || 0 })) + '</span>' +
+      '<div class="ws-set-stats"><span>' + escapeHtml(tCount('cardsCount', 'cardsCountOne', entry.cardCount || 0)) + '</span>' +
+      '<span>' + escapeHtml(tCount('dueCount', 'dueCountOne', entry.dueCount || 0)) + '</span>' +
       (mastered == null ? '' : '<span>' + escapeHtml(t('masteredPct', '', { n: mastered })) + '</span>') +
       '</div><div class="ws-muted">' + escapeHtml(t('lastUpdated', '', { when: when })) + '</div>' +
       '<div class="ws-row-actions"><a class="ws-btn ws-btn-primary ws-btn-sm" href="' + escapeHtml(reviewStartHref(entry.id)) + '">' + escapeHtml(t('study')) + '</a>' +
@@ -1303,7 +1313,7 @@
     var lede = document.querySelector('#app-study .ws-section-head .ws-lede');
     if (!lede || !set) return;
     var mastered = logic().masteredPercent(set.masteredCount, set.cardCount);
-    lede.textContent = t('cardsCount', '', { n: set.cardCount || 0 }) + ' · ' + t('dueCount', '', { n: set.dueCount || 0 }) +
+    lede.textContent = tCount('cardsCount', 'cardsCountOne', set.cardCount || 0) + ' · ' + tCount('dueCount', 'dueCountOne', set.dueCount || 0) +
       (mastered == null ? '' : ' · ' + t('masteredPct', '', { n: mastered }));
   }
 
@@ -1424,7 +1434,7 @@
           '</article>';
       }).join('');
       node.innerHTML = '<header class="ws-section-head"><div><p class="ws-kicker">' + escapeHtml(t('sets')) + '</p><h1 class="ws-title" id="ws-set-title"></h1>' +
-        '<p class="ws-lede">' + escapeHtml(t('cardsCount', '', { n: set.cardCount || 0 })) + ' · ' + escapeHtml(t('dueCount', '', { n: set.dueCount || 0 })) +
+        '<p class="ws-lede">' + escapeHtml(tCount('cardsCount', 'cardsCountOne', set.cardCount || 0)) + ' · ' + escapeHtml(tCount('dueCount', 'dueCountOne', set.dueCount || 0)) +
         (mastered == null ? '' : ' · ' + escapeHtml(t('masteredPct', '', { n: mastered }))) + '</p></div>' +
         '<div class="ws-row-actions"><a class="ws-btn ws-btn-primary" href="' + escapeHtml(reviewStartHref(set.id)) + '">' + escapeHtml(t('startReviewSet')) + '</a>' +
         '<a class="ws-btn" href="' + escapeHtml(focusReviewHref(set.id)) + '">' + escapeHtml(t('reviewWeakCards')) + '</a>' +
@@ -1697,16 +1707,19 @@
       '<button type="button" class="ws-chip' + (range === '7d' ? ' is-on' : '') + '" data-insight-range="7d" aria-pressed="' + (range === '7d' ? 'true' : 'false') + '">' + escapeHtml(t('range7d')) + '</button>' +
       '<button type="button" class="ws-chip' + (range === '30d' ? ' is-on' : '') + '" data-insight-range="30d" aria-pressed="' + (range === '30d' ? 'true' : 'false') + '">' + escapeHtml(t('range30d')) + '</button>' +
       '</div>';
-    var setFilter = '<label class="ws-field ws-insight-set"><select class="ws-input" id="ws-insight-set" aria-label="' + escapeHtml(t('allSets')) + '">' +
-      '<option value="">' + escapeHtml(t('allSets')) + '</option>' +
-      sets.map(function (set) {
-        return '<option value="' + escapeHtml(set.id) + '"' + (set.id === setId ? ' selected' : '') + '></option>';
-      }).join('') + '</select></label>';
-    var metrics = '<div class="ws-metrics is-five">' +
-      [['metricReviews', summary.reviews || 0], ['activeDays', summary.activeDays || 0], ['mastered', summary.masteredCards || 0], ['cardsDue', summary.dueNow || 0]].map(function (row) {
+    var setFilter = sets.length
+      ? '<label class="ws-field ws-insight-set"><select class="ws-input" id="ws-insight-set" aria-label="' + escapeHtml(t('allSets')) + '">' +
+        '<option value="">' + escapeHtml(t('allSets')) + '</option>' +
+        sets.map(function (set) {
+          return '<option value="' + escapeHtml(set.id) + '"' + (set.id === setId ? ' selected' : '') + '></option>';
+        }).join('') + '</select></label>'
+      : '';
+    var confidentPct = Math.round((summary.confidentReviews || 0) * 100);
+    var metrics = '<div class="ws-metrics">' +
+      '<div class="ws-metric" title="' + escapeHtml(t('confidentTip')) + '"><div class="ws-metric-value">' + escapeHtml(String(summary.reviews || 0)) + '</div><div class="ws-metric-label">' + escapeHtml(t('metricReviews')) + '</div><div class="ws-metric-sub">' + escapeHtml(String(confidentPct) + '% ' + t('confidentReviews')) + '</div></div>' +
+      [['activeDays', summary.activeDays || 0], ['mastered', summary.masteredCards || 0], ['cardsDue', summary.dueNow || 0]].map(function (row) {
         return '<div class="ws-metric"><div class="ws-metric-value">' + escapeHtml(String(row[1])) + '</div><div class="ws-metric-label">' + escapeHtml(t(row[0])) + '</div></div>';
       }).join('') +
-      '<div class="ws-metric" title="' + escapeHtml(t('confidentTip')) + '"><div class="ws-metric-value">' + escapeHtml(String(Math.round((summary.confidentReviews || 0) * 100)) + '%') + '</div><div class="ws-metric-label">' + escapeHtml(t('confidentReviews')) + '</div></div>' +
       '</div>';
     var ratingChart = '<figure class="ws-chart"><figcaption>' + escapeHtml(t('ratingsTitle')) + '</figcaption><ul class="ws-chart-bars">' +
       barRow(t('again'), ratings.again, ratingMax) +
@@ -1723,7 +1736,7 @@
     var weakHtml = weak.length
       ? '<div class="ws-grid" id="ws-weak-list">' + weak.map(function (card) {
         return '<article class="ws-study-item ws-weak-item"><div><h3 class="ws-item-title"></h3><div class="ws-item-meta">' +
-          escapeHtml(t('lapsesCount', '', { n: card.lapses || 0 })) + ' · ' + escapeHtml(reviewStateLabel(card.reviewState)) +
+          escapeHtml(tCount('lapsesCount', 'lapsesCountOne', card.lapses || 0)) + ' · ' + escapeHtml(reviewStateLabel(card.reviewState)) +
           (card.dueNow ? ' · ' + escapeHtml(t('dueNowLabel')) : '') +
           '</div></div><div class="ws-item-actions"><a class="ws-btn ws-btn-primary ws-btn-sm" href="' + escapeHtml(focusReviewHref(card.studySetId)) + '">' + escapeHtml(t('reviewCta')) + '</a></div></article>';
       }).join('') + '</div>'
@@ -1732,7 +1745,7 @@
       var pct = set.masteredPercent == null ? 0 : set.masteredPercent;
       return '<article class="ws-set-card"><h3 class="ws-item-title"></h3>' +
         '<div class="ws-progress" title="' + escapeHtml(t('masteredTip')) + '" role="progressbar" aria-valuenow="' + pct + '" aria-valuemin="0" aria-valuemax="100"><span style="width:' + pct + '%"></span></div>' +
-        '<div class="ws-item-meta">' + escapeHtml(t('cardsCount', '', { n: set.totalCards || 0 })) + ' · ' +
+        '<div class="ws-item-meta">' + escapeHtml(tCount('cardsCount', 'cardsCountOne', set.totalCards || 0)) + ' · ' +
         escapeHtml(t('mastered')) + ' ' + escapeHtml(String(set.mastered || 0)) + ' · ' +
         escapeHtml(t('needsAttention')) + ' ' + escapeHtml(String(set.needsAttention || 0)) + '</div></article>';
     }).join('');
@@ -1830,7 +1843,7 @@
     node.innerHTML = sectionHead(t('reviewTitle'), t('lockedReviewBody'), true) +
       '<div class="ws-review-split">' +
       '<section class="ws-hero is-ready"><div><h2 class="ws-hero-title">' + escapeHtml(t('dueReview')) + '</h2>' +
-      '<p class="ws-hero-copy">' + escapeHtml(due ? t('reviewReady', '', { n: due }) : t('emptyReviewTitle')) + '</p>' +
+      '<p class="ws-hero-copy">' + escapeHtml(due ? tCount('reviewReady', 'reviewReadyOne', due) : t('emptyReviewTitle')) + '</p>' +
       (due
         ? '<p class="ws-hero-copy">' + escapeHtml(t('reviewEstimate', '', { n: minutes })) + ' · ' + escapeHtml(t('reviewSeconds')) + '</p>' +
           '<a class="ws-btn ws-btn-primary" href="' + escapeHtml(dueHref) + '">' + escapeHtml(t('startReviewCta')) + '</a>'
