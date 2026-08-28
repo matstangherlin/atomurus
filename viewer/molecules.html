@@ -273,13 +273,14 @@ body{
 .mol-search-none{font-family:'DM Mono',monospace;font-size:11px;color:var(--viewer-text-3);padding:4px 2px 12px}
 
 .canvas-wrap{position:relative}
-canvas#viewer3d{width:100%;height:460px;display:block;cursor:grab;background:var(--canvas-bg-1);transition:background .25s,visibility .15s}
+canvas#viewer3d{width:100%;height:460px;display:block;cursor:grab;background:var(--canvas-bg-1);transition:background .25s}
 canvas#viewer2d-full{
   position:absolute;top:0;left:0;width:100%;height:460px;
   display:block;background:var(--canvas-bg-1);cursor:grab;
   visibility:hidden;pointer-events:none;z-index:1;
 }
-.canvas-wrap.is-2d canvas#viewer3d{visibility:hidden;pointer-events:none}
+/* Keep WebGL composited. Hiding #viewer3d blanks 3D when switching back. */
+.canvas-wrap.is-2d canvas#viewer3d{pointer-events:none}
 .canvas-wrap.is-2d canvas#viewer2d-full{visibility:visible;pointer-events:auto}
 
 .viewer-controls{
@@ -1491,7 +1492,7 @@ return (function(){
     const is3d = mode === '3d';
     const wrap = document.getElementById('canvas-wrap');
     if (wrap) wrap.classList.toggle('is-2d', !is3d);
-    canvas.style.visibility = is3d ? 'visible' : 'hidden';
+    canvas.style.visibility = 'visible';
     canvas.style.pointerEvents = is3d ? 'auto' : 'none';
     viewer2d.style.visibility = is3d ? 'hidden' : 'visible';
     viewer2d.style.pointerEvents = is3d ? 'none' : 'auto';
@@ -1510,9 +1511,11 @@ return (function(){
     const av = document.getElementById('av-view');
     if (av) av.textContent = is3d ? '3d' : '2d';
     if (!is3d) {
-      setTimeout(() => { resize2d(); draw2DMolecule(anim2dEnabled ? t : _t2dFrozen); }, 20);
+      resize2d();
+      draw2DMolecule(anim2dEnabled ? t : _t2dFrozen);
     } else {
-      setTimeout(resize, 20);
+      resize();
+      renderer.render(scene, camera);
     }
   };
 
@@ -1539,9 +1542,12 @@ return (function(){
 
   // ── Resize / Animate ──
   function resize(){
-    const w = canvas.clientWidth, h = canvas.clientHeight;
+    const wrap = document.getElementById('canvas-wrap');
+    const w = (wrap && wrap.clientWidth) || canvas.clientWidth || 800;
+    const h = (wrap && wrap.clientHeight) || canvas.clientHeight || 460;
+    if (w < 2 || h < 2) return;
     renderer.setSize(w, h, false);
-    camera.aspect = w/h;
+    camera.aspect = w / h;
     camera.updateProjectionMatrix();
   }
   window.addEventListener('resize', () => { resize(); if (viewMode === '2d') { resize2d(); draw2DMolecule(anim2dEnabled ? t : _t2dFrozen); } });

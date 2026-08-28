@@ -155,6 +155,8 @@ assert.doesNotMatch(molecules, /const molData = \{/);
 assert.doesNotMatch(molecules, /atoms:\[\{pos:/);
 assert.match(molecules, /\/api\/pro-lab\/viewer\/molecule/);
 assert.match(molecules, /canvas-wrap\.is-2d/);
+assert.doesNotMatch(molecules, /\.canvas-wrap\.is-2d canvas#viewer3d\{visibility:hidden/);
+assert.match(molecules, /canvas\.style\.visibility = 'visible'/);
 assert.match(molecules, /return fetchMolecule\(initialMol\)/);
 assert.match(molecules, /learningResourceType": "Overview"/);
 
@@ -166,6 +168,7 @@ const atomic = read('viewer/atomic-models.html');
 assert.match(atomic, /atomurusBootProViewer/);
 assert.match(atomic, /atomicModelViewer/);
 assert.match(atomic, /canvas-wrap\.is-2d/);
+assert.doesNotMatch(atomic, /\.canvas-wrap\.is-2d canvas#viewer3d\{visibility:hidden/);
 assert.doesNotMatch(atomic, /cdnjs\.cloudflare\.com\/ajax\/libs\/three\.js/);
 
 const allotropes = read('viewer/allotropes.html');

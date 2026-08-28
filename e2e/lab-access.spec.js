@@ -164,12 +164,37 @@ test('Pro loads the molecule runtime after entitlement', async ({ page }) => {
   await expect(page.locator('#mode-btn-2d')).toHaveAttribute('aria-pressed', 'true');
   await expect.poll(() => page.evaluate(() => {
     const c = document.getElementById('viewer2d-full');
-    return Boolean(c && c.width > 100 && c.height > 100);
+    const c3 = document.getElementById('viewer3d');
+    return Boolean(
+      c && c.width > 100 && c.height > 100 &&
+      getComputedStyle(c).visibility === 'visible' &&
+      c3 && getComputedStyle(c3).visibility === 'visible'
+    );
   })).toBe(true);
   await saveShot(page, 'pro-molecules-mode-2d');
+
+  await page.locator('.mol-btn[data-mol="ethanol"]').click();
+  await expect.poll(() => page.evaluate(() => {
+    const wrap = document.getElementById('canvas-wrap');
+    const c2 = document.getElementById('viewer2d-full');
+    return Boolean(
+      wrap && wrap.classList.contains('is-2d') &&
+      c2 && c2.width > 100 && getComputedStyle(c2).visibility === 'visible'
+    );
+  })).toBe(true);
+
   await page.locator('#mode-btn-3d').click();
   await expect(page.locator('#canvas-wrap')).not.toHaveClass(/is-2d/);
   await expect(page.locator('#mode-btn-3d')).toHaveAttribute('aria-pressed', 'true');
+  await expect.poll(() => page.evaluate(() => {
+    const c3 = document.getElementById('viewer3d');
+    const c2 = document.getElementById('viewer2d-full');
+    return Boolean(
+      c3 && c3.width > 100 && c3.height > 100 &&
+      getComputedStyle(c3).visibility === 'visible' &&
+      c2 && getComputedStyle(c2).visibility === 'hidden'
+    );
+  })).toBe(true);
   await saveShot(page, 'pro-molecules-mode-3d');
 });
 

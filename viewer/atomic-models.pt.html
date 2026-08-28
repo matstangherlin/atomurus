@@ -376,14 +376,15 @@ body{
 canvas#viewer3d{
   width:100%;height:460px;display:block;cursor:grab;
   background:var(--canvas-bg-1);
-  transition:background .25s,visibility .15s;
+  transition:background .25s;
 }
 canvas#viewer2d-full{
   position:absolute;top:0;left:0;width:100%;height:460px;
   display:block;background:var(--canvas-bg-1);cursor:grab;
   visibility:hidden;pointer-events:none;z-index:1;
 }
-.canvas-wrap.is-2d canvas#viewer3d{visibility:hidden;pointer-events:none}
+/* Keep WebGL composited. Hiding #viewer3d blanks 3D when switching back. */
+.canvas-wrap.is-2d canvas#viewer3d{pointer-events:none}
 .canvas-wrap.is-2d canvas#viewer2d-full{visibility:visible;pointer-events:auto}
 .canvas-wrap.static canvas#viewer3d{cursor:default}
 
@@ -3623,6 +3624,7 @@ atomurusBootProViewer(document.getElementById('viewer3d'), 'atomicModelViewer', 
   }
   window.draw2DAtomFull = draw2DAtomFull;
 
+  let _staticRendered = false;
   window.setViewerMode = function(mode){
     if (mode !== '2d' && mode !== '3d') return;
     viewMode = mode;
@@ -3630,7 +3632,7 @@ atomurusBootProViewer(document.getElementById('viewer3d'), 'atomicModelViewer', 
     const wrap = document.getElementById('canvas-wrap');
     if (wrap) wrap.classList.toggle('is-2d', !is3d);
     if (viewer3d) {
-      viewer3d.style.visibility = is3d ? 'visible' : 'hidden';
+      viewer3d.style.visibility = 'visible';
       viewer3d.style.pointerEvents = is3d ? 'auto' : 'none';
     }
     if (viewer2dFull) {
@@ -3660,11 +3662,12 @@ atomurusBootProViewer(document.getElementById('viewer3d'), 'atomicModelViewer', 
     if (rotBtn) rotBtn.style.display = is3d ? '' : 'none';
     if (staBtn) staBtn.style.display = is3d ? '' : 'none';
     if (!is3d){
-      // Switching to 2D: ensure canvas sized + drawn
-      setTimeout(() => { resize2dFull(); draw2DAtomFull(currentAtomModel); }, 20);
+      resize2dFull();
+      draw2DAtomFull(currentAtomModel);
     } else {
-      // Switching back to 3D: trigger resize so renderer matches container
-      setTimeout(() => { if (typeof resize === 'function') resize(); }, 20);
+      _staticRendered = false;
+      resize();
+      renderer.render(scene, camera);
     }
   };
 
@@ -3862,10 +3865,12 @@ atomurusBootProViewer(document.getElementById('viewer3d'), 'atomicModelViewer', 
 
   // Resize
   function resize(){
-    const w = canvas.clientWidth, h = canvas.clientHeight;
-    if (w === 0 || h === 0) return;
+    const wrap = document.getElementById('canvas-wrap');
+    const w = (wrap && wrap.clientWidth) || canvas.clientWidth || 800;
+    const h = (wrap && wrap.clientHeight) || canvas.clientHeight || 460;
+    if (w < 2 || h < 2) return;
     renderer.setSize(w, h, false);
-    camera.aspect = w/h;
+    camera.aspect = w / h;
     camera.updateProjectionMatrix();
   }
   window.addEventListener('resize', resize);
@@ -3884,7 +3889,6 @@ atomurusBootProViewer(document.getElementById('viewer3d'), 'atomicModelViewer', 
 
   // Render loop — 3D + 2D animation, rotation inertia
   let t = 0;
-  let _staticRendered = false;
   function animate(){
     requestAnimationFrame(animate);
     if (_docHidden) return; // pause when tab hidden
