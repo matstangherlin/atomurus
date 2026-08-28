@@ -3,7 +3,7 @@
 const DICT = {
     en: {
       common: {
-        brandTag: 'build v1.11',
+        brandTag: 'chemistry lab',
         openLab: 'Open lab',
         mobileFoot: '· open chemistry lab',
         backHome: 'Back to Home',
@@ -57,7 +57,7 @@ const DICT = {
           contact:       'Contact',
           pricing:       'Pricing',
           systemNominal: 'system nominal',
-          copy:          '© 2026 Atomurus · v1.11'
+          copy:          '© 2026 Atomurus'
         },
         auth: {
           loginError: 'Invalid email or password.',
@@ -237,7 +237,7 @@ const DICT = {
           dataVal:      'IUPAC 2024 · CODATA 2022'
         },
         hero: {
-          welcome:   'welcome to atomurus',
+          welcome:   'chemistry lab',
           version:   'v1.11 · 2026',
           // The title is split across three spans so each line can flow
           // naturally; the inline <br> stays in the markup.
@@ -256,15 +256,15 @@ const DICT = {
           previewFootR: '118 elements · IUPAC 2024'
         },
         modules: {
-          kicker:    '§ 01 · modules',
-          title:     'Four instruments. One workspace.',
+          kicker:    'lab tools',
+          title:     'Four tools. One chemistry lab.',
           live:      'live',
           queued:    'queued',
           // Used for "<n> live · <m> queued" — split so numbers stay raw
           headRightHtml: '<span class="hi">4</span> live · <span class="hi">40+</span> models',
           status: '● live',
           card1: {
-            no:    '01 — Reference',
+            no:    'Reference',
             name:  'Periodic Table',
             desc:  'The 118 confirmed elements with full property cards, heatmap, trend charts, comparator and isotope data. Filter by family, search by name or atomic number, export as PNG/PDF.',
             cta:   'Open table',
@@ -273,7 +273,7 @@ const DICT = {
             m3:    '5 views'
           },
           card2: {
-            no:    '02 — Visualization',
+            no:    'Visualization',
             name:  '3D Viewers',
             desc:  'Atomic models, molecules, allotropes and isomerism in interactive 3D: Dalton through quantum orbitals, molecular geometry, carbon structures and organic-isomer examples.',
             cta:   'Explore models',
@@ -282,7 +282,7 @@ const DICT = {
             m3:    'isomerism + allotropes'
           },
           card3: {
-            no:    '03 — Compute',
+            no:    'Compute',
             name:  'Calculators',
             desc:  'Five chemistry calculators: molar mass, scientific expressions, ideal gas PV=nRT, dilution and pH/pOH diagnostics.',
             cta:   'Use calculators',
@@ -291,7 +291,7 @@ const DICT = {
             m3:    'SI units'
           },
           card4: {
-            no:    '04 — Knowledge',
+            no:    'Knowledge',
             name:  'Explore',
             desc:  'Articles and deep dives for chemistry concepts and history, including the periodic table, isomerism and Bhopal/methyl isocyanate.',
             cta:   'Read articles',
@@ -301,7 +301,7 @@ const DICT = {
           }
         },
         manifest: {
-          kicker: '§ 02 — Manifesto',
+          kicker: 'manifesto',
           bodyHtml:
             'Most chemistry tools talk <em>about</em> matter. Atomurus shows it happening — from element data to 3D structures, calculations and articles, with the right typography for study and the right amount of nothing in between. <em>Built for studying, not for impressing.</em>'
         },
@@ -515,7 +515,7 @@ const DICT = {
         metaTitle:        'Molecules: 3D Interactive Viewer — H₂O, CO₂, CH₄ | Atomurus',
         metaDesc:         'Interactive 3D molecule viewer: water (H₂O), carbon dioxide (CO₂), methane (CH₄), ammonia (NH₃), salt (NaCl), sulfuric acid and more.',
         breadcrumb:       'Molecules',
-        kicker:           '§ 03 · Visualization',
+        kicker:           'visualization',
         title:            'Molecules',
         desc:             'Real molecular geometry in 3D and structural diagram in 2D. See how atoms arrange themselves — bent, tetrahedral, linear, pyramidal — and compare covalent vs. ionic bonds.',
         dsModule:         'molecular geometry',
@@ -600,7 +600,7 @@ const DICT = {
         metaTitle:        'Allotropes: Graphite, Diamond, Graphene and Fullerene in 3D | Atomurus',
         metaDesc:         'Explore carbon allotropes (graphite, diamond, graphene, fullerene, nanotubes), oxygen (O₂, ozone), sulfur and phosphorus in interactive 3D models.',
         breadcrumb:       'Allotropes',
-        kicker:           '§ 04 · Visualization',
+        kicker:           'visualization',
         title:            'Allotropes',
         desc:             'Different structural forms of the same chemical element — carbon yields graphite (hexagonal layers), diamond (tetrahedral), fullerene C₆₀ (truncated icosahedron) and graphene (2D). Same atom, radically different properties.',
         dsModule:         'allotropic structures',
@@ -645,7 +645,7 @@ const DICT = {
         metaTitle:          'Isomerism: Function, Chain, Geometric and Optical | Atomurus',
         metaDesc:           'Organic isomerism: functional (ethanol vs ether), chain (butane vs isobutane), geometric (cis/trans) and optical (R/S) — with interactive structural diagrams.',
         breadcrumb:         'Isomerism',
-        kicker:             '§ 04 · Visualization',
+        kicker:             'visualization',
         title:              'Isomerism',
         desc:               'Molecules with the same molecular formula but different structures — compare function, chain, geometric and optical isomerism side by side.',
         dsScope:            'VIEWER.ISOMERISM',
@@ -1045,7 +1045,7 @@ const DICT = {
         metaTitle:        'Atomic Models: Dalton, Thomson, Rutherford, Bohr and Quantum | Atomurus',
         metaDesc:         'Historical atomic models in interactive 3D: Dalton (1803), Thomson (1897), Rutherford (1911), Bohr (1913) and Quantum (Schrödinger 1926).',
         breadcrumb:       'Atomic Models',
-        kicker:           '§ 02 · Visualization',
+        kicker:           'visualization',
         title:            'Atomic Models',
         desc:             'The 5 historical models of the atom — from Dalton (1803) to Quantum (Schrödinger, 1926) — in animated 3D and 2D. Drag to rotate, adjust the ionic state, or switch model to compare.',
         tabAtomic:        'Atomic Models',
@@ -1286,7 +1286,7 @@ const DICT = {
         active:    'active',
         precision: 'precision',
         precisionVal: '4 sig. fig.',
-        kicker:    '§ 03 — Compute',
+        kicker:    'calculators',
         title:     'Calculators',
         desc:      'A compact chemical computation suite for formula mass, scientific expressions, gas laws, dilutions and acid-base diagnostics. Pick an instrument, load a preset, inspect the formula and copy a clean result.',
         menuQueued:      'Queued',
@@ -1314,7 +1314,7 @@ const DICT = {
         navEquilibriumDesc: 'K, Q, ICE tables',
         navElectroDesc: 'cells and potentials',
         navQueued: 'Queued',
-        uc01Kicker: '03 — Unit Converter',
+        uc01Kicker: 'Unit converter',
         uc01Title: 'Convert between chemistry units',
         uc01Desc: 'Mass, volume, pressure, temperature, energy, amount and concentration — one converter for the lab.',
         ucPill: 'SI base + common lab units',
@@ -1335,7 +1335,7 @@ const DICT = {
         ucChoosePress: 'choose a category and press',
         ucEmptyHtml: 'choose a category and press <strong style="color:var(--lc-ink);font-weight:500;">Compute</strong>',
         ucHowHtml: 'Each category converts through an SI base unit: grams, litres, pascals, kelvin, joules, moles and mol/L. Temperature uses the affine scale (273.15 and 9/5) because °C and °F have no absolute zero.',
-        sc07Kicker: '07 — Stoichiometry',
+        sc07Kicker: 'Stoichiometry',
         sc07Title: 'moles and masses from a balanced reaction',
         sc07Desc: 'Type a balanced equation, pick one substance and its mass — get the moles and theoretical masses of every species in the reaction.',
         stoichPill: 'balanced coefficients',
@@ -1350,7 +1350,7 @@ const DICT = {
         scKnown: 'known · {label}',
         scNote: 'theoretical — assuming {label} is the limiting reagent',
         scSolvedFor: 'stoichiometry of {label}',
-        tm08Kicker: '08 — Thermodynamics',
+        tm08Kicker: 'Thermodynamics',
         tm08Title: 'ΔG = ΔH − T·ΔS · q = m·c·ΔT',
         tm08Desc: 'Gibbs free energy tells you whether a reaction is spontaneous at a given temperature; the heat equation tells you how much energy a mass change of temperature absorbs or releases.',
         thermoPill: 'spontaneity + energy',
@@ -1435,7 +1435,7 @@ const DICT = {
         padScientific: 'func.',
         padChemistry: 'chem.',
         // 01 · Molar Mass
-        m01Kicker: '01 — Molar Mass',
+        m01Kicker: 'Molar mass',
         m01Title:  'Compute M(X) from formula',
         m01DescHtml: 'Type any chemical formula — supports parentheses, hydrates with <code style="font-family:var(--lc-mono);">·</code> or <code style="font-family:var(--lc-mono);">*</code>, charges and subscript counts. Atomic weights from IUPAC 2024.',
         formulaLabel:       'Formula',
@@ -1449,13 +1449,13 @@ const DICT = {
         mEmptyHtml:         'enter a formula and press <strong style="color:var(--lc-ink);font-weight:500;">Compute</strong>',
         molarHowHtml:       'The parser expands groups and hydrates, counts each element, then sums <code>count × atomic weight</code>. Optional amount conversion uses <code>n = m / M</code>.',
         // 02 · Scientific Calculator
-        sc02Kicker:'02 — Scientific Calculator',
+        sc02Kicker:'Scientific calculator',
         sc02Title: 'Chemical scientific calculator',
         sc02Desc:  'Evaluate chemistry-specific functions such as molarMass("H2SO4"), dilution(), density(), percentYield(), pH(), HfromPH(), molToParticles() and particlesToMol() with a safe expression parser.',
         scEmptyHtml: 'enter an expression and press <strong style="color:var(--lc-ink);font-weight:500;">Compute</strong>',
         scientificHowHtml: 'Expressions are tokenized and parsed locally without <code>eval</code>. The chemistry library accepts numbers, scientific notation, quoted formulas like <code>molarMass("H2SO4")</code>, and constants such as <code>NA</code>, <code>R</code>, <code>F</code>, <code>Kw</code>, <code>c</code> and <code>h</code>.',
         // 04 · Ideal Gas
-        ig02Kicker:'04 — Ideal Gas Law',
+        ig02Kicker:'Ideal gas law',
         ig02Title: 'PV = nRT — solve any variable',
         ig02DescHtml: 'Provide any three of {P, V, n, T} and we solve for the fourth. R is fixed at <code style="font-family:var(--lc-mono);">8.314 J·K⁻¹·mol⁻¹</code>. Temperature input is converted to Kelvin automatically.',
         optP:      'Pressure (P)',
@@ -1470,7 +1470,7 @@ const DICT = {
         igEmptyHtml: 'choose a variable, fill the other three, press <strong style="color:var(--lc-ink);font-weight:500;">Compute</strong>',
         idealHowHtml: 'Values are converted to SI units, the selected variable is isolated from <code>PV = nRT</code>, then the result is converted back to the unit selected in the input.',
         // 05 · Dilution
-        dl03Kicker:'05 — Dilution',
+        dl03Kicker:'Dilution',
         dl03Title: 'C₁V₁ = C₂V₂',
         dl03Desc:  'Solve for any of the four variables in a serial dilution. Concentrations in mol/L (molarity); volumes in any consistent unit.',
         dlOptC1:   'C₁ — initial concentration',
@@ -1480,7 +1480,7 @@ const DICT = {
         dlEmptyHtml: 'fill the three known values and press <strong style="color:var(--lc-ink);font-weight:500;">Compute</strong>',
         dilutionHowHtml: 'Dilution conserves solute amount before and after adding solvent, so <code>C₁V₁</code> equals <code>C₂V₂</code>. Use the same volume unit on both sides.',
         // 06 · pH
-        ph04Kicker:'06 — Acidity',
+        ph04Kicker:'Acidity',
         ph04Title: 'pH · pOH from [H⁺] or [OH⁻]',
         ph04Desc:  'Computes pH, pOH, [H⁺] and [OH⁻] from any one input at 25 °C (Kw = 1.0 × 10⁻¹⁴). Marks the solution as acidic, neutral or basic.',
         phInputMode: 'Input mode',
@@ -1544,7 +1544,7 @@ const DICT = {
         dsColormapVal: 'category',
         dsSelected: 'selected',
         // Page header
-        pageKicker: '01 — Main Module',
+        pageKicker: 'periodic table',
         pageTitle:  'Dynamic Periodic Table',
         pageDesc:   'The fundamental map of matter. Select an element to view its properties, discovery and atomic structure.',
         // Sub-page headers (heatmap/trends/compare/isotopes)
@@ -1987,7 +1987,7 @@ const DICT = {
     },
     pt: {
       common: {
-        brandTag: 'build v1.11',
+        brandTag: 'laboratório de química',
         openLab: 'Abrir lab',
         mobileFoot: '· laboratório de química aberto',
         backHome: 'Voltar para o início',
@@ -2041,7 +2041,7 @@ const DICT = {
           contact:       'Contato',
           pricing:       'Planos',
           systemNominal: 'sistema nominal',
-          copy:          '© 2026 Atomurus · v1.11'
+          copy:          '© 2026 Atomurus'
         },
         auth: {
           loginError: 'Email ou senha inválidos.',
@@ -2220,7 +2220,7 @@ const DICT = {
           dataVal:      'IUPAC 2024 · CODATA 2022'
         },
         hero: {
-          welcome:   'bem-vindo ao atomurus',
+          welcome:   'laboratório de química',
           version:   'v1.11 · 2026',
           t1:        'Um laboratório',
           t2:        'de química,',
@@ -2237,14 +2237,14 @@ const DICT = {
           previewFootR: '118 elementos · IUPAC 2024'
         },
         modules: {
-          kicker:    '§ 01 · módulos',
-          title:     'Quatro instrumentos. Um workspace.',
+          kicker:    'ferramentas',
+          title:     'Quatro ferramentas. Um laboratório.',
           live:      'ativos',
           queued:    'na fila',
           headRightHtml: '<span class="hi">4</span> ativos · <span class="hi">40+</span> modelos',
           status: '● ativo',
           card1: {
-            no:    '01 — Referência',
+            no:    'Referência',
             name:  'Tabela Periódica',
             desc:  'Os 118 elementos confirmados com cartões de propriedades, mapa de calor, gráficos de tendências, comparador e dados de isótopos. Filtre por família, busque por nome ou número atômico, exporte como PNG/PDF.',
             cta:   'Abrir tabela',
@@ -2253,7 +2253,7 @@ const DICT = {
             m3:    '5 visões'
           },
           card2: {
-            no:    '02 — Visualização',
+            no:    'Visualização',
             name:  'Visualizadores 3D',
             desc:  'Modelos atômicos, moléculas, alótropos e isomeria em 3D interativo: de Dalton aos orbitais quânticos, geometria molecular, estruturas de carbono e exemplos de isômeros orgânicos.',
             cta:   'Explorar modelos',
@@ -2262,7 +2262,7 @@ const DICT = {
             m3:    'isomeria + alótropos'
           },
           card3: {
-            no:    '03 — Computar',
+            no:    'Computar',
             name:  'Calculadoras',
             desc:  'Cinco calculadoras de química: massa molar, expressões científicas, gás ideal PV=nRT, diluição e diagnóstico pH/pOH.',
             cta:   'Usar calculadoras',
@@ -2271,7 +2271,7 @@ const DICT = {
             m3:    'Unidades SI'
           },
           card4: {
-            no:    '04 — Conhecimento',
+            no:    'Conhecimento',
             name:  'Explorar',
             desc:  'Artigos e leituras guiadas para conceitos e história da química, incluindo tabela periódica, isomeria e Bhopal/isocianato de metila.',
             cta:   'Ler artigos',
@@ -2281,7 +2281,7 @@ const DICT = {
           }
         },
         manifest: {
-          kicker: '§ 02 — Manifesto',
+          kicker: 'manifesto',
           bodyHtml:
             'A maioria das ferramentas de química <em>fala</em> sobre a matéria. O Atomurus mostra ela acontecendo — de dados de elementos a estruturas 3D, cálculos e artigos, com a tipografia certa para estudar e a quantidade certa de nada entre uma coisa e outra. <em>Feito para estudar, não para impressionar.</em>'
         },
@@ -2487,7 +2487,7 @@ const DICT = {
         metaTitle:        'Moléculas: Visualizador 3D Interativo — H₂O, CO₂, CH₄ | Atomurus',
         metaDesc:         'Visualizador 3D interativo de moléculas: água (H₂O), gás carbônico (CO₂), metano (CH₄), amônia (NH₃), sal (NaCl), ácido sulfúrico e outras.',
         breadcrumb:       'Moléculas',
-        kicker:           '§ 03 · Visualização',
+        kicker:           'visualização',
         title:            'Moléculas',
         desc:             'Geometria molecular real em 3D e diagrama estrutural em 2D. Veja como os átomos se arranjam — geometria angular, tetraédrica, linear, piramidal — e compare ligações covalentes e iônicas.',
         dsModule:         'geometria molecular',
@@ -2572,7 +2572,7 @@ const DICT = {
         metaTitle:        'Alótropos: Grafite, Diamante, Grafeno e Fulereno em 3D | Atomurus',
         metaDesc:         'Explore os alótropos do carbono (grafite, diamante, grafeno, fulereno, nanotubos), oxigênio (O₂, ozônio), enxofre e fósforo em modelos 3D interativos.',
         breadcrumb:       'Alótropos',
-        kicker:           '§ 04 · Visualização',
+        kicker:           'visualização',
         title:            'Alótropos',
         desc:             'Formas estruturais diferentes de um mesmo elemento químico — o carbono forma grafite (camadas hexagonais), diamante (tetraédrico), fulereno C₆₀ (icosaedro truncado) e grafeno (2D). Mesmo átomo, propriedades radicalmente distintas.',
         dsModule:         'estruturas alotrópicas',
@@ -2617,7 +2617,7 @@ const DICT = {
         metaTitle:          'Isomeria: Função, Cadeia, Geométrica e Óptica | Atomurus',
         metaDesc:           'Isomeria orgânica: de função (etanol vs éter), de cadeia (butano vs isobutano), geométrica (cis/trans) e óptica (R/S) — com diagramas estruturais interativos.',
         breadcrumb:         'Isomeria',
-        kicker:             '§ 04 · Visualização',
+        kicker:             'visualização',
         title:              'Isomeria',
         desc:               'Moléculas com a mesma fórmula molecular mas estruturas diferentes — compare os tipos de função, cadeia, geométrica e óptica lado a lado.',
         dsScope:            'VIEWER.ISOMERIA',
@@ -3017,7 +3017,7 @@ const DICT = {
         metaTitle:        'Modelos Atômicos: Dalton, Thomson, Rutherford, Bohr e Quântico | Atomurus',
         metaDesc:         'Modelos atômicos históricos em 3D interativo: Dalton (1803), Thomson (1897), Rutherford (1911), Bohr (1913) e Quântico (Schrödinger 1926).',
         breadcrumb:       'Modelos Atômicos',
-        kicker:           '§ 02 · Visualização',
+        kicker:           'visualização',
         title:            'Modelos Atômicos',
         desc:             'Os 5 modelos históricos do átomo — de Dalton (1803) ao Quântico (Schrödinger, 1926) — em 3D e 2D animados. Arraste para rotacionar, ajuste o estado iônico ou troque de modelo para comparar.',
         tabAtomic:        'Modelos Atômicos',
@@ -3250,7 +3250,7 @@ const DICT = {
         active:    'ativo',
         precision: 'precisão',
         precisionVal: '4 alg. sig.',
-        kicker:    '§ 03 — Calcular',
+        kicker:    'calculadoras',
         title:     'Calculadoras',
         desc:      'Uma suíte compacta de computação química para massa de fórmula, expressões científicas, leis dos gases, diluições e diagnósticos ácido-base. Escolha um instrumento, carregue um preset, confira a fórmula e copie um resultado limpo.',
         menuQueued:      'Na fila',
@@ -3278,7 +3278,7 @@ const DICT = {
         navEquilibriumDesc: 'K, Q, tabelas ICE',
         navElectroDesc: 'células e potenciais',
         navQueued: 'Na fila',
-        uc01Kicker: '03 — Conversor de Unidades',
+        uc01Kicker: 'Conversor de unidades',
         uc01Title: 'Converta entre unidades de química',
         uc01Desc: 'Massa, volume, pressão, temperatura, energia, quantidade e concentração — um conversor para o laboratório.',
         ucPill: 'unidades SI base + laboratório',
@@ -3299,7 +3299,7 @@ const DICT = {
         ucChoosePress: 'escolha uma categoria e pressione',
         ucEmptyHtml: 'escolha uma categoria e pressione <strong style="color:var(--lc-ink);font-weight:500;">Calcular</strong>',
         ucHowHtml: 'Cada categoria converte por uma unidade SI base: gramas, litros, pascals, kelvin, joules, mols e mol/L. Temperatura usa escala afim (273,15 e 9/5) porque °C e °F não têm zero absoluto.',
-        sc07Kicker: '07 — Estequiometria',
+        sc07Kicker: 'Estequiometria',
         sc07Title: 'mols e massas de uma reação balanceada',
         sc07Desc: 'Digite uma equação balanceada, escolha uma substância e sua massa — obtenha os mols e as massas teóricas de todas as espécies da reação.',
         stoichPill: 'coeficientes balanceados',
@@ -3314,7 +3314,7 @@ const DICT = {
         scKnown: 'conhecida · {label}',
         scNote: 'teórico — assumindo {label} como reagente limitante',
         scSolvedFor: 'estequiometria de {label}',
-        tm08Kicker: '08 — Termodinâmica',
+        tm08Kicker: 'Termodinâmica',
         tm08Title: 'ΔG = ΔH − T·ΔS · q = m·c·ΔT',
         tm08Desc: 'A energia livre de Gibbs diz se uma reação é espontânea em dada temperatura; a equação do calor diz quanta energia uma massa absorve ou libera ao mudar de temperatura.',
         thermoPill: 'espontaneidade + energia',
@@ -3398,7 +3398,7 @@ const DICT = {
         padAlpha: 'abc',
         padScientific: 'func.',
         padChemistry: 'quim.',
-        m01Kicker: '01 — Massa Molar',
+        m01Kicker: 'Massa molar',
         m01Title:  'Calcular M(X) a partir da fórmula',
         m01DescHtml: 'Digite qualquer fórmula química — suporta parênteses, hidratos com <code style="font-family:var(--lc-mono);">·</code> ou <code style="font-family:var(--lc-mono);">*</code>, cargas e subscritos. Pesos atômicos da IUPAC 2024.',
         formulaLabel:       'Fórmula',
@@ -3411,12 +3411,12 @@ const DICT = {
         unitKilograms:      'quilogramas (kg)',
         mEmptyHtml:         'digite uma fórmula e pressione <strong style="color:var(--lc-ink);font-weight:500;">Calcular</strong>',
         molarHowHtml:       'O parser expande grupos e hidratos, conta cada elemento e soma <code>quantidade × peso atômico</code>. A conversão opcional de amostra usa <code>n = m / M</code>.',
-        sc02Kicker:'02 — Calculadora Científica',
+        sc02Kicker:'Calculadora científica',
         sc02Title: 'Calculadora científica química',
         sc02Desc:  'Avalie funções químicas como molarMass("H2SO4"), dilution(), density(), percentYield(), pH(), HfromPH(), molToParticles() e particlesToMol() com um parser seguro.',
         scEmptyHtml: 'digite uma expressão e pressione <strong style="color:var(--lc-ink);font-weight:500;">Calcular</strong>',
         scientificHowHtml: 'As expressões são tokenizadas e resolvidas localmente sem <code>eval</code>. A biblioteca química aceita números, notação científica, fórmulas entre aspas como <code>molarMass("H2SO4")</code> e constantes como <code>NA</code>, <code>R</code>, <code>F</code>, <code>Kw</code>, <code>c</code> e <code>h</code>.',
-        ig02Kicker:'04 — Lei dos Gases Ideais',
+        ig02Kicker:'Lei dos gases ideais',
         ig02Title: 'PV = nRT — resolva qualquer variável',
         ig02DescHtml: 'Forneça três entre {P, V, n, T} e resolvemos a quarta. R é fixado em <code style="font-family:var(--lc-mono);">8,314 J·K⁻¹·mol⁻¹</code>. A temperatura é convertida para Kelvin automaticamente.',
         optP:      'Pressão (P)',
@@ -3430,7 +3430,7 @@ const DICT = {
         unitM3:    'metro cúbico (m³)',
         igEmptyHtml: 'escolha uma variável, preencha as outras três e pressione <strong style="color:var(--lc-ink);font-weight:500;">Calcular</strong>',
         idealHowHtml: 'Os valores são convertidos para unidades SI, a variável selecionada é isolada em <code>PV = nRT</code> e o resultado volta para a unidade escolhida.',
-        dl03Kicker:'05 — Diluição',
+        dl03Kicker:'Diluição',
         dl03Title: 'C₁V₁ = C₂V₂',
         dl03Desc:  'Resolva qualquer uma das quatro variáveis em uma diluição em série. Concentrações em mol/L (molaridade); volumes em qualquer unidade consistente.',
         dlOptC1:   'C₁ — concentração inicial',
@@ -3439,7 +3439,7 @@ const DICT = {
         dlOptV2:   'V₂ — volume final',
         dlEmptyHtml: 'preencha os três valores conhecidos e pressione <strong style="color:var(--lc-ink);font-weight:500;">Calcular</strong>',
         dilutionHowHtml: 'A diluição conserva a quantidade de soluto antes e depois da adição de solvente, então <code>C₁V₁</code> é igual a <code>C₂V₂</code>. Use a mesma unidade de volume nos dois lados.',
-        ph04Kicker:'06 — Acidez',
+        ph04Kicker:'Acidez',
         ph04Title: 'pH · pOH a partir de [H⁺] ou [OH⁻]',
         ph04Desc:  'Calcula pH, pOH, [H⁺] e [OH⁻] a partir de qualquer entrada a 25 °C (Kw = 1,0 × 10⁻¹⁴). Marca a solução como ácida, neutra ou básica.',
         phInputMode: 'Modo de entrada',
@@ -3497,7 +3497,7 @@ const DICT = {
         dsColormap: 'colormap',
         dsColormapVal: 'categoria',
         dsSelected: 'selecionado',
-        pageKicker: '01 — Módulo Principal',
+        pageKicker: 'tabela periódica',
         pageTitle:  'Tabela Periódica Dinâmica',
         pageDesc:   'O mapa fundamental da matéria. Selecione um elemento para ver suas propriedades, descoberta e estrutura atômica.',
         subKickerHeatmap:  'Visualização',

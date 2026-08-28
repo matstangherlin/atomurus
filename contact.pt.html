@@ -81,6 +81,7 @@
 <link rel="preload" href="atomurus-lab-console.css?v=202608041630" as="style">
 <link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
 <noscript><link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630"></noscript>
+<link rel="stylesheet" href="/assets/public-shell.css?v=202608281200">
 <script src="atomurus-mobile-nav.js?v=202608041630" defer></script>
 <style>
   *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -103,7 +104,7 @@
     </div>
     <div>
       <div class="lc-topnav-name">Atomurus</div>
-      <div class="lc-topnav-tag" data-i18n="common.brandTag">build v1.11</div>
+      <div class="lc-topnav-tag" data-i18n="common.brandTag">chemistry lab</div>
     </div>
   </a>
 
@@ -129,13 +130,13 @@
 </nav>
 
 <div class="data-strip">
-  <span class="ds-k">scope</span><span class="ds-v">DOC.CONTACT</span>
+  <span class="ds-k" data-i18n="contact.dsKScope">scope</span><span class="ds-v" data-i18n="contact.dsScopeVal">DOC.CONTACT</span>
   <span class="ds-sep"></span>
-  <span class="ds-k">section</span><span class="ds-v">contact</span>
+  <span class="ds-k" data-i18n="contact.dsKSection">section</span><span class="ds-v" data-i18n="contact.dsSectionVal">contact</span>
   <span class="ds-sep"></span>
-  <span class="ds-k">channel</span><span class="ds-v">form · email</span>
+  <span class="ds-k" data-i18n="contact.dsKChannel">channel</span><span class="ds-v" data-i18n="contact.dsChannelVal">form · email</span>
   <span class="ds-spacer"></span>
-  <span class="ds-k">reply</span><span class="ds-v ds-hi" data-i18n="contact.stripReply">2–3 working days</span>
+  <span class="ds-k" data-i18n="contact.dsKReply">reply</span><span class="ds-v ds-hi" data-i18n="contact.stripReply">2–3 working days</span>
 </div>
 
 <header class="lc-doc-hero">
@@ -150,19 +151,19 @@
 <div class="lc-doc-body">
 
   <aside class="lc-doc-aside">
-    <div><span class="lbl">channel</span><br><span class="v">form · email</span></div>
+    <div><span class="lbl" data-i18n="contact.asideKChannel">channel</span><br><span class="v" data-i18n="contact.asideChannelVal">form · email</span></div>
     <hr>
     <div><span class="lbl">reply</span><br><span class="v" data-i18n="contact.asideReply">2–3 days</span></div>
     <hr>
-    <div><span class="lbl">contents</span></div>
-    <a href="#email">Email</a>
-    <a href="#form">Message form</a>
-    <a href="#what">What to send</a>
-    <a href="#social">Social</a>
-    <a href="#privacy">Privacy</a>
+    <div><span class="lbl" data-i18n="contact.asideKContents">contents</span></div>
+    <a href="#email" data-i18n="contact.asideEmail">Email</a>
+    <a href="#form" data-i18n="contact.asideForm">Message form</a>
+    <a href="#what" data-i18n="contact.asideWhat">What to send</a>
+    <a href="#social" data-i18n="contact.asideSocial">Social</a>
+    <a href="#privacy" data-i18n="contact.asidePrivacy">Privacy</a>
     <hr>
-    <a href="privacy.html" style="text-transform:none;letter-spacing:.04em">→ Privacy</a>
-    <a href="terms.html" style="text-transform:none;letter-spacing:.04em">→ Terms</a>
+    <a href="privacy.html" style="text-transform:none;letter-spacing:.04em" data-i18n="contact.asideLinkPrivacy">→ Privacy</a>
+    <a href="terms.html" style="text-transform:none;letter-spacing:.04em" data-i18n="contact.asideLinkTerms">→ Terms</a>
   </aside>
 
   <article class="lc-doc-prose">
@@ -338,13 +339,13 @@
 </footer>
 
 <div class="lc-statusbar">
-  <span><span class="lc-st-dot"></span> ready</span>
+  <span><span class="lc-st-dot"></span> <span data-i18n="common.stReady">ready</span></span>
   <span class="lc-st-sep">·</span>
-  <span>doc / contact</span>
+  <span data-i18n="common.stDocContact">doc / contact</span>
   <span class="lc-st-spacer"></span>
-  <a href="periodic-table.html">→ periodic-table</a>
+  <a href="periodic-table.html" data-i18n="common.stLinkPeriodic">→ periodic-table</a>
   <span class="lc-st-sep">·</span>
-  <a href="about.html">→ about</a>
+  <a href="about.html" data-i18n="common.stLinkAbout">→ about</a>
 </div>
 
 <script>

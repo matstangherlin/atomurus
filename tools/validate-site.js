@@ -161,6 +161,19 @@ function assertPerfGuards() {
   if (!index.includes('critical-lab.css')) {
     fail('index.html is not loading critical-lab.css');
   }
+  if (!fs.existsSync(path.join(ROOT, 'assets', 'public-shell.css'))) {
+    fail('assets/public-shell.css is missing');
+  }
+  if (!index.includes('public-shell.css')) {
+    fail('index.html is not loading public-shell.css');
+  }
+  const app = read('app.html');
+  if (app.includes('public-shell.css')) {
+    fail('app.html must keep the workspace stylesheet, not public-shell.css');
+  }
+  if (index.includes('class="ws-body"')) {
+    fail('index.html must stay a public landing page');
+  }
   if (!/atomurus-lab-console\.css[^>]*media=["']print["']/.test(index) &&
       !/media=["']print["'][^>]*atomurus-lab-console\.css/.test(index)) {
     fail('index.html is not loading atomurus-lab-console.css asynchronously');

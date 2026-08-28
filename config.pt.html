@@ -20,8 +20,8 @@
 <link rel="apple-touch-icon" href="assets/atomurus-logo.png?v=202608041630">
 <title data-i18n="config.metaTitle">Configurações — Atomurus Laboratório de Química</title>
 <meta name="description" data-i18n-attr="content:config.metaDesc" content="Personalize sua experiência no Atomurus: alterne entre tema claro/escuro, idioma (Português / Inglês) e preferências de visualização.">
-<meta property="og:title" data-i18n-attr="content:config.metaTitle" content="Configurações — Atomurus Laboratório de Química">
-<meta property="og:description" data-i18n-attr="content:config.metaDesc" content="Personalize sua experiência no Atomurus: alterne entre tema claro/escuro, idioma (Português / Inglês) e preferências de visualização.">
+<meta property="og:title" data-i18n-attr="content:config.metaTitle" content="Settings — Atomurus Chemistry Lab">
+<meta property="og:description" data-i18n-attr="content:config.metaDesc" content="Customize your Atomurus experience: switch between light/dark theme, language (English / Portuguese) and display preferences.">
 <meta property="og:image" content="https://atomurus.com/assets/og-site.png?v=202608041630">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -65,6 +65,7 @@
 <link rel="preload" href="atomurus-lab-console.css?v=202608041630" as="style">
 <link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
 <noscript><link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630"></noscript>
+<link rel="stylesheet" href="/assets/public-shell.css?v=202608281200">
 <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>
 <script src="lazy-ads.js?v=202608041630" defer></script>
 <script src="recaptcha.js?v=202608041630" defer></script>
@@ -170,13 +171,13 @@
   </div>
 
   <div class="data-strip">
-    <span class="ds-k">scope</span><span class="ds-v">CONFIG.SETTINGS</span>
+    <span class="ds-k" data-i18n="config.dsKScope">scope</span><span class="ds-v" data-i18n="config.dsScopeVal">CONFIG.SETTINGS</span>
     <span class="ds-sep"></span>
-    <span class="ds-k">section</span><span class="ds-v" data-i18n="config.kicker">System</span>
+    <span class="ds-k" data-i18n="config.dsKSection">section</span><span class="ds-v" data-i18n="config.kicker">System</span>
     <span class="ds-sep"></span>
-    <span class="ds-k">storage</span><span class="ds-v">localStorage · device</span>
+    <span class="ds-k" data-i18n="config.dsKStorage">storage</span><span class="ds-v" data-i18n="config.dsStorageVal">localStorage · device</span>
     <span class="ds-spacer"></span>
-    <span class="ds-k">sync</span><span class="ds-v ds-hi">live</span>
+    <span class="ds-k" data-i18n="config.dsKSync">sync</span><span class="ds-v ds-hi" data-i18n="config.dsSyncVal">live</span>
   </div>
 
   <div class="content">
@@ -373,13 +374,13 @@
 </main>
 
 <div class="lc-statusbar">
-  <span><span class="lc-st-dot"></span> ready</span>
+  <span><span class="lc-st-dot"></span> <span data-i18n="common.stReady">ready</span></span>
   <span class="lc-st-sep">·</span>
   <span data-i18n="config.title">settings</span>
   <span class="lc-st-spacer"></span>
-  <a href="periodic-table.html">→ periodic-table</a>
+  <a href="periodic-table.html" data-i18n="common.stLinkPeriodic">→ periodic-table</a>
   <span class="lc-st-sep">·</span>
-  <a href="about.html">→ about</a>
+  <a href="about.html" data-i18n="common.stLinkAbout">→ about</a>
 </div>
 
 <div class="toast" id="toast"></div>

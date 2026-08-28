@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR" data-theme="light">
 <head>
 <style>html.lang-pt-pending [data-i18n],html.lang-pt-pending [data-i18n-html],html.lang-pt-pending [data-i18n-attr],html.lang-pt-pending [data-page-field]{visibility:hidden!important}html[data-theme="dark"] #icon-theme-light,html[data-theme="light"] #icon-theme-dark{display:none!important}html[data-theme="dark"] #icon-theme-dark,html[data-theme="light"] #icon-theme-light{display:block!important}</style>
@@ -52,7 +52,7 @@
       "name": "Atomurus Calculators",
       "alternateName": "Calculadoras Atomurus",
       "url": "https://atomurus.com/calculators",
-      "description": "Precision chemistry calculators â€” scientific expressions, molar mass, dilution, ideal gas and pH.",
+      "description": "Precision chemistry calculators — scientific expressions, molar mass, dilution, ideal gas and pH.",
       "applicationCategory": "EducationalApplication",
       "applicationSubCategory": "Chemistry",
       "operatingSystem": "Web",
@@ -85,8 +85,8 @@
 <script src="i18n.js?v=202608041630" defer></script>
 <script src="share-button.js?v=202608041630" defer></script>
 <script src="page-share-init.js?v=202608041630" defer></script>
-<script src="study-boot.js?v=202608280600" defer></script>
 <script src="meta-i18n.js?v=202608041630" defer></script>
+<script src="study-boot.js?v=202608280600" defer></script>
 
 <link rel="stylesheet" href="/assets/critical-lab.css?v=202608041630">
 <style>html.lc-loading body{visibility:hidden}</style>
@@ -94,13 +94,14 @@
 <link rel="preload" href="atomurus-lab-console.css?v=202608041630" as="style">
 <link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
 <noscript><link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630"></noscript>
+<link rel="stylesheet" href="/assets/public-shell.css?v=202608281200">
 
 <style>
   *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100vh; overflow: hidden; }
   body { display: flex; }
 
-  /* â€” Structural baseline (inlined for cache-safety) â€” */
+  /* — Structural baseline (inlined for cache-safety) — */
   .sidebar {
     width: 220px;
     flex-shrink: 0;
@@ -199,7 +200,7 @@
 </head>
 <body>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â• SIDEBAR â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ════════════ SIDEBAR ════════════ -->
 <aside class="sidebar">
 
   <a class="logo-wrap" href="index.html" title="Atomurus home">
@@ -255,15 +256,15 @@
         <div class="nav-children">
           <a class="nav-item" href="viewer/atomic-models.html">
             <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="1.5" fill="currentColor"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/></svg>
-            <span data-i18n="common.nav.atomicModels">Modelos AtÃ´micos</span>
+            <span data-i18n="common.nav.atomicModels">Modelos Atômicos</span>
           </a>
           <a class="nav-item" href="viewer/molecules.html">
             <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="4" cy="4" r="2" fill="currentColor"/><circle cx="12" cy="6" r="2" fill="currentColor" opacity=".7"/><circle cx="8" cy="12" r="2" fill="currentColor" opacity=".5"/><line x1="4" y1="4" x2="12" y2="6" stroke="currentColor" stroke-width="1"/><line x1="12" y1="6" x2="8" y2="12" stroke="currentColor" stroke-width="1"/><line x1="4" y1="4" x2="8" y2="12" stroke="currentColor" stroke-width="1"/></svg>
-            <span data-i18n="common.nav.molecules">MolÃ©culas</span>
+            <span data-i18n="common.nav.molecules">Moléculas</span>
           </a>
           <a class="nav-item" href="viewer/allotropes.html">
             <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><polygon points="8,2 14,6 12,13 4,13 2,6" stroke="currentColor" stroke-width="1.2" fill="none"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/></svg>
-            <span data-i18n="common.nav.allotropes">AlÃ³tropos</span>
+            <span data-i18n="common.nav.allotropes">Alótropos</span>
           </a>
           <a class="nav-item" href="viewer/isomerism/constitutional/function.html">
             <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
@@ -307,7 +308,7 @@
   </div>
 </aside>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â• MAIN â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ════════════ MAIN ════════════ -->
 <div class="mobile-overlay" id="mobile-overlay" onclick="toggleMobileSidebar()"></div>
 <main class="main">
 
@@ -328,7 +329,7 @@
       <span>calculators</span>
     </div>
 
-    <!-- Language toggle â€” direct child of .topbar (same as periodic-table.html);
+    <!-- Language toggle — direct child of .topbar (same as periodic-table.html);
          margin-left:auto pushes it and the following theme button to the right. -->
     <button class="theme-btn" data-i18n-toggle
             data-i18n-attr="aria-label:common.langToggle; title:common.langToggle"
@@ -337,7 +338,7 @@
       <span data-i18n-toggle-label>PT</span>
     </button>
 
-    <!-- Theme toggle â€” same sun-rays icon used by periodic-table.html. -->
+    <!-- Theme toggle — same sun-rays icon used by periodic-table.html. -->
     <button class="theme-btn" id="theme-btn-topbar" onclick="toggleTheme()"
             data-i18n-attr="title:common.themeToggle; aria-label:common.themeToggle"
             title="Toggle theme" aria-label="Toggle theme" style="margin-left:4px;">
@@ -349,21 +350,17 @@
 
   <!-- data strip -->
   <div class="data-strip">
-    <span class="ds-k" data-i18n="calc.scope">scope</span><span class="ds-v">CALC.SUITE</span>
-    <span class="ds-sep"></span>
     <span class="ds-k" data-i18n="calc.instrumentsLabel">instruments</span><span class="ds-v" data-i18n="calc.instrumentsVal">5 live</span>
     <span class="ds-sep"></span>
     <span class="ds-k" data-i18n="calc.active">active</span><span class="ds-v ds-hi" id="ds-active">molar-mass</span>
     <span class="ds-sep"></span>
     <span class="ds-k" data-i18n="calc.precision">precision</span><span class="ds-v" data-i18n="calc.precisionVal">4 sig. fig.</span>
-    <span class="ds-spacer"></span>
-    <span class="ds-k" data-i18n="calc.dataLabel">data</span><span class="ds-v" data-i18n="calc.dataVal">IUPAC 2024</span>
   </div>
 
   <!-- content -->
   <div class="content">
     <div class="content-inner">
-      <div class="ph-kicker" data-i18n="calc.kicker">Â§ 03 â€” Compute</div>
+      <div class="ph-kicker" data-i18n="calc.kicker">calculators</div>
       <h1 class="ph-title" data-i18n="calc.title">Calculators</h1>
       <p class="ph-desc" data-i18n="calc.desc">A compact chemical computation suite for formula mass, scientific expressions, gas laws, dilutions and acid-base diagnostics. Pick an instrument, load a preset, inspect the formula and copy a clean result.</p>
       <div data-pro-lab-tool="calculations"></div>
@@ -372,11 +369,6 @@
 
         <!-- menu -->
         <div class="calc-menu" role="tablist" aria-label="Chemistry calculator instruments">
-          <div class="calc-menu-status">
-            <span data-i18n="calc.workspaceLabel">Lab console</span>
-            <strong data-i18n="calc.instrumentsVal">5 live</strong>
-          </div>
-
           <div class="calc-menu-section">
             <div class="calc-menu-label" data-i18n="calc.menuCore">Core calculators</div>
             <button class="calc-menu-item active" data-target="molar" role="tab" aria-selected="true">
@@ -385,7 +377,6 @@
                 <span class="calc-menu-title" data-i18n="calc.tabMolar">Molar Mass</span>
                 <span class="calc-menu-sub" data-i18n="calc.navMolarDesc">formula mass + composition</span>
               </span>
-              <span class="calc-menu-key">M</span>
             </button>
             <button class="calc-menu-item" data-target="scientific" role="tab">
               <span class="calc-menu-num">02</span>
@@ -393,15 +384,13 @@
                 <span class="calc-menu-title" data-i18n="calc.tabScientific">Scientific Calculator</span>
                 <span class="calc-menu-sub" data-i18n="calc.navScientificDesc">constants + chemistry helpers</span>
               </span>
-              <span class="calc-menu-key">S</span>
             </button>
-            <button class="calc-menu-item" disabled>
+            <button class="calc-menu-item" data-target="unit" role="tab">
               <span class="calc-menu-num">03</span>
               <span class="calc-menu-copy">
                 <span class="calc-menu-title" data-i18n="calc.tabUnitConverter">Unit Converter</span>
                 <span class="calc-menu-sub" data-i18n="calc.navUnitDesc">mass, volume, pressure</span>
               </span>
-              <span class="calc-menu-badge" data-i18n="calc.navQueued">Queued</span>
             </button>
           </div>
 
@@ -413,7 +402,6 @@
                 <span class="calc-menu-title" data-i18n="calc.tabIdeal">Ideal Gas</span>
                 <span class="calc-menu-sub" data-i18n="calc.navIdealDesc">PV = nRT solver</span>
               </span>
-              <span class="calc-menu-key">G</span>
             </button>
             <button class="calc-menu-item" data-target="dilute" role="tab">
               <span class="calc-menu-num">05</span>
@@ -421,35 +409,31 @@
                 <span class="calc-menu-title" data-i18n="calc.tabDilute">Dilution</span>
                 <span class="calc-menu-sub" data-i18n="calc.navDiluteDesc">C1V1 = C2V2</span>
               </span>
-              <span class="calc-menu-key">D</span>
             </button>
             <button class="calc-menu-item" data-target="ph" role="tab">
               <span class="calc-menu-num">06</span>
               <span class="calc-menu-copy">
-                <span class="calc-menu-title" data-i18n="calc.tabPh">pH Â· pOH</span>
+                <span class="calc-menu-title" data-i18n="calc.tabPh">pH · pOH</span>
                 <span class="calc-menu-sub" data-i18n="calc.navPhDesc">acid/base diagnostics</span>
               </span>
-              <span class="calc-menu-key">H</span>
             </button>
-            <button class="calc-menu-item" disabled>
+            <button class="calc-menu-item" data-target="stoich" role="tab">
               <span class="calc-menu-num">07</span>
               <span class="calc-menu-copy">
                 <span class="calc-menu-title" data-i18n="calc.tabStoich">Stoichiometry</span>
                 <span class="calc-menu-sub" data-i18n="calc.navStoichDesc">reaction ratios</span>
               </span>
-              <span class="calc-menu-badge" data-i18n="calc.navQueued">Queued</span>
             </button>
           </div>
 
           <div class="calc-menu-section">
             <div class="calc-menu-label" data-i18n="calc.menuAdvanced">Advanced / queued</div>
-            <button class="calc-menu-item" disabled>
+            <button class="calc-menu-item" data-target="thermo" role="tab">
               <span class="calc-menu-num">08</span>
               <span class="calc-menu-copy">
                 <span class="calc-menu-title" data-i18n="calc.tabThermo">Thermodynamics</span>
-                <span class="calc-menu-sub" data-i18n="calc.navThermoDesc">Î”H, Î”G, entropy</span>
+                <span class="calc-menu-sub" data-i18n="calc.navThermoDesc">ΔH, ΔG, entropy</span>
               </span>
-              <span class="calc-menu-badge" data-i18n="calc.navQueued">Queued</span>
             </button>
             <button class="calc-menu-item" disabled>
               <span class="calc-menu-num">09</span>
@@ -473,24 +457,20 @@
         <!-- panel -->
         <div class="calc-panel">
 
-          <!-- â”€â”€â”€ 01 Â· MOLAR MASS â”€â”€â”€ -->
+          <!-- ─── 01 · MOLAR MASS ─── -->
           <section id="tab-molar" class="calc-tab active" role="tabpanel">
             <div class="calc-panel-head">
               <div class="calc-panel-h">
-                <span class="calc-panel-kicker" data-i18n="calc.m01Kicker">01 â€” Molar Mass</span>
+                <span class="calc-panel-kicker" data-i18n="calc.m01Kicker">Molar mass</span>
                 <h2 class="calc-panel-title" data-i18n="calc.m01Title">Compute M(X) from formula</h2>
-                <p class="calc-panel-desc" data-i18n-html="calc.m01DescHtml">Type any chemical formula â€” supports parentheses, hydrates with <code style="font-family:var(--lc-mono);">Â·</code> or <code style="font-family:var(--lc-mono);">*</code>, charges and subscript counts. Atomic weights from IUPAC 2024.</p>
+                <p class="calc-panel-desc" data-i18n-html="calc.m01DescHtml">Type any chemical formula — supports parentheses, hydrates with <code style="font-family:var(--lc-mono);">·</code> or <code style="font-family:var(--lc-mono);">*</code>, charges and subscript counts. Atomic weights from IUPAC 2024.</p>
               </div>
-              <div class="calc-panel-meta">
-                <span data-i18n="calc.panelMode">mode</span><strong data-i18n="calc.molarMode">formula parser</strong>
-                <span data-i18n="calc.panelOutput">output</span><strong>g Â· molâ»Â¹</strong>
               </div>
-            </div>
 
             <div class="calc-formula-strip">
               <div>
                 <span class="calc-formula-label" data-i18n="calc.formulaUsed">Formula used</span>
-                <span class="calc-formula-value">M = Î£ náµ¢Aáµ¢</span>
+                <span class="calc-formula-value">M = Σ nᵢAᵢ</span>
               </div>
               <span class="calc-formula-pill" data-i18n="calc.sigFigPill">4 significant figures</span>
             </div>
@@ -499,17 +479,17 @@
               <label class="calc-field-l" for="mm-input"><span data-i18n="calc.formulaLabel">Formula</span> <span class="req">*</span></label>
               <div>
                 <input id="mm-input" class="calc-input" type="text" value="H2SO4"
-                       placeholder="e.g. C6H12O6, CuSO4Â·5H2O, Ca(OH)2"
+                       placeholder="e.g. C6H12O6, CuSO4·5H2O, Ca(OH)2"
                        data-i18n-attr="placeholder:calc.formulaPlaceholder"
                        spellcheck="false" autocomplete="off">
-                <div class="calc-help" data-i18n="calc.formulaHelp">Common: H2O Â· NaCl Â· C6H12O6 Â· CH3COOH Â· Mg(OH)2 Â· KMnO4 Â· Fe2(SO4)3 Â· CuSO4Â·5H2O</div>
+                <div class="calc-help" data-i18n="calc.formulaHelp">Common: H2O · NaCl · C6H12O6 · CH3COOH · Mg(OH)2 · KMnO4 · Fe2(SO4)3 · CuSO4·5H2O</div>
               </div>
             </div>
 
             <div class="calc-field">
               <label class="calc-field-l" for="mm-amount" data-i18n="calc.sampleAmount">Sample amount</label>
               <div class="calc-row-2">
-                <input id="mm-amount" class="calc-input" type="number" step="any" placeholder="optional Â· e.g. 10"
+                <input id="mm-amount" class="calc-input" type="number" step="any" placeholder="optional · e.g. 10"
                        data-i18n-attr="placeholder:calc.sampleOptional">
                 <select id="mm-amount-unit" class="calc-select">
                   <option value="g" data-i18n="calc.unitGrams">grams (g)</option>
@@ -524,13 +504,13 @@
               <button class="calc-chip" type="button" data-mm-example="H2O">H2O</button>
               <button class="calc-chip" type="button" data-mm-example="C6H12O6">C6H12O6</button>
               <button class="calc-chip" type="button" data-mm-example="Ca(OH)2">Ca(OH)2</button>
-              <button class="calc-chip" type="button" data-mm-example="CuSO4Â·5H2O">CuSO4Â·5H2O</button>
+              <button class="calc-chip" type="button" data-mm-example="CuSO4·5H2O">CuSO4·5H2O</button>
             </div>
 
             <div class="calc-actions">
               <button class="calc-btn-run" onclick="runMolar()">
                 <span data-i18n="calc.compute">Compute</span>
-                <span class="lc-kbd" style="background:rgba(255,255,255,.18);">â†µ</span>
+                <span class="lc-kbd" style="background:rgba(255,255,255,.18);">↵</span>
               </button>
               <button class="calc-btn-reset" onclick="resetMolar()" data-i18n="calc.reset">Reset</button>
             </div>
@@ -538,14 +518,14 @@
             <details class="calc-how">
               <summary data-i18n="calc.howTitle">How this works</summary>
               <div class="calc-how-body" data-i18n-html="calc.molarHowHtml">
-                The parser expands groups and hydrates, counts each element, then sums <code>count Ã— atomic weight</code>. Optional amount conversion uses <code>n = m / M</code>.
+                The parser expands groups and hydrates, counts each element, then sums <code>count × atomic weight</code>. Optional amount conversion uses <code>n = m / M</code>.
               </div>
             </details>
 
             <div class="calc-result" id="mm-result">
               <div class="calc-result-head">
                 <span class="calc-result-head-main"><span class="lc-st-dot"></span><span data-i18n="calc.output">output</span></span>
-                <span class="calc-result-meta"><span id="mm-result-meta">awaiting inputâ€¦</span><button class="calc-copy-btn" type="button" data-copy-result="mm-result-body" data-i18n="calc.copy">Copy</button></span>
+                <span class="calc-result-meta"><span id="mm-result-meta" data-i18n="calc.awaiting">awaiting input…</span><button class="calc-copy-btn" type="button" data-copy-result="mm-result-body" data-i18n="calc.copy">Copy</button></span>
               </div>
               <div class="calc-result-body" id="mm-result-body">
                 <div class="calc-result-empty" data-i18n-html="calc.mEmptyHtml">enter a formula and press <strong style="color:var(--lc-ink);font-weight:500;">Compute</strong></div>
@@ -553,17 +533,13 @@
             </div>
           </section>
 
-          <!-- â”€â”€â”€ 02 Â· IDEAL GAS â”€â”€â”€ -->
+          <!-- ─── 02 · IDEAL GAS ─── -->
           <section id="tab-scientific" class="calc-tab scimode-calc" role="tabpanel">
             <div class="calc-panel-head">
               <div class="calc-panel-h">
                 <span class="calc-panel-kicker" data-i18n="calc.sc02Kicker">02 - Scientific Calculator</span>
                 <h2 class="calc-panel-title" data-i18n="calc.sc02Title">Chemical scientific calculator</h2>
                 <p class="calc-panel-desc" data-i18n="calc.sc02Desc">Evaluate scientific notation, constants and chemistry-specific helpers such as pH(), HfromPH(), molToParticles() and particlesToMol() with a safe expression parser.</p>
-              </div>
-              <div class="calc-panel-meta">
-                <span data-i18n="calc.panelMode">mode</span><strong data-i18n="calc.scientificMode">safe parser</strong>
-                <span data-i18n="calc.panelOutput">output</span><strong data-i18n="calc.scientificOutput">value + notation</strong>
               </div>
             </div>
 
@@ -575,7 +551,7 @@
               <span class="calc-formula-pill" data-i18n="calc.safeParserPill">safe parser</span>
             </div>
 
-            <!-- â”€â”€ Mode switch: Console vs Scientific Calculator (same engine) â”€â”€ -->
+            <!-- ── Mode switch: Console vs Scientific Calculator (same engine) ── -->
             <div class="sci-mode-switch" role="tablist" aria-label="Calculator mode">
               <button type="button" class="sci-mode-btn" data-sci-mode="console" role="tab" aria-selected="false" data-i18n="calc.modeConsole">Console Mode</button>
               <button type="button" class="sci-mode-btn is-on" data-sci-mode="calc" role="tab" aria-selected="true" data-i18n="calc.modeCalc">Scientific Calculator Mode</button>
@@ -645,12 +621,12 @@
               </div>
             </div>
 
-            <!-- â•â•â• SCIENTIFIC CALCULATOR MODE (premium instrument Â· same engine) â•â•â• -->
+            <!-- ═══ SCIENTIFIC CALCULATOR MODE (premium instrument · same engine) ═══ -->
             <div id="scicalc-view">
               <div class="scc-device">
                 <div class="scc-deck">
                   <span class="scc-brand">ATOMURUS</span>
-                  <span class="scc-brand-sub">Scientific Â· Chem</span>
+                  <span class="scc-brand-sub">Scientific · Chem</span>
                   <span class="scc-status" id="scc-status">ready</span>
                 </div>
 
@@ -757,14 +733,14 @@
                   <div class="sk-sect" data-scc-panel="scientific">
                     <span class="sk-sect-k">Scientific</span>
                     <div class="sk-grid sk-grid-sci">
-                      <button type="button" class="sk sk-fn" data-ck="^2" data-ck-shift="^3"><span class="k-main">x<sup>2</sup></span><span class="k-sub">xÂ³</span></button>
+                      <button type="button" class="sk sk-fn" data-ck="^2" data-ck-shift="^3"><span class="k-main">x<sup>2</sup></span><span class="k-sub">x³</span></button>
                       <button type="button" class="sk sk-fn" data-ck="^" data-ck-shift="factorial()" data-ck-shift-cur="-1"><span class="k-main">x<sup>y</sup></span><span class="k-sub">x!</span></button>
-                      <button type="button" class="sk sk-fn" data-ck="sqrt()" data-ck-cur="-1" data-ck-shift="sin()" data-ck-shift-cur="-1"><span class="k-main">âˆš</span><span class="k-sub">sin</span></button>
+                      <button type="button" class="sk sk-fn" data-ck="sqrt()" data-ck-cur="-1" data-ck-shift="sin()" data-ck-shift-cur="-1"><span class="k-main">√</span><span class="k-sub">sin</span></button>
                       <button type="button" class="sk sk-fn" data-ck="log10()" data-ck-cur="-1" data-ck-shift="cos()" data-ck-shift-cur="-1"><span class="k-main">log</span><span class="k-sub">cos</span></button>
                       <button type="button" class="sk sk-fn" data-ck="ln()" data-ck-cur="-1" data-ck-shift="tan()" data-ck-shift-cur="-1"><span class="k-main">ln</span><span class="k-sub">tan</span></button>
                       <button type="button" class="sk sk-fn" data-ck="10^" data-ck-shift="abs()" data-ck-shift-cur="-1"><span class="k-main">10<sup>x</sup></span><span class="k-sub">abs</span></button>
                       <button type="button" class="sk sk-fn" data-ck="exp()" data-ck-cur="-1"><span class="k-main">e<sup>x</sup></span></button>
-                      <button type="button" class="sk sk-fn" data-ck="pi" data-ck-shift="e"><span class="k-main">Ï€</span><span class="k-sub">e</span></button>
+                      <button type="button" class="sk sk-fn" data-ck="pi" data-ck-shift="e"><span class="k-main">π</span><span class="k-sub">e</span></button>
                       <button type="button" class="sk sk-fn" data-ck="sin()" data-ck-cur="-1"><span class="k-main">sin</span></button>
                       <button type="button" class="sk sk-fn" data-ck="cos()" data-ck-cur="-1"><span class="k-main">cos</span></button>
                       <button type="button" class="sk sk-fn" data-ck="tan()" data-ck-cur="-1"><span class="k-main">tan</span></button>
@@ -778,13 +754,13 @@
                   <div class="sk-sect" data-scc-panel="chemistry">
                     <span class="sk-sect-k">Chemistry</span>
                     <div class="sk-grid sk-grid-chem">
-                      <button type="button" class="sk sk-chem" data-ck="pH(" data-ck-shift="HfromPH("><span class="k-main">pH</span><span class="k-sub">[Hâº]</span></button>
-                      <button type="button" class="sk sk-chem" data-ck="pOH(" data-ck-shift="OHfromPOH("><span class="k-main">pOH</span><span class="k-sub">[OHâ»]</span></button>
+                      <button type="button" class="sk sk-chem" data-ck="pH(" data-ck-shift="HfromPH("><span class="k-main">pH</span><span class="k-sub">[H⁺]</span></button>
+                      <button type="button" class="sk sk-chem" data-ck="pOH(" data-ck-shift="OHfromPOH("><span class="k-main">pOH</span><span class="k-sub">[OH⁻]</span></button>
                       <button type="button" class="sk sk-chem" data-ck='molarMass("")' data-ck-cur="-2"><span class="k-main">MM</span><span class="k-sub">g/mol</span></button>
                       <button type="button" class="sk sk-chem" data-ck="molToParticles("><span class="k-main">mol-&gt;N</span><span class="k-sub">N<sub>A</sub></span></button>
                       <button type="button" class="sk sk-chem" data-ck="particlesToMol("><span class="k-main">N-&gt;mol</span><span class="k-sub">/N<sub>A</sub></span></button>
                       <button type="button" class="sk sk-chem" data-ck="molarity("><span class="k-main">M</span><span class="k-sub">mol/L</span></button>
-                      <button type="button" class="sk sk-chem" data-ck="dilution("><span class="k-main">dil</span><span class="k-sub">Câ‚Vâ‚</span></button>
+                      <button type="button" class="sk sk-chem" data-ck="dilution("><span class="k-main">dil</span><span class="k-sub">C₁V₁</span></button>
                       <button type="button" class="sk sk-chem" data-ck="percentYield("><span class="k-main">yield</span><span class="k-sub">%</span></button>
                       <button type="button" class="sk sk-chem" data-ck="idealGas("><span class="k-main">Gas</span><span class="k-sub">PV/nT</span></button>
                       <button type="button" class="sk sk-chem" data-ck="density("><span class="k-main">Density</span><span class="k-sub">m/V</span></button>
@@ -795,10 +771,10 @@
                   <div class="sk-sect" data-scc-panel="hidden">
                     <span class="sk-sect-k">Constants</span>
                     <div class="sk-grid sk-grid-const">
-                      <button type="button" class="sk sk-const" data-ck="NA" title="Avogadro Â· 6.022e23"><span class="k-main">N<sub>A</sub></span></button>
-                      <button type="button" class="sk sk-const" data-ck="R" title="Gas constant Â· 8.314"><span class="k-main">R</span></button>
-                      <button type="button" class="sk sk-const" data-ck="F" title="Faraday Â· 96485"><span class="k-main">F</span></button>
-                      <button type="button" class="sk sk-const" data-ck="Kw" title="Water ion product Â· 1e-14"><span class="k-main">K<sub>w</sub></span></button>
+                      <button type="button" class="sk sk-const" data-ck="NA" title="Avogadro · 6.022e23"><span class="k-main">N<sub>A</sub></span></button>
+                      <button type="button" class="sk sk-const" data-ck="R" title="Gas constant · 8.314"><span class="k-main">R</span></button>
+                      <button type="button" class="sk sk-const" data-ck="F" title="Faraday · 96485"><span class="k-main">F</span></button>
+                      <button type="button" class="sk sk-const" data-ck="Kw" title="Water ion product · 1e-14"><span class="k-main">K<sub>w</sub></span></button>
                       <button type="button" class="sk sk-const" data-ck="c" title="Speed of light"><span class="k-main">c</span></button>
                       <button type="button" class="sk sk-const" data-ck="h" title="Planck constant"><span class="k-main">h</span></button>
                     </div>
@@ -811,13 +787,13 @@
                       <button type="button" class="sk sk-num" data-ck="7">7</button>
                       <button type="button" class="sk sk-num" data-ck="8">8</button>
                       <button type="button" class="sk sk-num" data-ck="9">9</button>
-                      <button type="button" class="sk sk-op" data-ck="/"><span class="k-main">Ã·</span></button>
-                      <button type="button" class="sk sk-op" data-ck="*"><span class="k-main">Ã—</span></button>
+                      <button type="button" class="sk sk-op" data-ck="/"><span class="k-main">÷</span></button>
+                      <button type="button" class="sk sk-op" data-ck="*"><span class="k-main">×</span></button>
 
                       <button type="button" class="sk sk-num" data-ck="4">4</button>
                       <button type="button" class="sk sk-num" data-ck="5">5</button>
                       <button type="button" class="sk sk-num" data-ck="6">6</button>
-                      <button type="button" class="sk sk-op" data-ck="-"><span class="k-main">âˆ’</span></button>
+                      <button type="button" class="sk sk-op" data-ck="-"><span class="k-main">−</span></button>
                       <button type="button" class="sk sk-op" data-ck="+"><span class="k-main">+</span></button>
 
                       <button type="button" class="sk sk-num" data-ck="1">1</button>
@@ -834,7 +810,7 @@
               </div>
             </div>
 
-            <!-- â”€â”€ Reference (secondary) â€” collapsed by default so the calculator leads â”€â”€ -->
+            <!-- ── Reference (secondary) — collapsed by default so the calculator leads ── -->
             <details class="sci-keypad-shell">
               <summary>
                 <span data-i18n="calc.keypadTitle">Virtual scientific keypad</span>
@@ -927,23 +903,94 @@
             </details>
           </section>
 
-          <section id="tab-ideal" class="calc-tab" role="tabpanel">
+          <!-- ── 03 · UNIT CONVERTER ── -->
+          <section id="tab-unit" class="calc-tab" role="tabpanel">
             <div class="calc-panel-head">
               <div class="calc-panel-h">
-                <span class="calc-panel-kicker" data-i18n="calc.ig02Kicker">04 â€” Ideal Gas Law</span>
-                <h2 class="calc-panel-title" data-i18n="calc.ig02Title">PV = nRT â€” solve any variable</h2>
-                <p class="calc-panel-desc" data-i18n-html="calc.ig02DescHtml">Provide any three of {P, V, n, T} and we solve for the fourth. R is fixed at <code style="font-family:var(--lc-mono);">8.314 JÂ·Kâ»Â¹Â·molâ»Â¹</code>. Temperature input is converted to Kelvin automatically.</p>
-              </div>
-              <div class="calc-panel-meta">
-                <span data-i18n="calc.panelMode">mode</span><strong data-i18n="calc.solverMode">variable solver</strong>
-                <span data-i18n="calc.panelOutput">output</span><strong>P Â· V Â· n Â· T</strong>
+                <span class="calc-panel-kicker" data-i18n="calc.uc01Kicker">03 — Unit Converter</span>
+                <h2 class="calc-panel-title" data-i18n="calc.uc01Title">Convert between chemistry units</h2>
+                <p class="calc-panel-desc" data-i18n="calc.uc01Desc">Mass, volume, pressure, temperature, energy, amount and concentration — one converter for the lab.</p>
               </div>
             </div>
 
             <div class="calc-formula-strip">
               <div>
                 <span class="calc-formula-label" data-i18n="calc.formulaUsed">Formula used</span>
-                <span class="calc-formula-value">PV = nRT Â· R = 8.314 JÂ·Kâ»Â¹Â·molâ»Â¹</span>
+                <span class="calc-formula-value">value × factor</span>
+              </div>
+              <span class="calc-formula-pill" data-i18n="calc.ucPill">SI base + common lab units</span>
+            </div>
+
+            <div class="calc-field">
+              <label class="calc-field-l" data-i18n="calc.ucCategory">Category</label>
+              <select id="uc-cat" class="calc-select" onchange="updateUnitCategory()">
+                <option value="mass" data-i18n="calc.ucCatMass">Mass</option>
+                <option value="volume" data-i18n="calc.ucCatVolume">Volume</option>
+                <option value="pressure" data-i18n="calc.ucCatPressure">Pressure</option>
+                <option value="temperature" data-i18n="calc.ucCatTemp">Temperature</option>
+                <option value="energy" data-i18n="calc.ucCatEnergy">Energy</option>
+                <option value="amount" data-i18n="calc.ucCatAmount">Amount (mol)</option>
+                <option value="concentration" data-i18n="calc.ucCatConc">Concentration</option>
+              </select>
+            </div>
+
+            <div class="calc-field">
+              <label class="calc-field-l" data-i18n="calc.ucValue">Value</label>
+              <input id="uc-value" class="calc-input" type="number" step="any" value="1">
+            </div>
+            <div class="calc-field">
+              <label class="calc-field-l" data-i18n="calc.ucFrom">From</label>
+              <select id="uc-from" class="calc-select" onchange="runUnit()"></select>
+            </div>
+            <div class="calc-field">
+              <label class="calc-field-l" data-i18n="calc.ucTo">To</label>
+              <select id="uc-to" class="calc-select" onchange="runUnit()"></select>
+            </div>
+
+            <div class="calc-chip-row" aria-label="Unit converter presets">
+              <span class="calc-chip-label" data-i18n="calc.presets">Presets</span>
+              <button class="calc-chip" type="button" data-uc-preset='{"cat":"mass","value":"250","from":"mg","to":"g"}'>250 mg → g</button>
+              <button class="calc-chip" type="button" data-uc-preset='{"cat":"pressure","value":"1","from":"atm","to":"kPa"}'>1 atm → kPa</button>
+              <button class="calc-chip" type="button" data-uc-preset='{"cat":"temperature","value":"25","from":"°C","to":"°F"}'>25 °C → °F</button>
+              <button class="calc-chip" type="button" data-uc-preset='{"cat":"energy","value":"1","from":"kcal","to":"kJ"}'>1 kcal → kJ</button>
+            </div>
+
+            <div class="calc-actions">
+              <button class="calc-btn-run" onclick="runUnit()" data-i18n="calc.compute">Compute</button>
+              <button class="calc-btn-reset" onclick="resetUnit()" data-i18n="calc.reset">Reset</button>
+            </div>
+
+            <details class="calc-how">
+              <summary data-i18n="calc.howTitle">How this works</summary>
+              <div class="calc-how-body" data-i18n-html="calc.ucHowHtml">
+                Each category converts through an SI base unit: grams, litres, pascals, kelvin, joules, moles and mol/L. Temperature uses the affine scale (273.15 and 9/5) because °C and °F have no absolute zero.
+              </div>
+            </details>
+
+            <div class="calc-result" id="uc-result">
+              <div class="calc-result-head">
+                <span class="calc-result-head-main"><span class="lc-st-dot"></span><span data-i18n="calc.output">output</span></span>
+                <span class="calc-result-meta"><span id="uc-result-meta" data-i18n="calc.awaiting">awaiting input…</span><button class="calc-copy-btn" type="button" data-copy-result="uc-result-body" data-i18n="calc.copy">Copy</button></span>
+              </div>
+              <div class="calc-result-body" id="uc-result-body">
+                <div class="calc-result-empty" data-i18n-html="calc.ucEmptyHtml">choose a category and press <strong style="color:var(--lc-ink);font-weight:500;">Compute</strong></div>
+              </div>
+            </div>
+          </section>
+
+          <section id="tab-ideal" class="calc-tab" role="tabpanel">
+            <div class="calc-panel-head">
+              <div class="calc-panel-h">
+                <span class="calc-panel-kicker" data-i18n="calc.ig02Kicker">04 — Ideal Gas Law</span>
+                <h2 class="calc-panel-title" data-i18n="calc.ig02Title">PV = nRT — solve any variable</h2>
+                <p class="calc-panel-desc" data-i18n-html="calc.ig02DescHtml">Provide any three of {P, V, n, T} and we solve for the fourth. R is fixed at <code style="font-family:var(--lc-mono);">8.314 J·K⁻¹·mol⁻¹</code>. Temperature input is converted to Kelvin automatically.</p>
+              </div>
+              </div>
+
+            <div class="calc-formula-strip">
+              <div>
+                <span class="calc-formula-label" data-i18n="calc.formulaUsed">Formula used</span>
+                <span class="calc-formula-value">PV = nRT · R = 8.314 J·K⁻¹·mol⁻¹</span>
               </div>
               <span class="calc-formula-pill" data-i18n="calc.unitAware">unit aware</span>
             </div>
@@ -978,7 +1025,7 @@
                 <select id="ig-V-u" class="calc-select">
                   <option value="L" selected data-i18n="calc.unitL">liter (L)</option>
                   <option value="mL" data-i18n="calc.unitMl">milliliter (mL)</option>
-                  <option value="m3" data-i18n="calc.unitM3">cubic meter (mÂ³)</option>
+                  <option value="m3" data-i18n="calc.unitM3">cubic meter (m³)</option>
                 </select>
               </div>
             </div>
@@ -993,16 +1040,16 @@
               <div class="calc-row-2">
                 <input id="ig-T" class="calc-input" type="number" step="any" value="25">
                 <select id="ig-T-u" class="calc-select">
-                  <option value="C" selected>Â°C</option>
+                  <option value="C" selected>°C</option>
                   <option value="K">K</option>
-                  <option value="F">Â°F</option>
+                  <option value="F">°F</option>
                 </select>
               </div>
             </div>
 
             <div class="calc-chip-row" aria-label="Ideal gas presets">
               <span class="calc-chip-label" data-i18n="calc.presets">Presets</span>
-              <button class="calc-chip" type="button" data-ig-solve="V" data-ig-p="101325" data-ig-pu="Pa" data-ig-n="1" data-ig-t="0" data-ig-tu="C">STP Â· 1 mol</button>
+              <button class="calc-chip" type="button" data-ig-solve="V" data-ig-p="101325" data-ig-pu="Pa" data-ig-n="1" data-ig-t="0" data-ig-tu="C">STP · 1 mol</button>
               <button class="calc-chip" type="button" data-ig-solve="P" data-ig-v="2" data-ig-vu="L" data-ig-n="0.08" data-ig-t="25" data-ig-tu="C">Lab flask</button>
               <button class="calc-chip" type="button" data-ig-solve="n" data-ig-p="1" data-ig-pu="atm" data-ig-v="5" data-ig-vu="L" data-ig-t="20" data-ig-tu="C">Gas sample</button>
             </div>
@@ -1022,7 +1069,7 @@
             <div class="calc-result" id="ig-result">
               <div class="calc-result-head">
                 <span class="calc-result-head-main"><span class="lc-st-dot"></span><span data-i18n="calc.output">output</span></span>
-                <span class="calc-result-meta"><span id="ig-result-meta">awaiting inputâ€¦</span><button class="calc-copy-btn" type="button" data-copy-result="ig-result-body" data-i18n="calc.copy">Copy</button></span>
+                <span class="calc-result-meta"><span id="ig-result-meta" data-i18n="calc.awaiting">awaiting input…</span><button class="calc-copy-btn" type="button" data-copy-result="ig-result-body" data-i18n="calc.copy">Copy</button></span>
               </div>
               <div class="calc-result-body" id="ig-result-body">
                 <div class="calc-result-empty" data-i18n-html="calc.igEmptyHtml">choose a variable, fill the other three, press <strong style="color:var(--lc-ink);font-weight:500;">Compute</strong></div>
@@ -1030,24 +1077,20 @@
             </div>
           </section>
 
-          <!-- â”€â”€â”€ 03 Â· DILUTION â”€â”€â”€ -->
+          <!-- ─── 03 · DILUTION ─── -->
           <section id="tab-dilute" class="calc-tab" role="tabpanel">
             <div class="calc-panel-head">
               <div class="calc-panel-h">
-                <span class="calc-panel-kicker" data-i18n="calc.dl03Kicker">05 â€” Dilution</span>
-                <h2 class="calc-panel-title" data-i18n="calc.dl03Title">Câ‚Vâ‚ = Câ‚‚Vâ‚‚</h2>
+                <span class="calc-panel-kicker" data-i18n="calc.dl03Kicker">05 — Dilution</span>
+                <h2 class="calc-panel-title" data-i18n="calc.dl03Title">C₁V₁ = C₂V₂</h2>
                 <p class="calc-panel-desc" data-i18n="calc.dl03Desc">Solve for any of the four variables in a serial dilution. Concentrations in mol/L (molarity); volumes in any consistent unit.</p>
-              </div>
-              <div class="calc-panel-meta">
-                <span data-i18n="calc.panelMode">mode</span><strong data-i18n="calc.dilutionMode">solution prep</strong>
-                <span data-i18n="calc.panelOutput">output</span><strong>C Â· V</strong>
               </div>
             </div>
 
             <div class="calc-formula-strip">
               <div>
                 <span class="calc-formula-label" data-i18n="calc.formulaUsed">Formula used</span>
-                <span class="calc-formula-value">Câ‚Vâ‚ = Câ‚‚Vâ‚‚</span>
+                <span class="calc-formula-value">C₁V₁ = C₂V₂</span>
               </div>
               <span class="calc-formula-pill" data-i18n="calc.consistentUnits">consistent units</span>
             </div>
@@ -1055,33 +1098,33 @@
             <div class="calc-field">
               <label class="calc-field-l" data-i18n="calc.solveFor">Solve for</label>
               <select id="dl-solve" class="calc-select" onchange="updateDilField()">
-                <option value="C1" data-i18n="calc.dlOptC1">Câ‚ â€” initial concentration</option>
-                <option value="V1" data-i18n="calc.dlOptV1">Vâ‚ â€” initial volume</option>
-                <option value="C2" data-i18n="calc.dlOptC2">Câ‚‚ â€” final concentration</option>
-                <option value="V2" selected data-i18n="calc.dlOptV2">Vâ‚‚ â€” final volume</option>
+                <option value="C1" data-i18n="calc.dlOptC1">C₁ — initial concentration</option>
+                <option value="V1" data-i18n="calc.dlOptV1">V₁ — initial volume</option>
+                <option value="C2" data-i18n="calc.dlOptC2">C₂ — final concentration</option>
+                <option value="V2" selected data-i18n="calc.dlOptV2">V₂ — final volume</option>
               </select>
             </div>
 
             <div class="calc-field" data-dl="C1">
-              <label class="calc-field-l">Câ‚ <span class="calc-help" style="display:inline-block;margin:0;">mol/L</span></label>
+              <label class="calc-field-l">C₁ <span class="calc-help" style="display:inline-block;margin:0;">mol/L</span></label>
               <input id="dl-C1" class="calc-input" type="number" step="any" value="1.0">
             </div>
             <div class="calc-field" data-dl="V1">
-              <label class="calc-field-l">Vâ‚ <span class="calc-help" style="display:inline-block;margin:0;">mL</span></label>
+              <label class="calc-field-l">V₁ <span class="calc-help" style="display:inline-block;margin:0;">mL</span></label>
               <input id="dl-V1" class="calc-input" type="number" step="any" value="25">
             </div>
             <div class="calc-field" data-dl="C2">
-              <label class="calc-field-l">Câ‚‚ <span class="calc-help" style="display:inline-block;margin:0;">mol/L</span></label>
+              <label class="calc-field-l">C₂ <span class="calc-help" style="display:inline-block;margin:0;">mol/L</span></label>
               <input id="dl-C2" class="calc-input" type="number" step="any" value="0.1">
             </div>
             <div class="calc-field" data-dl="V2">
-              <label class="calc-field-l">Vâ‚‚ <span class="calc-help" style="display:inline-block;margin:0;">mL</span></label>
+              <label class="calc-field-l">V₂ <span class="calc-help" style="display:inline-block;margin:0;">mL</span></label>
               <input id="dl-V2" class="calc-input" type="number" step="any" value="">
             </div>
 
             <div class="calc-chip-row" aria-label="Dilution presets">
               <span class="calc-chip-label" data-i18n="calc.presets">Presets</span>
-              <button class="calc-chip" type="button" data-dl-solve="V2" data-dl-c1="1" data-dl-v1="10" data-dl-c2="0.1">10Ã— dilution</button>
+              <button class="calc-chip" type="button" data-dl-solve="V2" data-dl-c1="1" data-dl-v1="10" data-dl-c2="0.1">10× dilution</button>
               <button class="calc-chip" type="button" data-dl-solve="C2" data-dl-c1="0.5" data-dl-v1="20" data-dl-v2="100">Final molarity</button>
               <button class="calc-chip" type="button" data-dl-solve="V1" data-dl-c1="2" data-dl-c2="0.25" data-dl-v2="250">Stock volume</button>
             </div>
@@ -1094,14 +1137,14 @@
             <details class="calc-how">
               <summary data-i18n="calc.howTitle">How this works</summary>
               <div class="calc-how-body" data-i18n-html="calc.dilutionHowHtml">
-                Dilution conserves solute amount before and after adding solvent, so <code>Câ‚Vâ‚</code> equals <code>Câ‚‚Vâ‚‚</code>. Use the same volume unit on both sides.
+                Dilution conserves solute amount before and after adding solvent, so <code>C₁V₁</code> equals <code>C₂V₂</code>. Use the same volume unit on both sides.
               </div>
             </details>
 
             <div class="calc-result" id="dl-result">
               <div class="calc-result-head">
                 <span class="calc-result-head-main"><span class="lc-st-dot"></span><span data-i18n="calc.output">output</span></span>
-                <span class="calc-result-meta"><span id="dl-result-meta">awaiting inputâ€¦</span><button class="calc-copy-btn" type="button" data-copy-result="dl-result-body" data-i18n="calc.copy">Copy</button></span>
+                <span class="calc-result-meta"><span id="dl-result-meta" data-i18n="calc.awaiting">awaiting input…</span><button class="calc-copy-btn" type="button" data-copy-result="dl-result-body" data-i18n="calc.copy">Copy</button></span>
               </div>
               <div class="calc-result-body" id="dl-result-body">
                 <div class="calc-result-empty" data-i18n-html="calc.dlEmptyHtml">fill the three known values and press <strong style="color:var(--lc-ink);font-weight:500;">Compute</strong></div>
@@ -1109,44 +1152,40 @@
             </div>
           </section>
 
-          <!-- â”€â”€â”€ 04 Â· pH / pOH â”€â”€â”€ -->
+          <!-- ─── 04 · pH / pOH ─── -->
           <section id="tab-ph" class="calc-tab" role="tabpanel">
             <div class="calc-panel-head">
               <div class="calc-panel-h">
-                <span class="calc-panel-kicker" data-i18n="calc.ph04Kicker">06 â€” Acidity</span>
-                <h2 class="calc-panel-title" data-i18n="calc.ph04Title">pH Â· pOH from [Hâº] or [OHâ»]</h2>
-                <p class="calc-panel-desc" data-i18n="calc.ph04Desc">Computes pH, pOH, [Hâº] and [OHâ»] from any one input at 25 Â°C (Kw = 1.0 Ã— 10â»Â¹â´). Marks the solution as acidic, neutral or basic.</p>
+                <span class="calc-panel-kicker" data-i18n="calc.ph04Kicker">06 — Acidity</span>
+                <h2 class="calc-panel-title" data-i18n="calc.ph04Title">pH · pOH from [H⁺] or [OH⁻]</h2>
+                <p class="calc-panel-desc" data-i18n="calc.ph04Desc">Computes pH, pOH, [H⁺] and [OH⁻] from any one input at 25 °C (Kw = 1.0 × 10⁻¹⁴). Marks the solution as acidic, neutral or basic.</p>
               </div>
-              <div class="calc-panel-meta">
-                <span data-i18n="calc.panelMode">mode</span><strong data-i18n="calc.phMode">acid-base</strong>
-                <span data-i18n="calc.panelOutput">output</span><strong>pH Â· pOH</strong>
               </div>
-            </div>
 
             <div class="calc-formula-strip">
               <div>
                 <span class="calc-formula-label" data-i18n="calc.formulaUsed">Formula used</span>
-                <span class="calc-formula-value">pH = -log[Hâº] Â· pH + pOH = 14</span>
+                <span class="calc-formula-value">pH = -log[H⁺] · pH + pOH = 14</span>
               </div>
-              <span class="calc-formula-pill">25 Â°C Â· Kw</span>
+              <span class="calc-formula-pill">25 °C · Kw</span>
             </div>
 
             <div class="calc-field">
               <label class="calc-field-l" data-i18n="calc.phInputMode">Input mode</label>
               <select id="ph-mode" class="calc-select" onchange="updatePhFields()">
-                <option value="H" selected data-i18n="calc.phOptH">[Hâº] â€” hydrogen ion concentration</option>
-                <option value="OH" data-i18n="calc.phOptOH">[OHâ»] â€” hydroxide concentration</option>
+                <option value="H" selected data-i18n="calc.phOptH">[H⁺] — hydrogen ion concentration</option>
+                <option value="OH" data-i18n="calc.phOptOH">[OH⁻] — hydroxide concentration</option>
                 <option value="pH" data-i18n="calc.phOptPH">pH directly</option>
                 <option value="pOH" data-i18n="calc.phOptPOH">pOH directly</option>
               </select>
             </div>
 
             <div class="calc-field" data-ph="H">
-              <label class="calc-field-l">[Hâº] <span class="calc-help" style="display:inline-block;margin:0;">mol/L</span></label>
+              <label class="calc-field-l">[H⁺] <span class="calc-help" style="display:inline-block;margin:0;">mol/L</span></label>
               <input id="ph-H" class="calc-input" type="number" step="any" value="1e-3">
             </div>
             <div class="calc-field" data-ph="OH" style="display:none;">
-              <label class="calc-field-l">[OHâ»] <span class="calc-help" style="display:inline-block;margin:0;">mol/L</span></label>
+              <label class="calc-field-l">[OH⁻] <span class="calc-help" style="display:inline-block;margin:0;">mol/L</span></label>
               <input id="ph-OH" class="calc-input" type="number" step="any" value="1e-4">
             </div>
             <div class="calc-field" data-ph="pH" style="display:none;">
@@ -1160,9 +1199,9 @@
 
             <div class="calc-chip-row" aria-label="pH presets">
               <span class="calc-chip-label" data-i18n="calc.presets">Presets</span>
-              <button class="calc-chip" type="button" data-ph-mode="H" data-ph-value="1e-3">Acid Â· 10â»Â³ M Hâº</button>
+              <button class="calc-chip" type="button" data-ph-mode="H" data-ph-value="1e-3">Acid · 10⁻³ M H⁺</button>
               <button class="calc-chip" type="button" data-ph-mode="pH" data-ph-value="7">Neutral pH 7</button>
-              <button class="calc-chip" type="button" data-ph-mode="OH" data-ph-value="1e-2">Base Â· 10â»Â² M OHâ»</button>
+              <button class="calc-chip" type="button" data-ph-mode="OH" data-ph-value="1e-2">Base · 10⁻² M OH⁻</button>
             </div>
 
             <div class="calc-actions">
@@ -1173,17 +1212,165 @@
             <details class="calc-how">
               <summary data-i18n="calc.howTitle">How this works</summary>
               <div class="calc-how-body" data-i18n-html="calc.phHowHtml">
-                At 25 Â°C, water has <code>Kw = 1.0 Ã— 10â»Â¹â´</code>. The calculator converts the selected input into pH, pOH, [Hâº] and [OHâ»], then classifies the solution.
+                At 25 °C, water has <code>Kw = 1.0 × 10⁻¹⁴</code>. The calculator converts the selected input into pH, pOH, [H⁺] and [OH⁻], then classifies the solution.
               </div>
             </details>
 
             <div class="calc-result" id="ph-result">
               <div class="calc-result-head">
                 <span class="calc-result-head-main"><span class="lc-st-dot"></span><span data-i18n="calc.output">output</span></span>
-                <span class="calc-result-meta"><span id="ph-result-meta">awaiting inputâ€¦</span><button class="calc-copy-btn" type="button" data-copy-result="ph-result-body" data-i18n="calc.copy">Copy</button></span>
+                <span class="calc-result-meta"><span id="ph-result-meta" data-i18n="calc.awaiting">awaiting input…</span><button class="calc-copy-btn" type="button" data-copy-result="ph-result-body" data-i18n="calc.copy">Copy</button></span>
               </div>
               <div class="calc-result-body" id="ph-result-body">
                 <div class="calc-result-empty" data-i18n-html="calc.phEmptyHtml">choose an input mode and press <strong style="color:var(--lc-ink);font-weight:500;">Compute</strong></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ── 05 · STOICHIOMETRY ── -->
+          <section id="tab-stoich" class="calc-tab" role="tabpanel">
+            <div class="calc-panel-head">
+              <div class="calc-panel-h">
+                <span class="calc-panel-kicker" data-i18n="calc.sc07Kicker">07 — Stoichiometry</span>
+                <h2 class="calc-panel-title" data-i18n="calc.sc07Title">moles and masses from a balanced reaction</h2>
+                <p class="calc-panel-desc" data-i18n="calc.sc07Desc">Type a balanced equation, pick one substance and its mass — get the moles and theoretical masses of every species in the reaction.</p>
+              </div>
+            </div>
+
+            <div class="calc-formula-strip">
+              <div>
+                <span class="calc-formula-label" data-i18n="calc.formulaUsed">Formula used</span>
+                <span class="calc-formula-value">n = m / M · ratio = coef</span>
+              </div>
+              <span class="calc-formula-pill" data-i18n="calc.stoichPill">balanced coefficients</span>
+            </div>
+
+            <div class="calc-field">
+              <label class="calc-field-l" data-i18n="calc.stoichEquation">Balanced equation</label>
+              <input id="sc-equation" class="calc-input" type="text" spellcheck="false" value="2 H2 + O2 -> 2 H2O" placeholder="2 H2 + O2 -> 2 H2O" oninput="updateStoichSpecies()">
+            </div>
+
+            <div class="calc-field">
+              <label class="calc-field-l" data-i18n="calc.stoichKnown">Known substance</label>
+              <select id="sc-species" class="calc-select" onchange="runStoich()"></select>
+            </div>
+            <div class="calc-field">
+              <label class="calc-field-l" data-i18n="calc.stoichMass">Mass of known <span class="calc-help" style="display:inline-block;margin:0;">g</span></label>
+              <input id="sc-mass" class="calc-input" type="number" step="any" value="4">
+            </div>
+
+            <div class="calc-chip-row" aria-label="Stoichiometry presets">
+              <span class="calc-chip-label" data-i18n="calc.presets">Presets</span>
+              <button class="calc-chip" type="button" data-sc-preset='{"eq":"2 H2 + O2 -> 2 H2O","species":"H2O","mass":"36"}'>H₂ combustion</button>
+              <button class="calc-chip" type="button" data-sc-preset='{"eq":"N2 + 3 H2 -> 2 NH3","species":"NH3","mass":"34"}'>Haber · NH₃</button>
+              <button class="calc-chip" type="button" data-sc-preset='{"eq":"2 H2O2 -> 2 H2O + O2","species":"H2O2","mass":"68"}'>H₂O₂ breakdown</button>
+            </div>
+
+            <div class="calc-actions">
+              <button class="calc-btn-run" onclick="runStoich()" data-i18n="calc.compute">Compute</button>
+              <button class="calc-btn-reset" onclick="resetStoich()" data-i18n="calc.reset">Reset</button>
+            </div>
+
+            <details class="calc-how">
+              <summary data-i18n="calc.howTitle">How this works</summary>
+              <div class="calc-how-body" data-i18n-html="calc.stoichHowHtml">
+                The known mass is divided by its molar mass to get moles, then every other species is scaled by the coefficient ratio from the balanced equation. Results are theoretical — the chosen substance is treated as the limiting reagent.
+              </div>
+            </details>
+
+            <div class="calc-result" id="sc-result">
+              <div class="calc-result-head">
+                <span class="calc-result-head-main"><span class="lc-st-dot"></span><span data-i18n="calc.output">output</span></span>
+                <span class="calc-result-meta"><span id="sc-result-meta" data-i18n="calc.awaiting">awaiting input…</span><button class="calc-copy-btn" type="button" data-copy-result="sc-result-body" data-i18n="calc.copy">Copy</button></span>
+              </div>
+              <div class="calc-result-body" id="sc-result-body">
+                <div class="calc-result-empty" data-i18n-html="calc.scEmptyHtml">type a balanced equation and press <strong style="color:var(--lc-ink);font-weight:500;">Compute</strong></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ─── 08 · THERMODYNAMICS ─── -->
+          <section id="tab-thermo" class="calc-tab" role="tabpanel">
+            <div class="calc-panel-head">
+              <div class="calc-panel-h">
+                <span class="calc-panel-kicker" data-i18n="calc.tm08Kicker">08 — Thermodynamics</span>
+                <h2 class="calc-panel-title" data-i18n="calc.tm08Title">ΔG = ΔH − T·ΔS · q = m·c·ΔT</h2>
+                <p class="calc-panel-desc" data-i18n="calc.tm08Desc">Gibbs free energy tells you whether a reaction is spontaneous at a given temperature; the heat equation tells you how much energy a mass change of temperature absorbs or releases.</p>
+              </div>
+            </div>
+
+            <div class="calc-formula-strip">
+              <div>
+                <span class="calc-formula-label" data-i18n="calc.formulaUsed">Formula used</span>
+                <span class="calc-formula-value">ΔG = ΔH − T·ΔS · q = m·c·ΔT</span>
+              </div>
+              <span class="calc-formula-pill" data-i18n="calc.thermoPill">spontaneity + energy</span>
+            </div>
+
+            <div class="calc-subhead" data-i18n="calc.thermoGibbsTitle">① Gibbs free energy — ΔG = ΔH − T·ΔS</div>
+            <div class="calc-row-2">
+              <div class="calc-field">
+                <label class="calc-field-l" data-i18n="calc.thermoDeltaH">Enthalpy change ΔH <span class="calc-help" style="display:inline-block;margin:0;">kJ/mol</span></label>
+                <input id="tm-dh" class="calc-input" type="number" step="any" value="6.01">
+              </div>
+              <div class="calc-field">
+                <label class="calc-field-l" data-i18n="calc.thermoDeltaS">Entropy change ΔS <span class="calc-help" style="display:inline-block;margin:0;">J/mol·K</span></label>
+                <input id="tm-ds" class="calc-input" type="number" step="any" value="22.0">
+              </div>
+            </div>
+            <div class="calc-field">
+              <label class="calc-field-l" data-i18n="calc.thermoTemp">Temperature <span class="calc-help" style="display:inline-block;margin:0;">°C</span></label>
+              <input id="tm-t" class="calc-input" type="number" step="any" value="25">
+            </div>
+
+            <div class="calc-subhead" data-i18n="calc.thermoHeatTitle">② Heat exchange — q = m·c·ΔT</div>
+            <div class="calc-row-2">
+              <div class="calc-field">
+                <label class="calc-field-l" data-i18n="calc.thermoSubstance">Substance</label>
+                <select id="tm-sub" class="calc-select" onchange="runThermo()">
+                  <option value="water" data-i18n="calc.tmSubWater">Water (liquid) · 4.18 J/g·°C</option>
+                  <option value="ice" data-i18n="calc.tmSubIce">Ice · 2.09 J/g·°C</option>
+                  <option value="iron" data-i18n="calc.tmSubIron">Iron · 0.449 J/g·°C</option>
+                  <option value="aluminum" data-i18n="calc.tmSubAluminum">Aluminum · 0.897 J/g·°C</option>
+                  <option value="copper" data-i18n="calc.tmSubCopper">Copper · 0.385 J/g·°C</option>
+                </select>
+              </div>
+              <div class="calc-field">
+                <label class="calc-field-l" data-i18n="calc.thermoMass">Mass <span class="calc-help" style="display:inline-block;margin:0;">g</span></label>
+                <input id="tm-mass" class="calc-input" type="number" step="any" value="100">
+              </div>
+            </div>
+            <div class="calc-field">
+              <label class="calc-field-l" data-i18n="calc.thermoDT">Temperature change ΔT <span class="calc-help" style="display:inline-block;margin:0;">°C</span></label>
+              <input id="tm-dt" class="calc-input" type="number" step="any" value="20">
+            </div>
+
+            <div class="calc-chip-row" aria-label="Thermodynamics presets">
+              <span class="calc-chip-label" data-i18n="calc.presets">Presets</span>
+              <button class="calc-chip" type="button" data-tm-preset='{"dh":"6.01","ds":"22.0","t":"25","sub":"water","mass":"100","dt":"20"}'>H₂O melting</button>
+              <button class="calc-chip" type="button" data-tm-preset='{"dh":"-92.2","ds":"-198.7","t":"25","sub":"iron","mass":"50","dt":"30"}'>Haber NH₃</button>
+              <button class="calc-chip" type="button" data-tm-preset='{"dh":"178","ds":"160","t":"25","sub":"copper","mass":"80","dt":"40"}'>CaCO₃</button>
+            </div>
+
+            <div class="calc-actions">
+              <button class="calc-btn-run" onclick="runThermo()" data-i18n="calc.compute">Compute</button>
+              <button class="calc-btn-reset" onclick="resetThermo()" data-i18n="calc.reset">Reset</button>
+            </div>
+
+            <details class="calc-how">
+              <summary data-i18n="calc.howTitle">How this works</summary>
+              <div class="calc-how-body" data-i18n-html="calc.thermoHowHtml">
+                ΔG = ΔH − T·ΔS decides spontaneity: negative ΔG is spontaneous, positive is not, zero is equilibrium. When ΔH and ΔS share a sign, T* = ΔH/ΔS is the crossover where the reaction flips. The heat equation q = m·c·ΔT reports energy in joules — positive q is absorbed (endothermic), negative is released (exothermic).
+              </div>
+            </details>
+
+            <div class="calc-result" id="tm-result">
+              <div class="calc-result-head">
+                <span class="calc-result-head-main"><span class="lc-st-dot"></span><span data-i18n="calc.output">output</span></span>
+                <span class="calc-result-meta"><span id="tm-result-meta" data-i18n="calc.awaiting">awaiting input…</span><button class="calc-copy-btn" type="button" data-copy-result="tm-result-body" data-i18n="calc.copy">Copy</button></span>
+              </div>
+              <div class="calc-result-body" id="tm-result-body">
+                <div class="calc-result-empty" data-i18n-html="calc.tmEmptyHtml">fill the fields and press <strong style="color:var(--lc-ink);font-weight:500;">Compute</strong></div>
               </div>
             </div>
           </section>
@@ -1192,7 +1379,7 @@
       </div>
 
       <p style="font-family:var(--lc-mono);font-size:10.5px;color:var(--lc-ink-3);letter-spacing:.04em;margin-top:18px;text-align:center;" data-i18n="calc.footer">
-        atomic weights Â· IUPAC 2024 standard atomic weights Â· R = 8.314 JÂ·Kâ»Â¹Â·molâ»Â¹ Â· Kw = 1.0 Ã— 10â»Â¹â´ (25 Â°C)
+        atomic weights · IUPAC 2024 standard atomic weights · R = 8.314 J·K⁻¹·mol⁻¹ · Kw = 1.0 × 10⁻¹⁴ (25 °C)
       </p>
     </div>
   </div>
@@ -1201,22 +1388,22 @@
 <!-- status bar -->
 <div class="lc-statusbar">
   <span><span class="lc-st-dot"></span> <span data-i18n="calc.statusReady">ready</span></span>
-  <span class="lc-st-sep">Â·</span>
+  <span class="lc-st-sep">·</span>
   <span data-i18n="calc.statusBreadcrumb">workspace / laboratory / calculators</span>
-  <span class="lc-st-sep">Â·</span>
+  <span class="lc-st-sep">·</span>
   <span id="st-active">tool: molar-mass</span>
   <span class="lc-st-spacer"></span>
-  <a href="index.html" data-i18n="calc.statusUp">â†‘ workspace</a>
-  <span class="lc-st-sep">Â·</span>
-  <a href="periodic-table.html">â†’ periodic-table</a>
+  <a href="index.html" data-i18n="calc.statusUp">↑ workspace</a>
+  <span class="lc-st-sep">·</span>
+  <a href="periodic-table.html">→ periodic-table</a>
 </div>
 
 <script>
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// THEME â€” swaps the SVG content (sun â†” moon) so the icon reflects the
+// ═════════════════════════════════════════
+// THEME — swaps the SVG content (sun ↔ moon) so the icon reflects the
 // active theme. Markup + behaviour matched 1:1 with periodic-table.js
 // (applyTheme + updateThemeIcon).
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═════════════════════════════════════════
 function updateThemeIcon(isDark) {
   const icon = document.getElementById('theme-icon');
   if (!icon) return;
@@ -1242,9 +1429,9 @@ function toggleTheme() {
   updateThemeIcon(isDark);
 })();
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// SIDEBAR â€” mobile toggle + expandable nav (Visualizador)
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═════════════════════════════════════════
+// SIDEBAR — mobile toggle + expandable nav (Visualizador)
+// ═════════════════════════════════════════
 function toggleMobileSidebar(){
   const sidebar = document.querySelector('.sidebar');
   const overlay = document.getElementById('mobile-overlay');
@@ -1282,9 +1469,9 @@ function toggleNavGroup(name){
   });
 })();
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// ATOMIC WEIGHTS â€” IUPAC 2024 (standard)
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═════════════════════════════════════════
+// ATOMIC WEIGHTS — IUPAC 2024 (standard)
+// ═════════════════════════════════════════
 const AW = {
   H:1.008,He:4.0026,Li:6.94,Be:9.0122,B:10.81,C:12.011,N:14.007,O:15.999,F:18.998,Ne:20.180,
   Na:22.990,Mg:24.305,Al:26.982,Si:28.085,P:30.974,S:32.06,Cl:35.45,Ar:39.95,
@@ -1301,11 +1488,11 @@ const AW = {
   Nh:286,Fl:289,Mc:289,Lv:293,Ts:294,Og:294,
 };
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═════════════════════════════════════════
 // TAB SWITCHING
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═════════════════════════════════════════
 const tabs = document.querySelectorAll('.calc-menu-item[data-target]');
-const TAB_NAMES = { molar:'Molar Mass', scientific:'Scientific Calculator', ideal:'Ideal Gas', dilute:'Dilution', ph:'pH Â· pOH' };
+const TAB_NAMES = { molar:'Molar Mass', scientific:'Scientific Calculator', unit:'Unit Converter', ideal:'Ideal Gas', dilute:'Dilution', ph:'pH · pOH', stoich:'Stoichiometry', thermo:'Thermodynamics' };
 tabs.forEach(t => t.addEventListener('click', () => switchTab(t.dataset.target, t)));
 function switchTab(target, el) {
   tabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
@@ -1314,7 +1501,7 @@ function switchTab(target, el) {
   const panel = document.getElementById('tab-' + target);
   if (panel) panel.classList.add('active');
   if (target === 'scientific' && typeof window.setSciMode === 'function') window.setSciMode('calc');
-  document.getElementById('ds-active').textContent = target.replace('molar','molar-mass').replace('scientific','scientific-calculator').replace('dilute','dilution').replace('ideal','ideal-gas');
+  document.getElementById('ds-active').textContent = target.replace('molar','molar-mass').replace('scientific','scientific-calculator').replace('unit','unit-converter').replace('stoich','stoichiometry').replace('dilute','dilution').replace('ideal','ideal-gas').replace('thermo','thermodynamics');
   document.getElementById('st-active').textContent = 'tool: ' + (TAB_NAMES[target] || target);
   history.replaceState(null, '', '#' + target);
 }
@@ -1323,7 +1510,7 @@ window.addEventListener('keydown', e => {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
   if (e.ctrlKey || e.metaKey || e.altKey) return;
   const k = e.key.toLowerCase();
-  const map = {m:'molar', s:'scientific', g:'ideal', d:'dilute', h:'ph'};
+  const map = {m:'molar', s:'scientific', u:'unit', g:'ideal', d:'dilute', h:'ph', o:'stoich', t:'thermo'};
   if (map[k]) {
     const tab = document.querySelector(`[data-target="${map[k]}"]`);
     if (tab) tab.click();
@@ -1338,11 +1525,11 @@ window.addEventListener('keydown', e => {
   }
 })();
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═════════════════════════════════════════
 // FORMATTING
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═════════════════════════════════════════
 function fmt(n, sig = 4) {
-  if (!isFinite(n)) return 'âˆž';
+  if (!isFinite(n)) return '∞';
   if (n === 0) return '0';
   const abs = Math.abs(n);
   if (abs >= 1e5 || abs < 1e-3) return n.toExponential(sig-1);
@@ -1528,6 +1715,12 @@ document.addEventListener('click', function(e) {
   if (dilBtn) { applyDilutionPreset(dilBtn); return; }
   const phBtn = e.target.closest('[data-ph-mode]');
   if (phBtn) applyPhPreset(phBtn);
+  const ucPresetBtn = e.target.closest('[data-uc-preset]');
+  if (ucPresetBtn) applyUnitPreset(ucPresetBtn);
+  const scPresetBtn = e.target.closest('[data-sc-preset]');
+  if (scPresetBtn) applyStoichPreset(scPresetBtn);
+  const tmPresetBtn = e.target.closest('[data-tm-preset]');
+  if (tmPresetBtn) applyThermoPreset(tmPresetBtn);
 });
 
 // Safe scientific expression parser for chemistry calculations.
@@ -1542,18 +1735,18 @@ const SCI_CONSTANTS = {
   e: Math.E
 };
 const SCI_FUNCTION_INFO = {
-  pH: { en:'pH(H) = -log10(H), for hydrogen ion concentration in mol/L.', pt:'pH(H) = -log10(H), para concentraÃ§Ã£o de H+ em mol/L.' },
+  pH: { en:'pH(H) = -log10(H), for hydrogen ion concentration in mol/L.', pt:'pH(H) = -log10(H), para concentração de H+ em mol/L.' },
   HfromPH: { en:'HfromPH(pH) = 10^-pH, converting pH to [H+].', pt:'HfromPH(pH) = 10^-pH, convertendo pH para [H+].' },
-  pOH: { en:'pOH(OH) = -log10(OH), for hydroxide ion concentration in mol/L.', pt:'pOH(OH) = -log10(OH), para concentraÃ§Ã£o de OH- em mol/L.' },
+  pOH: { en:'pOH(OH) = -log10(OH), for hydroxide ion concentration in mol/L.', pt:'pOH(OH) = -log10(OH), para concentração de OH- em mol/L.' },
   OHfromPOH: { en:'OHfromPOH(pOH) = 10^-pOH, converting pOH to [OH-].', pt:'OHfromPOH(pOH) = 10^-pOH, convertendo pOH para [OH-].' },
-  molarMass: { en:'molarMass("formula") parses a formula and returns g/mol.', pt:'molarMass("formula") interpreta uma fÃ³rmula e retorna g/mol.' },
+  molarMass: { en:'molarMass("formula") parses a formula and returns g/mol.', pt:'molarMass("formula") interpreta uma fórmula e retorna g/mol.' },
   molToParticles: { en:'molToParticles(mol) multiplies moles by Avogadro constant NA.', pt:'molToParticles(mol) multiplica mols pela constante de Avogadro NA.' },
-  particlesToMol: { en:'particlesToMol(n) divides particle count by Avogadro constant NA.', pt:'particlesToMol(n) divide partÃ­culas pela constante de Avogadro NA.' },
-  idealGas: { en:'idealGas(P,V,n,T) returns PV/(nT), the gas-constant equivalent in coherent units.', pt:'idealGas(P,V,n,T) retorna PV/(nT), equivalente Ã  constante dos gases em unidades coerentes.' },
+  particlesToMol: { en:'particlesToMol(n) divides particle count by Avogadro constant NA.', pt:'particlesToMol(n) divide partículas pela constante de Avogadro NA.' },
+  idealGas: { en:'idealGas(P,V,n,T) returns PV/(nT), the gas-constant equivalent in coherent units.', pt:'idealGas(P,V,n,T) retorna PV/(nT), equivalente à constante dos gases em unidades coerentes.' },
   density: { en:'density(mass,volume) returns mass divided by volume.', pt:'density(mass,volume) retorna massa dividida por volume.' },
   molarity: { en:'molarity(mol,volume) returns mol per volume.', pt:'molarity(mol,volume) retorna mol por volume.' },
   dilution: { en:'dilution(C1,V1,C2) solves V2 from C1V1 = C2V2.', pt:'dilution(C1,V1,C2) resolve V2 a partir de C1V1 = C2V2.' },
-  percentYield: { en:'percentYield(actual,theoretical) returns reaction yield in percent.', pt:'percentYield(actual,theoretical) retorna o rendimento percentual da reaÃ§Ã£o.' }
+  percentYield: { en:'percentYield(actual,theoretical) returns reaction yield in percent.', pt:'percentYield(actual,theoretical) retorna o rendimento percentual da reação.' }
 };
 const SCI_FUNCTIONS = {
   sqrt: x => {
@@ -1667,13 +1860,13 @@ function sciMolarMass(formula) {
 function sciText(key) {
   const dict = calcLangIsPt()
     ? {
-        empty:'Digite uma expressÃ£o',
-        invalid:'ExpressÃ£o invÃ¡lida',
+        empty:'Digite uma expressão',
+        invalid:'Expressão inválida',
         result:'Resultado',
-        sci:'NotaÃ§Ã£o cientÃ­fica',
-        expression:'ExpressÃ£o',
+        sci:'Notação científica',
+        expression:'Expressão',
         constants:'Constantes usadas',
-        explanation:'Contexto quÃ­mico',
+        explanation:'Contexto químico',
         solved:'calculado',
         ready:'console pronto',
         historyEmpty:'Nenhum calculo anterior',
@@ -1681,7 +1874,7 @@ function sciText(key) {
         noAnswer:'sem resultado anterior',
         noContext:'nenhum contexto quimico',
         noConstants:'nenhuma constante',
-        syntax:'Sintaxe invÃ¡lida'
+        syntax:'Sintaxe inválida'
       }
     : {
         empty:'Enter an expression',
@@ -1710,7 +1903,7 @@ function sciFactorial(x) {
   return out;
 }
 function tokenizeScientificExpression(source) {
-  const input = source.replace(/[Ã—]/g, '*').replace(/[Ã·]/g, '/').replace(/[âˆ’]/g, '-');
+  const input = source.replace(/[×]/g, '*').replace(/[÷]/g, '/').replace(/[−]/g, '-');
   const tokens = [];
   let i = 0;
   while (i < input.length) {
@@ -2079,11 +2272,11 @@ function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// SCIENTIFIC CALCULATOR MODE â€” calculator-style skin over the SAME engine.
+// ═════════════════════════════════════════
+// SCIENTIFIC CALCULATOR MODE — calculator-style skin over the SAME engine.
 // Console Mode is untouched; this only adds a second view + a keypad that
 // drives the same #sci-input buffer, parser, history and display.
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═════════════════════════════════════════
 (function setupScientificCalculatorMode(){
   const panel = document.getElementById('tab-scientific');
   const keypad = document.getElementById('scicalc-keypad');
@@ -2236,9 +2429,9 @@ function escapeHtml(value) {
   setMode('calc');
 })();
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// 01 Â· MOLAR MASS â€” formula parser
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═════════════════════════════════════════
+// 01 · MOLAR MASS — formula parser
+// ═════════════════════════════════════════
 document.getElementById('sci-input').addEventListener('input', updateScientificSuggestions);
 document.getElementById('sci-input').addEventListener('focus', updateScientificSuggestions);
 document.getElementById('sci-input').addEventListener('keydown', e => {
@@ -2264,32 +2457,32 @@ document.addEventListener('click', e => {
     if (box) box.classList.remove('show');
   }
 });
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// Calculator Mode â€” live status + chemistry interpretation
+// ═════════════════════════════════════════
+// Calculator Mode — live status + chemistry interpretation
 // (non-invasive: wraps the engine, never changes parsing/results)
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═════════════════════════════════════════
 (function setupSccInsights(){
   var lang = (document.documentElement.getAttribute('lang') || '').toLowerCase();
   var isPT = lang.indexOf('pt') === 0 || /\.pt\.html/i.test(location.pathname);
   var T = isPT ? {
-    interp:'InterpretaÃ§Ã£o', acidic:'SoluÃ§Ã£o Ã¡cida', basic:'SoluÃ§Ã£o bÃ¡sica', neutral:'SoluÃ§Ã£o neutra',
-    molarMass:'Massa molar', of:'de', conc:'ConcentraÃ§Ã£o', vol:'Volume final Vâ‚‚',
-    particles:'partÃ­culas', mol:'mol', yield:'Rendimento da reaÃ§Ã£o',
+    interp:'Interpretação', acidic:'Solução ácida', basic:'Solução básica', neutral:'Solução neutra',
+    molarMass:'Massa molar', of:'de', conc:'Concentração', vol:'Volume final V₂',
+    particles:'partículas', mol:'mol', yield:'Rendimento da reação',
     ready:'pronto', computed:'calculado', error:'erro'
   } : {
     interp:'Interpretation', acidic:'Acidic solution', basic:'Basic solution', neutral:'Neutral solution',
-    molarMass:'Molar mass', of:'of', conc:'Concentration', vol:'Final volume Vâ‚‚',
+    molarMass:'Molar mass', of:'of', conc:'Concentration', vol:'Final volume V₂',
     particles:'particles', mol:'mol', yield:'Reaction yield',
     ready:'ready', computed:'computed', error:'error'
   };
   function el(id){ return document.getElementById(id); }
-  var SUP = 'â°Â¹Â²Â³â´âµâ¶â·â¸â¹';
+  var SUP = '⁰¹²³⁴⁵⁶⁷⁸⁹';
   function prettyExp(str){
     var m = String(str).match(/^(-?\d+(?:\.\d+)?)[eE]([+-]?\d+)$/);
     if(!m) return null;
     var exp = parseInt(m[2], 10);
     var sup = String(Math.abs(exp)).split('').map(function(d){ return SUP[+d]; }).join('');
-    return m[1] + ' Ã— 10' + (exp < 0 ? 'â»' : '') + sup;
+    return m[1] + ' × 10' + (exp < 0 ? '⁻' : '') + sup;
   }
   function pretty(str){ return prettyExp(str) || str; }
   function firstArg(expr, fn){
@@ -2310,16 +2503,16 @@ document.addEventListener('click', e => {
       var a = firstArg(expr, 'pH'), conc = a != null ? pretty(a) : '';
       var w = isFinite(res) ? (res < 6.999 ? T.acidic : res > 7.001 ? T.basic : T.neutral) : '';
       var cls = isFinite(res) ? (res < 6.999 ? 'is-acidic' : res > 7.001 ? 'is-basic' : '') : '';
-      return { cls:cls, html:(w ? '<strong>' + w + '</strong>' : '') + (conc ? ' Â· [Hâº] = ' + conc + ' mol/L' : '') };
+      return { cls:cls, html:(w ? '<strong>' + w + '</strong>' : '') + (conc ? ' · [H⁺] = ' + conc + ' mol/L' : '') };
     }
     if(has(expr, 'pOH')){
       var a2 = firstArg(expr, 'pOH'), conc2 = a2 != null ? pretty(a2) : '';
       var w2 = isFinite(res) ? (res < 6.999 ? T.basic : res > 7.001 ? T.acidic : T.neutral) : '';
       var cls2 = isFinite(res) ? (res < 6.999 ? 'is-basic' : res > 7.001 ? 'is-acidic' : '') : '';
-      return { cls:cls2, html:(w2 ? '<strong>' + w2 + '</strong>' : '') + (conc2 ? ' Â· [OHâ»] = ' + conc2 + ' mol/L' : '') };
+      return { cls:cls2, html:(w2 ? '<strong>' + w2 + '</strong>' : '') + (conc2 ? ' · [OH⁻] = ' + conc2 + ' mol/L' : '') };
     }
-    if(has(expr, 'HfromPH'))  return { cls:'', html:'<strong>[Hâº]</strong> = ' + pretty(resultText) + ' mol/L' };
-    if(has(expr, 'OHfromPOH')) return { cls:'', html:'<strong>[OHâ»]</strong> = ' + pretty(resultText) + ' mol/L' };
+    if(has(expr, 'HfromPH'))  return { cls:'', html:'<strong>[H⁺]</strong> = ' + pretty(resultText) + ' mol/L' };
+    if(has(expr, 'OHfromPOH')) return { cls:'', html:'<strong>[OH⁻]</strong> = ' + pretty(resultText) + ' mol/L' };
     if(has(expr, 'molarMass')){
       var f = (expr.match(/molarMass\(\s*"([^"]*)"/) || [])[1] || '';
       return { cls:'', html:'<strong>' + T.molarMass + '</strong>' + (f ? ' ' + T.of + ' ' + f : '') + ' = ' + resultText + ' g/mol' };
@@ -2364,8 +2557,8 @@ document.addEventListener('click', e => {
 runScientific({ record:false });
 
 function parseFormula(s) {
-  // Normalize hydrate dot (Â·, Â·, *) into +
-  s = s.replace(/\s+/g,'').replace(/[Â·â€¢*]/g, '+');
+  // Normalize hydrate dots (·, •, *) into +
+  s = s.replace(/\s+/g,'').replace(/[·•*]/g, '+');
   const tokens = []; // {sym, count}
   let i = 0;
   const stack = [{}];
@@ -2383,7 +2576,7 @@ function parseFormula(s) {
       const parent = stack[stack.length - 1];
       for (const k in top) parent[k] = (parent[k]||0) + top[k]*m;
     } else if (ch === '+') {
-      // hydrate boundary â€” read a leading multiplier
+      // hydrate boundary — read a leading multiplier
       i++;
       let pre = '';
       while (i < s.length && /\d/.test(s[i])) { pre += s[i]; i++; }
@@ -2418,13 +2611,28 @@ function parseFormula(s) {
   return stack[0];
 }
 
+// ── Solver output i18n (PT/EN) ──
+function solverT(key, vars) {
+  var v = (window.I18N && typeof window.I18N.t === 'function') ? window.I18N.t('calc.' + key) : null;
+  if (v == null) return key;
+  if (vars) Object.keys(vars).forEach(function (k) { v = v.split('{' + k + '}').join(vars[k]); });
+  return v;
+}
+function solverCompute() {
+  var v = (window.I18N && typeof window.I18N.t === 'function') ? window.I18N.t('calc.compute') : null;
+  return v || 'Compute';
+}
+function solverMsg(key, vars) {
+  return '<div class="calc-result-empty">' + solverT(key, vars) + ' <strong style="color:var(--lc-ink);font-weight:500;">' + solverCompute() + '</strong></div>';
+}
+
 function runMolar() {
   const input = document.getElementById('mm-input').value.trim();
   const body = document.getElementById('mm-result-body');
   const meta = document.getElementById('mm-result-meta');
   if (!input) {
-    body.innerHTML = '<div class="calc-result-empty">enter a formula</div>';
-    meta.textContent = 'no input';
+    body.innerHTML = '<div class="calc-result-empty">' + solverT('noInput') + '</div>';
+    meta.textContent = solverT('noInput');
     return;
   }
   let counts;
@@ -2444,7 +2652,7 @@ function runMolar() {
     rows.push({ sym, count: counts[sym], mass: AW[sym], cont });
   }
 
-  let html = `<div class="calc-result-row"><span class="calc-result-k">Molar mass Â· M</span><span class="calc-result-v big">${fmt(total)} <em>g Â· molâ»Â¹</em></span></div>`;
+  let html = `<div class="calc-result-row"><span class="calc-result-k">Molar mass · M</span><span class="calc-result-v big">${fmt(total)} <em>g · mol⁻¹</em></span></div>`;
 
   // amount conversion
   const amt = parseFloat(document.getElementById('mm-amount').value);
@@ -2454,8 +2662,8 @@ function runMolar() {
     if (unit === 'g')   { grams = amt; moles = amt / total; }
     else if (unit === 'kg') { grams = amt * 1000; moles = grams / total; }
     else { moles = amt; grams = amt * total; }
-    html += `<div class="calc-result-row"><span class="calc-result-k">â†’ for ${fmt(grams)} g</span><span class="calc-result-v">${fmt(moles)} mol</span></div>`;
-    html += `<div class="calc-result-row"><span class="calc-result-k">â†’ for ${fmt(moles)} mol</span><span class="calc-result-v">${fmt(grams)} g</span></div>`;
+    html += `<div class="calc-result-row"><span class="calc-result-k">→ for ${fmt(grams)} g</span><span class="calc-result-v">${fmt(moles)} mol</span></div>`;
+    html += `<div class="calc-result-row"><span class="calc-result-k">→ for ${fmt(moles)} mol</span><span class="calc-result-v">${fmt(grams)} g</span></div>`;
   }
 
   // breakdown
@@ -2463,46 +2671,46 @@ function runMolar() {
   rows.forEach(r => {
     const pct = total > 0 ? (r.cont/total*100) : 0;
     html += `<div class="calc-result-row">
-      <span class="calc-result-k">${r.sym} Ã— ${r.count} Â· A(${r.sym})=${fmt(r.mass)}</span>
-      <span class="calc-result-v">${fmt(r.cont)} g Â· ${pct.toFixed(1)}%</span>
+      <span class="calc-result-k">${r.sym} × ${r.count} · A(${r.sym})=${fmt(r.mass)}</span>
+      <span class="calc-result-v">${fmt(r.cont)} g · ${pct.toFixed(1)}%</span>
     </div>`;
   });
 
   // formula fragments
   let frags = '';
   for (const sym in counts) frags += `<span class="frag">${sym}<sub>${counts[sym]}</sub></span>`;
-  html += `<div class="calc-result-formula">parsed â†’ ${frags}</div>`;
+  html += `<div class="calc-result-formula">${solverT('parsed')} ${frags}</div>`;
 
   if (unknown.length) {
     html += `<div class="calc-result-formula" style="color:var(--lc-amber);border-color:color-mix(in oklab, var(--lc-amber) 30%, transparent);">
-      unknown symbol(s): ${unknown.join(', ')} â€”
-      <a href="periodic-table.html#q=${encodeURIComponent(unknown[0])}" class="calc-deeplink">check in periodic table</a>
+      ${solverT('unknownSymbols', { syms: unknown.join(', ') })}
+      <a href="periodic-table.html#q=${encodeURIComponent(unknown[0])}" class="calc-deeplink">${solverT('checkPeriodic')}</a>
     </div>`;
   } else {
     // CTA to periodic table for first element
     const first = rows[0] ? rows[0].sym : Object.keys(counts)[0];
     if (first) {
-      html += `<a href="periodic-table.html#q=${encodeURIComponent(first)}" class="calc-deeplink" style="margin-left:22px;margin-top:12px;">inspect ${first} in periodic table</a>`;
+      html += `<a href="periodic-table.html#q=${encodeURIComponent(first)}" class="calc-deeplink" style="margin-left:22px;margin-top:12px;">${solverT('inspectPeriodic', { el: first })}</a>`;
     }
   }
 
   body.innerHTML = html;
-  meta.textContent = `${Object.keys(counts).length} unique element${Object.keys(counts).length>1?'s':''} Â· ${Object.values(counts).reduce((a,b)=>a+b,0)} atoms`;
+  meta.textContent = solverT('uniqueAtoms', { n: Object.keys(counts).length, m: Object.values(counts).reduce((a,b)=>a+b,0) });
 }
 function resetMolar() {
   document.getElementById('mm-input').value = '';
   document.getElementById('mm-amount').value = '';
-  document.getElementById('mm-result-body').innerHTML = '<div class="calc-result-empty">enter a formula and press <strong style="color:var(--lc-ink);font-weight:500;">Compute</strong></div>';
-  document.getElementById('mm-result-meta').textContent = 'awaiting inputâ€¦';
+  document.getElementById('mm-result-body').innerHTML = solverMsg('enterFormula');
+  document.getElementById('mm-result-meta').textContent = solverT('awaiting');
 }
 document.getElementById('mm-input').addEventListener('keydown', e => { if (e.key === 'Enter') runMolar(); });
 document.getElementById('mm-amount').addEventListener('keydown', e => { if (e.key === 'Enter') runMolar(); });
 // auto-run on load
 runMolar();
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// 02 Â· IDEAL GAS
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═════════════════════════════════════════
+// 02 · IDEAL GAS
+// ═════════════════════════════════════════
 const R = 8.314;
 function updateIdealFields() {
   const solve = document.getElementById('ig-solve').value;
@@ -2582,7 +2790,7 @@ function runIdeal() {
       label = 'P';
     } else if (solve === 'V') {
       if (![P,n,T].every(isFinite)) throw 1;
-      result = n*R*Tk / Ppa;  // mÂ³
+      result = n*R*Tk / Ppa;  // m³
       displayValue = fromM3(result, Vu); displayUnit = Vu;
       label = 'V';
     } else if (solve === 'n') {
@@ -2593,36 +2801,36 @@ function runIdeal() {
     } else if (solve === 'T') {
       if (![P,V,n].every(isFinite)) throw 1;
       result = (Ppa*Vm3) / (n*R);  // K
-      displayValue = fromK(result, Tu); displayUnit = Tu === 'C' ? 'Â°C' : Tu === 'F' ? 'Â°F' : 'K';
+      displayValue = fromK(result, Tu); displayUnit = Tu === 'C' ? '°C' : Tu === 'F' ? '°F' : 'K';
       label = 'T';
     }
   } catch (e) {
-    body.innerHTML = '<div class="calc-result-empty" style="color:var(--lc-amber)">fill the other three variables</div>';
-    meta.textContent = 'incomplete inputs';
+    body.innerHTML = '<div class="calc-result-empty" style="color:var(--lc-amber)">' + solverT('fillThreeVars') + '</div>';
+    meta.textContent = solverT('incomplete');
     return;
   }
 
   let html = `<div class="calc-result-row">
-    <span class="calc-result-k">${label} (solved)</span>
+    <span class="calc-result-k">${solverT('solvedLabel', { label: label })}</span>
     <span class="calc-result-v big">${fmt(displayValue)} <em>${displayUnit}</em></span>
   </div>`;
   if (solve !== 'P') html += `<div class="calc-result-row"><span class="calc-result-k">P</span><span class="calc-result-v">${fmt(P)} ${Pu}</span></div>`;
   if (solve !== 'V') html += `<div class="calc-result-row"><span class="calc-result-k">V</span><span class="calc-result-v">${fmt(V)} ${Vu}</span></div>`;
   if (solve !== 'n') html += `<div class="calc-result-row"><span class="calc-result-k">n</span><span class="calc-result-v">${fmt(n)} mol</span></div>`;
-  if (solve !== 'T') html += `<div class="calc-result-row"><span class="calc-result-k">T</span><span class="calc-result-v">${fmt(T)} ${Tu === 'C' ? 'Â°C' : Tu === 'F' ? 'Â°F' : 'K'}</span></div>`;
+  if (solve !== 'T') html += `<div class="calc-result-row"><span class="calc-result-k">T</span><span class="calc-result-v">${fmt(T)} ${Tu === 'C' ? '°C' : Tu === 'F' ? '°F' : 'K'}</span></div>`;
 
-  html += `<div class="calc-result-formula">PV = nRT &nbsp;Â·&nbsp; R = 8.314 JÂ·Kâ»Â¹Â·molâ»Â¹</div>`;
+  html += `<div class="calc-result-formula">PV = nRT &nbsp;·&nbsp; R = 8.314 J·K⁻¹·mol⁻¹</div>`;
   body.innerHTML = html;
-  meta.textContent = 'solved for ' + label;
+  meta.textContent = solverT('solvedFor', { label: label });
 }
 function resetIdeal() {
-  document.getElementById('ig-result-body').innerHTML = '<div class="calc-result-empty">choose a variable, fill the other three, press <strong style="color:var(--lc-ink);font-weight:500;">Compute</strong></div>';
-  document.getElementById('ig-result-meta').textContent = 'awaiting inputâ€¦';
+  document.getElementById('ig-result-body').innerHTML = solverMsg('chooseVarPress');
+  document.getElementById('ig-result-meta').textContent = solverT('awaiting');
 }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// 03 Â· DILUTION
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═════════════════════════════════════════
+// 03 · DILUTION
+// ═════════════════════════════════════════
 function updateDilField() {
   const solve = document.getElementById('dl-solve').value;
   document.querySelectorAll('[data-dl]').forEach(el => {
@@ -2647,24 +2855,24 @@ function runDilution() {
 
   let val, label, unit;
   try {
-    if (solve === 'C1') { if (![V1,C2,V2].every(isFinite)) throw 1; val = C2*V2/V1; label='Câ‚'; unit='mol/L'; }
-    if (solve === 'V1') { if (![C1,C2,V2].every(isFinite)) throw 1; val = C2*V2/C1; label='Vâ‚'; unit='mL'; }
-    if (solve === 'C2') { if (![C1,V1,V2].every(isFinite)) throw 1; val = C1*V1/V2; label='Câ‚‚'; unit='mol/L'; }
-    if (solve === 'V2') { if (![C1,V1,C2].every(isFinite)) throw 1; val = C1*V1/C2; label='Vâ‚‚'; unit='mL'; }
+    if (solve === 'C1') { if (![V1,C2,V2].every(isFinite)) throw 1; val = C2*V2/V1; label='C₁'; unit='mol/L'; }
+    if (solve === 'V1') { if (![C1,C2,V2].every(isFinite)) throw 1; val = C2*V2/C1; label='V₁'; unit='mL'; }
+    if (solve === 'C2') { if (![C1,V1,V2].every(isFinite)) throw 1; val = C1*V1/V2; label='C₂'; unit='mol/L'; }
+    if (solve === 'V2') { if (![C1,V1,C2].every(isFinite)) throw 1; val = C1*V1/C2; label='V₂'; unit='mL'; }
   } catch (e) {
-    body.innerHTML = '<div class="calc-result-empty" style="color:var(--lc-amber)">fill the three known values</div>';
-    meta.textContent = 'incomplete inputs';
+    body.innerHTML = '<div class="calc-result-empty" style="color:var(--lc-amber)">' + solverT('fillThreeKnown') + '</div>';
+    meta.textContent = solverT('incomplete');
     return;
   }
 
   let html = `<div class="calc-result-row">
-    <span class="calc-result-k">${label} (solved)</span>
+    <span class="calc-result-k">${solverT('solvedLabel', { label: label })}</span>
     <span class="calc-result-v big">${fmt(val)} <em>${unit}</em></span>
   </div>`;
-  if (solve !== 'C1') html += `<div class="calc-result-row"><span class="calc-result-k">Câ‚</span><span class="calc-result-v">${fmt(C1)} mol/L</span></div>`;
-  if (solve !== 'V1') html += `<div class="calc-result-row"><span class="calc-result-k">Vâ‚</span><span class="calc-result-v">${fmt(V1)} mL</span></div>`;
-  if (solve !== 'C2') html += `<div class="calc-result-row"><span class="calc-result-k">Câ‚‚</span><span class="calc-result-v">${fmt(C2)} mol/L</span></div>`;
-  if (solve !== 'V2') html += `<div class="calc-result-row"><span class="calc-result-k">Vâ‚‚</span><span class="calc-result-v">${fmt(V2)} mL</span></div>`;
+  if (solve !== 'C1') html += `<div class="calc-result-row"><span class="calc-result-k">C₁</span><span class="calc-result-v">${fmt(C1)} mol/L</span></div>`;
+  if (solve !== 'V1') html += `<div class="calc-result-row"><span class="calc-result-k">V₁</span><span class="calc-result-v">${fmt(V1)} mL</span></div>`;
+  if (solve !== 'C2') html += `<div class="calc-result-row"><span class="calc-result-k">C₂</span><span class="calc-result-v">${fmt(C2)} mol/L</span></div>`;
+  if (solve !== 'V2') html += `<div class="calc-result-row"><span class="calc-result-k">V₂</span><span class="calc-result-v">${fmt(V2)} mL</span></div>`;
   // Dilution ratio
   let ratio;
   if (solve === 'V2' || solve === 'C1') {
@@ -2677,20 +2885,20 @@ function runDilution() {
     ratio = c1 / c2;
   }
   if (isFinite(ratio) && ratio > 0) {
-    html += `<div class="calc-result-row"><span class="calc-result-k">dilution factor</span><span class="calc-result-v">1 : ${fmt(ratio)}</span></div>`;
+    html += '<div class="calc-result-row"><span class="calc-result-k">' + solverT('dilutionFactor') + '</span><span class="calc-result-v">1 : ' + fmt(ratio) + '</span></div>';
   }
-  html += `<div class="calc-result-formula">Câ‚Vâ‚ = Câ‚‚Vâ‚‚</div>`;
+  html += `<div class="calc-result-formula">C₁V₁ = C₂V₂</div>`;
   body.innerHTML = html;
-  meta.textContent = 'solved for ' + label;
+  meta.textContent = solverT('solvedFor', { label: label });
 }
 function resetDilution() {
-  document.getElementById('dl-result-body').innerHTML = '<div class="calc-result-empty">fill the three known values and press <strong style="color:var(--lc-ink);font-weight:500;">Compute</strong></div>';
-  document.getElementById('dl-result-meta').textContent = 'awaiting inputâ€¦';
+  document.getElementById('dl-result-body').innerHTML = solverMsg('fillThreeKnownPress');
+  document.getElementById('dl-result-meta').textContent = solverT('awaiting');
 }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// 04 Â· pH / pOH
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═════════════════════════════════════════
+// 04 · pH / pOH
+// ═════════════════════════════════════════
 function updatePhFields() {
   const m = document.getElementById('ph-mode').value;
   document.querySelectorAll('[data-ph]').forEach(el => {
@@ -2729,36 +2937,321 @@ function runPH() {
       OH = Math.pow(10, -pOH);
     }
   } catch (e) {
-    body.innerHTML = '<div class="calc-result-empty" style="color:var(--lc-amber)">positive numeric value required</div>';
-    meta.textContent = 'invalid input';
+    body.innerHTML = '<div class="calc-result-empty" style="color:var(--lc-amber)">' + solverT('positiveNum') + '</div>';
+    meta.textContent = solverT('invalid');
     return;
   }
   let nature, color;
-  if (pH < 6.8) { nature = 'acidic'; color = '#B96B0C'; }
-  else if (pH > 7.2) { nature = 'basic'; color = '#2A4878'; }
-  else { nature = 'neutral'; color = '#1E6A50'; }
+  if (pH < 6.8) { nature = solverT('acidic'); color = '#B96B0C'; }
+  else if (pH > 7.2) { nature = solverT('basic'); color = '#2A4878'; }
+  else { nature = solverT('neutral'); color = '#1E6A50'; }
 
   let html = `<div class="calc-result-row">
     <span class="calc-result-k">pH</span>
     <span class="calc-result-v big">${pH.toFixed(2)} <em style="color:${color}">${nature}</em></span>
   </div>`;
   html += `<div class="calc-result-row"><span class="calc-result-k">pOH</span><span class="calc-result-v">${pOH.toFixed(2)}</span></div>`;
-  html += `<div class="calc-result-row"><span class="calc-result-k">[Hâº]</span><span class="calc-result-v">${fmt(H)} mol/L</span></div>`;
-  html += `<div class="calc-result-row"><span class="calc-result-k">[OHâ»]</span><span class="calc-result-v">${fmt(OH)} mol/L</span></div>`;
+  html += `<div class="calc-result-row"><span class="calc-result-k">[H⁺]</span><span class="calc-result-v">${fmt(H)} mol/L</span></div>`;
+  html += `<div class="calc-result-row"><span class="calc-result-k">[OH⁻]</span><span class="calc-result-v">${fmt(OH)} mol/L</span></div>`;
   // pH bar
   const pct = Math.max(0, Math.min(14, pH)) / 14 * 100;
-  html += `<div style="margin-top:14px;font-family:var(--lc-mono);font-size:10px;color:var(--lc-ink-3);letter-spacing:.08em;display:flex;justify-content:space-between;"><span>0 Â· acidic</span><span>7 Â· neutral</span><span>14 Â· basic</span></div>
+  html += `<div style="margin-top:14px;font-family:var(--lc-mono);font-size:10px;color:var(--lc-ink-3);letter-spacing:.08em;display:flex;justify-content:space-between;"><span>${solverT('ph0')}</span><span>${solverT('ph7')}</span><span>${solverT('ph14')}</span></div>
     <div style="position:relative;height:8px;border-radius:4px;background:linear-gradient(to right,#B96B0C,#D8D2BF 50%,#2A4878);margin-top:6px;">
       <div style="position:absolute;top:-3px;left:${pct}%;transform:translateX(-50%);width:2px;height:14px;background:${color};box-shadow:0 0 0 2px var(--lc-paper);"></div>
     </div>`;
-  html += `<div class="calc-result-formula">at 25 Â°C Â· Kw = [Hâº][OHâ»] = 1.0 Ã— 10â»Â¹â´ Â· pH + pOH = 14</div>`;
+  html += `<div class="calc-result-formula">at 25 °C · Kw = [H⁺][OH⁻] = 1.0 × 10⁻¹⁴ · pH + pOH = 14</div>`;
   body.innerHTML = html;
-  meta.textContent = nature + ' solution';
+  meta.textContent = solverT('natureSolution', { nature: nature });
 }
 function resetPH() {
-  document.getElementById('ph-result-body').innerHTML = '<div class="calc-result-empty">choose an input mode and press <strong style="color:var(--lc-ink);font-weight:500;">Compute</strong></div>';
-  document.getElementById('ph-result-meta').textContent = 'awaiting inputâ€¦';
+  document.getElementById('ph-result-body').innerHTML = solverMsg('chooseModePress');
+  document.getElementById('ph-result-meta').textContent = solverT('awaiting');
 }
+
+// ════════════════════════════════════════
+// 03 · UNIT CONVERTER
+// ════════════════════════════════════════
+const UNIT_CATEGORIES = {
+  mass: { linear: true, units: { ng: 1e-9, 'µg': 1e-6, mg: 1e-3, g: 1, kg: 1e3, t: 1e6, lb: 453.59237, oz: 28.349523125 } },
+  volume: { linear: true, units: { 'µL': 1e-6, mL: 1e-3, 'cm³': 1e-3, L: 1, 'm³': 1e3, 'fl oz': 0.0295735295625, pt: 0.473176473, qt: 0.946352946, 'gal (US)': 3.785411784, 'in³': 0.016387064 } },
+  pressure: { linear: true, units: { Pa: 1, hPa: 1e2, kPa: 1e3, MPa: 1e6, bar: 1e5, atm: 101325, mmHg: 133.322387415, Torr: 133.322387415, psi: 6894.757293168 } },
+  temperature: { linear: false },
+  energy: { linear: true, units: { J: 1, kJ: 1e3, MJ: 1e6, cal: 4.184, kcal: 4184, Wh: 3600, kWh: 3.6e6, eV: 1.602176634e-19 } },
+  amount: { linear: true, units: { 'µmol': 1e-6, mmol: 1e-3, mol: 1, kmol: 1e3 } },
+  concentration: { linear: true, units: { 'µM': 1e-6, mM: 1e-3, M: 1, 'mol/L': 1 } }
+};
+const UNIT_TEMP = ['K', '°C', '°F'];
+
+function unitOptions(def) {
+  return def.linear ? Object.keys(def.units) : UNIT_TEMP;
+}
+function updateUnitCategory() {
+  const cat = document.getElementById('uc-cat').value;
+  const def = UNIT_CATEGORIES[cat];
+  const opts = unitOptions(def);
+  const from = document.getElementById('uc-from');
+  const to = document.getElementById('uc-to');
+  const prevFrom = from.value;
+  from.innerHTML = opts.map(u => '<option value="' + u + '">' + u + '</option>').join('');
+  to.innerHTML = opts.map(u => '<option value="' + u + '">' + u + '</option>').join('');
+  if (opts.indexOf(prevFrom) !== -1) from.value = prevFrom;
+  to.value = opts[Math.min(1, opts.length - 1)];
+  runUnit();
+}
+function applyUnitPreset(btn) {
+  try {
+    const p = JSON.parse(btn.dataset.ucPreset || '{}');
+    if (!p.cat) return;
+    setCalcValue('uc-cat', p.cat);
+    updateUnitCategory();
+    setCalcValue('uc-value', p.value || '1');
+    if (p.from) setCalcValue('uc-from', p.from);
+    if (p.to) setCalcValue('uc-to', p.to);
+    runUnit();
+  } catch (e) {}
+}
+function runUnit() {
+  const cat = document.getElementById('uc-cat').value;
+  const def = UNIT_CATEGORIES[cat];
+  const val = parseFloat(document.getElementById('uc-value').value);
+  const from = document.getElementById('uc-from').value;
+  const to = document.getElementById('uc-to').value;
+  const body = document.getElementById('uc-result-body');
+  const meta = document.getElementById('uc-result-meta');
+  if (!isFinite(val)) {
+    body.innerHTML = '<div class="calc-result-empty" style="color:var(--lc-amber)">' + solverT('ucInvalid') + '</div>';
+    meta.textContent = solverT('invalid');
+    return;
+  }
+  let out;
+  if (def.linear) {
+    out = val * def.units[from] / def.units[to];
+  } else {
+    let K = from === 'K' ? val : (from === '°C' ? val + 273.15 : (val + 459.67) * 5 / 9);
+    out = to === 'K' ? K : (to === '°C' ? K - 273.15 : K * 9 / 5 - 459.67);
+  }
+  let html = '<div class="calc-result-row">'
+    + '<span class="calc-result-k">' + solverT('ucConverted') + '</span>'
+    + '<span class="calc-result-v big">' + fmt(out) + ' <em>' + to + '</em></span></div>';
+  html += '<div class="calc-result-row"><span class="calc-result-k">' + solverT('ucOriginal') + '</span><span class="calc-result-v">' + fmt(val) + ' ' + from + '</span></div>';
+  const factor = def.linear ? fmt(def.units[from] / def.units[to]) : '';
+  html += '<div class="calc-result-formula">' + (def.linear ? (fmt(val) + ' ' + from + ' × ' + factor + ' = ' + fmt(out) + ' ' + to) : (fmt(val) + ' ' + from + ' → ' + fmt(out) + ' ' + to)) + '</div>';
+  body.innerHTML = html;
+  meta.textContent = solverT('ucConverted', { to: to });
+}
+function resetUnit() {
+  document.getElementById('uc-result-body').innerHTML = solverMsg('ucChoosePress');
+  document.getElementById('uc-result-meta').textContent = solverT('awaiting');
+}
+updateUnitCategory();
+
+// ════════════════════════════════════════
+// 05 · STOICHIOMETRY
+// ════════════════════════════════════════
+var SC_STATE = { species: [], eq: '' };
+
+function scMM(formula) {
+  var counts = parseFormula(formula);
+  var total = 0;
+  for (var sym in counts) {
+    if (AW[sym] == null) return null;
+    total += AW[sym] * counts[sym];
+  }
+  return total;
+}
+function scParseTerm(term) {
+  var i = 0;
+  while (i < term.length && /\d/.test(term[i])) i++;
+  return { coef: i > 0 ? parseInt(term.slice(0, i), 10) : 1, formula: term.slice(i) };
+}
+function parseEquation(expr) {
+  var s = String(expr || '').replace(/\s+/g, '').replace(/→/g, '->').replace(/⇌/g, '->');
+  var parts = s.split(/->|=>|=|→/);
+  if (parts.length < 2) return null;
+  var left = parts[0], right = parts.slice(1).join('->');
+  function parseSide(side) {
+    return side.split('+').map(scParseTerm).filter(function (t) { return t.formula; });
+  }
+  var L = parseSide(left), R = parseSide(right);
+  if (!L.length || !R.length) return null;
+  return { left: L, right: R };
+}
+function scSpeciesList(parsed) {
+  return parsed.left.concat(parsed.right);
+}
+function scPretty(term) {
+  return (term.coef > 1 ? term.coef : '') + term.formula;
+}
+function scEquationText(parsed) {
+  return parsed.left.map(scPretty).join(' + ') + ' → ' + parsed.right.map(scPretty).join(' + ');
+}
+function updateStoichSpecies() {
+  var eqInput = document.getElementById('sc-equation');
+  var sel = document.getElementById('sc-species');
+  var parsed = parseEquation(eqInput.value);
+  SC_STATE.species = parsed ? scSpeciesList(parsed) : [];
+  var prev = sel.value;
+  if (!SC_STATE.species.length) {
+    sel.innerHTML = '<option value="">—</option>';
+    return;
+  }
+  sel.innerHTML = SC_STATE.species.map(function (t, i) {
+    var mm = scMM(t.formula);
+    return '<option value="' + i + '">' + scPretty(t) + (mm ? ' · ' + mm.toFixed(2) + ' g/mol' : '') + '</option>';
+  }).join('');
+  var keep = false;
+  for (var k = 0; k < SC_STATE.species.length; k++) { if (String(k) === prev) keep = true; }
+  sel.value = keep ? prev : '0';
+}
+function runStoich() {
+  var eqInput = document.getElementById('sc-equation');
+  var sel = document.getElementById('sc-species');
+  var mass = parseFloat(document.getElementById('sc-mass').value);
+  var body = document.getElementById('sc-result-body');
+  var meta = document.getElementById('sc-result-meta');
+  var parsed = parseEquation(eqInput.value);
+  if (!parsed || !SC_STATE.species.length) {
+    body.innerHTML = '<div class="calc-result-empty" style="color:var(--lc-amber)">' + solverT('scEquationInvalid') + '</div>';
+    meta.textContent = solverT('invalid');
+    return;
+  }
+  if (!isFinite(mass) || mass <= 0) {
+    body.innerHTML = '<div class="calc-result-empty" style="color:var(--lc-amber)">' + solverT('positiveNum') + '</div>';
+    meta.textContent = solverT('invalid');
+    return;
+  }
+  var idx = parseInt(sel.value, 10);
+  if (!(idx >= 0 && idx < SC_STATE.species.length)) {
+    body.innerHTML = '<div class="calc-result-empty" style="color:var(--lc-amber)">' + solverT('scEquationInvalid') + '</div>';
+    meta.textContent = solverT('invalid');
+    return;
+  }
+  var known = SC_STATE.species[idx];
+  var mmKnown = scMM(known.formula);
+  if (!mmKnown) {
+    body.innerHTML = '<div class="calc-result-empty" style="color:var(--lc-amber)">' + solverT('scUnknownElement') + '</div>';
+    meta.textContent = solverT('invalid');
+    return;
+  }
+  var nKnown = mass / mmKnown;
+  var html = '<div class="calc-result-formula">' + scEquationText(parsed) + '</div>';
+  for (var i = 0; i < SC_STATE.species.length; i++) {
+    var t = SC_STATE.species[i];
+    var mm = scMM(t.formula);
+    if (!mm) continue;
+    var moles = nKnown * (t.coef / known.coef);
+    var g = moles * mm;
+    var isKnown = i === idx;
+    html += '<div class="calc-result-row">'
+      + '<span class="calc-result-k">' + (isKnown ? solverT('scKnown', { label: scPretty(t) }) + ' ✓' : scPretty(t)) + '</span>'
+      + '<span class="calc-result-v' + (isKnown ? ' big' : '') + '">' + fmt(moles) + ' mol · ' + fmt(g) + ' g</span></div>';
+  }
+  html += '<div class="calc-result-formula">' + solverT('scNote', { label: scPretty(known) }) + '</div>';
+  body.innerHTML = html;
+  meta.textContent = solverT('scSolvedFor', { label: scPretty(known) });
+}
+function resetStoich() {
+  document.getElementById('sc-result-body').innerHTML = solverMsg('scEmpty');
+  document.getElementById('sc-result-meta').textContent = solverT('awaiting');
+}
+function applyStoichPreset(btn) {
+  try {
+    var p = JSON.parse(btn.dataset.scPreset || '{}');
+    if (!p.eq) return;
+    setCalcValue('sc-equation', p.eq);
+    updateStoichSpecies();
+    if (p.species) {
+      var target = -1;
+      for (var i = 0; i < SC_STATE.species.length; i++) {
+        if (SC_STATE.species[i].formula === p.species) { target = i; break; }
+      }
+      if (target >= 0) setCalcValue('sc-species', String(target));
+    }
+    setCalcValue('sc-mass', p.mass || '');
+    runStoich();
+  } catch (e) {}
+}
+updateStoichSpecies();
+runStoich();
+
+// ─── 08 · THERMODYNAMICS ───
+var THERMO_C = { water: 4.184, ice: 2.09, iron: 0.449, aluminum: 0.897, copper: 0.385 };
+
+function runThermo() {
+  var body = document.getElementById('tm-result-body');
+  var meta = document.getElementById('tm-result-meta');
+  var dh = parseFloat(document.getElementById('tm-dh').value);
+  var ds = parseFloat(document.getElementById('tm-ds').value);
+  var tC = parseFloat(document.getElementById('tm-t').value);
+  var subSel = document.getElementById('tm-sub');
+  var sub = subSel.value;
+  var mass = parseFloat(document.getElementById('tm-mass').value);
+  var dt = parseFloat(document.getElementById('tm-dt').value);
+  if (!isFinite(dh) || !isFinite(ds) || !isFinite(tC) ||
+      !isFinite(mass) || !isFinite(dt) || !THERMO_C[sub]) {
+    body.innerHTML = '<div class="calc-result-empty" style="color:var(--lc-amber)">' + solverT('tmInvalid') + '</div>';
+    meta.textContent = solverT('invalid');
+    return;
+  }
+  var subLabel = subSel.options[subSel.selectedIndex] ? subSel.options[subSel.selectedIndex].text : sub;
+  var T = tC + 273.15;
+  var dg = dh - (ds / 1000) * T; // kJ/mol
+  var verdict;
+  if (Math.abs(dg) < 1e-9) verdict = solverT('tmEquilibrium');
+  else if (dg < 0) verdict = solverT('tmSpont');
+  else verdict = solverT('tmNonSpont');
+  var html = '<div class="calc-result-formula">ΔG = ΔH − T·ΔS</div>';
+  html += '<div class="calc-result-row"><span class="calc-result-k">' + solverT('tmGibbsIn', { h: fmt(dh), s: fmt(ds), t: fmt(tC), tk: fmt(T) }) + '</span></div>';
+  html += '<div class="calc-result-row"><span class="calc-result-k">ΔG</span><span class="calc-result-v big">' + fmt(dg) + ' kJ/mol</span></div>';
+  html += '<div class="calc-result-row"><span class="calc-result-k">' + verdict + '</span></div>';
+  if (dh !== 0 && ds !== 0 && (dh > 0) === (ds > 0)) {
+    var tStarK = dh / (ds / 1000);
+    var tStarC = tStarK - 273.15;
+    html += '<div class="calc-result-formula">' + solverT('tmCrossover', { tk: fmt(tStarK), tc: fmt(tStarC), dir: dh > 0 ? solverT('tmAbove') : solverT('tmBelow') }) + '</div>';
+  }
+  var q = mass * THERMO_C[sub] * dt; // J
+  var direction = q >= 0 ? solverT('tmEndo') : solverT('tmExo');
+  html += '<div class="calc-result-formula">q = m·c·ΔT</div>';
+  html += '<div class="calc-result-row"><span class="calc-result-k">' + solverT('tmHeatIn', { sub: subLabel, m: fmt(mass), c: fmt(THERMO_C[sub]), dt: fmt(dt) }) + '</span></div>';
+  html += '<div class="calc-result-row"><span class="calc-result-k">q</span><span class="calc-result-v big">' + (q < 0 ? '−' : '+') + fmt(Math.abs(q)) + ' J · ' + (q < 0 ? '−' : '+') + fmt(Math.abs(q) / 1000) + ' kJ</span></div>';
+  html += '<div class="calc-result-row"><span class="calc-result-k">' + direction + '</span></div>';
+  body.innerHTML = html;
+  meta.textContent = solverT('tmSolved', { g: fmt(dg), q: fmt(q / 1000) });
+}
+function resetThermo() {
+  document.getElementById('tm-result-body').innerHTML = solverMsg('tmEmpty');
+  document.getElementById('tm-result-meta').textContent = solverT('awaiting');
+}
+function applyThermoPreset(btn) {
+  try {
+    var p = JSON.parse(btn.dataset.tmPreset || '{}');
+    if (!p.dh) return;
+    setCalcValue('tm-dh', p.dh);
+    setCalcValue('tm-ds', p.ds);
+    setCalcValue('tm-t', p.t);
+    setCalcValue('tm-mass', p.mass);
+    setCalcValue('tm-dt', p.dt);
+    if (p.sub) setCalcValue('tm-sub', p.sub);
+    runThermo();
+  } catch (e) {}
+}
+runThermo();
+
+// Re-render every calculator after i18n (deferred) finishes loading, so no
+// tab ever shows literal keys in its initial output.
+document.addEventListener('DOMContentLoaded', function () {
+  setTimeout(function () {
+    var list = ['runMolar', 'runScientific', 'runUnit', 'runIdeal', 'runDilution', 'runPH', 'runStoich', 'runThermo'];
+    for (var i = 0; i < list.length; i++) {
+      var fn = list[i];
+      if (typeof window[fn] !== 'function') continue;
+      try {
+        if (fn === 'runScientific') window[fn]({ record: false });
+        else window[fn]();
+      } catch (e) {}
+    }
+  }, 0);
+});
 </script>
 <script type="text/javascript">
     (window.atomurusRunAutoTag||function(){})({ zoneId: '6p1sooifu8' });
