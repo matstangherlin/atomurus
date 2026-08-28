@@ -47,6 +47,7 @@ export function prepareFromSolid(input = {}) {
     grams,
     mass,
     massUnit,
+    massDisplay: `${formatSig(mass, 4)} ${massUnit}`,
     note: CALCULATION_ONLY,
     steps: [
       {
@@ -94,6 +95,7 @@ export function mixSolutions(input = {}) {
     volumeL: volSum,
     concentration: molPerLToConc(finalMolPerL, outUnit),
     concUnit: outUnit,
+    concentrationDisplay: `${formatSig(molPerLToConc(finalMolPerL, outUnit), 4)} ${outUnit}`,
     assumption: ADDITIVE_VOLUMES,
     note: CALCULATION_ONLY,
     steps: steps.concat([

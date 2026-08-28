@@ -227,15 +227,19 @@ export function solveStoichiometry(input = {}) {
       grams: targetGrams,
       amount: targetAmount,
       unit: targetUnit,
+      amountDisplay: `${formatSig(targetAmount, 4)} ${targetUnit}`,
       molarMass: targetMm
     },
     theoreticalYield: {
       formula: targetSpec.formula,
       moles: targetMoles,
-      grams: targetGrams
+      grams: targetGrams,
+      molesDisplay: `${formatSig(targetMoles, 4)} mol`,
+      gramsDisplay: `${formatSig(targetGrams, 4)} g`
     },
     excess,
     percentYield,
+    percentYieldDisplay: percentYield == null ? null : `${formatSig(percentYield, 4)}%`,
     yieldNote,
     steps
   };

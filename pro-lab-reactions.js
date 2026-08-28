@@ -234,7 +234,7 @@
     var headline = el('p', 'ws-solver-headline');
     var target = data.target || data.theoreticalYield || {};
     headline.textContent = (target.formula || '') + '  ·  ' +
-      (target.amount != null ? target.amount : target.grams) + ' ' + (target.unit || 'g');
+      (target.amountDisplay || ((target.amount != null ? target.amount : target.grams) + ' ' + (target.unit || 'g')));
     wrap.appendChild(headline);
 
     var dl = el('dl', 'ws-lab-dl');
@@ -249,8 +249,8 @@
     }
     add(t('limitingReagent'), data.limitingReagent);
     add(t('reactionExtent'), data.reactionExtentDisplay || data.reactionExtent);
-    add(t('theoreticalYield'), target.grams != null ? String(target.grams) + ' g' : '');
-    if (data.percentYield != null) add(t('percentYield'), String(data.percentYield) + '%');
+    add(t('theoreticalYield'), (data.theoreticalYield && data.theoreticalYield.gramsDisplay) || (target.grams != null ? String(target.grams) + ' g' : ''));
+    if (data.percentYield != null) add(t('percentYield'), data.percentYieldDisplay || (String(data.percentYield) + '%'));
     (data.excess || []).forEach(function (row) {
       add(row.formula + ' ' + t('excessRemaining'), row.remainingDisplay || (String(row.remainingGrams) + ' g'));
     });
@@ -480,7 +480,7 @@
         copyRes.addEventListener('click', function () {
           var text = (data.balancedDisplay || data.balanced || '') + '\n' +
             t('limitingReagent') + ': ' + data.limitingReagent + '\n' +
-            t('theoreticalYield') + ': ' + ((data.target && data.target.grams) || '') + ' g';
+            t('theoreticalYield') + ': ' + ((data.theoreticalYield && data.theoreticalYield.gramsDisplay) || ((data.target && data.target.grams) || '') + ' g');
           copyText(text, copyRes, t('copied'));
         });
         resultHost.appendChild(copyRes);

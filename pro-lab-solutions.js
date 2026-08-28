@@ -246,9 +246,9 @@
       var headline = el('p', 'ws-solver-headline');
       headline.id = 'ws-lab-sol-answer';
       if (data.mode === 'mix') {
-        headline.textContent = String(data.concentration) + ' ' + (data.concUnit || 'mol/L');
+        headline.textContent = data.concentrationDisplay || (String(data.concentration) + ' ' + (data.concUnit || 'mol/L'));
       } else {
-        headline.textContent = t('requiredAmount') + ': ' + String(data.mass != null ? data.mass : data.grams) + ' ' + (data.massUnit || 'g') + ' ' + (data.formula || '');
+        headline.textContent = t('requiredAmount') + ': ' + (data.massDisplay || (String(data.mass != null ? data.mass : data.grams) + ' ' + (data.massUnit || 'g'))) + ' ' + (data.formula || '');
       }
       resultHost.appendChild(headline);
       if (data.assumption) {

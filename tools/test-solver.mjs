@@ -89,6 +89,8 @@ const grams = solveStoichiometry({
 });
 assert.equal(grams.limitingReagent, 'O2');
 assert.ok(grams.target.grams > 0);
+assert.match(grams.target.amountDisplay, /g/);
+assert.doesNotMatch(grams.target.amountDisplay, /\d{8}/);
 assert.ok(grams.excess.some((row) => row.formula === 'H2' && row.remainingGrams > 0));
 assert.ok(grams.steps.length >= 4);
 assert.match(grams.steps[1].body, /mol/);
