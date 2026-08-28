@@ -22,7 +22,10 @@
 .calc-menu-num,
 .lc-mobile-menu-num,
 .lc-btn-primary .lc-kbd,
-.lc-topnav-search .lc-kbd {
+.lc-topnav-search .lc-kbd,
+.calc-btn-run .lc-kbd,
+.ex-search-kbd,
+.ex-kicker .pill {
   display: none !important;
 }
 
@@ -511,17 +514,25 @@ html[lang^="pt"] .logo-tag::after { content: 'laboratório'; }
 .ph-desc { font-size: 16px; }
 
 .calc-shell {
+  grid-template-columns: minmax(220px, 248px) minmax(0, 1fr) !important;
   border-radius: var(--ps-radius-lg);
   overflow: hidden;
   margin-top: 12px;
+  max-width: none;
+  box-shadow: none;
 }
 .calc-menu {
   background: color-mix(in oklab, var(--lc-paper) 88%, var(--lc-bg));
+  padding: 12px 8px;
 }
 .calc-menu-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  width: 100%;
+  max-width: none;
   min-height: 44px;
-  margin: 0 8px;
-  padding: 0 12px;
+  margin: 0 0 4px;
+  padding: 8px 12px;
   border-radius: var(--ps-radius-md);
   border-left-width: 3px;
   font-size: 14px;
@@ -529,6 +540,13 @@ html[lang^="pt"] .logo-tag::after { content: 'laboratório'; }
 }
 .calc-menu-item.active {
   background: color-mix(in oklab, var(--lc-green) 10%, transparent);
+}
+.calc-menu-copy,
+.calc-menu-title {
+  min-width: 0;
+  overflow: visible;
+  text-overflow: unset;
+  white-space: normal;
 }
 .calc-panel { padding: 24px 28px; }
 .calc-panel-h h2,
@@ -651,4 +669,303 @@ html[lang^="pt"] .logo-tag::after { content: 'laboratório'; }
 @media (max-width: 390px) {
   .lc-hero-stats { grid-template-columns: 1fr 1fr; }
   .lc-hero-title { font-size: 28px !important; }
+}
+
+/* ── Interior: undo body * { max-width: 100% } crushing grids ── */
+body .calc-shell,
+body .calc-shell *,
+body .calc-menu-item,
+body .calc-menu-copy,
+body .sidebar,
+body .ptable,
+body .el,
+body .scc-device,
+body .sk,
+body .sk-grid,
+body .sk-row,
+body .cmp-slot,
+body .heatmap-legend,
+body .ex-card,
+body .viewer {
+  max-width: none;
+}
+body .calc-shell,
+body .sidebar,
+body .viewer,
+body .ptable {
+  max-width: 100%;
+}
+
+/* ── Calculator interior = workspace cards ── */
+.calc-tab.active {
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr) !important;
+  column-gap: 20px;
+}
+.calc-input,
+.calc-select {
+  height: 44px !important;
+  border-radius: var(--ps-radius-md) !important;
+  font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif) !important;
+  font-size: 14px !important;
+}
+.calc-input:focus,
+.calc-select:focus {
+  border-color: var(--lc-green) !important;
+  box-shadow: 0 0 0 3px var(--accent-ring, rgba(30, 106, 80, .2)) !important;
+}
+.calc-field-l {
+  font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif) !important;
+  font-size: 13px !important;
+  letter-spacing: 0 !important;
+  color: var(--lc-ink-2) !important;
+}
+.calc-formula-strip {
+  border-radius: var(--ps-radius-md) !important;
+  background: var(--lc-paper) !important;
+}
+.calc-chip {
+  min-height: 36px !important;
+  border-radius: 999px !important;
+  font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif) !important;
+  font-size: 13px !important;
+}
+.calc-chip:hover,
+.calc-btn-run:hover,
+.calc-btn-reset:hover,
+.calc-copy-btn:hover {
+  transform: none !important;
+}
+.calc-result {
+  border-radius: var(--ps-radius-lg) !important;
+  overflow: hidden;
+  background: var(--lc-paper) !important;
+  border: 1px solid var(--lc-rule) !important;
+}
+.calc-result-head {
+  background: color-mix(in oklab, var(--lc-paper) 70%, var(--lc-bg)) !important;
+  color: var(--lc-ink-2) !important;
+  font-size: 11px !important;
+  letter-spacing: .12em;
+  padding: 10px 16px !important;
+  border-bottom: 1px solid var(--lc-rule);
+}
+[data-theme="dark"] .calc-result-head {
+  background: color-mix(in oklab, var(--lc-paper) 70%, var(--lc-bg)) !important;
+  color: var(--lc-ink-2) !important;
+}
+.calc-result-body { padding: 18px 18px 16px !important; }
+.calc-result-row {
+  font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif) !important;
+  font-size: 14px !important;
+}
+.calc-result-v.big {
+  font-family: 'Instrument Serif', Georgia, serif !important;
+  font-size: 36px !important;
+  font-weight: 400 !important;
+}
+.calc-result-formula {
+  border-radius: var(--ps-radius-md) !important;
+  border-style: solid !important;
+}
+.calc-result-empty {
+  font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif) !important;
+  font-size: 14px !important;
+  letter-spacing: 0 !important;
+}
+.calc-copy-btn,
+.calc-btn-reset {
+  font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif) !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+}
+.calc-how {
+  border-radius: var(--ps-radius-md) !important;
+}
+
+/* Scientific instrument — paper card, not a black device */
+.scc-device {
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 18px !important;
+  border-radius: var(--ps-radius-lg) !important;
+  background: var(--lc-paper) !important;
+  border: 1px solid var(--lc-rule) !important;
+  box-shadow: none !important;
+}
+.scc-brand {
+  font-family: 'Instrument Serif', Georgia, serif !important;
+  font-size: 18px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
+  color: var(--lc-ink) !important;
+}
+.scc-brand-sub,
+.scc-status,
+.scc-line-k,
+.sk-sect-k {
+  color: var(--lc-ink-3) !important;
+}
+.scc-screen {
+  background: var(--lc-bg) !important;
+  border: 1px solid var(--lc-rule) !important;
+  border-radius: var(--ps-radius-md) !important;
+  box-shadow: none !important;
+}
+.scc-result {
+  color: var(--lc-ink) !important;
+  text-shadow: none !important;
+  font-family: 'Instrument Serif', Georgia, serif !important;
+  font-weight: 400 !important;
+}
+.scc-hist-row {
+  background: var(--lc-bg) !important;
+  border-color: var(--lc-rule) !important;
+  color: var(--lc-ink-2) !important;
+  border-radius: var(--ps-radius-md) !important;
+}
+.sk,
+.sk-num,
+.sk-op,
+.sk-fn,
+.sk-const,
+.sk-warn {
+  min-height: 44px !important;
+  border-radius: var(--ps-radius-md) !important;
+  background: var(--lc-bg) !important;
+  border: 1px solid var(--lc-rule) !important;
+  color: var(--lc-ink) !important;
+  box-shadow: none !important;
+}
+.sk:hover,
+.sk-num:hover {
+  background: color-mix(in oklab, var(--lc-green) 8%, var(--lc-bg)) !important;
+}
+.sk-const { color: var(--lc-ink-2) !important; }
+.sk-op,
+.sk-chem {
+  color: var(--lc-green) !important;
+  background: color-mix(in oklab, var(--lc-green) 8%, var(--lc-bg)) !important;
+}
+.sk-equals {
+  background: var(--lc-green) !important;
+  border-color: var(--lc-green) !important;
+  color: #F8F5EC !important;
+  box-shadow: none !important;
+}
+[data-theme="dark"] .sk-equals { color: #0E0D0C !important; }
+.sk-equals:hover {
+  background: color-mix(in oklab, var(--lc-green) 88%, #0a0907) !important;
+}
+.sci-keypad-shell,
+.sci-suggestions {
+  border-radius: var(--ps-radius-md) !important;
+  background: var(--lc-paper) !important;
+}
+
+/* ── Table toolbar, compare, heatmap, explore, viewers ── */
+.dl-btn,
+.dl-action,
+.trend-export-btn {
+  border-radius: var(--ps-radius-md) !important;
+  font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif) !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  min-height: 36px;
+  font-weight: 600 !important;
+}
+.dl-action,
+.trend-export-btn {
+  background: var(--lc-green) !important;
+  border-color: var(--lc-green) !important;
+  color: #F8F5EC !important;
+}
+[data-theme="dark"] .dl-action,
+[data-theme="dark"] .trend-export-btn {
+  color: #0E0D0C !important;
+}
+.dl-btn.active {
+  color: var(--lc-green) !important;
+  border-color: color-mix(in oklab, var(--lc-green) 40%, var(--lc-rule)) !important;
+  background: color-mix(in oklab, var(--lc-green) 10%, transparent) !important;
+}
+.hm-select {
+  height: 40px;
+  border-radius: var(--ps-radius-md);
+  font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif);
+  font-size: 14px;
+}
+.heatmap-legend,
+.cmp-slot,
+.iso-selector {
+  border-radius: var(--ps-radius-lg);
+}
+.cmp-slot-pick,
+.iso-selector-btn,
+.iso-selector-link,
+.iso-group-btn {
+  border-radius: var(--ps-radius-md);
+  min-height: 40px;
+}
+.ex-title {
+  font-family: 'Instrument Serif', Georgia, serif !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.02em;
+}
+.ex-card {
+  border-radius: var(--ps-radius-md);
+  background: var(--lc-paper);
+}
+html body .ex-card-title {
+  font-family: 'Instrument Serif', Georgia, serif !important;
+  font-size: 20px !important;
+  font-weight: 400 !important;
+}
+.ex-pill {
+  min-height: 36px;
+  border-radius: 999px;
+}
+.ex-search {
+  height: 44px;
+  border-radius: var(--ps-radius-md);
+}
+html body .viewer {
+  border-radius: var(--ps-radius-lg) !important;
+  overflow: hidden;
+}
+html body .viewer .tab[data-no]::before,
+html body .viewer .tab::before {
+  content: none !important;
+  display: none !important;
+}
+html body .viewer .tab {
+  min-height: 44px;
+  font-size: 14px !important;
+  font-weight: 550 !important;
+}
+html body .viewer .tab.active {
+  border-bottom-color: var(--lc-green) !important;
+  color: var(--lc-green) !important;
+}
+html body .viewer .panel {
+  padding: 18px 20px 8px !important;
+}
+
+@media (max-width: 1180px) {
+  .calc-tab.active {
+    grid-template-columns: 1fr !important;
+  }
+}
+@media (max-width: 720px) {
+  .calc-shell {
+    grid-template-columns: 1fr !important;
+  }
+  .calc-menu-item {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    white-space: nowrap;
+  }
+  .calc-menu-title {
+    white-space: nowrap;
+  }
 }

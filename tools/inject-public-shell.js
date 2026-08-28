@@ -29,14 +29,21 @@ function retagBrand(html) {
   );
 }
 
+const PUBLIC_SHELL_V = '202608281200';
+
 function ensurePublicShell(html) {
   html = retagBrand(html);
   if (!/atomurus-lab-console\.css/.test(html)) return html;
-  if (html.includes('public-shell.css')) return html;
 
-  const vMatch = html.match(/atomurus-lab-console\.css\?v=(\d+)/);
-  const v = vMatch ? vMatch[1] : '202608041630';
-  const tag = `<link rel="stylesheet" href="/assets/public-shell.css?v=${v}">`;
+  const href = `/assets/public-shell.css?v=${PUBLIC_SHELL_V}`;
+  if (/public-shell\.css/.test(html)) {
+    return html.replace(
+      /href=["'][^"']*public-shell\.css[^"']*["']/g,
+      `href="${href}"`
+    );
+  }
+
+  const tag = `<link rel="stylesheet" href="${href}">`;
 
   const noscriptRe = /<noscript>\s*<link rel=["']stylesheet["'] href=["'][^"']*atomurus-lab-console\.css[^"']*["']\s*>\s*<\/noscript>/i;
   if (noscriptRe.test(html)) {

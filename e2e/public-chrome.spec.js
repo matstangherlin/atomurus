@@ -45,16 +45,45 @@ test('public table, calculators, login and pricing share the new chrome', async 
   await expect(page.locator('.nl-no').first()).toBeHidden();
   const stripBg = await page.locator('.data-strip').evaluate((el) => getComputedStyle(el).backgroundColor);
   expect(stripBg).not.toBe('rgb(20, 18, 14)');
+  const dlBg = await page.locator('#dl-action-btn').evaluate((el) => getComputedStyle(el).backgroundColor);
+  expect(dlBg).toMatch(/rgb\(\s*30,\s*106,\s*80\s*\)/);
   await expect(page.locator('.el[data-z="1"]')).toBeVisible({ timeout: 15_000 });
+  await expect(page.locator('.data-strip .ds-v').first()).not.toContainText('Â');
   await saveShot(page, 'desktop-public-table');
 
   await page.goto('/calculators.html');
   await expect(page.locator('.calc-menu-item[data-target="molar"]')).toBeVisible();
   await expect(page.locator('.calc-menu-item[data-target="scientific"]')).toBeVisible();
+  const idealTitle = page.locator('.calc-menu-item[data-target="ideal"] .calc-menu-title');
+  await expect(idealTitle).toHaveText(/Ideal Gas/);
+  const titleFits = await idealTitle.evaluate((el) => el.scrollWidth <= el.clientWidth + 1);
+  expect(titleFits).toBe(true);
+  await expect(page.locator('#mm-result-body')).not.toContainText('Â');
   await page.locator('.calc-chip[data-mm-example="H2O"]').click();
   await page.locator('.calc-btn-run').first().click();
   await expect(page.locator('#mm-result-body')).toContainText(/18\.02/);
+  await expect(page.locator('#mm-result-body')).toContainText(/g\s*·\s*mol/);
+  const resultHeadBg = await page.locator('#mm-result .calc-result-head').evaluate((el) => getComputedStyle(el).backgroundColor);
+  expect(resultHeadBg).not.toBe('rgb(20, 18, 14)');
+  await page.locator('.calc-menu-item[data-target="scientific"]').click();
+  await expect(page.locator('.scc-device')).toBeVisible();
+  const deviceBg = await page.locator('.scc-device').evaluate((el) => getComputedStyle(el).backgroundColor);
+  const deviceR = Number((deviceBg.match(/rgb\(\s*(\d+)/) || [0, '0'])[1]);
+  expect(deviceR).toBeGreaterThan(180);
   await saveShot(page, 'desktop-public-calculators');
+
+  await page.goto('/explore.html');
+  await expect(page.locator('.ex-title')).toBeVisible();
+  await expect.poll(() => fontFamily(page.locator('.ex-title'))).toMatch(/Instrument Serif/i);
+  await expect(page.locator('.ex-title')).toContainText(/explore/i);
+  await expect(page.locator('.ex-title')).not.toContainText('Â');
+  await saveShot(page, 'desktop-public-explore');
+
+  await page.goto('/viewer/atomic-models.html');
+  await expect(page.locator('.viewer .tab').first()).toBeVisible();
+  const tabBefore = await page.locator('.viewer .tab').first().evaluate((el) => getComputedStyle(el, '::before').content);
+  expect(tabBefore).not.toMatch(/0\d/);
+  await saveShot(page, 'desktop-public-viewer');
 
   await page.goto('/login.html');
   await expect(page.locator('.lc-topnav-name')).toBeVisible();

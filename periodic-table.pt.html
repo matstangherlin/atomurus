@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR" data-theme="light">
 <head>
 <style>html.lang-pt-pending [data-i18n],html.lang-pt-pending [data-i18n-html],html.lang-pt-pending [data-i18n-attr],html.lang-pt-pending [data-page-field]{visibility:hidden!important}html[data-theme="dark"] #icon-theme-light,html[data-theme="light"] #icon-theme-dark{display:none!important}html[data-theme="dark"] #icon-theme-dark,html[data-theme="light"] #icon-theme-light{display:block!important}</style>
@@ -45,7 +45,7 @@
     {
       "@type": ["WebPage", "LearningResource", "CollectionPage"],
       "@id": "https://atomurus.com/periodic-table#webpage",
-      "name": "Interactive Periodic Table â€” Atomurus",
+      "name": "Interactive Periodic Table — Atomurus",
       "description": "Complete dynamic and interactive periodic table: 118 chemical elements with atomic properties, Bohr model, isotopes, comparisons and visual trends.",
       "url": "https://atomurus.com/periodic-table",
       "inLanguage": ["en", "pt-BR"],
@@ -90,10 +90,10 @@
 <link rel="preload" href="atomurus-lab-console.css?v=202608041630" as="style">
 <link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
 <noscript><link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630"></noscript>
-<link rel="stylesheet" href="/assets/public-shell.css?v=202608041630">
+<link rel="stylesheet" href="/assets/public-shell.css?v=202608281200">
 <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>
 <script src="lazy-ads.js?v=202608041630" defer></script>
-<!-- i18n (EN default, PT fallback) â€” precedes periodic-table.js so I18N is defined before its initLang runs -->
+<!-- i18n (EN default, PT fallback) — precedes periodic-table.js so I18N is defined before its initLang runs -->
 <script src="i18n.js?v=202608041630" defer></script>
 <script src="share-button.js?v=202608041630" defer></script>
 <script src="page-share-init.js?v=202608041630" defer></script>
@@ -116,7 +116,7 @@
 </head>
 <body>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â• SIDEBAR â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ════════════ SIDEBAR ════════════ -->
 <aside class="sidebar">
 
   <a class="logo-wrap" href="index.html" title="Atomurus home" style="text-decoration:none;color:inherit;">
@@ -134,7 +134,7 @@
     </div>
   </a>
 
-  <!-- â”€â”€ Scrollable middle: only this part of the sidebar scrolls â”€â”€ -->
+  <!-- ── Scrollable middle: only this part of the sidebar scrolls ── -->
   <div class="sidebar-scroll">
 
   <!-- Home link -->
@@ -175,15 +175,15 @@
       <div class="nav-children">
         <a class="nav-item" href="viewer/atomic-models.html">
           <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="1.5" fill="currentColor"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/></svg>
-          <span data-i18n="common.nav.atomicModels">Modelos AtÃ´micos</span>
+          <span data-i18n="common.nav.atomicModels">Modelos Atômicos</span>
         </a>
         <a class="nav-item" href="viewer/molecules.html">
           <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="4" cy="4" r="2" fill="currentColor"/><circle cx="12" cy="6" r="2" fill="currentColor" opacity=".7"/><circle cx="8" cy="12" r="2" fill="currentColor" opacity=".5"/><line x1="4" y1="4" x2="12" y2="6" stroke="currentColor" stroke-width="1"/><line x1="12" y1="6" x2="8" y2="12" stroke="currentColor" stroke-width="1"/><line x1="4" y1="4" x2="8" y2="12" stroke="currentColor" stroke-width="1"/></svg>
-          <span data-i18n="common.nav.molecules">MolÃ©culas</span>
+          <span data-i18n="common.nav.molecules">Moléculas</span>
         </a>
         <a class="nav-item" href="viewer/allotropes.html">
           <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><polygon points="8,2 14,6 12,13 4,13 2,6" stroke="currentColor" stroke-width="1.2" fill="none"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/></svg>
-          <span data-i18n="common.nav.allotropes">AlÃ³tropos</span>
+          <span data-i18n="common.nav.allotropes">Alótropos</span>
         </a>
           <a class="nav-item" href="viewer/isomerism/constitutional/function.html">
             <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
@@ -240,7 +240,7 @@
 <!-- Mobile sidebar overlay -->
 <div class="mobile-overlay" id="mobile-overlay" onclick="toggleMobileSidebar()"></div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â• MAIN â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ════════════ MAIN ════════════ -->
 <main class="main">
 
   <!-- Mobile scroll hint for periodic table -->
@@ -274,7 +274,7 @@
         <circle cx="5.5" cy="5.5" r="4" stroke="var(--text-3)" stroke-width="1.4"/>
         <line x1="8.7" y1="8.7" x2="11.5" y2="11.5" stroke="var(--text-3)" stroke-width="1.4" stroke-linecap="round"/>
       </svg>
-      <input id="search-input" type="text" placeholder="Search element (name or Z)â€¦"
+      <input id="search-input" type="text" placeholder="Search element (name or Z)…"
              data-i18n-attr="placeholder:ptable.searchPlaceholder"
              oninput="handleSearchInput(this.value)" onfocus="updateSearchSuggestions(this.value)" onkeydown="handleSearchKey(event)" autocomplete="off">
       <div class="search-suggestions" id="search-suggestions" role="listbox" aria-label="Search suggestions"></div>
@@ -288,7 +288,7 @@
       <span data-i18n-toggle-label>PT</span>
     </button>
 
-    <!-- Theme toggle â€” top right -->
+    <!-- Theme toggle — top right -->
     <button class="theme-btn" id="theme-btn-topbar" onclick="toggleTheme()"
             data-i18n-attr="title:common.themeToggle; aria-label:common.themeToggle"
             title="Toggle theme" aria-label="Toggle theme" style="margin-left:4px;">
@@ -305,16 +305,16 @@
     <span class="ds-sep"></span>
     <span class="ds-k" data-i18n="ptable.dsElements">elements</span><span class="ds-v">118 / 118</span>
     <span class="ds-sep"></span>
-    <span class="ds-k" data-i18n="ptable.dsGrp">grp</span><span class="ds-v">1â€“18</span>
+    <span class="ds-k" data-i18n="ptable.dsGrp">grp</span><span class="ds-v">1–18</span>
     <span class="ds-sep"></span>
-    <span class="ds-k" data-i18n="ptable.dsPrd">prd</span><span class="ds-v">1â€“7</span>
+    <span class="ds-k" data-i18n="ptable.dsPrd">prd</span><span class="ds-v">1–7</span>
     <span class="ds-sep"></span>
     <span class="ds-k" data-i18n="ptable.dsColormap">colormap</span><span class="ds-v" id="ds-colormap" data-i18n="ptable.dsColormapVal">category</span>
     <span class="ds-spacer"></span>
-    <span class="ds-k" data-i18n="ptable.dsSelected">selected</span><span class="ds-v ds-hi" id="ds-selected">â€”</span>
+    <span class="ds-k" data-i18n="ptable.dsSelected">selected</span><span class="ds-v ds-hi" id="ds-selected">—</span>
   </div>
 
-  <!-- â”€â”€ PERIODIC TABLE PAGE â”€â”€ -->
+  <!-- ── PERIODIC TABLE PAGE ── -->
   <div id="pg-periodic">
     <div class="content" id="ct-periodic">
 
@@ -423,7 +423,7 @@
           </button>
         </div>
 
-        <!-- Mobile quick-filter bar removed â€” using the normal .legend filter on all viewports -->
+        <!-- Mobile quick-filter bar removed — using the normal .legend filter on all viewports -->
 
         <!-- Table -->
         <div class="table-wrap-outer">
@@ -435,7 +435,7 @@
           </div>
           <!-- Zoom controls (mobile only) -->
           <div class="mobile-zoom-controls" id="mobile-zoom-controls" style="display:none">
-            <button class="mzc-btn" onclick="mobileZoom(-1)" title="Decrease">âˆ’</button>
+            <button class="mzc-btn" onclick="mobileZoom(-1)" title="Decrease">−</button>
             <span class="mzc-scale-label" id="mzc-label">68%</span>
             <button class="mzc-btn" onclick="mobileZoom(+1)" title="Increase">+</button>
           </div>
@@ -446,7 +446,7 @@
     </div>
   </div>
 
-  <!-- â”€â”€ OTHER PAGES â”€â”€ -->
+  <!-- ── OTHER PAGES ── -->
   <div id="pg-other" class="dev-wrap">
     <div class="dev-card">
       <div class="dev-icon">ðŸ”¬</div>
@@ -455,12 +455,12 @@
     </div>
   </div>
 
-  <!-- â”€â”€ SETTINGS PAGE â”€â”€ -->
+  <!-- ── SETTINGS PAGE ── -->
   <div id="pg-settings" style="display:none;flex:1;overflow-y:auto;">
     <div class="content">
       <div class="ph-kicker" data-i18n="config.kicker">System</div>
       <h2 class="ph-title" data-i18n="config.title">Settings</h2>
-      <p class="ph-desc" data-i18n="config.desc">Customize your Atomurus experience â€” theme, display and study preferences.</p>
+      <p class="ph-desc" data-i18n="config.desc">Customize your Atomurus experience — theme, display and study preferences.</p>
 
       <div class="settings-grid">
 
@@ -615,7 +615,7 @@
 
 </main>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â• ELEMENT MODAL â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ════════════ ELEMENT MODAL ════════════ -->
 <div class="overlay" id="overlay" onclick="overlayClick(event)">
   <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="m-nm">
 
@@ -635,12 +635,12 @@
       <div class="modal-corner-actions">
         <div class="modal-nav-group">
           <button class="modal-nav-btn" id="m-nav-prev" onclick="navElement(-1)"
-                  aria-label="Previous element" title="Previous element (â†)"
+                  aria-label="Previous element" title="Previous element (←)"
                   data-i18n-attr="aria-label:ptable.mNavPrev; title:ptable.mNavPrevTitle">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
           <button class="modal-nav-btn" id="m-nav-next" onclick="navElement(1)"
-                  aria-label="Next element" title="Next element (â†’)"
+                  aria-label="Next element" title="Next element (→)"
                   data-i18n-attr="aria-label:ptable.mNavNext; title:ptable.mNavNextTitle">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
@@ -652,7 +652,7 @@
           </button>
         </div>
         <div class="modal-action-group">
-          <a class="modal-cta-corner" id="m-explore-link" href="#" data-i18n="ptable.mExplore">Explore â†—</a>
+          <a class="modal-cta-corner" id="m-explore-link" href="#" data-i18n="ptable.mExplore">Explore ↗</a>
           <button class="modal-close-corner" onclick="closeModal()" aria-label="Close (ESC)" title="Close (ESC)"
                   data-i18n-attr="aria-label:ptable.mCloseAria; title:ptable.mCloseTitle">âœ•</button>
         </div>
@@ -768,7 +768,7 @@
               </svg>
             </button>
           </div>
-          <div class="bohr-status" id="bohr-status" data-i18n="ptable.mBohrStatus">original state Â· Bohr</div>
+          <div class="bohr-status" id="bohr-status" data-i18n="ptable.mBohrStatus">original state · Bohr</div>
         </div>
       </div>
 
