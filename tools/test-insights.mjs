@@ -381,9 +381,15 @@ const cardA = { id: CARD_A, lapses: 5, ease_factor: 1.5, due_at: '2026-08-27T12:
 const cardB = { id: CARD_B, lapses: 0, ease_factor: 2.5, due_at: '2026-08-28T10:00:00.000Z', interval_days: 6, review_state: 'review', suspended: false };
 const suspended = { id: CARD_C, lapses: 9, ease_factor: 1.3, due_at: '2026-08-20T00:00:00.000Z', suspended: true, review_state: 'learning' };
 assert.ok(needsAttention(cardA, Date.parse(FIXED_NOW)));
+assert.ok(!needsAttention(cardB, Date.parse(FIXED_NOW)));
+assert.ok(needsAttention({
+  id: 'learn-only', lapses: 0, ease_factor: 2.5, due_at: '2026-08-28T10:00:00.000Z',
+  interval_days: 0.1, review_state: 'learning', suspended: false
+}, Date.parse(FIXED_NOW)));
 assert.ok(compareWeakCards(cardA, cardB) < 0);
 assert.ok(weaknessScore(cardA, Date.parse(FIXED_NOW)) > weaknessScore(cardB, Date.parse(FIXED_NOW)));
 assert.equal(pickWeakCards([cardA, cardB, suspended], { nowMs: Date.parse(FIXED_NOW) })[0].id, CARD_A);
+assert.ok(!pickWeakCards([cardA, cardB, suspended], { nowMs: Date.parse(FIXED_NOW) }).some((row) => row.id === CARD_B));
 assert.ok(!pickWeakCards([cardA, cardB, suspended], { nowMs: Date.parse(FIXED_NOW) }).some((row) => row.id === CARD_C));
 
 const emptyPayload = buildInsightsPayload({
@@ -446,6 +452,7 @@ await withEnv(async ({ store }) => {
   assert.equal(sevenJson.activity.length, 7);
   assert.ok(sevenJson.dueForecast.length === 7);
   assert.equal(sevenJson.weakCards[0].id, CARD_A);
+  assert.ok(!sevenJson.weakCards.some((row) => row.id === CARD_B));
   assert.ok(!sevenJson.weakCards.some((row) => row.id === CARD_C));
   assert.ok(!sevenJson.weakCards.some((row) => row.id === CARD_D));
   assert.ok(!JSON.stringify(sevenJson).includes('Bob only'));
@@ -457,6 +464,8 @@ await withEnv(async ({ store }) => {
   }));
   const thirtyJson = await readJson(thirty);
   assert.equal(thirtyJson.summary.reviews, 4);
+  assert.equal(thirtyJson.activity.length, 30);
+  assert.equal(thirtyJson.dueForecast.length, 7);
   assert.equal(thirtyJson.ratings.easy, 1);
   assert.equal(thirtyJson.sets[0].title, 'Metals');
   assert.equal(thirtyJson.sets[0].reviews, 4);
@@ -493,6 +502,7 @@ await withEnv(async ({ store }) => {
   assertPrivate(focus, focusJson);
   assert.equal(focusJson.mode, 'weak');
   assert.equal(focusJson.cards[0].id, CARD_A);
+  assert.ok(focusJson.cards.every((card) => card.id !== CARD_B));
   assert.ok(focusJson.cards.every((card) => card.id !== CARD_C));
   assert.ok(focusJson.cards.every((card) => card.id !== CARD_D));
   assert.ok(focusJson.cards.length <= 20);
@@ -569,8 +579,12 @@ const app = readFileSync(new URL('../auth-app.js', import.meta.url), 'utf8');
 assert.match(app, /section=insights/);
 assert.match(app, /mode=weak/);
 assert.match(app, /renderLockedInsights/);
+assert.match(app, /data-insight-range/);
+assert.match(app, /focusLandingBody/);
+assert.match(app, /ws-sparkline|is-sparkline/);
 assert.doesNotMatch(app, /Accuracy 87/);
 assert.doesNotMatch(app, /Knowledge score/);
 assert.doesNotMatch(app, /location\.reload\s*\(/);
+assert.doesNotMatch(app, /location\.replace\(next\)/);
 
 console.log('insights tests passed');

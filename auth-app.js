@@ -141,7 +141,7 @@
       workspaceFreeTitle: 'Your chemistry workspace',
       publicLabRemainsFree: 'The public lab remains free.',
       upgradeFor: 'Upgrade to Pro for:',
-      upgradeForList: 'Library · Study Sets · Smart Review · Pro Lab',
+      upgradeForList: 'Library · Study Sets · Smart Review · Insights · Pro Lab',
       explorePro: 'Explore Pro', openTable: 'Periodic Table',
       openViewer: 'Viewer', openExplore: 'Explore',
       masteredTip: 'Cards with a review interval at or above the mastery threshold.',
@@ -154,6 +154,10 @@
       reviewCta: 'Review',
       stateNew: 'New', stateLearning: 'Learning', stateReview: 'Review',
       focusCards: '{n} cards',
+      navGroupStudy: 'Study', navGroupLab: 'Lab', navGroupActivity: 'Activity',
+      focusLandingBody: 'Review the cards that need the most attention.',
+      insightsOn: 'Study Insights unlocked', focusOn: 'Focus Review unlocked',
+      publicCalc: 'Calculators',
       addScenario: '+ Add scenario', calculateAll: 'Calculate all', saveSession: 'Save session',
       sessionTitle: 'Session title', sessionSaved: 'Lab session saved',
       pinResult: 'Pin result', pinned: 'Pinned', calculated: 'Results updated.',
@@ -308,7 +312,7 @@
       workspaceFreeTitle: 'Seu workspace de química',
       publicLabRemainsFree: 'O laboratório público continua gratuito.',
       upgradeFor: 'Assine o Pro para:',
-      upgradeForList: 'Biblioteca · Study Sets · Smart Review · Pro Lab',
+      upgradeForList: 'Biblioteca · Study Sets · Smart Review · Insights · Pro Lab',
       explorePro: 'Conhecer o Pro', openTable: 'Tabela Periódica',
       openViewer: 'Visualizador', openExplore: 'Explorar',
       masteredTip: 'Cards com intervalo de revisão no limiar de domínio ou acima.',
@@ -321,6 +325,10 @@
       reviewCta: 'Revisar',
       stateNew: 'Novo', stateLearning: 'Aprendendo', stateReview: 'Revisão',
       focusCards: '{n} cards',
+      navGroupStudy: 'Estudo', navGroupLab: 'Lab', navGroupActivity: 'Atividade',
+      focusLandingBody: 'Revise os cards que mais precisam de atenção.',
+      insightsOn: 'Insights de Estudo liberados', focusOn: 'Focus Review liberado',
+      publicCalc: 'Calculadoras',
       addScenario: '+ Adicionar cenário', calculateAll: 'Calcular todos', saveSession: 'Salvar sessão',
       sessionTitle: 'Título da sessão', sessionSaved: 'Sessão do Lab salva',
       pinResult: 'Fixar resultado', pinned: 'Fixados', calculated: 'Resultados atualizados.',
@@ -479,16 +487,26 @@
     return '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none">' + (paths[name] || paths.overview) + '</g></svg>';
   }
 
-  var NAV = [
-    ['overview', 'overview'],
-    ['library', 'library'],
-    ['sets', 'sets'],
-    ['review', 'review'],
-    ['insights', 'insights'],
-    ['pro-lab', 'proLab'],
-    ['history', 'history'],
-    ['notes', 'notes'],
-    ['progress', 'progress']
+  var NAV_GROUPS = [
+    {
+      key: 'navGroupStudy',
+      items: [
+        ['overview', 'overview'],
+        ['library', 'library'],
+        ['sets', 'sets'],
+        ['review', 'review'],
+        ['insights', 'insights']
+      ]
+    },
+    { key: 'navGroupLab', items: [['pro-lab', 'proLab']] },
+    {
+      key: 'navGroupActivity',
+      items: [
+        ['history', 'history'],
+        ['notes', 'notes'],
+        ['progress', 'progress']
+      ]
+    }
   ];
 
   function proUser(user) { return logic().isProUser(user); }
@@ -500,11 +518,14 @@
     var foot = $('ws-nav-foot');
     var bottom = $('ws-bottom');
     if (main) {
-      main.innerHTML = NAV.map(function (pair) {
-        var active = pair[0] === current ? ' is-active' : '';
-        var meta = proUser(user) ? '' : '<span class="ws-nav-meta">' + escapeHtml(t('pro')) + '</span>';
-        return '<a class="ws-nav-item' + active + '" href="/app?section=' + pair[0] + '">' +
-          icon(pair[0]) + '<span class="ws-nav-label">' + escapeHtml(t(pair[1])) + '</span>' + meta + '</a>';
+      main.innerHTML = NAV_GROUPS.map(function (group) {
+        return '<div class="ws-nav-block"><h2 class="ws-nav-group">' + escapeHtml(t(group.key)) + '</h2>' +
+          group.items.map(function (pair) {
+            var active = pair[0] === current ? ' is-active' : '';
+            var meta = proUser(user) ? '' : '<span class="ws-nav-meta">' + escapeHtml(t('pro')) + '</span>';
+            return '<a class="ws-nav-item' + active + '" href="/app?section=' + pair[0] + '">' +
+              icon(pair[0]) + '<span class="ws-nav-label">' + escapeHtml(t(pair[1])) + '</span>' + meta + '</a>';
+          }).join('') + '</div>';
       }).join('');
     }
     if (foot) {
@@ -610,6 +631,7 @@
   }
 
   var reviewSession = null;
+  var insightsSeq = 0;
   var reviewBusy = false;
   var pendingGrade = null;
   var currentUser = null;
@@ -864,16 +886,17 @@
           return '<div class="ws-metric"><div class="ws-metric-value">' + escapeHtml(String(row[1])) + '</div><div class="ws-metric-label">' + escapeHtml(t(row[0])) + '</div></div>';
         }).join('') + '</div>'
       : '';
-    var setsCard = '<section class="ws-lab-overview"><h2 class="ws-h2">' + escapeHtml(t('sets')) + '</h2><p class="ws-lede">' + escapeHtml(t('setsLede')) + '</p><a class="ws-btn ws-btn-secondary" href="/app?section=sets">' + escapeHtml(t('openSets')) + '</a></section>';
-    var insightsCard = '<section class="ws-lab-overview"><h2 class="ws-h2">' + escapeHtml(t('insights')) + '</h2><p class="ws-lede">' + escapeHtml(t('insightsLede')) + '</p><a class="ws-btn ws-btn-secondary" href="/app?section=insights">' + escapeHtml(t('insights')) + '</a></section>';
-    var labCard = '<section class="ws-lab-overview"><h2 class="ws-h2">' + escapeHtml(t('proLab')) + '</h2><p class="ws-lede">' + escapeHtml(t('continueLab')) + '</p><a class="ws-btn ws-btn-secondary" href="/app?section=pro-lab">' + escapeHtml(t('openProLab')) + '</a></section>';
+    var setsCard = '<section class="ws-dest-card"><h2 class="ws-h2">' + escapeHtml(t('sets')) + '</h2><p class="ws-lede">' + escapeHtml(t('setsLede')) + '</p><a class="ws-btn ws-btn-secondary" href="/app?section=sets">' + escapeHtml(t('openSets')) + '</a></section>';
+    var insightsCard = '<section class="ws-dest-card"><h2 class="ws-h2">' + escapeHtml(t('insights')) + '</h2><p class="ws-lede">' + escapeHtml(t('insightsLede')) + '</p><a class="ws-btn ws-btn-secondary" href="/app?section=insights">' + escapeHtml(t('insights')) + '</a></section>';
+    var labCard = '<section class="ws-dest-card"><h2 class="ws-h2">' + escapeHtml(t('proLab')) + '</h2><p class="ws-lede">' + escapeHtml(t('continueLab')) + '</p><a class="ws-btn ws-btn-secondary" href="/app?section=pro-lab">' + escapeHtml(t('openProLab')) + '</a></section>';
     var cont = (overview.continueStudying || []).slice(0, 5);
     node.innerHTML =
       '<p class="ws-kicker">Atomurus</p><h1 class="ws-title">' + escapeHtml(greet) + '</h1><p class="ws-lede">' + escapeHtml(t('greetingFallback')) + '</p>' +
       hero + metrics +
-      '<h2 class="ws-h2">' + escapeHtml(t('continueTitle')) + '</h2>' +
-      (cont.length ? '<div class="ws-grid">' + cont.map(continueCard).join('') + '</div>' : emptyState(t('emptyProgressTitle'), t('emptyProgressBody'))) +
-      setsCard + insightsCard + labCard;
+      (cont.length
+        ? '<h2 class="ws-h2">' + escapeHtml(t('continueTitle')) + '</h2><div class="ws-grid">' + cont.map(continueCard).join('') + '</div>'
+        : '') +
+      '<div class="ws-dest-grid">' + setsCard + insightsCard + labCard + '</div>';
   }
 
   function libraryRow(item) {
@@ -1599,7 +1622,7 @@
       ['insightsLocked1', 'insightsLocked2', 'insightsLocked3', 'insightsLocked4', 'insightsLocked5'].map(function (key) {
         return '<li>' + escapeHtml(t(key)) + '</li>';
       }).join('') +
-      '</ul><p class="ws-row-actions"><a class="ws-btn ws-btn-primary" href="/pricing">' + escapeHtml(t('upgrade')) + '</a></p>';
+      '</ul><p class="ws-insight-cta"><a class="ws-btn ws-btn-primary" href="/pricing">' + escapeHtml(t('upgrade')) + '</a></p>';
   }
 
   function weekdayLabel(key) {
@@ -1607,7 +1630,7 @@
     return t(map[String(key || '').slice(0, 3)] || 'forecastToday');
   }
 
-  function barRow(label, value, max, tip) {
+  function barRow(label, value, max) {
     var n = Number(value) || 0;
     var width = max > 0 ? Math.round((n / max) * 100) : 0;
     return '<li class="ws-chart-row"><span class="ws-chart-label">' + escapeHtml(label) + '</span>' +
@@ -1621,11 +1644,43 @@
     return weekdayLabel(row.weekday);
   }
 
+  function insightsPath(range, setId) {
+    if (logic().insightsHref) return logic().insightsHref(range, setId);
+    var href = '/app?section=insights&range=' + encodeURIComponent(range === '7d' ? '7d' : '30d');
+    if (setId) href += '&set=' + encodeURIComponent(setId);
+    return href;
+  }
+
+  function activityChartHtml(activity, range) {
+    var rows = activity || [];
+    var actMax = rows.reduce(function (m, row) { return Math.max(m, row.reviews || 0); }, 1);
+    var caption = '<figcaption id="ws-activity-title">' + escapeHtml(t('activityTitle')) + '</figcaption>';
+    if (range === '7d') {
+      return '<figure class="ws-chart" id="ws-activity-chart">' + caption +
+        '<ul class="ws-chart-bars" aria-labelledby="ws-activity-title">' +
+        rows.map(function (row) { return barRow(weekdayLabel(row.weekday), row.reviews, actMax); }).join('') +
+        '</ul>';
+    }
+    var first = rows[0] ? String(rows[0].date || '').slice(5) : '';
+    var last = rows.length ? String(rows[rows.length - 1].date || '').slice(5) : '';
+    return '<figure class="ws-chart is-sparkline" id="ws-activity-chart">' + caption +
+      '<ul class="ws-sparkline" aria-labelledby="ws-activity-title">' +
+      rows.map(function (row) {
+        var n = Number(row.reviews) || 0;
+        var pct = actMax > 0 && n ? Math.max(8, Math.round((n / actMax) * 100)) : 4;
+        var label = String(row.date || '') + ' · ' + n;
+        return '<li class="ws-spark-item" title="' + escapeHtml(label) + '" aria-label="' + escapeHtml(label) + '">' +
+          '<span class="ws-spark-bar' + (n ? '' : ' is-empty') + '" style="height:' + pct + '%"></span></li>';
+      }).join('') +
+      '</ul>' +
+      (first || last ? '<div class="ws-spark-axis"><span>' + escapeHtml(first) + '</span><span>' + escapeHtml(last) + '</span></div>' : '');
+  }
+
   function renderInsightsSkeleton(node) {
     node.innerHTML = sectionHead(t('insights'), t('insightsLede'), true) + skeleton();
   }
 
-  function paintInsights(node, data, params) {
+  function paintInsights(node, data, params, api) {
     var summary = data.summary || {};
     var ratings = data.ratings || {};
     var activity = data.activity || [];
@@ -1634,20 +1689,19 @@
     var sets = data.sets || [];
     var empty = !summary.reviews && !summary.masteredCards && !summary.dueNow;
     var ratingMax = Math.max(ratings.again || 0, ratings.hard || 0, ratings.good || 0, ratings.easy || 0, 1);
-    var actMax = activity.reduce(function (m, row) { return Math.max(m, row.reviews || 0); }, 1);
     var dueMax = forecast.reduce(function (m, row) { return Math.max(m, row.due || 0); }, 1);
     var range = params.range || '30d';
     var setId = params.setId || '';
     var rangeSwitch = '<div class="ws-chips" role="group" aria-label="' + escapeHtml(t('insights')) + '">' +
-      '<a class="ws-chip' + (range === '7d' ? ' is-on' : '') + '" href="/app?section=insights&range=7d' + (setId ? '&set=' + encodeURIComponent(setId) : '') + '">' + escapeHtml(t('range7d')) + '</a>' +
-      '<a class="ws-chip' + (range === '30d' ? ' is-on' : '') + '" href="/app?section=insights&range=30d' + (setId ? '&set=' + encodeURIComponent(setId) : '') + '">' + escapeHtml(t('range30d')) + '</a>' +
+      '<button type="button" class="ws-chip' + (range === '7d' ? ' is-on' : '') + '" data-insight-range="7d" aria-pressed="' + (range === '7d' ? 'true' : 'false') + '">' + escapeHtml(t('range7d')) + '</button>' +
+      '<button type="button" class="ws-chip' + (range === '30d' ? ' is-on' : '') + '" data-insight-range="30d" aria-pressed="' + (range === '30d' ? 'true' : 'false') + '">' + escapeHtml(t('range30d')) + '</button>' +
       '</div>';
     var setFilter = '<label class="ws-field"><span>' + escapeHtml(t('allSets')) + '</span><select class="ws-input" id="ws-insight-set">' +
       '<option value="">' + escapeHtml(t('allSets')) + '</option>' +
       sets.map(function (set) {
         return '<option value="' + escapeHtml(set.id) + '"' + (set.id === setId ? ' selected' : '') + '></option>';
       }).join('') + '</select></label>';
-    var metrics = '<div class="ws-metrics">' +
+    var metrics = '<div class="ws-metrics is-five">' +
       [['metricReviews', summary.reviews || 0], ['activeDays', summary.activeDays || 0], ['mastered', summary.masteredCards || 0], ['cardsDue', summary.dueNow || 0]].map(function (row) {
         return '<div class="ws-metric"><div class="ws-metric-value">' + escapeHtml(String(row[1])) + '</div><div class="ws-metric-label">' + escapeHtml(t(row[0])) + '</div></div>';
       }).join('') +
@@ -1659,23 +1713,18 @@
       barRow(t('good'), ratings.good, ratingMax) +
       barRow(t('easy'), ratings.easy, ratingMax) +
       '</ul></figure>';
-    var activityChart = '<figure class="ws-chart' + (range === '30d' ? ' is-dense' : '') + '"><figcaption id="ws-activity-title">' + escapeHtml(t('activityTitle')) + '</figcaption><ul class="ws-chart-bars" aria-labelledby="ws-activity-title">' +
-      activity.map(function (row) {
-        var label = range === '7d' ? weekdayLabel(row.weekday) : String(row.date || '').slice(5);
-        return barRow(label, row.reviews, actMax);
-      }).join('') +
-      '</ul>' +
+    var activityChart = activityChartHtml(activity, range) +
       (data.consistency ? '<p class="ws-lede">' + escapeHtml(t('consistencyCopy', '', { active: data.consistency.activeDays, days: data.consistency.windowDays })) + '</p>' : '') +
       '</figure>';
-    var forecastChart = '<figure class="ws-chart"><figcaption>' + escapeHtml(t('dueForecastTitle')) + '</figcaption><ul class="ws-chart-bars">' +
+    var forecastChart = '<figure class="ws-chart" id="ws-forecast-chart"><figcaption>' + escapeHtml(t('dueForecastTitle')) + '</figcaption><ul class="ws-chart-bars">' +
       forecast.map(function (row) { return barRow(forecastLabel(row), row.due, dueMax); }).join('') +
       '</ul></figure>';
     var weakHtml = weak.length
       ? '<div class="ws-grid" id="ws-weak-list">' + weak.map(function (card) {
-        return '<article class="ws-study-item"><div><h3 class="ws-item-title"></h3><div class="ws-item-meta">' +
+        return '<article class="ws-study-item ws-weak-item"><div><h3 class="ws-item-title"></h3><div class="ws-item-meta">' +
           escapeHtml(t('lapsesCount', '', { n: card.lapses || 0 })) + ' · ' + escapeHtml(reviewStateLabel(card.reviewState)) +
           (card.dueNow ? ' · ' + escapeHtml(t('dueNowLabel')) : '') +
-          '</div></div><a class="ws-btn ws-btn-primary ws-btn-sm" href="' + escapeHtml(focusReviewHref(card.studySetId)) + '">' + escapeHtml(t('reviewCta')) + '</a></article>';
+          '</div></div><div class="ws-item-actions"><a class="ws-btn ws-btn-primary ws-btn-sm" href="' + escapeHtml(focusReviewHref(card.studySetId)) + '">' + escapeHtml(t('reviewCta')) + '</a></div></article>';
       }).join('') + '</div>'
       : emptyState(t('emptyFocusTitle'), t('emptyFocusBody'), '/app?section=review', t('openSmartReview'));
     var setStats = sets.map(function (set) {
@@ -1686,10 +1735,14 @@
         escapeHtml(t('mastered')) + ' ' + escapeHtml(String(set.mastered || 0)) + ' · ' +
         escapeHtml(t('needsAttention')) + ' ' + escapeHtml(String(set.needsAttention || 0)) + '</div></article>';
     }).join('');
-    node.innerHTML = sectionHead(t('insights'), t('insightsLede'), true) + rangeSwitch + setFilter +
+    var showFocus = !empty || weak.length;
+    node.innerHTML = sectionHead(t('insights'), t('insightsLede'), true) +
+      '<div class="ws-insights-toolbar">' + rangeSwitch + setFilter + '</div>' +
       (empty ? emptyState(t('emptyInsightsTitle'), t('emptyInsightsBody'), '/app?section=sets', t('openSets')) : metrics + ratingChart + activityChart + forecastChart) +
-      '<div class="ws-section-split"><h2 class="ws-h2">' + escapeHtml(t('needsAttention')) + '</h2>' +
-      '<a class="ws-btn ws-btn-primary" href="' + escapeHtml(focusReviewHref(setId)) + '">' + escapeHtml(t('startFocusReview')) + '</a></div>' + weakHtml +
+      (showFocus
+        ? '<div class="ws-section-split"><h2 class="ws-h2">' + escapeHtml(t('needsAttention')) + '</h2>' +
+          '<a class="ws-btn ws-btn-primary" href="' + escapeHtml(focusReviewHref(setId)) + '">' + escapeHtml(t('startFocusReview')) + '</a></div>' + weakHtml
+        : '') +
       (setStats ? '<h2 class="ws-h2">' + escapeHtml(t('sets')) + '</h2><div class="ws-grid" id="ws-set-insights">' + setStats + '</div>' : '');
     weak.forEach(function (card, idx) {
       var titles = node.querySelectorAll('#ws-weak-list .ws-item-title');
@@ -1699,20 +1752,28 @@
       var titles = node.querySelectorAll('#ws-set-insights .ws-item-title');
       if (titles[idx]) titles[idx].textContent = set.title || '';
     });
+    function refetchInsights(nextRange, nextSet) {
+      if (history.replaceState) history.replaceState(null, '', insightsPath(nextRange, nextSet));
+      void renderInsights(node, api);
+    }
+    node.querySelectorAll('[data-insight-range]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        refetchInsights(btn.getAttribute('data-insight-range'), setId);
+      });
+    });
     var select = $('ws-insight-set');
     if (select) {
       sets.forEach(function (set, idx) {
         if (select.options[idx + 1]) select.options[idx + 1].textContent = set.title || t('sets');
       });
       select.addEventListener('change', function () {
-        var next = '/app?section=insights&range=' + encodeURIComponent(range);
-        if (select.value) next += '&set=' + encodeURIComponent(select.value);
-        location.replace(next);
+        refetchInsights(range, select.value || '');
       });
     }
   }
 
   async function renderInsights(node, api) {
+    var seq = insightsSeq += 1;
     renderInsightsSkeleton(node);
     var range = logic().insightsRangeFromQuery ? logic().insightsRangeFromQuery(location.search) : '30d';
     var setId = studySetIdFromQuery();
@@ -1720,8 +1781,10 @@
     try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (_err) {}
     try {
       var data = await api.insights({ range: range, setId: setId || undefined, tz: tz }, true);
-      paintInsights(node, data, { range: range, setId: setId });
+      if (seq !== insightsSeq) return;
+      paintInsights(node, data, { range: range, setId: setId }, api);
     } catch (err) {
+      if (seq !== insightsSeq) return;
       if (err && err.code === 'feature_locked') {
         renderLockedInsights();
         return;
@@ -1773,7 +1836,7 @@
         : '<p class="ws-hero-copy">' + escapeHtml(t('emptyReviewBody')) + '</p><a class="ws-btn" href="/app?section=sets">' + escapeHtml(t('openSets')) + '</a>') +
       '</div></section>' +
       '<section class="ws-hero"><div><h2 class="ws-hero-title">' + escapeHtml(t('weakReview')) + '</h2>' +
-      '<p class="ws-hero-copy">' + escapeHtml(t('emptyFocusBody')) + '</p>' +
+      '<p class="ws-hero-copy">' + escapeHtml(t('focusLandingBody')) + '</p>' +
       '<a class="ws-btn ws-btn-primary" href="' + escapeHtml(focusReviewHref(setId, 20)) + '">' + escapeHtml(t('startFocusReview')) + '</a>' +
       '<p class="ws-chips" style="margin-top:12px">' +
       [10, 20, 30].map(function (n) {
@@ -1960,7 +2023,7 @@
       if (currency) meta.push(currency);
       if (user.cancelAtPeriodEnd && when) meta.push(t('cancelsOn', '', { when: when }));
       planBlock = '<h3>' + escapeHtml(t('proPlan')) + '</h3><p>' + escapeHtml(meta.join(' · ')) + '</p>' +
-        '<ul><li>' + escapeHtml(t('adsOff')) + '</li><li>' + escapeHtml(t('cloudOn')) + '</li><li>' + escapeHtml(t('reviewOn')) + '</li></ul>' +
+        '<ul><li>' + escapeHtml(t('adsOff')) + '</li><li>' + escapeHtml(t('cloudOn')) + '</li><li>' + escapeHtml(t('reviewOn')) + '</li><li>' + escapeHtml(t('insightsOn')) + '</li><li>' + escapeHtml(t('focusOn')) + '</li></ul>' +
         (state.canManage
           ? '<button type="button" class="ws-btn ws-btn-primary" id="ws-billing-portal">' + escapeHtml(t('managePlan')) + '</button>'
           : '<a class="ws-btn ws-btn-primary" href="/pricing">' + escapeHtml(t('viewPlans')) + '</a>');
@@ -1994,7 +2057,7 @@
       '<a class="ws-btn ws-btn-primary" href="/pricing">' + escapeHtml(t('explorePro')) + '</a></div></section>' +
       '<div class="ws-grid ws-grid-3">' +
       '<a class="ws-lab-card" href="/periodic-table.html"><h3 class="ws-lab-card-title">' + escapeHtml(t('openTable')) + '</h3></a>' +
-      '<a class="ws-lab-card" href="/calculators.html"><h3 class="ws-lab-card-title">' + escapeHtml(t('openCalculators')) + '</h3></a>' +
+      '<a class="ws-lab-card" href="/calculators.html"><h3 class="ws-lab-card-title">' + escapeHtml(t('publicCalc')) + '</h3></a>' +
       '<a class="ws-lab-card" href="/viewer/atomic-models.html"><h3 class="ws-lab-card-title">' + escapeHtml(t('openViewer')) + '</h3></a>' +
       '<a class="ws-lab-card" href="/explore.html"><h3 class="ws-lab-card-title">' + escapeHtml(t('openExplore')) + '</h3></a>' +
       '</div>';

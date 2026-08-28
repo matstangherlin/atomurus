@@ -193,7 +193,14 @@ const DICT = {
           ratingsTitle: 'Review ratings',
           activityTitle: 'Reviews by day',
           dueForecastTitle: 'Next 7 days',
-          reviewCta: 'Review'
+          reviewCta: 'Review',
+          navGroupStudy: 'Study',
+          navGroupLab: 'Lab',
+          navGroupActivity: 'Activity',
+          focusLandingBody: 'Review the cards that need the most attention.',
+          insightsOn: 'Study Insights unlocked',
+          focusOn: 'Focus Review unlocked',
+          publicCalc: 'Calculators'
         }
       },
       pricing: {
@@ -2203,7 +2210,14 @@ const DICT = {
           ratingsTitle: 'Avaliações',
           activityTitle: 'Revisões por dia',
           dueForecastTitle: 'Próximos 7 dias',
-          reviewCta: 'Revisar'
+          reviewCta: 'Revisar',
+          navGroupStudy: 'Estudo',
+          navGroupLab: 'Lab',
+          navGroupActivity: 'Atividade',
+          focusLandingBody: 'Revise os cards que mais precisam de atenção.',
+          insightsOn: 'Insights de Estudo liberados',
+          focusOn: 'Focus Review liberado',
+          publicCalc: 'Calculadoras'
         }
       },
       pricing: {

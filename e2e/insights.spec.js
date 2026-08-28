@@ -74,11 +74,19 @@ test('Pro Insights: 30 days, set filter, Needs attention, Focus Review, Good', a
   await expect(page.locator('#app-study')).toContainText(/30 days|30 dias/);
   await expect(page.locator('#app-study')).toContainText(/Confident reviews|Revisões confiantes/);
   await expect(page.locator('#app-study')).not.toContainText(/Accuracy/i);
+  await expect(page.locator('#ws-forecast-chart .ws-chart-row')).toHaveCount(7);
+  await expect(page.locator('#ws-activity-chart .ws-sparkline li')).toHaveCount(30);
+  await expect(page.locator('#ws-weak-list')).toContainText('Periodic trend: atomic radius');
+  await expect(page.locator('#ws-weak-list')).not.toContainText(/Symbol for iron/);
   await saveShot(page, 'desktop-insights-pro');
 
-  await page.locator('a.ws-chip').filter({ hasText: /30 days|30 dias/ }).click();
+  await page.locator('[data-insight-range="7d"]').click();
+  await expect(page).toHaveURL(/range=7d/);
+  await expect(page.locator('#ws-activity-chart .ws-chart-row')).toHaveCount(7);
+  await page.locator('[data-insight-range="30d"]').click();
   await expect(page.locator('#ws-insight-set')).toBeVisible();
   await page.locator('#ws-insight-set').selectOption(SET_ID);
+  await expect(page).toHaveURL(/set=/);
   await expect(page.locator('#app-study')).toContainText(/Needs attention|Precisa de atenção/);
   await expect(page.locator('#ws-weak-list')).toContainText('Periodic trend: atomic radius');
   await saveShot(page, 'desktop-insights-filtered');
@@ -100,6 +108,7 @@ test('Pro Insights empty state', async ({ page }) => {
   await installApi(page, { kind: 'pro', store });
   await gotoWorkspace(page, '/app?section=insights');
   await expect(page.locator('#app-study')).toContainText(/will appear here|aparecem aqui/i);
+  await expect(page.locator('#app-study').getByRole('link', { name: /Start Focus Review|Começar Focus Review/i })).toHaveCount(0);
   await saveShot(page, 'desktop-insights-empty');
 });
 
@@ -183,11 +192,15 @@ test('Overview hierarchy: Pro due hero and Free workspace copy', async ({ page }
   await gotoWorkspace(page, '/app');
   await expect(page.locator('#app-study')).toContainText(/Ready to study|Pronto para estudar/i);
   await expect(page.locator('#app-study').getByRole('link', { name: /Start Smart Review|Começar Smart Review/i })).toBeVisible();
+  await expect(page.locator('#app-study')).not.toContainText(/Nothing in progress yet|Nada em andamento/);
+  await expect(page.locator('#ws-nav-main .ws-nav-group').first()).toBeVisible();
   await saveShot(page, 'desktop-overview-pro-hero');
 
   await installApi(page, { kind: 'free' });
   await gotoWorkspace(page, '/app');
   await expect(page.locator('#app-study')).toContainText(/chemistry workspace|workspace de química/i);
   await expect(page.locator('#app-study').getByRole('link', { name: /Explore Pro|Conhecer o Pro/i })).toBeVisible();
+  await expect(page.locator('#app-study')).toContainText(/Insights/);
+  await expect(page.locator('#app-study a[href="/calculators.html"]')).toContainText(/Calculators|Calculadoras/);
   await saveShot(page, 'desktop-overview-free');
 });

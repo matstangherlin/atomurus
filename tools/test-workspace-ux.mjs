@@ -18,6 +18,11 @@ assert.equal(
 );
 assert.equal(logic.reviewModeFromQuery('?mode=weak'), 'weak');
 assert.equal(logic.insightsRangeFromQuery('?range=7d'), '7d');
+assert.equal(logic.insightsHref('7d'), '/app?section=insights&range=7d');
+assert.equal(
+  logic.insightsHref('30d', 'aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee'),
+  '/app?section=insights&range=30d&set=aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee'
+);
 assert.equal(logic.focusLimitFromQuery('?limit=30'), 30);
 assert.equal(logic.hasFeature({ isPro: true, features: { studyInsights: true } }, 'studyInsights'), true);
 assert.equal(logic.normalizeSection('pro-lab'), 'pro-lab');
@@ -85,6 +90,9 @@ assert.match(authApp, /section=insights/);
 assert.match(authApp, /renderLockedInsights/);
 assert.match(authApp, /startFocusReview/);
 assert.match(authApp, /ws-insights-retry/);
+assert.match(authApp, /ws-nav-group/);
+assert.match(authApp, /focusLandingBody/);
+assert.match(authApp, /data-insight-range/);
 assert.match(authApp, /confirmDialog/);
 assert.doesNotMatch(authApp, /Accuracy 87/);
 assert.doesNotMatch(authApp, /Knowledge score|Chemistry level/);
@@ -127,6 +135,7 @@ assert.match(css, /\.ws-skip/);
 assert.match(css, /safe-area-inset-bottom/);
 const foundation = readFileSync(new URL('../assets/workspace-foundation.css', import.meta.url), 'utf8');
 assert.match(foundation, /\.ws-chart/);
+assert.match(foundation, /\.ws-sparkline/);
 assert.match(foundation, /prefers-reduced-motion/);
 assert.doesNotMatch(foundation, /chart\.js|d3|recharts/i);
 

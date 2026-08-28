@@ -17,6 +17,10 @@
  *   + (intervalDays < 1 ? 8 : 0)
  *   + (reviewState === 'learning' ? 5 : 0)
  *
+ * Needs attention / Focus Review (not ordinary Due review):
+ *   not suspended AND (lapses > 0 OR ease < DEFAULT_EASE OR learning).
+ *   Due cards with default ease and no lapses stay on Due review.
+ *
  * Focus / Needs attention sort (exposed order):
  *   lapses DESC, ease_factor ASC, due_at ASC, id ASC
  */
@@ -154,13 +158,10 @@ export function needsAttention(card, nowMs = Date.now()) {
   const lapses = Number(card?.lapses) || 0;
   const ease = Number(card?.ease_factor ?? card?.easeFactor);
   const easeFactor = Number.isFinite(ease) ? ease : DEFAULT_EASE;
-  const interval = Number(card?.interval_days ?? card?.intervalDays) || 0;
   const state = String(card?.review_state || card?.reviewState || '').toLowerCase();
-  const due = Date.parse(card?.due_at || card?.dueAt);
   if (lapses > 0) return true;
   if (easeFactor < DEFAULT_EASE) return true;
   if (state === 'learning') return true;
-  if (Number.isFinite(due) && due <= nowMs && interval < MASTERED_INTERVAL_DAYS) return true;
   return false;
 }
 

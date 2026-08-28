@@ -302,7 +302,7 @@ async function installApi(page, options = {}) {
         reviews: hasHistory && i % 3 === 0 ? 4 : hasHistory && i % 2 === 0 ? 2 : 0
       }));
       const weak = data.cards
-        .filter((card) => !card.suspended && ((card.lapses || 0) > 0 || (card.easeFactor || 2.5) < 2.5 || card.reviewState === 'learning' || !card.intervalDays))
+        .filter((card) => !card.suspended && ((card.lapses || 0) > 0 || (card.easeFactor || 2.5) < 2.5 || card.reviewState === 'learning'))
         .sort((a, b) => (b.lapses || 0) - (a.lapses || 0))
         .slice(0, 5)
         .map((card) => ({
@@ -329,12 +329,12 @@ async function installApi(page, options = {}) {
         ratings: hasHistory ? { again: 1, hard: 2, good: 6, easy: 3 } : { again: 0, hard: 0, good: 0, easy: 0 },
         activity,
         consistency: { windowDays: Math.min(14, days), activeDays: hasHistory ? 3 : 0 },
-        dueForecast: hasHistory
-          ? [
-              { date: '2026-08-28', weekday: 'fri', kind: 'today', due: 2 },
-              { date: '2026-08-29', weekday: 'sat', kind: 'tomorrow', due: 1 }
-            ]
-          : [],
+        dueForecast: ['2026-08-28', '2026-08-29', '2026-08-30', '2026-08-31', '2026-09-01', '2026-09-02', '2026-09-03'].map((date, i) => ({
+          date,
+          weekday: ['fri', 'sat', 'sun', 'mon', 'tue', 'wed', 'thu'][i],
+          kind: i === 0 ? 'today' : i === 1 ? 'tomorrow' : 'weekday',
+          due: hasHistory ? [2, 1, 0, 3, 1, 0, 2][i] : 0
+        })),
         weakCards: weak,
         sets: sets.map((set) => ({
           id: set.id,

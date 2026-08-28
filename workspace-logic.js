@@ -186,6 +186,12 @@
     }
   }
 
+  function insightsHref(range, setId) {
+    var href = '/app?section=insights&range=' + (range === '7d' ? '7d' : '30d');
+    if (isValidSetId(setId)) href += '&set=' + encodeURIComponent(String(setId).trim());
+    return href;
+  }
+
   function overviewSetCount(review) {
     if (!review) return 0;
     if (Array.isArray(review.sets)) return review.sets.length;
@@ -318,6 +324,7 @@
     reviewModeFromQuery: reviewModeFromQuery,
     focusLimitFromQuery: focusLimitFromQuery,
     insightsRangeFromQuery: insightsRangeFromQuery,
+    insightsHref: insightsHref,
     overviewSetCount: overviewSetCount,
     uxError: uxError,
     isTechnicalErrorText: isTechnicalErrorText,
