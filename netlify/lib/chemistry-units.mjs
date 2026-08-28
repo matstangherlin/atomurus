@@ -17,6 +17,10 @@ export const CONC_UNITS = Object.freeze(['mol/L', 'mmol/L']);
 export const NUMBER_ABS_MAX = 1e12;
 export const PERCENT_TOTAL_MIN = 99;
 export const PERCENT_TOTAL_MAX = 101;
+/** Relative floating-point tolerance for reaction-extent ties. */
+export const SOLVER_EPSILON = 1e-10;
+/** Absolute floor treated as zero remaining mass/moles. */
+export const SOLVER_ABS_ZERO = 1e-12;
 
 export function solverError(message, status = 400, code = 'invalid_request') {
   return calcError(message, status, code);
@@ -39,17 +43,32 @@ export function requirePositiveNumber(value, field) {
   return n;
 }
 
-export function allowUnit(unit, allowed, field) {
-  const value = String(unit || '').trim();
-  if (!allowed.includes(value)) {
-    throw solverError(`${field} unit is not supported`);
-  }
-  return value;
+export function requireNonNegativeNumber(value, field) {
+  const n = requireFiniteNumber(value, field);
+  if (n < 0) throw solverError(`${field} must be a non-negative number`);
+  return n;
 }
 
-export function massToGrams(value, unit) {
-  const n = requirePositiveNumber(value, 'mass');
-  const u = allowUnit(unit, MASS_UNITS, 'mass');
+/**
+ * Unknown explicit units are rejected. A fallback is used only when the field is absent.
+ */
+export function allowUnit(unit, allowed, field, fallback) {
+  const raw = unit == null ? '' : String(unit).trim();
+  if (!raw) {
+    if (fallback && allowed.includes(fallback)) return fallback;
+    throw solverError(`${field} unit is not supported`);
+  }
+  if (!allowed.includes(raw)) {
+    throw solverError(`${field} unit is not supported`);
+  }
+  return raw;
+}
+
+export function massToGrams(value, unit, options = {}) {
+  const n = options.allowZero
+    ? requireNonNegativeNumber(value, 'mass')
+    : requirePositiveNumber(value, 'mass');
+  const u = allowUnit(unit, MASS_UNITS, 'mass', options.fallbackUnit);
   if (u === 'mg') return n / 1000;
   if (u === 'kg') return n * 1000;
   return n;
@@ -64,7 +83,7 @@ export function gramsToMass(grams, unit) {
 
 export function volumeToLiters(value, unit) {
   const n = requirePositiveNumber(value, 'volume');
-  const u = allowUnit(unit, VOLUME_UNITS, 'volume');
+  const u = allowUnit(unit, VOLUME_UNITS, 'volume', 'L');
   if (u === 'mL') return n / 1000;
   return n;
 }
@@ -77,7 +96,7 @@ export function litersToVolume(liters, unit) {
 
 export function concToMolPerL(value, unit) {
   const n = requirePositiveNumber(value, 'concentration');
-  const u = allowUnit(unit, CONC_UNITS, 'concentration');
+  const u = allowUnit(unit, CONC_UNITS, 'concentration', 'mol/L');
   if (u === 'mmol/L') return n / 1000;
   return n;
 }
@@ -102,14 +121,17 @@ export function molesFromGas({ amount, volume, volUnit, P, PUnit, T, TUnit }) {
     allowUnit('mol', AMOUNT_UNITS, 'amount');
     return requirePositiveNumber(amount, 'amount');
   }
+  const pressureUnit = allowUnit(PUnit, PRESSURE_UNITS, 'pressure', 'atm');
+  const tempUnit = allowUnit(TUnit, TEMP_UNITS, 'temperature', 'K');
+  const gasVolUnit = allowUnit(volUnit, VOLUME_UNITS, 'volume', 'L');
   const gas = solveIdealGas({
     solve: 'n',
     P,
     V: volume,
     T,
-    PUnit: PUnit || 'atm',
-    VUnit: volUnit || 'L',
-    TUnit: TUnit || 'K'
+    PUnit: pressureUnit,
+    VUnit: gasVolUnit,
+    TUnit: tempUnit
   });
   return requirePositiveNumber(gas.solved, 'gas amount');
 }

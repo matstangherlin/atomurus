@@ -21,6 +21,9 @@ export const UNCLEAR_RATIO =
 export const BAD_PERCENT_TOTAL = 'Percentages must add up to about 100%.';
 export const BAD_MOLECULAR_MULTIPLE =
   'The supplied molar mass is not close to an integer multiple of the empirical formula mass.';
+export const DUPLICATE_ELEMENT = 'Each element can only be entered once.';
+
+const FORMULA_KINDS = new Set(['empirical', 'molecular', 'percent', 'mass']);
 
 function symbolOf(entry) {
   const sym = String(entry.symbol || entry.element || '').trim();
@@ -55,21 +58,39 @@ function formulaFromCounts(symbols, counts) {
   return symbols.map((sym, i) => (counts[i] === 1 ? sym : `${sym}${counts[i]}`)).join('');
 }
 
+function resolveCompositionMode(input, rows) {
+  const requestedMode = String(input.mode || '').trim();
+  if (requestedMode === 'percent' || requestedMode === 'mass') return requestedMode;
+  if (requestedMode && requestedMode !== 'empirical') {
+    throw solverError('mode is not supported', 400, 'invalid_mode');
+  }
+  const unit = String(rows[0]?.unit || '');
+  return unit === 'percent' || unit === '%' ? 'percent' : 'mass';
+}
+
 export function solveEmpiricalFormula(input = {}) {
   const rows = Array.isArray(input.composition) ? input.composition : [];
   if (rows.length < 1) throw solverError('at least one element is required');
   if (rows.length > 12) throw solverError('too many elements');
 
-  const mode = String(input.mode || rows[0].unit === 'percent' || rows[0].unit === '%' ? 'percent' : 'mass');
+  const mode = resolveCompositionMode(input, rows);
   const parsed = rows.map((row) => ({
     symbol: symbolOf(row),
     value: requirePositiveNumber(row.value ?? row.amount ?? row.percent ?? row.mass, row.symbol || 'value'),
     unit: String(row.unit || (mode === 'percent' ? 'percent' : 'g'))
   }));
 
+  const seen = new Set();
+  parsed.forEach((row) => {
+    if (seen.has(row.symbol)) {
+      throw solverError(DUPLICATE_ELEMENT, 400, 'duplicate_element');
+    }
+    seen.add(row.symbol);
+  });
+
   const steps = [];
   let masses;
-  if (parsed.every((row) => row.unit === 'percent' || row.unit === '%')) {
+  if (mode === 'percent') {
     const total = parsed.reduce((sum, row) => sum + row.value, 0);
     if (total < PERCENT_TOTAL_MIN || total > PERCENT_TOTAL_MAX) {
       throw solverError(BAD_PERCENT_TOTAL);
@@ -80,7 +101,9 @@ export function solveEmpiricalFormula(input = {}) {
     }));
     steps.push({
       title: 'Normalize percentages',
-      body: `Total = ${formatSig(total, 4)}%. Treat as mass in a 100 g sample.`
+      body: Math.abs(total - 100) <= 1e-9
+        ? 'Percentages total 100%. Treat as mass in a 100 g sample.'
+        : `Percentages total ${formatSig(total, 4)}%. Values were normalized to 100% before calculating.`
     });
   } else {
     masses = parsed.map((row) => ({ symbol: row.symbol, mass: row.value }));
@@ -172,7 +195,11 @@ export function solveMolecularFormula(input = {}) {
 }
 
 export function solveFormula(input = {}) {
-  const kind = String(input.kind || input.mode || 'empirical').trim();
+  const kind = String(input.kind || input.mode || '').trim();
+  if (!kind) return solveEmpiricalFormula(input);
+  if (!FORMULA_KINDS.has(kind)) {
+    throw solverError('mode is not supported', 400, 'invalid_mode');
+  }
   if (kind === 'molecular') return solveMolecularFormula(input);
   return solveEmpiricalFormula(input);
 }

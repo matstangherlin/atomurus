@@ -6,6 +6,11 @@
 import { ATOMIC_WEIGHTS, calcError } from './chemistry-calc.mjs';
 
 export const MAX_FORMULA_CHARS = 200;
+export const MAX_ATOM_COUNT = 100000;
+export const MAX_GROUP_MULTIPLIER = 100000;
+export const MAX_HYDRATE_MULTIPLIER = 100000;
+export const MAX_INPUT_COEFFICIENT = 100000;
+
 export const IONIC_UNAVAILABLE =
   'Ionic equation balancing is not available in this version.';
 
@@ -27,9 +32,22 @@ export function looksIonic(raw) {
   return false;
 }
 
+export function parseBoundedInt(digits, max, message) {
+  const text = String(digits == null ? '' : digits);
+  if (!text) return 1;
+  if (text.length > 15) throw formulaError(message);
+  const n = Number(text);
+  if (!Number.isSafeInteger(n) || n < 1 || n > max) throw formulaError(message);
+  return n;
+}
+
 function addCounts(target, source, mult) {
   for (const key of Object.keys(source)) {
-    target[key] = (target[key] || 0) + source[key] * mult;
+    const next = (target[key] || 0) + source[key] * mult;
+    if (!Number.isSafeInteger(next) || next > MAX_ATOM_COUNT * MAX_HYDRATE_MULTIPLIER) {
+      throw formulaError('atom count is too large');
+    }
+    target[key] = next;
   }
 }
 
@@ -51,8 +69,7 @@ function parseBody(s, i, stop) {
         digits += s[i];
         i += 1;
       }
-      const m = digits ? Number(digits) : 1;
-      if (!Number.isInteger(m) || m < 1) throw formulaError('invalid group multiplier');
+      const m = digits ? parseBoundedInt(digits, MAX_GROUP_MULTIPLIER, 'invalid group multiplier') : 1;
       addCounts(counts, inner.counts, m);
       continue;
     }
@@ -76,9 +93,11 @@ function parseBody(s, i, stop) {
       digits += s[i];
       i += 1;
     }
-    const n = digits ? Number(digits) : 1;
-    if (!Number.isInteger(n) || n < 1) throw formulaError('invalid atom count');
+    const n = digits ? parseBoundedInt(digits, MAX_ATOM_COUNT, 'invalid atom count') : 1;
     counts[sym] = (counts[sym] || 0) + n;
+    if (!Number.isSafeInteger(counts[sym]) || counts[sym] > MAX_ATOM_COUNT * MAX_GROUP_MULTIPLIER) {
+      throw formulaError('atom count is too large');
+    }
   }
   return { counts, i };
 }
@@ -104,9 +123,8 @@ export function parseFormulaStrict(raw) {
     let mult = 1;
     if (index > 0 && /^\d+/.test(piece)) {
       const match = piece.match(/^(\d+)(.*)$/);
-      mult = Number(match[1]);
+      mult = parseBoundedInt(match[1], MAX_HYDRATE_MULTIPLIER, 'invalid hydrate multiplier');
       piece = match[2];
-      if (!Number.isInteger(mult) || mult < 1) throw formulaError('invalid hydrate multiplier');
       if (!piece) throw formulaError('invalid hydrate formula');
     }
     const parsed = parseBody(piece, 0, null);
@@ -122,8 +140,25 @@ export function parseFormulaStrict(raw) {
   };
 }
 
+function subscriptDigits(text) {
+  return String(text || '').replace(/\d/g, (d) => SUB[d] || d);
+}
+
+/**
+ * Chemical subscripts only. A digit immediately after · / • / * is a hydrate
+ * coefficient and stays on the baseline: CuSO4·5H2O → CuSO₄·5H₂O.
+ */
 export function formatFormulaDisplay(formula) {
-  return String(formula || '').replace(/\d/g, (d) => SUB[d] || d);
+  const source = String(formula || '');
+  return source.split(/([·•*])/).map((part, i, parts) => {
+    if (part === '•' || part === '*') return '·';
+    if (part === '·') return '·';
+    if (i > 0 && /[·•*]/.test(parts[i - 1])) {
+      const match = part.match(/^(\d+)(.*)$/);
+      if (match) return match[1] + subscriptDigits(match[2]);
+    }
+    return subscriptDigits(part);
+  }).join('');
 }
 
 export function countsEqual(a, b) {

@@ -253,6 +253,7 @@ export function solveIdealGas(input = {}) {
   const Ppa = P == null ? null : toPascals(P, Pu);
   const Vm3 = V == null ? null : toM3(V, Vu);
   const Tk = T == null ? null : toK(T, Tu);
+  if (Tk != null && !(Tk > 0)) throw calcError('temperature must be above absolute zero');
   let SI;
   let display;
   let displayUnit;
