@@ -59,6 +59,7 @@ test('public table, calculators, login and pricing share the new chrome', async 
   expect(shell.columns.split(/\s+/).filter(Boolean).length).toBeGreaterThanOrEqual(2);
   const brandInTopbar = await page.locator('.ps-shell > .topbar .logo-wrap').count();
   expect(brandInTopbar).toBe(1);
+  await expect(page.locator('.ps-shell > .topbar .breadcrumb')).toBeHidden();
   const dlBg = await page.locator('#dl-action-btn').evaluate((el) => getComputedStyle(el).backgroundColor);
   expect(dlBg).toMatch(/rgb\(\s*30,\s*106,\s*80\s*\)/);
   const tabColor = await page.locator('.pt-tab.active').evaluate((el) => getComputedStyle(el).color);

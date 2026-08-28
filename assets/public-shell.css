@@ -625,6 +625,10 @@ html body.ps-body.lc-doc .ps-shell {
 .ps-shell > .topbar .theme-btn {
   margin-left: 0 !important;
 }
+.ps-shell > .topbar .breadcrumb,
+.ps-shell [hidden] {
+  display: none !important;
+}
 .ps-shell > .lc-topnav .lc-topnav-links {
   display: none !important;
 }
