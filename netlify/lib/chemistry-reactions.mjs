@@ -8,10 +8,12 @@ import { calcError } from './chemistry-calc.mjs';
 import { SOLVER_VERSION } from './chemistry-units.mjs';
 import {
   IONIC_UNAVAILABLE,
+  MAX_INPUT_COEFFICIENT,
   countsEqual,
   formatFormulaDisplay,
   looksIonic,
   mergeCounts,
+  parseBoundedInt,
   parseFormulaStrict
 } from './chemistry-formula-strict.mjs';
 
@@ -82,14 +84,39 @@ function parseSpeciesToken(token) {
   const text = String(token || '').trim();
   if (!text) throw calcError('empty species in equation');
   const match = text.match(/^(\d+)\s*(.+)$/);
-  const formula = match ? match[2].trim() : text;
-  if (!formula || /^\d+$/.test(formula)) throw calcError('species is missing a formula');
-  const parsed = parseFormulaStrict(formula);
+  let formulaText = text;
+  let inputCoefficient = 1;
+  if (match) {
+    try {
+      inputCoefficient = parseBoundedInt(match[1], MAX_INPUT_COEFFICIENT, 'invalid stoichiometric coefficient');
+    } catch (err) {
+      throw calcError(err.message || 'invalid stoichiometric coefficient', 400, err.code || 'invalid_request');
+    }
+    formulaText = match[2].trim();
+  }
+  if (!formulaText || /^\d+$/.test(formulaText)) throw calcError('species is missing a formula');
+  const parsed = parseFormulaStrict(formulaText);
   return {
     formula: parsed.formula,
     counts: parsed.counts,
-    inputCoefficient: match ? Number(match[1]) : 1
+    inputCoefficient
   };
+}
+
+function assertUniqueSide(rows, side) {
+  const seen = new Set();
+  for (const row of rows) {
+    if (seen.has(row.formula)) {
+      throw calcError(
+        side === 'reactant'
+          ? 'The same species appears more than once on the reactant side.'
+          : 'The same species appears more than once on the product side.',
+        400,
+        'duplicate_species'
+      );
+    }
+    seen.add(row.formula);
+  }
 }
 
 function splitSide(side) {
@@ -127,6 +154,8 @@ export function parseEquation(raw) {
   const products = splitSide(right).map(parseSpeciesToken);
   if (!reactants.length) throw calcError('reactants are required');
   if (!products.length) throw calcError('products are required');
+  assertUniqueSide(reactants, 'reactant');
+  assertUniqueSide(products, 'product');
   const species = [...reactants.map((row) => ({ ...row, role: 'reactant' })), ...products.map((row) => ({ ...row, role: 'product' }))];
   if (species.length > REACTION_LIMITS.species) {
     throw calcError(`at most ${REACTION_LIMITS.species} species`);
@@ -253,6 +282,7 @@ export function balanceEquation(raw) {
   const coeffs = integerKernel(reduced, parsed.species.length);
   const species = parsed.species.map((row, i) => ({
     formula: row.formula,
+    formulaDisplay: formatFormulaDisplay(row.formula),
     role: row.role,
     coefficient: coeffs[i],
     counts: row.counts
