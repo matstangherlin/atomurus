@@ -58,6 +58,8 @@ assert.equal(logic.hasFeature({ isPro: true, features: { proLab: true } }, 'proL
 assert.equal(logic.annualSavePercent(24.9, 180), 40);
 assert.equal(logic.annualSavePercent(10, 60), 50);
 assert.equal(logic.estimateReviewMinutes(12), 4);
+assert.equal(logic.estimateReviewMinutes(1), 1);
+assert.equal(logic.estimateReviewMinutes(2), 1);
 assert.equal(logic.progressPercent(168), 100);
 assert.equal(logic.progressPercent(-4), 0);
 
@@ -96,6 +98,8 @@ assert.match(authApp, /ws-nav-group/);
 assert.match(authApp, /focusLandingBody/);
 assert.match(authApp, /data-insight-range/);
 assert.match(authApp, /tCount/);
+assert.match(authApp, /tCount\('reviewEstimate', 'reviewEstimateOne'/);
+assert.match(authApp, /openInsights/);
 assert.match(authApp, /reviewShort/);
 assert.match(authApp, /confirmDialog/);
 assert.doesNotMatch(authApp, /Accuracy 87/);
@@ -138,6 +142,7 @@ assert.match(css, /\.ws-body \[hidden\]/);
 assert.match(css, /\.ws-skip/);
 assert.match(css, /safe-area-inset-bottom/);
 assert.match(css, /repeat\(5, minmax\(0, 1fr\)\)/);
+assert.match(css, /\.ws-dest-card \{[\s\S]*display: flex/);
 const foundation = readFileSync(new URL('../assets/workspace-foundation.css', import.meta.url), 'utf8');
 assert.match(foundation, /\.ws-chart/);
 assert.match(foundation, /\.ws-sparkline/);

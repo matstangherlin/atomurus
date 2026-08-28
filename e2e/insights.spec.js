@@ -78,6 +78,7 @@ test('Pro Insights: 30 days, set filter, Needs attention, Focus Review, Good', a
   await expect(page.locator('#ws-activity-chart .ws-sparkline li')).toHaveCount(30);
   await expect(page.locator('#ws-weak-list')).toContainText('Periodic trend: atomic radius');
   await expect(page.locator('#ws-weak-list')).not.toContainText(/Symbol for iron/);
+  await expect(page.locator('#ws-set-insights')).toContainText(/0% complete|0% concluído/);
   await saveShot(page, 'desktop-insights-pro');
 
   await page.locator('[data-insight-range="7d"]').click();
@@ -194,6 +195,7 @@ test('Overview hierarchy: Pro due hero and Free workspace copy', async ({ page }
   await gotoWorkspace(page, '/app');
   await expect(page.locator('#app-study')).toContainText(/Ready to study|Pronto para estudar/i);
   await expect(page.locator('#app-study').getByRole('link', { name: /Start Smart Review|Começar Smart Review/i })).toBeVisible();
+  await expect(page.locator('#app-study').getByRole('link', { name: /Open Insights|Abrir Insights/i })).toBeVisible();
   await expect(page.locator('#app-study')).not.toContainText(/Nothing in progress yet|Nada em andamento/);
   await expect(page.locator('#ws-nav-main .ws-nav-group').first()).toBeVisible();
   await saveShot(page, 'desktop-overview-pro-hero');
@@ -201,6 +203,8 @@ test('Overview hierarchy: Pro due hero and Free workspace copy', async ({ page }
   await gotoWorkspace(page, '/app?section=review');
   await expect(page.locator('#app-study')).toContainText(/need the most attention|mais precisam de atenção/i);
   await expect(page.locator('#app-study')).toContainText(/Due review|Revisão vencida/);
+  await expect(page.locator('#app-study')).toContainText(/Estimated session: ~1 minute|Sessão estimada: ~1 minuto/);
+  await expect(page.locator('#app-study')).not.toContainText(/1 minutes|1 minutos/);
   await saveShot(page, 'desktop-smart-review-landing');
 
   await installApi(page, { kind: 'free' });

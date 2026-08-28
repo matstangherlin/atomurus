@@ -581,6 +581,7 @@ assert.match(app, /mode=weak/);
 assert.match(app, /renderLockedInsights/);
 assert.match(app, /data-insight-range/);
 assert.match(app, /tCount|pickCountKey/);
+assert.match(app, /tCount\('reviewEstimate', 'reviewEstimateOne'/);
 assert.match(app, /focusLandingBody/);
 assert.match(app, /ws-sparkline|is-sparkline/);
 assert.doesNotMatch(app, /Accuracy 87/);

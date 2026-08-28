@@ -200,6 +200,7 @@ const DICT = {
           focusLandingBody: 'Review the cards that need the most attention.',
           insightsOn: 'Study Insights unlocked',
           focusOn: 'Focus Review unlocked',
+          openInsights: 'Open Insights',
           publicCalc: 'Calculators'
         }
       },
@@ -2217,6 +2218,7 @@ const DICT = {
           focusLandingBody: 'Revise os cards que mais precisam de atenção.',
           insightsOn: 'Insights de Estudo liberados',
           focusOn: 'Focus Review liberado',
+          openInsights: 'Abrir Insights',
           publicCalc: 'Calculadoras'
         }
       },

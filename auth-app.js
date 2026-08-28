@@ -48,7 +48,7 @@
       deleteSet: 'Delete Study Set', deleteCardTitle: 'Delete this flashcard?', deleteCardBody: 'This cannot be undone.',
       deleteCard: 'Delete flashcard', deleteItemTitle: 'Remove saved item?', deleteItemBody: 'This removes it from your Library. Study Sets keep their own copies of generated cards.',
       remove: 'Remove',
-      reviewTitle: 'Smart Review', reviewReady: '{n} cards are ready.', reviewReadyOne: '{n} card is ready.', reviewEstimate: 'Estimated session: ~{n} minutes',
+      reviewTitle: 'Smart Review', reviewReady: '{n} cards are ready.', reviewReadyOne: '{n} card is ready.', reviewEstimate: 'Estimated session: ~{n} minutes', reviewEstimateOne: 'Estimated session: ~{n} minute',
       reviewSeconds: '~20 seconds/card', startReviewCta: 'Start review',
       showAnswer: 'Show answer', again: 'Again', hard: 'Hard', good: 'Good', easy: 'Easy',
       reviewHint: 'Space reveal · 1 Again · 2 Hard · 3 Good · 4 Easy',
@@ -159,6 +159,7 @@
       navGroupStudy: 'Study', navGroupLab: 'Lab', navGroupActivity: 'Activity',
       focusLandingBody: 'Review the cards that need the most attention.',
       insightsOn: 'Study Insights unlocked', focusOn: 'Focus Review unlocked',
+      openInsights: 'Open Insights',
       publicCalc: 'Calculators',
       addScenario: '+ Add scenario', calculateAll: 'Calculate all', saveSession: 'Save session',
       sessionTitle: 'Session title', sessionSaved: 'Lab session saved',
@@ -221,7 +222,7 @@
       deleteSet: 'Excluir Study Set', deleteCardTitle: 'Excluir este flashcard?', deleteCardBody: 'Isso não pode ser desfeito.',
       deleteCard: 'Excluir flashcard', deleteItemTitle: 'Remover item salvo?', deleteItemBody: 'Ele sai da Biblioteca. Cards já gerados nos Study Sets permanecem.',
       remove: 'Remover',
-      reviewTitle: 'Smart Review', reviewReady: '{n} cards estão prontos.', reviewReadyOne: '{n} card está pronto.', reviewEstimate: 'Sessão estimada: ~{n} minutos',
+      reviewTitle: 'Smart Review', reviewReady: '{n} cards estão prontos.', reviewReadyOne: '{n} card está pronto.', reviewEstimate: 'Sessão estimada: ~{n} minutos', reviewEstimateOne: 'Sessão estimada: ~{n} minuto',
       reviewSeconds: '~20 segundos/card', startReviewCta: 'Começar revisão',
       showAnswer: 'Mostrar resposta', again: 'De novo', hard: 'Difícil', good: 'Bom', easy: 'Fácil',
       reviewHint: 'Espaço revela · 1 De novo · 2 Difícil · 3 Bom · 4 Fácil',
@@ -332,6 +333,7 @@
       navGroupStudy: 'Estudo', navGroupLab: 'Lab', navGroupActivity: 'Atividade',
       focusLandingBody: 'Revise os cards que mais precisam de atenção.',
       insightsOn: 'Insights de Estudo liberados', focusOn: 'Focus Review liberado',
+      openInsights: 'Abrir Insights',
       publicCalc: 'Calculadoras',
       addScenario: '+ Adicionar cenário', calculateAll: 'Calcular todos', saveSession: 'Salvar sessão',
       sessionTitle: 'Título da sessão', sessionSaved: 'Sessão do Lab salva',
@@ -897,7 +899,7 @@
         }).join('') + '</div>'
       : '';
     var setsCard = '<section class="ws-dest-card"><h2 class="ws-h2">' + escapeHtml(t('sets')) + '</h2><p class="ws-lede">' + escapeHtml(t('setsLede')) + '</p><a class="ws-btn ws-btn-secondary" href="/app?section=sets">' + escapeHtml(t('openSets')) + '</a></section>';
-    var insightsCard = '<section class="ws-dest-card"><h2 class="ws-h2">' + escapeHtml(t('insights')) + '</h2><p class="ws-lede">' + escapeHtml(t('insightsLede')) + '</p><a class="ws-btn ws-btn-secondary" href="/app?section=insights">' + escapeHtml(t('insights')) + '</a></section>';
+    var insightsCard = '<section class="ws-dest-card"><h2 class="ws-h2">' + escapeHtml(t('insights')) + '</h2><p class="ws-lede">' + escapeHtml(t('insightsLede')) + '</p><a class="ws-btn ws-btn-secondary" href="/app?section=insights">' + escapeHtml(t('openInsights')) + '</a></section>';
     var labCard = '<section class="ws-dest-card"><h2 class="ws-h2">' + escapeHtml(t('proLab')) + '</h2><p class="ws-lede">' + escapeHtml(t('continueLab')) + '</p><a class="ws-btn ws-btn-secondary" href="/app?section=pro-lab">' + escapeHtml(t('openProLab')) + '</a></section>';
     var cont = (overview.continueStudying || []).slice(0, 5);
     node.innerHTML =
@@ -1413,7 +1415,8 @@
     var pct = mastered == null ? 0 : mastered;
     return '<section class="ws-set-progress" title="' + escapeHtml(t('masteredTip')) + '">' +
       '<h2 class="ws-h2">' + escapeHtml(t('setProgress')) + '</h2>' +
-      '<div class="ws-progress" role="progressbar" aria-valuenow="' + pct + '" aria-valuemin="0" aria-valuemax="100" aria-label="' + escapeHtml(t('setProgress')) + '"><span style="width:' + pct + '%"></span></div>' +
+      '<div class="ws-progress-label">' + escapeHtml(t('complete', '', { n: pct })) + '</div>' +
+      '<div class="ws-progress' + (pct ? '' : ' is-empty') + '" role="progressbar" aria-valuenow="' + pct + '" aria-valuemin="0" aria-valuemax="100" aria-label="' + escapeHtml(t('setProgress')) + '"><span style="width:' + pct + '%"></span></div>' +
       '<div class="ws-item-meta">' + escapeHtml(t('mastered')) + ' ' + escapeHtml(String(set.masteredCount || 0)) +
       ' · ' + escapeHtml(t('learningCount', '', { n: set.learningCount || 0 })) +
       ' · ' + escapeHtml(t('newCount', '', { n: set.newCount || 0 })) + '</div></section>';
@@ -1744,7 +1747,8 @@
     var setStats = sets.map(function (set) {
       var pct = set.masteredPercent == null ? 0 : set.masteredPercent;
       return '<article class="ws-set-card"><h3 class="ws-item-title"></h3>' +
-        '<div class="ws-progress" title="' + escapeHtml(t('masteredTip')) + '" role="progressbar" aria-valuenow="' + pct + '" aria-valuemin="0" aria-valuemax="100"><span style="width:' + pct + '%"></span></div>' +
+        '<div class="ws-progress-label">' + escapeHtml(t('complete', '', { n: pct })) + '</div>' +
+        '<div class="ws-progress' + (pct ? '' : ' is-empty') + '" title="' + escapeHtml(t('masteredTip')) + '" role="progressbar" aria-valuenow="' + pct + '" aria-valuemin="0" aria-valuemax="100"><span style="width:' + pct + '%"></span></div>' +
         '<div class="ws-item-meta">' + escapeHtml(tCount('cardsCount', 'cardsCountOne', set.totalCards || 0)) + ' · ' +
         escapeHtml(t('mastered')) + ' ' + escapeHtml(String(set.mastered || 0)) + ' · ' +
         escapeHtml(t('needsAttention')) + ' ' + escapeHtml(String(set.needsAttention || 0)) + '</div></article>';
@@ -1845,7 +1849,7 @@
       '<section class="ws-hero is-ready"><div><h2 class="ws-hero-title">' + escapeHtml(t('dueReview')) + '</h2>' +
       '<p class="ws-hero-copy">' + escapeHtml(due ? tCount('reviewReady', 'reviewReadyOne', due) : t('emptyReviewTitle')) + '</p>' +
       (due
-        ? '<p class="ws-hero-copy">' + escapeHtml(t('reviewEstimate', '', { n: minutes })) + ' · ' + escapeHtml(t('reviewSeconds')) + '</p>' +
+        ? '<p class="ws-hero-copy">' + escapeHtml(tCount('reviewEstimate', 'reviewEstimateOne', minutes)) + ' · ' + escapeHtml(t('reviewSeconds')) + '</p>' +
           '<a class="ws-btn ws-btn-primary" href="' + escapeHtml(dueHref) + '">' + escapeHtml(t('startReviewCta')) + '</a>'
         : '<p class="ws-hero-copy">' + escapeHtml(t('emptyReviewBody')) + '</p><a class="ws-btn" href="/app?section=sets">' + escapeHtml(t('openSets')) + '</a>') +
       '</div></section>' +
