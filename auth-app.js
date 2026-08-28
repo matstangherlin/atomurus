@@ -177,7 +177,62 @@
       density: 'Density', atomicRadius: 'Atomic radius', ionizationEnergy: 'Ionization energy',
       molecule: 'Molecule', selectMolecule: 'Select molecule', highlightElement: 'Highlight element',
       addBothToSet: 'Add both to Study Set',
-      noBondMeasure: '3D models are for visualization. Bond lengths and angles are not measured as experimental values.'
+      noBondMeasure: '3D models are for visualization. Bond lengths and angles are not measured as experimental values.',
+      chemistrySolver: 'Chemistry Solver',
+      chemistrySolverKicker: 'Chemistry Solver',
+      chemistrySolverLede: 'Balance reactions and solve stoichiometry.',
+      solveReaction: 'Solve a reaction',
+      labReactions: 'Reaction Workbench',
+      labReactionsLede: 'Balance a chemical equation and solve stoichiometric quantities from the same reaction.',
+      labReactionsPoints: 'Balance equations. Find limiting reagents. Calculate theoretical yield. Solve stoichiometry step by step.',
+      labFormula: 'Formula Solver',
+      labFormulaLede: 'Find empirical and molecular formulas from composition.',
+      labSolutions: 'Solution Builder',
+      labSolutionsLede: 'Prepare solutions from a solid solute and mix solutions of the same solute.',
+      labAnalysis: 'Analysis',
+      equationLabel: 'Chemical equation',
+      balanceEquation: 'Balance equation',
+      continueStoich: 'Continue with stoichiometry',
+      solveStoich: 'Solve stoichiometry',
+      givenQuantities: 'Given quantities',
+      targetSpecies: 'Target product',
+      actualYield: 'Actual yield',
+      optional: 'optional',
+      limitingReagent: 'Limiting reagent',
+      reactionExtent: 'Reaction extent',
+      theoreticalYield: 'Theoretical yield',
+      percentYield: 'Percent yield',
+      excessRemaining: 'remaining',
+      showCalculation: 'Show calculation',
+      hideCalculation: 'Hide calculation',
+      copy: 'Copy',
+      copied: 'Copied',
+      empiricalFormula: 'Empirical formula',
+      molecularFormula: 'Molecular formula',
+      composition: 'Composition',
+      addElementRow: 'Add element',
+      solveFormula: 'Solve formula',
+      prepareFromSolid: 'Prepare from solid',
+      mixSolutions: 'Mix solutions',
+      soluteFormula: 'Solute formula',
+      targetConcentration: 'Target concentration',
+      finalVolume: 'Final volume',
+      requiredAmount: 'Required amount',
+      additiveVolumes: 'Calculation assumes additive solution volumes.',
+      calcOnly: 'Calculation only. Follow appropriate laboratory procedures and safety information for the substances involved.',
+      solverTrust: 'The solver works from the equation you entered. It does not predict products, mechanisms or experimental conditions.',
+      bothSides: 'Enter reactants and products. Atomurus balances the equation you provide.',
+      qtyKind: 'Quantity type',
+      kindMass: 'Mass',
+      kindAmount: 'Amount',
+      kindGas: 'Gas',
+      kindSolution: 'Solution',
+      pressure: 'Pressure',
+      temperature: 'Temperature',
+      volume: 'Volume',
+      concentration: 'Concentration',
+      unitLabel: 'Unit',
+      freeSolverPreview: 'Balance reactions, solve stoichiometry and build solutions.'
     },
     pt: {
       overview: 'Visão geral', library: 'Biblioteca', sets: 'Study Sets', review: 'Smart Review',
@@ -351,7 +406,62 @@
       density: 'Densidade', atomicRadius: 'Raio atômico', ionizationEnergy: 'Energia de ionização',
       molecule: 'Molécula', selectMolecule: 'Selecionar molécula', highlightElement: 'Destacar elemento',
       addBothToSet: 'Adicionar as duas ao Study Set',
-      noBondMeasure: 'Os modelos 3D são para visualização. Comprimentos e ângulos de ligação não são medidos como valores experimentais.'
+      noBondMeasure: 'Os modelos 3D são para visualização. Comprimentos e ângulos de ligação não são medidos como valores experimentais.',
+      chemistrySolver: 'Chemistry Solver',
+      chemistrySolverKicker: 'Chemistry Solver',
+      chemistrySolverLede: 'Balanceie reações e resolva a estequiometria.',
+      solveReaction: 'Resolver uma reação',
+      labReactions: 'Laboratório de Reações',
+      labReactionsLede: 'Balanceie uma equação química e resolva quantidades estequiométricas na mesma reação.',
+      labReactionsPoints: 'Balanceie equações. Encontre o reagente limitante. Calcule o rendimento teórico. Resolva a estequiometria passo a passo.',
+      labFormula: 'Formula Solver',
+      labFormulaLede: 'Encontre fórmulas empíricas e moleculares a partir da composição.',
+      labSolutions: 'Preparação de Soluções',
+      labSolutionsLede: 'Prepare soluções a partir de um soluto sólido e misture soluções do mesmo soluto.',
+      labAnalysis: 'Análise',
+      equationLabel: 'Equação química',
+      balanceEquation: 'Balancear equação',
+      continueStoich: 'Continuar com a estequiometria',
+      solveStoich: 'Resolver estequiometria',
+      givenQuantities: 'Quantidades dadas',
+      targetSpecies: 'Produto-alvo',
+      actualYield: 'Rendimento experimental',
+      optional: 'opcional',
+      limitingReagent: 'Reagente limitante',
+      reactionExtent: 'Extensão da reação',
+      theoreticalYield: 'Rendimento teórico',
+      percentYield: 'Rendimento percentual',
+      excessRemaining: 'restante',
+      showCalculation: 'Mostrar cálculo',
+      hideCalculation: 'Ocultar cálculo',
+      copy: 'Copiar',
+      copied: 'Copiado',
+      empiricalFormula: 'Fórmula empírica',
+      molecularFormula: 'Fórmula molecular',
+      composition: 'Composição',
+      addElementRow: 'Adicionar elemento',
+      solveFormula: 'Resolver fórmula',
+      prepareFromSolid: 'Preparar a partir do sólido',
+      mixSolutions: 'Misturar soluções',
+      soluteFormula: 'Fórmula do soluto',
+      targetConcentration: 'Concentração-alvo',
+      finalVolume: 'Volume final',
+      requiredAmount: 'Quantidade necessária',
+      additiveVolumes: 'O cálculo assume volumes de solução aditivos.',
+      calcOnly: 'Somente cálculo. Siga os procedimentos de laboratório e as informações de segurança adequados para as substâncias envolvidas.',
+      solverTrust: 'O solver trabalha apenas com a equação que você informou. Ele não prevê produtos, mecanismos nem condições experimentais.',
+      bothSides: 'Informe reagentes e produtos. O Atomurus balanceia a equação que você fornece.',
+      qtyKind: 'Tipo de quantidade',
+      kindMass: 'Massa',
+      kindAmount: 'Quantidade',
+      kindGas: 'Gás',
+      kindSolution: 'Solução',
+      pressure: 'Pressão',
+      temperature: 'Temperatura',
+      volume: 'Volume',
+      concentration: 'Concentração',
+      unitLabel: 'Unidade',
+      freeSolverPreview: 'Balanceie reações, resolva a estequiometria e prepare soluções.'
     }
   };
 
@@ -901,6 +1011,7 @@
     var setsCard = '<section class="ws-dest-card"><h2 class="ws-h2">' + escapeHtml(t('sets')) + '</h2><p class="ws-lede">' + escapeHtml(t('setsLede')) + '</p><a class="ws-btn ws-btn-secondary" href="/app?section=sets">' + escapeHtml(t('openSets')) + '</a></section>';
     var insightsCard = '<section class="ws-dest-card"><h2 class="ws-h2">' + escapeHtml(t('insights')) + '</h2><p class="ws-lede">' + escapeHtml(t('insightsLede')) + '</p><a class="ws-btn ws-btn-secondary" href="/app?section=insights">' + escapeHtml(t('openInsights')) + '</a></section>';
     var labCard = '<section class="ws-dest-card"><h2 class="ws-h2">' + escapeHtml(t('proLab')) + '</h2><p class="ws-lede">' + escapeHtml(t('continueLab')) + '</p><a class="ws-btn ws-btn-secondary" href="/app?section=pro-lab">' + escapeHtml(t('openProLab')) + '</a></section>';
+    var solverCard = '<section class="ws-dest-card" data-dest="solver"><h2 class="ws-h2">' + escapeHtml(t('chemistrySolver')) + '</h2><p class="ws-lede">' + escapeHtml(t('chemistrySolverLede')) + '</p><a class="ws-btn ws-btn-secondary" href="/app?section=pro-lab&tool=reactions">' + escapeHtml(t('solveReaction')) + '</a></section>';
     var cont = (overview.continueStudying || []).slice(0, 5);
     node.innerHTML =
       '<p class="ws-kicker">Atomurus</p><h1 class="ws-title">' + escapeHtml(greet) + '</h1><p class="ws-lede">' + escapeHtml(t('greetingFallback')) + '</p>' +
@@ -908,7 +1019,7 @@
       (cont.length
         ? '<h2 class="ws-h2">' + escapeHtml(t('continueTitle')) + '</h2><div class="ws-grid">' + cont.map(continueCard).join('') + '</div>'
         : '') +
-      '<div class="ws-dest-grid">' + setsCard + insightsCard + labCard + '</div>';
+      '<div class="ws-dest-grid">' + setsCard + insightsCard + labCard + solverCard + '</div>';
   }
 
   function libraryRow(item) {
@@ -2073,6 +2184,7 @@
       '<p class="ws-hero-copy">' + escapeHtml(t('publicLabRemainsFree')) + '</p>' +
       '<p class="ws-hero-copy">' + escapeHtml(t('upgradeFor')) + ' ' + escapeHtml(t('upgradeForList')) + '</p>' +
       '<a class="ws-btn ws-btn-primary" href="/pricing">' + escapeHtml(t('explorePro')) + '</a></div></section>' +
+      '<section class="ws-solver-shortcut is-locked"><span class="ws-lab-badge">' + escapeHtml(t('pro')) + '</span><h2 class="ws-h2">' + escapeHtml(t('chemistrySolver')) + '</h2><p class="ws-lede">' + escapeHtml(t('freeSolverPreview')) + '</p><a class="ws-btn ws-btn-secondary" href="/pricing">' + escapeHtml(t('explorePro')) + '</a></section>' +
       '<div class="ws-grid ws-grid-3">' +
       '<a class="ws-lab-card" href="/periodic-table.html"><h3 class="ws-lab-card-title">' + escapeHtml(t('openTable')) + '</h3></a>' +
       '<a class="ws-lab-card" href="/calculators.html"><h3 class="ws-lab-card-title">' + escapeHtml(t('publicCalc')) + '</h3></a>' +

@@ -210,7 +210,7 @@ test('mobile 390x844: bottom nav, drawer, no horizontal overflow', async ({ page
   await expect(page.locator('#app-study')).toContainText(/1 card is due today|1 card vence hoje/);
   await expect(page.locator('#app-study')).not.toContainText(/1 cards are due|1 cards vencem/);
   const destCards = page.locator('.ws-dest-card');
-  await expect(destCards).toHaveCount(3);
+  await expect(destCards).toHaveCount(4);
   const destLayout = await destCards.evaluateAll((els) => els.map((el) => {
     const box = el.getBoundingClientRect();
     return { left: box.left, top: box.top, right: box.right, bottom: box.bottom };

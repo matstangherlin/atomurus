@@ -34,7 +34,15 @@ function features(on) {
     advancedElementCompare: on,
     advancedMoleculeCompare: on,
     advancedAtomicCompare: on,
-    savedLabSessions: on
+    savedLabSessions: on,
+    chemistrySolver: on,
+    reactionWorkbench: on,
+    reactionBalancer: on,
+    stoichiometrySolver: on,
+    limitingReagentSolver: on,
+    yieldSolver: on,
+    formulaSolver: on,
+    solutionBuilder: on
   };
 }
 
@@ -632,6 +640,45 @@ async function installApi(page, options = {}) {
       };
       const numbers = (body.atomicNumbers || [11, 17]).map(Number);
       return json(route, 200, { ok: true, elements: numbers.map((z) => catalog[z] || catalog[11]) });
+    }
+    if (path === '/api/pro-lab/reaction/balance' && method === 'POST') {
+      const body = req.postDataJSON() || {};
+      try {
+        const { balanceEquation } = await import('../netlify/lib/chemistry-reactions.mjs');
+        return json(route, 200, balanceEquation(body.equation));
+      } catch (err) {
+        return json(route, err.status || 400, { ok: false, error: err.message, code: err.code || 'invalid_request' });
+      }
+    }
+    if (path === '/api/pro-lab/reaction/solve' && method === 'POST') {
+      const body = req.postDataJSON() || {};
+      if (body.clientMolarMass != null || body.clientCoefficient != null || body.clientLimitingReagent != null) {
+        return json(route, 400, { ok: false, code: 'invalid_request', error: 'Client-supplied solver results are not accepted.' });
+      }
+      try {
+        const { solveStoichiometry } = await import('../netlify/lib/chemistry-stoichiometry.mjs');
+        return json(route, 200, solveStoichiometry(body));
+      } catch (err) {
+        return json(route, err.status || 400, { ok: false, error: err.message, code: err.code || 'invalid_request' });
+      }
+    }
+    if (path === '/api/pro-lab/formula/solve' && method === 'POST') {
+      const body = req.postDataJSON() || {};
+      try {
+        const { solveFormula } = await import('../netlify/lib/chemistry-formula-solver.mjs');
+        return json(route, 200, solveFormula(body));
+      } catch (err) {
+        return json(route, err.status || 400, { ok: false, error: err.message, code: err.code || 'invalid_request' });
+      }
+    }
+    if (path === '/api/pro-lab/solutions/solve' && method === 'POST') {
+      const body = req.postDataJSON() || {};
+      try {
+        const { solveSolution } = await import('../netlify/lib/chemistry-solutions.mjs');
+        return json(route, 200, solveSolution(body));
+      } catch (err) {
+        return json(route, err.status || 400, { ok: false, error: err.message, code: err.code || 'invalid_request' });
+      }
     }
 
     return json(route, 404, { ok: false, error: 'not mocked', path });

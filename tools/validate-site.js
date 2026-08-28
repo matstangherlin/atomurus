@@ -220,7 +220,14 @@ function assertStudyCloud() {
     'supabase/migrations/005_study_cloud.sql',
     'supabase/migrations/008_study_sets_smart_review.sql',
     'supabase/migrations/009_pro_lab_sessions.sql',
+    'supabase/migrations/010_chemistry_solver_sessions.sql',
     'netlify/lib/chemistry-calc.mjs',
+    'netlify/lib/chemistry-units.mjs',
+    'netlify/lib/chemistry-formula-strict.mjs',
+    'netlify/lib/chemistry-reactions.mjs',
+    'netlify/lib/chemistry-stoichiometry.mjs',
+    'netlify/lib/chemistry-formula-solver.mjs',
+    'netlify/lib/chemistry-solutions.mjs',
     'netlify/lib/canonical-elements.mjs',
     'netlify/lib/canonical-molecules.mjs',
     'netlify/lib/pro-lab.mjs',
@@ -230,14 +237,21 @@ function assertStudyCloud() {
     'netlify/functions/pro-lab-elements-compare.mjs',
     'netlify/functions/pro-lab-molecules-compare.mjs',
     'netlify/functions/pro-lab-atomic-compare.mjs',
+    'netlify/functions/pro-lab-reaction-balance.mjs',
+    'netlify/functions/pro-lab-reaction-solve.mjs',
+    'netlify/functions/pro-lab-formula-solve.mjs',
+    'netlify/functions/pro-lab-solutions-solve.mjs',
     'pro-lab.js',
+    'pro-lab-reactions.js',
+    'pro-lab-formula.js',
+    'pro-lab-solutions.js',
     'assets/workspace-foundation.css'
   ];
   files.forEach((rel) => {
     if (!fs.existsSync(path.join(ROOT, rel))) fail(`${rel} is missing`);
   });
   const netlify = read('netlify.toml');
-  ['/api/study/overview', '/api/study/items', '/api/study/item', '/api/study/calculator-history', '/api/study/progress', '/api/study/sets', '/api/study/review/queue', '/api/study/insights', '/api/study/cards/generate', '/api/pro-lab/sessions', '/api/pro-lab/calculate', '/api/pro-lab/elements/compare'].forEach((route) => {
+  ['/api/study/overview', '/api/study/items', '/api/study/item', '/api/study/calculator-history', '/api/study/progress', '/api/study/sets', '/api/study/review/queue', '/api/study/insights', '/api/study/cards/generate', '/api/pro-lab/sessions', '/api/pro-lab/calculate', '/api/pro-lab/elements/compare', '/api/pro-lab/reaction/balance', '/api/pro-lab/reaction/solve', '/api/pro-lab/formula/solve', '/api/pro-lab/solutions/solve'].forEach((route) => {
     if (!netlify.includes(route)) fail(`netlify.toml missing ${route}`);
   });
   const client = read('study-client.js');
@@ -248,6 +262,16 @@ function assertStudyCloud() {
   if (/(?:^|[^/\w])eval\s*\(/.test(calc) || /new Function\s*\(/.test(calc)) {
     fail('chemistry-calc.mjs must not use eval or new Function');
   }
+  ['chemistry-reactions.mjs', 'chemistry-stoichiometry.mjs', 'chemistry-formula-solver.mjs', 'chemistry-solutions.mjs'].forEach((name) => {
+    const src = read('netlify/lib/' + name);
+    if (/(?:^|[^/\w])eval\s*\(/.test(src) || /new Function\s*\(/.test(src)) {
+      fail(`${name} must not use eval or new Function`);
+    }
+  });
+  ['calculators.html', 'periodic-table.html', 'explore.html'].forEach((rel) => {
+    const html = read(rel);
+    if (html.includes('requireFeature')) fail(`${rel} must not call requireFeature`);
+  });
   const heatmap = read('periodic-table/heatmap.html');
   if ((heatmap.match(/id="cmp-slot-/g) || []).length !== 2) {
     fail('Free element compare must keep exactly two slots');

@@ -67,6 +67,13 @@ export default async function handler(request) {
       state: features.proLab ? 'available' : 'locked'
     },
     {
+      id: 'chemistry-solver',
+      label: 'Chemistry Solver',
+      description: 'Balance reactions, solve stoichiometry and build solutions.',
+      href: features.reactionWorkbench ? '/app?section=pro-lab&tool=reactions' : '/pricing',
+      state: features.reactionWorkbench ? 'available' : 'locked'
+    },
+    {
       id: 'calculator-history',
       label: 'Calculator History',
       description: 'Keep validated calculator runs and reopen them later.',

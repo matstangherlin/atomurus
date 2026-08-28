@@ -65,6 +65,18 @@
     },
     compareAtomic: function (body) {
       return request('/api/pro-lab/atomic/compare', { method: 'POST', body: JSON.stringify(body || {}) });
+    },
+    balanceReaction: function (body) {
+      return request('/api/pro-lab/reaction/balance', { method: 'POST', body: JSON.stringify(body || {}) });
+    },
+    solveReaction: function (body) {
+      return request('/api/pro-lab/reaction/solve', { method: 'POST', body: JSON.stringify(body || {}) });
+    },
+    solveFormula: function (body) {
+      return request('/api/pro-lab/formula/solve', { method: 'POST', body: JSON.stringify(body || {}) });
+    },
+    solveSolution: function (body) {
+      return request('/api/pro-lab/solutions/solve', { method: 'POST', body: JSON.stringify(body || {}) });
     }
   };
 })();

@@ -1860,3 +1860,35 @@ html body .lc-form label {
   font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif) !important;
   letter-spacing: .08em !important;
 }
+
+.solver-discover {
+  margin: 12px 0 20px;
+  padding: 12px 14px;
+  border: 1px solid color-mix(in oklab, var(--lc-green, #1E6A50) 35%, var(--lc-rule, #D8D2BF));
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--lc-paper, #F8F5EC) 88%, transparent);
+  max-width: 42rem;
+}
+.solver-discover-badge {
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--lc-green, #1E6A50);
+}
+.solver-discover p { margin: 6px 0 10px; color: var(--lc-ink-2, #58544A); font-size: 14px; }
+.solver-discover-cta {
+  font: inherit;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 6px;
+  padding: 8px 12px;
+  background: var(--lc-green, #1E6A50);
+  color: #fff;
+}
+.pt-solver-cta {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--lc-ink-3, #6b675c);
+}
+.pt-solver-cta a { color: var(--lc-green, #1E6A50); text-decoration: none; }

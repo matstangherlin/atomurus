@@ -6,14 +6,14 @@
 
   var COPY = {
     en: {
-      title: 'Study chemistry. Remember more.',
-      desc: 'Atomurus Pro turns the public chemistry lab into your personal study system with Study Library, flashcards and Smart Review.',
+      title: 'From periodic table to complete chemistry problems.',
+      desc: 'Atomurus Pro adds reaction solving, stoichiometry, advanced analysis and a complete study system.',
       currencyNote: 'Prices follow country and language. New accounts start with 30 days of Pro. No card is required to begin the trial.',
       statusGuest: 'public lab · free access',
       freeTag: 'Free forever',
       freeName: 'Atomurus Free',
-      freeSub: 'Explore chemistry',
-      freeGroup: 'Free lab',
+      freeSub: 'Explore and calculate chemistry.',
+      freeGroup: 'FREE CHEMISTRY LAB',
       freeFeatures: [
         'Periodic Table',
         'Element pages',
@@ -26,10 +26,10 @@
       freeCta: 'Open lab',
       popular: 'Most popular',
       proTag: 'Atomurus Pro',
-      proName: 'Build your study system',
-      proSub: 'Everything in Free, plus a personal study system',
-      proStudyGroup: 'Pro Study',
-      proLabGroup: 'Pro Lab',
+      proName: 'Solve, analyze and study chemistry.',
+      proSub: 'Everything in Free, plus problem solving and a personal study system',
+      proStudyGroup: 'PRO STUDY SYSTEM',
+      proLabGroup: 'PRO CHEMISTRY SOLVER',
       proFeatures: [
         'Everything in Free',
         'No ads',
@@ -51,7 +51,7 @@
       ],
       proGroups: [
         {
-          title: 'Pro Study',
+          title: 'PRO STUDY SYSTEM',
           items: [
             'Everything in Free',
             'No ads',
@@ -63,17 +63,23 @@
             'Spaced repetition',
             'Study Insights',
             'Focus Review',
-            'Study progress'
+            'Study progress',
+            'Advanced analysis',
+            'Element, molecule and atomic compare',
+            'Saved Lab Sessions'
           ]
         },
         {
-          title: 'Pro Lab',
+          title: 'PRO CHEMISTRY SOLVER',
           items: [
-            'Advanced calculations',
-            'Multi-element analysis',
-            'Molecule comparison',
-            'Atomic comparison',
-            'Saved Lab Sessions'
+            'Reaction balancing',
+            'Stoichiometry',
+            'Limiting reagent',
+            'Theoretical & percent yield',
+            'Empirical formula solver',
+            'Molecular formula solver',
+            'Solution preparation',
+            'Saved solver sessions'
           ]
         }
       ],
@@ -103,6 +109,8 @@
         ['Focus Review', 'no', 'yes'],
         ['Spaced repetition', 'no', 'yes'],
         ['Pro Lab', 'no', 'yes'],
+        ['Chemistry Solver', 'no', 'yes'],
+        ['Reaction Workbench', 'no', 'yes'],
         ['Saved Lab sessions', 'no', 'yes'],
         ['Ads', 'ads', 'noads']
       ],
@@ -141,14 +149,14 @@
       freeZeroUSD: '$0'
     },
     pt: {
-      title: 'Estude química. Lembre por mais tempo.',
-      desc: 'O Atomurus Pro transforma o laboratório público em um sistema pessoal de estudos com biblioteca, flashcards e revisão inteligente.',
+      title: 'Da tabela periódica à resolução completa de problemas de química.',
+      desc: 'O Atomurus Pro adiciona resolução de reações, estequiometria, análise avançada e um sistema completo de estudos.',
       currencyNote: 'Os preços seguem país e idioma. Contas novas começam com 30 dias de Pro. Não é preciso cartão para iniciar o trial.',
       statusGuest: 'lab público · acesso gratuito',
       freeTag: 'Grátis para sempre',
       freeName: 'Atomurus Free',
-      freeSub: 'Explore química',
-      freeGroup: 'Lab gratuito',
+      freeSub: 'Explore e calcule química.',
+      freeGroup: 'FREE CHEMISTRY LAB',
       freeFeatures: [
         'Tabela periódica',
         'Páginas dos elementos',
@@ -161,10 +169,10 @@
       freeCta: 'Abrir lab',
       popular: 'Mais popular',
       proTag: 'Atomurus Pro',
-      proName: 'Monte seu sistema de estudos',
-      proSub: 'Tudo do Free, mais um sistema pessoal de estudos',
-      proStudyGroup: 'Pro Study',
-      proLabGroup: 'Pro Lab',
+      proName: 'Resolva, analise e estude química.',
+      proSub: 'Tudo do Free, mais resolução de problemas e um sistema pessoal de estudos',
+      proStudyGroup: 'PRO STUDY SYSTEM',
+      proLabGroup: 'PRO CHEMISTRY SOLVER',
       proFeatures: [
         'Tudo do Free',
         'Sem anúncios',
@@ -186,7 +194,7 @@
       ],
       proGroups: [
         {
-          title: 'Pro Study',
+          title: 'PRO STUDY SYSTEM',
           items: [
             'Tudo do Free',
             'Sem anúncios',
@@ -198,17 +206,23 @@
             'Repetição espaçada',
             'Insights de Estudo',
             'Focus Review',
-            'Progresso de estudo'
+            'Progresso de estudo',
+            'Análise avançada',
+            'Comparação de elementos, moléculas e átomos',
+            'Sessões salvas do Lab'
           ]
         },
         {
-          title: 'Pro Lab',
+          title: 'PRO CHEMISTRY SOLVER',
           items: [
-            'Cálculos avançados',
-            'Análise de vários elementos',
-            'Comparação de moléculas',
-            'Comparação atômica',
-            'Sessões salvas do Lab'
+            'Balanceamento de reações',
+            'Estequiometria',
+            'Reagente limitante',
+            'Rendimento teórico e percentual',
+            'Solver de fórmula empírica',
+            'Solver de fórmula molecular',
+            'Preparação de soluções',
+            'Sessões salvas do solver'
           ]
         }
       ],
@@ -238,6 +252,8 @@
         ['Focus Review', 'no', 'yes'],
         ['Repetição espaçada', 'no', 'yes'],
         ['Pro Lab', 'no', 'yes'],
+        ['Chemistry Solver', 'no', 'yes'],
+        ['Laboratório de Reações', 'no', 'yes'],
         ['Sessões salvas do Lab', 'no', 'yes'],
         ['Anúncios', 'ads', 'noads']
       ],

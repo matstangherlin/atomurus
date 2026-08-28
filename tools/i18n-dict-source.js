@@ -201,7 +201,12 @@ const DICT = {
           insightsOn: 'Study Insights unlocked',
           focusOn: 'Focus Review unlocked',
           openInsights: 'Open Insights',
-          publicCalc: 'Calculators'
+          publicCalc: 'Calculators',
+          chemistrySolver: 'Chemistry Solver',
+          labReactions: 'Reaction Workbench',
+          labFormula: 'Formula Solver',
+          labSolutions: 'Solution Builder',
+          solveReaction: 'Solve a reaction'
         }
       },
       pricing: {
@@ -1324,6 +1329,8 @@ const DICT = {
         kicker:    'calculators',
         title:     'Calculators',
         desc:      'A compact chemical computation suite for formula mass, scientific expressions, gas laws, dilutions and acid-base diagnostics. Pick an instrument, load a preset, inspect the formula and copy a clean result.',
+        solverDiscover: 'Need to solve a full reaction? Balance equations, calculate limiting reagents and solve stoichiometry.',
+        solverDiscoverCta: 'Open Reaction Workbench',
         menuQueued:      'Queued',
         menuCore:        'Core calculators',
         menuChemistry:   'Chemistry calculators',
@@ -1582,6 +1589,7 @@ const DICT = {
         pageKicker: 'periodic table',
         pageTitle:  'Dynamic Periodic Table',
         pageDesc:   'The fundamental map of matter. Select an element to view its properties, discovery and atomic structure.',
+        solverCta:  'Use element data in Chemistry Solver',
         // Sub-page headers (heatmap/trends/compare/isotopes)
         subKickerHeatmap:  'Visualization',
         subTitleHeatmap:   'Periodic Heatmap',
@@ -2219,7 +2227,12 @@ const DICT = {
           insightsOn: 'Insights de Estudo liberados',
           focusOn: 'Focus Review liberado',
           openInsights: 'Abrir Insights',
-          publicCalc: 'Calculadoras'
+          publicCalc: 'Calculadoras',
+          chemistrySolver: 'Chemistry Solver',
+          labReactions: 'Laboratório de Reações',
+          labFormula: 'Formula Solver',
+          labSolutions: 'Preparação de Soluções',
+          solveReaction: 'Resolver uma reação'
         }
       },
       pricing: {
@@ -3323,6 +3336,8 @@ const DICT = {
         kicker:    'calculadoras',
         title:     'Calculadoras',
         desc:      'Uma suíte compacta de computação química para massa de fórmula, expressões científicas, leis dos gases, diluições e diagnósticos ácido-base. Escolha um instrumento, carregue um preset, confira a fórmula e copie um resultado limpo.',
+        solverDiscover: 'Precisa resolver uma reação completa? Balanceie equações, calcule o reagente limitante e resolva a estequiometria.',
+        solverDiscoverCta: 'Abrir Laboratório de Reações',
         menuQueued:      'Na fila',
         menuCore:        'Calculadoras base',
         menuChemistry:   'Calculadoras de química',
@@ -3570,6 +3585,7 @@ const DICT = {
         pageKicker: 'tabela periódica',
         pageTitle:  'Tabela Periódica Dinâmica',
         pageDesc:   'O mapa fundamental da matéria. Selecione um elemento para ver suas propriedades, descoberta e estrutura atômica.',
+        solverCta:  'Usar dados do elemento no Chemistry Solver',
         subKickerHeatmap:  'Visualização',
         subTitleHeatmap:   'Heatmap Periódico',
         subDescHeatmap:    'Mapa de calor interativo da tabela periódica: visualize eletronegatividade, raio atômico, energia de ionização e outras propriedades dos 118 elementos.',

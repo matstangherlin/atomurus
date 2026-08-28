@@ -30,6 +30,9 @@ assert.equal(logic.hasFeature({ isPro: true, features: { studyInsights: true } }
 assert.equal(logic.normalizeSection('pro-lab'), 'pro-lab');
 assert.equal(logic.labToolFromQuery('?tool=calculations'), 'calculations');
 assert.equal(logic.labHref('elements'), '/app?section=pro-lab&tool=elements');
+assert.equal(logic.labHref('reactions'), '/app?section=pro-lab&tool=reactions');
+assert.equal(logic.labToolFromQuery('?tool=formula'), 'formula');
+assert.equal(logic.labToolFromQuery('?tool=solutions'), 'solutions');
 assert.ok(!logic.SECTIONS.includes('billing'));
 
 assert.equal(logic.isValidSetId('not-a-uuid'), false);
@@ -102,6 +105,16 @@ assert.match(authApp, /tCount\('reviewEstimate', 'reviewEstimateOne'/);
 assert.match(authApp, /openInsights/);
 assert.match(authApp, /reviewShort/);
 assert.match(authApp, /confirmDialog/);
+assert.match(authApp, /chemistrySolver/);
+assert.match(authApp, /labReactions/);
+assert.match(authApp, /tool=reactions/);
+const proLab = readFileSync(new URL('../pro-lab.js', import.meta.url), 'utf8');
+assert.match(proLab, /chemistrySolverKicker/);
+assert.match(proLab, /reactionWorkbench/);
+assert.doesNotMatch(proLab, /🔒/);
+const calcs = readFileSync(new URL('../calculators.html', import.meta.url), 'utf8');
+assert.match(calcs, /solver-discover/);
+assert.match(calcs, /tool=reactions/);
 assert.doesNotMatch(authApp, /Accuracy 87/);
 assert.doesNotMatch(authApp, /Knowledge score|Chemistry level/);
 assert.doesNotMatch(authApp, /🔥/);
@@ -164,6 +177,10 @@ assert.match(appHtml, /pro-lab\.js/);
 assert.match(appHtml, /id="app-study"/);
 
 const pricing = readFileSync(new URL('../pricing-page.js', import.meta.url), 'utf8');
+assert.match(pricing, /PRO CHEMISTRY SOLVER/);
+assert.match(pricing, /Reaction balancing/);
+assert.match(pricing, /Limiting reagent/);
+assert.match(pricing, /From periodic table to complete chemistry problems/);
 assert.doesNotMatch(pricing, /AI tutor|AI powered|AI study/i);
 assert.doesNotMatch(pricing, /alert\s*\(/);
 assert.match(pricing, /annualSavePercent/);
@@ -183,6 +200,7 @@ const dashboard = readFileSync(new URL('../netlify/functions/private-dashboard.m
 assert.match(dashboard, /Chemistry Lab/);
 assert.match(dashboard, /Study Insights/);
 assert.match(dashboard, /id: 'pro-lab'/);
+assert.match(dashboard, /id: 'chemistry-solver'/);
 assert.doesNotMatch(dashboard, /Study workspace/);
 assert.match(dashboard, /state: 'coming'/);
 assert.doesNotMatch(dashboard, /AI tutor/);

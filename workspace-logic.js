@@ -7,7 +7,7 @@
   'use strict';
 
   var SECTIONS = ['overview', 'library', 'sets', 'review', 'insights', 'pro-lab', 'history', 'notes', 'progress', 'account'];
-  var LAB_TOOLS = ['home', 'calculations', 'elements', 'molecules', 'atomic', 'sessions'];
+  var LAB_TOOLS = ['home', 'reactions', 'formula', 'solutions', 'calculations', 'elements', 'molecules', 'atomic', 'sessions'];
   var UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   var MS_DAY = 24 * 60 * 60 * 1000;
   var REVIEW_SECONDS_PER_CARD = 20;

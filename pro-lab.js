@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var SCRIPT_V = '202608282000';
+  var SCRIPT_V = '202608282800';
   var loaded = {};
 
   function loadScript(src) {
@@ -64,7 +64,7 @@
 
   function card(href, title, lede, locked, t, escapeHtml, tool) {
     var lock = locked
-      ? '<span class="ws-lab-badge">' + escapeHtml(t('pro')) + ' 🔒</span>'
+      ? '<span class="ws-lab-badge">' + escapeHtml(t('pro')) + '</span>'
       : '';
     var cta = locked
       ? '<span class="ws-btn ws-btn-secondary ws-btn-sm">' + escapeHtml(t('seePro')) + '</span>'
@@ -77,6 +77,37 @@
       '</a>';
   }
 
+  function flagshipCard(href, title, lede, points, locked, t, escapeHtml, tool) {
+    var lock = '<span class="ws-lab-badge">' + escapeHtml(t('pro')) + '</span>';
+    var cta = locked
+      ? '<span class="ws-btn ws-btn-primary ws-btn-sm">' + escapeHtml(t('upgrade')) + '</span>'
+      : '<span class="ws-btn ws-btn-primary ws-btn-sm">' + escapeHtml(t('open')) + '</span>';
+    return '<a class="ws-lab-card is-flagship' + (locked ? ' is-locked' : '') + '" data-lab-tool="' + escapeHtml(tool || '') + '" href="' + escapeHtml(locked ? '/pricing' : href) + '">' +
+      lock +
+      '<h3 class="ws-lab-card-title">' + escapeHtml(title) + '</h3>' +
+      '<p class="ws-lab-card-copy">' + escapeHtml(lede) + '</p>' +
+      (points ? '<p class="ws-lab-card-copy">' + escapeHtml(points) + '</p>' : '') +
+      cta +
+      '</a>';
+  }
+
+  function solverHomeInner(locked, t, esc) {
+    return '<div id="ws-lab-home">' +
+      '<p class="ws-kicker">' + esc(t('chemistrySolverKicker')) + '</p>' +
+      flagshipCard(labHref('reactions'), t('labReactions'), t('labReactionsLede'), t('labReactionsPoints'), locked, t, esc, 'reactions') +
+      '<div class="ws-lab-grid">' +
+      card(locked ? '/pricing' : labHref('formula'), t('labFormula'), t('labFormulaLede'), locked, t, esc, 'formula') +
+      card(locked ? '/pricing' : labHref('solutions'), t('labSolutions'), t('labSolutionsLede'), locked, t, esc, 'solutions') +
+      '</div>' +
+      '<p class="ws-kicker">' + esc(t('labAnalysis')) + '</p>' +
+      '<div class="ws-lab-grid">' +
+      card(locked ? '/pricing' : labHref('calculations'), t('labCalc'), t('labCalcLede'), locked, t, esc, 'calculations') +
+      card(locked ? '/pricing' : labHref('elements'), t('labElements'), t('labElementsLede'), locked, t, esc, 'elements') +
+      card(locked ? '/pricing' : labHref('molecules'), t('labMolecules'), t('labMoleculesLede'), locked, t, esc, 'molecules') +
+      card(locked ? '/pricing' : labHref('atomic'), t('labAtomic'), t('labAtomicLede'), locked, t, esc, 'atomic') +
+      '</div></div>';
+  }
+
   function lockedHome(node, ctx) {
     var t = ctx.t;
     var esc = ctx.escapeHtml;
@@ -84,13 +115,28 @@
       '<p class="ws-kicker">' + esc(t('proLabKicker')) + '</p>' +
       '<h1 class="ws-title">' + esc(t('proLab')) + '</h1>' +
       '<p class="ws-lede">' + esc(t('proLabLede')) + '</p>' +
-      '<div class="ws-lab-grid" id="ws-lab-home">' +
-      card(labHref('calculations'), t('labCalc'), t('labCalcLede'), true, t, esc, 'calculations') +
-      card(labHref('elements'), t('labElements'), t('labElementsLede'), true, t, esc, 'elements') +
-      card(labHref('molecules'), t('labMolecules'), t('labMoleculesLede'), true, t, esc, 'molecules') +
-      card(labHref('atomic'), t('labAtomic'), t('labAtomicLede'), true, t, esc, 'atomic') +
-      '</div>' +
+      solverHomeInner(true, t, esc) +
       '<p class="ws-lede">' + esc(t('labLockedBody')) + '</p>' +
+      '<a class="ws-btn ws-btn-primary" href="/pricing">' + esc(t('upgrade')) + '</a>';
+  }
+
+  function lockedTool(node, ctx, tool) {
+    var t = ctx.t;
+    var esc = ctx.escapeHtml;
+    var title = t('labReactions');
+    var body = t('labReactionsPoints');
+    if (tool === 'formula') {
+      title = t('labFormula');
+      body = t('labFormulaLede');
+    } else if (tool === 'solutions') {
+      title = t('labSolutions');
+      body = t('labSolutionsLede');
+    }
+    node.innerHTML =
+      '<p class="ws-kicker"><a href="' + esc(labHref('home')) + '">' + esc(t('proLab')) + '</a></p>' +
+      '<p class="ws-lab-badge">' + esc(t('pro')) + '</p>' +
+      '<h1 class="ws-title">' + esc(title) + '</h1>' +
+      '<p class="ws-lede">' + esc(body) + '</p>' +
       '<a class="ws-btn ws-btn-primary" href="/pricing">' + esc(t('upgrade')) + '</a>';
   }
 
@@ -117,12 +163,7 @@
       '<p class="ws-kicker">' + esc(t('proLabKicker')) + '</p>' +
       '<h1 class="ws-title">' + esc(t('proLab')) + '</h1>' +
       '<p class="ws-lede">' + esc(t('proLabLede')) + '</p>' +
-      '<div class="ws-lab-grid" id="ws-lab-home">' +
-      card(labHref('calculations'), t('labCalc'), t('labCalcLede'), false, t, esc, 'calculations') +
-      card(labHref('elements'), t('labElements'), t('labElementsLede'), false, t, esc, 'elements') +
-      card(labHref('molecules'), t('labMolecules'), t('labMoleculesLede'), false, t, esc, 'molecules') +
-      card(labHref('atomic'), t('labAtomic'), t('labAtomicLede'), false, t, esc, 'atomic') +
-      '</div>' +
+      solverHomeInner(false, t, esc) +
       '<h2 class="ws-h2" id="ws-lab-sessions-heading">' + esc(t('labSessions')) + '</h2>' +
       '<p class="ws-lede">' + esc(t('labSessionsLede')) + '</p>' +
       '<div id="ws-lab-sessions">' + list + '</div>';
@@ -137,7 +178,10 @@
       var when = ctx.logic && ctx.logic.relativeTime
         ? ctx.logic.relativeTime(row.updatedAt || row.updated_at, Date.now(), lang)
         : '';
-      metas[i].textContent = [typeLabel(row.sessionType, t), when].filter(Boolean).join(' · ');
+      var bits = [typeLabel(row.sessionType, t)];
+      if (row.equation) bits.push(row.equation);
+      if (when) bits.push(when);
+      metas[i].textContent = bits.filter(Boolean).join(' · ');
     });
     node.querySelectorAll('[data-session-more]').forEach(function (btn) {
       btn.addEventListener('click', function (event) {
@@ -177,6 +221,9 @@
     if (type === 'element_compare') return 'elements';
     if (type === 'molecule_compare') return 'molecules';
     if (type === 'atomic_compare') return 'atomic';
+    if (type === 'reaction') return 'reactions';
+    if (type === 'formula_solver') return 'formula';
+    if (type === 'solution_builder') return 'solutions';
     return 'calculations';
   }
 
@@ -184,6 +231,9 @@
     if (type === 'element_compare') return t('labElements');
     if (type === 'molecule_compare') return t('labMolecules');
     if (type === 'atomic_compare') return t('labAtomic');
+    if (type === 'reaction') return t('labReactions');
+    if (type === 'formula_solver') return t('labFormula');
+    if (type === 'solution_builder') return t('labSolutions');
     return t('labCalc');
   }
 
@@ -302,6 +352,19 @@
     var tool = toolFromQuery();
     if (tool === 'home' || !tool) tool = 'home';
 
+    if (tool === 'reactions' && !hasFeature(ctx.user, 'reactionWorkbench')) {
+      lockedTool(node, ctx, 'reactions');
+      return;
+    }
+    if (tool === 'formula' && !hasFeature(ctx.user, 'formulaSolver')) {
+      lockedTool(node, ctx, 'formula');
+      return;
+    }
+    if (tool === 'solutions' && !hasFeature(ctx.user, 'solutionBuilder')) {
+      lockedTool(node, ctx, 'solutions');
+      return;
+    }
+
     if (locked) {
       lockedHome(node, ctx);
       return;
@@ -328,6 +391,9 @@
       elements: '/pro-lab-elements.js?v=' + SCRIPT_V,
       molecules: '/pro-lab-molecules.js?v=' + SCRIPT_V,
       atomic: '/pro-lab-atomic.js?v=' + SCRIPT_V,
+      reactions: '/pro-lab-reactions.js?v=' + SCRIPT_V,
+      formula: '/pro-lab-formula.js?v=' + SCRIPT_V,
+      solutions: '/pro-lab-solutions.js?v=' + SCRIPT_V,
       sessions: '/pro-lab-calculations.js?v=' + SCRIPT_V
     };
     if (tool === 'sessions') {
@@ -351,7 +417,10 @@
       calculations: window.AtomurusProLabCalculations,
       elements: window.AtomurusProLabElements,
       molecules: window.AtomurusProLabMolecules,
-      atomic: window.AtomurusProLabAtomic
+      atomic: window.AtomurusProLabAtomic,
+      reactions: window.AtomurusProLabReactions,
+      formula: window.AtomurusProLabFormula,
+      solutions: window.AtomurusProLabSolutions
     };
     var runner = runners[tool];
     if (runner && typeof runner.mount === 'function') {

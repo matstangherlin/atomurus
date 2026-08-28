@@ -10,6 +10,10 @@ import calculateHandler from '../netlify/functions/pro-lab-calculate.mjs';
 import elementsHandler from '../netlify/functions/pro-lab-elements-compare.mjs';
 import moleculesHandler from '../netlify/functions/pro-lab-molecules-compare.mjs';
 import atomicHandler from '../netlify/functions/pro-lab-atomic-compare.mjs';
+import balanceHandler from '../netlify/functions/pro-lab-reaction-balance.mjs';
+import solveHandler from '../netlify/functions/pro-lab-reaction-solve.mjs';
+import formulaHandler from '../netlify/functions/pro-lab-formula-solve.mjs';
+import solutionsHandler from '../netlify/functions/pro-lab-solutions-solve.mjs';
 
 const originalEnv = { ...process.env };
 const originalFetch = globalThis.fetch;
@@ -388,6 +392,12 @@ assert.match(planAccess, /advancedElementCompare: isPro/);
 assert.match(planAccess, /advancedMoleculeCompare: isPro/);
 assert.match(planAccess, /advancedAtomicCompare: isPro/);
 assert.match(planAccess, /savedLabSessions: isPro/);
+assert.match(planAccess, /chemistrySolver: isPro/);
+assert.match(planAccess, /reactionWorkbench: isPro/);
+assert.match(planAccess, /reactionBalancer: isPro/);
+assert.match(planAccess, /stoichiometrySolver: isPro/);
+assert.match(planAccess, /formulaSolver: isPro/);
+assert.match(planAccess, /solutionBuilder: isPro/);
 
 const calcFn = readFileSync(new URL('../netlify/functions/pro-lab-calculate.mjs', import.meta.url), 'utf8');
 assert.match(calcFn, /requireFeature\(request, 'advancedCalculations'\)/);
@@ -407,7 +417,11 @@ await withLabEnv(async () => {
     [calculateHandler, 'https://atomurus.com/api/pro-lab/calculate', 'POST', 'advancedCalculations'],
     [elementsHandler, 'https://atomurus.com/api/pro-lab/elements/compare', 'POST', 'advancedElementCompare'],
     [moleculesHandler, 'https://atomurus.com/api/pro-lab/molecules/compare', 'GET', 'advancedMoleculeCompare'],
-    [atomicHandler, 'https://atomurus.com/api/pro-lab/atomic/compare', 'POST', 'advancedAtomicCompare']
+    [atomicHandler, 'https://atomurus.com/api/pro-lab/atomic/compare', 'POST', 'advancedAtomicCompare'],
+    [balanceHandler, 'https://atomurus.com/api/pro-lab/reaction/balance', 'POST', 'reactionBalancer'],
+    [solveHandler, 'https://atomurus.com/api/pro-lab/reaction/solve', 'POST', 'stoichiometrySolver'],
+    [formulaHandler, 'https://atomurus.com/api/pro-lab/formula/solve', 'POST', 'formulaSolver'],
+    [solutionsHandler, 'https://atomurus.com/api/pro-lab/solutions/solve', 'POST', 'solutionBuilder']
   ]) {
     const free = await handler(cookieRequest(url, {
       method,
@@ -614,5 +628,62 @@ await withLabEnv(async () => {
   }));
   assert.equal(rejected.status, 400);
 });
+
+await withLabEnv(async () => {
+  const unsigned = await balanceHandler(cookieRequest('https://atomurus.com/api/pro-lab/reaction/balance', {
+    method: 'POST',
+    body: { equation: 'H2 + O2 -> H2O' }
+  }));
+  assert.equal(unsigned.status, 401);
+});
+
+await withLabEnv(async () => {
+  const balanced = await balanceHandler(cookieRequest('https://atomurus.com/api/pro-lab/reaction/balance', {
+    method: 'POST',
+    cookies: sessionCookie('access-pro-a'),
+    body: { equation: 'C2H6 + O2 -> CO2 + H2O' }
+  }));
+  const json = await readJson(balanced);
+  assert.equal(balanced.status, 200);
+  assert.equal(json.balanced, '2 C2H6 + 7 O2 -> 4 CO2 + 6 H2O');
+  assertPrivate(balanced, json);
+});
+
+await withLabEnv(async () => {
+  const rejected = await solveHandler(cookieRequest('https://atomurus.com/api/pro-lab/reaction/solve', {
+    method: 'POST',
+    cookies: sessionCookie('access-pro-a'),
+    body: {
+      equation: 'H2 + O2 -> H2O',
+      quantities: [{ formula: 'H2', amount: 2, unit: 'mol' }],
+      clientLimitingReagent: 'H2'
+    }
+  }));
+  assert.equal(rejected.status, 400);
+});
+
+await withLabEnv(async () => {
+  const created = await sessionsHandler(cookieRequest('https://atomurus.com/api/pro-lab/sessions', {
+    method: 'POST',
+    cookies: sessionCookie('access-trial'),
+    body: {
+      sessionType: 'reaction',
+      title: 'Combustion of ethane',
+      state: {
+        equation: 'C2H6 + O2 -> CO2 + H2O',
+        quantities: [{ formula: 'C2H6', amount: 10, unit: 'g' }],
+        balanced: 'should-not-trust'
+      }
+    }
+  }));
+  const json = await readJson(created);
+  assert.equal(created.status, 200);
+  assert.equal(json.session.state.solverVersion, 1);
+  assert.equal(json.session.state.equation, 'C2H6 + O2 -> CO2 + H2O');
+  assert.equal(json.session.state.balanced, undefined);
+});
+
+const reactionState = validateSessionState('reaction', { equation: 'H2 + O2 -> H2O', quantities: [] });
+assert.equal(reactionState.solverVersion, 1);
 
 console.log('pro-lab tests passed');

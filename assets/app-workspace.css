@@ -1158,7 +1158,133 @@ html.auth-error .ws-auth-only { visibility: hidden; }
   .ws-lab-table { display: none; }
   .ws-lab-stack { display: grid; gap: 10px; }
 }
-@media (max-width: 390px) {
-  .ws-lab-card-title { font-size: 22px; }
-  .ws-lab-scenario { grid-template-columns: 1fr; }
+.ws-lab-card.is-flagship {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  min-height: 200px;
+  margin: 0 0 14px;
+  padding: 22px 18px 18px;
+  border: 1px solid color-mix(in oklab, var(--lc-green, #1E6A50) 40%, var(--lc-rule, #D8D2BF));
+  border-radius: var(--ws-radius-md);
+  background: var(--lc-paper, #F8F5EC);
+  text-decoration: none;
+}
+.ws-solver-eq-field { display: grid; gap: 6px; margin: 16px 0 10px; }
+.ws-solver-eq-input {
+  min-height: 5.5rem;
+  width: 100%;
+  max-width: 42rem;
+  font-size: 16px;
+  line-height: 1.45;
+  resize: vertical;
+}
+.ws-eq {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4em 0.55em;
+  margin: 18px 0 8px;
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: clamp(22px, 3.2vw, 34px);
+  line-height: 1.25;
+  color: var(--lc-ink);
+}
+.ws-eq-term { white-space: nowrap; }
+.ws-eq-plus, .ws-eq-arrow { color: var(--lc-ink-3); }
+.ws-solver-error {
+  color: #8a2a22;
+  font-size: 14px;
+  margin: 0 0 12px;
+}
+[data-theme="dark"] .ws-solver-error { color: #f0b4ae; }
+.ws-solver-headline {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: clamp(24px, 3vw, 32px);
+  margin: 8px 0 12px;
+}
+.ws-solver-result { margin: 18px 0; }
+.ws-solver-steps {
+  list-style: none;
+  padding: 0;
+  margin: 14px 0 0;
+  display: grid;
+  gap: 8px;
+}
+.ws-solver-step {
+  display: grid;
+  grid-template-columns: 2.2rem minmax(0, 1fr);
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--lc-rule);
+  border-radius: 10px;
+  background: var(--lc-paper);
+}
+.ws-solver-step-n {
+  font-family: var(--lc-mono, ui-monospace, monospace);
+  font-size: 11px;
+  letter-spacing: .08em;
+  color: var(--lc-ink-3);
+  padding-top: 2px;
+}
+.ws-solver-step-title {
+  margin: 0 0 4px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: var(--lc-sans);
+}
+.ws-solver-step-body {
+  margin: 0;
+  font-size: 13px;
+  color: var(--lc-ink-2);
+  overflow-wrap: anywhere;
+}
+.ws-solver-qty-formula {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: 22px;
+}
+.ws-solver-trust { max-width: 40rem; }
+.ws-solver-shortcut {
+  margin: 16px 0 24px;
+  padding: 16px 18px;
+  border: 1px solid color-mix(in oklab, var(--lc-green, #1E6A50) 35%, var(--lc-rule));
+  border-radius: var(--ws-radius-md);
+  max-width: 36rem;
+}
+.ws-solver-shortcut .ws-h2 { margin-top: 0; font-size: 18px; font-family: var(--lc-sans); }
+.solver-discover {
+  margin: 12px 0 20px;
+  padding: 12px 14px;
+  border: 1px solid color-mix(in oklab, var(--lc-green, #1E6A50) 35%, var(--lc-rule, #D8D2BF));
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--lc-paper, #F8F5EC) 88%, transparent);
+  max-width: 42rem;
+}
+.solver-discover-badge {
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--lc-green, #1E6A50);
+}
+.solver-discover p { margin: 6px 0 10px; color: var(--lc-ink-2, #58544A); font-size: 14px; }
+.solver-discover-cta {
+  font: inherit;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 6px;
+  padding: 8px 12px;
+  background: var(--lc-green, #1E6A50);
+  color: #fff;
+}
+.pt-solver-cta {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--lc-ink-3, #6b675c);
+}
+.pt-solver-cta a { color: var(--lc-green, #1E6A50); text-decoration: none; }
+@media (max-width: 640px) {
+  .ws-eq { font-size: 22px; }
+  .ws-eq-arrow { flex-basis: 100%; }
 }
