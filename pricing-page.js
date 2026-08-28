@@ -92,7 +92,9 @@
       annualEqBRL: '≈ R$15/month',
       monthlyAmountUSD: '$10',
       annualAmountUSD: '$60',
-      annualEqUSD: '≈ $5/month'
+      annualEqUSD: '≈ $5/month',
+      freeZeroBRL: 'R$0',
+      freeZeroUSD: '$0'
     },
     pt: {
       title: 'Estude química. Lembre por mais tempo.',
@@ -181,7 +183,9 @@
       annualEqBRL: '≈ R$15/mês',
       monthlyAmountUSD: 'US$10',
       annualAmountUSD: 'US$60',
-      annualEqUSD: '≈ US$5/mês'
+      annualEqUSD: '≈ US$5/mês',
+      freeZeroBRL: 'R$0',
+      freeZeroUSD: 'US$0'
     }
   };
 
@@ -310,6 +314,7 @@
     setText('pricing-geo-badge', pricing.geoLabel);
     setText('pricing-free-tag', t('freeTag'));
     setText('pricing-free-name', t('freeName'));
+    setText('pricing-free-amount', currency === 'brl' ? t('freeZeroBRL') : t('freeZeroUSD'));
     setText('pricing-free-sub', t('freeSub'));
     setList('pricing-free-list', t('freeFeatures'));
     setText('pricing-popular', t('popular'));

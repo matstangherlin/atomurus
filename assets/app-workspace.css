@@ -27,6 +27,7 @@
   min-height: 100vh;
   overflow-x: hidden;
 }
+.ws-body [hidden] { display: none !important; }
 
 [data-theme="dark"] .ws-body {
   --ws-danger: #E08A82;

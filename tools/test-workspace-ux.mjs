@@ -67,6 +67,9 @@ assert.match(authApp, /t\('loadMore'\)/);
 assert.match(authApp, /openAddToSetDialog/);
 assert.doesNotMatch(authApp, />Load more</);
 
+const css = readFileSync(new URL('../assets/app-workspace.css', import.meta.url), 'utf8');
+assert.match(css, /\.ws-body \[hidden\]/);
+
 const appHtml = readFileSync(new URL('../app.html', import.meta.url), 'utf8');
 assert.match(appHtml, /assets\/app-workspace\.css/);
 assert.match(appHtml, /workspace-logic\.js/);
@@ -83,6 +86,7 @@ assert.match(pricing, /Smart Review/);
 
 const pricingHtml = readFileSync(new URL('../pricing.html', import.meta.url), 'utf8');
 assert.match(pricingHtml, /flashcards/i);
+assert.match(pricingHtml, /id="pricing-free-amount"/);
 assert.doesNotMatch(pricingHtml, /upcoming tutors/i);
 
 const dashboard = readFileSync(new URL('../netlify/functions/private-dashboard.mjs', import.meta.url), 'utf8');

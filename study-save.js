@@ -139,7 +139,7 @@
       '#atomurus-study-save{font-family:var(--lc-mono,ui-monospace,monospace);margin:14px 0 18px}',
       '.calc-panel > #atomurus-study-save{margin:0 0 16px;grid-column:1/-1}',
       '#atomurus-study-save .study-save-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px}',
-      '#atomurus-study-save button{font:inherit;letter-spacing:.08em;text-transform:uppercase;font-size:10.5px;padding:7px 10px;border:1px solid var(--lc-rule,rgba(30,106,80,.35));background:transparent;color:inherit;border-radius:2px;cursor:pointer}',
+      '#atomurus-study-save button{font:inherit;letter-spacing:.02em;text-transform:none;font-size:13px;font-weight:650;padding:8px 12px;border:1px solid var(--lc-rule,rgba(30,106,80,.35));background:transparent;color:inherit;border-radius:8px;cursor:pointer;min-height:40px}',
       '#atomurus-study-save button[disabled]{opacity:.6;cursor:wait}',
       '#atomurus-study-save button.saved{color:var(--lc-green,#1E6A50);border-color:color-mix(in oklab,var(--lc-green,#1E6A50) 40%,transparent)}',
       '#atomurus-study-save .study-pro-badge{margin-left:6px;font-family:var(--lc-mono,ui-monospace,monospace);font-size:9px;letter-spacing:.12em;color:var(--lc-green,#1E6A50)}',
