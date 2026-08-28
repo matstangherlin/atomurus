@@ -3,7 +3,7 @@
 const DICT = {
     en: {
       common: {
-        brandTag: 'build v1.11',
+        brandTag: 'chemistry lab',
         openLab: 'Open lab',
         mobileFoot: '· open chemistry lab',
         backHome: 'Back to Home',
@@ -57,7 +57,7 @@ const DICT = {
           contact:       'Contact',
           pricing:       'Pricing',
           systemNominal: 'system nominal',
-          copy:          '© 2026 Atomurus · v1.11'
+          copy:          '© 2026 Atomurus'
         },
         auth: {
           loginError: 'Invalid email or password.',
@@ -237,7 +237,7 @@ const DICT = {
           dataVal:      'IUPAC 2024 · CODATA 2022'
         },
         hero: {
-          welcome:   'welcome to atomurus',
+          welcome:   'chemistry lab',
           version:   'v1.11 · 2026',
           // The title is split across three spans so each line can flow
           // naturally; the inline <br> stays in the markup.
@@ -256,15 +256,15 @@ const DICT = {
           previewFootR: '118 elements · IUPAC 2024'
         },
         modules: {
-          kicker:    '§ 01 · modules',
-          title:     'Four instruments. One workspace.',
+          kicker:    'lab tools',
+          title:     'Four tools. One chemistry lab.',
           live:      'live',
           queued:    'queued',
           // Used for "<n> live · <m> queued" — split so numbers stay raw
           headRightHtml: '<span class="hi">4</span> live · <span class="hi">40+</span> models',
           status: '● live',
           card1: {
-            no:    '01 — Reference',
+            no:    'Reference',
             name:  'Periodic Table',
             desc:  'The 118 confirmed elements with full property cards, heatmap, trend charts, comparator and isotope data. Filter by family, search by name or atomic number, export as PNG/PDF.',
             cta:   'Open table',
@@ -273,7 +273,7 @@ const DICT = {
             m3:    '5 views'
           },
           card2: {
-            no:    '02 — Visualization',
+            no:    'Visualization',
             name:  '3D Viewers',
             desc:  'Atomic models, molecules, allotropes and isomerism in interactive 3D: Dalton through quantum orbitals, molecular geometry, carbon structures and organic-isomer examples.',
             cta:   'Explore models',
@@ -282,7 +282,7 @@ const DICT = {
             m3:    'isomerism + allotropes'
           },
           card3: {
-            no:    '03 — Compute',
+            no:    'Compute',
             name:  'Calculators',
             desc:  'Five chemistry calculators: molar mass, scientific expressions, ideal gas PV=nRT, dilution and pH/pOH diagnostics.',
             cta:   'Use calculators',
@@ -291,7 +291,7 @@ const DICT = {
             m3:    'SI units'
           },
           card4: {
-            no:    '04 — Knowledge',
+            no:    'Knowledge',
             name:  'Explore',
             desc:  'Articles and deep dives for chemistry concepts and history, including the periodic table, isomerism and Bhopal/methyl isocyanate.',
             cta:   'Read articles',
@@ -301,7 +301,7 @@ const DICT = {
           }
         },
         manifest: {
-          kicker: '§ 02 — Manifesto',
+          kicker: 'manifesto',
           bodyHtml:
             'Most chemistry tools talk <em>about</em> matter. Atomurus shows it happening — from element data to 3D structures, calculations and articles, with the right typography for study and the right amount of nothing in between. <em>Built for studying, not for impressing.</em>'
         },
@@ -1544,7 +1544,7 @@ const DICT = {
         dsColormapVal: 'category',
         dsSelected: 'selected',
         // Page header
-        pageKicker: '01 — Main Module',
+        pageKicker: 'periodic table',
         pageTitle:  'Dynamic Periodic Table',
         pageDesc:   'The fundamental map of matter. Select an element to view its properties, discovery and atomic structure.',
         // Sub-page headers (heatmap/trends/compare/isotopes)
@@ -1987,7 +1987,7 @@ const DICT = {
     },
     pt: {
       common: {
-        brandTag: 'build v1.11',
+        brandTag: 'laboratório de química',
         openLab: 'Abrir lab',
         mobileFoot: '· laboratório de química aberto',
         backHome: 'Voltar para o início',
@@ -2041,7 +2041,7 @@ const DICT = {
           contact:       'Contato',
           pricing:       'Planos',
           systemNominal: 'sistema nominal',
-          copy:          '© 2026 Atomurus · v1.11'
+          copy:          '© 2026 Atomurus'
         },
         auth: {
           loginError: 'Email ou senha inválidos.',
@@ -2220,7 +2220,7 @@ const DICT = {
           dataVal:      'IUPAC 2024 · CODATA 2022'
         },
         hero: {
-          welcome:   'bem-vindo ao atomurus',
+          welcome:   'laboratório de química',
           version:   'v1.11 · 2026',
           t1:        'Um laboratório',
           t2:        'de química,',
@@ -2237,14 +2237,14 @@ const DICT = {
           previewFootR: '118 elementos · IUPAC 2024'
         },
         modules: {
-          kicker:    '§ 01 · módulos',
-          title:     'Quatro instrumentos. Um workspace.',
+          kicker:    'ferramentas',
+          title:     'Quatro ferramentas. Um laboratório.',
           live:      'ativos',
           queued:    'na fila',
           headRightHtml: '<span class="hi">4</span> ativos · <span class="hi">40+</span> modelos',
           status: '● ativo',
           card1: {
-            no:    '01 — Referência',
+            no:    'Referência',
             name:  'Tabela Periódica',
             desc:  'Os 118 elementos confirmados com cartões de propriedades, mapa de calor, gráficos de tendências, comparador e dados de isótopos. Filtre por família, busque por nome ou número atômico, exporte como PNG/PDF.',
             cta:   'Abrir tabela',
@@ -2253,7 +2253,7 @@ const DICT = {
             m3:    '5 visões'
           },
           card2: {
-            no:    '02 — Visualização',
+            no:    'Visualização',
             name:  'Visualizadores 3D',
             desc:  'Modelos atômicos, moléculas, alótropos e isomeria em 3D interativo: de Dalton aos orbitais quânticos, geometria molecular, estruturas de carbono e exemplos de isômeros orgânicos.',
             cta:   'Explorar modelos',
@@ -2262,7 +2262,7 @@ const DICT = {
             m3:    'isomeria + alótropos'
           },
           card3: {
-            no:    '03 — Computar',
+            no:    'Computar',
             name:  'Calculadoras',
             desc:  'Cinco calculadoras de química: massa molar, expressões científicas, gás ideal PV=nRT, diluição e diagnóstico pH/pOH.',
             cta:   'Usar calculadoras',
@@ -2271,7 +2271,7 @@ const DICT = {
             m3:    'Unidades SI'
           },
           card4: {
-            no:    '04 — Conhecimento',
+            no:    'Conhecimento',
             name:  'Explorar',
             desc:  'Artigos e leituras guiadas para conceitos e história da química, incluindo tabela periódica, isomeria e Bhopal/isocianato de metila.',
             cta:   'Ler artigos',
@@ -2281,7 +2281,7 @@ const DICT = {
           }
         },
         manifest: {
-          kicker: '§ 02 — Manifesto',
+          kicker: 'manifesto',
           bodyHtml:
             'A maioria das ferramentas de química <em>fala</em> sobre a matéria. O Atomurus mostra ela acontecendo — de dados de elementos a estruturas 3D, cálculos e artigos, com a tipografia certa para estudar e a quantidade certa de nada entre uma coisa e outra. <em>Feito para estudar, não para impressionar.</em>'
         },
@@ -3497,7 +3497,7 @@ const DICT = {
         dsColormap: 'colormap',
         dsColormapVal: 'categoria',
         dsSelected: 'selecionado',
-        pageKicker: '01 — Módulo Principal',
+        pageKicker: 'tabela periódica',
         pageTitle:  'Tabela Periódica Dinâmica',
         pageDesc:   'O mapa fundamental da matéria. Selecione um elemento para ver suas propriedades, descoberta e estrutura atômica.',
         subKickerHeatmap:  'Visualização',

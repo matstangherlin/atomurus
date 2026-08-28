@@ -55,8 +55,8 @@
           '</svg>' +
         '</div>' +
         '<div>' +
-          '<div class="lc-mobile-menu-name">ATOMURUS</div>' +
-          '<div class="lc-mobile-menu-tag">v1.11 · navigation</div>' +
+          '<div class="lc-mobile-menu-name">Atomurus</div>' +
+          '<div class="lc-mobile-menu-tag" data-i18n="common.brandTag">chemistry lab</div>' +
         '</div>' +
       '</div>' +
       '<button class="lc-mobile-menu-close" aria-label="Close menu">' +
@@ -73,7 +73,6 @@
     if (r.sep) { drawerInner += '<div class="lc-mobile-menu-sep"></div>'; continue; }
     var isActive = (r.href === here) || (r.href.endsWith(here) && here !== 'index.html');
     drawerInner += '<a class="lc-mobile-menu-item' + (isActive ? ' active' : '') + '" href="' + r.href + '">' +
-      '<span class="lc-mobile-menu-num">' + r.n + '</span>' +
       '<span class="lc-mobile-menu-label" data-i18n="' + r.i18n + '">' + r.label + '</span>' +
       '<svg class="lc-mobile-menu-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none">' +
         '<path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +

@@ -75,6 +75,7 @@
 <link rel="preload" href="atomurus-lab-console.css?v=202608041630" as="style">
 <link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
 <noscript><link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630"></noscript>
+<link rel="stylesheet" href="/assets/public-shell.css?v=202608041630">
 <script src="atomurus-mobile-nav.js?v=202608041630" defer></script>
 <style>
   *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -98,7 +99,7 @@
     </div>
     <div>
       <div class="lc-topnav-name">Atomurus</div>
-      <div class="lc-topnav-tag" data-i18n="common.brandTag">build v1.11</div>
+      <div class="lc-topnav-tag" data-i18n="common.brandTag">chemistry lab</div>
     </div>
   </a>
 
@@ -144,13 +145,13 @@
 
 <!-- â•â•â•â•â•â•â•â•â•â•â•â• DATA STRIP â•â•â•â•â•â•â•â•â•â•â•â• -->
 <div class="data-strip">
-  <span class="ds-k">scope</span><span class="ds-v">DOC.ABOUT</span>
+  <span class="ds-k" data-i18n="about.dsKScope">scope</span><span class="ds-v" data-i18n="about.dsScopeVal">DOC.ABOUT</span>
   <span class="ds-sep"></span>
-  <span class="ds-k">section</span><span class="ds-v">project</span>
+  <span class="ds-k" data-i18n="about.dsKSection">section</span><span class="ds-v" data-i18n="about.dsSectionVal">project</span>
   <span class="ds-sep"></span>
-  <span class="ds-k">rev</span><span class="ds-v">v1.11 Â· 2026.05</span>
+  <span class="ds-k" data-i18n="about.dsKRev">rev</span><span class="ds-v">v1.11 · 2026.05</span>
   <span class="ds-spacer"></span>
-  <span class="ds-k">data</span><span class="ds-v ds-hi">IUPAC 2024 Â· CODATA 2022</span>
+  <span class="ds-k" data-i18n="about.dsKData">data</span><span class="ds-v ds-hi">IUPAC 2024 · CODATA 2022</span>
 </div>
 
 <!-- â•â•â•â•â•â•â•â•â•â•â•â• HERO â•â•â•â•â•â•â•â•â•â•â•â• -->
@@ -167,20 +168,20 @@
 <div class="lc-doc-body">
 
   <aside class="lc-doc-aside">
-    <div><span class="lbl">document</span><br><span class="v">about</span></div>
+    <div><span class="lbl" data-i18n="about.asideKDocument">document</span><br><span class="v" data-i18n="about.asideDocVal">about</span></div>
     <hr>
-    <div><span class="lbl">updated</span><br><span class="v"><span data-i18n="common.brandTag">build v1.11</span> Â· 2026</span></div>
+    <div><span class="lbl" data-i18n="about.asideKUpdated">updated</span><br><span class="v"><span data-i18n="common.brandTag">chemistry lab</span> · 2026</span></div>
     <hr>
-    <div><span class="lbl">contents</span></div>
-    <a href="#what">What is Atomurus</a>
-    <a href="#mission">Mission</a>
-    <a href="#inside">Inside the lab</a>
-    <a href="#why">Why we built this</a>
-    <a href="#open">Open by default</a>
-    <a href="#built">Built with</a>
-    <a href="#indep">Independence</a>
+    <div><span class="lbl" data-i18n="about.asideKContents">contents</span></div>
+    <a href="#what" data-i18n="about.asideWhat">What is Atomurus</a>
+    <a href="#mission" data-i18n="about.asideMission">Mission</a>
+    <a href="#inside" data-i18n="about.asideInside">Inside the lab</a>
+    <a href="#why" data-i18n="about.asideWhy">Why we built this</a>
+    <a href="#open" data-i18n="about.asideOpen">Open by default</a>
+    <a href="#built" data-i18n="about.asideBuilt">Built with</a>
+    <a href="#indep" data-i18n="about.asideIndep">Independence</a>
     <hr>
-    <a href="contact.html" style="text-transform:none;letter-spacing:.04em">â†’ Contact</a>
+    <a href="contact.html" style="text-transform:none;letter-spacing:.04em" data-i18n="about.asideContact">→ Contact</a>
   </aside>
 
   <article class="lc-doc-prose">
@@ -296,13 +297,13 @@
 
 <!-- â•â•â•â•â•â•â•â•â•â•â•â• STATUS BAR â•â•â•â•â•â•â•â•â•â•â•â• -->
 <div class="lc-statusbar">
-  <span><span class="lc-st-dot"></span> ready</span>
-  <span class="lc-st-sep">Â·</span>
-  <span>doc / about</span>
+  <span><span class="lc-st-dot"></span> <span data-i18n="common.stReady">ready</span></span>
+  <span class="lc-st-sep">·</span>
+  <span data-i18n="common.stDocAbout">doc / about</span>
   <span class="lc-st-spacer"></span>
-  <a href="periodic-table.html">â†’ periodic-table</a>
-  <span class="lc-st-sep">Â·</span>
-  <a href="contact.html">â†’ contact</a>
+  <a href="periodic-table.html" data-i18n="common.stLinkPeriodic">→ periodic-table</a>
+  <span class="lc-st-sep">·</span>
+  <a href="contact.html" data-i18n="common.stLinkContact">→ contact</a>
 </div>
 
 <script>

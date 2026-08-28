@@ -1,0 +1,615 @@
+/* Atomurus public chrome — match the /app workspace shell.
+   Loaded after atomurus-lab-console.css on public (pre-login) pages.
+   Tokens stay cream / dark brown / Atomurus green. Do not restyle /app. */
+
+:root {
+  --ps-radius-sm: 6px;
+  --ps-radius-md: 10px;
+  --ps-radius-lg: 16px;
+  --ps-topbar: 64px;
+  --ps-dur: 180ms;
+  --sidebar-w: 248px;
+}
+
+/* ── Hide Bloomberg / lab-console chrome ── */
+.lc-tn-no,
+.lc-hero-kicker .pill,
+.lc-hero-kicker::before,
+.lc-doc-kicker::before,
+.lc-br-bl,
+.lc-br-br,
+.nl-no,
+.calc-menu-num,
+.lc-mobile-menu-num,
+.lc-btn-primary .lc-kbd,
+.lc-topnav-search .lc-kbd {
+  display: none !important;
+}
+
+.lc-landing .data-strip,
+.lc-doc .data-strip,
+.lc-statusbar {
+  display: none !important;
+}
+
+/* Status bar used to eat 22px at the bottom of tool shells */
+
+/* ── Brand mark ── */
+.lc-topnav-mark,
+.logo-mark,
+.lc-mobile-menu-brand .lc-topnav-mark {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--ps-radius-sm);
+  background: var(--lc-ink);
+  color: var(--lc-green-soft);
+}
+[data-theme="dark"] .lc-topnav-mark,
+[data-theme="dark"] .logo-mark,
+[data-theme="dark"] .lc-mobile-menu-brand .lc-topnav-mark {
+  background: var(--lc-green);
+  color: var(--lc-paper);
+}
+
+.lc-topnav-name,
+.logo-text,
+.lc-footer-brand-name,
+.lc-mobile-menu-name {
+  font-family: 'Instrument Serif', Georgia, serif !important;
+  font-size: 22px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  line-height: 1 !important;
+  color: var(--lc-ink);
+}
+
+.lc-topnav-tag {
+  font-family: var(--lc-mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--lc-ink-3);
+  margin-top: 3px;
+}
+
+/* Sidebar version chip is hardcoded "v1.11" + CSS "build " prefix */
+.logo-tag {
+  font-size: 0 !important;
+  line-height: 0 !important;
+  margin-top: 4px !important;
+}
+.logo-tag::before { content: none !important; }
+.logo-tag::after {
+  content: 'chemistry lab';
+  font-family: var(--lc-mono, ui-monospace, monospace);
+  font-size: 10px;
+  line-height: 1.2;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--lc-ink-3);
+  font-weight: 400;
+}
+html[lang^="pt"] .logo-tag::after { content: 'laboratório'; }
+
+/* ── Public topnav = workspace topbar ── */
+.lc-topnav {
+  height: var(--ps-topbar);
+  padding: 0 18px;
+  gap: 12px;
+  background: var(--lc-paper);
+  border-bottom: 1px solid var(--lc-rule);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+[data-theme="dark"] .lc-topnav { background: var(--lc-paper); }
+
+.lc-topnav-links {
+  gap: 4px;
+  margin-left: 8px;
+}
+.lc-topnav-link {
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: var(--ps-radius-md);
+  font-size: 14px;
+  font-weight: 550;
+  color: var(--lc-ink-2);
+}
+.lc-topnav-link:hover {
+  background: color-mix(in oklab, var(--lc-green) 8%, transparent);
+  color: var(--lc-ink);
+}
+.lc-topnav-link.active {
+  color: var(--lc-green);
+  background: color-mix(in oklab, var(--lc-green) 10%, transparent);
+  border-left: 0;
+}
+
+.lc-topnav-menu {
+  border-radius: var(--ps-radius-md);
+  padding: 8px;
+  min-width: 220px;
+}
+.lc-topnav-menu a {
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: var(--ps-radius-md);
+  font-size: 14px;
+  font-weight: 550;
+}
+.lc-topnav-menu a:hover {
+  background: color-mix(in oklab, var(--lc-green) 8%, transparent);
+  color: var(--lc-ink);
+}
+
+.lc-topnav-search {
+  height: 40px;
+  width: min(420px, 32vw);
+  border-radius: var(--ps-radius-md);
+  background: var(--lc-bg);
+  padding: 0 12px;
+  font-family: var(--lc-sans);
+  font-size: 14px;
+  color: var(--lc-ink-2);
+}
+.lc-topnav-search .lc-tn-search-input {
+  font-family: var(--lc-sans);
+  font-size: 14px;
+}
+
+.lc-topnav-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--ps-radius-md);
+  background: transparent;
+  color: inherit;
+}
+.lc-topnav-btn:hover {
+  border-color: color-mix(in oklab, var(--lc-green) 40%, var(--lc-rule));
+  background: color-mix(in oklab, var(--lc-green) 8%, transparent);
+}
+
+.lc-topnav-cta,
+.lc-btn-primary {
+  height: 40px;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: var(--ps-radius-md);
+  background: var(--lc-green) !important;
+  border-color: var(--lc-green) !important;
+  color: #F8F5EC !important;
+  font-size: 14px;
+  font-weight: 600;
+}
+.lc-topnav-cta:hover,
+.lc-btn-primary:hover {
+  background: color-mix(in oklab, var(--lc-green) 88%, #0a0907) !important;
+  transform: none;
+}
+[data-theme="dark"] .lc-topnav-cta,
+[data-theme="dark"] .lc-btn-primary {
+  color: #0E0D0C !important;
+}
+
+.lc-btn-ghost {
+  height: 40px;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: var(--ps-radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  background: transparent;
+}
+.lc-btn-ghost:hover {
+  border-color: color-mix(in oklab, var(--lc-green) 40%, var(--lc-rule));
+}
+
+/* ── Landing hero = workspace overview ── */
+.lc-landing {
+  font-size: 15px;
+  padding-bottom: 0 !important;
+}
+
+.lc-hero {
+  padding: 36px 28px 28px;
+  max-width: 1120px;
+  gap: 28px;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+}
+
+.lc-hero-kicker,
+.lc-doc-kicker,
+.lc-modules-kicker,
+.ph-kicker,
+.lc-manifest-label {
+  font-family: var(--lc-mono, ui-monospace, monospace);
+  font-size: 11px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--lc-ink-3);
+  font-weight: 400;
+  margin-bottom: 8px;
+}
+
+.lc-hero-title,
+.lc-doc-title,
+.ph-title,
+.lc-modules-title {
+  font-family: 'Instrument Serif', Georgia, serif !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+}
+.lc-hero-title {
+  font-size: clamp(36px, 5vw, 56px);
+  max-width: 16ch;
+  margin-bottom: 12px;
+}
+.lc-hero-title em {
+  font-style: italic;
+  color: var(--lc-green);
+}
+
+.lc-hero-desc,
+.lc-doc-desc,
+.ph-desc {
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--lc-ink-2);
+  max-width: 54ch;
+}
+
+.lc-hero-actions { margin-bottom: 24px; gap: 10px; }
+
+.lc-hero-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  padding-top: 0;
+  border-top: 0;
+}
+.lc-hero-stat {
+  padding: 16px 14px 14px;
+  border: 1px solid var(--lc-rule);
+  border-right: 1px solid var(--lc-rule);
+  border-radius: var(--ps-radius-md);
+  background: var(--lc-paper);
+}
+.lc-hero-stat-n {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.lc-hero-stat-l {
+  font-family: var(--lc-sans);
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--lc-ink-2);
+}
+
+.lc-preview {
+  border-radius: var(--ps-radius-lg);
+  background: var(--lc-paper);
+}
+.lc-preview-head,
+.lc-preview-foot {
+  background: color-mix(in oklab, var(--lc-paper) 70%, var(--lc-bg));
+  font-size: 11px;
+  letter-spacing: .08em;
+}
+.lc-preview-head .dots { display: none; }
+
+/* ── Module cards = workspace lab cards ── */
+.lc-modules {
+  max-width: 1120px;
+  padding: 8px 28px 72px;
+}
+.lc-modules-head {
+  align-items: flex-end;
+  margin-bottom: 18px;
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+.lc-modules-title { font-size: clamp(28px, 4vw, 36px); }
+.lc-modules-h-right { font-size: 13px; }
+
+.lc-modules-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+.lc-mod-card,
+.lc-mod-card-wide {
+  grid-column: auto;
+  min-height: 200px;
+  padding: 18px 16px 16px;
+  border: 1px solid var(--lc-rule);
+  border-radius: var(--ps-radius-md);
+  background: var(--lc-paper);
+  gap: 8px;
+  transition: border-color var(--ps-dur) ease, background var(--ps-dur) ease;
+}
+.lc-mod-card:hover {
+  background: var(--lc-paper);
+  border-color: color-mix(in oklab, var(--lc-green) 40%, var(--lc-rule));
+}
+.lc-mod-name {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: 26px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.lc-mod-desc {
+  font-size: 14px;
+  color: var(--lc-ink-2);
+  flex: 1;
+}
+.lc-mod-no {
+  font-size: 10px;
+  letter-spacing: .14em;
+  color: var(--lc-green);
+  text-transform: uppercase;
+}
+.lc-mod-status {
+  font-family: var(--lc-mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--lc-green);
+  border: 1px solid color-mix(in oklab, var(--lc-green) 40%, var(--lc-rule));
+  border-radius: 999px;
+  padding: 3px 8px;
+  background: color-mix(in oklab, var(--lc-green) 8%, transparent);
+}
+.lc-mod-go {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--lc-green);
+}
+.lc-mod-meta {
+  font-size: 12px;
+  color: var(--lc-ink-3);
+}
+
+.lc-manifest {
+  max-width: 1120px;
+  margin: 0 auto 48px;
+  padding: 0 28px;
+}
+.lc-manifest-grid {
+  padding: 22px 24px;
+  border: 1px solid var(--lc-rule);
+  border-radius: var(--ps-radius-lg);
+  background: var(--lc-paper);
+}
+.lc-manifest-body {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: 24px;
+  line-height: 1.35;
+}
+
+.lc-footer-brand-desc { font-size: 14px; }
+.lc-footer-col h4 {
+  font-family: var(--lc-mono, ui-monospace, monospace);
+  letter-spacing: .12em;
+}
+.lc-footer-col a { font-size: 14px; }
+
+/* ── Tool sidebar = workspace nav ── */
+.sidebar {
+  background: color-mix(in oklab, var(--lc-paper) 88%, var(--lc-bg));
+  width: var(--sidebar-w) !important;
+  padding-bottom: 12px !important;
+}
+.logo-wrap {
+  padding: 16px 12px 14px;
+  gap: 10px;
+}
+.nav-label {
+  font-size: 10px;
+  letter-spacing: .12em;
+  padding: 16px 12px 6px;
+}
+.nav-item,
+.nav-expandable .nav-row {
+  min-height: 44px;
+  margin: 0 8px;
+  padding: 0 12px;
+  border-radius: var(--ps-radius-md);
+  border-left: 3px solid transparent;
+  font-size: 14px;
+  font-weight: 550;
+  gap: 10px;
+}
+.nav-item:hover,
+.nav-expandable .nav-row:hover {
+  background: color-mix(in oklab, var(--lc-green) 8%, transparent);
+  color: var(--lc-ink);
+}
+.nav-item.active {
+  color: var(--lc-green);
+  background: color-mix(in oklab, var(--lc-green) 10%, transparent);
+  border-left-color: var(--lc-green);
+  font-weight: 650;
+}
+.nav-icon { width: 16px; height: 16px; }
+.nav-children {
+  margin: 2px 8px 4px 22px;
+}
+.nav-children .nav-item {
+  min-height: 40px;
+  font-size: 13px;
+}
+.sidebar-foot {
+  padding: 12px 8px 16px;
+}
+
+/* ── Tool topbar + quiet data strip ── */
+.topbar {
+  height: var(--ps-topbar);
+  padding: 0 18px;
+  gap: 12px;
+  background: var(--lc-paper);
+}
+.search-box {
+  height: 40px;
+  border-radius: var(--ps-radius-md);
+  width: min(420px, 42vw);
+  padding: 0 12px;
+  font-family: var(--lc-sans);
+}
+.search-box input {
+  font-family: var(--lc-sans);
+  font-size: 14px;
+}
+.theme-btn,
+.mobile-menu-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--ps-radius-md);
+  background: transparent;
+}
+.breadcrumb {
+  font-family: var(--lc-sans);
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.data-strip {
+  background: var(--lc-paper);
+  color: var(--lc-ink-2);
+  border-bottom: 1px solid var(--lc-rule);
+  font-size: 11px;
+  letter-spacing: .04em;
+  padding: 8px 18px;
+}
+[data-theme="dark"] .data-strip {
+  background: var(--lc-paper);
+  border-bottom-color: var(--lc-rule);
+}
+.data-strip .ds-k {
+  color: var(--lc-ink-3);
+}
+.data-strip .ds-v,
+.data-strip .ds-v.ds-hi {
+  color: var(--lc-ink);
+  font-weight: 500;
+}
+.data-strip .ds-v.ds-hi { color: var(--lc-green); }
+.data-strip .ds-sep { background: var(--lc-rule); }
+
+/* ── Page headers + calculator shell ── */
+.content { padding: 24px 28px 40px; }
+.ph-title { font-size: clamp(28px, 4vw, 40px); margin-bottom: 8px; }
+.ph-desc { font-size: 16px; }
+
+.calc-shell {
+  border-radius: var(--ps-radius-lg);
+  overflow: hidden;
+  margin-top: 12px;
+}
+.calc-menu {
+  background: color-mix(in oklab, var(--lc-paper) 88%, var(--lc-bg));
+}
+.calc-menu-item {
+  min-height: 44px;
+  margin: 0 8px;
+  padding: 0 12px;
+  border-radius: var(--ps-radius-md);
+  border-left-width: 3px;
+  font-size: 14px;
+  font-weight: 550;
+}
+.calc-menu-item.active {
+  background: color-mix(in oklab, var(--lc-green) 10%, transparent);
+}
+.calc-panel { padding: 24px 28px; }
+.calc-panel-h h2,
+.calc-panel-title {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-weight: 400;
+}
+
+/* ── Docs, login, pricing ── */
+.lc-doc { font-size: 15px; }
+.lc-doc-hero { padding: 40px 28px 20px; }
+.lc-doc-title { font-size: clamp(32px, 5vw, 48px); }
+.lc-doc-kicker .pill {
+  border-radius: 999px;
+  letter-spacing: .12em;
+}
+
+.price-card { border-radius: var(--ps-radius-md) !important; }
+.currency-toggle button,
+.period-toggle button {
+  border-radius: var(--ps-radius-sm);
+  min-height: 36px;
+}
+
+/* ── Mobile drawer ── */
+.lc-mobile-menu {
+  width: min(84vw, 300px);
+  border-radius: 0;
+}
+.lc-mobile-menu-item {
+  min-height: 44px;
+  margin: 0 8px;
+  padding: 0 12px;
+  border-radius: var(--ps-radius-md);
+  border-left-width: 3px;
+  font-size: 14px;
+  font-weight: 550;
+}
+.lc-mobile-menu-item.active {
+  background: color-mix(in oklab, var(--lc-green) 10%, transparent);
+}
+.lc-mobile-menu-close {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--ps-radius-md);
+}
+
+@media (max-width: 900px) {
+  .lc-hero {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 28px 16px 24px;
+  }
+  .lc-hero-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lc-hero-stat {
+    padding: 16px 14px 14px;
+    border-bottom: 1px solid var(--lc-rule);
+  }
+  .lc-modules { padding: 8px 16px 56px; }
+  .lc-modules-grid { grid-template-columns: 1fr; }
+  .lc-manifest { padding: 0 16px; margin-bottom: 36px; }
+}
+
+@media (max-width: 760px) {
+  .lc-topnav { height: var(--ps-topbar); padding: 0 12px; }
+  .lc-topnav-name,
+  .logo-text,
+  .lc-mobile-menu-name { font-size: 20px !important; }
+  .lc-mobile-hamb {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: var(--ps-radius-md) !important;
+    background: transparent !important;
+  }
+  .lc-topnav-btn,
+  .lc-topnav-cta { height: 40px; }
+  .lc-hero-title { font-size: clamp(32px, 9vw, 42px) !important; }
+  .sidebar { width: min(84vw, 300px) !important; }
+}
+
+@media (max-width: 390px) {
+  .lc-hero-stats { grid-template-columns: 1fr 1fr; }
+  .lc-hero-title { font-size: 28px !important; }
+}

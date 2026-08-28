@@ -10,7 +10,9 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
-const SKIP = new Set(['node_modules', '.git', 'netlify', 'tools', 'scripts', 'supabase', 'hanzi-logic']);
+const { ensurePublicShell } = require('./inject-public-shell');
+
+const SKIP = new Set(['node_modules', '.git', 'netlify', 'tools', 'scripts', 'supabase', 'hanzi-logic', 'propostas']);
 
 const LINK_RE =
   /<link\s+rel=["']stylesheet["']\s+href=["']([^"']*atomurus-lab-console\.css[^"']*)["']\s*>/gi;
@@ -51,8 +53,9 @@ function patch(html) {
 const files = walk(ROOT, []);
 let changed = 0;
 for (const file of files) {
+  if (path.basename(file) === 'app.html') continue;
   const original = fs.readFileSync(file, 'utf8');
-  const next = patch(original);
+  const next = ensurePublicShell(patch(original));
   if (next !== original) {
     fs.writeFileSync(file, next, 'utf8');
     changed += 1;
