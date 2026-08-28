@@ -186,6 +186,11 @@ export const establishIpLimiter = createAuthRateLimiter({
   limit: 20,
   maxKeys: 2000
 });
+export const refreshIpLimiter = createAuthRateLimiter({
+  windowMs: 15 * 60 * 1000,
+  limit: 60,
+  maxKeys: 4000
+});
 
 const AUTH_LIMITERS = [
   loginIpLimiter,
@@ -196,7 +201,8 @@ const AUTH_LIMITERS = [
   recoverEmailLimiter,
   resetIpLimiter,
   confirmIpLimiter,
-  establishIpLimiter
+  establishIpLimiter,
+  refreshIpLimiter
 ];
 
 export function resetAuthRateLimiters() {

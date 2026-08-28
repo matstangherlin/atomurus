@@ -1,4 +1,3 @@
-import { clearSessionCookieHeaders } from './auth-cookies.mjs';
 import { logAuthEvent } from './auth-log.mjs';
 import { authSession } from './auth-provider.mjs';
 import { jsonWithCookies } from './netlify-identity-utils.mjs';
@@ -17,7 +16,7 @@ export async function requireUser(request, message = 'Session expired') {
       response: jsonWithCookies(
         401,
         { ok: false, error: message, code: 'session_expired' },
-        session?.cookieHeaders?.length ? session.cookieHeaders : clearSessionCookieHeaders()
+        session?.cookieHeaders || []
       )
     };
   }

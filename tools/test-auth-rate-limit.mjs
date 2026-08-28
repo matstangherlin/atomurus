@@ -5,6 +5,7 @@ import {
   createAuthRateLimiter,
   hashIdentifier,
   loginIdentifierLimiter,
+  refreshIpLimiter,
   resetAuthRateLimiters
 } from '../netlify/lib/auth-rate-limit.mjs';
 import { createRateLimit } from '../netlify/lib/netlify-identity-utils.mjs';
@@ -71,5 +72,8 @@ assert.equal(emailLimiter.keys().join(' ').includes('@'), false);
 
 loginIdentifierLimiter.hit(hashIdentifier('secret.user@atomurus.com'));
 assert.equal(loginIdentifierLimiter.keys().some((key) => /secret\.user@|@atomurus/.test(key)), false);
+
+assert.equal(refreshIpLimiter.limit, 60);
+assert.equal(refreshIpLimiter.windowMs, 15 * 60 * 1000);
 
 console.log('test-auth-rate-limit: ok');

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { authConfirm, authLogin, authLogout, authRecover, authRefresh, authReset, authSession, authSignup } from '../netlify/lib/auth-provider.mjs';
 import { isProtectedPath, safeNextPath } from '../netlify/lib/auth-redirect.mjs';
-import { loginIdentifierLimiter, resetAuthRateLimiters } from '../netlify/lib/auth-rate-limit.mjs';
+import { loginIdentifierLimiter, refreshIpLimiter, resetAuthRateLimiters } from '../netlify/lib/auth-rate-limit.mjs';
 import { resetRefreshFlights } from '../netlify/lib/supabase-auth.mjs';
 import loginHandler from '../netlify/functions/auth-login.mjs';
 import meHandler from '../netlify/functions/auth-me.mjs';
@@ -12,6 +12,7 @@ import signupHandler from '../netlify/functions/auth-signup.mjs';
 import confirmHandler from '../netlify/functions/auth-confirm.mjs';
 import resetHandler from '../netlify/functions/auth-reset.mjs';
 import dashboardHandler from '../netlify/functions/private-dashboard.mjs';
+import adsConfigHandler from '../netlify/functions/ads-config.mjs';
 
 const originalEnv = { ...process.env };
 const originalFetch = globalThis.fetch;
@@ -103,6 +104,15 @@ function sessionRequest(extra = {}) {
 
 async function readJson(res) {
   return JSON.parse(await res.text());
+}
+
+function cookieHeadersOf(resOrList) {
+  if (Array.isArray(resOrList)) return resOrList;
+  return resOrList.headers.getSetCookie();
+}
+
+function clearsSessionCookies(resOrList) {
+  return cookieHeadersOf(resOrList).some((header) => header.includes('Max-Age=0'));
 }
 
 function installSupabaseMock(handlers) {
@@ -228,10 +238,11 @@ await withAuthEnv(async () => {
   const meJson = await readJson(meRes);
   assert.equal(meRes.status, 401);
   assert.equal(meJson.code, 'session_expired');
-  assert.ok(meRes.headers.getSetCookie().some((header) => header.includes('Max-Age=0')));
+  assert.equal(clearsSessionCookies(meRes), false);
 
   const dash = await dashboardHandler(cookieRequest('https://atomurus.com/api/private/dashboard'));
   assert.equal(dash.status, 401);
+  assert.equal(clearsSessionCookies(dash), false);
   assert.equal(isProtectedPath('/app'), true);
 });
 
@@ -285,11 +296,19 @@ await withAuthEnv(async () => {
     cookies: 'atm_access=stale; atm_refresh=stale'
   }));
   assert.equal(meRes.status, 401);
-  assert.ok(meRes.headers.getSetCookie().some((header) => header.includes('Max-Age=0')));
+  assert.equal(clearsSessionCookies(meRes), false);
+
+  const ads = await adsConfigHandler(cookieRequest('https://atomurus.com/api/ads-config', {
+    cookies: 'atm_access=stale; atm_refresh=stale'
+  }));
+  const adsJson = await readJson(ads);
+  assert.equal(ads.status, 200);
+  assert.equal(adsJson.signedIn, false);
+  assert.equal(clearsSessionCookies(ads), false);
 });
 
 await withAuthEnv(async () => {
-  // 9. sessão expirada limpa cookies
+  // 9. opportunistic restore miss must not clear cookies (refresh race)
   installSupabaseMock([
     {
       match: (url, method) => method === 'GET' && url.endsWith('/user'),
@@ -302,7 +321,8 @@ await withAuthEnv(async () => {
   ]);
   const expired = await authSession(sessionRequest({ cookie: 'atm_access=dead; atm_refresh=dead' }));
   assert.equal(expired.user, null);
-  assert.ok(expired.cookieHeaders.every((header) => header.includes('Max-Age=0')));
+  assert.equal(expired.cookieHeaders.length, 0);
+  assert.equal(clearsSessionCookies(expired.cookieHeaders), false);
 });
 
 await withAuthEnv(async () => {
@@ -319,6 +339,68 @@ await withAuthEnv(async () => {
     body: {}
   }));
   assert.equal(res.status, 200);
+});
+
+await withAuthEnv(async () => {
+  // explicit refresh of a dead session still clears cookies
+  installSupabaseMock([
+    {
+      match: (url, method) => method === 'GET' && url.endsWith('/user'),
+      respond: async () => jsonRes(401, { message: 'expired' })
+    },
+    {
+      match: (url, method) => method === 'POST' && url.includes('refresh_token'),
+      respond: async () => jsonRes(401, { message: 'Invalid Refresh Token' })
+    }
+  ]);
+  const expired = await authRefresh(sessionRequest({ cookie: 'atm_access=dead; atm_refresh=dead' }));
+  assert.equal(expired.user, null);
+  assert.ok(expired.cookieHeaders.length > 0);
+  assert.equal(clearsSessionCookies(expired.cookieHeaders), true);
+
+  const res = await refreshHandler(cookieRequest('https://atomurus.com/api/auth/refresh', {
+    method: 'POST',
+    cookies: 'atm_access=dead; atm_refresh=dead',
+    body: {}
+  }));
+  assert.equal(res.status, 401);
+  assert.equal(clearsSessionCookies(res), true);
+});
+
+await withAuthEnv(async () => {
+  // loser of a refresh-token rotation must not wipe the winner's cookies
+  resetRefreshFlights();
+  let refreshCalls = 0;
+  installSupabaseMock([
+    {
+      match: (url, method) => method === 'GET' && url.endsWith('/user'),
+      respond: async () => jsonRes(401, { message: 'expired' })
+    },
+    {
+      match: (url, method) => method === 'POST' && url.includes('/token?grant_type=refresh_token'),
+      respond: async () => {
+        refreshCalls += 1;
+        if (refreshCalls === 1) return jsonRes(200, sessionBody());
+        return jsonRes(401, { message: 'Invalid Refresh Token' });
+      }
+    }
+  ]);
+  const winner = await authSession(sessionRequest({ cookie: 'atm_access=dead; atm_refresh=refresh-live' }));
+  const loser = await authSession(sessionRequest({ cookie: 'atm_access=dead; atm_refresh=refresh-live' }));
+  const ads = await adsConfigHandler(cookieRequest('https://atomurus.com/api/ads-config', {
+    cookies: 'atm_access=dead; atm_refresh=refresh-live'
+  }));
+  const meRes = await meHandler(cookieRequest('https://atomurus.com/api/auth/me', {
+    cookies: 'atm_access=dead; atm_refresh=refresh-live'
+  }));
+  assert.equal(winner.user.email, 'alice@atomurus.com');
+  assert.ok(winner.cookieHeaders.some((header) => header.startsWith('atm_access=')));
+  assert.equal(loser.user, null);
+  assert.equal(clearsSessionCookies(loser.cookieHeaders), false);
+  assert.equal(ads.status, 200);
+  assert.equal(clearsSessionCookies(ads), false);
+  assert.equal(meRes.status, 401);
+  assert.equal(clearsSessionCookies(meRes), false);
 });
 
 await withAuthEnv(async () => {
@@ -624,6 +706,27 @@ await withAuthEnv(async () => {
   }));
   assert.equal(blocked.status, 429);
   assert.ok(Number(blocked.headers.get('Retry-After')) >= 1);
+});
+
+await withAuthEnv(async () => {
+  resetAuthRateLimiters();
+  installSupabaseMock([{
+    match: (url, method) => method === 'POST' && url.includes('/token?grant_type=refresh_token'),
+    respond: async () => jsonRes(200, sessionBody())
+  }]);
+  assert.equal(refreshIpLimiter.limit, 60);
+  for (let i = 0; i < refreshIpLimiter.limit; i += 1) {
+    refreshIpLimiter.hit('ip:203.0.113.200');
+  }
+  const blocked = await refreshHandler(cookieRequest('https://atomurus.com/api/auth/refresh', {
+    method: 'POST',
+    headers: { 'x-forwarded-for': '203.0.113.200' },
+    cookies: 'atm_refresh=refresh-live',
+    body: {}
+  }));
+  assert.equal(blocked.status, 429);
+  assert.ok(Number(blocked.headers.get('Retry-After')) >= 1);
+  assert.match(blocked.headers.get('Cache-Control') || '', /no-store/);
 });
 
 await withAuthEnv(async () => {

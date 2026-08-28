@@ -8,6 +8,8 @@ export default async function handler(request) {
     return json(405, { ok: false, error: 'Method not allowed' });
   }
 
+  // Opportunistic restore only. A miss must not Set-Cookie Max-Age=0:
+  // this runs on every public page and would race /app's /me refresh.
   const session = await authSession(request);
   const user = session?.user ? publicUser(session.user) : null;
   const pricingContext = resolvePricingContext(request);

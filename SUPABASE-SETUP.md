@@ -99,7 +99,9 @@ Sessions use HttpOnly cookies:
 - Production: `__Host-atm_access`, `__Host-atm_refresh`
 - Local `netlify dev`: `atm_access`, `atm_refresh`
 
-Auth endpoints apply **best-effort in-memory rate limits per Function isolate** (`netlify/lib/auth-rate-limit.mjs`). That Map is not a global/distributed limiter. Identifiers are stored as SHA-256 prefixes (`identifier:<hash>`), never as raw email. A shared store (Redis/Upstash) is the future step if cross-instance limits become required.
+Auth endpoints apply **best-effort in-memory rate limits per Function isolate** (`netlify/lib/auth-rate-limit.mjs`). That Map is not a global/distributed limiter. Identifiers are stored as SHA-256 prefixes (`identifier:<hash>`), never as raw email. `POST /api/auth/refresh` is limited to 60 requests / 15 minutes / IP. A shared store (Redis/Upstash) is the future step if cross-instance limits become required.
+
+Opportunistic session restore (`GET /api/auth/me`, `GET /api/ads-config`, `requireUser`) never emits `Set-Cookie` with `Max-Age=0` on a miss. Clearing the jar is reserved for `POST /api/auth/logout` and `POST /api/auth/refresh` when the session is actually dead. That keeps a sibling Function isolate from wiping cookies after refresh-token rotation.
 
 Cross-tab session hints use `BroadcastChannel` (`auth-sync.js`) with a `localStorage` fallback. Those messages never carry tokens, cookies, or user fields; `/api/auth/me` remains the source of truth.
 

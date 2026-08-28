@@ -41,19 +41,17 @@ export async function authLogin(identifier, password) {
 }
 
 export async function authSession(request) {
-  const tokens = readSessionTokens(request);
   try {
     const session = await supabaseSessionFromRequest(request);
     if (session?.user) return session;
-    return {
-      user: null,
-      cookieHeaders: (tokens.accessToken || tokens.refreshToken)
-        ? clearSessionCookieHeaders()
-        : (session?.cookieHeaders || [])
-    };
+    // Opportunistic restore only. A miss (expired access, rotated
+    // refresh in another isolate, ads-config racing /me) must not
+    // Set-Cookie Max-Age=0: that would wipe a sibling isolate's newly
+    // rotated cookies from the shared jar.
+    return { user: null, cookieHeaders: session?.cookieHeaders || [] };
   } catch (err) {
     if (isRejectedSession(err)) {
-      return { user: null, cookieHeaders: clearSessionCookieHeaders() };
+      return { user: null, cookieHeaders: [] };
     }
     throw err;
   }

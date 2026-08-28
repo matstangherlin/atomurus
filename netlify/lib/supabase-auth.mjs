@@ -211,8 +211,10 @@ export async function supabaseLogin(identifier, password) {
 // Same-isolate single-flight for refresh_token grants.
 // This Map is NOT a distributed lock: two Function instances can still
 // race. Supabase rotates refresh tokens, so a sibling isolate may see
-// an invalid/reused token and clear cookies. Shared storage would be
-// required to close that gap. Keys are SHA-256 prefixes, never the token.
+// an invalid/reused token. authSession must not clear cookies on that
+// miss; only explicit authRefresh / authLogout expire the jar. Shared
+// storage would still be required to make refresh itself consistent.
+// Keys are SHA-256 prefixes, never the token.
 const refreshFlights = new Map();
 
 function refreshFlightKey(refreshToken) {
