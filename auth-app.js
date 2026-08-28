@@ -1663,8 +1663,9 @@
     }
     var first = rows[0] ? String(rows[0].date || '').slice(5) : '';
     var last = rows.length ? String(rows[rows.length - 1].date || '').slice(5) : '';
+    var cols = Math.max(rows.length, 1);
     return '<figure class="ws-chart is-sparkline" id="ws-activity-chart">' + caption +
-      '<ul class="ws-sparkline" aria-labelledby="ws-activity-title">' +
+      '<ul class="ws-sparkline" style="grid-template-columns:repeat(' + cols + ',minmax(0,1fr))" aria-labelledby="ws-activity-title">' +
       rows.map(function (row) {
         var n = Number(row.reviews) || 0;
         var pct = actMax > 0 && n ? Math.max(8, Math.round((n / actMax) * 100)) : 4;
@@ -1696,7 +1697,7 @@
       '<button type="button" class="ws-chip' + (range === '7d' ? ' is-on' : '') + '" data-insight-range="7d" aria-pressed="' + (range === '7d' ? 'true' : 'false') + '">' + escapeHtml(t('range7d')) + '</button>' +
       '<button type="button" class="ws-chip' + (range === '30d' ? ' is-on' : '') + '" data-insight-range="30d" aria-pressed="' + (range === '30d' ? 'true' : 'false') + '">' + escapeHtml(t('range30d')) + '</button>' +
       '</div>';
-    var setFilter = '<label class="ws-field"><span>' + escapeHtml(t('allSets')) + '</span><select class="ws-input" id="ws-insight-set">' +
+    var setFilter = '<label class="ws-field ws-insight-set"><select class="ws-input" id="ws-insight-set" aria-label="' + escapeHtml(t('allSets')) + '">' +
       '<option value="">' + escapeHtml(t('allSets')) + '</option>' +
       sets.map(function (set) {
         return '<option value="' + escapeHtml(set.id) + '"' + (set.id === setId ? ' selected' : '') + '></option>';

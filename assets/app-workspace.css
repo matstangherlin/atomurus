@@ -1060,6 +1060,8 @@ html.auth-error .ws-auth-only { visibility: hidden; }
   gap: 12px;
   margin: 0 0 20px;
 }
+.ws-insight-set { min-width: min(100%, 14rem); }
+.ws-insight-set .ws-input { width: 100%; }
 .ws-lab-tools, .ws-lab-actions, .ws-lab-picks, .ws-lab-picker, .ws-lab-chips {
   display: flex;
   flex-wrap: wrap;
