@@ -44,15 +44,28 @@ export default async function handler(request) {
         ),
         db.select(
           'study_cards',
-          `select=study_set_id,interval_days,due_at,suspended&user_id=eq.${userId}&limit=${STUDY_SET_LIMITS.maxCards}`
+          `select=study_set_id,interval_days,due_at,suspended,review_state&user_id=eq.${userId}&limit=${STUDY_SET_LIMITS.maxCards}`
         )
       ]);
       const stats = new Map();
       for (const row of cards.rows || []) {
-        const current = stats.get(row.study_set_id) || { cardCount: 0, dueCount: 0, masteredCount: 0 };
+        const current = stats.get(row.study_set_id) || {
+          cardCount: 0,
+          dueCount: 0,
+          masteredCount: 0,
+          activeCount: 0,
+          learningCount: 0,
+          newCount: 0
+        };
         current.cardCount += 1;
-        if (!row.suspended && Date.parse(row.due_at) <= now) current.dueCount += 1;
-        if (!row.suspended && isMastered(row.interval_days)) current.masteredCount += 1;
+        if (!row.suspended) {
+          current.activeCount += 1;
+          if (Date.parse(row.due_at) <= now) current.dueCount += 1;
+          if (isMastered(row.interval_days)) current.masteredCount += 1;
+          const state = String(row.review_state || '').toLowerCase();
+          if (state === 'learning') current.learningCount += 1;
+          if (state === 'new') current.newCount += 1;
+        }
         stats.set(row.study_set_id, current);
       }
       return cookieResponse(auth, 200, {
@@ -60,7 +73,10 @@ export default async function handler(request) {
         sets: rows.map((row) => publicStudySet(row, stats.get(row.id) || {
           cardCount: 0,
           dueCount: 0,
-          masteredCount: 0
+          masteredCount: 0,
+          activeCount: 0,
+          learningCount: 0,
+          newCount: 0
         }))
       });
     }

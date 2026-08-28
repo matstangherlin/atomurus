@@ -266,7 +266,7 @@
       if (pinned.length >= 12) pinned.shift();
       pinned.push(item);
       renderPinned();
-      if (ctx.ui && ctx.ui.toast) ctx.ui.toast(t('pinned'), 'success');
+      if (ctx.ui && ctx.ui.toast) ctx.ui.toast(t('pinned'), { tone: 'success' });
     };
 
     function renderPinned() {
@@ -322,7 +322,7 @@
         if (ctx.ui && ctx.ui.toast) ctx.ui.toast(t('sessionSaved'));
         if (sessionId) history.replaceState(null, '', ctx.labHref('calculations') + '&session=' + encodeURIComponent(sessionId));
       }).catch(function (err) {
-        if (ctx.ui && ctx.ui.toast) ctx.ui.toast(ctx.t(ctx.logic.uxError(err).bodyKey), 'danger');
+        if (ctx.ui && ctx.ui.toast) ctx.ui.toast(ctx.t(ctx.logic.uxError(err).bodyKey), { tone: 'danger' });
       });
     });
 

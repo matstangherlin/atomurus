@@ -59,7 +59,7 @@
       var link = document.createElement('link');
       link.id = 'atomurus-workspace-ui-css';
       link.rel = 'stylesheet';
-      link.href = '/assets/app-workspace.css?v=202608280700';
+      link.href = '/assets/app-workspace.css?v=202608282000';
       document.head.appendChild(link);
     }
     var node = document.getElementById(id);
@@ -78,6 +78,7 @@
   }
 
   function toast(message, options) {
+    if (typeof options === 'string') options = { tone: options };
     options = options || {};
     var host = ensureHost(TOAST_ID, 'toast');
     var item = document.createElement('div');

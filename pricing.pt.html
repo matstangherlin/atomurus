@@ -70,6 +70,11 @@
   .price-card .amount small{font-family:var(--lc-mono);font-size:11px;letter-spacing:.04em;color:var(--lc-ink-3);display:block;margin-top:6px;font-style:normal}
   .price-card ul{margin:12px 0 16px;padding-left:18px}
   .price-card li{margin:6px 0;color:var(--lc-ink-2);font-size:14px}
+  .price-card li.price-group{list-style:none;margin:14px 0 6px;margin-left:-18px;font-family:var(--lc-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--lc-green)}
+  .price-coming{margin:28px 0 8px;padding:14px 16px;border:1px dashed var(--lc-rule);border-radius:10px;color:var(--lc-ink-3)}
+  .price-coming h3{font-size:14px;font-weight:600;margin:0 0 8px;color:var(--lc-ink-2)}
+  .price-coming ul{margin:0;padding-left:18px}
+  .price-coming li{margin:4px 0;font-size:13px}
   .price-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
   .price-note{font-family:var(--lc-mono);font-size:11px;color:var(--lc-ink-3);margin-top:10px}
   .currency-toggle{display:inline-flex;gap:6px;margin:8px 0 0}
@@ -212,6 +217,10 @@
 
     <h2 id="keep-free"><span class="h-no">§ 04</span> <span id="pricing-keep-free-title">What stays free</span></h2>
     <p id="pricing-keep-free-copy">The periodic table, element pages, articles, calculators and viewers stay open. Billing should never become a gate in front of chemistry fundamentals.</p>
+    <aside class="price-coming" id="pricing-coming">
+      <h3 id="pricing-coming-title">Coming later</h3>
+      <ul id="pricing-coming-list"></ul>
+    </aside>
   </article>
 </div>
 
@@ -249,7 +258,7 @@
 <script>
 function toggleTheme(){var h=document.documentElement;var d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');localStorage.setItem('atomurus-theme',d?'light':'dark')}
 </script>
-<script src="pricing-page.js?v=202608041630" defer></script>
+<script src="pricing-page.js?v=202608282000" defer></script>
 <script type="text/javascript">
     (window.atomurusRunAutoTag||function(){})({ zoneId: '6p1sooifu8' });
 </script>

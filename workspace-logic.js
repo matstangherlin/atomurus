@@ -6,7 +6,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
 
-  var SECTIONS = ['overview', 'library', 'sets', 'review', 'pro-lab', 'history', 'notes', 'progress', 'account'];
+  var SECTIONS = ['overview', 'library', 'sets', 'review', 'insights', 'pro-lab', 'history', 'notes', 'progress', 'account'];
   var LAB_TOOLS = ['home', 'calculations', 'elements', 'molecules', 'atomic', 'sessions'];
   var UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   var MS_DAY = 24 * 60 * 60 * 1000;
@@ -152,6 +152,40 @@
     return href;
   }
 
+  function focusReviewHref(id, limit) {
+    var href = '/app?section=review&start=1&mode=weak';
+    if (isValidSetId(id)) href += '&set=' + encodeURIComponent(String(id).trim());
+    var n = Number(limit);
+    if (n === 10 || n === 20 || n === 30) href += '&limit=' + n;
+    return href;
+  }
+
+  function reviewModeFromQuery(search) {
+    try {
+      var mode = String(new URLSearchParams(search || '').get('mode') || 'due').trim().toLowerCase();
+      return mode === 'weak' ? 'weak' : 'due';
+    } catch (_err) {
+      return 'due';
+    }
+  }
+
+  function focusLimitFromQuery(search) {
+    try {
+      var n = Number(new URLSearchParams(search || '').get('limit'));
+      if (n === 10 || n === 20 || n === 30) return n;
+    } catch (_err) {}
+    return 20;
+  }
+
+  function insightsRangeFromQuery(search) {
+    try {
+      var range = String(new URLSearchParams(search || '').get('range') || '30d').trim().toLowerCase();
+      return range === '7d' ? '7d' : '30d';
+    } catch (_err) {
+      return '30d';
+    }
+  }
+
   function overviewSetCount(review) {
     if (!review) return 0;
     if (Array.isArray(review.sets)) return review.sets.length;
@@ -280,6 +314,10 @@
     safeHref: safeHref,
     humanizeKey: humanizeKey,
     reviewStartHref: reviewStartHref,
+    focusReviewHref: focusReviewHref,
+    reviewModeFromQuery: reviewModeFromQuery,
+    focusLimitFromQuery: focusLimitFromQuery,
+    insightsRangeFromQuery: insightsRangeFromQuery,
     overviewSetCount: overviewSetCount,
     uxError: uxError,
     isTechnicalErrorText: isTechnicalErrorText,

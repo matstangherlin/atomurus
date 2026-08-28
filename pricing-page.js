@@ -13,34 +13,72 @@
       freeTag: 'Free forever',
       freeName: 'Atomurus Free',
       freeSub: 'Explore chemistry',
+      freeGroup: 'Free lab',
       freeFeatures: [
         'Periodic Table',
-        'Calculators',
+        'Element pages',
+        'Trends & isotopes',
+        'Chemistry calculators',
         'Atomic models',
         'Molecule viewer',
-        'Explore',
-        'Public chemistry content'
+        'Explore chemistry content'
       ],
       freeCta: 'Open lab',
       popular: 'Most popular',
       proTag: 'Atomurus Pro',
       proName: 'Build your study system',
       proSub: 'Everything in Free, plus a personal study system',
+      proStudyGroup: 'Pro Study',
+      proLabGroup: 'Pro Lab',
       proFeatures: [
         'Everything in Free',
         'No ads',
-        'Study Library, notes and calculator history',
-        'Study Sets, flashcards and Smart Review',
-        'Study Progress',
-        'Automatic card generation',
+        'Study Library',
+        'Notes & tags',
+        'Study Sets',
+        'Flashcards',
+        'Smart Review',
         'Spaced repetition',
-        'Pro Lab advanced tools',
-        'Advanced calculation workspace',
-        'Advanced element comparisons',
-        'Molecule comparisons',
-        'Atomic comparisons',
-        'Saved Lab sessions'
+        'Study Insights',
+        'Focus Review',
+        'Study progress',
+        'Calculator History',
+        'Advanced calculations',
+        'Multi-element analysis',
+        'Molecule comparison',
+        'Atomic comparison',
+        'Saved Lab Sessions'
       ],
+      proGroups: [
+        {
+          title: 'Pro Study',
+          items: [
+            'Everything in Free',
+            'No ads',
+            'Study Library',
+            'Notes & tags',
+            'Study Sets',
+            'Flashcards',
+            'Smart Review',
+            'Spaced repetition',
+            'Study Insights',
+            'Focus Review',
+            'Study progress'
+          ]
+        },
+        {
+          title: 'Pro Lab',
+          items: [
+            'Advanced calculations',
+            'Multi-element analysis',
+            'Molecule comparison',
+            'Atomic comparison',
+            'Saved Lab Sessions'
+          ]
+        }
+      ],
+      comingTitle: 'Coming later',
+      comingItems: ['Study sheet PDF', 'Premium study tracks'],
       checkoutGuest: 'Create account',
       checkoutTrial: 'Subscribe after trial',
       checkoutFree: 'Upgrade to Pro',
@@ -61,6 +99,8 @@
         ['Study Library', 'no', 'yes'],
         ['Study Sets', 'no', 'yes'],
         ['Smart Review', 'no', 'yes'],
+        ['Study Insights', 'no', 'yes'],
+        ['Focus Review', 'no', 'yes'],
         ['Spaced repetition', 'no', 'yes'],
         ['Pro Lab', 'no', 'yes'],
         ['Saved Lab sessions', 'no', 'yes'],
@@ -108,34 +148,72 @@
       freeTag: 'Grátis para sempre',
       freeName: 'Atomurus Free',
       freeSub: 'Explore química',
+      freeGroup: 'Lab gratuito',
       freeFeatures: [
         'Tabela periódica',
-        'Calculadoras',
+        'Páginas dos elementos',
+        'Tendências e isótopos',
+        'Calculadoras de química',
         'Modelos atômicos',
         'Visualizador de moléculas',
-        'Explore',
-        'Conteúdo público de química'
+        'Conteúdo Explore de química'
       ],
       freeCta: 'Abrir lab',
       popular: 'Mais popular',
       proTag: 'Atomurus Pro',
       proName: 'Monte seu sistema de estudos',
       proSub: 'Tudo do Free, mais um sistema pessoal de estudos',
+      proStudyGroup: 'Pro Study',
+      proLabGroup: 'Pro Lab',
       proFeatures: [
         'Tudo do Free',
         'Sem anúncios',
-        'Biblioteca, notas e histórico de calculadoras',
-        'Study Sets, flashcards e Smart Review',
-        'Progresso de estudo',
-        'Geração automática de cards',
+        'Biblioteca de estudos',
+        'Notas e tags',
+        'Study Sets',
+        'Flashcards',
+        'Smart Review',
         'Repetição espaçada',
-        'Ferramentas avançadas do Pro Lab',
-        'Workspace de cálculos avançados',
-        'Comparações avançadas de elementos',
-        'Comparações de moléculas',
-        'Comparações atômicas',
+        'Insights de Estudo',
+        'Focus Review',
+        'Progresso de estudo',
+        'Histórico de calculadoras',
+        'Cálculos avançados',
+        'Análise de vários elementos',
+        'Comparação de moléculas',
+        'Comparação atômica',
         'Sessões salvas do Lab'
       ],
+      proGroups: [
+        {
+          title: 'Pro Study',
+          items: [
+            'Tudo do Free',
+            'Sem anúncios',
+            'Biblioteca de estudos',
+            'Notas e tags',
+            'Study Sets',
+            'Flashcards',
+            'Smart Review',
+            'Repetição espaçada',
+            'Insights de Estudo',
+            'Focus Review',
+            'Progresso de estudo'
+          ]
+        },
+        {
+          title: 'Pro Lab',
+          items: [
+            'Cálculos avançados',
+            'Análise de vários elementos',
+            'Comparação de moléculas',
+            'Comparação atômica',
+            'Sessões salvas do Lab'
+          ]
+        }
+      ],
+      comingTitle: 'Em breve',
+      comingItems: ['PDF de ficha de estudo', 'Trilhas premium de estudo'],
       checkoutGuest: 'Criar conta',
       checkoutTrial: 'Assinar após o trial',
       checkoutFree: 'Assinar o Pro',
@@ -156,6 +234,8 @@
         ['Biblioteca de estudos', 'no', 'yes'],
         ['Study Sets', 'no', 'yes'],
         ['Smart Review', 'no', 'yes'],
+        ['Insights de Estudo', 'no', 'yes'],
+        ['Focus Review', 'no', 'yes'],
         ['Repetição espaçada', 'no', 'yes'],
         ['Pro Lab', 'no', 'yes'],
         ['Sessões salvas do Lab', 'no', 'yes'],
@@ -257,6 +337,23 @@
     });
   }
 
+  function setGroupedList(id, groups) {
+    var node = document.getElementById(id);
+    if (!node) return;
+    node.textContent = '';
+    (groups || []).forEach(function (group) {
+      var heading = document.createElement('li');
+      heading.className = 'price-group';
+      heading.textContent = group.title;
+      node.appendChild(heading);
+      (group.items || []).forEach(function (item) {
+        var li = document.createElement('li');
+        li.textContent = item;
+        node.appendChild(li);
+      });
+    });
+  }
+
   function readStorage(key, fallback) {
     try { return localStorage.getItem(key) || fallback; } catch (_err) { return fallback; }
   }
@@ -329,7 +426,9 @@
     setText('pricing-pro-tag', t('proTag'));
     setText('pricing-pro-name', t('proName'));
     setText('pricing-pro-sub', t('proSub'));
-    setList('pricing-pro-list', t('proFeatures'));
+    setGroupedList('pricing-pro-list', t('proGroups'));
+    setText('pricing-coming-title', t('comingTitle'));
+    setList('pricing-coming-list', t('comingItems'));
     if (period === 'annual') {
       setText('pricing-pro-amount', pricing.annualAmount);
       setText('pricing-pro-meta', pricing.annualEq + ' · ' + t('billedAnnual'));

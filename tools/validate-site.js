@@ -210,6 +210,8 @@ function assertStudyCloud() {
     'netlify/functions/study-review.mjs',
     'netlify/functions/study-review-overview.mjs',
     'netlify/functions/study-review-queue.mjs',
+    'netlify/functions/study-insights.mjs',
+    'netlify/lib/study-insights.mjs',
     'netlify/lib/review-scheduler.mjs',
     'study-client.js',
     'study-save.js',
@@ -228,13 +230,14 @@ function assertStudyCloud() {
     'netlify/functions/pro-lab-elements-compare.mjs',
     'netlify/functions/pro-lab-molecules-compare.mjs',
     'netlify/functions/pro-lab-atomic-compare.mjs',
-    'pro-lab.js'
+    'pro-lab.js',
+    'assets/workspace-foundation.css'
   ];
   files.forEach((rel) => {
     if (!fs.existsSync(path.join(ROOT, rel))) fail(`${rel} is missing`);
   });
   const netlify = read('netlify.toml');
-  ['/api/study/overview', '/api/study/items', '/api/study/item', '/api/study/calculator-history', '/api/study/progress', '/api/study/sets', '/api/study/review/queue', '/api/study/cards/generate', '/api/pro-lab/sessions', '/api/pro-lab/calculate', '/api/pro-lab/elements/compare'].forEach((route) => {
+  ['/api/study/overview', '/api/study/items', '/api/study/item', '/api/study/calculator-history', '/api/study/progress', '/api/study/sets', '/api/study/review/queue', '/api/study/insights', '/api/study/cards/generate', '/api/pro-lab/sessions', '/api/pro-lab/calculate', '/api/pro-lab/elements/compare'].forEach((route) => {
     if (!netlify.includes(route)) fail(`netlify.toml missing ${route}`);
   });
   const client = read('study-client.js');

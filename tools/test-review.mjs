@@ -205,6 +205,17 @@ function matchesFilters(row, params) {
 function sortRows(rows, params) {
   const order = param(params, 'order') || '';
   const copy = [...rows];
+  if (order.includes('lapses.desc')) {
+    return copy.sort((a, b) => {
+      const lapse = (Number(b.lapses) || 0) - (Number(a.lapses) || 0);
+      if (lapse) return lapse;
+      const ease = (Number(a.ease_factor) || 0) - (Number(b.ease_factor) || 0);
+      if (ease) return ease;
+      const due = String(a.due_at || '').localeCompare(String(b.due_at || ''));
+      if (due) return due;
+      return String(a.id).localeCompare(String(b.id));
+    });
+  }
   if (order.includes('due_at.asc')) {
     return copy.sort((a, b) => String(a.due_at).localeCompare(String(b.due_at)) || String(a.id).localeCompare(String(b.id)));
   }

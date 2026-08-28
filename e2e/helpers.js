@@ -23,6 +23,9 @@ function features(on) {
     flashcards: on,
     smartReview: on,
     spacedRepetition: on,
+    studyInsights: on,
+    focusReview: on,
+    advancedStudyStats: on,
     exportPdf: on,
     adsFree: on,
     adminConsole: false,
@@ -287,10 +290,80 @@ async function installApi(page, options = {}) {
         sets: data.sets
       });
     }
-    if (path === '/api/study/review/queue') {
+    if (path === '/api/study/insights' && method === 'GET') {
+      const range = url.searchParams.get('range') === '7d' ? '7d' : '30d';
+      const days = range === '7d' ? 7 : 30;
+      const setFilter = String(url.searchParams.get('setId') || url.searchParams.get('set') || '').trim();
+      const sets = (data.sets || []).filter((set) => !setFilter || set.id === setFilter);
+      const hasHistory = (data.reviews && data.reviews.length) || data.cards.length;
+      const activity = Array.from({ length: days }, (_, i) => ({
+        date: `2026-08-${String(Math.max(1, 28 - days + 1 + i)).padStart(2, '0')}`,
+        weekday: ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'][(i + 5) % 7],
+        reviews: hasHistory && i % 3 === 0 ? 4 : hasHistory && i % 2 === 0 ? 2 : 0
+      }));
+      const weak = data.cards
+        .filter((card) => !card.suspended && ((card.lapses || 0) > 0 || (card.easeFactor || 2.5) < 2.5 || card.reviewState === 'learning' || !card.intervalDays))
+        .sort((a, b) => (b.lapses || 0) - (a.lapses || 0))
+        .slice(0, 5)
+        .map((card) => ({
+          id: card.id,
+          studySetId: card.studySetId || (data.sets[0] && data.sets[0].id) || SET_ID,
+          studySetTitle: (data.sets[0] && data.sets[0].title) || 'Metals',
+          front: card.front,
+          lapses: card.lapses || 0,
+          reviewState: card.reviewState || 'learning',
+          dueAt: card.dueAt,
+          dueNow: true
+        }));
       return json(route, 200, {
         ok: true,
-        cards: data.cards.filter((card) => !card.suspended)
+        range,
+        setId: setFilter || null,
+        summary: {
+          reviews: hasHistory ? 12 : 0,
+          activeDays: hasHistory ? 3 : 0,
+          masteredCards: hasHistory ? 1 : 0,
+          dueNow: data.cards.filter((card) => !card.suspended).length,
+          confidentReviews: hasHistory ? 0.75 : 0
+        },
+        ratings: hasHistory ? { again: 1, hard: 2, good: 6, easy: 3 } : { again: 0, hard: 0, good: 0, easy: 0 },
+        activity,
+        consistency: { windowDays: Math.min(14, days), activeDays: hasHistory ? 3 : 0 },
+        dueForecast: hasHistory
+          ? [
+              { date: '2026-08-28', weekday: 'fri', kind: 'today', due: 2 },
+              { date: '2026-08-29', weekday: 'sat', kind: 'tomorrow', due: 1 }
+            ]
+          : [],
+        weakCards: weak,
+        sets: sets.map((set) => ({
+          id: set.id,
+          title: set.title,
+          totalCards: data.cards.length,
+          mastered: set.masteredCount || 0,
+          learning: set.learningCount || 0,
+          newCards: set.newCount || 0,
+          due: set.dueCount || data.cards.length,
+          reviews: hasHistory ? 12 : 0,
+          needsAttention: weak.length,
+          masteredPercent: 0
+        }))
+      });
+    }
+    if (path === '/api/study/review/queue') {
+      const mode = String(url.searchParams.get('mode') || 'due').toLowerCase();
+      let cards = data.cards.filter((card) => !card.suspended);
+      if (mode === 'weak') {
+        cards = cards
+          .filter((card) => (card.lapses || 0) > 0 || (card.easeFactor || 2.5) < 2.5 || card.reviewState === 'learning')
+          .sort((a, b) => (b.lapses || 0) - (a.lapses || 0));
+        const n = Number(url.searchParams.get('limit'));
+        cards = cards.slice(0, n === 10 || n === 30 ? n : 20);
+      }
+      return json(route, 200, {
+        ok: true,
+        mode: mode === 'weak' ? 'weak' : 'due',
+        cards
       });
     }
     if (path === '/api/study/review' && method === 'POST') {

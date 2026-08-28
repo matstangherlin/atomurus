@@ -9,6 +9,7 @@
   var setsCache = null;
   var setCache = Object.create(null);
   var reviewOverviewCache = null;
+  var insightsCache = null;
 
   function request(path, options) {
     var headers = { Accept: 'application/json' };
@@ -63,6 +64,7 @@
     setsCache = null;
     setCache = Object.create(null);
     reviewOverviewCache = null;
+    insightsCache = null;
   }
 
   var api = {
@@ -222,6 +224,15 @@
         return data;
       });
     },
+    insights: function (params, force) {
+      var query = Object.assign({}, params || {});
+      var key = cacheKey(['insights', query.range, query.setId, query.tz]);
+      if (!force && insightsCache && insightsCache.key === key) return Promise.resolve(insightsCache.data);
+      return request('/api/study/insights' + queryString(query)).then(function (data) {
+        insightsCache = { key: key, data: data };
+        return data;
+      });
+    },
     reviewQueue: function (params) {
       return request('/api/study/review/queue' + queryString(params || {}));
     },
@@ -231,6 +242,7 @@
         body: JSON.stringify(body || {})
       }).then(function (data) {
         reviewOverviewCache = null;
+        insightsCache = null;
         setsCache = null;
         setCache = Object.create(null);
         return data;

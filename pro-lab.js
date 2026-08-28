@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var SCRIPT_V = '202608280700';
+  var SCRIPT_V = '202608282000';
   var loaded = {};
 
   function loadScript(src) {
@@ -94,15 +94,23 @@
       '<a class="ws-btn ws-btn-primary" href="/pricing">' + esc(t('upgrade')) + '</a>';
   }
 
+  function labToast(ctx, message, tone) {
+    if (ctx.ui && ctx.ui.toast) ctx.ui.toast(message, { tone: tone || 'success' });
+  }
+
   function renderHome(node, ctx, sessions) {
     var t = ctx.t;
     var esc = ctx.escapeHtml;
     var recent = (sessions || []).slice();
     var list = recent.length
       ? '<ul class="ws-lab-session-list" id="ws-lab-session-list">' + recent.map(function (row) {
-        return '<li data-session-id="' + esc(row.id) + '"><a href="' + esc(labHref(toolForType(row.sessionType)) + '&session=' + encodeURIComponent(row.id)) + '">' +
-          '<strong></strong><span class="ws-item-meta"></span></a>' +
-          '<button type="button" class="ws-btn ws-btn-sm" data-lab-delete="' + esc(row.id) + '">' + esc(t('delete')) + '</button></li>';
+        return '<li class="ws-session-card" data-session-id="' + esc(row.id) + '">' +
+          '<div><h3 class="ws-item-title"></h3><div class="ws-item-meta"></div></div>' +
+          '<div class="ws-item-actions">' +
+          '<a class="ws-btn ws-btn-primary ws-btn-sm" href="' + esc(labHref(toolForType(row.sessionType)) + '&session=' + encodeURIComponent(row.id)) + '">' + esc(t('sessionOpen')) + '</a>' +
+          '<div class="ws-dropdown"><button type="button" class="ws-btn ws-btn-icon ws-btn-sm" data-session-more aria-haspopup="true" aria-label="' + esc(t('moreActions')) + '">•••</button>' +
+          '<div class="ws-menu"><button type="button" data-lab-delete="' + esc(row.id) + '">' + esc(t('delete')) + '</button></div></div>' +
+          '</div></li>';
       }).join('') + '</ul>'
       : '<p class="ws-lede">' + esc(t('emptySessions')) + '</p>';
     node.innerHTML =
@@ -118,24 +126,48 @@
       '<h2 class="ws-h2" id="ws-lab-sessions-heading">' + esc(t('labSessions')) + '</h2>' +
       '<p class="ws-lede">' + esc(t('labSessionsLede')) + '</p>' +
       '<div id="ws-lab-sessions">' + list + '</div>';
-    var items = node.querySelectorAll('#ws-lab-sessions strong');
+    var items = node.querySelectorAll('#ws-lab-sessions .ws-item-title');
     recent.forEach(function (row, i) {
       if (items[i]) items[i].textContent = row.title || t('labSessions');
     });
     var metas = node.querySelectorAll('#ws-lab-sessions .ws-item-meta');
+    var lang = (document.documentElement.lang || '').toLowerCase().indexOf('pt') === 0 ? 'pt' : 'en';
     recent.forEach(function (row, i) {
-      if (metas[i]) metas[i].textContent = typeLabel(row.sessionType, t);
+      if (!metas[i]) return;
+      var when = ctx.logic && ctx.logic.relativeTime
+        ? ctx.logic.relativeTime(row.updatedAt || row.updated_at, Date.now(), lang)
+        : '';
+      metas[i].textContent = [typeLabel(row.sessionType, t), when].filter(Boolean).join(' · ');
+    });
+    node.querySelectorAll('[data-session-more]').forEach(function (btn) {
+      btn.addEventListener('click', function (event) {
+        event.preventDefault();
+        var drop = btn.parentNode;
+        drop.classList.toggle('is-open');
+      });
     });
     node.querySelectorAll('[data-lab-delete]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         var id = btn.getAttribute('data-lab-delete');
         if (!id || !ctx.api) return;
-        ctx.api.deleteSession(id).then(function () {
-          var li = btn.closest('li');
-          if (li && li.parentNode) li.parentNode.removeChild(li);
-          if (ctx.ui && ctx.ui.toast) ctx.ui.toast(t('toastDeleted'));
+        var confirm = ctx.ui && ctx.ui.confirmDialog
+          ? ctx.ui.confirmDialog({
+            title: t('deleteSessionTitle'),
+            body: t('deleteSessionBody'),
+            confirmLabel: t('delete'),
+            cancelLabel: t('cancel'),
+            danger: true
+          })
+          : Promise.resolve(true);
+        confirm.then(function (ok) {
+          if (!ok) return;
+          return ctx.api.deleteSession(id).then(function () {
+            var li = btn.closest('[data-session-id]');
+            if (li && li.parentNode) li.parentNode.removeChild(li);
+            labToast(ctx, t('toastDeleted'));
+          });
         }).catch(function (err) {
-          if (ctx.ui && ctx.ui.toast) ctx.ui.toast(ctx.t(ctx.logic.uxError(err).bodyKey), 'danger');
+          labToast(ctx, ctx.t(ctx.logic.uxError(err).bodyKey), 'danger');
         });
       });
     });
@@ -202,7 +234,7 @@
                 ui.closeDialog();
                 onPick(res.set.id);
               }).catch(function (err) {
-                if (ui.toast) ui.toast(ctx.t(ctx.logic.uxError(err).bodyKey), 'danger');
+                if (ui.toast) ui.toast(ctx.t(ctx.logic.uxError(err).bodyKey), { tone: 'danger' });
               });
             }
           },
@@ -245,7 +277,7 @@
             }).then(function (data) {
               var fb = ctx.logic.generateCardsFeedback(data);
               if (fb.kind === 'created' && ui.toast) ui.toast(ctx.t('genCreated', '', { n: fb.created }));
-              else if (ui.toast) ui.toast(ctx.t('genNone'), 'info');
+              else if (ui.toast) ui.toast(ctx.t('genNone'), { tone: 'info' });
               resolve({ setId: setId, items: saved, cards: data });
             });
           }).catch(reject);

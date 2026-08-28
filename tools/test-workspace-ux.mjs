@@ -9,8 +9,17 @@ assert.equal(logic.normalizeSection('library'), 'library');
 assert.equal(logic.normalizeSection('account'), 'account');
 assert.equal(logic.normalizeSection('nope'), 'overview');
 assert.equal(logic.normalizeSection(''), 'overview');
-assert.ok(logic.SECTIONS.includes('account'));
-assert.ok(logic.SECTIONS.includes('pro-lab'));
+assert.ok(logic.SECTIONS.includes('insights'));
+assert.equal(logic.normalizeSection('insights'), 'insights');
+assert.equal(logic.focusReviewHref(), '/app?section=review&start=1&mode=weak');
+assert.equal(
+  logic.focusReviewHref('aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee', 10),
+  '/app?section=review&start=1&mode=weak&set=aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee&limit=10'
+);
+assert.equal(logic.reviewModeFromQuery('?mode=weak'), 'weak');
+assert.equal(logic.insightsRangeFromQuery('?range=7d'), '7d');
+assert.equal(logic.focusLimitFromQuery('?limit=30'), 30);
+assert.equal(logic.hasFeature({ isPro: true, features: { studyInsights: true } }, 'studyInsights'), true);
 assert.equal(logic.normalizeSection('pro-lab'), 'pro-lab');
 assert.equal(logic.labToolFromQuery('?tool=calculations'), 'calculations');
 assert.equal(logic.labHref('elements'), '/app?section=pro-lab&tool=elements');
@@ -72,7 +81,15 @@ assert.match(authApp, /textContent = card\.front/);
 assert.match(authApp, /textContent = reviewSession\.revealed \? \(card\.back/);
 assert.doesNotMatch(authApp, /window\.alert\s*\(/);
 assert.doesNotMatch(authApp, /\/api\/auth\/me/);
-assert.match(authApp, /showStudyLocked/);
+assert.match(authApp, /section=insights/);
+assert.match(authApp, /renderLockedInsights/);
+assert.match(authApp, /startFocusReview/);
+assert.match(authApp, /ws-insights-retry/);
+assert.match(authApp, /confirmDialog/);
+assert.doesNotMatch(authApp, /Accuracy 87/);
+assert.doesNotMatch(authApp, /Knowledge score|Chemistry level/);
+assert.doesNotMatch(authApp, /🔥/);
+assert.doesNotMatch(authApp, /apply_focus_review/);
 assert.match(authApp, /isProUser/);
 assert.match(authApp, /t\('reviewHint'\)/);
 assert.match(authApp, /t\('loadMore'\)/);
@@ -108,8 +125,13 @@ const css = readFileSync(new URL('../assets/app-workspace.css', import.meta.url)
 assert.match(css, /\.ws-body \[hidden\]/);
 assert.match(css, /\.ws-skip/);
 assert.match(css, /safe-area-inset-bottom/);
+const foundation = readFileSync(new URL('../assets/workspace-foundation.css', import.meta.url), 'utf8');
+assert.match(foundation, /\.ws-chart/);
+assert.match(foundation, /prefers-reduced-motion/);
+assert.doesNotMatch(foundation, /chart\.js|d3|recharts/i);
 
 const appHtml = readFileSync(new URL('../app.html', import.meta.url), 'utf8');
+assert.match(appHtml, /workspace-foundation\.css/);
 assert.match(appHtml, /assets\/app-workspace\.css/);
 assert.match(appHtml, /workspace-logic\.js/);
 assert.match(appHtml, /noindex,nofollow/);
@@ -123,10 +145,12 @@ const pricing = readFileSync(new URL('../pricing-page.js', import.meta.url), 'ut
 assert.doesNotMatch(pricing, /AI tutor|AI powered|AI study/i);
 assert.doesNotMatch(pricing, /alert\s*\(/);
 assert.match(pricing, /annualSavePercent/);
-assert.match(pricing, /Study Library, notes and calculator history/);
-assert.match(pricing, /Pro Lab advanced tools/);
-assert.match(pricing, /Saved Lab sessions/);
-assert.doesNotMatch(pricing, /Study Library, notes, history and Smart Review/);
+assert.match(pricing, /Study Insights/);
+assert.match(pricing, /Focus Review/);
+assert.match(pricing, /Saved Lab Sessions/);
+assert.match(pricing, /comingTitle/);
+assert.doesNotMatch(pricing, /Study Library, notes and calculator history/);
+assert.doesNotMatch(pricing, /Pro Lab advanced tools/);
 
 const pricingHtml = readFileSync(new URL('../pricing.html', import.meta.url), 'utf8');
 assert.match(pricingHtml, /flashcards/i);
@@ -134,6 +158,10 @@ assert.match(pricingHtml, /id="pricing-free-amount"/);
 assert.doesNotMatch(pricingHtml, /upcoming tutors/i);
 
 const dashboard = readFileSync(new URL('../netlify/functions/private-dashboard.mjs', import.meta.url), 'utf8');
+assert.match(dashboard, /Chemistry Lab/);
+assert.match(dashboard, /Study Insights/);
+assert.match(dashboard, /id: 'pro-lab'/);
+assert.doesNotMatch(dashboard, /Study workspace/);
 assert.match(dashboard, /state: 'coming'/);
 assert.doesNotMatch(dashboard, /AI tutor/);
 

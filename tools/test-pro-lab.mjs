@@ -375,6 +375,12 @@ const appHtml = readFileSync(new URL('../app.html', import.meta.url), 'utf8');
 assert.match(appHtml, /pro-lab\.js/);
 assert.doesNotMatch(appHtml, /three(\.min)?\.js/i);
 
+const proLabSrc = readFileSync(new URL('../pro-lab.js', import.meta.url), 'utf8');
+assert.match(proLabSrc, /confirmDialog/);
+assert.match(proLabSrc, /deleteSessionTitle/);
+assert.match(proLabSrc, /tone: 'danger'/);
+assert.doesNotMatch(proLabSrc, /toast\([^)]+,\s*'danger'\s*\)/);
+
 const planAccess = readFileSync(new URL('../netlify/lib/plan-access.mjs', import.meta.url), 'utf8');
 assert.match(planAccess, /proLab: isPro/);
 assert.match(planAccess, /advancedCalculations: isPro/);

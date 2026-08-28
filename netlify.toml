@@ -193,6 +193,11 @@
   status = 200
 
 [[redirects]]
+  from   = "/api/study/insights"
+  to     = "/.netlify/functions/study-insights"
+  status = 200
+
+[[redirects]]
   from   = "/api/study/review/overview"
   to     = "/.netlify/functions/study-review-overview"
   status = 200

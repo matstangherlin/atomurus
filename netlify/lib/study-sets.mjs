@@ -12,7 +12,10 @@ export const STUDY_SET_LIMITS = {
   cardsPage: 20,
   cardsPageMax: 50,
   queueDefault: 20,
-  queueMax: 50
+  queueMax: 50,
+  focusLimits: [10, 20, 30],
+  focusDefault: 20,
+  focusFetchCap: 200
 };
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -120,6 +123,20 @@ export function publicSetItem(row, item) {
 
 export function parseQueueLimit(raw) {
   return parseLimit(raw, STUDY_SET_LIMITS.queueDefault, STUDY_SET_LIMITS.queueMax);
+}
+
+export function parseFocusLimit(raw) {
+  if (raw == null || raw === '') return STUDY_SET_LIMITS.focusDefault;
+  const n = Number(raw);
+  if (STUDY_SET_LIMITS.focusLimits.includes(n)) return n;
+  return STUDY_SET_LIMITS.focusDefault;
+}
+
+export function parseQueueMode(raw) {
+  const mode = String(raw || 'due').trim().toLowerCase();
+  if (mode === 'due' || mode === 'weak') return mode;
+  const err = studyError('mode must be due or weak', 400, 'invalid_request');
+  throw err;
 }
 
 export function encodeCardCursor(row) {

@@ -18,9 +18,9 @@ export default async function handler(request) {
 
   const modules = [
     {
-      id: 'study-workspace',
-      label: 'Study workspace',
-      description: 'Open the free lab: periodic table, models and calculators.',
+      id: 'chemistry-lab',
+      label: 'Chemistry Lab',
+      description: 'Open the public lab: periodic table, models and calculators.',
       href: '/periodic-table',
       state: 'available'
     },
@@ -32,32 +32,11 @@ export default async function handler(request) {
       state: features.adsFree ? 'available' : 'locked'
     },
     {
-      id: 'export-pdf',
-      label: 'Study sheet PDF',
-      description: 'Study-sheet PDF export is not available yet. The public periodic table can still be downloaded from the table page.',
-      href: '/periodic-table',
-      state: 'coming'
-    },
-    {
       id: 'study-library',
       label: 'Study Library',
       description: 'Saved elements, molecules and articles, with notes and tags.',
       href: '/app?section=library',
       state: features.studyCloud || features.favorites ? 'available' : 'locked'
-    },
-    {
-      id: 'calculator-history',
-      label: 'Calculator History',
-      description: 'Keep validated calculator runs and reopen them later.',
-      href: '/app?section=history',
-      state: features.calculatorHistory || features.studyCloud ? 'available' : 'locked'
-    },
-    {
-      id: 'study-progress',
-      label: 'Study Progress',
-      description: 'Continue studying from the last incomplete lesson or article.',
-      href: '/app?section=progress',
-      state: features.studyProgress || features.studyCloud ? 'available' : 'locked'
     },
     {
       id: 'study-sets',
@@ -74,6 +53,34 @@ export default async function handler(request) {
       state: features.smartReview ? 'available' : 'locked'
     },
     {
+      id: 'study-insights',
+      label: 'Study Insights',
+      description: 'Review activity, weak cards, consistency and due forecast.',
+      href: features.studyInsights ? '/app?section=insights' : '/pricing',
+      state: features.studyInsights ? 'available' : 'locked'
+    },
+    {
+      id: 'pro-lab',
+      label: 'Pro Lab',
+      description: 'Advanced chemistry analysis, comparisons and saved sessions.',
+      href: features.proLab ? '/app?section=pro-lab' : '/pricing',
+      state: features.proLab ? 'available' : 'locked'
+    },
+    {
+      id: 'calculator-history',
+      label: 'Calculator History',
+      description: 'Keep validated calculator runs and reopen them later.',
+      href: '/app?section=history',
+      state: features.calculatorHistory || features.studyCloud ? 'available' : 'locked'
+    },
+    {
+      id: 'study-progress',
+      label: 'Study Progress',
+      description: 'Continue studying from the last incomplete lesson or article.',
+      href: '/app?section=progress',
+      state: features.studyProgress || features.studyCloud ? 'available' : 'locked'
+    },
+    {
       id: 'favorites',
       label: 'Favorites & history',
       description: 'Your Study Cloud library and calculator history live in this workspace.',
@@ -81,11 +88,18 @@ export default async function handler(request) {
       state: features.favorites ? 'available' : 'locked'
     },
     {
+      id: 'export-pdf',
+      label: 'Study sheet PDF',
+      description: 'Study-sheet PDF export is not available yet. The public periodic table can still be downloaded from the table page.',
+      href: '/periodic-table',
+      state: 'coming'
+    },
+    {
       id: 'premium-lessons',
       label: 'Premium study tracks',
       description: 'Guided chemistry paths for high school, ENEM and general chemistry.',
       href: '/pricing',
-      state: features.premiumLessons ? 'coming' : 'locked'
+      state: 'coming'
     },
     {
       id: 'admin-console',
@@ -121,7 +135,9 @@ export default async function handler(request) {
           ? [
               'Open Study Library to review saved elements and notes.',
               'Add a saved item to a Study Set and generate flashcards.',
-              'Open Smart Review when cards are due.'
+              'Open Smart Review when cards are due.',
+              'Check Study Insights, then start Focus Review on cards that need attention.',
+              'Use Pro Lab for advanced calculations, comparisons and saved sessions.'
             ]
           : [
               'Create an account to unlock 30 days of Pro (ads-free) automatically.',

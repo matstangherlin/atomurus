@@ -149,7 +149,7 @@
         sessionId = data.session && data.session.id;
         if (ctx.ui && ctx.ui.toast) ctx.ui.toast(t('sessionSaved'));
       }).catch(function (err) {
-        if (ctx.ui && ctx.ui.toast) ctx.ui.toast(ctx.t(ctx.logic.uxError(err).bodyKey), 'danger');
+        if (ctx.ui && ctx.ui.toast) ctx.ui.toast(ctx.t(ctx.logic.uxError(err).bodyKey), { tone: 'danger' });
       });
     });
 
@@ -160,7 +160,7 @@
       });
       if (!items.length) return;
       ctx.saveItemsToSet(items, false).catch(function (err) {
-        if (ctx.ui && ctx.ui.toast) ctx.ui.toast(ctx.t(ctx.logic.uxError(err).bodyKey), 'danger');
+        if (ctx.ui && ctx.ui.toast) ctx.ui.toast(ctx.t(ctx.logic.uxError(err).bodyKey), { tone: 'danger' });
       });
     });
 

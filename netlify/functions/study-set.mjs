@@ -94,7 +94,7 @@ export default async function handler(request) {
     const cursor = decodeCardCursor(url.searchParams.get('cursor'));
     const extra = cardCursorFilter(cursor);
 
-    const [itemLinks, cardPage, cardCount, dueCount, masteredCount] = await Promise.all([
+    const [itemLinks, cardPage, cardCount, dueCount, masteredCount, activeCount, learningCount, newCount] = await Promise.all([
       db.select(
         'study_set_items',
         `select=id,item_id,created_at&user_id=eq.${userId}&study_set_id=eq.${encodeURIComponent(id)}&order=created_at.desc,id.desc&limit=100`
@@ -118,6 +118,18 @@ export default async function handler(request) {
       db.count(
         'study_cards',
         `user_id=eq.${userId}&study_set_id=eq.${encodeURIComponent(id)}&suspended=eq.false&interval_days=gte.${MASTERED_INTERVAL_DAYS}`
+      ),
+      db.count(
+        'study_cards',
+        `user_id=eq.${userId}&study_set_id=eq.${encodeURIComponent(id)}&suspended=eq.false`
+      ),
+      db.count(
+        'study_cards',
+        `user_id=eq.${userId}&study_set_id=eq.${encodeURIComponent(id)}&suspended=eq.false&review_state=eq.learning`
+      ),
+      db.count(
+        'study_cards',
+        `user_id=eq.${userId}&study_set_id=eq.${encodeURIComponent(id)}&suspended=eq.false&review_state=eq.new`
       )
     ]);
 
@@ -139,6 +151,9 @@ export default async function handler(request) {
         cardCount,
         dueCount,
         masteredCount,
+        activeCount,
+        learningCount,
+        newCount,
         itemCount: itemLinks.rows.length
       }),
       items: itemLinks.rows.map((row) => publicSetItem(row, itemById.get(row.item_id) || null)),

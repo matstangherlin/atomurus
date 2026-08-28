@@ -1,0 +1,112 @@
+/* Shared workspace primitives for /app.
+   Load before app-workspace.css. Do not replace atomurus-lab-console.css. */
+
+.ws-insight-bullets {
+  margin: 12px 0 20px;
+  padding-left: 1.2em;
+  color: var(--lc-ink-2, #58544A);
+  line-height: 1.55;
+}
+.ws-insight-bullets li { margin: 6px 0; }
+
+.ws-section-split {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 28px 0 12px;
+}
+.ws-section-split .ws-h2 { margin: 0; }
+
+.ws-chart {
+  margin: 20px 0;
+  padding: 14px 16px;
+  border: 1px solid var(--lc-rule, #D8D2BF);
+  border-radius: var(--ws-radius-md, 10px);
+  background: var(--lc-paper, #F8F5EC);
+}
+.ws-chart figcaption {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0 0 10px;
+}
+.ws-chart-bars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.ws-chart.is-dense .ws-chart-bars { gap: 4px; }
+.ws-chart-row {
+  display: grid;
+  grid-template-columns: minmax(4.5rem, 7rem) minmax(0, 1fr) 2.75rem;
+  gap: 8px;
+  align-items: center;
+  font-size: 13px;
+}
+.ws-chart-label { color: var(--lc-ink-2, #58544A); }
+.ws-chart-n {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-family: var(--lc-mono, ui-monospace, monospace);
+  font-size: 12px;
+}
+.ws-chart-track {
+  display: block;
+  height: 8px;
+  border-radius: 99px;
+  background: color-mix(in oklab, var(--lc-rule, #D8D2BF) 70%, transparent);
+  overflow: hidden;
+}
+.ws-chart-fill {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: var(--lc-green, #1E6A50);
+  min-width: 0;
+}
+
+.ws-session-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 14px;
+  border: 1px solid var(--lc-rule, #D8D2BF);
+  border-radius: var(--ws-radius-md, 10px);
+  background: var(--lc-paper, #F8F5EC);
+}
+.ws-session-card .ws-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ws-set-progress {
+  margin: 8px 0 20px;
+  padding: 14px 16px;
+  border: 1px solid var(--lc-rule, #D8D2BF);
+  border-radius: var(--ws-radius-md, 10px);
+}
+.ws-set-progress .ws-h2 { margin: 0 0 8px; }
+
+.ws-review-split {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 16px 0 24px;
+}
+@media (max-width: 768px) {
+  .ws-review-split { grid-template-columns: 1fr; }
+  .ws-chart-row { grid-template-columns: 3.5rem minmax(0, 1fr) 2.25rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ws-chart-fill,
+  .ws-toast,
+  .ws-btn {
+    transition: none;
+  }
+}

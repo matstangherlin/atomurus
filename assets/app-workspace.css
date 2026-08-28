@@ -1032,13 +1032,14 @@ html.auth-error .ws-auth-only { visibility: hidden; }
 .ws-lab-check { display: inline-flex; gap: 6px; align-items: center; margin: 4px 8px 4px 0; font-size: 13px; }
 .ws-lab-chip { border: 1px solid var(--lc-green); background: transparent; color: var(--lc-green); border-radius: 99px; padding: 4px 10px; cursor: pointer; }
 .ws-lab-session-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.ws-lab-session-list li.ws-session-card,
 .ws-lab-session-list li {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 8px;
   align-items: center;
 }
-.ws-lab-session-list a { display: flex; justify-content: space-between; gap: 12px; text-decoration: none; padding: 10px 12px; border: 1px solid var(--lc-rule); border-radius: 8px; }
+.ws-lab-session-list a { text-decoration: none; }
 .ws-lab-props { border: 1px solid var(--lc-rule); border-radius: 10px; padding: 10px 12px; margin: 12px 0; }
 [data-aria-pressed="true"], .ws-lab-tools button[aria-pressed="true"] {
   border-color: var(--lc-green);
