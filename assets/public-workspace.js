@@ -29,6 +29,79 @@
     } catch (e) {}
   }
 
+  var LOGIN_ICON =
+    '<svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="6" r="2.2" stroke="currentColor" stroke-width="1.3"/><path d="M3.5 13c.8-2.2 2.4-3.2 4.5-3.2s3.7 1 4.5 3.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>';
+  var PRICING_ICON =
+    '<svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1.8l1.6 3.2 3.5.5-2.5 2.5.6 3.5L8 10.3 4.8 11.5l.6-3.5-2.5-2.5 3.5-.5L8 1.8z" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>';
+  var KICKER_MARK = /^\s*§\s*\d*[.\d]*\s*[·•—–-]*\s*/;
+
+  function ensureToolFoot(aside) {
+    var foot = aside.querySelector('.sidebar-foot');
+    if (!foot) return;
+    var p = prefix();
+    var login = foot.querySelector('[data-auth-nav-link="common.nav.login"], a[href*="login"]');
+    if (!login) {
+      login = document.createElement('a');
+      login.className = 'nav-item';
+      login.href = p + 'login.html';
+      login.innerHTML = LOGIN_ICON + '<span data-i18n="common.nav.login">Login</span>';
+      foot.insertBefore(login, foot.firstChild);
+    }
+    login.setAttribute('data-auth-nav-link', 'common.nav.login');
+    if (!foot.querySelector('a[href*="pricing"]')) {
+      var pricing = document.createElement('a');
+      pricing.className = 'nav-item';
+      pricing.href = p + 'pricing.html';
+      pricing.innerHTML = PRICING_ICON + '<span data-i18n="common.nav.pricing">Pricing</span>';
+      foot.appendChild(pricing);
+    }
+  }
+
+  function normalizeLandingCta(topnav) {
+    var cta = topnav.querySelector('.lc-topnav-cta');
+    if (!cta) return;
+    var path = location.pathname.replace(/\/+$/, '').toLowerCase();
+    if (/\/login(?:\.pt)?(?:\.html)?$/.test(path)) return;
+    if (/\/404(?:\.html)?$/.test(path)) return;
+    var href = (cta.getAttribute('href') || '').toLowerCase();
+    if (/login|signup|account/.test(href)) return;
+    var p = prefix();
+    cta.setAttribute('href', p + 'login.html');
+    cta.setAttribute('aria-label', 'Account');
+    cta.removeAttribute('data-i18n-attr');
+    var span = cta.querySelector('span');
+    if (!span) {
+      span = document.createElement('span');
+      cta.insertBefore(span, cta.firstChild);
+    }
+    span.setAttribute('data-i18n', 'pricing.ctaAccount');
+    span.textContent = 'Account';
+  }
+
+  function stripKickerMarks(root) {
+    (root || document).querySelectorAll(
+      '.ph-kicker, .lc-doc-kicker, .ex-kicker, .lc-hero-kicker, .lc-modules-kicker'
+    ).forEach(function (el) {
+      if (el.childElementCount) {
+        Array.prototype.forEach.call(el.childNodes, function (n) {
+          if (n.nodeType === 3) n.textContent = n.textContent.replace(KICKER_MARK, '');
+        });
+        return;
+      }
+      var t = el.textContent || '';
+      var next = t.replace(KICKER_MARK, '');
+      if (next !== t) el.textContent = next;
+    });
+  }
+
+  function polishCopy() {
+    stripKickerMarks(document);
+    var brand = document.querySelector('.scc-brand');
+    if (brand && /^ATOMURUS$/i.test((brand.textContent || '').trim())) {
+      brand.textContent = 'Atomurus';
+    }
+  }
+
   function ensureSearch(topbar, p) {
     if (topbar.querySelector('.search-box, .lc-topnav-search, .ps-search')) return;
     var form = document.createElement('form');
@@ -101,7 +174,7 @@
         '</div>' +
       '</nav>' +
       '<div class="sidebar-foot">' +
-        '<a class="nav-item" href="' + p + 'login.html">' +
+        '<a class="nav-item" href="' + p + 'login.html" data-auth-nav-link="common.nav.login">' +
           '<svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="6" r="2.2" stroke="currentColor" stroke-width="1.3"/><path d="M3.5 13c.8-2.2 2.4-3.2 4.5-3.2s3.7 1 4.5 3.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>' +
           '<span data-i18n="common.nav.login">Login</span></a>' +
         '<a class="nav-item" href="' + p + 'config.html">' +
@@ -136,6 +209,7 @@
     if (bc) bc.hidden = true;
 
     ensureSearch(topbar, prefix());
+    ensureToolFoot(aside);
 
     var overlay = document.querySelector('body > .mobile-overlay');
     shell.appendChild(topbar);
@@ -144,7 +218,7 @@
     shell.appendChild(main);
     document.body.insertBefore(shell, document.body.firstChild);
     document.body.classList.add('ps-body');
-    applyI18n(topbar);
+    applyI18n(shell);
     return true;
   }
 
@@ -171,6 +245,7 @@
     document.body.insertBefore(shell, document.body.firstChild);
     document.body.classList.add('ps-body');
     ensureSearch(topnav, prefix());
+    normalizeLandingCta(topnav);
     applyI18n(shell);
     return true;
   }
@@ -182,6 +257,13 @@
         return;
       }
       hoistToolShell() || hoistLandingShell();
+      polishCopy();
+      setTimeout(function () {
+        polishCopy();
+        try {
+          if (window.I18N && typeof window.I18N.onChange === 'function') window.I18N.onChange(polishCopy);
+        } catch (err) {}
+      }, 0);
     } catch (e) {}
     release();
   }

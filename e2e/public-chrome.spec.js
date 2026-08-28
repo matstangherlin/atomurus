@@ -75,6 +75,11 @@ test('public table, calculators, login and pricing share the new chrome', async 
   await saveShot(page, 'desktop-public-table');
 
   await page.goto('/calculators.html');
+  await expect(page.locator('.ps-shell')).toBeVisible();
+  await expect(page.locator('.ps-shell > .topbar .mobile-menu-btn')).toBeHidden();
+  await expect(page.locator('.ps-shell .nav-label')).toBeHidden();
+  await expect(page.locator('.sidebar-foot a[href*="login"]')).toBeVisible();
+  await expect(page.locator('.sidebar-foot a[href*="pricing"]')).toBeVisible();
   await expect(page.locator('.data-strip').first()).toBeHidden();
   await expect(page.locator('.calc-menu-item[data-target="molar"]')).toBeVisible();
   await expect(page.locator('.calc-menu-item[data-target="scientific"]')).toBeVisible();
@@ -100,6 +105,7 @@ test('public table, calculators, login and pricing share the new chrome', async 
   expect(padOn).not.toBe('rgb(20, 18, 14)');
   const padColor = await page.locator('.scc-keypad-tab.is-on').evaluate((el) => getComputedStyle(el).color);
   expect(padColor).toMatch(/rgb\(\s*30,\s*106,\s*80\s*\)/);
+  await expect.poll(async () => (await page.locator('.scc-brand').textContent()).trim()).toBe('Atomurus');
   await saveShot(page, 'desktop-public-calculators');
 
   await page.goto('/explore.html');
@@ -144,6 +150,8 @@ test('public table, calculators, login and pricing share the new chrome', async 
   await expect(page.locator('.ps-pub-sidebar')).toBeVisible();
   await expect(page.locator('.lc-topnav-name')).toBeVisible();
   await expect.poll(() => fontFamily(page.locator('.lc-topnav-name'))).toMatch(/Instrument Serif/i);
+  await expect(page.locator('.ps-shell > .lc-topnav .lc-topnav-cta')).toHaveAttribute('href', /periodic-table/);
+  await expect(page.locator('.ps-shell > .lc-topnav .lc-topnav-cta')).toContainText(/Open lab/i);
   await expect(page.locator('#auth-email')).toBeVisible();
   const inputRadius = await page.locator('#auth-email').evaluate((el) => getComputedStyle(el).borderRadius);
   expect(parseFloat(inputRadius)).toBeGreaterThanOrEqual(10);
@@ -155,6 +163,8 @@ test('public table, calculators, login and pricing share the new chrome', async 
   await expect.poll(() => fontFamily(page.locator('.lc-topnav-name'))).toMatch(/Instrument Serif/i);
   await expect.poll(() => fontFamily(page.locator('.price-card h3').first())).toMatch(/Instrument Serif/i);
   await expect(page.locator('.lc-doc-kicker .pill')).toBeHidden();
+  await expect(page.locator('.ps-shell > .lc-topnav .lc-topnav-cta')).toHaveAttribute('href', /login/);
+  await expect(page.locator('.ps-shell > .lc-topnav .lc-topnav-cta')).toContainText(/Account/i);
   await saveShot(page, 'desktop-public-pricing');
 });
 
@@ -194,6 +204,8 @@ test('settings, compare, docs and articles keep the workspace pattern', async ({
   await expect(page.locator('.lc-doc-title')).toBeVisible();
   await expect.poll(() => fontFamily(page.locator('.lc-doc-title'))).toMatch(/Instrument Serif/i);
   await expect(page.locator('.lc-landing .data-strip, .data-strip').first()).toBeHidden();
+  await expect(page.locator('.ps-shell > .lc-topnav .lc-topnav-cta')).toHaveAttribute('href', /login/);
+  await expect(page.locator('.ps-shell > .lc-topnav .lc-topnav-cta')).toContainText(/Account/i);
   await saveShot(page, 'desktop-public-about');
 
   await page.goto('/explore/what-is-an-atom.html');
@@ -205,6 +217,7 @@ test('settings, compare, docs and articles keep the workspace pattern', async ({
   await page.goto('/viewer/isomerism.html');
   await expect(page.locator('.data-strip').first()).toBeHidden();
   await expect(page.locator('.vz-tab').first()).toBeVisible();
+  await expect(page.locator('.ph-kicker').first()).not.toContainText('§');
   await saveShot(page, 'desktop-public-isomerism');
 
   await page.goto('/viewer/isomerism/constitutional/function.html');
@@ -255,4 +268,8 @@ test('public home dark mode and mobile keep the workspace chrome', async ({ page
   await expect(page.locator('#lc-mobile-menu.open, .lc-mobile-menu.open')).toBeVisible();
   await expect(page.locator('.lc-mobile-menu-num')).toHaveCount(0);
   await saveShot(page, 'mobile-public-home-menu');
+
+  await page.goto('/calculators.html');
+  await expect(page.locator('.ps-shell > .topbar .mobile-menu-btn')).toBeVisible();
+  await saveShot(page, 'mobile-public-calculators');
 });

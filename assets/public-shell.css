@@ -442,6 +442,9 @@ html[lang^="pt"] .logo-tag::after { content: 'laboratório'; }
   letter-spacing: .12em;
   padding: 16px 12px 6px;
 }
+.ps-shell .nav-label {
+  display: none !important;
+}
 .nav-item,
 .nav-expandable .nav-row {
   min-height: 44px;
@@ -628,6 +631,11 @@ html body.ps-body.lc-doc .ps-shell {
 .ps-shell > .topbar .breadcrumb,
 .ps-shell [hidden] {
   display: none !important;
+}
+@media (min-width: 761px) {
+  .ps-shell > .topbar .mobile-menu-btn {
+    display: none !important;
+  }
 }
 .ps-shell > .lc-topnav .lc-topnav-links {
   display: none !important;
@@ -902,6 +910,11 @@ html body.ps-body.lc-doc .ps-shell {
   .ps-shell > .topbar .logo-wrap,
   .ps-shell > .topbar .ps-brand {
     display: none !important;
+  }
+  .ps-shell > .topbar .mobile-menu-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
   }
   .ps-shell > .topbar .search-box,
   .ps-shell > .topbar .ps-search,
