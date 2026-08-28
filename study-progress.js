@@ -3,9 +3,14 @@
 
   var sent = 0;
   var timer = null;
+  var disabled = false;
 
   function study() {
     return window.AtomurusStudy;
+  }
+
+  function prettyPath() {
+    return location.pathname.replace(/\.html$/i, '') + location.search;
   }
 
   function context() {
@@ -15,7 +20,7 @@
         return {
           contentType: detected.itemType,
           contentKey: detected.itemKey,
-          lastPosition: location.pathname
+          lastPosition: detected.href || prettyPath()
         };
       }
     }
@@ -24,7 +29,7 @@
       return {
         contentType: 'element',
         contentKey: path.split('/').pop(),
-        lastPosition: location.pathname
+        lastPosition: prettyPath()
       };
     }
     return null;
@@ -38,6 +43,7 @@
   }
 
   function put(progress) {
+    if (disabled) return;
     var api = study();
     var ctx = context();
     if (!api || !ctx) return;
@@ -48,12 +54,17 @@
       contentKey: ctx.contentKey,
       progress: progress,
       lastPosition: ctx.lastPosition
-    }).catch(function () {
+    }).catch(function (err) {
+      if (err && (err.status === 401 || err.status === 403 || err.code === 'feature_locked' || err.code === 'session_expired')) {
+        disabled = true;
+        return;
+      }
       sent = Math.min(sent, progress - 1);
     });
   }
 
   function schedule() {
+    if (disabled) return;
     if (timer) return;
     timer = setTimeout(function () {
       timer = null;

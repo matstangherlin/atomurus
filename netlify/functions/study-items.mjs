@@ -23,6 +23,8 @@ export default async function handler(request) {
   try {
     const url = new URL(request.url);
     const typeRaw = String(url.searchParams.get('type') || '').trim();
+    const excludeRaw = String(url.searchParams.get('exclude') || '').trim();
+    const itemKey = String(url.searchParams.get('itemKey') || url.searchParams.get('item_key') || '').trim();
     const tag = String(url.searchParams.get('tag') || '').trim();
     const hasNote = String(url.searchParams.get('hasNote') || '') === '1';
     const limit = parseLimit(url.searchParams.get('limit'), 20, 100);
@@ -32,6 +34,8 @@ export default async function handler(request) {
 
     const filters = [`user_id=eq.${userId}`];
     if (typeRaw) filters.push(`item_type=eq.${normalizeItemType(typeRaw)}`);
+    else if (excludeRaw) filters.push(`item_type=neq.${normalizeItemType(excludeRaw)}`);
+    if (itemKey) filters.push(`item_key=eq.${encodeURIComponent(itemKey)}`);
     if (tag) filters.push(tagContainsFilter(tag));
     if (hasNote) filters.push(notePresentFilter());
     const extra = cursorFilter(cursor);

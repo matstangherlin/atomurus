@@ -3,12 +3,36 @@
 
   var STYLE_ID = 'atomurus-study-save-style';
   var HOST_ID = 'atomurus-study-save';
+  var STUDY_WAIT_MS = 8000;
   var lastCalculatorRun = null;
   var pending = false;
   var savedItem = null;
 
   function study() {
     return window.AtomurusStudy;
+  }
+
+  function withStudy(cb) {
+    var api = study();
+    if (api) {
+      try { return Promise.resolve(cb(api)); } catch (err) { return Promise.reject(err); }
+    }
+    return new Promise(function (resolve, reject) {
+      var started = Date.now();
+      function tick() {
+        var ready = study();
+        if (ready) {
+          try { resolve(cb(ready)); } catch (err) { reject(err); }
+          return;
+        }
+        if (Date.now() - started > STUDY_WAIT_MS) {
+          resolve(null);
+          return;
+        }
+        setTimeout(tick, 50);
+      }
+      tick();
+    });
   }
 
   function langIsPt() {
@@ -40,12 +64,25 @@
       signIn: t('signIn', pt ? 'Entre para salvar no Study Cloud.' : 'Sign in to save to Study Cloud.'),
       proOnly: t('proOnly', pt ? 'Study Cloud está no Atomurus Pro.' : 'Study Cloud is included with Atomurus Pro.'),
       upgrade: t('upgrade', pt ? 'Ver planos' : 'See plans'),
-      login: t('login', pt ? 'Entrar' : 'Sign in')
+      login: t('login', pt ? 'Entrar' : 'Sign in'),
+      nothingToSave: t('nothingToSave', pt ? 'Execute a calculadora primeiro e depois salve o resultado.' : 'Run the calculator first, then save the result.')
     };
   }
 
   function currentPath() {
     return location.pathname + location.search;
+  }
+
+  function pagePath() {
+    return location.pathname.replace(/\.html$/i, '').replace(/\/$/, '').toLowerCase() || '/';
+  }
+
+  function isCalculatorsPage() {
+    return pagePath() === '/calculators';
+  }
+
+  function isMoleculesPage() {
+    return pagePath() === '/viewer/molecules';
   }
 
   function loginHref() {
@@ -69,6 +106,7 @@
     style.id = STYLE_ID;
     style.textContent = [
       '#atomurus-study-save{font-family:var(--lc-mono,ui-monospace,monospace);margin:14px 0 18px}',
+      '.calc-panel > #atomurus-study-save{margin:0 0 16px;grid-column:1/-1}',
       '#atomurus-study-save .study-save-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px}',
       '#atomurus-study-save button{font:inherit;letter-spacing:.08em;text-transform:uppercase;font-size:10.5px;padding:7px 10px;border:1px solid var(--lc-rule,rgba(30,106,80,.35));background:transparent;color:inherit;border-radius:2px;cursor:pointer}',
       '#atomurus-study-save button[disabled]{opacity:.6;cursor:wait}',
@@ -112,12 +150,12 @@
       };
     }
 
-    var path = location.pathname.replace(/\.html$/i, '').replace(/\/$/, '').toLowerCase();
+    var path = pagePath();
     if (path === '/calculators') {
       return { kind: 'calculator' };
     }
 
-    if (path === '/viewer/molecules' || document.querySelector('[data-mol]')) {
+    if (path === '/viewer/molecules') {
       var active = document.querySelector('.mol-btn.active,[data-mol].active');
       var mol = (active && active.getAttribute('data-mol')) || new URLSearchParams(location.search).get('mol') || 'water';
       var name = document.getElementById('model-name');
@@ -145,10 +183,11 @@
   }
 
   function hostParent() {
-    return document.querySelector('.lc-el-header-l, .calc-panel-head, .content-inner, .lc-doc-prose, article, .main') || document.body;
+    return document.querySelector('.lc-el-header-l, .content-inner, .lc-doc-prose, article, .main') || document.body;
   }
 
   function setMsg(node, text, href, hrefLabel) {
+    if (!node) return;
     node.textContent = '';
     if (!text) return;
     node.appendChild(document.createTextNode(text + (href ? ' ' : '')));
@@ -174,8 +213,11 @@
   }
 
   function paintSaved(button, labels, on) {
+    if (!button) return;
     button.classList.toggle('saved', on);
-    button.textContent = on ? labels.saved : (lastCalculatorRun && detectContext() && detectContext().kind === 'calculator' ? labels.saveResult : labels.save);
+    button.textContent = on
+      ? labels.saved
+      : (isCalculatorsPage() ? labels.saveResult : labels.save);
   }
 
   function readFields(host) {
@@ -185,6 +227,29 @@
       note: note ? note.value : '',
       tags: tags ? tags.value.split(',').map(function (tag) { return tag.trim(); }).filter(Boolean) : []
     };
+  }
+
+  function fillFields(host, item) {
+    if (!host || !item) return;
+    var note = host.querySelector('[data-study-note]');
+    var tags = host.querySelector('[data-study-tags]');
+    if (note) note.value = item.note || '';
+    if (tags) tags.value = Array.isArray(item.tags) ? item.tags.join(', ') : '';
+  }
+
+  function hydrateLibrary(ctx, host, button, labels) {
+    if (!ctx || ctx.kind !== 'library') return;
+    withStudy(function (api) {
+      if (!api) return null;
+      return api.items({ type: ctx.itemType, itemKey: ctx.itemKey, limit: 1 }).then(function (data) {
+        var item = data && data.items && data.items[0];
+        if (!item) return;
+        savedItem = item;
+        fillFields(host, item);
+        paintSaved(button, labels, true);
+        if (item.note || (item.tags && item.tags.length)) host.classList.add('open');
+      }).catch(function () { /* unsigned / locked */ });
+    });
   }
 
   function mountLibrary(ctx) {
@@ -235,8 +300,9 @@
 
     button.addEventListener('click', function () {
       if (pending) return;
-      var api = study();
-      if (!api) return;
+      pending = true;
+      paintSaved(button, labels, true);
+      setMsg(msg, '');
       var fieldsValue = readFields(host);
       var payload = {
         itemType: ctx.itemType,
@@ -246,29 +312,47 @@
         note: fieldsValue.note,
         tags: fieldsValue.tags
       };
-      pending = true;
-      paintSaved(button, labels, true);
-      setMsg(msg, '');
-      api.saveItem(payload).then(function (data) {
-        savedItem = data.item || null;
-        paintSaved(button, labels, true);
-      }).catch(function (err) {
-        paintSaved(button, labels, false);
-        handleError(err, msg, labels);
-      }).then(function () {
-        pending = false;
+      withStudy(function (api) {
+        if (!api) {
+          pending = false;
+          paintSaved(button, labels, false);
+          setMsg(msg, 'Could not save.');
+          return null;
+        }
+        return api.saveItem(payload).then(function (data) {
+          savedItem = data.item || null;
+          paintSaved(button, labels, true);
+        }).catch(function (err) {
+          paintSaved(button, labels, false);
+          handleError(err, msg, labels);
+        }).then(function () {
+          pending = false;
+        });
       });
     });
+
+    hydrateLibrary(ctx, host, button, labels);
+  }
+
+  function resultLooksEmpty(tab) {
+    if (!tab) return true;
+    if (tab.querySelector('.calc-result-empty') && !tab.querySelector('.calc-result-v')) return true;
+    var result = tab.querySelector('.calc-result-v.big, .calc-result-v');
+    if (!result) return true;
+    var text = result.textContent.replace(/\s+/g, ' ').trim();
+    return !text;
   }
 
   function captureCalculatorRun() {
     var tab = document.querySelector('.calc-tab.active') || document;
+    if (resultLooksEmpty(tab)) {
+      lastCalculatorRun = null;
+      return null;
+    }
     var result = tab.querySelector('.calc-result-v.big, .calc-result-v');
-    if (!result) return null;
     var titleNode = tab.querySelector('.calc-panel-title, h2');
     var input = tab.querySelector('input:not([type="hidden"]), textarea');
     var resultText = result.textContent.replace(/\s+/g, ' ').trim();
-    if (!resultText) return null;
     var calculator = (tab.id || 'calculator').replace(/^tab-/, '') || 'calculator';
     lastCalculatorRun = {
       calculator: calculator,
@@ -279,6 +363,17 @@
       unit: ''
     };
     return lastCalculatorRun;
+  }
+
+  function mountCalculatorHost(host) {
+    var panel = document.querySelector('.calc-panel');
+    if (panel) {
+      if (host.parentNode !== panel) panel.insertBefore(host, panel.firstChild);
+      return true;
+    }
+    var fallback = document.querySelector('.calc-shell, .content-inner, .content') || document.body;
+    if (host.parentNode !== fallback) fallback.insertBefore(host, fallback.firstChild);
+    return false;
   }
 
   function mountCalculator() {
@@ -298,40 +393,49 @@
     row.appendChild(button);
     row.appendChild(msg);
     host.appendChild(row);
-    var panel = document.querySelector('.calc-panel-head, .calc-panel, .content') || document.body;
-    panel.appendChild(host);
+    mountCalculatorHost(host);
+    captureCalculatorRun();
 
     button.addEventListener('click', function () {
       var run = lastCalculatorRun || captureCalculatorRun();
-      if (!run || pending) return;
-      var api = study();
-      if (!api) return;
+      if (!run) {
+        setMsg(msg, labels.nothingToSave);
+        return;
+      }
+      if (pending) return;
       pending = true;
       paintSaved(button, labels, true);
       setMsg(msg, '');
-      api.saveCalculatorRun(run).then(function () {
-        paintSaved(button, labels, true);
-      }).catch(function (err) {
-        paintSaved(button, labels, false);
-        handleError(err, msg, labels);
-      }).then(function () {
-        pending = false;
+      withStudy(function (api) {
+        if (!api) {
+          pending = false;
+          paintSaved(button, labels, false);
+          setMsg(msg, 'Could not save.');
+          return null;
+        }
+        return api.saveCalculatorRun(run).then(function () {
+          paintSaved(button, labels, true);
+        }).catch(function (err) {
+          paintSaved(button, labels, false);
+          handleError(err, msg, labels);
+        }).then(function () {
+          pending = false;
+        });
       });
     });
   }
 
-  function hookCalculators() {
-    document.addEventListener('click', function (event) {
-      var btn = event.target && event.target.closest && event.target.closest('.calc-btn-run');
-      if (!btn) return;
-      setTimeout(captureCalculatorRun, 0);
-    }, true);
+  function wrapCalcFns() {
     ['runMolar', 'runScientific', 'runUnit', 'runIdeal', 'runDilution', 'runPH', 'runStoich', 'runThermo'].forEach(function (name) {
       var original = window[name];
       if (typeof original !== 'function' || original.__atomurusStudyWrapped) return;
       var wrapped = function () {
         var result = original.apply(this, arguments);
-        setTimeout(captureCalculatorRun, 0);
+        setTimeout(function () {
+          captureCalculatorRun();
+          var button = document.querySelector('#atomurus-study-save button');
+          if (button) paintSaved(button, copy(), false);
+        }, 0);
         return result;
       };
       wrapped.__atomurusStudyWrapped = true;
@@ -339,7 +443,34 @@
     });
   }
 
+  function hookCalculators() {
+    document.addEventListener('click', function (event) {
+      var btn = event.target && event.target.closest && event.target.closest('.calc-btn-run');
+      if (btn) setTimeout(captureCalculatorRun, 0);
+      var tab = event.target && event.target.closest && event.target.closest('.calc-menu-item[data-target]');
+      if (!tab || tab.disabled) return;
+      setTimeout(function () {
+        var host = document.getElementById(HOST_ID);
+        if (host) mountCalculatorHost(host);
+        lastCalculatorRun = null;
+        captureCalculatorRun();
+        var button = document.querySelector('#atomurus-study-save button');
+        var msg = document.querySelector('#atomurus-study-save .study-save-msg');
+        if (button) paintSaved(button, copy(), false);
+        if (msg) setMsg(msg, '');
+      }, 0);
+    }, true);
+    wrapCalcFns();
+    var tries = 0;
+    var timer = setInterval(function () {
+      wrapCalcFns();
+      tries += 1;
+      if (tries > 40) clearInterval(timer);
+    }, 250);
+  }
+
   function hookMolecule() {
+    if (!isMoleculesPage()) return;
     if (typeof window.setMolecule !== 'function' || window.setMolecule.__atomurusStudyWrapped) return;
     var original = window.setMolecule;
     window.setMolecule = function (key, skip) {

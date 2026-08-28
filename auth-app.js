@@ -258,7 +258,7 @@
         return;
       }
       if (section === 'library') {
-        var library = await api.items({ limit: 40 });
+        var library = await api.items({ exclude: 'calculator', limit: 40 });
         node.innerHTML = library.items && library.items.length
           ? library.items.map(itemCard).join('')
           : '<div class="app-study-empty">Your library is empty.</div>';

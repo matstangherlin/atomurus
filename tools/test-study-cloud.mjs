@@ -599,6 +599,37 @@ await withStudyEnv(async () => {
   const dashJson = await readJson(dash);
   const library = dashJson.dashboard.modules.find((item) => item.id === 'study-library');
   assert.equal(library.state, 'available');
+
+  const listed = await itemsHandler(cookieRequest('https://atomurus.com/api/study/items?limit=40', {
+    cookies: sessionCookie('access-pro-a')
+  }));
+  const listedJson = await readJson(listed);
+  assert.ok(listedJson.items.some((item) => item.itemType === 'calculator'));
+  assert.ok(listedJson.items.some((item) => item.itemType === 'element'));
+
+  const libraryOnly = await itemsHandler(cookieRequest('https://atomurus.com/api/study/items?exclude=calculator&limit=40', {
+    cookies: sessionCookie('access-pro-a')
+  }));
+  const libraryOnlyJson = await readJson(libraryOnly);
+  assert.equal(libraryOnly.status, 200);
+  assert.ok(libraryOnlyJson.items.length >= 1);
+  assert.equal(libraryOnlyJson.items.some((item) => item.itemType === 'calculator'), false);
+  assert.ok(libraryOnlyJson.items.every((item) => item.itemType === 'element' || item.itemType === 'molecule' || item.itemType === 'article'));
+
+  const byKey = await itemsHandler(cookieRequest('https://atomurus.com/api/study/items?type=element&itemKey=n', {
+    cookies: sessionCookie('access-pro-a')
+  }));
+  const byKeyJson = await readJson(byKey);
+  assert.equal(byKey.status, 200);
+  assert.equal(byKeyJson.items.length, 1);
+  assert.equal(byKeyJson.items[0].itemKey, 'n');
+  assert.equal(byKeyJson.items[0].itemType, 'element');
+
+  const missingKey = await itemsHandler(cookieRequest('https://atomurus.com/api/study/items?itemKey=does-not-exist', {
+    cookies: sessionCookie('access-pro-a')
+  }));
+  const missingKeyJson = await readJson(missingKey);
+  assert.equal(missingKeyJson.items.length, 0);
 });
 
 const studyClient = readFileSync(new URL('../study-client.js', import.meta.url), 'utf8');
@@ -611,9 +642,24 @@ const studySave = readFileSync(new URL('../study-save.js', import.meta.url), 'ut
 assert.doesNotMatch(studySave, /innerHTML/);
 assert.doesNotMatch(studySave, /\/api\/auth\/me/);
 assert.doesNotMatch(studySave, /SERVICE_ROLE|service_role/);
+assert.doesNotMatch(studySave, /querySelector\(['"]\[data-mol\]['"]\)/);
+assert.match(studySave, /\/viewer\/molecules/);
+assert.match(studySave, /\.calc-panel/);
+assert.match(studySave, /insertBefore\(host, panel\.firstChild\)/);
+
+const studyBoot = readFileSync(new URL('../study-boot.js', import.meta.url), 'utf8');
+assert.match(studyBoot, /onload/);
+assert.match(studyBoot, /study-client\.js/);
+assert.match(studyBoot, /study-save\.js/);
+assert.match(studyBoot, /study-progress\.js/);
+
+const studyProgress = readFileSync(new URL('../study-progress.js', import.meta.url), 'utf8');
+assert.match(studyProgress, /feature_locked/);
+assert.match(studyProgress, /session_expired/);
 
 const authApp = readFileSync(new URL('../auth-app.js', import.meta.url), 'utf8');
 assert.match(authApp, /\/api\/study\/overview|api\.overview/);
+assert.match(authApp, /exclude:\s*'calculator'/);
 assert.doesNotMatch(authApp, /startRefreshTimer\s*\(/);
 
 console.log('study-cloud tests passed');

@@ -59,7 +59,7 @@
       });
     },
     items: function (params, force) {
-      var key = cacheKey(['items', params && params.type, params && params.tag, params && params.hasNote, params && params.cursor, params && params.limit]);
+      var key = cacheKey(['items', params && params.type, params && params.exclude, params && params.itemKey, params && params.tag, params && params.hasNote, params && params.cursor, params && params.limit]);
       if (!force && itemsCache[key]) return Promise.resolve(itemsCache[key]);
       return request('/api/study/items' + queryString(params || {})).then(function (data) {
         itemsCache[key] = data;
