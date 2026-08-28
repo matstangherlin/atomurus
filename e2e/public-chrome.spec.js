@@ -128,6 +128,8 @@ test('public table, calculators, login and pricing share the new chrome', async 
   await page.goto('/periodic-table/hydrogenium.html');
   await expect(page.locator('.lc-el-name')).toBeVisible();
   await expect.poll(() => fontFamily(page.locator('.lc-el-name'))).toMatch(/Instrument Serif/i);
+  await expect.poll(() => fontFamily(page.locator('.lc-el-lat'))).toMatch(/Inter Tight/i);
+  await expect.poll(() => fontFamily(page.locator('.lc-el-prop .k').first())).toMatch(/Inter Tight/i);
   await expect(page.locator('.data-strip').first()).toBeHidden();
   await saveShot(page, 'desktop-public-element');
 
@@ -169,6 +171,13 @@ test('settings, compare, docs and articles keep the workspace pattern', async ({
   await page.goto('/periodic-table/trends.html');
   await expect(page.locator('.pt-tab.active')).toBeVisible();
   await expect(page.locator('.data-strip').first()).toBeHidden();
+  const autoOn = await page.locator('#trend-auto').evaluate((el) => {
+    const s = getComputedStyle(el);
+    return { color: s.color, fontFamily: s.fontFamily, backgroundColor: s.backgroundColor };
+  });
+  expect(autoOn.color).toMatch(/rgb\(\s*30,\s*106,\s*80\s*\)/);
+  expect(autoOn.fontFamily).toMatch(/Inter Tight/i);
+  expect(autoOn.backgroundColor).not.toBe('rgb(20, 18, 14)');
   await saveShot(page, 'desktop-public-trends');
 
   await page.goto('/about.html');
@@ -192,6 +201,35 @@ test('settings, compare, docs and articles keep the workspace pattern', async ({
   await expect(page.locator('.sub-tab.active')).toBeVisible();
   await expect(page.locator('.sub-num').first()).toBeHidden();
   await saveShot(page, 'desktop-public-isomerism-function');
+});
+
+test('molecules, allotropes and 404 drop leftover console chrome', async ({ page }) => {
+  await page.goto('/viewer/molecules.html');
+  const molPill = await page.locator('.viewer .pill.active').first().evaluate((el) => {
+    const s = getComputedStyle(el);
+    return { bg: s.backgroundColor, color: s.color };
+  });
+  expect(molPill.bg).toMatch(/rgb\(\s*30,\s*106,\s*80\s*\)/);
+  expect(molPill.color).not.toMatch(/rgb\(\s*91,\s*33,\s*182\s*\)/);
+  await expect.poll(() => fontFamily(page.locator('.mol-search'))).toMatch(/Inter Tight/i);
+  await saveShot(page, 'desktop-public-molecules');
+
+  await page.goto('/viewer/allotropes.html');
+  const alloPill = await page.locator('.viewer .pill.purple.active').first().evaluate((el) => {
+    const s = getComputedStyle(el);
+    return { bg: s.backgroundColor, color: s.color };
+  });
+  expect(alloPill.bg).toMatch(/rgb\(\s*30,\s*106,\s*80\s*\)/);
+  expect(alloPill.color).not.toMatch(/rgb\(\s*91,\s*33,\s*182\s*\)/);
+  await expect.poll(() => fontFamily(page.locator('.allo-search'))).toMatch(/Inter Tight/i);
+  await saveShot(page, 'desktop-public-allotropes');
+
+  await page.goto('/404.html');
+  await expect(page.locator('.lc-doc-title')).toBeVisible();
+  await expect(page.locator('.lc-doc-card .lbl').first()).toHaveText(/Periodic Table/);
+  await expect(page.locator('.lc-doc-card .lbl').first()).not.toHaveText(/01/);
+  await expect(page.locator('.h-no')).toBeHidden();
+  await saveShot(page, 'desktop-public-404');
 });
 
 test('public home dark mode and mobile keep the workspace chrome', async ({ page }) => {

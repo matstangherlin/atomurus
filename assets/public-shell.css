@@ -603,7 +603,7 @@ html[lang^="pt"] .logo-tag::after { content: 'laboratório'; }
   min-height: 44px;
   border-radius: var(--ps-radius-md);
 }
-.h-no { display: none; }
+.h-no { display: none !important; }
 
 /* ── Docs, login, pricing ── */
 .lc-doc { font-size: 15px; }
@@ -1036,12 +1036,19 @@ html body .viewer .pill {
   border-radius: 999px !important;
   padding: 6px 12px !important;
 }
-html body .viewer .pill.active {
+html body .viewer .pill:hover {
+  border-color: color-mix(in oklab, var(--lc-green) 40%, var(--lc-rule)) !important;
+  color: var(--lc-ink) !important;
+}
+html body .viewer .pill.active,
+html body .viewer .pill.purple.active,
+html body .viewer .pill.purple.active:hover {
   background: var(--lc-green) !important;
   border-color: var(--lc-green) !important;
   color: #F8F5EC !important;
 }
-[data-theme="dark"] html body .viewer .pill.active {
+[data-theme="dark"] html body .viewer .pill.active,
+[data-theme="dark"] html body .viewer .pill.purple.active {
   color: #0E0D0C !important;
 }
 .vz-num {
@@ -1486,4 +1493,71 @@ html body .about-logo > div > div:first-child {
 #aco-cookie-banner button {
   min-height: 40px;
   border-radius: var(--ps-radius-md) !important;
+}
+
+/* ── Leftover instrument chrome: elements, trends, molecules, allotropes ── */
+
+html body .lc-el-kicker,
+html body .lc-el-prop .k,
+html body .lc-el-desc-lbl,
+html body .lc-el-card-cat,
+html body .lc-el-card-mass,
+html body .lc-el-nav .dir {
+  font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif) !important;
+  letter-spacing: .08em !important;
+}
+html body .lc-el-lat {
+  font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif) !important;
+  letter-spacing: 0 !important;
+  font-style: italic;
+}
+
+html body .mol-search,
+html body .allo-search {
+  height: 44px !important;
+  min-height: 44px !important;
+  border-radius: var(--ps-radius-md) !important;
+  font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif) !important;
+  font-size: 14px !important;
+}
+html body .mol-search-none,
+html body .allo-search-none,
+html body .info-hint,
+html body .info-stats {
+  font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif) !important;
+  letter-spacing: 0 !important;
+}
+html body .info-name {
+  font-family: 'Instrument Serif', Georgia, serif !important;
+  font-weight: 400 !important;
+}
+html body .viewer-controls .vc-btn::after,
+html body .viewer-zoom .vc-btn::after {
+  font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif) !important;
+  border-radius: var(--ps-radius-sm) !important;
+}
+
+html body .trend-tool {
+  min-height: 36px !important;
+  height: 36px !important;
+  border-radius: var(--ps-radius-md) !important;
+  font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif) !important;
+  letter-spacing: 0 !important;
+  font-size: 12px !important;
+  font-weight: 550 !important;
+}
+html body .trend-auto.is-on {
+  background: color-mix(in oklab, var(--lc-green) 10%, transparent) !important;
+  color: var(--lc-green) !important;
+  border-color: color-mix(in oklab, var(--lc-green) 40%, var(--lc-rule)) !important;
+}
+html body .trend-select-head {
+  font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif) !important;
+  letter-spacing: .12em !important;
+}
+
+html body .lc-doc-card .lbl,
+html body .lc-form label {
+  font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif) !important;
+  letter-spacing: .08em !important;
 }

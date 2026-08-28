@@ -29,7 +29,7 @@ function retagBrand(html) {
   );
 }
 
-const PUBLIC_SHELL_V = '202608281600';
+const PUBLIC_SHELL_V = '202608281610';
 
 function ensurePublicShell(html) {
   html = retagBrand(html);
