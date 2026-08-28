@@ -590,7 +590,7 @@
   font-size: 11px;
   color: var(--lc-ink-3);
 }
-@media (pointer: coarse) {
+@media (pointer: coarse), (max-width: 860px) {
   .ws-review-hint { display: none; }
 }
 
@@ -676,6 +676,15 @@
   margin: 0;
 }
 .ws-dialog-body { color: var(--lc-ink-2); font-size: 15px; line-height: 1.5; }
+.ws-dialog-body label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--lc-ink);
+  margin: 10px 0 6px;
+}
+.ws-dialog-body .ws-input,
+.ws-dialog-body .ws-textarea { width: 100%; }
 .ws-dialog-actions { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
 body.ws-dialog-open { overflow: hidden; }
 
@@ -715,8 +724,9 @@ body.ws-dialog-open { overflow: hidden; }
   font-size: 11px;
   color: var(--lc-ink-3);
   text-align: right;
+  visibility: hidden;
 }
-.ws-charcount.is-near { color: var(--ws-warning); }
+.ws-charcount.is-near { visibility: visible; color: var(--ws-warning); }
 
 .ws-error {
   padding: 16px;
@@ -808,6 +818,7 @@ html.auth-error .ws-auth-only { visibility: hidden; }
     min-height: 56px;
   }
   .ws-bottom a.is-active { color: var(--lc-green); }
+  .ws-btn-sm { min-height: 44px; }
   .ws-study-item { grid-template-columns: auto minmax(0, 1fr); }
   .ws-item-actions { grid-column: 1 / -1; justify-content: flex-start; }
   .ws-grid-2, .ws-grid-3 { grid-template-columns: 1fr; }

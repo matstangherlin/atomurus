@@ -145,7 +145,7 @@
       trialPlan: 'Trial Pro', trialDays: '{n} dias restantes',
       proPlan: 'Atomurus Pro', annual: 'Anual', monthly: 'Mensal',
       loading: 'Carregando o workspace…', loadError: 'Não foi possível carregar o workspace.',
-      retry: 'Tentar de novo', loadMore: 'Load more', previous: 'Anterior', next: 'Próxima',
+      retry: 'Tentar de novo', loadMore: 'Carregar mais', previous: 'Anterior', next: 'Próxima',
       lockedLibraryTitle: 'Biblioteca de estudos', lockedLibraryBody: 'Salve materiais, notas e progresso em todos os dispositivos.',
       lockedSetsTitle: 'Study Sets', lockedSetsBody: 'Agrupe química salva em coleções e gere flashcards.',
       lockedReviewTitle: 'Smart Review', lockedReviewBody: 'Agenda automaticamente os flashcards conforme você lembra deles.',
@@ -472,7 +472,7 @@
       '</div>' +
       '<div class="ws-error" data-review-error hidden></div>' +
       '<div class="ws-empty" data-review-empty hidden></div>' +
-      '<p class="ws-review-hint">Space reveal · 1 Again · 2 Hard · 3 Good · 4 Easy</p>' +
+      '<p class="ws-review-hint">' + escapeHtml(t('reviewHint')) + '</p>' +
       '</div>';
     var root = document.getElementById('app-review-session');
     root.querySelector('[data-review-reveal]').addEventListener('click', revealReviewCard);
@@ -590,10 +590,45 @@
       '</div><div class="ws-item-actions">' +
       '<a class="ws-btn ws-btn-primary ws-btn-sm" href="' + escapeHtml(href) + '">' + escapeHtml(t('open')) + '</a>' +
       '<button type="button" class="ws-btn ws-btn-secondary ws-btn-sm" data-add-to-set="' + escapeHtml(item.id) + '">' + escapeHtml(t('addToSet')) + '</button>' +
-      (canGenerate ? '<button type="button" class="ws-btn ws-btn-sm" data-generate-item="' + escapeHtml(item.id) + '" disabled>' + escapeHtml(t('generate')) + '</button>' : '') +
+      (canGenerate ? '<button type="button" class="ws-btn ws-btn-sm" data-generate-item="' + escapeHtml(item.id) + '">' + escapeHtml(t('generate')) + '</button>' : '') +
       '<div class="ws-dropdown"><button type="button" class="ws-btn ws-btn-icon ws-btn-sm" data-more="' + escapeHtml(item.id) + '" aria-haspopup="true">•••</button>' +
       '<div class="ws-menu"><button type="button" data-delete-item="' + escapeHtml(item.id) + '">' + escapeHtml(t('remove')) + '</button></div></div>' +
       '</div></article>';
+  }
+
+  function openAddToSetDialog(api, itemId, node) {
+    api.listSets().then(function (data) {
+      var box = document.createElement('div');
+      (data.sets || []).forEach(function (set) {
+        var choice = document.createElement('button');
+        choice.type = 'button';
+        choice.className = 'ws-btn';
+        choice.style.display = 'block';
+        choice.style.width = '100%';
+        choice.style.marginBottom = '8px';
+        choice.textContent = set.title || t('sets');
+        choice.addEventListener('click', function () {
+          ui().setBusy(choice, true, t('saving'));
+          api.addSetItem({ setId: set.id, itemId: itemId }).then(function () {
+            toast(t('toastAdded'));
+            ui().closeDialog();
+            var generate = node && node.querySelector('[data-generate-item="' + itemId + '"]');
+            if (generate) generate.setAttribute('data-set-id', set.id);
+          }).catch(function (err) {
+            ui().setBusy(choice, false);
+            toast(t(logic().uxError(err).bodyKey), 'danger');
+          });
+        });
+        box.appendChild(choice);
+      });
+      var newer = document.createElement('button');
+      newer.type = 'button';
+      newer.className = 'ws-btn ws-btn-secondary';
+      newer.textContent = t('newSet');
+      newer.addEventListener('click', function () { openCreateSetDialog(api, itemId, node); });
+      box.appendChild(newer);
+      ui().openDialog({ title: t('addToSet'), bodyNode: box, actions: [{ label: t('cancel'), kind: 'ws-btn-ghost' }] });
+    }).catch(function (err) { toast(t(logic().uxError(err).bodyKey), 'danger'); });
   }
 
   function bindLibrarySetActions(node, api) {
@@ -625,49 +660,14 @@
         return;
       }
       if (addBtn) {
-        var itemId = addBtn.getAttribute('data-add-to-set') || '';
-        api.listSets().then(function (data) {
-          var box = document.createElement('div');
-          (data.sets || []).forEach(function (set) {
-            var choice = document.createElement('button');
-            choice.type = 'button';
-            choice.className = 'ws-btn';
-            choice.style.display = 'block';
-            choice.style.width = '100%';
-            choice.style.marginBottom = '8px';
-            choice.textContent = set.title || t('sets');
-            choice.addEventListener('click', function () {
-              ui().setBusy(choice, true, t('saving'));
-              api.addSetItem({ setId: set.id, itemId: itemId }).then(function () {
-                toast(t('toastAdded'));
-                ui().closeDialog();
-                var generate = node.querySelector('[data-generate-item="' + itemId + '"]');
-                if (generate) {
-                  generate.disabled = false;
-                  generate.setAttribute('data-set-id', set.id);
-                }
-              }).catch(function (err) {
-                ui().setBusy(choice, false);
-                toast(t(logic().uxError(err).bodyKey), 'danger');
-              });
-            });
-            box.appendChild(choice);
-          });
-          var newer = document.createElement('button');
-          newer.type = 'button';
-          newer.className = 'ws-btn ws-btn-secondary';
-          newer.textContent = t('newSet');
-          newer.addEventListener('click', function () { openCreateSetDialog(api, itemId, node); });
-          box.appendChild(newer);
-          ui().openDialog({ title: t('addToSet'), bodyNode: box, actions: [{ label: t('cancel'), kind: 'ws-btn-ghost' }] });
-        }).catch(function (err) { toast(t(logic().uxError(err).bodyKey), 'danger'); });
+        openAddToSetDialog(api, addBtn.getAttribute('data-add-to-set') || '', node);
         return;
       }
       if (genBtn) {
         var gid = genBtn.getAttribute('data-generate-item');
         var setId = genBtn.getAttribute('data-set-id');
         if (!setId) {
-          toast(t('addToSet'), 'info');
+          openAddToSetDialog(api, gid, node);
           return;
         }
         ui().setBusy(genBtn, true, t('generating'));
@@ -692,17 +692,27 @@
 
   function openCreateSetDialog(api, itemId, node) {
     var body = document.createElement('div');
+    var nameLabel = document.createElement('label');
+    nameLabel.setAttribute('for', 'ws-new-set-name');
+    nameLabel.textContent = t('setName');
     var name = document.createElement('input');
+    name.id = 'ws-new-set-name';
     name.className = 'ws-input';
     name.maxLength = 120;
     name.setAttribute('aria-label', t('setName'));
     name.placeholder = t('setName');
+    var descLabel = document.createElement('label');
+    descLabel.setAttribute('for', 'ws-new-set-desc');
+    descLabel.textContent = t('setDesc');
     var desc = document.createElement('textarea');
+    desc.id = 'ws-new-set-desc';
     desc.className = 'ws-textarea';
     desc.maxLength = 1000;
+    desc.setAttribute('aria-label', t('setDesc'));
     desc.placeholder = t('setDesc');
+    body.appendChild(nameLabel);
     body.appendChild(name);
-    body.appendChild(document.createElement('br'));
+    body.appendChild(descLabel);
     body.appendChild(desc);
     ui().openDialog({
       title: t('newSet'),
@@ -715,7 +725,12 @@
           close: false,
           onClick: function () {
             var title = name.value.trim();
-            if (!title) return;
+            if (!title) {
+              name.focus();
+              return;
+            }
+            var primary = document.querySelector('#ws-dialog-host .ws-btn-primary');
+            ui().setBusy(primary, true, t('creating'));
             api.createSet({ title: title, description: desc.value }).then(function (created) {
               toast(t('toastSet'));
               if (itemId && created.set && created.set.id) {
@@ -724,10 +739,7 @@
                   ui().closeDialog();
                   if (node) {
                     var generate = node.querySelector('[data-generate-item="' + itemId + '"]');
-                    if (generate) {
-                      generate.disabled = false;
-                      generate.setAttribute('data-set-id', created.set.id);
-                    }
+                    if (generate) generate.setAttribute('data-set-id', created.set.id);
                   } else {
                     location.replace(setHref(created.set.id));
                   }
@@ -735,7 +747,10 @@
               }
               ui().closeDialog();
               if (created.set && created.set.id) location.replace(setHref(created.set.id));
-            }).catch(function (err) { toast(t(logic().uxError(err).bodyKey), 'danger'); });
+            }).catch(function (err) {
+              ui().setBusy(primary, false);
+              toast(t(logic().uxError(err).bodyKey), 'danger');
+            });
           }
         }
       ]
@@ -762,35 +777,57 @@
         emptyState(t('emptyLibraryTitle'), t('emptyLibraryBody'), '/periodic-table.html', t('exploreTable'));
       return;
     }
+    var tags = [];
+    items.forEach(function (item) {
+      (item.tags || []).forEach(function (tag) {
+        if (tag && tags.indexOf(tag) === -1) tags.push(tag);
+      });
+    });
     node.innerHTML = sectionHead(t('libraryTitle'), t('libraryLede'), true) +
-      '<div class="ws-toolbar"><input class="ws-search-field" id="ws-lib-q" type="search"><select class="ws-select" id="ws-lib-type">' +
+      '<div class="ws-toolbar"><input class="ws-search-field" id="ws-lib-q" type="search" aria-label="' + escapeHtml(t('search')) + '">' +
+      '<select class="ws-select" id="ws-lib-type" aria-label="' + escapeHtml(t('type')) + '">' +
       ['all', 'element', 'molecule', 'article'].map(function (type) {
         var label = type === 'all' ? t('all') : type === 'element' ? t('elements') : type === 'molecule' ? t('molecules') : t('articles');
         return '<option value="' + type + '">' + escapeHtml(label) + '</option>';
       }).join('') +
-      '</select><select class="ws-select" id="ws-lib-sort"><option value="updated">' + escapeHtml(t('sortUpdated')) + '</option><option value="title">' + escapeHtml(t('sortTitle')) + '</option></select></div>' +
+      '</select>' +
+      (tags.length
+        ? '<select class="ws-select" id="ws-lib-tag" aria-label="' + escapeHtml(t('tag')) + '"><option value="all">' + escapeHtml(t('all')) + '</option>' +
+          tags.map(function (tag) { return '<option value="' + escapeHtml(tag) + '">' + escapeHtml(tag) + '</option>'; }).join('') + '</select>'
+        : '') +
+      '<select class="ws-select" id="ws-lib-sort" aria-label="' + escapeHtml(t('sort')) + '"><option value="updated">' + escapeHtml(t('sortUpdated')) + '</option><option value="title">' + escapeHtml(t('sortTitle')) + '</option></select></div>' +
       '<div id="ws-lib-list" class="ws-grid">' + items.map(libraryRow).join('') + '</div>';
     bindLibrarySetActions(node, api);
     var apply = function () {
       var q = (($('ws-lib-q') || {}).value || '').toLowerCase();
       var type = ($('ws-lib-type') || {}).value || 'all';
+      var tag = ($('ws-lib-tag') || {}).value || 'all';
       var sort = ($('ws-lib-sort') || {}).value || 'updated';
       var next = items.filter(function (item) {
         if (type !== 'all' && item.itemType !== type) return false;
+        if (tag !== 'all' && (!item.tags || item.tags.indexOf(tag) === -1)) return false;
         if (!q) return true;
         var blob = ((item.title || '') + ' ' + (item.note || '') + ' ' + (item.tags || []).join(' ')).toLowerCase();
         return blob.indexOf(q) !== -1;
       });
       if (sort === 'title') next = next.slice().sort(function (a, b) { return String(a.title || '').localeCompare(String(b.title || '')); });
       var list = $('ws-lib-list');
-      if (list) list.innerHTML = next.map(libraryRow).join('');
+      if (!list) return;
+      items.forEach(function (item) {
+        var el = list.querySelector('[data-library-id="' + item.id + '"]');
+        if (el) el.hidden = next.indexOf(item) === -1;
+      });
+      next.forEach(function (item) {
+        var el = list.querySelector('[data-library-id="' + item.id + '"]');
+        if (el) list.appendChild(el);
+      });
     };
     var qn = $('ws-lib-q');
     if (qn) {
       qn.placeholder = t('search');
       qn.addEventListener('input', debounce(apply, 200));
     }
-    ['ws-lib-type', 'ws-lib-sort'].forEach(function (id) {
+    ['ws-lib-type', 'ws-lib-sort', 'ws-lib-tag'].forEach(function (id) {
       var el = $(id);
       if (el) el.addEventListener('change', apply);
     });
@@ -811,8 +848,8 @@
   function flashcardRow(entry) {
     var due = logic().relativeTime(entry.dueAt, Date.now(), langIsPt() ? 'pt' : 'en');
     return '<article class="ws-flashcard" data-card-id="' + escapeHtml(entry.id) + '">' +
-      '<div class="ws-flash-kicker">FRONT</div><div class="ws-flash-front"></div>' +
-      '<div class="ws-flash-kicker">BACK</div><div class="ws-flash-back"></div>' +
+      '<div class="ws-flash-kicker">' + escapeHtml(t('front')) + '</div><div class="ws-flash-front"></div>' +
+      '<div class="ws-flash-kicker">' + escapeHtml(t('back')) + '</div><div class="ws-flash-back"></div>' +
       '<div class="ws-muted">' + escapeHtml(t('dueWhen', '', { when: due || '—' })) +
       (entry.suspended ? ' · ' + escapeHtml(t('suspend')) : '') + '</div>' +
       '<div class="ws-dropdown"><button type="button" class="ws-btn ws-btn-sm" data-card-menu="' + escapeHtml(entry.id) + '">•••</button>' +
@@ -872,6 +909,8 @@
           close: false,
           onClick: function () {
             var payload = { front: front.value, back: back.value };
+            var primary = document.querySelector('#ws-dialog-host .ws-btn-primary');
+            ui().setBusy(primary, true, t('saving'));
             var req = card && card.id
               ? api.updateCard({ id: card.id, front: payload.front, back: payload.back })
               : api.createCard({ setId: setId, front: payload.front, back: payload.back });
@@ -879,7 +918,10 @@
               toast(t('toastNote'));
               ui().closeDialog();
               location.reload();
-            }).catch(function (err) { toast(t(logic().uxError(err).bodyKey), 'danger'); });
+            }).catch(function (err) {
+              ui().setBusy(primary, false);
+              toast(t(logic().uxError(err).bodyKey), 'danger');
+            });
           }
         }
       ]
@@ -908,7 +950,7 @@
         '<button type="button" class="ws-tab" data-tab="cards">' + escapeHtml(t('flashcards')) + '</button></div>' +
         '<div id="ws-tab-materials">' + (itemsHtml || emptyState(t('emptySetItems'), '')) + '</div>' +
         '<div id="ws-tab-cards" hidden><div id="app-set-cards">' + ((detail.cards || []).map(flashcardRow).join('') || emptyState(t('emptyCards'), '')) + '</div>' +
-        (detail.nextCursor ? '<button type="button" class="ws-btn" id="app-cards-more" data-cursor="' + escapeHtml(detail.nextCursor) + '">Load more</button>' : '') +
+        (detail.nextCursor ? '<button type="button" class="ws-btn" id="app-cards-more" data-cursor="' + escapeHtml(detail.nextCursor) + '">' + escapeHtml(t('loadMore')) + '</button>' : '') +
         '</div>';
       var titleNode = $('ws-set-title');
       if (titleNode) titleNode.textContent = set.title || t('sets');
@@ -1013,8 +1055,9 @@
     node.innerHTML = '<header class="ws-section-head"><div><p class="ws-kicker">Atomurus Pro</p><h1 class="ws-title">' + escapeHtml(t('setsTitle')) +
       ' <span class="ws-badge ws-badge-pro">PRO</span></h1><p class="ws-lede">' + escapeHtml(t('setsLede')) + '</p></div>' +
       '<button type="button" class="ws-btn ws-btn-primary" id="app-set-open">' + escapeHtml(t('newSet')) + '</button></header>' +
-      (sets.length ? '<div class="ws-grid ws-grid-2" id="ws-set-list">' + sets.map(setCard).join('') + '</div>' :
-        emptyState(t('emptySetsTitle'), t('emptySetsBody'), null, t('firstSet')));
+      (sets.length
+        ? '<div class="ws-toolbar"><input class="ws-search-field" id="ws-set-q" type="search" aria-label="' + escapeHtml(t('search')) + '"></div><div class="ws-grid ws-grid-2" id="ws-set-list">' + sets.map(setCard).join('') + '</div>'
+        : emptyState(t('emptySetsTitle'), t('emptySetsBody'), null, t('firstSet')));
     var opener = $('app-set-open') || node.querySelector('.ws-empty .ws-btn');
     function bindCreate() { openCreateSetDialog(api); }
     if ($('app-set-open')) $('app-set-open').addEventListener('click', bindCreate);
@@ -1026,6 +1069,20 @@
       cta.textContent = t('firstSet');
       cta.addEventListener('click', bindCreate);
       emptyBtn.appendChild(cta);
+    }
+    var setSearch = $('ws-set-q');
+    if (setSearch) {
+      setSearch.placeholder = t('search');
+      setSearch.addEventListener('input', debounce(function () {
+        var q = (setSearch.value || '').toLowerCase();
+        var list = $('ws-set-list');
+        if (!list) return;
+        var next = sets.filter(function (entry) {
+          if (!q) return true;
+          return ((entry.title || '') + ' ' + (entry.description || '')).toLowerCase().indexOf(q) !== -1;
+        });
+        list.innerHTML = next.map(setCard).join('');
+      }, 200));
     }
   }
 
@@ -1081,7 +1138,7 @@
     }
     node.innerHTML = sectionHead(t('historyTitle'), t('historyLede'), true) +
       '<div class="ws-grid" id="ws-hist-list">' + items.map(historyRow).join('') + '</div>' +
-      (history.nextCursor ? '<button type="button" class="ws-btn" id="ws-hist-more" data-cursor="' + escapeHtml(history.nextCursor) + '">Load more</button>' : '');
+      (history.nextCursor ? '<button type="button" class="ws-btn" id="ws-hist-more" data-cursor="' + escapeHtml(history.nextCursor) + '">' + escapeHtml(t('loadMore')) + '</button>' : '');
     node.querySelectorAll('#ws-hist-list .ws-study-item').forEach(function (wrap, idx) {
       var item = items[idx];
       if (!item) return;

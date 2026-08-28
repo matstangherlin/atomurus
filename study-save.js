@@ -257,7 +257,19 @@
     var base = on
       ? labels.saved
       : (isCalculatorsPage() ? labels.saveResult : labels.save);
-    button.textContent = (!on && !sessionHint().isPro) ? (base + '  ' + labels.proBadge) : base;
+    while (button.firstChild) button.removeChild(button.firstChild);
+    var mark = document.createElement('span');
+    mark.className = 'study-save-mark';
+    mark.setAttribute('aria-hidden', 'true');
+    mark.textContent = on ? '✓' : '♡';
+    button.appendChild(mark);
+    button.appendChild(document.createTextNode(' ' + base));
+    if (!on && !sessionHint().isPro) {
+      var badge = document.createElement('span');
+      badge.className = 'study-pro-badge';
+      badge.textContent = labels.proBadge;
+      button.appendChild(badge);
+    }
   }
 
   function openSaveGate(labels, hint) {

@@ -62,7 +62,10 @@ assert.doesNotMatch(authApp, /window\.alert\s*\(/);
 assert.doesNotMatch(authApp, /\/api\/auth\/me/);
 assert.match(authApp, /showStudyLocked/);
 assert.match(authApp, /isProUser/);
-assert.match(authApp, /ws-locked/);
+assert.match(authApp, /t\('reviewHint'\)/);
+assert.match(authApp, /t\('loadMore'\)/);
+assert.match(authApp, /openAddToSetDialog/);
+assert.doesNotMatch(authApp, />Load more</);
 
 const appHtml = readFileSync(new URL('../app.html', import.meta.url), 'utf8');
 assert.match(appHtml, /assets\/app-workspace\.css/);

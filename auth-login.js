@@ -352,7 +352,7 @@
       show(errBox, t('common.auth.passwordMismatch', 'Password confirmation does not match.'));
       return;
     }
-    setBusy(button, true, t('common.auth.creating', 'Creating...'));
+    setBusy(button, true, t('common.auth.creatingAccount', t('common.auth.creating', 'Creating account…')));
     setFormBusy(form, true);
     try {
       var data = await auth().signup({
