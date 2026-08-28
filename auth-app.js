@@ -380,21 +380,126 @@
       ' <a href="' + escapeHtml((err && err.upgradeUrl) || '/pricing') + '">See plans</a></div>';
   }
 
+  function setCardRow(entry) {
+    return '<div class="lc-doc-card app-module-row" data-card-id="' + escapeHtml(entry.id) + '">' +
+      '<div><div class="lbl">' + escapeHtml(entry.front) + '</div>' +
+      '<div class="v">' + escapeHtml(entry.suspended ? 'suspended' : (entry.mastered ? 'mastered' : (entry.reviewState || 'new'))) + '</div></div>' +
+      '<div class="app-card-actions">' +
+      '<button type="button" data-card-action="toggle" data-card-id="' + escapeHtml(entry.id) + '" data-suspended="' + (entry.suspended ? '1' : '0') + '">' +
+      escapeHtml(entry.suspended ? 'Resume' : 'Suspend') + '</button>' +
+      '<button type="button" data-card-action="delete" data-card-id="' + escapeHtml(entry.id) + '">Delete</button>' +
+      '</div></div>';
+  }
+
+  function libraryRow(item) {
+    var href = item.href || '/app';
+    var title = item.title || item.itemKey || 'item';
+    var canGenerate = item.itemType === 'element' || item.itemType === 'molecule';
+    return '<div class="lc-doc-card app-module-row" data-library-id="' + escapeHtml(item.id) + '">' +
+      '<div><a href="' + escapeHtml(href) + '"><div class="lbl">' + escapeHtml(title) + '</div></a>' +
+      '<div class="v">' + escapeHtml(item.itemType || '') + '</div></div>' +
+      '<div class="app-card-actions">' +
+      '<button type="button" data-add-to-set="' + escapeHtml(item.id) + '">Add to set</button>' +
+      (canGenerate
+        ? '<button type="button" data-generate-item="' + escapeHtml(item.id) + '" disabled>Generate cards</button>'
+        : '') +
+      '</div></div>';
+  }
+
+  function bindLibrarySetActions(node, api) {
+    var picker = $('app-library-picker');
+    var activeItemId = '';
+    node.onclick = function (event) {
+      var addBtn = event.target && event.target.closest && event.target.closest('[data-add-to-set]');
+      var genBtn = event.target && event.target.closest && event.target.closest('[data-generate-item]');
+      if (addBtn) {
+        activeItemId = addBtn.getAttribute('data-add-to-set') || '';
+        api.listSets().then(function (data) {
+          if (!picker) return;
+          picker.hidden = false;
+          picker.textContent = '';
+          (data.sets || []).forEach(function (set) {
+            var choice = document.createElement('button');
+            choice.type = 'button';
+            choice.textContent = set.title || 'Study Set';
+            choice.addEventListener('click', function () {
+              api.addSetItem({ setId: set.id, itemId: activeItemId }).then(function (result) {
+                picker.textContent = 'Added to ' + (result.setTitle || set.title) + ' ✓';
+                var generate = node.querySelector('[data-generate-item="' + activeItemId + '"]');
+                if (generate) {
+                  generate.disabled = false;
+                  generate.setAttribute('data-set-id', set.id);
+                }
+              }).catch(function (err) {
+                picker.textContent = (err && err.message) || 'Could not add to this set.';
+              });
+            });
+            picker.appendChild(choice);
+          });
+          var newer = document.createElement('button');
+          newer.type = 'button';
+          newer.textContent = '+ New Study Set';
+          newer.addEventListener('click', function () {
+            var title = window.prompt('Study Set title');
+            if (!title) return;
+            api.createSet({ title: title }).then(function (created) {
+              return api.addSetItem({ setId: created.set.id, itemId: activeItemId }).then(function () {
+                picker.textContent = 'Added to ' + (created.set.title || title) + ' ✓';
+                var generate = node.querySelector('[data-generate-item="' + activeItemId + '"]');
+                if (generate) {
+                  generate.disabled = false;
+                  generate.setAttribute('data-set-id', created.set.id);
+                }
+              });
+            }).catch(function (err) {
+              picker.textContent = (err && err.message) || 'Could not create this set.';
+            });
+          });
+          picker.appendChild(newer);
+        }).catch(function (err) {
+          if (picker) {
+            picker.hidden = false;
+            picker.textContent = (err && err.message) || 'Could not load Study Sets.';
+          }
+        });
+        return;
+      }
+      if (genBtn) {
+        var itemId = genBtn.getAttribute('data-generate-item');
+        var setId = genBtn.getAttribute('data-set-id');
+        if (!setId) {
+          if (picker) {
+            picker.hidden = false;
+            picker.textContent = 'Add this item to a Study Set first.';
+          }
+          return;
+        }
+        genBtn.disabled = true;
+        api.generateCards({ setId: setId, itemId: itemId }).then(function (data) {
+          if (picker) {
+            picker.hidden = false;
+            picker.textContent = '';
+            picker.appendChild(document.createTextNode(String(data.created || 0) + ' cards created '));
+            var link = document.createElement('a');
+            link.href = reviewHref(setId);
+            link.textContent = 'Review';
+            picker.appendChild(link);
+          }
+          genBtn.disabled = false;
+        }).catch(function (err) {
+          genBtn.disabled = false;
+          if (picker) picker.textContent = (err && err.message) || 'Could not generate cards.';
+        });
+      }
+    };
+  }
+
   async function renderSetsSection(node, api) {
     var setId = studySetIdFromQuery();
     if (setId) {
       var detail = await api.getSet(setId, { limit: 40 });
       var set = detail.set || {};
-      var cardsHtml = (detail.cards || []).map(function (entry) {
-        return '<div class="lc-doc-card app-module-row" data-card-id="' + escapeHtml(entry.id) + '">' +
-          '<div><div class="lbl">' + escapeHtml(entry.front) + '</div>' +
-          '<div class="v">' + escapeHtml(entry.suspended ? 'suspended' : (entry.mastered ? 'mastered' : (entry.reviewState || 'new'))) + '</div></div>' +
-          '<div class="app-card-actions">' +
-          '<button type="button" data-card-action="toggle" data-card-id="' + escapeHtml(entry.id) + '" data-suspended="' + (entry.suspended ? '1' : '0') + '">' +
-          escapeHtml(entry.suspended ? 'Resume' : 'Suspend') + '</button>' +
-          '<button type="button" data-card-action="delete" data-card-id="' + escapeHtml(entry.id) + '">Delete</button>' +
-          '</div></div>';
-      }).join('');
+      var cardsHtml = (detail.cards || []).map(setCardRow).join('');
       var itemsHtml = (detail.items || []).map(function (entry) {
         var item = entry.item || {};
         return '<div class="v">' + escapeHtml(item.title || item.itemKey || 'item') + '</div>';
@@ -416,7 +521,12 @@
         '<label class="lbl">Back</label><textarea id="app-card-back" maxlength="3000"></textarea>' +
         '<button type="button" id="app-card-save">Save flashcard</button>' +
         '<p class="lbl">Cards</p>' +
-        (cardsHtml || '<div class="app-study-empty">No flashcards yet.</div>');
+        '<div id="app-set-cards">' +
+        (cardsHtml || '<div class="app-study-empty">No flashcards yet.</div>') +
+        '</div>' +
+        (detail.nextCursor
+          ? '<button type="button" id="app-cards-more" data-cursor="' + escapeHtml(detail.nextCursor) + '">Load more</button>'
+          : '');
       var generateBtn = $('app-generate-set');
       if (generateBtn) {
         generateBtn.addEventListener('click', function () {
@@ -451,7 +561,29 @@
           });
         });
       }
-      node.addEventListener('click', function (event) {
+      node.onclick = function (event) {
+        var more = event.target && event.target.closest && event.target.closest('#app-cards-more');
+        if (more) {
+          var cursor = more.getAttribute('data-cursor');
+          more.disabled = true;
+          api.getSet(set.id, { cursor: cursor, limit: 40 }, true).then(function (page) {
+            var list = $('app-set-cards');
+            (page.cards || []).forEach(function (entry) {
+              var wrap = document.createElement('div');
+              wrap.innerHTML = setCardRow(entry);
+              if (list && wrap.firstChild) list.appendChild(wrap.firstChild);
+            });
+            if (page.nextCursor) {
+              more.setAttribute('data-cursor', page.nextCursor);
+              more.disabled = false;
+            } else {
+              more.remove();
+            }
+          }).catch(function () {
+            more.disabled = false;
+          });
+          return;
+        }
         var btn = event.target && event.target.closest && event.target.closest('[data-card-action]');
         if (!btn) return;
         var id = btn.getAttribute('data-card-id');
@@ -465,12 +597,19 @@
             window.location.reload();
           });
         }
-      });
+      };
       return;
     }
 
-    var listed = await api.listSets();
-    var sets = listed.sets || [];
+    var listedPair = await Promise.all([
+      api.listSets(),
+      api.reviewOverview().catch(function () { return { sets: [] }; })
+    ]);
+    var sets = listedPair[0].sets || [];
+    var dueById = {};
+    (listedPair[1].sets || []).forEach(function (entry) {
+      dueById[entry.id] = entry.dueCount || 0;
+    });
     node.innerHTML =
       '<p class="lbl">New Study Set</p>' +
       '<input id="app-set-title" maxlength="120" placeholder="ENEM — Química">' +
@@ -479,9 +618,10 @@
       '<p class="lbl">Your sets</p>' +
       (sets.length
         ? sets.map(function (entry) {
+          var due = dueById[entry.id] != null ? dueById[entry.id] : 0;
           return '<a class="lc-doc-card app-module-row" href="' + escapeHtml(setHref(entry.id)) + '"><div>' +
             '<div class="lbl">' + escapeHtml(entry.title) + '</div>' +
-            '<div class="v">' + escapeHtml(entry.description || 'Open set') + '</div></div></a>';
+            '<div class="v">' + escapeHtml(String(due) + ' cards due') + '</div></div></a>';
         }).join('')
         : '<div class="app-study-empty">Create a set, then add saved library items.</div>');
     var createBtn = $('app-set-create');
@@ -568,7 +708,7 @@
           (review ? card('mastered', String(review.masteredCards || 0)) : '') +
           '</div>' +
           (review && dueNow
-            ? '<p class="lbl">' + escapeHtml(String(dueNow) + ' cards due') + '</p><a class="lc-doc-card app-module-row" href="/app?section=review"><div><div class="lbl">Review now</div><div class="v">Start Smart Review</div></div></a>'
+            ? '<p class="lbl">' + escapeHtml(String(dueNow) + ' cards due') + '</p><a class="lc-doc-card app-module-row" href="/app?section=review&start=1"><div><div class="lbl">Review now</div><div class="v">Start Smart Review</div></div></a>'
             : '') +
           '<p class="lbl">Continue studying</p>' +
           (overview.continueStudying && overview.continueStudying.length
@@ -582,9 +722,11 @@
       }
       if (section === 'library') {
         var library = await api.items({ exclude: 'calculator', limit: 40 });
-        node.innerHTML = library.items && library.items.length
-          ? library.items.map(itemCard).join('')
-          : '<div class="app-study-empty">Your library is empty.</div>';
+        node.innerHTML = (library.items && library.items.length
+          ? library.items.map(libraryRow).join('')
+          : '<div class="app-study-empty">Your library is empty.</div>') +
+          '<div id="app-library-picker" class="app-study-empty" hidden></div>';
+        bindLibrarySetActions(node, api);
         return;
       }
       if (section === 'sets') {

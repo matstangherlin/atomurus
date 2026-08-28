@@ -836,6 +836,10 @@ assert.match(authApp, /textContent = card\.front/);
 assert.match(authApp, /textContent = reviewSession\.revealed \? \(card\.back/);
 assert.match(authApp, /crypto\.randomUUID/);
 assert.match(authApp, /event\.key === '1'/);
+assert.match(authApp, /data-add-to-set/);
+assert.match(authApp, /section=review&start=1/);
+assert.match(authApp, /nextCursor/);
+assert.match(authApp, /Load more/);
 
 const migration = readFileSync(new URL('../supabase/migrations/008_study_sets_smart_review.sql', import.meta.url), 'utf8');
 assert.match(migration, /study_sets/);
