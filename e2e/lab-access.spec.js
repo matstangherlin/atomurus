@@ -55,6 +55,7 @@ test('guest 3D molecule viewer stays a preview without Three.js', async ({ page 
   await expect(page.locator('#lab-tool-gate')).toContainText(/Atomurus Pro/i);
   await expect(page.locator('#lab-tool-gate a.lab-tool-gate-primary')).toHaveAttribute('href', /signup/);
   await expect(page.locator('#lab-tool-gate a.lab-tool-gate-primary')).toHaveText(/Start 30-day Pro trial/i);
+  await page.locator('#viewer3d').scrollIntoViewIfNeeded();
   await page.waitForTimeout(800);
   const runtime = await page.evaluate(() => ({
     three: typeof window.THREE !== 'undefined',
@@ -77,6 +78,8 @@ test('removing the overlay does not boot the Pro molecule runtime', async ({ pag
     document.querySelectorAll('.lab-tool-gate').forEach((el) => el.remove());
     document.querySelectorAll('[inert]').forEach((el) => el.removeAttribute('inert'));
   });
+  const canvas = page.locator('#viewer3d');
+  if (await canvas.count()) await canvas.scrollIntoViewIfNeeded();
   await page.waitForTimeout(1000);
   const runtime = await page.evaluate(() => ({
     three: typeof window.THREE !== 'undefined',
@@ -140,6 +143,7 @@ test('Pro loads the molecule runtime after entitlement', async ({ page }) => {
     return Boolean(ads.ready && user.features && user.features.moleculeViewer);
   })).toBe(true);
   await expect(page.locator('#lab-tool-gate')).toHaveCount(0);
+  await page.locator('#viewer3d').scrollIntoViewIfNeeded();
   await expect.poll(() => page.evaluate(() => Boolean(document.querySelector('script[data-atomurus-dep="three"]') || window.THREE))).toBe(true);
   await expect.poll(() => moleculeHits).toBeGreaterThan(0);
   await saveShot(page, 'pro-molecules-runtime');
