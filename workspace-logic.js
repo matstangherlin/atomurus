@@ -6,7 +6,8 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
 
-  var SECTIONS = ['overview', 'library', 'sets', 'review', 'history', 'notes', 'progress', 'account'];
+  var SECTIONS = ['overview', 'library', 'sets', 'review', 'pro-lab', 'history', 'notes', 'progress', 'account'];
+  var LAB_TOOLS = ['home', 'calculations', 'elements', 'molecules', 'atomic', 'sessions'];
   var UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   var MS_DAY = 24 * 60 * 60 * 1000;
   var REVIEW_SECONDS_PER_CARD = 20;
@@ -23,6 +24,21 @@
   function normalizeSection(raw) {
     var section = String(raw || '').trim().toLowerCase();
     return SECTIONS.indexOf(section) === -1 ? 'overview' : section;
+  }
+
+  function labToolFromQuery(search) {
+    try {
+      var tool = String(new URLSearchParams(search || '').get('tool') || 'home').trim().toLowerCase();
+      return LAB_TOOLS.indexOf(tool) === -1 ? 'home' : tool;
+    } catch (_err) {
+      return 'home';
+    }
+  }
+
+  function labHref(tool) {
+    var next = String(tool || 'home').trim().toLowerCase();
+    if (LAB_TOOLS.indexOf(next) === -1 || next === 'home') return '/app?section=pro-lab';
+    return '/app?section=pro-lab&tool=' + encodeURIComponent(next);
   }
 
   function isValidSetId(raw) {
@@ -272,6 +288,8 @@
     relativeTime: relativeTime,
     formatDate: formatDate,
     hasFeature: hasFeature,
-    libraryTypeLabel: libraryTypeLabel
+    libraryTypeLabel: libraryTypeLabel,
+    labToolFromQuery: labToolFromQuery,
+    labHref: labHref
   };
 });

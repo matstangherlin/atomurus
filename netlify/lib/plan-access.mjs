@@ -154,7 +154,13 @@ export function accessForUser(user) {
       spacedRepetition: isPro,
       exportPdf: isPro,
       adsFree: isPro,
-      adminConsole: isAdmin
+      adminConsole: isAdmin,
+      proLab: isPro,
+      advancedCalculations: isPro,
+      advancedElementCompare: isPro,
+      advancedMoleculeCompare: isPro,
+      advancedAtomicCompare: isPro,
+      savedLabSessions: isPro
     }
   };
 }

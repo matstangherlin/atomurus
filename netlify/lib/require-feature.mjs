@@ -19,7 +19,7 @@ export async function requireFeature(request, featureKey = 'studyCloud') {
           code: 'feature_locked',
           feature: featureKey,
           upgradeUrl: '/pricing',
-          error: 'Study Cloud is an Atomurus Pro feature.'
+          error: 'This is an Atomurus Pro feature.'
         },
         auth.session?.cookieHeaders || []
       )

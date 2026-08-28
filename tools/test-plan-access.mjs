@@ -36,21 +36,45 @@ assert.equal(paid.features.studySets, true);
 assert.equal(paid.features.flashcards, true);
 assert.equal(paid.features.smartReview, true);
 assert.equal(paid.features.spacedRepetition, true);
+assert.equal(paid.features.proLab, true);
+assert.equal(paid.features.advancedCalculations, true);
+assert.equal(paid.features.advancedElementCompare, true);
+assert.equal(paid.features.advancedMoleculeCompare, true);
+assert.equal(paid.features.advancedAtomicCompare, true);
+assert.equal(paid.features.savedLabSessions, true);
 
 const expiredStudy = accessForUser({ createdAt: daysAgo(40), email: 'a@b.com' });
 assert.equal(expiredStudy.features.studyCloud, false);
 assert.equal(expiredStudy.features.smartReview, false);
 assert.equal(expiredStudy.features.studySets, false);
+assert.equal(expiredStudy.features.proLab, false);
+assert.equal(expiredStudy.features.advancedCalculations, false);
+assert.equal(expiredStudy.features.advancedElementCompare, false);
+assert.equal(expiredStudy.features.advancedMoleculeCompare, false);
+assert.equal(expiredStudy.features.advancedAtomicCompare, false);
+assert.equal(expiredStudy.features.savedLabSessions, false);
 
 const trialStudy = accessForUser({ createdAt: daysAgo(2), email: 'a@b.com' });
 assert.equal(trialStudy.features.studyCloud, true);
 assert.equal(trialStudy.features.smartReview, true);
+assert.equal(trialStudy.features.proLab, true);
+assert.equal(trialStudy.features.advancedCalculations, true);
+assert.equal(trialStudy.features.advancedElementCompare, true);
+assert.equal(trialStudy.features.advancedMoleculeCompare, true);
+assert.equal(trialStudy.features.advancedAtomicCompare, true);
+assert.equal(trialStudy.features.savedLabSessions, true);
 
 const admin = accessForUser({ role: 'admin', createdAt: daysAgo(100) });
 assert.equal(admin.plan, 'admin');
 assert.equal(admin.adsFree, true);
 assert.equal(admin.features.studyCloud, true);
 assert.equal(admin.features.flashcards, true);
+assert.equal(admin.features.proLab, true);
+assert.equal(admin.features.advancedCalculations, true);
+assert.equal(admin.features.advancedElementCompare, true);
+assert.equal(admin.features.advancedMoleculeCompare, true);
+assert.equal(admin.features.advancedAtomicCompare, true);
+assert.equal(admin.features.savedLabSessions, true);
 
 const pub = publicUser({
   id: '1',
@@ -80,6 +104,7 @@ const canceledStatus = accessForUser({
 });
 assert.equal(canceledStatus.plan, 'free');
 assert.equal(canceledStatus.features.studyCloud, false);
+assert.equal(canceledStatus.features.proLab, false);
 
 const memberPub = publicUser({
   id: '1',

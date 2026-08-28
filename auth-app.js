@@ -99,7 +99,36 @@
       toastSaved: 'Saved to Library', toastAdded: 'Added to Study Set', toastSet: 'Study Set created',
       toastNote: 'Note updated', toastSuspended: 'Card suspended', toastDeleted: 'Deleted',
       sortUpdated: 'Recently updated', sortTitle: 'Title', member: 'member',
-      signInAgain: 'Sign in'
+      signInAgain: 'Sign in',
+      proLab: 'Pro Lab', proLabKicker: 'Pro Lab',
+      proLabLede: 'Advanced chemistry tools for deeper study.',
+      labCalc: 'Advanced Calculations', labCalcLede: 'Compare scenarios and save sessions.',
+      labElements: 'Element Compare', labElementsLede: 'Analyze multiple elements together.',
+      labMolecules: 'Molecule Compare', labMoleculesLede: 'Compare molecular composition.',
+      labAtomic: 'Atomic Compare', labAtomicLede: 'Compare electronic structures.',
+      labSessions: 'Saved Lab Sessions', labSessionsLede: 'Reopen analyses you saved in Pro Lab.',
+      emptySessions: 'No saved lab sessions yet.',
+      labLockedBody: 'Advanced analysis tools are included with Atomurus Pro.',
+      labLockedTeaser: 'Advanced analysis tools.',
+      continueLab: 'Continue your advanced chemistry work.',
+      openProLab: 'Open Pro Lab', seePro: 'See Pro',
+      addScenario: '+ Add scenario', calculateAll: 'Calculate all', saveSession: 'Save session',
+      sessionTitle: 'Session title', sessionSaved: 'Lab session saved',
+      pinResult: 'Pin result', pinned: 'Pinned', calculated: 'Results updated.',
+      formula: 'Formula', atomCount: 'Atom count', labMolarMass: 'Molar mass',
+      labDilution: 'Dilution', labIdealGas: 'Ideal gas', labPh: 'pH / pOH',
+      scenarioName: 'Scenario', solveFor: 'Solve for', mode: 'Mode', solved: 'Solved', nature: 'Nature',
+      addElement: 'Add element', customProperties: 'Properties', compare: 'Compare',
+      addElementsToSet: 'Add selected elements to Study Set', generateFlashcards: 'Generate flashcards',
+      property: 'Property', chartProperty: 'Chart property',
+      atomicNo: 'Atomic no.', symbol: 'Symbol', name: 'Name', latin: 'Latin',
+      atomicMass: 'Atomic mass', period: 'Period', groupEl: 'Group', category: 'Category',
+      electronegativity: 'Electronegativity', state: 'State', electronConfig: 'Electron configuration',
+      shells: 'Shells', meltingPoint: 'Melting point', boilingPoint: 'Boiling point',
+      density: 'Density', atomicRadius: 'Atomic radius', ionizationEnergy: 'Ionization energy',
+      molecule: 'Molecule', selectMolecule: 'Select molecule', highlightElement: 'Highlight element',
+      addBothToSet: 'Add both to Study Set',
+      noBondMeasure: '3D models are for visualization. Bond lengths and angles are not measured as experimental values.'
     },
     pt: {
       overview: 'Visão geral', library: 'Biblioteca', sets: 'Study Sets', review: 'Smart Review',
@@ -195,7 +224,36 @@
       toastSaved: 'Salvo na Biblioteca', toastAdded: 'Adicionado ao Study Set', toastSet: 'Study Set criado',
       toastNote: 'Nota atualizada', toastSuspended: 'Card suspenso', toastDeleted: 'Excluído',
       sortUpdated: 'Atualizados', sortTitle: 'Título', member: 'membro',
-      signInAgain: 'Entrar'
+      signInAgain: 'Entrar',
+      proLab: 'Pro Lab', proLabKicker: 'Pro Lab',
+      proLabLede: 'Ferramentas avançadas de química para estudo mais profundo.',
+      labCalc: 'Cálculos avançados', labCalcLede: 'Compare cenários e salve sessões.',
+      labElements: 'Comparar elementos', labElementsLede: 'Analise vários elementos juntos.',
+      labMolecules: 'Comparar moléculas', labMoleculesLede: 'Compare a composição molecular.',
+      labAtomic: 'Comparar átomos', labAtomicLede: 'Compare estruturas eletrônicas.',
+      labSessions: 'Sessões salvas do Lab', labSessionsLede: 'Reabra análises salvas no Pro Lab.',
+      emptySessions: 'Nenhuma sessão de laboratório salva ainda.',
+      labLockedBody: 'Ferramentas avançadas de análise fazem parte do Atomurus Pro.',
+      labLockedTeaser: 'Ferramentas avançadas de análise.',
+      continueLab: 'Continue seu trabalho avançado de química.',
+      openProLab: 'Abrir Pro Lab', seePro: 'Ver Pro',
+      addScenario: '+ Adicionar cenário', calculateAll: 'Calcular todos', saveSession: 'Salvar sessão',
+      sessionTitle: 'Título da sessão', sessionSaved: 'Sessão do Lab salva',
+      pinResult: 'Fixar resultado', pinned: 'Fixados', calculated: 'Resultados atualizados.',
+      formula: 'Fórmula', atomCount: 'Número de átomos', labMolarMass: 'Massa molar',
+      labDilution: 'Diluição', labIdealGas: 'Gás ideal', labPh: 'pH / pOH',
+      scenarioName: 'Cenário', solveFor: 'Resolver', mode: 'Modo', solved: 'Resolvido', nature: 'Natureza',
+      addElement: 'Adicionar elemento', customProperties: 'Propriedades', compare: 'Comparar',
+      addElementsToSet: 'Adicionar elementos ao Study Set', generateFlashcards: 'Gerar flashcards',
+      property: 'Propriedade', chartProperty: 'Propriedade do gráfico',
+      atomicNo: 'Nº atômico', symbol: 'Símbolo', name: 'Nome', latin: 'Latim',
+      atomicMass: 'Massa atômica', period: 'Período', groupEl: 'Grupo', category: 'Categoria',
+      electronegativity: 'Eletronegatividade', state: 'Estado', electronConfig: 'Configuração eletrônica',
+      shells: 'Camadas', meltingPoint: 'Ponto de fusão', boilingPoint: 'Ponto de ebulição',
+      density: 'Densidade', atomicRadius: 'Raio atômico', ionizationEnergy: 'Energia de ionização',
+      molecule: 'Molécula', selectMolecule: 'Selecionar molécula', highlightElement: 'Destacar elemento',
+      addBothToSet: 'Adicionar as duas ao Study Set',
+      noBondMeasure: 'Os modelos 3D são para visualização. Comprimentos e ângulos de ligação não são medidos como valores experimentais.'
     }
   };
 
@@ -323,6 +381,7 @@
       library: '<path d="M3 3h3v10H3zM7 5h3v8H7zM11 4h3v9h-3z"/>',
       sets: '<path d="M3 5h10M3 8h10M3 11h10M5 3v10"/>',
       review: '<path d="M8 2.5a5.5 5.5 0 1 1-4.6 2.5M8 5v3.5L10 10"/>',
+      'pro-lab': '<path d="M5 2h6l1 3H4zM5 5v7h6V5M6.5 8v2.5M9.5 8v2.5"/>',
       history: '<path d="M8 3v5l3 2M3.5 8a4.5 4.5 0 1 0 1-2.8"/>',
       notes: '<path d="M4 3h6l3 3v7H4zM10 3v3h3"/>',
       progress: '<path d="M3 12l4-4 2 2 4-6"/>',
@@ -339,6 +398,7 @@
     ['library', 'library'],
     ['sets', 'sets'],
     ['review', 'review'],
+    ['pro-lab', 'proLab'],
     ['history', 'history'],
     ['notes', 'notes'],
     ['progress', 'progress']
@@ -697,11 +757,12 @@
           return '<div class="ws-metric"><div class="ws-metric-value">' + escapeHtml(String(row[1])) + '</div><div class="ws-metric-label">' + escapeHtml(t(row[0])) + '</div></div>';
         }).join('') + '</div>'
       : '';
+    var labCard = '<section class="ws-lab-overview"><h2 class="ws-h2">' + escapeHtml(t('proLab')) + '</h2><p class="ws-lede">' + escapeHtml(t('continueLab')) + '</p><a class="ws-btn ws-btn-secondary" href="/app?section=pro-lab">' + escapeHtml(t('openProLab')) + '</a></section>';
     var cont = (overview.continueStudying || []).slice(0, 5);
     var recent = (overview.recentItems || []).slice(0, 5);
     node.innerHTML =
       '<p class="ws-kicker">Atomurus</p><h1 class="ws-title">' + escapeHtml(greet) + '</h1><p class="ws-lede">' + escapeHtml(t('greetingFallback')) + '</p>' +
-      hero + metrics +
+      hero + metrics + labCard +
       '<h2 class="ws-h2">' + escapeHtml(t('continueTitle')) + '</h2>' +
       (cont.length ? '<div class="ws-grid">' + cont.map(continueCard).join('') + '</div>' : emptyState(t('emptyProgressTitle'), t('emptyProgressBody'))) +
       '<h2 class="ws-h2">' + escapeHtml(t('recentSaved')) + '</h2>' +
@@ -1644,6 +1705,7 @@
     node.innerHTML = '<p class="ws-kicker">Atomurus</p><h1 class="ws-title">' + escapeHtml(greet) + '</h1><p class="ws-lede">' + escapeHtml(t('greetingFallback')) + '</p>' +
       '<section class="ws-hero"><div><h2 class="ws-hero-title">' + escapeHtml(t('lockedReviewTitle')) + '</h2><p class="ws-hero-copy">' + escapeHtml(t('lockedReviewBody')) + '</p>' +
       '<a class="ws-btn ws-btn-primary" href="/pricing">' + escapeHtml(t('upgrade')) + '</a></div></section>' +
+      '<section class="ws-lab-overview is-locked"><h2 class="ws-h2">' + escapeHtml(t('proLab')) + '</h2><p class="ws-lede">' + escapeHtml(t('labLockedTeaser')) + '</p><span class="ws-lab-badge">' + escapeHtml(t('pro')) + '</span> <a class="ws-btn ws-btn-secondary" href="/app?section=pro-lab">' + escapeHtml(t('seePro')) + '</a></section>' +
       '<div class="ws-grid ws-grid-3">' +
       lockedState('lockedLibraryTitle', 'lockedLibraryBody') +
       lockedState('lockedSetsTitle', 'lockedSetsBody') +
@@ -1668,6 +1730,35 @@
     if (section === 'account') {
       renderAccount(user);
       return;
+    }
+    if (section === 'pro-lab') {
+      node.innerHTML = '<p class="ws-kicker">' + escapeHtml(t('proLabKicker')) + '</p><h1 class="ws-title">' + escapeHtml(t('proLab')) + '</h1>';
+      var mountLab = function () {
+        return window.AtomurusProLab.mount(node, {
+          user: user,
+          t: t,
+          escapeHtml: escapeHtml,
+          logic: logic(),
+          ui: ui(),
+          study: window.AtomurusStudy
+        });
+      };
+      if (window.AtomurusProLab && typeof window.AtomurusProLab.mount === 'function') {
+        return Promise.resolve(mountLab()).catch(function (err) { friendlyCatch(node, err); });
+      }
+      return new Promise(function (resolve) {
+        var tries = 0;
+        var timer = window.setInterval(function () {
+          tries += 1;
+          if (window.AtomurusProLab && typeof window.AtomurusProLab.mount === 'function') {
+            window.clearInterval(timer);
+            resolve(Promise.resolve(mountLab()).catch(function (err) { friendlyCatch(node, err); }));
+          } else if (tries > 50) {
+            window.clearInterval(timer);
+            resolve();
+          }
+        }, 40);
+      });
     }
     if (!proUser(user)) {
       if (section === 'overview') renderFreeOverview(user);

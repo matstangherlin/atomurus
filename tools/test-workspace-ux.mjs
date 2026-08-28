@@ -10,6 +10,10 @@ assert.equal(logic.normalizeSection('account'), 'account');
 assert.equal(logic.normalizeSection('nope'), 'overview');
 assert.equal(logic.normalizeSection(''), 'overview');
 assert.ok(logic.SECTIONS.includes('account'));
+assert.ok(logic.SECTIONS.includes('pro-lab'));
+assert.equal(logic.normalizeSection('pro-lab'), 'pro-lab');
+assert.equal(logic.labToolFromQuery('?tool=calculations'), 'calculations');
+assert.equal(logic.labHref('elements'), '/app?section=pro-lab&tool=elements');
 assert.ok(!logic.SECTIONS.includes('billing'));
 
 assert.equal(logic.isValidSetId('not-a-uuid'), false);
@@ -30,6 +34,10 @@ assert.equal(logic.isProUser(trial), true);
 assert.equal(logic.isProUser(free), false);
 assert.equal(logic.hasFeature(free, 'smartReview'), false);
 assert.equal(logic.hasFeature(pro, 'smartReview'), true);
+assert.equal(logic.hasFeature(free, 'proLab'), false);
+assert.equal(logic.hasFeature(pro, 'proLab'), true);
+assert.equal(logic.hasFeature({ isPro: false, features: { proLab: false } }, 'proLab'), false);
+assert.equal(logic.hasFeature({ isPro: true, features: { proLab: true } }, 'proLab'), true);
 
 assert.equal(logic.annualSavePercent(24.9, 180), 40);
 assert.equal(logic.annualSavePercent(10, 60), 50);
@@ -108,6 +116,7 @@ assert.match(appHtml, /noindex,nofollow/);
 assert.doesNotMatch(appHtml, /html\.lc-loading body/);
 assert.match(appHtml, /requireSession\(\{\s*next:/);
 assert.match(appHtml, /ws-skip/);
+assert.match(appHtml, /pro-lab\.js/);
 assert.match(appHtml, /id="app-study"/);
 
 const pricing = readFileSync(new URL('../pricing-page.js', import.meta.url), 'utf8');
@@ -115,7 +124,8 @@ assert.doesNotMatch(pricing, /AI tutor|AI powered|AI study/i);
 assert.doesNotMatch(pricing, /alert\s*\(/);
 assert.match(pricing, /annualSavePercent/);
 assert.match(pricing, /Study Library, notes and calculator history/);
-assert.match(pricing, /Study Sets, flashcards and Smart Review/);
+assert.match(pricing, /Pro Lab advanced tools/);
+assert.match(pricing, /Saved Lab sessions/);
 assert.doesNotMatch(pricing, /Study Library, notes, history and Smart Review/);
 
 const pricingHtml = readFileSync(new URL('../pricing.html', import.meta.url), 'utf8');
