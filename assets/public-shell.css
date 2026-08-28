@@ -901,11 +901,11 @@ html body.ps-body.lc-doc .ps-shell {
     bottom: 0 !important;
     z-index: 500;
     width: min(84vw, 300px) !important;
-    transform: translateX(-100%);
+    transform: translateX(-100%) !important;
     grid-area: auto;
   }
   .ps-shell > aside.sidebar.mobile-open {
-    transform: translateX(0);
+    transform: translateX(0) !important;
   }
   .ps-shell > .topbar .logo-wrap,
   .ps-shell > .topbar .ps-brand {

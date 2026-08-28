@@ -29,8 +29,8 @@ function retagBrand(html) {
   );
 }
 
-const PUBLIC_SHELL_V = '202608281800';
-const PUBLIC_WORKSPACE_V = '202608281800';
+const PUBLIC_SHELL_V = '202608281810';
+const PUBLIC_WORKSPACE_V = '202608281810';
 
 function ensurePublicWorkspace(html) {
   if (!/atomurus-lab-console\.css/.test(html)) return html;

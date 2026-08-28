@@ -271,5 +271,15 @@ test('public home dark mode and mobile keep the workspace chrome', async ({ page
 
   await page.goto('/calculators.html');
   await expect(page.locator('.ps-shell > .topbar .mobile-menu-btn')).toBeVisible();
+  const closed = await page.locator('.ps-shell > aside.sidebar').evaluate((el) => {
+    const r = el.getBoundingClientRect();
+    return { x: r.x, width: r.width, transform: getComputedStyle(el).transform };
+  });
+  expect(closed.x + closed.width).toBeLessThanOrEqual(1);
+  await page.locator('.ps-shell > .topbar .mobile-menu-btn').click();
+  await expect.poll(async () => {
+    const r = await page.locator('.ps-shell > aside.sidebar').evaluate((el) => el.getBoundingClientRect());
+    return r.x;
+  }).toBeGreaterThanOrEqual(0);
   await saveShot(page, 'mobile-public-calculators');
 });
