@@ -25,7 +25,13 @@ function features(on) {
     spacedRepetition: on,
     exportPdf: on,
     adsFree: on,
-    adminConsole: false
+    adminConsole: false,
+    proLab: on,
+    advancedCalculations: on,
+    advancedElementCompare: on,
+    advancedMoleculeCompare: on,
+    advancedAtomicCompare: on,
+    savedLabSessions: on
   };
 }
 
@@ -151,7 +157,8 @@ function createStore() {
     }],
     sets: [],
     cards: [],
-    reviews: []
+    reviews: [],
+    labSessions: []
   };
 }
 
@@ -324,8 +331,9 @@ async function installApi(page, options = {}) {
     }
     if (path === '/api/study/item' && method === 'PUT') {
       const body = req.postDataJSON() || {};
+      const existing = data.items.findIndex((row) => row.itemKey === (body.itemKey || 'ferrum') && row.itemType === (body.itemType || 'element'));
       const item = {
-        id: IRON_ID,
+        id: existing >= 0 ? data.items[existing].id : `00000000-0000-4000-8000-${String(data.items.length + 20).padStart(12, '0')}`,
         itemType: body.itemType || 'element',
         itemKey: body.itemKey || 'ferrum',
         title: body.title || 'Iron',
@@ -336,7 +344,6 @@ async function installApi(page, options = {}) {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
-      const existing = data.items.findIndex((row) => row.itemKey === item.itemKey && row.itemType === item.itemType);
       if (existing >= 0) data.items[existing] = { ...data.items[existing], ...item, id: data.items[existing].id };
       else data.items.unshift(item);
       const saved = data.items[existing >= 0 ? existing : 0];
@@ -426,6 +433,132 @@ async function installApi(page, options = {}) {
     }
     if (path === '/api/study/progress') {
       return json(route, 200, { ok: true, items: [], nextCursor: null });
+    }
+
+    if (path.startsWith('/api/pro-lab/')) {
+      if (!signedIn) return json(route, 401, { ok: false, code: 'session_expired', error: 'Sign in required' });
+      if (locked) return json(route, 403, { ok: false, code: 'feature_locked', feature: 'proLab', upgradeUrl: '/pricing' });
+    }
+
+    if (path === '/api/pro-lab/sessions' && method === 'GET') {
+      return json(route, 200, {
+        ok: true,
+        sessions: data.labSessions,
+        quota: { used: data.labSessions.length, max: 200 }
+      });
+    }
+    if (path === '/api/pro-lab/sessions' && method === 'POST') {
+      const body = req.postDataJSON() || {};
+      const session = {
+        id: `aaaaaaaa-bbbb-4ccc-8ddd-${String(data.labSessions.length + 1).padStart(12, '0')}`,
+        sessionType: body.sessionType || 'calculation',
+        title: body.title || 'Untitled',
+        state: body.state || {},
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      data.labSessions.unshift(session);
+      return json(route, 200, { ok: true, session });
+    }
+    if (path === '/api/pro-lab/session' && method === 'GET') {
+      const id = url.searchParams.get('id');
+      const session = data.labSessions.find((row) => row.id === id);
+      if (!session) return json(route, 404, { ok: false, code: 'not_found' });
+      return json(route, 200, { ok: true, session });
+    }
+    if (path === '/api/pro-lab/session' && method === 'PUT') {
+      const body = req.postDataJSON() || {};
+      const session = data.labSessions.find((row) => row.id === body.id);
+      if (!session) return json(route, 404, { ok: false, code: 'not_found' });
+      Object.assign(session, {
+        title: body.title || session.title,
+        sessionType: body.sessionType || session.sessionType,
+        state: body.state || session.state,
+        updatedAt: new Date().toISOString()
+      });
+      return json(route, 200, { ok: true, session });
+    }
+    if (path === '/api/pro-lab/session' && method === 'DELETE') {
+      const id = url.searchParams.get('id');
+      data.labSessions = data.labSessions.filter((row) => row.id !== id);
+      return json(route, 200, { ok: true, deleted: true, id });
+    }
+    if (path === '/api/pro-lab/calculate' && method === 'POST') {
+      const body = req.postDataJSON() || {};
+      const scenarios = body.scenarios || body.formulas || [];
+      const results = scenarios.map((row, index) => {
+        if (body.calculator === 'molar_mass') {
+          return { label: row.label || row.formula, formula: row.formula || row, molarMass: 18.015, molarMassDisplay: '18.015', unit: 'g/mol', atomCount: 3, composition: [] };
+        }
+        const C1 = Number(row.C1);
+        const V1 = Number(row.V1);
+        const C2 = Number(row.C2);
+        const V2 = C2 ? (C1 * V1) / C2 : Number(row.V2);
+        return { label: row.label || `Scenario ${index + 1}`, C1, V1, C2, V2, solved: V2, unit: 'mL' };
+      });
+      return json(route, 200, { ok: true, calculator: body.calculator, results });
+    }
+    if (path === '/api/pro-lab/elements/compare' && method === 'GET') {
+      return json(route, 200, {
+        ok: true,
+        maxElements: 4,
+        properties: ['atomicNumber', 'atomicMass', 'period', 'group', 'category', 'electronegativity'],
+        chartProperties: ['atomicMass', 'electronegativity', 'period', 'group']
+      });
+    }
+    if (path === '/api/pro-lab/elements/compare' && method === 'POST') {
+      const body = req.postDataJSON() || {};
+      const catalog = {
+        26: { atomicNumber: 26, symbol: 'Fe', name: 'Iron', latin: 'ferrum', itemKey: 'ferrum', href: '/periodic-table/ferrum', atomicMass: 55.845, atomicMassDisplay: '55.845', period: 4, group: 8, category: 'transition', electronegativity: 1.83 },
+        27: { atomicNumber: 27, symbol: 'Co', name: 'Cobalt', latin: 'cobaltum', itemKey: 'cobaltum', href: '/periodic-table/cobaltum', atomicMass: 58.933, atomicMassDisplay: '58.933', period: 4, group: 9, category: 'transition', electronegativity: 1.88 },
+        28: { atomicNumber: 28, symbol: 'Ni', name: 'Nickel', latin: 'niccolum', itemKey: 'niccolum', href: '/periodic-table/niccolum', atomicMass: 58.693, atomicMassDisplay: '58.693', period: 4, group: 10, category: 'transition', electronegativity: 1.91 },
+        29: { atomicNumber: 29, symbol: 'Cu', name: 'Copper', latin: 'cuprum', itemKey: 'cuprum', href: '/periodic-table/cuprum', atomicMass: 63.546, atomicMassDisplay: '63.546', period: 4, group: 11, category: 'transition', electronegativity: 1.9 }
+      };
+      const numbers = (body.atomicNumbers || []).map((entry) => Number(typeof entry === 'object' ? entry.atomicNumber || entry.z : entry));
+      const elements = numbers.map((z) => catalog[z]).filter(Boolean);
+      const max = Math.max(...elements.map((el) => el.atomicMass), 1);
+      return json(route, 200, {
+        ok: true,
+        elements,
+        properties: body.properties || ['atomicNumber', 'atomicMass', 'period', 'group'],
+        chart: {
+          property: 'atomicMass',
+          max,
+          bars: elements.map((el) => ({ atomicNumber: el.atomicNumber, symbol: el.symbol, value: el.atomicMass, ratio: el.atomicMass / max }))
+        }
+      });
+    }
+    if (path === '/api/pro-lab/molecules/compare' && method === 'GET') {
+      return json(route, 200, {
+        ok: true,
+        maxMolecules: 2,
+        measuresBonds: false,
+        catalog: [
+          { id: 'water', formula: 'H2O', name: 'Water' },
+          { id: 'co2', formula: 'CO2', name: 'Carbon dioxide' }
+        ]
+      });
+    }
+    if (path === '/api/pro-lab/molecules/compare' && method === 'POST') {
+      const body = req.postDataJSON() || {};
+      const catalog = {
+        water: { id: 'water', formula: 'H2O', name: 'Water', itemKey: 'water', href: '/viewer/molecules?mol=water', molarMass: 18.015, molarMassDisplay: '18.015', atomCount: 3, composition: [{ symbol: 'H', count: 2, massPercent: 11.19 }, { symbol: 'O', count: 1, massPercent: 88.81 }] },
+        co2: { id: 'co2', formula: 'CO2', name: 'Carbon dioxide', itemKey: 'co2', href: '/viewer/molecules?mol=co2', molarMass: 44.009, molarMassDisplay: '44.009', atomCount: 3, composition: [{ symbol: 'C', count: 1, massPercent: 27.29 }, { symbol: 'O', count: 2, massPercent: 72.71 }] }
+      };
+      return json(route, 200, {
+        ok: true,
+        measuresBonds: false,
+        molecules: (body.moleculeIds || ['water', 'co2']).map((id) => catalog[id]).filter(Boolean)
+      });
+    }
+    if (path === '/api/pro-lab/atomic/compare' && method === 'POST') {
+      const body = req.postDataJSON() || {};
+      const catalog = {
+        11: { atomicNumber: 11, symbol: 'Na', name: 'Sodium', latin: 'natrium', itemKey: 'natrium', href: '/periodic-table/natrium', electronConfig: '[Ne] 3s1', shells: [2, 8, 1], period: 3, group: 1 },
+        17: { atomicNumber: 17, symbol: 'Cl', name: 'Chlorine', latin: 'chlorum', itemKey: 'chlorum', href: '/periodic-table/chlorum', electronConfig: '[Ne] 3s2 3p5', shells: [2, 8, 7], period: 3, group: 17 }
+      };
+      const numbers = (body.atomicNumbers || [11, 17]).map(Number);
+      return json(route, 200, { ok: true, elements: numbers.map((z) => catalog[z] || catalog[11]) });
     }
 
     return json(route, 404, { ok: false, error: 'not mocked', path });

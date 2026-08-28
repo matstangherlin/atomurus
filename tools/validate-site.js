@@ -203,18 +203,38 @@ function assertStudyCloud() {
     'study-progress.js',
     'study-boot.js',
     'supabase/migrations/005_study_cloud.sql',
-    'supabase/migrations/008_study_sets_smart_review.sql'
+    'supabase/migrations/008_study_sets_smart_review.sql',
+    'supabase/migrations/009_pro_lab_sessions.sql',
+    'netlify/lib/chemistry-calc.mjs',
+    'netlify/lib/canonical-elements.mjs',
+    'netlify/lib/canonical-molecules.mjs',
+    'netlify/lib/pro-lab.mjs',
+    'netlify/functions/pro-lab-sessions.mjs',
+    'netlify/functions/pro-lab-session.mjs',
+    'netlify/functions/pro-lab-calculate.mjs',
+    'netlify/functions/pro-lab-elements-compare.mjs',
+    'netlify/functions/pro-lab-molecules-compare.mjs',
+    'netlify/functions/pro-lab-atomic-compare.mjs',
+    'pro-lab.js'
   ];
   files.forEach((rel) => {
     if (!fs.existsSync(path.join(ROOT, rel))) fail(`${rel} is missing`);
   });
   const netlify = read('netlify.toml');
-  ['/api/study/overview', '/api/study/items', '/api/study/item', '/api/study/calculator-history', '/api/study/progress', '/api/study/sets', '/api/study/review/queue', '/api/study/cards/generate'].forEach((route) => {
+  ['/api/study/overview', '/api/study/items', '/api/study/item', '/api/study/calculator-history', '/api/study/progress', '/api/study/sets', '/api/study/review/queue', '/api/study/cards/generate', '/api/pro-lab/sessions', '/api/pro-lab/calculate', '/api/pro-lab/elements/compare'].forEach((route) => {
     if (!netlify.includes(route)) fail(`netlify.toml missing ${route}`);
   });
   const client = read('study-client.js');
   if (client.includes('localStorage') || client.includes('/api/auth/me')) {
     fail('study-client.js must not use localStorage or /api/auth/me');
+  }
+  const calc = read('netlify/lib/chemistry-calc.mjs');
+  if (/(?:^|[^/\w])eval\s*\(/.test(calc) || /new Function\s*\(/.test(calc)) {
+    fail('chemistry-calc.mjs must not use eval or new Function');
+  }
+  const heatmap = read('periodic-table/heatmap.html');
+  if ((heatmap.match(/id="cmp-slot-/g) || []).length !== 2) {
+    fail('Free element compare must keep exactly two slots');
   }
 }
 

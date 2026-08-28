@@ -33,7 +33,13 @@
         'Study Sets, flashcards and Smart Review',
         'Study Progress',
         'Automatic card generation',
-        'Spaced repetition'
+        'Spaced repetition',
+        'Pro Lab advanced tools',
+        'Advanced calculation workspace',
+        'Advanced element comparisons',
+        'Molecule comparisons',
+        'Atomic comparisons',
+        'Saved Lab sessions'
       ],
       checkoutGuest: 'Create account',
       checkoutTrial: 'Subscribe after trial',
@@ -56,6 +62,8 @@
         ['Study Sets', 'no', 'yes'],
         ['Smart Review', 'no', 'yes'],
         ['Spaced repetition', 'no', 'yes'],
+        ['Pro Lab', 'no', 'yes'],
+        ['Saved Lab sessions', 'no', 'yes'],
         ['Ads', 'ads', 'noads']
       ],
       yes: 'Yes',
@@ -120,7 +128,13 @@
         'Study Sets, flashcards e Smart Review',
         'Progresso de estudo',
         'Geração automática de cards',
-        'Repetição espaçada'
+        'Repetição espaçada',
+        'Ferramentas avançadas do Pro Lab',
+        'Workspace de cálculos avançados',
+        'Comparações avançadas de elementos',
+        'Comparações de moléculas',
+        'Comparações atômicas',
+        'Sessões salvas do Lab'
       ],
       checkoutGuest: 'Criar conta',
       checkoutTrial: 'Assinar após o trial',
@@ -143,6 +157,8 @@
         ['Study Sets', 'no', 'yes'],
         ['Smart Review', 'no', 'yes'],
         ['Repetição espaçada', 'no', 'yes'],
+        ['Pro Lab', 'no', 'yes'],
+        ['Sessões salvas do Lab', 'no', 'yes'],
         ['Anúncios', 'ads', 'noads']
       ],
       yes: 'Sim',
