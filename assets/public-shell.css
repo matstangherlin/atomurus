@@ -21,6 +21,7 @@
 .nl-no,
 .calc-menu-num,
 .lc-mobile-menu-num,
+.vz-num,
 .lc-btn-primary .lc-kbd,
 .lc-topnav-search .lc-kbd,
 .calc-btn-run .lc-kbd,
@@ -948,8 +949,36 @@ html body .viewer .tab.active {
   border-bottom-color: var(--lc-green) !important;
   color: var(--lc-green) !important;
 }
-html body .viewer .panel {
-  padding: 18px 20px 8px !important;
+html body .viewer .pill {
+  min-height: 36px;
+  border-radius: 999px !important;
+  padding: 6px 12px !important;
+}
+html body .viewer .pill.active {
+  background: var(--lc-green) !important;
+  border-color: var(--lc-green) !important;
+  color: #F8F5EC !important;
+}
+[data-theme="dark"] html body .viewer .pill.active {
+  color: #0E0D0C !important;
+}
+.vz-num {
+  display: none !important;
+}
+.vz-tabs {
+  gap: 4px;
+  padding: 6px;
+  border-radius: var(--ps-radius-md);
+  background: color-mix(in oklab, var(--lc-paper) 70%, var(--lc-bg));
+}
+.vz-tab {
+  min-height: 44px;
+  border-radius: var(--ps-radius-md);
+  font-size: 14px;
+  font-weight: 550;
+}
+.vz-tab.active {
+  background: color-mix(in oklab, var(--lc-green) 10%, transparent);
 }
 
 @media (max-width: 1180px) {

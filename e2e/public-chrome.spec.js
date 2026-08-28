@@ -56,6 +56,8 @@ test('public table, calculators, login and pricing share the new chrome', async 
   await expect(page.locator('.calc-menu-item[data-target="scientific"]')).toBeVisible();
   const idealTitle = page.locator('.calc-menu-item[data-target="ideal"] .calc-menu-title');
   await expect(idealTitle).toHaveText(/Ideal Gas/);
+  const idealGrid = await page.locator('.calc-menu-item[data-target="ideal"]').evaluate((el) => getComputedStyle(el).gridTemplateColumns);
+  expect(idealGrid.split(/\s+/).filter(Boolean)).toHaveLength(2);
   const titleFits = await idealTitle.evaluate((el) => el.scrollWidth <= el.clientWidth + 1);
   expect(titleFits).toBe(true);
   await expect(page.locator('#mm-result-body')).not.toContainText('Â');
@@ -80,9 +82,9 @@ test('public table, calculators, login and pricing share the new chrome', async 
   await saveShot(page, 'desktop-public-explore');
 
   await page.goto('/viewer/atomic-models.html');
-  await expect(page.locator('.viewer .tab').first()).toBeVisible();
-  const tabBefore = await page.locator('.viewer .tab').first().evaluate((el) => getComputedStyle(el, '::before').content);
-  expect(tabBefore).not.toMatch(/0\d/);
+  await expect(page.locator('.vz-tab.active')).toBeVisible();
+  await expect(page.locator('.vz-num').first()).toBeHidden();
+  await expect(page.locator('.vz-tab.active')).toContainText(/Atomic Models/i);
   await saveShot(page, 'desktop-public-viewer');
 
   await page.goto('/login.html');
