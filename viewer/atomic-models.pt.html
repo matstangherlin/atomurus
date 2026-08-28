@@ -3652,7 +3652,7 @@ atomurusBootProViewer(document.getElementById('viewer3d'), 'atomicModelViewer', 
     }
     if (b2) {
       b2.classList.toggle('active', !is3d);
-      b2.setAttribute('aria-pressed', is3d ? 'true' : 'false');
+      b2.setAttribute('aria-pressed', is3d ? 'false' : 'true');
     }
     // Hide 3D-only controls in 2D mode (rotate / static / labels / fullscreen / download still useful)
     const rotBtn = document.getElementById('vc-rotate');

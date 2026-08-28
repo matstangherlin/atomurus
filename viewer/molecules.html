@@ -1503,7 +1503,7 @@ return (function(){
     }
     if (b2) {
       b2.classList.toggle('active', !is3d);
-      b2.setAttribute('aria-pressed', is3d ? 'true' : 'false');
+      b2.setAttribute('aria-pressed', is3d ? 'false' : 'true');
     }
     const rot = document.getElementById('vc-rotate');
     if (rot) rot.style.display = is3d ? '' : 'none';
