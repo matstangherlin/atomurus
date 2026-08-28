@@ -88,6 +88,32 @@
     return Math.max(0, Math.min(100, Math.round(n)));
   }
 
+  function humanizeKey(value) {
+    var text = String(value == null ? '' : value).trim();
+    if (!text) return '';
+    return text
+      .replace(/[._]+/g, '-')
+      .split(/[-/]+/)
+      .filter(Boolean)
+      .map(function (part) {
+        if (/^[A-Z]{1,3}$/.test(part)) return part;
+        return part.charAt(0).toUpperCase() + part.slice(1);
+      })
+      .join(' ');
+  }
+
+  function reviewStartHref(id) {
+    var href = '/app?section=review&start=1';
+    if (isValidSetId(id)) href += '&set=' + encodeURIComponent(String(id).trim());
+    return href;
+  }
+
+  function overviewSetCount(review) {
+    if (!review) return 0;
+    if (Array.isArray(review.sets)) return review.sets.length;
+    return Number(review.setCount) || 0;
+  }
+
   function safeHref(value, fallback) {
     var href = String(value == null ? '' : value).trim();
     var next = fallback || '/app';
@@ -204,6 +230,9 @@
     estimateReviewMinutes: estimateReviewMinutes,
     progressPercent: progressPercent,
     safeHref: safeHref,
+    humanizeKey: humanizeKey,
+    reviewStartHref: reviewStartHref,
+    overviewSetCount: overviewSetCount,
     uxError: uxError,
     isTechnicalErrorText: isTechnicalErrorText,
     generateCardsFeedback: generateCardsFeedback,

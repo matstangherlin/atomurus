@@ -221,7 +221,7 @@
   }
 
   function setHref(id) { return '/app?section=sets&set=' + encodeURIComponent(id); }
-  function reviewHref(id) { return id ? '/app?section=review&set=' + encodeURIComponent(id) : '/app?section=review'; }
+  function reviewStartHref(id) { return logic().reviewStartHref(id); }
   function safeHref(value) { return logic().safeHref(value, '/app'); }
 
   function icon(name) {
@@ -235,7 +235,8 @@
       progress: '<path d="M3 12l4-4 2 2 4-6"/>',
       account: '<path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5"/>',
       plan: '<path d="M4 5h8v8H4zM6 3v2M10 3v2"/>',
-      lock: '<path d="M5 7V5.5a3 3 0 0 1 6 0V7M4 7h8v6H4z"/>'
+      lock: '<path d="M5 7V5.5a3 3 0 0 1 6 0V7M4 7h8v6H4z"/>',
+      logout: '<path d="M6 3H3.5A1.5 1.5 0 0 0 2 4.5v7A1.5 1.5 0 0 0 3.5 13H6M10 11l3-3-3-3M13 8H6"/>'
     };
     return '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none">' + (paths[name] || paths.overview) + '</g></svg>';
   }
@@ -272,7 +273,7 @@
       foot.innerHTML =
         '<a class="ws-nav-item' + (current === 'account' ? ' is-active' : '') + '" href="/app?section=account">' + icon('account') + '<span class="ws-nav-label">' + escapeHtml(t('account')) + '</span></a>' +
         '<a class="ws-nav-item" href="/pricing">' + icon('plan') + '<span class="ws-nav-label">' + escapeHtml(t('plan')) + '</span></a>' +
-        '<button type="button" class="ws-nav-item" id="app-logout-aside">' + icon('account') + '<span class="ws-nav-label">' + escapeHtml(t('logout')) + '</span></button>' +
+        '<button type="button" class="ws-nav-item" id="app-logout-aside">' + icon('logout') + '<span class="ws-nav-label">' + escapeHtml(t('logout')) + '</span></button>' +
         upgrade;
       var aside = $('app-logout-aside');
       if (aside) aside.addEventListener('click', doLogout);
@@ -361,6 +362,7 @@
 
   var reviewSession = null;
   var reviewBusy = false;
+  var currentUser = null;
 
   function newClientEventId() {
     if (window.crypto && typeof window.crypto.randomUUID === 'function') return window.crypto.randomUUID();
@@ -407,7 +409,7 @@
       if (reveal) reveal.hidden = true;
       if (ratings) ratings.hidden = true;
       reviewSession.active = false;
-      renderReviewComplete(root);
+      if (reviewSession.cards && reviewSession.cards.length) renderReviewComplete(root);
       return;
     }
     if (empty) empty.hidden = true;
@@ -445,17 +447,19 @@
   }
 
   function startReviewSession(data, title) {
+    var cards = (data && data.cards) || [];
+    if (!cards.length) return false;
     bindReviewKeys();
     reviewSession = {
       active: true,
       revealed: false,
       index: 0,
       title: title || t('reviewTitle'),
-      cards: (data && data.cards) || [],
+      cards: cards,
       stats: { again: 0, hard: 0, good: 0, easy: 0 }
     };
     var node = $('app-study');
-    if (!node) return;
+    if (!node) return false;
     node.innerHTML =
       '<div id="app-review-session" class="ws-review">' +
       '<p class="ws-kicker">' + escapeHtml(reviewSession.title) + '</p>' +
@@ -482,6 +486,7 @@
       gradeReview(btn.getAttribute('data-grade'));
     });
     paintReviewCard();
+    return true;
   }
 
   async function gradeReview(rating) {
@@ -535,8 +540,9 @@
 
   function continueCard(row) {
     var pct = logic().progressPercent(row.progress);
+    var title = (row && row.title) || logic().humanizeKey(row && row.contentKey) || (row && row.contentType) || '';
     return '<a class="ws-study-item" href="' + escapeHtml(safeHref(row.lastPosition)) + '"><div class="ws-item-symbol">' + icon('progress') + '</div><div>' +
-      '<h3 class="ws-item-title">' + escapeHtml(row.contentKey || row.contentType || '') + '</h3>' +
+      '<h3 class="ws-item-title">' + escapeHtml(title) + '</h3>' +
       '<div class="ws-progress-label">' + escapeHtml(t('complete', '', { n: pct })) + '</div>' + progressBar(pct) +
       '</div><span class="ws-btn ws-btn-sm">' + escapeHtml(t('continueCta')) + ' →</span></a>';
   }
@@ -563,7 +569,7 @@
       : '<section class="ws-hero"><div><h2 class="ws-hero-title">' + escapeHtml(t('caughtUpTitle')) + '</h2><p class="ws-hero-copy">' + escapeHtml(t('caughtUpCopy')) + '</p><a class="ws-btn ws-btn-secondary" href="/app?section=sets">' + escapeHtml(t('openSets')) + '</a></div></section>';
     var metrics = review
       ? '<div class="ws-metrics">' +
-        [['dueToday', dueNow], ['metricSets', (review.sets || []).length], ['metricCards', review.totalCards || 0], ['mastered', review.masteredCards || 0]].map(function (row) {
+        [['dueToday', dueNow], ['metricSets', logic().overviewSetCount(review)], ['metricCards', review.totalCards || 0], ['mastered', review.masteredCards || 0]].map(function (row) {
           return '<div class="ws-metric"><div class="ws-metric-value">' + escapeHtml(String(row[1])) + '</div><div class="ws-metric-label">' + escapeHtml(t(row[0])) + '</div></div>';
         }).join('') + '</div>'
       : '';
@@ -841,7 +847,7 @@
       '<span>' + escapeHtml(t('dueCount', '', { n: entry.dueCount || 0 })) + '</span>' +
       (mastered == null ? '' : '<span>' + escapeHtml(t('masteredPct', '', { n: mastered })) + '</span>') +
       '</div><div class="ws-muted">' + escapeHtml(t('lastUpdated', '', { when: when })) + '</div>' +
-      '<div class="ws-row-actions"><a class="ws-btn ws-btn-primary ws-btn-sm" href="' + escapeHtml(reviewHref(entry.id)) + '">' + escapeHtml(t('study')) + '</a>' +
+      '<div class="ws-row-actions"><a class="ws-btn ws-btn-primary ws-btn-sm" href="' + escapeHtml(reviewStartHref(entry.id)) + '">' + escapeHtml(t('study')) + '</a>' +
       '<a class="ws-btn ws-btn-sm" href="' + escapeHtml(setHref(entry.id)) + '">' + escapeHtml(t('open')) + '</a></div></article>';
   }
 
@@ -942,7 +948,7 @@
       node.innerHTML = '<header class="ws-section-head"><div><p class="ws-kicker">Study Set</p><h1 class="ws-title" id="ws-set-title"></h1>' +
         '<p class="ws-lede">' + escapeHtml(t('cardsCount', '', { n: set.cardCount || 0 })) + ' · ' + escapeHtml(t('dueCount', '', { n: set.dueCount || 0 })) +
         (mastered == null ? '' : ' · ' + escapeHtml(t('masteredPct', '', { n: mastered }))) + '</p></div>' +
-        '<div class="ws-row-actions"><a class="ws-btn ws-btn-primary" href="' + escapeHtml(reviewHref(set.id)) + '">' + escapeHtml(t('startReviewSet')) + '</a>' +
+        '<div class="ws-row-actions"><a class="ws-btn ws-btn-primary" href="' + escapeHtml(reviewStartHref(set.id)) + '">' + escapeHtml(t('startReviewSet')) + '</a>' +
         '<button type="button" class="ws-btn" id="app-card-new">' + escapeHtml(t('addCard')) + '</button>' +
         '<button type="button" class="ws-btn" id="app-generate-set">' + escapeHtml(t('generate')) + '</button>' +
         '<button type="button" class="ws-btn ws-btn-danger" id="app-delete-set">' + escapeHtml(t('deleteSet')) + '</button></div></header>' +
@@ -1013,6 +1019,7 @@
               if (list && wrap.firstChild) list.appendChild(wrap.firstChild);
             });
             fillFlashcardTexts(node, page.cards || []);
+            detail.cards = (detail.cards || []).concat(page.cards || []);
             if (page.nextCursor) {
               more.setAttribute('data-cursor', page.nextCursor);
               more.disabled = false;
@@ -1091,15 +1098,14 @@
     var setId = studySetIdFromQuery();
     var overview = await api.reviewOverview();
     var start = String(new URLSearchParams(location.search).get('start') || '');
-    if (start === '1' || (setId && start === '1')) {
+    if (start === '1') {
       var queue = await api.reviewQueue(setId ? { setId: setId, limit: 20 } : { limit: 20 });
       var title = t('reviewTitle');
       if (setId && overview.sets) {
         var found = overview.sets.find(function (entry) { return entry.id === setId; });
         if (found) title = found.title;
       }
-      startReviewSession(queue, title);
-      return;
+      if (startReviewSession(queue, title)) return;
     }
     var due = overview.dueNow || 0;
     var minutes = logic().estimateReviewMinutes(due);
@@ -1110,7 +1116,7 @@
         : '<p class="ws-hero-copy">' + escapeHtml(t('emptyReviewBody')) + '</p><a class="ws-btn" href="/app?section=sets">' + escapeHtml(t('openSets')) + '</a>') +
       '</div></section>' +
       '<div class="ws-metrics">' +
-      [['dueToday', overview.dueNow || 0], ['metricSets', (overview.sets || []).length], ['metricCards', overview.totalCards || 0], ['mastered', overview.masteredCards || 0]].map(function (row) {
+      [['dueToday', overview.dueNow || 0], ['metricSets', logic().overviewSetCount(overview)], ['metricCards', overview.totalCards || 0], ['mastered', overview.masteredCards || 0]].map(function (row) {
         return '<div class="ws-metric"><div class="ws-metric-value">' + escapeHtml(String(row[1])) + '</div><div class="ws-metric-label">' + escapeHtml(t(row[0])) + '</div></div>';
       }).join('') + '</div>';
   }
@@ -1127,6 +1133,17 @@
       '<a class="ws-btn ws-btn-sm" href="' + escapeHtml(safeHref(item.href || '/calculators.html')) + '">' + escapeHtml(t('openCalc')) + '</a></article>';
   }
 
+  function fillHistoryRow(el, item) {
+    if (!el || !item) return;
+    var title = el.querySelector('.ws-item-title');
+    if (title) title.textContent = item.title || item.itemKey || '';
+    var meta = el.querySelector('[data-hist-meta]');
+    if (meta && item.payload) {
+      var bits = [item.payload.formula || item.payload.input, item.payload.result || item.payload.output].filter(Boolean);
+      meta.textContent = bits.join(' · ');
+    }
+  }
+
   async function renderHistory(node, api) {
     node.innerHTML = sectionHead(t('historyTitle'), t('historyLede'), true) + skeleton();
     var history = await api.items({ type: 'calculator', limit: 20 });
@@ -1140,14 +1157,7 @@
       '<div class="ws-grid" id="ws-hist-list">' + items.map(historyRow).join('') + '</div>' +
       (history.nextCursor ? '<button type="button" class="ws-btn" id="ws-hist-more" data-cursor="' + escapeHtml(history.nextCursor) + '">' + escapeHtml(t('loadMore')) + '</button>' : '');
     node.querySelectorAll('#ws-hist-list .ws-study-item').forEach(function (wrap, idx) {
-      var item = items[idx];
-      if (!item) return;
-      wrap.querySelector('.ws-item-title').textContent = item.title || item.itemKey || '';
-      var meta = wrap.querySelector('[data-hist-meta]');
-      if (meta && item.payload) {
-        var bits = [item.payload.formula || item.payload.input, item.payload.result || item.payload.output].filter(Boolean);
-        meta.textContent = bits.join(' · ');
-      }
+      fillHistoryRow(wrap, items[idx]);
     });
     var more = $('ws-hist-more');
     if (more) more.addEventListener('click', function () {
@@ -1158,7 +1168,7 @@
           var wrap = document.createElement('div');
           wrap.innerHTML = historyRow(item);
           var el = wrap.firstChild;
-          el.querySelector('.ws-item-title').textContent = item.title || item.itemKey || '';
+          fillHistoryRow(el, item);
           list.appendChild(el);
         });
         if (page.nextCursor) { more.setAttribute('data-cursor', page.nextCursor); more.disabled = false; }
@@ -1194,7 +1204,7 @@
     var progress = await api.progressList({ limit: 40 });
     var items = progress.items || [];
     node.innerHTML = sectionHead(t('progressTitle'), t('progressLede'), true) +
-      (items.length ? '<div class="ws-grid">' + items.map(continueCard).join('') : emptyState(t('emptyProgressTitle'), t('emptyProgressBody')));
+      (items.length ? '<div class="ws-grid">' + items.map(continueCard).join('') + '</div>' : emptyState(t('emptyProgressTitle'), t('emptyProgressBody')));
   }
 
   function renderAccount(user) {
@@ -1242,9 +1252,18 @@
       '</div>';
   }
 
-  async function loadStudyCloud(user) {
-    renderNav(user);
+  function resetStudyRoot() {
     var node = $('app-study');
+    if (!node || !node.parentNode) return node;
+    var clone = node.cloneNode(false);
+    node.parentNode.replaceChild(clone, node);
+    return clone;
+  }
+
+  async function loadStudyCloud(user) {
+    currentUser = user;
+    renderNav(user);
+    var node = resetStudyRoot();
     if (!node) return;
     var section = studySection();
     if (section === 'account') {
@@ -1299,7 +1318,15 @@
     window.location.replace('/login?next=' + encodeURIComponent('/app'));
   }
 
+  function closeDropdowns(except) {
+    document.querySelectorAll('.ws-dropdown.is-open').forEach(function (el) {
+      if (el !== except) el.classList.remove('is-open');
+    });
+  }
+
   function initNavChrome() {
+    if (initNavChrome.bound) return;
+    initNavChrome.bound = true;
     var btn = $('ws-menu-btn');
     var shell = $('ws-shell');
     var backdrop = $('ws-drawer-backdrop');
@@ -1317,6 +1344,17 @@
       if (shell && shell.classList.contains('is-nav-open')) close(); else open();
     });
     if (backdrop) backdrop.addEventListener('click', close);
+    document.addEventListener('keydown', function (event) {
+      if (event.key !== 'Escape') return;
+      close();
+      closeDropdowns();
+    });
+    document.addEventListener('click', function (event) {
+      var drop = event.target && event.target.closest && event.target.closest('.ws-dropdown');
+      closeDropdowns(drop);
+      var navClick = event.target && event.target.closest && event.target.closest('#ws-sidebar a, #ws-sidebar button, #ws-bottom a');
+      if (navClick) close();
+    });
   }
 
   async function loadWorkspace() {
@@ -1354,6 +1392,17 @@
 
   function boot() {
     initNavChrome();
+    if (window.I18N && typeof window.I18N.onChange === 'function' && !boot.i18nBound) {
+      boot.i18nBound = true;
+      window.I18N.onChange(function () {
+        if (!currentUser) return;
+        if (reviewSession && reviewSession.active) {
+          renderNav(currentUser);
+          return;
+        }
+        void loadStudyCloud(currentUser);
+      });
+    }
     void loadWorkspace();
   }
 

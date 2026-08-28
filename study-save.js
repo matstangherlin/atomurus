@@ -473,7 +473,7 @@
       }
       if (set && set.id) {
         var link = document.createElement('a');
-        link.href = '/app?section=review&set=' + encodeURIComponent(set.id);
+        link.href = '/app?section=review&start=1&set=' + encodeURIComponent(set.id);
         link.textContent = labels.review;
         setStatus.appendChild(document.createTextNode(' '));
         setStatus.appendChild(link);

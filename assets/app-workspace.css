@@ -294,13 +294,16 @@
 
 .ws-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(220px, .8fr);
+  grid-template-columns: 1fr;
   gap: 18px;
   padding: 22px 24px;
   border: 1px solid var(--lc-rule);
   border-radius: var(--ws-radius-lg);
   background: var(--lc-paper);
   margin-bottom: 22px;
+}
+.ws-hero:has(.ws-hero-aside) {
+  grid-template-columns: minmax(0, 1.4fr) minmax(220px, .8fr);
 }
 .ws-hero.is-ready {
   border-color: color-mix(in oklab, var(--lc-green) 35%, var(--lc-rule));
