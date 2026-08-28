@@ -136,6 +136,31 @@
   to     = "/.netlify/functions/billing-webhook"
   status = 200
 
+[[redirects]]
+  from   = "/api/study/overview"
+  to     = "/.netlify/functions/study-overview"
+  status = 200
+
+[[redirects]]
+  from   = "/api/study/items"
+  to     = "/.netlify/functions/study-items"
+  status = 200
+
+[[redirects]]
+  from   = "/api/study/item"
+  to     = "/.netlify/functions/study-item"
+  status = 200
+
+[[redirects]]
+  from   = "/api/study/calculator-history"
+  to     = "/.netlify/functions/study-calculator-history"
+  status = 200
+
+[[redirects]]
+  from   = "/api/study/progress"
+  to     = "/.netlify/functions/study-progress"
+  status = 200
+
 # Auth pages. Explicit rewrites keep these stable alongside pretty URLs.
 [[redirects]]
   from   = "/login"

@@ -167,6 +167,131 @@
     return location.pathname + location.search;
   }
 
+  function studySection() {
+    try {
+      var section = new URLSearchParams(location.search).get('section') || 'overview';
+      if (['overview', 'library', 'history', 'notes', 'progress'].indexOf(section) === -1) return 'overview';
+      return section;
+    } catch (_err) {
+      return 'overview';
+    }
+  }
+
+  function renderStudyNav() {
+    var nav = $('app-study-nav');
+    if (!nav) return;
+    var current = studySection();
+    var links = [
+      ['overview', 'Overview'],
+      ['library', 'Library'],
+      ['history', 'History'],
+      ['notes', 'Notes'],
+      ['progress', 'Continue studying']
+    ];
+    nav.innerHTML = links.map(function (pair) {
+      var cls = pair[0] === current ? 'active' : '';
+      return '<a class="' + cls + '" href="/app?section=' + pair[0] + '">' + escapeHtml(pair[1]) + '</a>';
+    }).join('');
+  }
+
+  function itemCard(item) {
+    var href = item.href || '/app';
+    var title = item.title || item.itemKey || 'item';
+    var note = item.note ? '<div class="v">' + escapeHtml(item.note) + '</div>' : '';
+    var tags = Array.isArray(item.tags) && item.tags.length
+      ? '<div class="v">' + escapeHtml(item.tags.join(', ')) + '</div>'
+      : '';
+    return '<a class="lc-doc-card app-module-row" href="' + escapeHtml(href) + '"><div>' +
+      '<div class="lbl">' + escapeHtml(title) + '</div>' +
+      '<div class="v">' + escapeHtml(item.itemType || '') + '</div>' +
+      note + tags +
+      '</div></a>';
+  }
+
+  function progressCard(row) {
+    var href = row.lastPosition || '/app';
+    return '<a class="lc-doc-card app-module-row" href="' + escapeHtml(href) + '"><div>' +
+      '<div class="lbl">' + escapeHtml(row.contentKey || row.contentType || 'progress') + '</div>' +
+      '<div class="v">' + escapeHtml(String(row.progress || 0) + '% · ' + (row.status || '')) + '</div>' +
+      '</div></a>';
+  }
+
+  function showStudyLocked(node, err) {
+    node.innerHTML = '<div class="app-study-empty">' +
+      escapeHtml('Study Cloud is included with Atomurus Pro.') +
+      ' <a href="' + escapeHtml((err && err.upgradeUrl) || '/pricing') + '">See plans</a></div>';
+  }
+
+  async function loadStudyCloud(user) {
+    renderStudyNav();
+    var node = $('app-study');
+    if (!node) return;
+    if (!user || !user.isPro) {
+      showStudyLocked(node, { upgradeUrl: '/pricing' });
+      return;
+    }
+    var api = window.AtomurusStudy;
+    if (!api) {
+      node.innerHTML = '<div class="app-study-empty">Study Cloud client is unavailable.</div>';
+      return;
+    }
+    var section = studySection();
+    try {
+      if (section === 'overview') {
+        var overview = await api.overview();
+        var counts = overview.counts || {};
+        node.innerHTML =
+          '<div class="lc-doc-cards">' +
+          card('saved items', String(counts.items || 0)) +
+          card('notes', String(counts.notes || 0)) +
+          card('in progress', String(counts.inProgress || 0)) +
+          card('calculator runs', String(counts.calculator || 0)) +
+          '</div>' +
+          '<p class="lbl">Continue studying</p>' +
+          (overview.continueStudying && overview.continueStudying.length
+            ? overview.continueStudying.map(progressCard).join('')
+            : '<div class="app-study-empty">Nothing in progress yet.</div>') +
+          '<p class="lbl">Recent library</p>' +
+          (overview.recentItems && overview.recentItems.length
+            ? overview.recentItems.map(itemCard).join('')
+            : '<div class="app-study-empty">Save an element, molecule or article to fill this shelf.</div>');
+        return;
+      }
+      if (section === 'library') {
+        var library = await api.items({ limit: 40 });
+        node.innerHTML = library.items && library.items.length
+          ? library.items.map(itemCard).join('')
+          : '<div class="app-study-empty">Your library is empty.</div>';
+        return;
+      }
+      if (section === 'history') {
+        var history = await api.items({ type: 'calculator', limit: 40 });
+        node.innerHTML = history.items && history.items.length
+          ? history.items.map(itemCard).join('')
+          : '<div class="app-study-empty">No calculator runs saved yet.</div>';
+        return;
+      }
+      if (section === 'notes') {
+        var notes = await api.items({ hasNote: '1', limit: 40 });
+        node.innerHTML = notes.items && notes.items.length
+          ? notes.items.map(itemCard).join('')
+          : '<div class="app-study-empty">No notes yet.</div>';
+        return;
+      }
+      var progress = await api.progressList({ limit: 40 });
+      node.innerHTML = progress.items && progress.items.length
+        ? progress.items.map(progressCard).join('')
+        : '<div class="app-study-empty">No study progress yet.</div>';
+    } catch (err) {
+      if (err && (err.status === 401 || err.code === 'session_expired')) throw err;
+      if (err && (err.status === 403 || err.code === 'feature_locked')) {
+        showStudyLocked(node, err);
+        return;
+      }
+      node.innerHTML = '<div class="app-study-empty">' + escapeHtml((err && err.message) || 'Could not load Study Cloud.') + '</div>';
+    }
+  }
+
   async function loadWorkspace() {
     var client = auth();
     if (!client) {
@@ -179,6 +304,7 @@
       renderAccount(me);
       var dash = await fetchJson('/api/private/dashboard');
       renderDashboard(dash);
+      await loadStudyCloud(me.user);
       var loading = $('app-loading');
       if (loading) loading.style.display = 'none';
       markReady();

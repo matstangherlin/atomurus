@@ -112,8 +112,12 @@ export function accessForUser(user) {
     features: {
       labWorkspace: true,
       premiumLessons: isPro,
+      studyCloud: isPro,
       studyProgress: isPro,
       favorites: isPro,
+      calculatorHistory: isPro,
+      studyNotes: isPro,
+      studyTags: isPro,
       exportPdf: isPro,
       adsFree: isPro,
       adminConsole: isAdmin

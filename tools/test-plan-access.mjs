@@ -26,10 +26,23 @@ const paid = accessForUser({
 assert.equal(paid.plan, 'paid');
 assert.equal(paid.planSource, 'paid');
 assert.equal(paid.features.premiumLessons, true);
+assert.equal(paid.features.studyCloud, true);
+assert.equal(paid.features.favorites, true);
+assert.equal(paid.features.calculatorHistory, true);
+assert.equal(paid.features.studyNotes, true);
+assert.equal(paid.features.studyTags, true);
+assert.equal(paid.features.studyProgress, true);
+
+const expiredStudy = accessForUser({ createdAt: daysAgo(40), email: 'a@b.com' });
+assert.equal(expiredStudy.features.studyCloud, false);
+
+const trialStudy = accessForUser({ createdAt: daysAgo(2), email: 'a@b.com' });
+assert.equal(trialStudy.features.studyCloud, true);
 
 const admin = accessForUser({ role: 'admin', createdAt: daysAgo(100) });
 assert.equal(admin.plan, 'admin');
 assert.equal(admin.adsFree, true);
+assert.equal(admin.features.studyCloud, true);
 
 const pub = publicUser({
   id: '1',

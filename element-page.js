@@ -256,11 +256,20 @@
     });
   }
 
+  function loadStudyCloud() {
+    if (window.__atomurusStudyBoot) return;
+    var script = document.createElement('script');
+    script.src = '/study-boot.js?v=202608280130';
+    script.defer = true;
+    document.head.appendChild(script);
+  }
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', render);
   } else {
     render();
   }
+  loadStudyCloud();
   if (window.I18N && I18N.onChange) {
     I18N.onChange(function (lang) {
       if (lang === 'en' && typeof window.__ATOMURUS_ENSURE_ELEMENTS_EN === 'function') {

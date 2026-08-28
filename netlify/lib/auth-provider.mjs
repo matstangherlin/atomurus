@@ -48,10 +48,10 @@ export async function authSession(request) {
     // refresh in another isolate, ads-config racing /me) must not
     // Set-Cookie Max-Age=0: that would wipe a sibling isolate's newly
     // rotated cookies from the shared jar.
-    return { user: null, cookieHeaders: session?.cookieHeaders || [] };
+    return { user: null, cookieHeaders: session?.cookieHeaders || [], accessToken: null };
   } catch (err) {
     if (isRejectedSession(err)) {
-      return { user: null, cookieHeaders: [] };
+      return { user: null, cookieHeaders: [], accessToken: null };
     }
     throw err;
   }

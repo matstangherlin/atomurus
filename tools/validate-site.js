@@ -180,6 +180,35 @@ function assertPerfGuards() {
   }
 }
 
+function assertStudyCloud() {
+  const files = [
+    'netlify/lib/require-feature.mjs',
+    'netlify/lib/study-cloud.mjs',
+    'netlify/lib/supabase-user-db.mjs',
+    'netlify/functions/study-overview.mjs',
+    'netlify/functions/study-items.mjs',
+    'netlify/functions/study-item.mjs',
+    'netlify/functions/study-calculator-history.mjs',
+    'netlify/functions/study-progress.mjs',
+    'study-client.js',
+    'study-save.js',
+    'study-progress.js',
+    'study-boot.js',
+    'supabase/migrations/005_study_cloud.sql'
+  ];
+  files.forEach((rel) => {
+    if (!fs.existsSync(path.join(ROOT, rel))) fail(`${rel} is missing`);
+  });
+  const netlify = read('netlify.toml');
+  ['/api/study/overview', '/api/study/items', '/api/study/item', '/api/study/calculator-history', '/api/study/progress'].forEach((route) => {
+    if (!netlify.includes(route)) fail(`netlify.toml missing ${route}`);
+  });
+  const client = read('study-client.js');
+  if (client.includes('localStorage') || client.includes('/api/auth/me')) {
+    fail('study-client.js must not use localStorage or /api/auth/me');
+  }
+}
+
 function main() {
   assertRootNoForbiddenArchives();
   assertDeployGuards();
@@ -190,6 +219,7 @@ function main() {
   assertI18nNamespaceAssets();
   assertPricingSurface();
   assertPerfGuards();
+  assertStudyCloud();
   console.log('Site validation passed');
 }
 

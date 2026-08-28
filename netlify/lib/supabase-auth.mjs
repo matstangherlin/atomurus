@@ -248,6 +248,7 @@ async function supabaseRefreshOnce(refreshToken) {
   if (!session) return null;
   return {
     user: session.user,
+    accessToken: session.accessToken,
     cookieHeaders: sessionCookieHeaders(session.accessToken, session.refreshToken, session.expiresIn)
   };
 }
@@ -387,14 +388,20 @@ export async function supabaseSessionFromRequest(request) {
   const { accessToken, refreshToken } = readSessionTokens(request);
   let user = await supabaseGetUser(accessToken);
   let cookieHeaders = [];
+  let token = accessToken || null;
   if (!user && refreshToken) {
     const refreshed = await supabaseRefresh(refreshToken);
     if (refreshed) {
       user = refreshed.user;
       cookieHeaders = refreshed.cookieHeaders;
+      token = refreshed.accessToken || null;
     }
   }
-  return { user, cookieHeaders };
+  return {
+    user,
+    cookieHeaders,
+    accessToken: user ? token : null
+  };
 }
 
 export async function supabaseAdminUpdateUser(userId, payload = {}) {

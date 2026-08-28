@@ -39,12 +39,32 @@ export default async function handler(request) {
       state: features.exportPdf ? 'available' : 'locked'
     },
     {
+      id: 'study-library',
+      label: 'Study Library',
+      description: 'Saved elements, molecules and articles, with notes and tags.',
+      href: '/app?section=library',
+      state: features.studyCloud || features.favorites ? 'available' : 'locked'
+    },
+    {
+      id: 'calculator-history',
+      label: 'Calculator History',
+      description: 'Keep validated calculator runs and reopen them later.',
+      href: '/app?section=history',
+      state: features.calculatorHistory || features.studyCloud ? 'available' : 'locked'
+    },
+    {
+      id: 'study-progress',
+      label: 'Study Progress',
+      description: 'Continue studying from the last incomplete lesson or article.',
+      href: '/app?section=progress',
+      state: features.studyProgress || features.studyCloud ? 'available' : 'locked'
+    },
+    {
       id: 'favorites',
       label: 'Favorites & history',
-      description: 'Save elements, molecules and calculator runs — shipping next.',
-      href: '/pricing',
-      // Entitlement bit exists for Pro, but UI/storage is not live yet — stay honest.
-      state: features.favorites ? 'coming' : 'locked'
+      description: 'Your Study Cloud library and calculator history live in this workspace.',
+      href: user.isPro ? '/app?section=library' : '/pricing',
+      state: features.favorites ? 'available' : 'locked'
     },
     {
       id: 'premium-lessons',
@@ -85,14 +105,14 @@ export default async function handler(request) {
         modules,
         nextSteps: user.isPro
           ? [
-              'Explore the periodic table without ads.',
-              'Use PDF export from the periodic table when you need study sheets.',
-              'Favorites and premium tracks are next on the roadmap.'
+              'Open Study Library to review saved elements and notes.',
+              'Save calculator results from /calculators after a successful run.',
+              'Use Continue studying for incomplete progress.'
             ]
           : [
               'Create an account to unlock 30 days of Pro (ads-free) automatically.',
-              'Compare Free vs Pro on the pricing page.',
-              'Subscribe with Stripe when the trial ends — checkout is live.'
+              'Upgrade to Pro to sync Study Cloud across devices.',
+              'Compare Free vs Pro on the pricing page.'
             ]
       }
     },

@@ -127,7 +127,7 @@ assert.match(logs[0], /invalid_credentials/);
 assert.doesNotMatch(logs[0], /secret-token|hunter2|refresh-secret|access_token|password/);
 assert.doesNotMatch(logs[0], /a@b\.com/);
 
-for (const file of ['auth-client.js', 'auth-login.js', 'auth-app.js', 'auth-sync.js', 'ads-gate.js', 'login.html', 'app.html']) {
+for (const file of ['auth-client.js', 'auth-login.js', 'auth-app.js', 'auth-sync.js', 'ads-gate.js', 'login.html', 'app.html', 'study-client.js', 'study-save.js', 'study-progress.js', 'study-boot.js']) {
   const source = readFileSync(new URL(`../${file}`, import.meta.url), 'utf8');
   assert.doesNotMatch(source, /SERVICE_ROLE|service_role|SUPABASE_SERVICE/);
 }
@@ -163,6 +163,12 @@ assert.doesNotMatch(protectAppSrc, /jwt|Bearer|supabase/i);
 const authApp = readFileSync(new URL('../auth-app.js', import.meta.url), 'utf8');
 assert.match(authApp, /getSession\(\{\s*force:\s*true\s*\}\)/);
 assert.doesNotMatch(authApp, /startRefreshTimer\s*\(/);
+assert.match(authApp, /AtomurusStudy|api\.overview/);
+
+const studyClient = readFileSync(new URL('../study-client.js', import.meta.url), 'utf8');
+assert.doesNotMatch(studyClient, /SERVICE_ROLE|service_role|SUPABASE_SERVICE/);
+assert.doesNotMatch(studyClient, /\/api\/auth\/me/);
+assert.doesNotMatch(studyClient, /localStorage|sessionStorage/);
 
 const loginHtml = readFileSync(new URL('../login.html', import.meta.url), 'utf8');
 assert.match(loginHtml, /auth-sync\.js/);

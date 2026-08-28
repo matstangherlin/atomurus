@@ -38,6 +38,7 @@
 <link rel="stylesheet" href="/assets/critical-lab.css?v=202608041630">
 <link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630">
 <script src="atomurus-mobile-nav.js?v=202608041630" defer></script>
+<script src="study-client.js?v=202608280130" defer></script>
 <script src="auth-app.js?v=202608272400" defer></script>
 <style>
   *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -97,6 +98,29 @@
   .app-upgrade.ok { color: var(--lc-green); border-color: color-mix(in oklab, var(--lc-green) 35%, transparent); }
   .app-upgrade.warn { color: var(--lc-ink-2); }
   .app-upgrade a { color: inherit; }
+  .app-study-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 18px;
+  }
+  .app-study-nav a {
+    font-family: var(--lc-mono);
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--lc-ink-3);
+    border: 1px solid var(--lc-rule);
+    border-radius: 2px;
+    padding: 6px 9px;
+  }
+  .app-study-nav a.active {
+    color: var(--lc-green);
+    border-color: color-mix(in oklab, var(--lc-green) 35%, transparent);
+  }
+  .app-study-list { display: grid; gap: 10px; }
+  .app-study-empty { color: var(--lc-ink-3); font-family: var(--lc-mono); font-size: 12px; }
 </style>
 </head>
 
@@ -170,7 +194,11 @@
     <hr>
     <div><span class="lbl">contents</span></div>
     <a href="#account">Account</a>
-    <a href="#progress">Next steps</a>
+    <a href="/app?section=overview">Overview</a>
+    <a href="/app?section=library">Library</a>
+    <a href="/app?section=history">History</a>
+    <a href="/app?section=notes">Notes</a>
+    <a href="/app?section=progress">Continue</a>
     <a href="#modules">Modules</a>
     <a href="pricing.html">Pricing</a>
     <hr>
@@ -188,8 +216,10 @@
     <p>Identity confirmed by <code>/api/auth/me</code>. Plan and ads entitlement are decided on the server.</p>
     <div class="lc-doc-cards" id="app-account"></div>
 
-    <h2 id="progress"><span class="h-no">§ 02</span> Next steps</h2>
-    <p>Study progress storage ships next; these actions keep you moving now.</p>
+    <h2 id="progress"><span class="h-no">§ 02</span> Study Cloud</h2>
+    <p>Overview loads from <code>/api/study/overview</code>. Library, history and notes fetch their lists when you open each section.</p>
+    <div class="app-study-nav" id="app-study-nav"></div>
+    <div id="app-study" class="app-study-list"></div>
     <ul id="app-next-steps"></ul>
 
     <h2 id="modules"><span class="h-no">§ 03</span> Modules</h2>
