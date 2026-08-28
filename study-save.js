@@ -363,13 +363,17 @@
     var fields = document.createElement('div');
     fields.className = 'study-save-fields';
     var noteLabel = document.createElement('label');
+    noteLabel.setAttribute('for', 'study-save-note');
     noteLabel.textContent = labels.note;
     var note = document.createElement('textarea');
+    note.id = 'study-save-note';
     note.setAttribute('data-study-note', '1');
     note.maxLength = 5000;
     var tagsLabel = document.createElement('label');
+    tagsLabel.setAttribute('for', 'study-save-tags');
     tagsLabel.textContent = labels.tags;
     var tags = document.createElement('input');
+    tags.id = 'study-save-tags';
     tags.setAttribute('data-study-tags', '1');
     tags.maxLength = 400;
     fields.appendChild(noteLabel);
@@ -447,7 +451,7 @@
         var choice = document.createElement('button');
         choice.type = 'button';
         choice.className = 'study-set-choice';
-        choice.textContent = set.title || 'Study Set';
+        choice.textContent = set.title || labels.newSet.replace(/^\+\s*/, '') || 'Study Set';
         choice.addEventListener('click', function () {
           addToSet(set);
         });
@@ -467,7 +471,7 @@
     function addedMessage(set, extra) {
       lastSet = set;
       setStatus.textContent = '';
-      setStatus.appendChild(document.createTextNode(labels.addedTo + ' ' + (set.title || 'Study Set') + ' ✓'));
+      setStatus.appendChild(document.createTextNode(labels.addedTo + ' ' + (set.title || labels.newSet.replace(/^\+\s*/, '')) + ' ✓'));
       if (extra) {
         setStatus.appendChild(document.createTextNode(' ' + extra));
       }
@@ -496,7 +500,13 @@
       });
     }
 
-    addBtn.addEventListener('click', function () {
+    function closeSetMenu() {
+      menu.classList.remove('open');
+      createRow.classList.remove('open');
+    }
+
+    addBtn.addEventListener('click', function (event) {
+      event.stopPropagation();
       var hint = sessionHint();
       if (!hint.isPro) {
         openSaveGate(labels, hint);
@@ -529,9 +539,10 @@
       });
     });
 
-    genBtn.addEventListener('click', function () {
+    genBtn.addEventListener('click', function (event) {
+      event.stopPropagation();
       if (!lastSet || !lastSet.id) {
-        setStatus.textContent = labels.addToSet;
+        addBtn.click();
         return;
       }
       requireSavedItem().then(function (item) {
@@ -578,7 +589,7 @@
         if (!api) {
           pending = false;
           paintSaved(button, labels, false);
-          setMsg(msg, 'Could not save.');
+          setMsg(msg, labels.couldNotSave);
           return null;
         }
         return api.saveItem(payload).then(function (data) {
@@ -595,6 +606,7 @@
     });
 
     hydrateLibrary(ctx, host, button, labels);
+    bindSetMenuDismiss();
   }
 
   function resultLooksEmpty(tab) {
@@ -678,7 +690,7 @@
         if (!api) {
           pending = false;
           paintSaved(button, labels, false);
-          setMsg(msg, 'Could not save.');
+          setMsg(msg, labels.couldNotSave);
           return null;
         }
         return api.saveCalculatorRun(run).then(function () {
@@ -748,6 +760,28 @@
       return result;
     };
     window.setMolecule.__atomurusStudyWrapped = true;
+  }
+
+  function bindSetMenuDismiss() {
+    if (bindSetMenuDismiss.bound) return;
+    bindSetMenuDismiss.bound = true;
+    document.addEventListener('click', function (event) {
+      var host = document.getElementById(HOST_ID);
+      if (!host || host.contains(event.target)) return;
+      var menu = host.querySelector('.study-set-menu');
+      var create = host.querySelector('.study-set-create');
+      if (menu) menu.classList.remove('open');
+      if (create) create.classList.remove('open');
+    });
+    document.addEventListener('keydown', function (event) {
+      if (event.key !== 'Escape') return;
+      var host = document.getElementById(HOST_ID);
+      if (!host) return;
+      var menu = host.querySelector('.study-set-menu');
+      var create = host.querySelector('.study-set-create');
+      if (menu) menu.classList.remove('open');
+      if (create) create.classList.remove('open');
+    });
   }
 
   function boot() {

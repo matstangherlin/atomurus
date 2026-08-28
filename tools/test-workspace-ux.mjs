@@ -50,6 +50,7 @@ assert.ok(logic.isTechnicalErrorText('feature_locked'));
 assert.ok(logic.isTechnicalErrorText('PostgREST error'));
 assert.equal(logic.generateCardsFeedback({ created: 3, skipped: 0 }).kind, 'created');
 assert.equal(logic.generateCardsFeedback({ created: 0, skipped: 4 }).kind, 'noneNeeded');
+assert.equal(logic.generateCardsFeedback({ created: 0, skipped: 0 }).kind, 'none');
 
 const ends = new Date(Date.now() + 23 * 24 * 60 * 60 * 1000).toISOString();
 const days = logic.trialDaysLeft(ends);
@@ -72,11 +73,20 @@ assert.match(authApp, /reviewStartHref/);
 assert.match(authApp, /humanizeKey/);
 assert.match(authApp, /I18N\.onChange/);
 assert.match(authApp, /icon\('logout'\)/);
+assert.match(authApp, /removeSetItem/);
+assert.match(authApp, /exitReview/);
+assert.match(authApp, /reviewAgain/);
+assert.match(authApp, /genPickSet/);
+assert.match(authApp, /ws-lib-more/);
+assert.match(authApp, /billingManageBody/);
+assert.match(authApp, /toastGenerate/);
 assert.doesNotMatch(authApp, /map\(continueCard\)\.join\(''\) : emptyState/);
 assert.doesNotMatch(authApp, />Load more</);
 
 const css = readFileSync(new URL('../assets/app-workspace.css', import.meta.url), 'utf8');
 assert.match(css, /\.ws-body \[hidden\]/);
+assert.match(css, /\.ws-skip/);
+assert.match(css, /safe-area-inset-bottom/);
 
 const appHtml = readFileSync(new URL('../app.html', import.meta.url), 'utf8');
 assert.match(appHtml, /assets\/app-workspace\.css/);
@@ -84,6 +94,8 @@ assert.match(appHtml, /workspace-logic\.js/);
 assert.match(appHtml, /noindex,nofollow/);
 assert.doesNotMatch(appHtml, /html\.lc-loading body/);
 assert.match(appHtml, /requireSession\(\{\s*next:/);
+assert.match(appHtml, /ws-skip/);
+assert.match(appHtml, /id="app-study"/);
 
 const pricing = readFileSync(new URL('../pricing-page.js', import.meta.url), 'utf8');
 assert.doesNotMatch(pricing, /AI tutor|AI powered|AI study/i);
@@ -106,5 +118,11 @@ assert.doesNotMatch(studySave, /innerHTML/);
 assert.match(studySave, /openSaveGate/);
 assert.match(studySave, /sessionHint/);
 assert.match(studySave, /section=review&start=1&set=/);
+assert.match(studySave, /bindSetMenuDismiss/);
+assert.match(studySave, /labels\.couldNotSave/);
+assert.doesNotMatch(studySave, /setMsg\(msg, 'Could not save\.'\)/);
+
+const dictSrc = readFileSync(new URL('../tools/i18n-dict-source.js', import.meta.url), 'utf8');
+assert.doesNotMatch(dictSrc, /export flags/);
 
 console.log('workspace ux tests passed');

@@ -36,6 +36,14 @@
       resume: 'Resume', delete: 'Delete', dueWhen: 'Due {when}',
       genCreated: '{n} flashcards created', genNone: 'No new cards were needed. These flashcards already exist in this Study Set.',
       genEmpty: 'Add an element or molecule first, then generate cards.',
+      genPickSet: 'Choose a Study Set. We’ll generate flashcards next.',
+      filterEmptyTitle: 'No matching items.', filterEmptyBody: 'Try another search, type or tag.',
+      exitReview: 'Exit', reviewAgain: 'Review again',
+      removeFromSetTitle: 'Remove this material from the set?',
+      removeFromSetBody: 'The Library item stays saved. Flashcards already generated in this set stay until you delete them.',
+      billingManageBody: 'Cancel, invoices and card updates are not in the workspace yet. Write to contato@atomurus.com or use Contact.',
+      contactBilling: 'Contact about billing', resetPassword: 'Reset password',
+      skipToContent: 'Skip to content', toastCard: 'Flashcard saved', calculatorType: 'Calculator',
       deleteSetTitle: 'Delete “{title}”?', deleteSetBody: 'Its flashcards will be deleted. Your saved Library items will not be removed.',
       deleteSet: 'Delete Study Set', deleteCardTitle: 'Delete this flashcard?', deleteCardBody: 'This cannot be undone.',
       deleteCard: 'Delete flashcard', deleteItemTitle: 'Remove saved item?', deleteItemBody: 'This removes it from your Library. Study Sets keep their own copies of generated cards.',
@@ -116,6 +124,14 @@
       resume: 'Retomar', delete: 'Excluir', dueWhen: 'Vence {when}',
       genCreated: '{n} flashcards criados', genNone: 'Nenhum card novo era necessário. Esses flashcards já existem neste Study Set.',
       genEmpty: 'Adicione um elemento ou molécula e depois gere os cards.',
+      genPickSet: 'Escolha um Study Set. Em seguida geramos os flashcards.',
+      filterEmptyTitle: 'Nenhum item corresponde.', filterEmptyBody: 'Tente outra busca, tipo ou tag.',
+      exitReview: 'Sair', reviewAgain: 'Revisar de novo',
+      removeFromSetTitle: 'Remover este material do set?',
+      removeFromSetBody: 'O item permanece na Biblioteca. Flashcards já gerados neste set ficam até você apagá-los.',
+      billingManageBody: 'Cancelar, faturas e cartão ainda não estão no workspace. Escreva para contato@atomurus.com ou use Contato.',
+      contactBilling: 'Falar sobre cobrança', resetPassword: 'Redefinir senha',
+      skipToContent: 'Pular para o conteúdo', toastCard: 'Flashcard salvo', calculatorType: 'Calculadora',
       deleteSetTitle: 'Excluir “{title}”?', deleteSetBody: 'Os flashcards serão apagados. Os itens da Biblioteca permanecem.',
       deleteSet: 'Excluir Study Set', deleteCardTitle: 'Excluir este flashcard?', deleteCardBody: 'Isso não pode ser desfeito.',
       deleteCard: 'Excluir flashcard', deleteItemTitle: 'Remover item salvo?', deleteItemBody: 'Ele sai da Biblioteca. Cards já gerados nos Study Sets permanecem.',
@@ -202,6 +218,51 @@
     if (ui().toast) ui().toast(message, { tone: tone || 'success' });
   }
 
+  function typeLabel(type) {
+    var key = logic().libraryTypeLabel ? logic().libraryTypeLabel(type) : String(type || '').toLowerCase();
+    if (key === 'element') return t('elements');
+    if (key === 'molecule') return t('molecules');
+    if (key === 'article') return t('articles');
+    if (key === 'calculator') return t('calculatorType');
+    return type || '';
+  }
+
+  function toastGenerate(fb) {
+    if (fb.kind === 'created') toast(t('genCreated', '', { n: fb.created }));
+    else if (fb.kind === 'noneNeeded') toast(t('genNone'), 'info');
+    else toast(t('genEmpty'), 'info');
+  }
+
+  function afterAddedToSet(api, node, itemId, setId, thenGenerate) {
+    var generate = node && node.querySelector('[data-generate-item="' + itemId + '"]');
+    if (generate) generate.setAttribute('data-set-id', setId);
+    toast(t('toastAdded'));
+    if (!thenGenerate) return Promise.resolve();
+    if (generate) ui().setBusy(generate, true, t('generating'));
+    return api.generateCards({ setId: setId, itemId: itemId }).then(function (data) {
+      if (generate) ui().setBusy(generate, false);
+      toastGenerate(logic().generateCardsFeedback(data));
+    }).catch(function (err) {
+      if (generate) ui().setBusy(generate, false);
+      toast(t(logic().uxError(err).bodyKey), 'danger');
+    });
+  }
+
+  function bindCursorMore(btn, loadPage, onItems) {
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var cursor = btn.getAttribute('data-cursor');
+      btn.disabled = true;
+      loadPage(cursor).then(function (page) {
+        onItems(page);
+        if (page.nextCursor) {
+          btn.setAttribute('data-cursor', page.nextCursor);
+          btn.disabled = false;
+        } else btn.remove();
+      }).catch(function () { btn.disabled = false; });
+    });
+  }
+
   function displayName(user) {
     return (user && (user.displayName || user.fullName || user.username || user.email)) || 'Atomurus';
   }
@@ -262,7 +323,7 @@
     if (main) {
       main.innerHTML = NAV.map(function (pair) {
         var active = pair[0] === current ? ' is-active' : '';
-        var meta = proUser(user) ? '' : '<span class="ws-nav-meta">PRO</span>';
+        var meta = proUser(user) ? '' : '<span class="ws-nav-meta">' + escapeHtml(t('pro')) + '</span>';
         return '<a class="ws-nav-item' + active + '" href="/app?section=' + pair[0] + '">' +
           icon(pair[0]) + '<span class="ws-nav-label">' + escapeHtml(t(pair[1])) + '</span>' + meta + '</a>';
       }).join('');
@@ -284,6 +345,12 @@
         return '<a class="' + (pair[0] === current ? 'is-active' : '') + '" href="/app?section=' + pair[0] + '">' + icon(pair[0]) + '<span>' + escapeHtml(t(pair[1])) + '</span></a>';
       }).join('');
     }
+    var skip = $('ws-skip');
+    if (skip) skip.textContent = t('skipToContent');
+    var mainNav = $('ws-nav-main');
+    if (mainNav) mainNav.setAttribute('aria-label', t('workspaceTag'));
+    var bottomNav = $('ws-bottom');
+    if (bottomNav) bottomNav.setAttribute('aria-label', t('workspaceTag'));
     var chip = $('ws-user-name');
     if (chip) chip.textContent = displayName(user);
     var planBadge = $('ws-plan-badge');
@@ -437,7 +504,8 @@
       '<div class="ws-metric"><div class="ws-metric-value">' + escapeHtml(String(stats.easy || 0)) + '</div><div class="ws-metric-label">' + escapeHtml(t('easy')) + '</div></div>' +
       '<div class="ws-metric"><div class="ws-metric-value">' + escapeHtml(String(stats.hard || 0)) + '</div><div class="ws-metric-label">' + escapeHtml(t('hard')) + '</div></div>' +
       '<div class="ws-metric"><div class="ws-metric-value">' + escapeHtml(String(stats.again || 0)) + '</div><div class="ws-metric-label">' + escapeHtml(t('again')) + '</div></div>' +
-      '</div><p><a class="ws-btn ws-btn-primary" href="/app?section=overview">' + escapeHtml(t('backOverview')) + '</a></p></div>';
+      '</div><p class="ws-row-actions" style="justify-content:center"><a class="ws-btn ws-btn-primary" href="' + escapeHtml(reviewStartHref(reviewSession && reviewSession.setId)) + '">' + escapeHtml(t('reviewAgain')) + '</a>' +
+      '<a class="ws-btn" href="/app?section=overview">' + escapeHtml(t('backOverview')) + '</a></p></div>';
   }
 
   function revealReviewCard() {
@@ -455,6 +523,7 @@
       revealed: false,
       index: 0,
       title: title || t('reviewTitle'),
+      setId: studySetIdFromQuery(),
       cards: cards,
       stats: { again: 0, hard: 0, good: 0, easy: 0 }
     };
@@ -462,6 +531,7 @@
     if (!node) return false;
     node.innerHTML =
       '<div id="app-review-session" class="ws-review">' +
+      '<div class="ws-review-toolbar"><button type="button" class="ws-btn ws-btn-ghost ws-btn-sm" data-review-exit>' + escapeHtml(t('exitReview')) + '</button></div>' +
       '<p class="ws-kicker">' + escapeHtml(reviewSession.title) + '</p>' +
       '<div class="ws-review-progress" data-review-meta></div>' +
       '<div data-review-bar></div>' +
@@ -480,6 +550,11 @@
       '</div>';
     var root = document.getElementById('app-review-session');
     root.querySelector('[data-review-reveal]').addEventListener('click', revealReviewCard);
+    var exitBtn = root.querySelector('[data-review-exit]');
+    if (exitBtn) exitBtn.addEventListener('click', function () {
+      reviewSession.active = false;
+      location.replace('/app?section=review' + (reviewSession.setId ? '&set=' + encodeURIComponent(reviewSession.setId) : ''));
+    });
     root.querySelector('[data-review-ratings]').addEventListener('click', function (event) {
       var btn = event.target && event.target.closest && event.target.closest('[data-grade]');
       if (!btn) return;
@@ -550,7 +625,7 @@
   function recentCard(item) {
     return '<a class="ws-study-item" href="' + escapeHtml(safeHref(item.href)) + '"><div class="ws-item-symbol">' + escapeHtml(itemSymbol(item)) + '</div><div>' +
       '<h3 class="ws-item-title">' + escapeHtml(item.title || item.itemKey || '') + '</h3>' +
-      '<div class="ws-item-meta">' + escapeHtml(item.itemType || '') + '</div></div></a>';
+      '<div class="ws-item-meta">' + escapeHtml(typeLabel(item.itemType)) + '</div></div></a>';
   }
 
   async function renderOverview(node, api, user) {
@@ -591,7 +666,7 @@
     return '<article class="ws-study-item" data-library-id="' + escapeHtml(item.id) + '">' +
       '<div class="ws-item-symbol">' + escapeHtml(itemSymbol(item)) + '</div><div>' +
       '<h3 class="ws-item-title">' + escapeHtml(item.title || item.itemKey || '') + '</h3>' +
-      '<div class="ws-item-meta">' + escapeHtml(item.itemType || '') + (tags ? ' · ' + escapeHtml(tags) : '') + '</div>' +
+      '<div class="ws-item-meta">' + escapeHtml(typeLabel(item.itemType)) + (tags ? ' · ' + escapeHtml(tags) : '') + '</div>' +
       (item.note ? '<div class="ws-item-note"></div>' : '') +
       '</div><div class="ws-item-actions">' +
       '<a class="ws-btn ws-btn-primary ws-btn-sm" href="' + escapeHtml(href) + '">' + escapeHtml(t('open')) + '</a>' +
@@ -602,9 +677,15 @@
       '</div></article>';
   }
 
-  function openAddToSetDialog(api, itemId, node) {
+  function openAddToSetDialog(api, itemId, node, options) {
+    options = options || {};
     api.listSets().then(function (data) {
       var box = document.createElement('div');
+      if (options.generate) {
+        var lede = document.createElement('p');
+        lede.textContent = t('genPickSet');
+        box.appendChild(lede);
+      }
       (data.sets || []).forEach(function (set) {
         var choice = document.createElement('button');
         choice.type = 'button';
@@ -616,10 +697,8 @@
         choice.addEventListener('click', function () {
           ui().setBusy(choice, true, t('saving'));
           api.addSetItem({ setId: set.id, itemId: itemId }).then(function () {
-            toast(t('toastAdded'));
             ui().closeDialog();
-            var generate = node && node.querySelector('[data-generate-item="' + itemId + '"]');
-            if (generate) generate.setAttribute('data-set-id', set.id);
+            return afterAddedToSet(api, node, itemId, set.id, options.generate);
           }).catch(function (err) {
             ui().setBusy(choice, false);
             toast(t(logic().uxError(err).bodyKey), 'danger');
@@ -631,9 +710,9 @@
       newer.type = 'button';
       newer.className = 'ws-btn ws-btn-secondary';
       newer.textContent = t('newSet');
-      newer.addEventListener('click', function () { openCreateSetDialog(api, itemId, node); });
+      newer.addEventListener('click', function () { openCreateSetDialog(api, itemId, node, options); });
       box.appendChild(newer);
-      ui().openDialog({ title: t('addToSet'), bodyNode: box, actions: [{ label: t('cancel'), kind: 'ws-btn-ghost' }] });
+      ui().openDialog({ title: options.generate ? t('generate') : t('addToSet'), bodyNode: box, actions: [{ label: t('cancel'), kind: 'ws-btn-ghost' }] });
     }).catch(function (err) { toast(t(logic().uxError(err).bodyKey), 'danger'); });
   }
 
@@ -660,7 +739,8 @@
           if (!ok) return;
           api.deleteItem(del.getAttribute('data-delete-item')).then(function () {
             toast(t('toastDeleted'));
-            location.reload();
+            var row = del.closest('[data-library-id]');
+            if (row) row.remove();
           }).catch(function (err) { toast(t(logic().uxError(err).bodyKey), 'danger'); });
         });
         return;
@@ -673,15 +753,13 @@
         var gid = genBtn.getAttribute('data-generate-item');
         var setId = genBtn.getAttribute('data-set-id');
         if (!setId) {
-          openAddToSetDialog(api, gid, node);
+          openAddToSetDialog(api, gid, node, { generate: true });
           return;
         }
         ui().setBusy(genBtn, true, t('generating'));
         api.generateCards({ setId: setId, itemId: gid }).then(function (data) {
           ui().setBusy(genBtn, false);
-          var fb = logic().generateCardsFeedback(data);
-          if (fb.kind === 'created') toast(t('genCreated', '', { n: fb.created }));
-          else toast(t('genNone'), 'info');
+          toastGenerate(logic().generateCardsFeedback(data));
         }).catch(function (err) {
           ui().setBusy(genBtn, false);
           toast(t(logic().uxError(err).bodyKey), 'danger');
@@ -696,7 +774,8 @@
     });
   }
 
-  function openCreateSetDialog(api, itemId, node) {
+  function openCreateSetDialog(api, itemId, node, options) {
+    options = options || {};
     var body = document.createElement('div');
     var nameLabel = document.createElement('label');
     nameLabel.setAttribute('for', 'ws-new-set-name');
@@ -741,14 +820,8 @@
               toast(t('toastSet'));
               if (itemId && created.set && created.set.id) {
                 return api.addSetItem({ setId: created.set.id, itemId: itemId }).then(function () {
-                  toast(t('toastAdded'));
                   ui().closeDialog();
-                  if (node) {
-                    var generate = node.querySelector('[data-generate-item="' + itemId + '"]');
-                    if (generate) generate.setAttribute('data-set-id', created.set.id);
-                  } else {
-                    location.replace(setHref(created.set.id));
-                  }
+                  return afterAddedToSet(api, node, itemId, created.set.id, options.generate);
                 });
               }
               ui().closeDialog();
@@ -802,7 +875,9 @@
           tags.map(function (tag) { return '<option value="' + escapeHtml(tag) + '">' + escapeHtml(tag) + '</option>'; }).join('') + '</select>'
         : '') +
       '<select class="ws-select" id="ws-lib-sort" aria-label="' + escapeHtml(t('sort')) + '"><option value="updated">' + escapeHtml(t('sortUpdated')) + '</option><option value="title">' + escapeHtml(t('sortTitle')) + '</option></select></div>' +
-      '<div id="ws-lib-list" class="ws-grid">' + items.map(libraryRow).join('') + '</div>';
+      '<div id="ws-lib-list" class="ws-grid">' + items.map(libraryRow).join('') + '</div>' +
+      '<div id="ws-lib-empty" hidden>' + emptyState(t('filterEmptyTitle'), t('filterEmptyBody')) + '</div>' +
+      (library.nextCursor ? '<button type="button" class="ws-btn" id="ws-lib-more" data-cursor="' + escapeHtml(library.nextCursor) + '">' + escapeHtml(t('loadMore')) + '</button>' : '');
     bindLibrarySetActions(node, api);
     var apply = function () {
       var q = (($('ws-lib-q') || {}).value || '').toLowerCase();
@@ -827,6 +902,8 @@
         var el = list.querySelector('[data-library-id="' + item.id + '"]');
         if (el) list.appendChild(el);
       });
+      var empty = $('ws-lib-empty');
+      if (empty) empty.hidden = next.length > 0;
     };
     var qn = $('ws-lib-q');
     if (qn) {
@@ -836,6 +913,23 @@
     ['ws-lib-type', 'ws-lib-sort', 'ws-lib-tag'].forEach(function (id) {
       var el = $(id);
       if (el) el.addEventListener('change', apply);
+    });
+    bindCursorMore($('ws-lib-more'), function (cursor) {
+      return api.items({ exclude: 'calculator', limit: 40, cursor: cursor }, true);
+    }, function (page) {
+      var list = $('ws-lib-list');
+      (page.items || []).forEach(function (item) {
+        items.push(item);
+        if (!list) return;
+        var wrap = document.createElement('div');
+        wrap.innerHTML = libraryRow(item);
+        var el = wrap.firstChild;
+        var noteNode = el.querySelector('.ws-item-note');
+        if (noteNode && item.note) noteNode.textContent = item.note;
+        list.appendChild(el);
+      });
+      bindLibrarySetActions.items = items;
+      apply();
     });
   }
 
@@ -921,7 +1015,7 @@
               ? api.updateCard({ id: card.id, front: payload.front, back: payload.back })
               : api.createCard({ setId: setId, front: payload.front, back: payload.back });
             req.then(function () {
-              toast(t('toastNote'));
+              toast(t('toastCard'));
               ui().closeDialog();
               location.reload();
             }).catch(function (err) {
@@ -943,9 +1037,12 @@
       var mastered = logic().masteredPercent(set.masteredCount, set.cardCount);
       var itemsHtml = (detail.items || []).map(function (entry) {
         var item = entry.item || {};
-        return '<div class="ws-study-item"><div class="ws-item-symbol">' + escapeHtml(itemSymbol(item)) + '</div><div><h3 class="ws-item-title"></h3><div class="ws-item-meta">' + escapeHtml(item.itemType || '') + '</div></div></div>';
+        var itemId = entry.itemId || item.id || '';
+        return '<article class="ws-study-item" data-set-item="' + escapeHtml(itemId) + '"><div class="ws-item-symbol">' + escapeHtml(itemSymbol(item)) + '</div><div><h3 class="ws-item-title"></h3><div class="ws-item-meta">' + escapeHtml(typeLabel(item.itemType)) + '</div></div>' +
+          (itemId ? '<button type="button" class="ws-btn ws-btn-sm" data-remove-set-item="' + escapeHtml(itemId) + '">' + escapeHtml(t('remove')) + '</button>' : '') +
+          '</article>';
       }).join('');
-      node.innerHTML = '<header class="ws-section-head"><div><p class="ws-kicker">Study Set</p><h1 class="ws-title" id="ws-set-title"></h1>' +
+      node.innerHTML = '<header class="ws-section-head"><div><p class="ws-kicker">' + escapeHtml(t('sets')) + '</p><h1 class="ws-title" id="ws-set-title"></h1>' +
         '<p class="ws-lede">' + escapeHtml(t('cardsCount', '', { n: set.cardCount || 0 })) + ' · ' + escapeHtml(t('dueCount', '', { n: set.dueCount || 0 })) +
         (mastered == null ? '' : ' · ' + escapeHtml(t('masteredPct', '', { n: mastered }))) + '</p></div>' +
         '<div class="ws-row-actions"><a class="ws-btn ws-btn-primary" href="' + escapeHtml(reviewStartHref(set.id)) + '">' + escapeHtml(t('startReviewSet')) + '</a>' +
@@ -978,7 +1075,7 @@
         api.generateCards({ setId: set.id }).then(function (data) {
           ui().setBusy(generateBtn, false);
           var fb = logic().generateCardsFeedback(data);
-          toast(fb.kind === 'created' ? t('genCreated', '', { n: fb.created }) : t('genNone'), fb.kind === 'created' ? 'success' : 'info');
+          toastGenerate(fb);
           if (fb.kind === 'created') location.reload();
         }).catch(function (err) {
           ui().setBusy(generateBtn, false);
@@ -1002,6 +1099,24 @@
       var addCard = $('app-card-new');
       if (addCard) addCard.addEventListener('click', function () { openCardEditor(api, set.id, null); });
       node.addEventListener('click', function (event) {
+        var removeItem = event.target.closest && event.target.closest('[data-remove-set-item]');
+        if (removeItem) {
+          ui().confirmDialog({
+            title: t('removeFromSetTitle'),
+            body: t('removeFromSetBody'),
+            confirmLabel: t('remove'),
+            cancelLabel: t('cancel'),
+            danger: true
+          }).then(function (ok) {
+            if (!ok) return;
+            api.removeSetItem(set.id, removeItem.getAttribute('data-remove-set-item')).then(function () {
+              toast(t('toastDeleted'));
+              var row = removeItem.closest('[data-set-item]');
+              if (row) row.remove();
+            }).catch(function (err) { toast(t(logic().uxError(err).bodyKey), 'danger'); });
+          });
+          return;
+        }
         var menu = event.target.closest && event.target.closest('[data-card-menu]');
         if (menu) {
           menu.parentNode.classList.toggle('is-open');
@@ -1042,7 +1157,11 @@
             danger: true
           }).then(function (ok) {
             if (!ok) return;
-            api.deleteCard(id).then(function () { toast(t('toastDeleted')); location.reload(); });
+            api.deleteCard(id).then(function () {
+              toast(t('toastDeleted'));
+              var wrap = node.querySelector('[data-card-id="' + id + '"]');
+              if (wrap) wrap.remove();
+            });
           });
           return;
         }
@@ -1060,7 +1179,7 @@
     var listed = await api.listSets();
     var sets = listed.sets || [];
     node.innerHTML = '<header class="ws-section-head"><div><p class="ws-kicker">Atomurus Pro</p><h1 class="ws-title">' + escapeHtml(t('setsTitle')) +
-      ' <span class="ws-badge ws-badge-pro">PRO</span></h1><p class="ws-lede">' + escapeHtml(t('setsLede')) + '</p></div>' +
+      ' <span class="ws-badge ws-badge-pro">' + escapeHtml(t('pro')) + '</span></h1><p class="ws-lede">' + escapeHtml(t('setsLede')) + '</p></div>' +
       '<button type="button" class="ws-btn ws-btn-primary" id="app-set-open">' + escapeHtml(t('newSet')) + '</button></header>' +
       (sets.length
         ? '<div class="ws-toolbar"><input class="ws-search-field" id="ws-set-q" type="search" aria-label="' + escapeHtml(t('search')) + '"></div><div class="ws-grid ws-grid-2" id="ws-set-list">' + sets.map(setCard).join('') + '</div>'
@@ -1177,6 +1296,21 @@
     });
   }
 
+  function noteRow(item) {
+    var when = logic().relativeTime(item.updatedAt, Date.now(), langIsPt() ? 'pt' : 'en');
+    return '<article class="ws-study-item"><div class="ws-item-symbol">' + escapeHtml(itemSymbol(item)) + '</div><div>' +
+      '<h3 class="ws-item-title"></h3><div class="ws-item-note"></div><div class="ws-muted">' + escapeHtml(t('edited', '', { when: when })) + '</div></div>' +
+      '<a class="ws-btn ws-btn-sm" href="' + escapeHtml(safeHref(item.href)) + '">' + escapeHtml(t('openMaterial')) + '</a></article>';
+  }
+
+  function fillNoteRow(el, item) {
+    if (!el || !item) return;
+    var title = el.querySelector('.ws-item-title');
+    if (title) title.textContent = item.title || item.itemKey || '';
+    var note = el.querySelector('.ws-item-note');
+    if (note) note.textContent = item.note || '';
+  }
+
   async function renderNotes(node, api) {
     node.innerHTML = sectionHead(t('notesTitle'), t('notesLede'), true) + skeleton();
     var notes = await api.items({ hasNote: '1', limit: 40 });
@@ -1186,16 +1320,22 @@
       return;
     }
     node.innerHTML = sectionHead(t('notesTitle'), t('notesLede'), true) + '<div class="ws-grid" id="ws-notes-list">' +
-      items.map(function (item) {
-        var when = logic().relativeTime(item.updatedAt, Date.now(), langIsPt() ? 'pt' : 'en');
-        return '<article class="ws-study-item"><div class="ws-item-symbol">' + escapeHtml(itemSymbol(item)) + '</div><div>' +
-          '<h3 class="ws-item-title"></h3><div class="ws-item-note"></div><div class="ws-muted">' + escapeHtml(t('edited', '', { when: when })) + '</div></div>' +
-          '<a class="ws-btn ws-btn-sm" href="' + escapeHtml(safeHref(item.href)) + '">' + escapeHtml(t('openMaterial')) + '</a></article>';
-      }).join('') + '</div>';
+      items.map(noteRow).join('') + '</div>' +
+      (notes.nextCursor ? '<button type="button" class="ws-btn" id="ws-notes-more" data-cursor="' + escapeHtml(notes.nextCursor) + '">' + escapeHtml(t('loadMore')) + '</button>' : '');
     node.querySelectorAll('#ws-notes-list .ws-study-item').forEach(function (wrap, idx) {
-      var item = items[idx];
-      wrap.querySelector('.ws-item-title').textContent = item.title || item.itemKey || '';
-      wrap.querySelector('.ws-item-note').textContent = item.note || '';
+      fillNoteRow(wrap, items[idx]);
+    });
+    bindCursorMore($('ws-notes-more'), function (cursor) {
+      return api.items({ hasNote: '1', limit: 40, cursor: cursor }, true);
+    }, function (page) {
+      var list = $('ws-notes-list');
+      (page.items || []).forEach(function (item) {
+        var wrap = document.createElement('div');
+        wrap.innerHTML = noteRow(item);
+        var el = wrap.firstChild;
+        fillNoteRow(el, item);
+        if (list && el) list.appendChild(el);
+      });
     });
   }
 
@@ -1204,7 +1344,20 @@
     var progress = await api.progressList({ limit: 40 });
     var items = progress.items || [];
     node.innerHTML = sectionHead(t('progressTitle'), t('progressLede'), true) +
-      (items.length ? '<div class="ws-grid">' + items.map(continueCard).join('') + '</div>' : emptyState(t('emptyProgressTitle'), t('emptyProgressBody')));
+      (items.length
+        ? '<div class="ws-grid" id="ws-progress-list">' + items.map(continueCard).join('') + '</div>' +
+          (progress.nextCursor ? '<button type="button" class="ws-btn" id="ws-progress-more" data-cursor="' + escapeHtml(progress.nextCursor) + '">' + escapeHtml(t('loadMore')) + '</button>' : '')
+        : emptyState(t('emptyProgressTitle'), t('emptyProgressBody')));
+    bindCursorMore($('ws-progress-more'), function (cursor) {
+      return api.progressList({ limit: 40, cursor: cursor }, true);
+    }, function (page) {
+      var list = $('ws-progress-list');
+      (page.items || []).forEach(function (row) {
+        var wrap = document.createElement('div');
+        wrap.innerHTML = continueCard(row);
+        if (list && wrap.firstChild) list.appendChild(wrap.firstChild);
+      });
+    });
   }
 
   function renderAccount(user) {
@@ -1220,7 +1373,9 @@
     } else if (proUser(user)) {
       planBlock = '<h3>' + escapeHtml(t('proPlan')) + '</h3><p>' + escapeHtml(t('proActive')) + (period ? ' · ' + escapeHtml(period) : '') + (currency ? ' · ' + escapeHtml(currency) : '') +
         '</p><ul><li>' + escapeHtml(t('adsOff')) + '</li><li>' + escapeHtml(t('cloudOn')) + '</li><li>' + escapeHtml(t('reviewOn')) + '</li></ul>' +
-        '<a class="ws-btn ws-btn-primary" href="/pricing">' + escapeHtml(t('managePlan')) + '</a>';
+        '<p>' + escapeHtml(t('billingManageBody')) + '</p>' +
+        '<div class="ws-row-actions"><a class="ws-btn" href="/pricing">' + escapeHtml(t('viewPlans')) + '</a>' +
+        '<a class="ws-btn ws-btn-secondary" href="/contact">' + escapeHtml(t('contactBilling')) + '</a></div>';
     } else {
       planBlock = '<h3>' + escapeHtml(t('freePlan')) + '</h3><p>' + escapeHtml(t('freePlanBody')) + '</p><a class="ws-btn ws-btn-primary" href="/pricing">' + escapeHtml(t('upgrade')) + '</a>';
     }
@@ -1229,6 +1384,7 @@
       '<div class="ws-plan-row"><span>' + escapeHtml(t('email')) + '</span><strong></strong></div>' +
       '<div class="ws-plan-row"><span>' + escapeHtml(t('username')) + '</span><span id="ws-acc-user"></span></div>' +
       '<div class="ws-plan-row"><span>' + escapeHtml(t('security')) + '</span><span>' + escapeHtml(user.emailConfirmed ? t('emailConfirmed') : t('emailPending')) + '</span></div>' +
+      '<div class="ws-plan-row"><span>' + escapeHtml(t('resetPassword')) + '</span><a href="/forgot-password">' + escapeHtml(t('resetPassword')) + '</a></div>' +
       '</section><section class="ws-account-card" id="ws-plan-card">' + planBlock + '</section></div>';
     var emailRow = node.querySelector('.ws-account-card strong');
     if (emailRow) emailRow.textContent = user.email || '—';
@@ -1330,23 +1486,33 @@
     var btn = $('ws-menu-btn');
     var shell = $('ws-shell');
     var backdrop = $('ws-drawer-backdrop');
-    function close() {
+    function close(restore) {
+      var wasOpen = shell && shell.classList.contains('is-nav-open');
       if (shell) shell.classList.remove('is-nav-open');
       if (btn) btn.setAttribute('aria-expanded', 'false');
       if (backdrop) backdrop.hidden = true;
+      var sidebar = $('ws-sidebar');
+      if (sidebar) sidebar.removeAttribute('aria-modal');
+      if (restore && wasOpen && btn) btn.focus();
     }
     function open() {
       if (shell) shell.classList.add('is-nav-open');
       if (btn) btn.setAttribute('aria-expanded', 'true');
       if (backdrop) backdrop.hidden = false;
+      var sidebar = $('ws-sidebar');
+      if (sidebar) {
+        sidebar.setAttribute('aria-modal', 'true');
+        var first = sidebar.querySelector('a, button');
+        if (first) window.setTimeout(function () { first.focus(); }, 20);
+      }
     }
     if (btn) btn.addEventListener('click', function () {
       if (shell && shell.classList.contains('is-nav-open')) close(); else open();
     });
-    if (backdrop) backdrop.addEventListener('click', close);
+    if (backdrop) backdrop.addEventListener('click', function () { close(true); });
     document.addEventListener('keydown', function (event) {
       if (event.key !== 'Escape') return;
-      close();
+      close(true);
       closeDropdowns();
     });
     document.addEventListener('click', function (event) {

@@ -448,8 +448,8 @@
         <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M1 7l5 5 7-10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <span data-i18n="common.auth.sendRecovery">Send recovery email</span>
       </button>
-      <div class="feedback ok" id="auth-reset-ok" data-i18n="common.auth.recoverOk">If this email has access, the authentication provider will send recovery instructions.</div>
-      <div class="feedback err" id="auth-reset-err" data-i18n="common.auth.recoverError">Could not send right now. Please try again later.</div>
+      <div class="feedback ok" id="auth-reset-ok" aria-live="polite" data-i18n="common.auth.recoverOk">If this email has access, the authentication provider will send recovery instructions.</div>
+      <div class="feedback err" id="auth-reset-err" role="alert" aria-live="polite" data-i18n="common.auth.recoverError">Could not send right now. Please try again later.</div>
       </form>
 
       <div class="auth-subtle-box">
@@ -481,7 +481,7 @@
           <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M1 7l5 5 7-10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <span data-i18n="common.auth.savePassword">Save password</span>
         </button>
-        <div class="feedback err" id="auth-password-err" data-i18n="common.auth.resetError">Password reset link is invalid or expired.</div>
+        <div class="feedback err" id="auth-password-err" role="alert" aria-live="polite" data-i18n="common.auth.resetError">Password reset link is invalid or expired.</div>
       </form>
     </section>
   </article>
