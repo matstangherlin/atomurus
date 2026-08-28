@@ -1,55 +1,17 @@
 import { constructWebhookEvent, getStripeClient } from '../lib/billing-stripe.mjs';
+import {
+  billingAppMetadataPatch,
+  stripeUserIdFromMetadata
+} from '../lib/billing-lifecycle.mjs';
 import { json, options, statusFromError } from '../lib/netlify-identity-utils.mjs';
 import { supabaseAdminPatchAppMetadata } from '../lib/supabase-auth.mjs';
 
-function normalizeSubscriptionInterval(value) {
-  const interval = String(value || '').trim().toLowerCase();
-  return interval === 'year' || interval === 'annual' ? 'annual' : 'monthly';
-}
-
-function planFromMetadata(metadata = {}, subscription) {
-  const planKey = String(metadata.atomurus_plan_key || '').trim();
-  const currency = String(
-    metadata.atomurus_currency ||
-    subscription?.currency ||
-    ''
-  ).trim().toLowerCase();
-  const interval = normalizeSubscriptionInterval(
-    metadata.atomurus_interval ||
-    subscription?.items?.data?.[0]?.price?.recurring?.interval
-  );
-  return {
-    planKey: planKey || (currency ? `pro_${interval}_${currency}` : null),
-    currency: currency || null,
-    interval
-  };
-}
-
 async function syncSubscriptionMetadata(subscription, overrides = {}) {
-  const metadata = {
-    ...(subscription?.metadata || {}),
-    ...(overrides.metadata || {})
-  };
-  const userId = String(metadata.atomurus_user_id || '').trim();
+  const userId = stripeUserIdFromMetadata(subscription, overrides);
   if (!userId) return false;
-
-  const plan = planFromMetadata(metadata, subscription);
-  const status = String(overrides.status || subscription?.status || '').trim().toLowerCase();
-  const trialEnd = subscription?.trial_end
-    ? new Date(subscription.trial_end * 1000).toISOString()
-    : null;
-
-  await supabaseAdminPatchAppMetadata(userId, {
-    atomurus_plan: status === 'active' || status === 'trialing' ? 'paid' : 'free',
-    subscription_status: status || null,
-    subscription_interval: plan.interval,
-    subscription_currency: plan.currency,
-    atomurus_plan_key: plan.planKey,
-    stripe_customer_id: subscription?.customer ? String(subscription.customer) : null,
-    stripe_subscription_id: subscription?.id ? String(subscription.id) : null,
-    atomurus_trial_ends_at: status === 'trialing' ? trialEnd : null,
-    billing_updated_at: new Date().toISOString()
-  });
+  // billingAppMetadataPatch is last-write-wins on the same keys, so Stripe retries
+  // of the same event rewrite the same metadata and do not corrupt entitlement.
+  await supabaseAdminPatchAppMetadata(userId, billingAppMetadataPatch(subscription, overrides));
   return true;
 }
 
@@ -81,6 +43,7 @@ async function handleStripeEvent(event) {
       if (subscription) await syncSubscriptionMetadata(subscription, { status: 'past_due' });
       return;
     }
+    case 'invoice.paid':
     case 'invoice.payment_succeeded': {
       const subscription = await subscriptionFromInvoice(event.data.object);
       if (subscription) await syncSubscriptionMetadata(subscription);

@@ -5,6 +5,8 @@ import {
   normalizeTags,
   publicStudyItem,
   safeStudyHref,
+  sanitizeStudySearch,
+  studySearchFilter,
   STUDY_LIMITS
 } from '../netlify/lib/study-cloud.mjs';
 import overviewHandler from '../netlify/functions/study-overview.mjs';
@@ -164,6 +166,15 @@ function matchesFilters(row, params) {
     if (key === 'select' || key === 'order' || key === 'limit' || key === 'on_conflict') continue;
     if (key === 'and') {
       if (String(raw).includes('note.neq') && !String(row.note || '').trim()) return false;
+      continue;
+    }
+    if (key === 'or') {
+      const decoded = decodeURIComponent(String(raw || ''));
+      const ilike = /ilike\.\*?([^,*)]+)/i.exec(decoded);
+      const needle = ilike ? ilike[1].replace(/\*/g, '').toLowerCase() : '';
+      if (!needle) return false;
+      const blob = `${row.title || ''} ${row.item_key || ''} ${(row.tags || []).join(' ')}`.toLowerCase();
+      if (!blob.includes(needle)) return false;
       continue;
     }
     if (key === 'tags' && String(raw).startsWith('cs.')) {
@@ -356,6 +367,12 @@ assert.equal(publicStudyItem({
   updated_at: 't'
 }).note, '<img src=x onerror=alert(1)>');
 assert.equal(STUDY_LIMITS.note, 5000);
+assert.equal(sanitizeStudySearch('  Iron * (lab)  '), 'Iron lab');
+assert.equal(sanitizeStudySearch('x'.repeat(140)).length, 100);
+assert.equal(sanitizeStudySearch('***'), '');
+assert.match(studySearchFilter('Iron'), /or=\(title\.ilike\./);
+assert.equal(studySearchFilter('***'), '');
+assert.equal(studySearchFilter('x'.repeat(180)).includes('x'.repeat(101)), false);
 
 await withStudyEnv(async () => {
   const unsigned = await overviewHandler(cookieRequest('https://atomurus.com/api/study/overview'));
@@ -528,7 +545,7 @@ await withStudyEnv(async () => {
   assert.equal(tooBig.status, 413);
 });
 
-await withStudyEnv(async () => {
+await withStudyEnv(async ({ store }) => {
   const saved = await itemHandler(cookieRequest('https://atomurus.com/api/study/item', {
     method: 'PUT',
     cookies: sessionCookie('access-pro-a'),
@@ -542,6 +559,10 @@ await withStudyEnv(async () => {
   const cancelledJson = await readJson(cancelled);
   assert.equal(cancelled.status, 403);
   assert.equal(cancelledJson.code, 'feature_locked');
+
+  // Entitlement ended: 403 on Pro APIs, but rows stay in the store for reactivation.
+  assert.equal(store.items.length, 1);
+  assert.equal(store.items[0].note, 'keep-me');
 
   const restored = await itemsHandler(cookieRequest('https://atomurus.com/api/study/items', {
     cookies: sessionCookie('access-pro-a')
@@ -625,11 +646,35 @@ await withStudyEnv(async () => {
   assert.equal(byKeyJson.items[0].itemKey, 'n');
   assert.equal(byKeyJson.items[0].itemType, 'element');
 
-  const missingKey = await itemsHandler(cookieRequest('https://atomurus.com/api/study/items?itemKey=does-not-exist', {
+const missingKey = await itemsHandler(cookieRequest('https://atomurus.com/api/study/items?itemKey=does-not-exist', {
     cookies: sessionCookie('access-pro-a')
   }));
   const missingKeyJson = await readJson(missingKey);
   assert.equal(missingKeyJson.items.length, 0);
+
+  const searched = await itemsHandler(cookieRequest('https://atomurus.com/api/study/items?q=lab&exclude=calculator', {
+    cookies: sessionCookie('access-pro-a')
+  }));
+  const searchedJson = await readJson(searched);
+  assert.equal(searched.status, 200);
+  assert.ok(searchedJson.items.some((item) => item.itemKey === 'n'));
+
+  const none = await itemsHandler(cookieRequest('https://atomurus.com/api/study/items?q=zzzznotfound', {
+    cookies: sessionCookie('access-pro-a')
+  }));
+  const noneJson = await readJson(none);
+  assert.equal(noneJson.items.length, 0);
+
+  const wild = await itemsHandler(cookieRequest('https://atomurus.com/api/study/items?q=****', {
+    cookies: sessionCookie('access-pro-a')
+  }));
+  const wildJson = await readJson(wild);
+  assert.equal(wild.status, 200);
+
+  const tooLong = await itemsHandler(cookieRequest(`https://atomurus.com/api/study/items?q=${'x'.repeat(180)}`, {
+    cookies: sessionCookie('access-pro-a')
+  }));
+  assert.equal(tooLong.status, 200);
 });
 
 const studyClient = readFileSync(new URL('../study-client.js', import.meta.url), 'utf8');
@@ -637,6 +682,7 @@ assert.doesNotMatch(studyClient, /\/api\/auth\/me/);
 assert.doesNotMatch(studyClient, /localStorage|sessionStorage|BroadcastChannel/);
 assert.doesNotMatch(studyClient, /SERVICE_ROLE|service_role|withRefresh/);
 assert.match(studyClient, /\/api\/study\/overview/);
+assert.match(studyClient, /query\.q|params\.q|q:/);
 
 const studySave = readFileSync(new URL('../study-save.js', import.meta.url), 'utf8');
 assert.doesNotMatch(studySave, /innerHTML/);

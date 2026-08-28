@@ -80,7 +80,9 @@
       lockedBody: t('lockedBody', pt ? 'Salve materiais, notas e progresso de estudo em todos os dispositivos.' : 'Save materials, notes and study progress across devices.'),
       proBadge: t('proBadge', 'PRO'),
       couldNotSave: t('couldNotSave', pt ? 'Não foi possível salvar. Tente de novo.' : 'Could not save. Try again.'),
-      nothingToSave: t('nothingToSave', pt ? 'Execute a calculadora primeiro e depois salve o resultado.' : 'Run the calculator first, then save the result.')
+      nothingToSave: t('nothingToSave', pt ? 'Execute a calculadora primeiro e depois salve o resultado.' : 'Run the calculator first, then save the result.'),
+      genPartial: t('genPartial', pt ? 'Adicionado ao Study Set, mas não foi possível gerar os flashcards.' : 'Added to Study Set, but flashcards could not be generated.'),
+      tryGenerate: t('tryGenerate', pt ? 'Tentar gerar novamente' : 'Try generating again')
     };
   }
 
@@ -392,7 +394,10 @@
     setRow.className = 'study-save-row';
     var addBtn = document.createElement('button');
     addBtn.type = 'button';
+    addBtn.className = 'study-add-set';
     addBtn.textContent = labels.addToSet;
+    addBtn.setAttribute('aria-haspopup', 'menu');
+    addBtn.setAttribute('aria-expanded', 'false');
     var genBtn = document.createElement('button');
     genBtn.type = 'button';
     genBtn.textContent = labels.generate;
@@ -405,6 +410,7 @@
     setRow.appendChild(setStatus);
     var menu = document.createElement('div');
     menu.className = 'study-set-menu';
+    menu.setAttribute('role', 'menu');
     var createRow = document.createElement('div');
     createRow.className = 'study-set-create';
     var createInput = document.createElement('input');
@@ -453,6 +459,7 @@
         choice.className = 'study-set-choice';
         choice.textContent = set.title || labels.newSet.replace(/^\+\s*/, '') || 'Study Set';
         choice.addEventListener('click', function () {
+          choice.disabled = true;
           addToSet(set);
         });
         menu.appendChild(choice);
@@ -491,7 +498,7 @@
         return withStudy(function (api) {
           if (!api) return null;
           return api.addSetItem({ setId: set.id, itemId: item.id }).then(function (data) {
-            menu.classList.remove('open');
+            closeSetMenu();
             addedMessage({ id: set.id, title: data.setTitle || set.title });
           });
         });
@@ -503,6 +510,7 @@
     function closeSetMenu() {
       menu.classList.remove('open');
       createRow.classList.remove('open');
+      addBtn.setAttribute('aria-expanded', 'false');
     }
 
     addBtn.addEventListener('click', function (event) {
@@ -518,6 +526,9 @@
         return api.listSets().then(function (data) {
           fillSetMenu(data.sets || []);
           menu.classList.add('open');
+          addBtn.setAttribute('aria-expanded', 'true');
+          var first = menu.querySelector('button');
+          if (first) first.focus();
         });
       }).catch(function (err) {
         handleError(err, setStatus, labels);
@@ -527,14 +538,17 @@
     createBtn.addEventListener('click', function () {
       var title = (createInput.value || '').trim();
       if (!title) return;
+      createBtn.disabled = true;
       withStudy(function (api) {
         if (!api) return null;
         return api.createSet({ title: title }).then(function (data) {
           createRow.classList.remove('open');
           createInput.value = '';
+          createBtn.disabled = false;
           return addToSet(data.set);
         });
       }).catch(function (err) {
+        createBtn.disabled = false;
         handleError(err, setStatus, labels);
       });
     });
@@ -545,8 +559,13 @@
         addBtn.click();
         return;
       }
+      if (genBtn.disabled) return;
+      genBtn.disabled = true;
       requireSavedItem().then(function (item) {
-        if (!item) return;
+        if (!item) {
+          genBtn.disabled = false;
+          return;
+        }
         return withStudy(function (api) {
           if (!api) return null;
           return api.generateCards({ setId: lastSet.id, itemId: item.id }).then(function (data) {
@@ -558,7 +577,17 @@
           });
         });
       }).catch(function (err) {
-        handleError(err, setStatus, labels);
+        setStatus.textContent = labels.genPartial;
+        var retry = document.createElement('button');
+        retry.type = 'button';
+        retry.className = 'study-set-choice';
+        retry.textContent = labels.tryGenerate;
+        retry.addEventListener('click', function () { genBtn.click(); });
+        setStatus.appendChild(document.createTextNode(' '));
+        setStatus.appendChild(retry);
+        void err;
+      }).then(function () {
+        genBtn.disabled = false;
       });
     });
 
@@ -772,6 +801,8 @@
       var create = host.querySelector('.study-set-create');
       if (menu) menu.classList.remove('open');
       if (create) create.classList.remove('open');
+      var expander = host.querySelector('.study-add-set');
+      if (expander) expander.setAttribute('aria-expanded', 'false');
     });
     document.addEventListener('keydown', function (event) {
       if (event.key !== 'Escape') return;
@@ -779,8 +810,13 @@
       if (!host) return;
       var menu = host.querySelector('.study-set-menu');
       var create = host.querySelector('.study-set-create');
+      var addBtn = host.querySelector('[data-study-add-set], .study-add-set, button');
+      var wasOpen = (menu && menu.classList.contains('open')) || (create && create.classList.contains('open'));
       if (menu) menu.classList.remove('open');
       if (create) create.classList.remove('open');
+      var expander = host.querySelector('.study-add-set');
+      if (expander) expander.setAttribute('aria-expanded', 'false');
+      if (wasOpen && addBtn && typeof addBtn.focus === 'function') addBtn.focus();
     });
   }
 

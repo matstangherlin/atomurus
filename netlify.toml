@@ -133,6 +133,11 @@
   status = 200
 
 [[redirects]]
+  from   = "/api/billing/portal"
+  to     = "/.netlify/functions/billing-portal"
+  status = 200
+
+[[redirects]]
   from   = "/api/billing/webhook"
   to     = "/.netlify/functions/billing-webhook"
   status = 200

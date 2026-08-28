@@ -665,6 +665,19 @@
   background: var(--lc-paper);
   box-shadow: var(--shadow-md, 0 8px 24px rgba(20,18,14,.12));
   font-size: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.ws-toast-action {
+  border: 0;
+  background: transparent;
+  color: var(--lc-green, #1E6A50);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
 }
 .ws-toast-success { border-color: color-mix(in oklab, var(--lc-green) 40%, var(--lc-rule)); }
 .ws-toast-danger { border-color: color-mix(in oklab, var(--ws-danger) 40%, var(--lc-rule)); }

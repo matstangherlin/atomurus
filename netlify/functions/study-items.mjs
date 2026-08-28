@@ -10,6 +10,8 @@ import {
   notePresentFilter,
   parseLimit,
   publicStudyItem,
+  sanitizeStudySearch,
+  studySearchFilter,
   tagContainsFilter
 } from '../lib/study-cloud.mjs';
 
@@ -27,6 +29,7 @@ export default async function handler(request) {
     const itemKey = String(url.searchParams.get('itemKey') || url.searchParams.get('item_key') || '').trim();
     const tag = String(url.searchParams.get('tag') || '').trim();
     const hasNote = String(url.searchParams.get('hasNote') || '') === '1';
+    const q = sanitizeStudySearch(url.searchParams.get('q') || url.searchParams.get('search') || '');
     const limit = parseLimit(url.searchParams.get('limit'), 20, 100);
     const cursor = decodeStudyCursor(url.searchParams.get('cursor'));
     const userId = auth.user.id;
@@ -38,6 +41,8 @@ export default async function handler(request) {
     if (itemKey) filters.push(`item_key=eq.${encodeURIComponent(itemKey)}`);
     if (tag) filters.push(tagContainsFilter(tag));
     if (hasNote) filters.push(notePresentFilter());
+    const search = studySearchFilter(q);
+    if (search) filters.push(search);
     const extra = cursorFilter(cursor);
     if (extra) filters.push(extra);
 

@@ -78,8 +78,21 @@ assert.match(authApp, /exitReview/);
 assert.match(authApp, /reviewAgain/);
 assert.match(authApp, /genPickSet/);
 assert.match(authApp, /ws-lib-more/);
-assert.match(authApp, /billingManageBody/);
-assert.match(authApp, /toastGenerate/);
+assert.equal(logic.accountPlanState({ isPro: false, planSource: 'free' }).kind, 'free');
+assert.equal(logic.accountPlanState({ isPro: true, planSource: 'trial' }).kind, 'auto_trial');
+assert.equal(logic.accountPlanState({ isPro: true, planSource: 'paid', canManageBilling: true }).kind, 'paid');
+assert.equal(logic.accountPlanState({ isPro: true, planSource: 'paid', cancelAtPeriodEnd: true, canManageBilling: true }).kind, 'cancel_scheduled');
+assert.equal(logic.accountPlanState({ isPro: true, planSource: 'paid', subscriptionStatus: 'past_due', canManageBilling: true }).kind, 'payment_issue');
+assert.equal(logic.isAutoTrialUser({ planSource: 'trial' }), true);
+assert.equal(logic.isBillingTrialUser({ planSource: 'billing_trial' }), true);
+assert.equal(logic.isAutoTrialUser({ planSource: 'billing_trial' }), false);
+
+assert.match(authApp, /genPartial/);
+assert.match(authApp, /ws-billing-portal|openBillingPortal/);
+assert.match(authApp, /drawerChrome|ws-topbar-actions/);
+assert.match(authApp, /params\.q/);
+assert.doesNotMatch(authApp, /location\.reload\s*\(/);
+assert.doesNotMatch(authApp, /billingManageBody/);
 assert.doesNotMatch(authApp, /map\(continueCard\)\.join\(''\) : emptyState/);
 assert.doesNotMatch(authApp, />Load more</);
 
@@ -101,8 +114,9 @@ const pricing = readFileSync(new URL('../pricing-page.js', import.meta.url), 'ut
 assert.doesNotMatch(pricing, /AI tutor|AI powered|AI study/i);
 assert.doesNotMatch(pricing, /alert\s*\(/);
 assert.match(pricing, /annualSavePercent/);
-assert.match(pricing, /Study Library/);
-assert.match(pricing, /Smart Review/);
+assert.match(pricing, /Study Library, notes and calculator history/);
+assert.match(pricing, /Study Sets, flashcards and Smart Review/);
+assert.doesNotMatch(pricing, /Study Library, notes, history and Smart Review/);
 
 const pricingHtml = readFileSync(new URL('../pricing.html', import.meta.url), 'utf8');
 assert.match(pricingHtml, /flashcards/i);
@@ -113,13 +127,20 @@ const dashboard = readFileSync(new URL('../netlify/functions/private-dashboard.m
 assert.match(dashboard, /state: 'coming'/);
 assert.doesNotMatch(dashboard, /AI tutor/);
 
+const portalFn = readFileSync(new URL('../netlify/functions/billing-portal.mjs', import.meta.url), 'utf8');
+assert.match(portalFn, /requireUser/);
+assert.match(portalFn, /createPortalSession/);
+assert.match(portalFn, /Body is ignored for authority/);
+
 const studySave = readFileSync(new URL('../study-save.js', import.meta.url), 'utf8');
 assert.doesNotMatch(studySave, /innerHTML/);
 assert.match(studySave, /openSaveGate/);
 assert.match(studySave, /sessionHint/);
 assert.match(studySave, /section=review&start=1&set=/);
 assert.match(studySave, /bindSetMenuDismiss/);
-assert.match(studySave, /labels\.couldNotSave/);
+assert.match(studySave, /labels\.genPartial/);
+assert.match(studySave, /aria-expanded/);
+assert.match(studySave, /study-add-set/);
 assert.doesNotMatch(studySave, /setMsg\(msg, 'Could not save\.'\)/);
 
 const dictSrc = readFileSync(new URL('../tools/i18n-dict-source.js', import.meta.url), 'utf8');

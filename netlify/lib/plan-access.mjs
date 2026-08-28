@@ -57,6 +57,27 @@ function billingStatus(app) {
   return String(app.subscription_status || '').trim().toLowerCase();
 }
 
+function truthyFlag(value) {
+  return value === true || value === 'true' || value === '1' || value === 1;
+}
+
+function hasStripeCustomerId(app) {
+  return Boolean(String(app.stripe_customer_id || '').trim());
+}
+
+/** Stripe statuses that keep Pro access. Central source of truth — do not reimplement elsewhere. */
+export const PAID_SUBSCRIPTION_STATUSES = Object.freeze(['active', 'trialing', 'past_due']);
+
+export function isPaidSubscriptionStatus(status) {
+  return PAID_SUBSCRIPTION_STATUSES.includes(String(status || '').trim().toLowerCase());
+}
+
+export function stripeCustomerIdFromMeta(user) {
+  const app = appMeta(user);
+  const id = String(app.stripe_customer_id || '').trim();
+  return id || null;
+}
+
 export function trialEndsAtForUser(user) {
   const app = appMeta(user);
   const explicit = parseIso(app.atomurus_trial_ends_at || app.trial_ends_at);
@@ -76,10 +97,9 @@ export function accessForUser(user) {
 
   const paidMeta =
     roles.includes('paid') ||
-    app.atomurus_plan === 'paid' ||
-    app.plan === 'paid' ||
-    subscriptionStatus === 'active' ||
-    subscriptionStatus === 'trialing';
+    (subscriptionStatus
+      ? isPaidSubscriptionStatus(subscriptionStatus)
+      : (app.atomurus_plan === 'paid' || app.plan === 'paid'));
 
   const trialEndsAt = trialEndsAtForUser(user);
   const trialActive = Boolean(trialEndsAt && Date.now() < Date.parse(trialEndsAt) && !paidMeta && !isAdmin);
@@ -98,6 +118,12 @@ export function accessForUser(user) {
   }
 
   const isPro = plan === 'paid' || plan === 'admin';
+  const cancelAtPeriodEnd = isPaidSubscriptionStatus(subscriptionStatus) && truthyFlag(app.cancel_at_period_end);
+  const currentPeriodEnd = parseIso(app.current_period_end)
+    ? new Date(parseIso(app.current_period_end)).toISOString()
+    : null;
+  const hasStripeCustomer = hasStripeCustomerId(app);
+  const canManageBilling = hasStripeCustomer && isPaidSubscriptionStatus(subscriptionStatus);
 
   return {
     role: isAdmin ? 'admin' : 'member',
@@ -109,6 +135,10 @@ export function accessForUser(user) {
     subscriptionStatus: subscriptionStatus || null,
     billingPeriod: app.subscription_interval || null,
     billingCurrency: app.subscription_currency || null,
+    cancelAtPeriodEnd,
+    currentPeriodEnd,
+    hasStripeCustomer,
+    canManageBilling,
     features: {
       labWorkspace: true,
       premiumLessons: isPro,
@@ -154,6 +184,10 @@ export function publicUser(user) {
     subscriptionStatus: access.subscriptionStatus,
     billingPeriod: access.billingPeriod,
     billingCurrency: access.billingCurrency,
+    cancelAtPeriodEnd: access.cancelAtPeriodEnd,
+    currentPeriodEnd: access.currentPeriodEnd,
+    hasStripeCustomer: access.hasStripeCustomer,
+    canManageBilling: access.canManageBilling,
     stripeCustomerId: user?.role === 'admin' ? (user?.appMetadata?.stripe_customer_id || user?.app_metadata?.stripe_customer_id || null) : null,
     stripeSubscriptionId: user?.role === 'admin' ? (user?.appMetadata?.stripe_subscription_id || user?.app_metadata?.stripe_subscription_id || null) : null,
     features: access.features

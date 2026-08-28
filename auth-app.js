@@ -41,7 +41,6 @@
       exitReview: 'Exit', reviewAgain: 'Review again',
       removeFromSetTitle: 'Remove this material from the set?',
       removeFromSetBody: 'The Library item stays saved. Flashcards already generated in this set stay until you delete them.',
-      billingManageBody: 'Cancel, invoices and card updates are not in the workspace yet. Write to contato@atomurus.com or use Contact.',
       contactBilling: 'Contact about billing', resetPassword: 'Reset password',
       skipToContent: 'Skip to content', toastCard: 'Flashcard saved', calculatorType: 'Calculator',
       deleteSetTitle: 'Delete “{title}”?', deleteSetBody: 'Its flashcards will be deleted. Your saved Library items will not be removed.',
@@ -68,10 +67,19 @@
       security: 'Security', billing: 'Billing', trial: 'Trial',
       emailConfirmed: 'Email confirmed', emailPending: 'Email pending confirmation',
       proActive: 'Active', adsOff: 'Ads off', cloudOn: 'Study Cloud unlocked', reviewOn: 'Smart Review unlocked',
-      managePlan: 'Manage subscription', viewPlans: 'View plans',
-      freePlan: 'Atomurus Free', freePlanBody: 'Public chemistry tools',
-      trialPlan: 'Pro Trial', trialDays: '{n} days remaining',
+      managePlan: 'Manage subscription', viewPlans: 'View plans', manageBilling: 'Manage billing',
+      openingPortal: 'Opening portal…',
+      billingCustomerMissing: 'This account has no Stripe subscription to manage yet.',
+      freePlan: 'Atomurus Free', freePlanBody: 'Public chemistry tools are available.',
+      trialPlan: 'Atomurus Pro Trial', trialDays: '{n} days remaining',
       proPlan: 'Atomurus Pro', annual: 'Annual', monthly: 'Monthly',
+      activeUntil: 'Active until {when}',
+      cancelsOn: 'Cancels on {when}',
+      wontRenew: 'Your subscription will not renew.',
+      paymentIssue: 'Payment issue',
+      paymentIssueBody: 'Update your payment method to keep Pro active.',
+      genPartial: 'Added to Study Set, but flashcards could not be generated.',
+      tryGenerate: 'Try generating again',
       loading: 'Loading workspace…', loadError: 'Could not load your private workspace.',
       retry: 'Retry', loadMore: 'Load more', previous: 'Previous', next: 'Next',
       lockedLibraryTitle: 'Study Library', lockedLibraryBody: 'Save materials, notes and study progress across devices.',
@@ -129,7 +137,6 @@
       exitReview: 'Sair', reviewAgain: 'Revisar de novo',
       removeFromSetTitle: 'Remover este material do set?',
       removeFromSetBody: 'O item permanece na Biblioteca. Flashcards já gerados neste set ficam até você apagá-los.',
-      billingManageBody: 'Cancelar, faturas e cartão ainda não estão no workspace. Escreva para contato@atomurus.com ou use Contato.',
       contactBilling: 'Falar sobre cobrança', resetPassword: 'Redefinir senha',
       skipToContent: 'Pular para o conteúdo', toastCard: 'Flashcard salvo', calculatorType: 'Calculadora',
       deleteSetTitle: 'Excluir “{title}”?', deleteSetBody: 'Os flashcards serão apagados. Os itens da Biblioteca permanecem.',
@@ -156,10 +163,19 @@
       security: 'Segurança', billing: 'Cobrança', trial: 'Trial',
       emailConfirmed: 'Email confirmado', emailPending: 'Email pendente de confirmação',
       proActive: 'Ativo', adsOff: 'Anúncios desligados', cloudOn: 'Study Cloud liberado', reviewOn: 'Smart Review liberado',
-      managePlan: 'Gerenciar assinatura', viewPlans: 'Ver planos',
-      freePlan: 'Atomurus Free', freePlanBody: 'Ferramentas públicas de química',
-      trialPlan: 'Trial Pro', trialDays: '{n} dias restantes',
+      managePlan: 'Gerenciar assinatura', viewPlans: 'Ver planos', manageBilling: 'Gerenciar cobrança',
+      openingPortal: 'Abrindo o portal…',
+      billingCustomerMissing: 'Esta conta ainda não tem uma assinatura Stripe para gerenciar.',
+      freePlan: 'Atomurus Free', freePlanBody: 'Ferramentas públicas de química estão disponíveis.',
+      trialPlan: 'Atomurus Pro Trial', trialDays: '{n} dias restantes',
       proPlan: 'Atomurus Pro', annual: 'Anual', monthly: 'Mensal',
+      activeUntil: 'Ativo até {when}',
+      cancelsOn: 'Cancela em {when}',
+      wontRenew: 'Sua assinatura não será renovada.',
+      paymentIssue: 'Problema no pagamento',
+      paymentIssueBody: 'Atualize a forma de pagamento para manter o Pro ativo.',
+      genPartial: 'Adicionado ao Study Set, mas não foi possível gerar os flashcards.',
+      tryGenerate: 'Tentar gerar novamente',
       loading: 'Carregando o workspace…', loadError: 'Não foi possível carregar o workspace.',
       retry: 'Tentar de novo', loadMore: 'Carregar mais', previous: 'Anterior', next: 'Próxima',
       lockedLibraryTitle: 'Biblioteca de estudos', lockedLibraryBody: 'Salve materiais, notas e progresso em todos os dispositivos.',
@@ -244,7 +260,23 @@
       toastGenerate(logic().generateCardsFeedback(data));
     }).catch(function (err) {
       if (generate) ui().setBusy(generate, false);
-      toast(t(logic().uxError(err).bodyKey), 'danger');
+      if (ui().toast) {
+        ui().toast(t('genPartial'), {
+          tone: 'danger',
+          ms: 8000,
+          actionLabel: t('tryGenerate'),
+          onAction: function () {
+            if (generate) generate.click();
+            else api.generateCards({ setId: setId, itemId: itemId }).then(function (data) {
+              toastGenerate(logic().generateCardsFeedback(data));
+            }).catch(function (retryErr) {
+              toast(t(logic().uxError(retryErr).bodyKey), 'danger');
+            });
+          }
+        });
+      } else {
+        toast(t('genPartial'), 'danger');
+      }
     });
   }
 
@@ -411,7 +443,9 @@
     node.innerHTML = '<div class="ws-error"><h3>' + escapeHtml(t(info.titleKey)) + '</h3><p>' + escapeHtml(t(info.bodyKey)) + '</p>' +
       '<button type="button" class="ws-btn ws-btn-primary" id="ws-retry">' + escapeHtml(t('retry')) + '</button></div>';
     var btn = $('ws-retry');
-    if (btn) btn.addEventListener('click', function () { location.reload(); });
+    if (btn) btn.addEventListener('click', function () {
+      if (currentUser) void loadStudyCloud(currentUser);
+    });
   }
 
   function progressBar(pct) {
@@ -429,6 +463,7 @@
 
   var reviewSession = null;
   var reviewBusy = false;
+  var pendingGrade = null;
   var currentUser = null;
 
   function newClientEventId() {
@@ -505,6 +540,7 @@
       '<div class="ws-metric"><div class="ws-metric-value">' + escapeHtml(String(stats.hard || 0)) + '</div><div class="ws-metric-label">' + escapeHtml(t('hard')) + '</div></div>' +
       '<div class="ws-metric"><div class="ws-metric-value">' + escapeHtml(String(stats.again || 0)) + '</div><div class="ws-metric-label">' + escapeHtml(t('again')) + '</div></div>' +
       '</div><p class="ws-row-actions" style="justify-content:center"><a class="ws-btn ws-btn-primary" href="' + escapeHtml(reviewStartHref(reviewSession && reviewSession.setId)) + '">' + escapeHtml(t('reviewAgain')) + '</a>' +
+      '<a class="ws-btn" href="/app?section=review' + (reviewSession && reviewSession.setId ? '&set=' + encodeURIComponent(reviewSession.setId) : '') + '">' + escapeHtml(t('exitReview')) + '</a>' +
       '<a class="ws-btn" href="/app?section=overview">' + escapeHtml(t('backOverview')) + '</a></p></div>';
   }
 
@@ -570,23 +606,35 @@
     if (!card || !reviewSession.revealed) return;
     var api = window.AtomurusStudy;
     if (!api) return;
-    reviewBusy = true;
-    var root = document.getElementById('app-review-session');
-    var errBox = root && root.querySelector('[data-review-error]');
-    if (errBox) errBox.hidden = true;
-    try {
-      await api.submitReview({
+    if (!pendingGrade || pendingGrade.cardId !== card.id || pendingGrade.rating !== rating) {
+      pendingGrade = {
         cardId: card.id,
         rating: rating,
         clientEventId: newClientEventId(),
         expectedVersion: card.version
+      };
+    }
+    reviewBusy = true;
+    var root = document.getElementById('app-review-session');
+    var errBox = root && root.querySelector('[data-review-error]');
+    if (errBox) errBox.hidden = true;
+    var ratingBtns = root ? root.querySelectorAll('[data-grade]') : [];
+    ratingBtns.forEach(function (btn) { ui().setBusy(btn, true); });
+    try {
+      await api.submitReview({
+        cardId: pendingGrade.cardId,
+        rating: pendingGrade.rating,
+        clientEventId: pendingGrade.clientEventId,
+        expectedVersion: pendingGrade.expectedVersion
       });
+      pendingGrade = null;
       reviewSession.stats[rating] = (reviewSession.stats[rating] || 0) + 1;
       reviewSession.index += 1;
       reviewSession.revealed = false;
       paintReviewCard();
     } catch (err) {
       if (err && err.code === 'review_conflict') {
+        pendingGrade = null;
         reviewSession.index += 1;
         reviewSession.revealed = false;
         paintReviewCard();
@@ -610,6 +658,7 @@
       }
     } finally {
       reviewBusy = false;
+      ratingBtns.forEach(function (btn) { ui().setBusy(btn, false); });
     }
   }
 
@@ -825,7 +874,7 @@
                 });
               }
               ui().closeDialog();
-              if (created.set && created.set.id) location.replace(setHref(created.set.id));
+              if (created.set) insertCreatedSet(api, created.set);
             }).catch(function (err) {
               ui().setBusy(primary, false);
               toast(t(logic().uxError(err).bodyKey), 'danger');
@@ -850,20 +899,113 @@
     node.innerHTML = sectionHead(t('libraryTitle'), t('libraryLede'), true) + skeleton();
     var library = await api.items({ exclude: 'calculator', limit: 40 });
     var items = library.items || [];
-    bindLibrarySetActions.items = items;
     if (!items.length) {
       node.innerHTML = sectionHead(t('libraryTitle'), t('libraryLede'), true) +
         emptyState(t('emptyLibraryTitle'), t('emptyLibraryBody'), '/periodic-table.html', t('exploreTable'));
       return;
     }
-    var tags = [];
-    items.forEach(function (item) {
-      (item.tags || []).forEach(function (tag) {
-        if (tag && tags.indexOf(tag) === -1) tags.push(tag);
+    var state = {
+      items: items.slice(),
+      nextCursor: library.nextCursor || null,
+      q: '',
+      type: 'all',
+      tag: 'all',
+      sort: 'updated',
+      req: 0,
+      abort: null
+    };
+    bindLibrarySetActions.items = state.items;
+
+    function collectTags(rows) {
+      var tags = [];
+      (rows || []).forEach(function (item) {
+        (item.tags || []).forEach(function (tag) {
+          if (tag && tags.indexOf(tag) === -1) tags.push(tag);
+        });
       });
-    });
+      return tags;
+    }
+
+    function queryParams(cursor) {
+      var params = { limit: 40 };
+      if (cursor) params.cursor = cursor;
+      if (state.type !== 'all') params.type = state.type;
+      else params.exclude = 'calculator';
+      if (state.tag !== 'all') params.tag = state.tag;
+      if (state.q) params.q = state.q;
+      return params;
+    }
+
+    function sortedItems() {
+      if (state.sort !== 'title') return state.items.slice();
+      return state.items.slice().sort(function (a, b) {
+        return String(a.title || '').localeCompare(String(b.title || ''));
+      });
+    }
+
+    function paintRows() {
+      var list = $('ws-lib-list');
+      if (!list) return;
+      var rows = sortedItems();
+      list.textContent = '';
+      rows.forEach(function (item) {
+        var wrap = document.createElement('div');
+        wrap.innerHTML = libraryRow(item);
+        var el = wrap.firstChild;
+        var noteNode = el && el.querySelector('.ws-item-note');
+        if (noteNode && item.note) noteNode.textContent = item.note;
+        if (el) list.appendChild(el);
+      });
+      bindLibrarySetActions.items = state.items;
+      var empty = $('ws-lib-empty');
+      if (empty) empty.hidden = rows.length > 0;
+      var more = $('ws-lib-more');
+      if (state.nextCursor) {
+        if (!more) {
+          more = document.createElement('button');
+          more.type = 'button';
+          more.className = 'ws-btn';
+          more.id = 'ws-lib-more';
+          more.textContent = t('loadMore');
+          node.appendChild(more);
+          more.addEventListener('click', function () { void fetchPage(false); });
+        }
+        more.hidden = false;
+        more.disabled = false;
+        more.setAttribute('data-cursor', state.nextCursor);
+      } else if (more) more.remove();
+    }
+
+    function fetchPage(reset) {
+      if (state.abort) state.abort.abort();
+      var ac = typeof AbortController === 'function' ? new AbortController() : null;
+      state.abort = ac;
+      var id = ++state.req;
+      var params = queryParams(reset ? null : state.nextCursor);
+      if (ac) params.signal = ac.signal;
+      var more = $('ws-lib-more');
+      if (more && !reset) more.disabled = true;
+      return api.items(params, true).then(function (page) {
+        if (id !== state.req) return;
+        var incoming = page.items || [];
+        if (reset) state.items = incoming;
+        else {
+          incoming.forEach(function (item) {
+            if (!state.items.some(function (row) { return row.id === item.id; })) state.items.push(item);
+          });
+        }
+        state.nextCursor = page.nextCursor || null;
+        paintRows();
+      }).catch(function (err) {
+        if (err && (err.name === 'AbortError' || err.code === 'AbortError')) return;
+        if (more) more.disabled = false;
+        toast(t(logic().uxError(err).bodyKey), 'danger');
+      });
+    }
+
+    var tags = collectTags(items);
     node.innerHTML = sectionHead(t('libraryTitle'), t('libraryLede'), true) +
-      '<div class="ws-toolbar"><input class="ws-search-field" id="ws-lib-q" type="search" aria-label="' + escapeHtml(t('search')) + '">' +
+      '<div class="ws-toolbar"><input class="ws-search-field" id="ws-lib-q" type="search" maxlength="100" aria-label="' + escapeHtml(t('search')) + '">' +
       '<select class="ws-select" id="ws-lib-type" aria-label="' + escapeHtml(t('type')) + '">' +
       ['all', 'element', 'molecule', 'article'].map(function (type) {
         var label = type === 'all' ? t('all') : type === 'element' ? t('elements') : type === 'molecule' ? t('molecules') : t('articles');
@@ -877,60 +1019,55 @@
       '<select class="ws-select" id="ws-lib-sort" aria-label="' + escapeHtml(t('sort')) + '"><option value="updated">' + escapeHtml(t('sortUpdated')) + '</option><option value="title">' + escapeHtml(t('sortTitle')) + '</option></select></div>' +
       '<div id="ws-lib-list" class="ws-grid">' + items.map(libraryRow).join('') + '</div>' +
       '<div id="ws-lib-empty" hidden>' + emptyState(t('filterEmptyTitle'), t('filterEmptyBody')) + '</div>' +
-      (library.nextCursor ? '<button type="button" class="ws-btn" id="ws-lib-more" data-cursor="' + escapeHtml(library.nextCursor) + '">' + escapeHtml(t('loadMore')) + '</button>' : '');
+      (state.nextCursor ? '<button type="button" class="ws-btn" id="ws-lib-more" data-cursor="' + escapeHtml(state.nextCursor) + '">' + escapeHtml(t('loadMore')) + '</button>' : '');
     bindLibrarySetActions(node, api);
-    var apply = function () {
-      var q = (($('ws-lib-q') || {}).value || '').toLowerCase();
-      var type = ($('ws-lib-type') || {}).value || 'all';
-      var tag = ($('ws-lib-tag') || {}).value || 'all';
-      var sort = ($('ws-lib-sort') || {}).value || 'updated';
-      var next = items.filter(function (item) {
-        if (type !== 'all' && item.itemType !== type) return false;
-        if (tag !== 'all' && (!item.tags || item.tags.indexOf(tag) === -1)) return false;
-        if (!q) return true;
-        var blob = ((item.title || '') + ' ' + (item.note || '') + ' ' + (item.tags || []).join(' ')).toLowerCase();
-        return blob.indexOf(q) !== -1;
-      });
-      if (sort === 'title') next = next.slice().sort(function (a, b) { return String(a.title || '').localeCompare(String(b.title || '')); });
-      var list = $('ws-lib-list');
-      if (!list) return;
-      items.forEach(function (item) {
-        var el = list.querySelector('[data-library-id="' + item.id + '"]');
-        if (el) el.hidden = next.indexOf(item) === -1;
-      });
-      next.forEach(function (item) {
-        var el = list.querySelector('[data-library-id="' + item.id + '"]');
-        if (el) list.appendChild(el);
-      });
-      var empty = $('ws-lib-empty');
-      if (empty) empty.hidden = next.length > 0;
-    };
+    node.querySelectorAll('.ws-item-note').forEach(function (noteNode) {
+      var wrap = noteNode.closest('[data-library-id]');
+      var id = wrap && wrap.getAttribute('data-library-id');
+      var match = state.items.find(function (row) { return row.id === id; });
+      if (match && match.note) noteNode.textContent = match.note;
+    });
     var qn = $('ws-lib-q');
     if (qn) {
       qn.placeholder = t('search');
-      qn.addEventListener('input', debounce(apply, 200));
+      qn.addEventListener('input', debounce(function () {
+        state.q = (qn.value || '').trim().slice(0, 100);
+        void fetchPage(true);
+      }, 250));
     }
-    ['ws-lib-type', 'ws-lib-sort', 'ws-lib-tag'].forEach(function (id) {
-      var el = $(id);
-      if (el) el.addEventListener('change', apply);
+    var typeEl = $('ws-lib-type');
+    if (typeEl) typeEl.addEventListener('change', function () {
+      state.type = typeEl.value || 'all';
+      void fetchPage(true);
     });
-    bindCursorMore($('ws-lib-more'), function (cursor) {
-      return api.items({ exclude: 'calculator', limit: 40, cursor: cursor }, true);
-    }, function (page) {
-      var list = $('ws-lib-list');
-      (page.items || []).forEach(function (item) {
-        items.push(item);
-        if (!list) return;
-        var wrap = document.createElement('div');
-        wrap.innerHTML = libraryRow(item);
-        var el = wrap.firstChild;
-        var noteNode = el.querySelector('.ws-item-note');
-        if (noteNode && item.note) noteNode.textContent = item.note;
-        list.appendChild(el);
-      });
-      bindLibrarySetActions.items = items;
-      apply();
+    var tagEl = $('ws-lib-tag');
+    if (tagEl) tagEl.addEventListener('change', function () {
+      state.tag = tagEl.value || 'all';
+      void fetchPage(true);
     });
+    var sortEl = $('ws-lib-sort');
+    if (sortEl) sortEl.addEventListener('change', function () {
+      state.sort = sortEl.value || 'updated';
+      paintRows();
+    });
+    var moreBtn = $('ws-lib-more');
+    if (moreBtn) moreBtn.addEventListener('click', function () { void fetchPage(false); });
+  }
+
+  function insertCreatedSet(api, set) {
+    if (!set) return;
+    if (logic().emitWorkspaceEvent) logic().emitWorkspaceEvent('study_set_created', { id: set.id });
+    var list = $('ws-set-list');
+    if (list) {
+      var wrap = document.createElement('div');
+      wrap.innerHTML = setCard(set);
+      if (wrap.firstChild) list.insertBefore(wrap.firstChild, list.firstChild);
+      var empty = list.parentNode && list.parentNode.querySelector('.ws-empty');
+      if (empty) empty.remove();
+      return;
+    }
+    var node = $('app-study');
+    if (node && api) void renderSetsSection(node, api);
   }
 
   function setCard(entry) {
@@ -971,7 +1108,49 @@
     });
   }
 
-  function openCardEditor(api, setId, card) {
+  function patchSetStats(set) {
+    var lede = document.querySelector('#app-study .ws-section-head .ws-lede');
+    if (!lede || !set) return;
+    var mastered = logic().masteredPercent(set.masteredCount, set.cardCount);
+    lede.textContent = t('cardsCount', '', { n: set.cardCount || 0 }) + ' · ' + t('dueCount', '', { n: set.dueCount || 0 }) +
+      (mastered == null ? '' : ' · ' + t('masteredPct', '', { n: mastered }));
+  }
+
+  function replaceCardNode(node, card) {
+    if (!node || !card || !card.id) return;
+    var wrap = node.querySelector('[data-card-id="' + card.id + '"]');
+    var holder = document.createElement('div');
+    holder.innerHTML = flashcardRow(card);
+    var next = holder.firstChild;
+    if (wrap && next) wrap.parentNode.replaceChild(next, wrap);
+    else {
+      var list = $('app-set-cards');
+      if (list && next) {
+        var empty = list.querySelector('.ws-empty');
+        if (empty) empty.remove();
+        list.insertBefore(next, list.firstChild);
+      }
+    }
+    fillFlashcardTexts(node, [card]);
+  }
+
+  function applySavedCard(node, detail, set, saved, isNew) {
+    if (!saved || !saved.id) return;
+    detail.cards = detail.cards || [];
+    if (isNew) {
+      detail.cards.unshift(saved);
+      set.cardCount = (set.cardCount || 0) + 1;
+      replaceCardNode(node, saved);
+      patchSetStats(set);
+      return;
+    }
+    var found = detail.cards.find(function (row) { return row.id === saved.id; });
+    if (found) Object.assign(found, saved);
+    else detail.cards.unshift(saved);
+    replaceCardNode(node, saved);
+  }
+
+  function openCardEditor(api, setId, card, onSaved) {
     var body = document.createElement('div');
     var front = document.createElement('textarea');
     front.className = 'ws-textarea';
@@ -1014,10 +1193,11 @@
             var req = card && card.id
               ? api.updateCard({ id: card.id, front: payload.front, back: payload.back })
               : api.createCard({ setId: setId, front: payload.front, back: payload.back });
-            req.then(function () {
+            req.then(function (data) {
               toast(t('toastCard'));
               ui().closeDialog();
-              location.reload();
+              var saved = (data && data.card) || Object.assign({}, card || {}, payload);
+              if (typeof onSaved === 'function') onSaved(saved, !(card && card.id));
             }).catch(function (err) {
               ui().setBusy(primary, false);
               toast(t(logic().uxError(err).bodyKey), 'danger');
@@ -1076,7 +1256,8 @@
           ui().setBusy(generateBtn, false);
           var fb = logic().generateCardsFeedback(data);
           toastGenerate(fb);
-          if (fb.kind === 'created') location.reload();
+          if (logic().emitWorkspaceEvent) logic().emitWorkspaceEvent('flashcards_generated', { created: fb.created || 0 });
+          if (fb.kind === 'created') void renderSetsSection(node, api);
         }).catch(function (err) {
           ui().setBusy(generateBtn, false);
           toast(t(logic().uxError(err).bodyKey), 'danger');
@@ -1097,7 +1278,11 @@
         });
       });
       var addCard = $('app-card-new');
-      if (addCard) addCard.addEventListener('click', function () { openCardEditor(api, set.id, null); });
+      if (addCard) addCard.addEventListener('click', function () {
+        openCardEditor(api, set.id, null, function (saved, isNew) {
+          applySavedCard(node, detail, set, saved, isNew);
+        });
+      });
       node.addEventListener('click', function (event) {
         var removeItem = event.target.closest && event.target.closest('[data-remove-set-item]');
         if (removeItem) {
@@ -1147,7 +1332,12 @@
         var id = btn.getAttribute('data-card-id');
         var action = btn.getAttribute('data-card-action');
         var found = (detail.cards || []).find(function (row) { return row.id === id; });
-        if (action === 'edit') { openCardEditor(api, set.id, found || { id: id }); return; }
+        if (action === 'edit') {
+          openCardEditor(api, set.id, found || { id: id }, function (saved) {
+            applySavedCard(node, detail, set, saved, false);
+          });
+          return;
+        }
         if (action === 'delete') {
           ui().confirmDialog({
             title: t('deleteCardTitle'),
@@ -1161,14 +1351,24 @@
               toast(t('toastDeleted'));
               var wrap = node.querySelector('[data-card-id="' + id + '"]');
               if (wrap) wrap.remove();
-            });
+              detail.cards = (detail.cards || []).filter(function (row) { return row.id !== id; });
+              set.cardCount = Math.max(0, (set.cardCount || 1) - 1);
+              patchSetStats(set);
+            }).catch(function (err) { toast(t(logic().uxError(err).bodyKey), 'danger'); });
           });
           return;
         }
         if (action === 'toggle') {
-          api.updateCard({ id: id, suspended: btn.getAttribute('data-suspended') !== '1' }).then(function () {
+          var nextSuspended = btn.getAttribute('data-suspended') !== '1';
+          ui().setBusy(btn, true);
+          api.updateCard({ id: id, suspended: nextSuspended }).then(function (data) {
+            var saved = (data && data.card) || Object.assign({}, found || { id: id }, { suspended: nextSuspended });
+            if (found) Object.assign(found, saved);
+            replaceCardNode(node, saved);
             toast(t('toastSuspended'));
-            location.reload();
+          }).catch(function (err) {
+            ui().setBusy(btn, false);
+            toast(t(logic().uxError(err).bodyKey), 'danger');
           });
         }
       });
@@ -1360,22 +1560,64 @@
     });
   }
 
+  function openBillingPortal(button) {
+    if (logic().emitWorkspaceEvent) logic().emitWorkspaceEvent('billing_portal_open');
+    ui().setBusy(button, true, t('openingPortal'));
+    return fetch('/api/billing/portal', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: '{}'
+    }).then(function (res) {
+      return res.json().catch(function () { return {}; }).then(function (data) {
+        if (!res.ok || !data || !data.url) {
+          var err = new Error(data.error || 'portal');
+          err.status = res.status;
+          err.code = data.code;
+          throw err;
+        }
+        location.assign(data.url);
+      });
+    }).catch(function (err) {
+      ui().setBusy(button, false);
+      if (err && err.code === 'billing_customer_missing') toast(t('billingCustomerMissing'), 'danger');
+      else toast(t(logic().uxError(err).bodyKey), 'danger');
+    });
+  }
+
   function renderAccount(user) {
     var node = $('app-study');
     if (!node || !user) return;
-    var badge = logic().planBadge(user);
     var days = logic().trialDaysLeft(user.trialEndsAt);
-    var period = user.billingPeriod === 'year' || user.billingPeriod === 'annual' ? t('annual') : (user.billingPeriod ? t('monthly') : '');
+    var period = user.billingPeriod === 'year' || user.billingPeriod === 'annual' ? t('annual') : (user.billingPeriod === 'month' || user.billingPeriod === 'monthly' ? t('monthly') : '');
     var currency = user.billingCurrency ? String(user.billingCurrency).toUpperCase() : '';
+    var when = user.currentPeriodEnd ? logic().formatDate(user.currentPeriodEnd, langIsPt() ? 'pt' : 'en') : '';
+    var state = logic().accountPlanState ? logic().accountPlanState(user) : { kind: user.isPro ? 'paid' : 'free', canManage: false };
     var planBlock;
-    if (logic().isTrialUser(user)) {
-      planBlock = '<h3>' + escapeHtml(t('trialPlan')) + '</h3><p>' + escapeHtml(days == null ? '' : t('trialDays', '', { n: days })) + '</p><a class="ws-btn ws-btn-primary" href="/pricing">' + escapeHtml(t('viewPlans')) + '</a>';
-    } else if (proUser(user)) {
-      planBlock = '<h3>' + escapeHtml(t('proPlan')) + '</h3><p>' + escapeHtml(t('proActive')) + (period ? ' · ' + escapeHtml(period) : '') + (currency ? ' · ' + escapeHtml(currency) : '') +
-        '</p><ul><li>' + escapeHtml(t('adsOff')) + '</li><li>' + escapeHtml(t('cloudOn')) + '</li><li>' + escapeHtml(t('reviewOn')) + '</li></ul>' +
-        '<p>' + escapeHtml(t('billingManageBody')) + '</p>' +
-        '<div class="ws-row-actions"><a class="ws-btn" href="/pricing">' + escapeHtml(t('viewPlans')) + '</a>' +
-        '<a class="ws-btn ws-btn-secondary" href="/contact">' + escapeHtml(t('contactBilling')) + '</a></div>';
+    if (state.kind === 'auto_trial') {
+      planBlock = '<h3>' + escapeHtml(t('trialPlan')) + '</h3><p>' + escapeHtml(days == null ? '' : t('trialDays', '', { n: days })) + '</p>' +
+        '<a class="ws-btn ws-btn-primary" href="/pricing">' + escapeHtml(t('viewPlans')) + '</a>';
+    } else if (state.kind === 'payment_issue') {
+      planBlock = '<h3>' + escapeHtml(t('paymentIssue')) + '</h3><p>' + escapeHtml(t('paymentIssueBody')) + '</p>' +
+        (state.canManage
+          ? '<button type="button" class="ws-btn ws-btn-primary" id="ws-billing-portal">' + escapeHtml(t('manageBilling')) + '</button>'
+          : '<a class="ws-btn ws-btn-primary" href="/pricing">' + escapeHtml(t('viewPlans')) + '</a>');
+    } else if (state.kind === 'cancel_scheduled') {
+      planBlock = '<h3>' + escapeHtml(t('proPlan')) + '</h3><p>' + escapeHtml(when ? t('activeUntil', '', { when: when }) : t('proActive')) + '</p>' +
+        '<p>' + escapeHtml(t('wontRenew')) + '</p>' +
+        (state.canManage
+          ? '<button type="button" class="ws-btn ws-btn-primary" id="ws-billing-portal">' + escapeHtml(t('managePlan')) + '</button>'
+          : '<a class="ws-btn" href="/pricing">' + escapeHtml(t('viewPlans')) + '</a>');
+    } else if (state.kind === 'paid' || state.kind === 'billing_trial') {
+      var meta = [t('proActive')];
+      if (period) meta.push(period);
+      if (currency) meta.push(currency);
+      if (user.cancelAtPeriodEnd && when) meta.push(t('cancelsOn', '', { when: when }));
+      planBlock = '<h3>' + escapeHtml(t('proPlan')) + '</h3><p>' + escapeHtml(meta.join(' · ')) + '</p>' +
+        '<ul><li>' + escapeHtml(t('adsOff')) + '</li><li>' + escapeHtml(t('cloudOn')) + '</li><li>' + escapeHtml(t('reviewOn')) + '</li></ul>' +
+        (state.canManage
+          ? '<button type="button" class="ws-btn ws-btn-primary" id="ws-billing-portal">' + escapeHtml(t('managePlan')) + '</button>'
+          : '<a class="ws-btn ws-btn-primary" href="/pricing">' + escapeHtml(t('viewPlans')) + '</a>');
     } else {
       planBlock = '<h3>' + escapeHtml(t('freePlan')) + '</h3><p>' + escapeHtml(t('freePlanBody')) + '</p><a class="ws-btn ws-btn-primary" href="/pricing">' + escapeHtml(t('upgrade')) + '</a>';
     }
@@ -1390,7 +1632,8 @@
     if (emailRow) emailRow.textContent = user.email || '—';
     var userRow = $('ws-acc-user');
     if (userRow) userRow.textContent = user.username || '—';
-    void badge;
+    var portalBtn = $('ws-billing-portal');
+    if (portalBtn) portalBtn.addEventListener('click', function () { openBillingPortal(portalBtn); });
   }
 
   function renderFreeOverview(user) {
@@ -1486,13 +1729,27 @@
     var btn = $('ws-menu-btn');
     var shell = $('ws-shell');
     var backdrop = $('ws-drawer-backdrop');
+    function drawerChrome() {
+      return [
+        document.querySelector('.ws-main'),
+        $('ws-bottom'),
+        document.querySelector('.ws-search'),
+        document.querySelector('.ws-topbar-actions')
+      ];
+    }
     function close(restore) {
       var wasOpen = shell && shell.classList.contains('is-nav-open');
       if (shell) shell.classList.remove('is-nav-open');
       if (btn) btn.setAttribute('aria-expanded', 'false');
       if (backdrop) backdrop.hidden = true;
       var sidebar = $('ws-sidebar');
-      if (sidebar) sidebar.removeAttribute('aria-modal');
+      if (sidebar) {
+        sidebar.removeAttribute('aria-modal');
+        sidebar.removeAttribute('role');
+      }
+      drawerChrome().forEach(function (node) {
+        if (node) node.removeAttribute('inert');
+      });
       if (restore && wasOpen && btn) btn.focus();
     }
     function open() {
@@ -1500,19 +1757,31 @@
       if (btn) btn.setAttribute('aria-expanded', 'true');
       if (backdrop) backdrop.hidden = false;
       var sidebar = $('ws-sidebar');
+      drawerChrome().forEach(function (node) {
+        if (node) node.setAttribute('inert', '');
+      });
       if (sidebar) {
         sidebar.setAttribute('aria-modal', 'true');
+        sidebar.setAttribute('role', 'dialog');
         var first = sidebar.querySelector('a, button');
         if (first) window.setTimeout(function () { first.focus(); }, 20);
       }
+    }
+    function onDrawerKey(event) {
+      if (!shell || !shell.classList.contains('is-nav-open')) return;
+      if (event.key === 'Escape') {
+        close(true);
+        return;
+      }
+      if (event.key === 'Tab' && ui().trapTab) ui().trapTab(event, $('ws-sidebar'));
     }
     if (btn) btn.addEventListener('click', function () {
       if (shell && shell.classList.contains('is-nav-open')) close(); else open();
     });
     if (backdrop) backdrop.addEventListener('click', function () { close(true); });
     document.addEventListener('keydown', function (event) {
+      onDrawerKey(event);
       if (event.key !== 'Escape') return;
-      close(true);
       closeDropdowns();
     });
     document.addEventListener('click', function (event) {

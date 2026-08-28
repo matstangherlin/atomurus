@@ -5,7 +5,54 @@
 
   var TOAST_ID = 'ws-toast-host';
   var DIALOG_ID = 'ws-dialog-host';
+  var FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
   var lastFocus = null;
+  var inertNodes = [];
+
+  function focusables(root) {
+    if (!root) return [];
+    return Array.prototype.slice.call(root.querySelectorAll(FOCUSABLE)).filter(function (el) {
+      return el.offsetParent !== null || el === document.activeElement;
+    });
+  }
+
+  function trapTab(event, root) {
+    if (event.key !== 'Tab' || !root) return;
+    var nodes = focusables(root);
+    if (!nodes.length) {
+      event.preventDefault();
+      return;
+    }
+    var first = nodes[0];
+    var last = nodes[nodes.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    } else if (!root.contains(document.activeElement)) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+
+  function setBackgroundInert(on) {
+    inertNodes.forEach(function (node) {
+      node.removeAttribute('inert');
+      node.removeAttribute('aria-hidden');
+    });
+    inertNodes = [];
+    if (!on) return;
+    var shell = document.getElementById('ws-shell');
+    var skip = document.getElementById('ws-skip');
+    [shell, skip].forEach(function (node) {
+      if (!node) return;
+      node.setAttribute('inert', '');
+      node.setAttribute('aria-hidden', 'true');
+      inertNodes.push(node);
+    });
+  }
 
   function ensureHost(id, role) {
     if (!document.getElementById('atomurus-workspace-ui-css')) {
@@ -36,7 +83,20 @@
     var item = document.createElement('div');
     item.className = 'ws-toast ws-toast-' + (options.tone || 'info');
     item.setAttribute('role', options.tone === 'danger' ? 'alert' : 'status');
-    item.textContent = String(message || '');
+    var text = document.createElement('span');
+    text.textContent = String(message || '');
+    item.appendChild(text);
+    if (options.actionLabel && typeof options.onAction === 'function') {
+      var action = document.createElement('button');
+      action.type = 'button';
+      action.className = 'ws-toast-action';
+      action.textContent = options.actionLabel;
+      action.addEventListener('click', function () {
+        options.onAction();
+        if (item.parentNode) item.parentNode.removeChild(item);
+      });
+      item.appendChild(action);
+    }
     host.appendChild(item);
     window.setTimeout(function () {
       item.classList.add('is-out');
@@ -54,6 +114,7 @@
     host.classList.remove('is-open');
     document.body.classList.remove('ws-dialog-open');
     document.removeEventListener('keydown', onDialogKey);
+    setBackgroundInert(false);
     if (lastFocus && typeof lastFocus.focus === 'function') {
       try { lastFocus.focus(); } catch (_err) {}
     }
@@ -67,19 +128,7 @@
       return;
     }
     if (event.key !== 'Tab') return;
-    var host = document.getElementById(DIALOG_ID);
-    if (!host) return;
-    var focusable = host.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-    if (!focusable.length) return;
-    var first = focusable[0];
-    var last = focusable[focusable.length - 1];
-    if (event.shiftKey && document.activeElement === first) {
-      event.preventDefault();
-      last.focus();
-    } else if (!event.shiftKey && document.activeElement === last) {
-      event.preventDefault();
-      first.focus();
-    }
+    trapTab(event, document.getElementById(DIALOG_ID));
   }
 
   function openDialog(options) {
@@ -89,6 +138,7 @@
     host.textContent = '';
     host.classList.add('is-open');
     document.body.classList.add('ws-dialog-open');
+    setBackgroundInert(true);
 
     var backdrop = document.createElement('div');
     backdrop.className = 'ws-dialog-backdrop';
@@ -184,6 +234,7 @@
     openDialog: openDialog,
     closeDialog: closeDialog,
     confirmDialog: confirmDialog,
-    setBusy: setBusy
+    setBusy: setBusy,
+    trapTab: trapTab
   };
 })(typeof window !== 'undefined' ? window : globalThis);

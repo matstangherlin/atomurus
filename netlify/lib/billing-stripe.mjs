@@ -122,6 +122,36 @@ export function stripePriceIdFor(planKey) {
   return priceId;
 }
 
+export function stripeCustomerIdFromUser(user) {
+  const app = appMetaFromUser(user);
+  const id = String(app.stripe_customer_id || '').trim();
+  return id || null;
+}
+
+export function portalReturnUrl(request) {
+  return `${stripeBaseUrl(request)}/app?section=account`;
+}
+
+export async function createPortalSession({
+  request,
+  rawUser,
+  stripe = null
+}) {
+  const customer = stripeCustomerIdFromUser(rawUser);
+  if (!customer) {
+    const err = new Error('No Stripe customer is linked to this account');
+    err.status = 409;
+    err.code = 'billing_customer_missing';
+    throw err;
+  }
+  const client = stripe || getStripeClient();
+  const session = await client.billingPortal.sessions.create({
+    customer,
+    return_url: portalReturnUrl(request)
+  });
+  return { url: session.url };
+}
+
 export async function createCheckoutSession({
   request,
   planKey,
@@ -133,9 +163,12 @@ export async function createCheckoutSession({
   const baseUrl = stripeBaseUrl(request);
   const price = billingCatalog()[planKey];
   const trialDays = checkoutTrialDays(user, rawUser);
+  const existingCustomer = stripeCustomerIdFromUser(rawUser);
   const session = await stripe.checkout.sessions.create({
     mode: 'subscription',
-    customer_email: user.email || undefined,
+    ...(existingCustomer
+      ? { customer: existingCustomer }
+      : { customer_email: user.email || undefined }),
     line_items: [{ price: priceId, quantity: 1 }],
     success_url: `${baseUrl}/app?checkout=success`,
     cancel_url: `${baseUrl}/pricing?checkout=cancelled`,

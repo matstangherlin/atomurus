@@ -14,8 +14,9 @@
     "test:auth": "node tools/test-auth-provider.mjs && node tools/test-auth-flows.mjs && node tools/test-auth-rate-limit.mjs && node tools/test-auth-sync.mjs",
     "test:study": "node tools/test-study-cloud.mjs",
     "test:review": "node tools/test-review.mjs",
-    "test:billing": "node tools/test-billing-geo.mjs",
+    "test:billing": "node tools/test-billing-geo.mjs && node tools/test-billing-lifecycle.mjs",
     "test:ux": "node tools/test-workspace-ux.mjs",
+    "test:e2e": "playwright test",
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
     "supabase:db:push": "supabase db push",
@@ -26,5 +27,8 @@
   },
   "dependencies": {
     "stripe": "^22.3.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0"
   }
 }

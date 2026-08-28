@@ -67,4 +67,28 @@ assert.equal(pub.billingPeriod, 'monthly');
 
 assert.ok(trialEndsAtForUser({ appMetadata: { atomurus_trial_ends_at: daysFromNow(10) } }));
 
+const pastDue = accessForUser({
+  createdAt: daysAgo(40),
+  appMetadata: { subscription_status: 'past_due', stripe_customer_id: 'cus_x' }
+});
+assert.equal(pastDue.isPro, true);
+assert.equal(pastDue.canManageBilling, true);
+
+const canceledStatus = accessForUser({
+  createdAt: daysAgo(40),
+  appMetadata: { atomurus_plan: 'paid', subscription_status: 'canceled' }
+});
+assert.equal(canceledStatus.plan, 'free');
+assert.equal(canceledStatus.features.studyCloud, false);
+
+const memberPub = publicUser({
+  id: '1',
+  email: 'x@y.com',
+  createdAt: daysAgo(40),
+  appMetadata: { subscription_status: 'active', stripe_customer_id: 'cus_hidden' }
+});
+assert.equal(memberPub.stripeCustomerId, null);
+assert.equal(memberPub.hasStripeCustomer, true);
+assert.equal(memberPub.canManageBilling, true);
+
 console.log('plan-access tests passed');

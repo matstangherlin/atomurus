@@ -13,10 +13,12 @@
   function request(path, options) {
     var headers = { Accept: 'application/json' };
     if (options && options.body != null) headers['Content-Type'] = 'application/json';
-    return fetch(path, Object.assign({
+    var init = Object.assign({
       credentials: 'include',
       headers: headers
-    }, options || {})).then(function (res) {
+    }, options || {});
+    if (options && options.signal) init.signal = options.signal;
+    return fetch(path, init).then(function (res) {
       return res.json().catch(function () { return {}; }).then(function (data) {
         if (!res.ok || data.ok === false) {
           var err = new Error(data.error || 'Request failed');
@@ -29,6 +31,13 @@
         }
         return data;
       });
+    }).catch(function (err) {
+      if (err && (err.name === 'AbortError' || err.code === 'ABORT_ERR')) throw err;
+      if (err && err.status) throw err;
+      var network = new Error('network');
+      network.status = 0;
+      network.code = 'network';
+      throw network;
     });
   }
 
@@ -65,9 +74,12 @@
       });
     },
     items: function (params, force) {
-      var key = cacheKey(['items', params && params.type, params && params.exclude, params && params.itemKey, params && params.tag, params && params.hasNote, params && params.cursor, params && params.limit]);
-      if (!force && itemsCache[key]) return Promise.resolve(itemsCache[key]);
-      return request('/api/study/items' + queryString(params || {})).then(function (data) {
+      var query = Object.assign({}, params || {});
+      var signal = query.signal;
+      delete query.signal;
+      var key = cacheKey(['items', query.type, query.exclude, query.itemKey, query.tag, query.hasNote, query.q, query.cursor, query.limit]);
+      if (!force && !signal && itemsCache[key]) return Promise.resolve(itemsCache[key]);
+      return request('/api/study/items' + queryString(query), signal ? { signal: signal } : undefined).then(function (data) {
         itemsCache[key] = data;
         return data;
       });

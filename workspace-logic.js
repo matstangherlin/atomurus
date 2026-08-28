@@ -42,9 +42,37 @@
     return Boolean(user && user.isPro);
   }
 
+  function isAutoTrialUser(user) {
+    return Boolean(user && user.planSource === 'trial');
+  }
+
+  function isBillingTrialUser(user) {
+    return Boolean(user && user.planSource === 'billing_trial');
+  }
+
   function isTrialUser(user) {
-    if (!user) return false;
-    return user.planSource === 'trial' || user.planSource === 'billing_trial';
+    return isAutoTrialUser(user) || isBillingTrialUser(user);
+  }
+
+  function accountPlanState(user) {
+    if (!user) return { kind: 'guest', canManage: false };
+    var status = String(user.subscriptionStatus || '').toLowerCase();
+    var canManage = Boolean(user.canManageBilling);
+    if (isAutoTrialUser(user)) return { kind: 'auto_trial', canManage: false };
+    if (user.isPro && status === 'past_due') return { kind: 'payment_issue', canManage: canManage };
+    if (user.isPro && user.cancelAtPeriodEnd) return { kind: 'cancel_scheduled', canManage: canManage };
+    if (isBillingTrialUser(user)) return { kind: 'billing_trial', canManage: canManage };
+    if (user.isPro) return { kind: 'paid', canManage: canManage };
+    return { kind: 'free', canManage: false };
+  }
+
+  function emitWorkspaceEvent(name, detail) {
+    if (typeof window === 'undefined' || typeof window.dispatchEvent !== 'function') return;
+    try {
+      window.dispatchEvent(new CustomEvent('atomurus:analytics', {
+        detail: Object.assign({ source: 'workspace', name: name }, detail || {})
+      }));
+    } catch (_err) {}
   }
 
   function planBadge(user) {
@@ -222,7 +250,11 @@
     isValidSetId: isValidSetId,
     setIdFromQuery: setIdFromQuery,
     isProUser: isProUser,
+    isAutoTrialUser: isAutoTrialUser,
+    isBillingTrialUser: isBillingTrialUser,
     isTrialUser: isTrialUser,
+    accountPlanState: accountPlanState,
+    emitWorkspaceEvent: emitWorkspaceEvent,
     planBadge: planBadge,
     trialDaysLeft: trialDaysLeft,
     greetingKey: greetingKey,

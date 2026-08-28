@@ -29,14 +29,10 @@
       proFeatures: [
         'Everything in Free',
         'No ads',
-        'Study Library',
-        'Notes & tags',
-        'Calculator History',
+        'Study Library, notes and calculator history',
+        'Study Sets, flashcards and Smart Review',
         'Study Progress',
-        'Study Sets',
-        'Flashcards',
         'Automatic card generation',
-        'Smart Review',
         'Spaced repetition'
       ],
       checkoutGuest: 'Create account',
@@ -120,14 +116,10 @@
       proFeatures: [
         'Tudo do Free',
         'Sem anúncios',
-        'Biblioteca de estudos',
-        'Notas e tags',
-        'Histórico de calculadoras',
+        'Biblioteca, notas e histórico de calculadoras',
+        'Study Sets, flashcards e Smart Review',
         'Progresso de estudo',
-        'Study Sets',
-        'Flashcards',
         'Geração automática de cards',
-        'Smart Review',
         'Repetição espaçada'
       ],
       checkoutGuest: 'Criar conta',
@@ -442,7 +434,7 @@
       return;
     }
     var user = activeState().user;
-    if (user && user.isPro && user.planSource !== 'trial' && user.planSource !== 'billing_trial') {
+    if (user && user.canManageBilling) {
       location.assign('/app?section=account');
       return;
     }

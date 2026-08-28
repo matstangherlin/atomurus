@@ -157,7 +157,10 @@ const DICT = {
           saveTitle: 'Save this to your Study Library',
           saveBody: 'Create an Atomurus account and start your 30-day Pro trial to save and sync study material.',
           lockedBody: 'Save materials, notes and study progress across devices.',
-          proBadge: 'PRO'
+          proBadge: 'PRO',
+          couldNotSave: 'Could not save. Try again.',
+          genPartial: 'Added to Study Set, but flashcards could not be generated.',
+          tryGenerate: 'Try generating again'
         },
         ws: {
           menu: 'Menu',
@@ -185,8 +188,8 @@ const DICT = {
         proName:   'Pro',
         pro1:      'Ad-free workspace',
         pro2:      'Private dashboard + plan status',
-        pro3:      'Study Library, notes, history and Smart Review',
-        pro4:      'Study Library, flashcards and Smart Review',
+        pro3:      'Study Library, notes and calculator history',
+        pro4:      'Study Sets, flashcards and Smart Review',
         ctaTrial:  'Start 30-day Pro trial',
         ctaWorkspace: 'Open account access',
         ctaAccount: 'Account',
@@ -201,7 +204,7 @@ const DICT = {
         next1:     'Stripe Checkout live for BRL and USD (monthly / annual)',
         next2:     'Webhook syncs subscription status into account metadata',
         next3:     'Mercado Pago / Pix for Brazil (roadmap)',
-        next4:     'Customer portal for cancel / renew self-serve (roadmap)',
+        next4:     'Stripe Customer Portal live for cancel / renew self-serve',
         dsKScope: 'scope',
         dsKTrial: 'trial',
         dsKCurrency: 'currency',
@@ -2137,7 +2140,10 @@ const DICT = {
           saveTitle: 'Salve isto na sua Biblioteca',
           saveBody: 'Crie uma conta Atomurus e comece seu trial Pro de 30 dias para salvar e sincronizar material de estudo.',
           lockedBody: 'Salve materiais, notas e progresso de estudo em todos os dispositivos.',
-          proBadge: 'PRO'
+          proBadge: 'PRO',
+          couldNotSave: 'Não foi possível salvar. Tente de novo.',
+          genPartial: 'Adicionado ao Study Set, mas não foi possível gerar os flashcards.',
+          tryGenerate: 'Tentar gerar novamente'
         },
         ws: {
           menu: 'Menu',
@@ -2165,8 +2171,8 @@ const DICT = {
         proName:   'Pro',
         pro1:      'Workspace sem anúncios',
         pro2:      'Dashboard privado + status do plano',
-        pro3:      'Biblioteca, notas, histórico e Smart Review',
-        pro4:      'Biblioteca, flashcards e Smart Review',
+        pro3:      'Biblioteca, notas e histórico de calculadoras',
+        pro4:      'Study Sets, flashcards e Smart Review',
         ctaTrial:  'Começar trial Pro de 30 dias',
         ctaWorkspace: 'Abrir acesso da conta',
         ctaAccount: 'Conta',
@@ -2181,7 +2187,7 @@ const DICT = {
         next1:     'Stripe Checkout no ar para BRL e USD (mensal / anual)',
         next2:     'Webhook sincroniza status da assinatura na conta',
         next3:     'Mercado Pago / Pix para o Brasil (roadmap)',
-        next4:     'Portal do cliente para cancelar / renovar (roadmap)',
+        next4:     'Portal Stripe no ar para cancelar / renovar',
         dsKScope: 'escopo',
         dsKTrial: 'avaliação',
         dsKCurrency: 'moeda',

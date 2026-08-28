@@ -184,3 +184,23 @@ export function tagContainsFilter(tag) {
 export function notePresentFilter() {
   return 'and=(note.neq.%22%22)';
 }
+
+export const STUDY_SEARCH_MAX = 100;
+
+export function sanitizeStudySearch(raw) {
+  const text = String(raw == null ? '' : raw).trim().slice(0, STUDY_SEARCH_MAX);
+  if (!text) return '';
+  return text
+    .replace(/[\\%_*(),]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+export function studySearchFilter(raw) {
+  const safe = sanitizeStudySearch(raw);
+  if (!safe) return '';
+  const wildcard = `*${safe}*`;
+  const encoded = encodeURIComponent(wildcard);
+  const tagLiteral = JSON.stringify(safe);
+  return `or=(title.ilike.${encoded},item_key.ilike.${encoded},tags.cs.{${tagLiteral}})`;
+}
