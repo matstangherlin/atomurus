@@ -1243,6 +1243,41 @@ html body .art-kicker .art-cat {
   min-height: 28px;
   border-radius: 999px !important;
 }
+html body .scc-keypad-tabs {
+  background: color-mix(in oklab, var(--lc-paper) 70%, var(--lc-bg)) !important;
+  border: 1px solid var(--lc-rule) !important;
+  border-radius: var(--ps-radius-md) !important;
+}
+html body .scc-keypad-tab {
+  min-height: 36px !important;
+  border-radius: var(--ps-radius-md) !important;
+  font-weight: 550 !important;
+}
+html body .scc-keypad-tab.is-on {
+  background: color-mix(in oklab, var(--lc-green) 10%, transparent) !important;
+  color: var(--lc-green) !important;
+  box-shadow: none !important;
+}
+html body .sci-mode-btn.is-on {
+  background: color-mix(in oklab, var(--lc-green) 10%, transparent) !important;
+  color: var(--lc-green) !important;
+  box-shadow: none !important;
+}
+html body .ion-btn {
+  min-height: 36px !important;
+  border-radius: 999px !important;
+  font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif) !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+html body .ion-btn.active {
+  background: var(--lc-green) !important;
+  color: #F8F5EC !important;
+  border-color: var(--lc-green) !important;
+}
+[data-theme="dark"] html body .ion-btn.active {
+  color: #0E0D0C !important;
+}
 html body .toast {
   background: var(--lc-paper) !important;
   color: var(--lc-ink) !important;

@@ -89,6 +89,10 @@ test('public table, calculators, login and pricing share the new chrome', async 
   const deviceBg = await page.locator('.scc-device').evaluate((el) => getComputedStyle(el).backgroundColor);
   const deviceR = Number((deviceBg.match(/rgb\(\s*(\d+)/) || [0, '0'])[1]);
   expect(deviceR).toBeGreaterThan(180);
+  const padOn = await page.locator('.scc-keypad-tab.is-on').evaluate((el) => getComputedStyle(el).backgroundColor);
+  expect(padOn).not.toBe('rgb(20, 18, 14)');
+  const padColor = await page.locator('.scc-keypad-tab.is-on').evaluate((el) => getComputedStyle(el).color);
+  expect(padColor).toMatch(/rgb\(\s*30,\s*106,\s*80\s*\)/);
   await saveShot(page, 'desktop-public-calculators');
 
   await page.goto('/explore.html');
