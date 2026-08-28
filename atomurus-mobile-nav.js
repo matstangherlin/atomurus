@@ -22,10 +22,11 @@
     { href: 'viewer/isomerism/constitutional/function.html', label: 'Isomerism', i18n: 'common.nav.isomerism', n: '05' },
     { href: 'calculators.html',                label: 'Calculators',   i18n: 'common.nav.calc',          n: '06' },
     { href: 'explore.html',                    label: 'Explore',       i18n: 'common.nav.explore',       n: '07' },
+    { href: '/app',                            label: 'Study',         i18n: 'common.nav.study',         n: '08' },
     { sep: true },
-    { href: 'config.html',                     label: 'Settings',      i18n: 'common.nav.settings',      n: '08' },
-    { href: 'about.html',                      label: 'About',         i18n: 'common.nav.about',         n: '09' },
-    { href: 'contact.html',                    label: 'Contact',       i18n: 'common.nav.contact',       n: '10' },
+    { href: 'config.html',                     label: 'Settings',      i18n: 'common.nav.settings',      n: '09' },
+    { href: 'about.html',                      label: 'About',         i18n: 'common.nav.about',         n: '10' },
+    { href: 'contact.html',                    label: 'Contact',       i18n: 'common.nav.contact',       n: '11' },
   ];
 
   // Make hrefs work whether we are at site root or one level deep (e.g. viewer/)

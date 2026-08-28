@@ -25,6 +25,8 @@ test('public home uses workspace chrome, not lab-console ticker', async ({ page 
   await page.goto('/index.html');
   await expect(page.locator('.ps-shell')).toBeVisible();
   await expect(page.locator('.ps-pub-sidebar')).toBeVisible();
+  await expect(page.locator('.ps-pub-sidebar a[href*="/app"]')).toBeVisible();
+  await expect(page.locator('.ps-pub-sidebar a[href*="/app"]')).toContainText(/Study/i);
   await expect(page.locator('.lc-topnav-name')).toBeVisible();
   await expect.poll(() => fontFamily(page.locator('.lc-topnav-name'))).toMatch(/Instrument Serif/i);
   await expect(page.locator('.lc-tn-no').first()).toBeHidden();
@@ -80,6 +82,8 @@ test('public table, calculators, login and pricing share the new chrome', async 
   await expect(page.locator('.ps-shell .nav-label')).toBeHidden();
   await expect(page.locator('.sidebar-foot a[href*="login"]')).toBeVisible();
   await expect(page.locator('.sidebar-foot a[href*="pricing"]')).toBeVisible();
+  await expect(page.locator('.ps-shell aside.sidebar a[href*="/app"]')).toBeVisible();
+  await expect(page.locator('.ps-shell aside.sidebar a[href*="/app"]')).toContainText(/Study/i);
   await expect(page.locator('.data-strip').first()).toBeHidden();
   await expect.poll(() => fontFamily(page.locator('.ph-title'))).toMatch(/Instrument Serif/i);
   const innerMax = await page.locator('.content-inner').evaluate((el) => getComputedStyle(el).maxWidth);

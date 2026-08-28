@@ -33,6 +33,8 @@
     '<svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="6" r="2.2" stroke="currentColor" stroke-width="1.3"/><path d="M3.5 13c.8-2.2 2.4-3.2 4.5-3.2s3.7 1 4.5 3.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>';
   var PRICING_ICON =
     '<svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1.8l1.6 3.2 3.5.5-2.5 2.5.6 3.5L8 10.3 4.8 11.5l.6-3.5-2.5-2.5 3.5-.5L8 1.8z" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>';
+  var STUDY_ICON =
+    '<svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M3 3h4v10H3zM8 5h5v8H8z" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M5 6v4M10.5 8v3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>';
   var KICKER_MARK = /^\s*§\s*\d*[.\d]*\s*[·•—–-]*\s*/;
 
   function ensureToolFoot(aside) {
@@ -54,6 +56,56 @@
       pricing.href = p + 'pricing.html';
       pricing.innerHTML = PRICING_ICON + '<span data-i18n="common.nav.pricing">Pricing</span>';
       foot.appendChild(pricing);
+    }
+  }
+
+  function studyHref() {
+    return '/app';
+  }
+
+  function makeStudyNavItem(className) {
+    var a = document.createElement('a');
+    a.className = className || 'nav-item';
+    a.href = studyHref();
+    if ((className || '').indexOf('lc-mobile-menu-item') !== -1) {
+      a.innerHTML = '<span class="lc-mobile-menu-label" data-i18n="common.nav.study">Study</span>';
+    } else {
+      a.innerHTML = STUDY_ICON + '<span data-i18n="common.nav.study">Study</span>';
+    }
+    return a;
+  }
+
+  function ensureStudyNav(root) {
+    if (!root) return;
+    if (root.querySelector('a[href="/app"], a[href$="app.html"], a[href*="/app?"]')) return;
+    var item = makeStudyNavItem('nav-item');
+    var explore = null;
+    root.querySelectorAll('a.nav-item[href]').forEach(function (link) {
+      if ((link.getAttribute('href') || '').indexOf('explore') !== -1) explore = link;
+    });
+    if (explore && explore.parentNode) {
+      if (explore.nextSibling) explore.parentNode.insertBefore(item, explore.nextSibling);
+      else explore.parentNode.appendChild(item);
+      return;
+    }
+    var section = root.querySelector('.nav-section');
+    if (section) section.appendChild(item);
+  }
+
+  function ensureMobileStudyLink() {
+    var list = document.querySelector('.lc-mobile-menu-list');
+    if (!list) return;
+    if (list.querySelector('a[href="/app"], a[href$="app.html"]')) return;
+    var item = makeStudyNavItem('lc-mobile-menu-item');
+    var explore = null;
+    list.querySelectorAll('a[href]').forEach(function (link) {
+      if ((link.getAttribute('href') || '').indexOf('explore') !== -1) explore = link;
+    });
+    if (explore && explore.parentNode) {
+      if (explore.nextSibling) explore.parentNode.insertBefore(item, explore.nextSibling);
+      else explore.parentNode.appendChild(item);
+    } else {
+      list.appendChild(item);
     }
   }
 
@@ -143,7 +195,8 @@
         (target.indexOf('isomerism') !== -1 && here.indexOf('isomerism') !== -1) ||
         (target.indexOf('login') !== -1 && here.indexOf('login') !== -1) ||
         (target.indexOf('config') !== -1 && here.indexOf('config') !== -1) ||
-        (target.indexOf('pricing') !== -1 && here.indexOf('pricing') !== -1);
+        (target.indexOf('pricing') !== -1 && here.indexOf('pricing') !== -1) ||
+        (target.indexOf('/app') !== -1 && (here === '/app' || /\/app(?:\.html)?$/.test(here)));
       if (on) a.classList.add('active');
     });
   }
@@ -171,6 +224,9 @@
           '<a class="nav-item" href="' + p + 'explore.html">' +
             '<svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.3" stroke="currentColor" stroke-width="1.1" fill="none"/><rect x="9" y="1" width="6" height="6" rx="1.3" stroke="currentColor" stroke-width="1.1" fill="none"/><rect x="1" y="9" width="6" height="6" rx="1.3" stroke="currentColor" stroke-width="1.1" fill="none"/><circle cx="12" cy="12" r="2.6" stroke="currentColor" stroke-width="1.3" fill="none"/><line x1="14" y1="14" x2="15.5" y2="15.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>' +
             '<span data-i18n="common.nav.explore">Explore</span></a>' +
+          '<a class="nav-item" href="/app">' +
+            '<svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M3 3h4v10H3zM8 5h5v8H8z" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M5 6v4M10.5 8v3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>' +
+            '<span data-i18n="common.nav.study">Study</span></a>' +
         '</div>' +
       '</nav>' +
       '<div class="sidebar-foot">' +
@@ -210,6 +266,7 @@
 
     ensureSearch(topbar, prefix());
     ensureToolFoot(aside);
+    ensureStudyNav(aside);
 
     var overlay = document.querySelector('body > .mobile-overlay');
     shell.appendChild(topbar);
@@ -246,6 +303,7 @@
     document.body.classList.add('ps-body');
     ensureSearch(topnav, prefix());
     normalizeLandingCta(topnav);
+    ensureMobileStudyLink();
     applyI18n(shell);
     return true;
   }
