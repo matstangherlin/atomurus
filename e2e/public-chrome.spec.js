@@ -35,6 +35,7 @@ test('public home uses workspace chrome, not lab-console ticker', async ({ page 
   await expect(page.locator('.lc-hero-title')).toBeVisible();
   await expect(page.locator('#preview-grid .lc-preview-cell').first()).toBeVisible();
   await expect(page.locator('.lc-mod-card')).toHaveCount(4);
+  await expect(page.locator('.lc-footer-bottom > span:has(.lc-st-dot)')).toBeHidden();
   await saveShot(page, 'desktop-public-home');
 });
 
@@ -142,6 +143,48 @@ test('public table, calculators, login and pricing share the new chrome', async 
   await expect(page.locator('.price-card, .lc-doc-title').first()).toBeVisible();
   await expect.poll(() => fontFamily(page.locator('.lc-topnav-name'))).toMatch(/Instrument Serif/i);
   await saveShot(page, 'desktop-public-pricing');
+});
+
+test('settings, compare, docs and articles keep the workspace pattern', async ({ page }) => {
+  await page.goto('/config.html');
+  await expect(page.locator('.data-strip').first()).toBeHidden();
+  const toggleBg = await page.locator('.settings-toggle.active').first().evaluate((el) => getComputedStyle(el).backgroundColor);
+  expect(toggleBg).toMatch(/rgb\(\s*30,\s*106,\s*80\s*\)/);
+  const segBg = await page.locator('.seg-btn.active').first().evaluate((el) => getComputedStyle(el).backgroundColor);
+  expect(segBg).not.toBe('rgb(20, 18, 14)');
+  const segColor = await page.locator('.seg-btn.active').first().evaluate((el) => getComputedStyle(el).color);
+  expect(segColor).toMatch(/rgb\(\s*30,\s*106,\s*80\s*\)/);
+  await saveShot(page, 'desktop-public-config');
+
+  await page.goto('/periodic-table/compare.html');
+  await expect(page.locator('.pt-tab.active')).toBeVisible();
+  const cmpTab = await page.locator('.pt-tab.active').evaluate((el) => getComputedStyle(el).color);
+  expect(cmpTab).toMatch(/rgb\(\s*30,\s*106,\s*80\s*\)/);
+  await expect(page.locator('.cmp-slot').first()).toBeVisible();
+  await expect(page.locator('.data-strip').first()).toBeHidden();
+  await saveShot(page, 'desktop-public-compare');
+
+  await page.goto('/periodic-table/trends.html');
+  await expect(page.locator('.pt-tab.active')).toBeVisible();
+  await expect(page.locator('.data-strip').first()).toBeHidden();
+  await saveShot(page, 'desktop-public-trends');
+
+  await page.goto('/about.html');
+  await expect(page.locator('.lc-doc-title')).toBeVisible();
+  await expect.poll(() => fontFamily(page.locator('.lc-doc-title'))).toMatch(/Instrument Serif/i);
+  await expect(page.locator('.lc-landing .data-strip, .data-strip').first()).toBeHidden();
+  await saveShot(page, 'desktop-public-about');
+
+  await page.goto('/explore/what-is-an-atom.html');
+  await expect(page.locator('.art-title')).toBeVisible();
+  await expect.poll(() => fontFamily(page.locator('.art-title'))).toMatch(/Instrument Serif/i);
+  await expect(page.locator('.data-strip').first()).toBeHidden();
+  await saveShot(page, 'desktop-public-article');
+
+  await page.goto('/viewer/isomerism.html');
+  await expect(page.locator('.data-strip').first()).toBeHidden();
+  await expect(page.locator('.vz-tab').first()).toBeVisible();
+  await saveShot(page, 'desktop-public-isomerism');
 });
 
 test('public home dark mode and mobile keep the workspace chrome', async ({ page }) => {
