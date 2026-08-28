@@ -111,6 +111,7 @@ test('public table, calculators, login and pricing share the new chrome', async 
   await expect(page.locator('#mm-result-meta')).toContainText(/element/i);
   await page.locator('.calc-menu-item[data-target="scientific"]').click();
   await expect(page.locator('.scc-device')).toBeVisible();
+  await expect(page.locator('#lab-tool-gate-scientific')).toBeVisible();
   const deviceBg = await page.locator('.scc-device').evaluate((el) => getComputedStyle(el).backgroundColor);
   const deviceR = Number((deviceBg.match(/rgb\(\s*(\d+)/) || [0, '0'])[1]);
   expect(deviceR).toBeGreaterThan(180);

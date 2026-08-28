@@ -195,7 +195,9 @@ assert.doesNotMatch(pricing, /alert\s*\(/);
 assert.match(pricing, /annualSavePercent/);
 assert.match(pricing, /Study Insights/);
 assert.match(pricing, /Focus Review/);
-assert.match(pricing, /Saved Lab Sessions/);
+assert.match(pricing, /Extra calculators with a free account/);
+assert.match(pricing, /3D molecule viewer, atomic models, allotropes and isomerism/);
+assert.doesNotMatch(pricing, /calculators and viewers stay open/);
 assert.match(pricing, /comingTitle/);
 assert.doesNotMatch(pricing, /Study Library, notes and calculator history/);
 assert.doesNotMatch(pricing, /Pro Lab advanced tools/);
@@ -206,7 +208,7 @@ assert.match(pricingHtml, /id="pricing-free-amount"/);
 assert.doesNotMatch(pricingHtml, /upcoming tutors/i);
 
 const dashboard = readFileSync(new URL('../netlify/functions/private-dashboard.mjs', import.meta.url), 'utf8');
-assert.match(dashboard, /Chemistry Lab/);
+assert.match(dashboard, /molar mass and dilution/);
 assert.match(dashboard, /Study Insights/);
 assert.match(dashboard, /id: 'pro-lab'/);
 assert.match(dashboard, /id: 'chemistry-solver'/);
@@ -232,5 +234,8 @@ assert.doesNotMatch(studySave, /setMsg\(msg, 'Could not save\.'\)/);
 
 const dictSrc = readFileSync(new URL('../tools/i18n-dict-source.js', import.meta.url), 'utf8');
 assert.doesNotMatch(dictSrc, /export flags/);
+
+const publicWorkspace = readFileSync(new URL('../assets/public-workspace.js', import.meta.url), 'utf8');
+assert.match(publicWorkspace, /lab-tool-gate\.js/);
 
 console.log('workspace ux tests passed');

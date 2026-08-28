@@ -18,9 +18,8 @@
         'Periodic Table',
         'Element pages',
         'Trends & isotopes',
-        'Chemistry calculators',
-        'Atomic models',
-        'Molecule viewer',
+        'Molar mass and dilution',
+        'Extra calculators with a free account',
         'Explore chemistry content'
       ],
       freeCta: 'Open lab',
@@ -66,7 +65,9 @@
             'Study progress',
             'Advanced analysis',
             'Element, molecule and atomic compare',
-            'Saved Lab Sessions'
+            'Saved Lab Sessions',
+            '3D molecule viewer, atomic models, allotropes and isomerism',
+            'Public element compare, stoichiometry and thermo'
           ]
         },
         {
@@ -100,8 +101,9 @@
       matrixFeature: 'Feature',
       matrix: [
         ['Periodic Table', 'yes', 'yes'],
-        ['Calculators', 'yes', 'yes'],
-        ['Atomic models', 'yes', 'yes'],
+        ['Molar mass and dilution', 'yes', 'yes'],
+        ['Extra calculators (after sign-in)', 'yes', 'yes'],
+        ['3D viewers, compare, public stoich/thermo', 'no', 'yes'],
         ['Study Library', 'no', 'yes'],
         ['Study Sets', 'no', 'yes'],
         ['Smart Review', 'no', 'yes'],
@@ -125,7 +127,7 @@
         ['03 Review', 'Atomurus schedules what you should review next.']
       ],
       keepFreeTitle: 'What stays free',
-      keepFree: 'The periodic table, element pages, articles, calculators and viewers stay open. Billing should never become a gate in front of chemistry fundamentals.',
+      keepFree: 'The periodic table, element pages, Explore articles, molar mass and dilution stay open — no account required. Extra calculators unlock after you create a free account. 3D viewers, compare and public stoichiometry/thermo are Pro. Billing should never become a wall in front of the table.',
       geoBRL: 'Brazil pricing',
       geoUSD: 'International pricing',
       periodMonthly: 'Monthly',
@@ -161,9 +163,8 @@
         'Tabela periódica',
         'Páginas dos elementos',
         'Tendências e isótopos',
-        'Calculadoras de química',
-        'Modelos atômicos',
-        'Visualizador de moléculas',
+        'Massa molar e diluição',
+        'Calculadoras extras com conta gratuita',
         'Conteúdo Explore de química'
       ],
       freeCta: 'Abrir lab',
@@ -209,7 +210,9 @@
             'Progresso de estudo',
             'Análise avançada',
             'Comparação de elementos, moléculas e átomos',
-            'Sessões salvas do Lab'
+            'Sessões salvas do Lab',
+            'Visualizador 3D, modelos atômicos, alótropos e isomeria',
+            'Comparação pública, estequiometria e termo públicos'
           ]
         },
         {
@@ -243,8 +246,9 @@
       matrixFeature: 'Recurso',
       matrix: [
         ['Tabela periódica', 'yes', 'yes'],
-        ['Calculadoras', 'yes', 'yes'],
-        ['Modelos atômicos', 'yes', 'yes'],
+        ['Massa molar e diluição', 'yes', 'yes'],
+        ['Calculadoras extras (após login)', 'yes', 'yes'],
+        ['3D, comparação, esteq./termo públicos', 'no', 'yes'],
         ['Biblioteca de estudos', 'no', 'yes'],
         ['Study Sets', 'no', 'yes'],
         ['Smart Review', 'no', 'yes'],
@@ -268,7 +272,7 @@
         ['03 Revisar', 'O Atomurus agenda o que você deve revisar a seguir.']
       ],
       keepFreeTitle: 'O que continua grátis',
-      keepFree: 'A tabela periódica, as páginas dos elementos, artigos, calculadoras e visualizadores continuam abertos. Billing não deve virar uma barreira na frente dos fundamentos de química.',
+      keepFree: 'Tabela periódica, páginas dos elementos, artigos Explore, massa molar e diluição continuam abertos — sem conta. Calculadoras extras liberam depois de criar uma conta gratuita. Visualizadores 3D, comparação e estequiometria/termo públicos são Pro. Billing não deve virar um muro na frente da tabela.',
       geoBRL: 'preço Brasil',
       geoUSD: 'preço internacional',
       periodMonthly: 'Mensal',

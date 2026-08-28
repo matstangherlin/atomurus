@@ -20,7 +20,7 @@ export default async function handler(request) {
     {
       id: 'chemistry-lab',
       label: 'Chemistry Lab',
-      description: 'Open the public lab: periodic table, models and calculators.',
+      description: 'Open the public lab: periodic table, molar mass and dilution.',
       href: '/periodic-table',
       state: 'available'
     },

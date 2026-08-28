@@ -13,11 +13,26 @@ const fresh = accessForUser({ createdAt: daysAgo(2), email: 'a@b.com' });
 assert.equal(fresh.plan, 'paid');
 assert.equal(fresh.planSource, 'trial');
 assert.equal(fresh.adsFree, true);
+assert.equal(fresh.features.scientificCalculator, true);
+assert.equal(fresh.features.interactiveViewers, true);
+assert.equal(fresh.features.publicStoichiometry, true);
 assert.ok(fresh.trialEndsAt);
 
 const expired = accessForUser({ createdAt: daysAgo(40), email: 'a@b.com' });
 assert.equal(expired.plan, 'free');
 assert.equal(expired.adsFree, false);
+assert.equal(expired.features.scientificCalculator, true);
+assert.equal(expired.features.unitConverter, true);
+assert.equal(expired.features.idealGasCalculator, true);
+assert.equal(expired.features.phCalculator, true);
+assert.equal(expired.features.interactiveViewers, false);
+assert.equal(expired.features.publicStoichiometry, false);
+assert.equal(expired.features.publicThermodynamics, false);
+assert.equal(expired.features.publicElementCompare, false);
+
+const guest = accessForUser({});
+assert.equal(guest.features.scientificCalculator, false);
+assert.equal(guest.features.interactiveViewers, false);
 
 const paid = accessForUser({
   createdAt: daysAgo(40),

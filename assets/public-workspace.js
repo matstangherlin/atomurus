@@ -308,6 +308,15 @@
     return true;
   }
 
+  function loadLabGate() {
+    if (document.querySelector('script[data-lab-tool-gate]')) return;
+    var s = document.createElement('script');
+    s.src = '/assets/lab-tool-gate.js?v=202608282400';
+    s.defer = true;
+    s.setAttribute('data-lab-tool-gate', '1');
+    document.head.appendChild(s);
+  }
+
   function run() {
     try {
       if (document.body && document.body.classList.contains('ws-body')) {
@@ -315,6 +324,7 @@
         return;
       }
       hoistToolShell() || hoistLandingShell();
+      loadLabGate();
       polishCopy();
       setTimeout(function () {
         polishCopy();

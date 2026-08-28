@@ -113,8 +113,15 @@ function assertPricingSurface() {
   if (!fs.existsSync(path.join(ROOT, 'netlify', 'lib', 'plan-access.mjs'))) {
     fail('netlify/lib/plan-access.mjs is missing');
   }
-  if (!fs.existsSync(path.join(ROOT, 'netlify', 'functions', 'ads-config.mjs'))) {
-    fail('netlify/functions/ads-config.mjs is missing');
+  if (!fs.existsSync(path.join(ROOT, 'netlify', 'lib', 'lab-tool-access.mjs'))) {
+    fail('netlify/lib/lab-tool-access.mjs is missing');
+  }
+  if (!fs.existsSync(path.join(ROOT, 'assets', 'lab-tool-gate.js'))) {
+    fail('assets/lab-tool-gate.js is missing');
+  }
+  const workspace = read('assets/public-workspace.js');
+  if (!workspace.includes('lab-tool-gate.js')) {
+    fail('public-workspace.js must inject lab-tool-gate.js');
   }
   const netlify = read('netlify.toml');
   if (!netlify.includes('/api/ads-config') || !netlify.includes('/pricing')) {

@@ -398,6 +398,9 @@ assert.match(planAccess, /reactionBalancer: isPro/);
 assert.match(planAccess, /stoichiometrySolver: isPro/);
 assert.match(planAccess, /formulaSolver: isPro/);
 assert.match(planAccess, /solutionBuilder: isPro/);
+assert.match(planAccess, /scientificCalculator: signedIn/);
+assert.match(planAccess, /interactiveViewers: isPro/);
+assert.match(planAccess, /publicStoichiometry: isPro/);
 
 const calcFn = readFileSync(new URL('../netlify/functions/pro-lab-calculate.mjs', import.meta.url), 'utf8');
 assert.match(calcFn, /requireFeature\(request, 'advancedCalculations'\)/);

@@ -118,6 +118,7 @@ export function accessForUser(user) {
   }
 
   const isPro = plan === 'paid' || plan === 'admin';
+  const signedIn = Boolean(user?.id || user?.email);
   const cancelAtPeriodEnd = isPaidSubscriptionStatus(subscriptionStatus) && truthyFlag(app.cancel_at_period_end);
   const currentPeriodEnd = parseIso(app.current_period_end)
     ? new Date(parseIso(app.current_period_end)).toISOString()
@@ -171,7 +172,15 @@ export function accessForUser(user) {
       limitingReagentSolver: isPro,
       yieldSolver: isPro,
       formulaSolver: isPro,
-      solutionBuilder: isPro
+      solutionBuilder: isPro,
+      scientificCalculator: signedIn,
+      unitConverter: signedIn,
+      idealGasCalculator: signedIn,
+      phCalculator: signedIn,
+      interactiveViewers: isPro,
+      publicStoichiometry: isPro,
+      publicThermodynamics: isPro,
+      publicElementCompare: isPro
     }
   };
 }
