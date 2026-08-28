@@ -6,6 +6,9 @@
   var overviewCache = null;
   var itemsCache = Object.create(null);
   var progressCache = Object.create(null);
+  var setsCache = null;
+  var setCache = Object.create(null);
+  var reviewOverviewCache = null;
 
   function request(path, options) {
     var headers = { Accept: 'application/json' };
@@ -48,6 +51,9 @@
     overviewCache = null;
     itemsCache = Object.create(null);
     progressCache = Object.create(null);
+    setsCache = null;
+    setCache = Object.create(null);
+    reviewOverviewCache = null;
   }
 
   var api = {
@@ -105,6 +111,116 @@
       }).then(function (data) {
         progressCache = Object.create(null);
         overviewCache = null;
+        return data;
+      });
+    },
+    listSets: function (force) {
+      if (!force && setsCache) return Promise.resolve(setsCache);
+      return request('/api/study/sets').then(function (data) {
+        setsCache = data;
+        return data;
+      });
+    },
+    createSet: function (body) {
+      return request('/api/study/sets', {
+        method: 'POST',
+        body: JSON.stringify(body || {})
+      }).then(function (data) {
+        invalidate();
+        return data;
+      });
+    },
+    getSet: function (id, params, force) {
+      var key = cacheKey(['set', id, params && params.cursor, params && params.limit]);
+      if (!force && setCache[key]) return Promise.resolve(setCache[key]);
+      return request('/api/study/set' + queryString(Object.assign({ id: id }, params || {}))).then(function (data) {
+        setCache[key] = data;
+        return data;
+      });
+    },
+    updateSet: function (body) {
+      return request('/api/study/set', {
+        method: 'PUT',
+        body: JSON.stringify(body || {})
+      }).then(function (data) {
+        invalidate();
+        return data;
+      });
+    },
+    deleteSet: function (id) {
+      return request('/api/study/set?id=' + encodeURIComponent(id), { method: 'DELETE' }).then(function (data) {
+        invalidate();
+        return data;
+      });
+    },
+    addSetItem: function (body) {
+      return request('/api/study/set-item', {
+        method: 'PUT',
+        body: JSON.stringify(body || {})
+      }).then(function (data) {
+        invalidate();
+        return data;
+      });
+    },
+    removeSetItem: function (setId, itemId) {
+      return request('/api/study/set-item?setId=' + encodeURIComponent(setId) + '&itemId=' + encodeURIComponent(itemId), {
+        method: 'DELETE'
+      }).then(function (data) {
+        invalidate();
+        return data;
+      });
+    },
+    createCard: function (body) {
+      return request('/api/study/card', {
+        method: 'POST',
+        body: JSON.stringify(body || {})
+      }).then(function (data) {
+        invalidate();
+        return data;
+      });
+    },
+    updateCard: function (body) {
+      return request('/api/study/card', {
+        method: 'PUT',
+        body: JSON.stringify(body || {})
+      }).then(function (data) {
+        invalidate();
+        return data;
+      });
+    },
+    deleteCard: function (id) {
+      return request('/api/study/card?id=' + encodeURIComponent(id), { method: 'DELETE' }).then(function (data) {
+        invalidate();
+        return data;
+      });
+    },
+    generateCards: function (body) {
+      return request('/api/study/cards/generate', {
+        method: 'POST',
+        body: JSON.stringify(body || {})
+      }).then(function (data) {
+        invalidate();
+        return data;
+      });
+    },
+    reviewOverview: function (force) {
+      if (!force && reviewOverviewCache) return Promise.resolve(reviewOverviewCache);
+      return request('/api/study/review/overview').then(function (data) {
+        reviewOverviewCache = data;
+        return data;
+      });
+    },
+    reviewQueue: function (params) {
+      return request('/api/study/review/queue' + queryString(params || {}));
+    },
+    submitReview: function (body) {
+      return request('/api/study/review', {
+        method: 'POST',
+        body: JSON.stringify(body || {})
+      }).then(function (data) {
+        reviewOverviewCache = null;
+        setsCache = null;
+        setCache = Object.create(null);
         return data;
       });
     },

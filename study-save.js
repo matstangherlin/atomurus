@@ -61,6 +61,14 @@
       saveResult: t('saveResult', pt ? 'Salvar resultado' : 'Save result'),
       note: t('note', pt ? 'Nota' : 'Note'),
       tags: t('tags', pt ? 'Tags' : 'Tags'),
+      addToSet: t('addToSet', pt ? 'Adicionar ao Study Set' : 'Add to Study Set'),
+      newSet: t('newSet', pt ? '+ Novo Study Set' : '+ New Study Set'),
+      generate: t('generate', pt ? 'Gerar cards' : 'Generate cards'),
+      review: t('review', pt ? 'Revisar' : 'Review'),
+      setName: t('setName', pt ? 'Nome do set' : 'Set title'),
+      createSet: t('createSet', pt ? 'Criar' : 'Create'),
+      addedTo: t('addedTo', pt ? 'Adicionado a' : 'Added to'),
+      cardsCreated: t('cardsCreated', pt ? 'cards criados' : 'cards created'),
       signIn: t('signIn', pt ? 'Entre para salvar no Study Cloud.' : 'Sign in to save to Study Cloud.'),
       proOnly: t('proOnly', pt ? 'Study Cloud está no Atomurus Pro.' : 'Study Cloud is included with Atomurus Pro.'),
       upgrade: t('upgrade', pt ? 'Ver planos' : 'See plans'),
@@ -117,7 +125,14 @@
       '#atomurus-study-save.open .study-save-fields{display:grid;gap:8px}',
       '#atomurus-study-save label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--lc-ink-3,#667)}',
       '#atomurus-study-save input,#atomurus-study-save textarea{font:inherit;width:100%;padding:8px;border:1px solid var(--lc-rule,rgba(0,0,0,.12));background:transparent;color:inherit;border-radius:2px}',
-      '#atomurus-study-save textarea{min-height:72px;resize:vertical}'
+      '#atomurus-study-save textarea{min-height:72px;resize:vertical}',
+      '#atomurus-study-save .study-set-box{display:none;margin-top:10px;max-width:420px}',
+      '#atomurus-study-save.has-saved .study-set-box{display:block}',
+      '#atomurus-study-save .study-set-menu{display:none;margin-top:8px;padding:8px;border:1px solid var(--lc-rule,rgba(0,0,0,.12));border-radius:2px;gap:6px}',
+      '#atomurus-study-save .study-set-menu.open{display:grid}',
+      '#atomurus-study-save .study-set-choice,#atomurus-study-save .study-set-new{text-transform:none;letter-spacing:.02em;font-size:12px;text-align:left}',
+      '#atomurus-study-save .study-set-create{display:none;grid-template-columns:1fr auto;gap:6px;margin-top:6px}',
+      '#atomurus-study-save .study-set-create.open{display:grid}'
     ].join('');
     document.head.appendChild(style);
   }
@@ -237,6 +252,15 @@
     if (tags) tags.value = Array.isArray(item.tags) ? item.tags.join(', ') : '';
   }
 
+  function markSavedHost(host, on) {
+    if (!host) return;
+    host.classList.toggle('has-saved', Boolean(on));
+  }
+
+  function setCanGenerate(ctx) {
+    return ctx && (ctx.itemType === 'element' || ctx.itemType === 'molecule');
+  }
+
   function hydrateLibrary(ctx, host, button, labels) {
     if (!ctx || ctx.kind !== 'library') return;
     withStudy(function (api) {
@@ -247,6 +271,7 @@
         savedItem = item;
         fillFields(host, item);
         paintSaved(button, labels, true);
+        markSavedHost(host, true);
         if (item.note || (item.tags && item.tags.length)) host.classList.add('open');
       }).catch(function () { /* unsigned / locked */ });
     });
@@ -291,8 +316,167 @@
     row.appendChild(msg);
     host.appendChild(row);
     host.appendChild(fields);
+
+    var setBox = document.createElement('div');
+    setBox.className = 'study-set-box';
+    var setRow = document.createElement('div');
+    setRow.className = 'study-save-row';
+    var addBtn = document.createElement('button');
+    addBtn.type = 'button';
+    addBtn.textContent = labels.addToSet;
+    var genBtn = document.createElement('button');
+    genBtn.type = 'button';
+    genBtn.textContent = labels.generate;
+    genBtn.hidden = !setCanGenerate(ctx);
+    genBtn.disabled = true;
+    var setStatus = document.createElement('div');
+    setStatus.className = 'study-save-msg';
+    setRow.appendChild(addBtn);
+    if (setCanGenerate(ctx)) setRow.appendChild(genBtn);
+    setRow.appendChild(setStatus);
+    var menu = document.createElement('div');
+    menu.className = 'study-set-menu';
+    var createRow = document.createElement('div');
+    createRow.className = 'study-set-create';
+    var createInput = document.createElement('input');
+    createInput.maxLength = 120;
+    createInput.placeholder = labels.setName;
+    var createBtn = document.createElement('button');
+    createBtn.type = 'button';
+    createBtn.textContent = labels.createSet;
+    createRow.appendChild(createInput);
+    createRow.appendChild(createBtn);
+    setBox.appendChild(setRow);
+    setBox.appendChild(menu);
+    setBox.appendChild(createRow);
+    host.appendChild(setBox);
+
     var parent = hostParent();
     parent.insertBefore(host, parent.firstChild);
+
+    var lastSet = null;
+
+    function requireSavedItem() {
+      if (savedItem && savedItem.id) return Promise.resolve(savedItem);
+      return withStudy(function (api) {
+        if (!api) return null;
+        return api.saveItem({
+          itemType: ctx.itemType,
+          itemKey: ctx.itemKey,
+          title: ctx.title,
+          href: ctx.href,
+          note: readFields(host).note,
+          tags: readFields(host).tags
+        }).then(function (data) {
+          savedItem = data.item || null;
+          markSavedHost(host, true);
+          paintSaved(button, labels, true);
+          return savedItem;
+        });
+      });
+    }
+
+    function fillSetMenu(sets) {
+      menu.textContent = '';
+      (sets || []).forEach(function (set) {
+        var choice = document.createElement('button');
+        choice.type = 'button';
+        choice.className = 'study-set-choice';
+        choice.textContent = set.title || 'Study Set';
+        choice.addEventListener('click', function () {
+          addToSet(set);
+        });
+        menu.appendChild(choice);
+      });
+      var newer = document.createElement('button');
+      newer.type = 'button';
+      newer.className = 'study-set-new';
+      newer.textContent = labels.newSet;
+      newer.addEventListener('click', function () {
+        createRow.classList.add('open');
+        createInput.focus();
+      });
+      menu.appendChild(newer);
+    }
+
+    function addedMessage(set, extra) {
+      lastSet = set;
+      setStatus.textContent = '';
+      setStatus.appendChild(document.createTextNode(labels.addedTo + ' ' + (set.title || 'Study Set') + ' ✓'));
+      if (extra) {
+        setStatus.appendChild(document.createTextNode(' ' + extra));
+      }
+      if (set && set.id) {
+        var link = document.createElement('a');
+        link.href = '/app?section=review&set=' + encodeURIComponent(set.id);
+        link.textContent = labels.review;
+        setStatus.appendChild(document.createTextNode(' '));
+        setStatus.appendChild(link);
+      }
+      genBtn.disabled = false;
+    }
+
+    function addToSet(set) {
+      requireSavedItem().then(function (item) {
+        if (!item) return;
+        return withStudy(function (api) {
+          if (!api) return null;
+          return api.addSetItem({ setId: set.id, itemId: item.id }).then(function (data) {
+            menu.classList.remove('open');
+            addedMessage({ id: set.id, title: data.setTitle || set.title });
+          });
+        });
+      }).catch(function (err) {
+        handleError(err, setStatus, labels);
+      });
+    }
+
+    addBtn.addEventListener('click', function () {
+      setStatus.textContent = '';
+      withStudy(function (api) {
+        if (!api) return null;
+        return api.listSets().then(function (data) {
+          fillSetMenu(data.sets || []);
+          menu.classList.add('open');
+        });
+      }).catch(function (err) {
+        handleError(err, setStatus, labels);
+      });
+    });
+
+    createBtn.addEventListener('click', function () {
+      var title = (createInput.value || '').trim();
+      if (!title) return;
+      withStudy(function (api) {
+        if (!api) return null;
+        return api.createSet({ title: title }).then(function (data) {
+          createRow.classList.remove('open');
+          createInput.value = '';
+          return addToSet(data.set);
+        });
+      }).catch(function (err) {
+        handleError(err, setStatus, labels);
+      });
+    });
+
+    genBtn.addEventListener('click', function () {
+      if (!lastSet || !lastSet.id) {
+        setStatus.textContent = labels.addToSet;
+        return;
+      }
+      requireSavedItem().then(function (item) {
+        if (!item) return;
+        return withStudy(function (api) {
+          if (!api) return null;
+          return api.generateCards({ setId: lastSet.id, itemId: item.id }).then(function (data) {
+            var count = data.created || 0;
+            addedMessage(lastSet, String(count) + ' ' + labels.cardsCreated);
+          });
+        });
+      }).catch(function (err) {
+        handleError(err, setStatus, labels);
+      });
+    });
 
     details.addEventListener('click', function () {
       host.classList.toggle('open');
@@ -322,6 +506,7 @@
         return api.saveItem(payload).then(function (data) {
           savedItem = data.item || null;
           paintSaved(button, labels, true);
+          markSavedHost(host, true);
         }).catch(function (err) {
           paintSaved(button, labels, false);
           handleError(err, msg, labels);

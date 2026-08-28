@@ -60,6 +60,20 @@ export default async function handler(request) {
       state: features.studyProgress || features.studyCloud ? 'available' : 'locked'
     },
     {
+      id: 'study-sets',
+      label: 'Study Sets',
+      description: 'Group saved material into exam-ready study sets.',
+      href: features.studySets ? '/app?section=sets' : '/pricing',
+      state: features.studySets ? 'available' : 'locked'
+    },
+    {
+      id: 'smart-review',
+      label: 'Smart Review',
+      description: 'Flashcards and spaced repetition for due cards.',
+      href: features.smartReview ? '/app?section=review' : '/pricing',
+      state: features.smartReview ? 'available' : 'locked'
+    },
+    {
       id: 'favorites',
       label: 'Favorites & history',
       description: 'Your Study Cloud library and calculator history live in this workspace.',
@@ -106,8 +120,8 @@ export default async function handler(request) {
         nextSteps: user.isPro
           ? [
               'Open Study Library to review saved elements and notes.',
-              'Save calculator results from /calculators after a successful run.',
-              'Use Continue studying for incomplete progress.'
+              'Add a saved item to a Study Set and generate flashcards.',
+              'Open Smart Review when cards are due.'
             ]
           : [
               'Create an account to unlock 30 days of Pro (ads-free) automatically.',

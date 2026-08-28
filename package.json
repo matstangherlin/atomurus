@@ -13,6 +13,7 @@
     "test:plan": "node tools/test-plan-access.mjs",
     "test:auth": "node tools/test-auth-provider.mjs && node tools/test-auth-flows.mjs && node tools/test-auth-rate-limit.mjs && node tools/test-auth-sync.mjs",
     "test:study": "node tools/test-study-cloud.mjs",
+    "test:review": "node tools/test-review.mjs",
     "test:billing": "node tools/test-billing-geo.mjs",
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
@@ -20,7 +21,7 @@
     "validate": "node tools/validate-site.js",
     "warm:cache": "node tools/warm-edge-cache.js",
     "smoke:prod": "node tools/smoke-prod.js",
-    "ci": "npm run build && npm run test:plan && npm run test:auth && npm run test:study && npm run test:billing && npm run validate"
+    "ci": "npm run build && npm run test:plan && npm run test:auth && npm run test:study && npm run test:review && npm run test:billing && npm run validate"
   },
   "dependencies": {
     "stripe": "^22.3.0"

@@ -108,6 +108,21 @@ export function createUserDataClient(accessToken) {
         range: '0-0'
       });
       return Number(count) || 0;
+    },
+    async insertMany(table, rows) {
+      const { data } = await request(table, {
+        method: 'POST',
+        body: rows,
+        prefer: 'return=representation'
+      });
+      return Array.isArray(data) ? data : (data ? [data] : []);
+    },
+    async rpc(fn, args) {
+      const { data } = await request(`rpc/${fn}`, {
+        method: 'POST',
+        body: args
+      });
+      return data;
     }
   };
 }

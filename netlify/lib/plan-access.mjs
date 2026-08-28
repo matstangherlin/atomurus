@@ -118,6 +118,10 @@ export function accessForUser(user) {
       calculatorHistory: isPro,
       studyNotes: isPro,
       studyTags: isPro,
+      studySets: isPro,
+      flashcards: isPro,
+      smartReview: isPro,
+      spacedRepetition: isPro,
       exportPdf: isPro,
       adsFree: isPro,
       adminConsole: isAdmin

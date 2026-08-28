@@ -32,17 +32,25 @@ assert.equal(paid.features.calculatorHistory, true);
 assert.equal(paid.features.studyNotes, true);
 assert.equal(paid.features.studyTags, true);
 assert.equal(paid.features.studyProgress, true);
+assert.equal(paid.features.studySets, true);
+assert.equal(paid.features.flashcards, true);
+assert.equal(paid.features.smartReview, true);
+assert.equal(paid.features.spacedRepetition, true);
 
 const expiredStudy = accessForUser({ createdAt: daysAgo(40), email: 'a@b.com' });
 assert.equal(expiredStudy.features.studyCloud, false);
+assert.equal(expiredStudy.features.smartReview, false);
+assert.equal(expiredStudy.features.studySets, false);
 
 const trialStudy = accessForUser({ createdAt: daysAgo(2), email: 'a@b.com' });
 assert.equal(trialStudy.features.studyCloud, true);
+assert.equal(trialStudy.features.smartReview, true);
 
 const admin = accessForUser({ role: 'admin', createdAt: daysAgo(100) });
 assert.equal(admin.plan, 'admin');
 assert.equal(admin.adsFree, true);
 assert.equal(admin.features.studyCloud, true);
+assert.equal(admin.features.flashcards, true);
 
 const pub = publicUser({
   id: '1',

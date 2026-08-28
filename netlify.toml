@@ -41,6 +41,7 @@
 
 [functions]
   node_bundler = "esbuild"
+  included_files = ["elements-data.js", "assets/i18n/molecules.json"]
 
 # Unsigned /app never receives app.html. Cookie presence is the only check
 # here; stale atm_* cookies still fall through to /api/auth/me in the browser.
@@ -159,6 +160,46 @@
 [[redirects]]
   from   = "/api/study/progress"
   to     = "/.netlify/functions/study-progress"
+  status = 200
+
+[[redirects]]
+  from   = "/api/study/sets"
+  to     = "/.netlify/functions/study-sets"
+  status = 200
+
+[[redirects]]
+  from   = "/api/study/set"
+  to     = "/.netlify/functions/study-set"
+  status = 200
+
+[[redirects]]
+  from   = "/api/study/set-item"
+  to     = "/.netlify/functions/study-set-item"
+  status = 200
+
+[[redirects]]
+  from   = "/api/study/card"
+  to     = "/.netlify/functions/study-card"
+  status = 200
+
+[[redirects]]
+  from   = "/api/study/cards/generate"
+  to     = "/.netlify/functions/study-cards-generate"
+  status = 200
+
+[[redirects]]
+  from   = "/api/study/review/overview"
+  to     = "/.netlify/functions/study-review-overview"
+  status = 200
+
+[[redirects]]
+  from   = "/api/study/review/queue"
+  to     = "/.netlify/functions/study-review-queue"
+  status = 200
+
+[[redirects]]
+  from   = "/api/study/review"
+  to     = "/.netlify/functions/study-review"
   status = 200
 
 # Auth pages. Explicit rewrites keep these stable alongside pretty URLs.

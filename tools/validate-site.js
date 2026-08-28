@@ -190,17 +190,26 @@ function assertStudyCloud() {
     'netlify/functions/study-item.mjs',
     'netlify/functions/study-calculator-history.mjs',
     'netlify/functions/study-progress.mjs',
+    'netlify/functions/study-sets.mjs',
+    'netlify/functions/study-set.mjs',
+    'netlify/functions/study-card.mjs',
+    'netlify/functions/study-cards-generate.mjs',
+    'netlify/functions/study-review.mjs',
+    'netlify/functions/study-review-overview.mjs',
+    'netlify/functions/study-review-queue.mjs',
+    'netlify/lib/review-scheduler.mjs',
     'study-client.js',
     'study-save.js',
     'study-progress.js',
     'study-boot.js',
-    'supabase/migrations/005_study_cloud.sql'
+    'supabase/migrations/005_study_cloud.sql',
+    'supabase/migrations/008_study_sets_smart_review.sql'
   ];
   files.forEach((rel) => {
     if (!fs.existsSync(path.join(ROOT, rel))) fail(`${rel} is missing`);
   });
   const netlify = read('netlify.toml');
-  ['/api/study/overview', '/api/study/items', '/api/study/item', '/api/study/calculator-history', '/api/study/progress'].forEach((route) => {
+  ['/api/study/overview', '/api/study/items', '/api/study/item', '/api/study/calculator-history', '/api/study/progress', '/api/study/sets', '/api/study/review/queue', '/api/study/cards/generate'].forEach((route) => {
     if (!netlify.includes(route)) fail(`netlify.toml missing ${route}`);
   });
   const client = read('study-client.js');

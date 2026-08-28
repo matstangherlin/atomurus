@@ -121,6 +121,53 @@
   }
   .app-study-list { display: grid; gap: 10px; }
   .app-study-empty { color: var(--lc-ink-3); font-family: var(--lc-mono); font-size: 12px; }
+  .app-study-list input, .app-study-list textarea {
+    font: inherit;
+    width: 100%;
+    max-width: 520px;
+    padding: 8px;
+    border: 1px solid var(--lc-rule);
+    background: transparent;
+    color: inherit;
+    border-radius: 2px;
+  }
+  .app-study-list button {
+    font-family: var(--lc-mono);
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 8px 12px;
+    border: 1px solid var(--lc-rule);
+    background: transparent;
+    color: inherit;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+  .app-card-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+  .app-review { display: grid; gap: 14px; max-width: 640px; }
+  .app-review-face {
+    min-height: 88px;
+    padding: 18px;
+    border: 1px solid var(--lc-rule);
+    border-radius: 4px;
+    font-size: 20px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .app-review-ratings {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .app-review-ratings button, .app-review-reveal {
+    min-height: 48px;
+    font-size: 13px;
+  }
+  .app-review-hint { color: var(--lc-ink-3); font-family: var(--lc-mono); font-size: 11px; }
+  @media (max-width: 720px) {
+    .app-review-ratings { grid-template-columns: 1fr 1fr; }
+    .app-review-ratings button, .app-review-reveal { min-height: 56px; }
+  }
 </style>
 </head>
 
@@ -196,6 +243,8 @@
     <a href="#account">Account</a>
     <a href="/app?section=overview">Overview</a>
     <a href="/app?section=library">Library</a>
+    <a href="/app?section=sets">Study Sets</a>
+    <a href="/app?section=review">Smart Review</a>
     <a href="/app?section=history">History</a>
     <a href="/app?section=notes">Notes</a>
     <a href="/app?section=progress">Continue</a>
@@ -217,7 +266,7 @@
     <div class="lc-doc-cards" id="app-account"></div>
 
     <h2 id="progress"><span class="h-no">§ 02</span> Study Cloud</h2>
-    <p>Overview loads from <code>/api/study/overview</code>. Library, history and notes fetch their lists when you open each section.</p>
+    <p>Overview, Study Sets and Smart Review load from Pro APIs after the session is verified. Library, history and notes fetch their lists when you open each section.</p>
     <div class="app-study-nav" id="app-study-nav"></div>
     <div id="app-study" class="app-study-list"></div>
     <ul id="app-next-steps"></ul>
