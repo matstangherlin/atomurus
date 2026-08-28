@@ -24,7 +24,7 @@ test('Free opens Pro Lab locked without calling premium APIs', async ({ page }) 
   await waitForLab(page);
   await expect(page.locator('#ws-lab-home .is-locked').first()).toBeVisible();
   await expect(page.locator('#app-study')).toContainText(/PRO/);
-  await expect(page.locator('#app-study').getByRole('link', { name: /Upgrade|Assinar/i })).toBeVisible();
+  await expect(page.locator('#app-study').getByRole('link', { name: /Upgrade to Pro|Assinar o Pro/i }).first()).toBeVisible();
   await expect(page.locator('#ws-lab-calculate')).toHaveCount(0);
   expect(calculateCalls).toBe(0);
   await saveShot(page, 'desktop-pro-lab-home-free');

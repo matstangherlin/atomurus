@@ -210,7 +210,7 @@ test('Overview hierarchy: Pro due hero and Free workspace copy', async ({ page }
   await installApi(page, { kind: 'free' });
   await gotoWorkspace(page, '/app');
   await expect(page.locator('#app-study')).toContainText(/chemistry workspace|workspace de química/i);
-  await expect(page.locator('#app-study').getByRole('link', { name: /Explore Pro|Conhecer o Pro/i })).toBeVisible();
+  await expect(page.locator('#app-study').getByRole('link', { name: /Explore Pro|Conhecer o Pro/i }).first()).toBeVisible();
   await expect(page.locator('#app-study')).toContainText(/Insights/);
   await expect(page.locator('#app-study a[href="/calculators.html"]')).toContainText(/Calculators|Calculadoras/);
   await saveShot(page, 'desktop-overview-free');
