@@ -126,6 +126,7 @@ const emp = solveEmpiricalFormula({
   ]
 });
 assert.equal(emp.empiricalFormula, 'CH2O');
+assert.equal(emp.empiricalFormulaDisplay, 'CH₂O');
 
 const empMass = solveEmpiricalFormula({
   composition: [
@@ -138,6 +139,7 @@ assert.equal(empMass.empiricalFormula, 'CH2O');
 
 const mol = solveMolecularFormula({ empiricalFormula: 'CH2O', molarMass: 180.16 });
 assert.equal(mol.molecularFormula, 'C6H12O6');
+assert.equal(mol.molecularFormulaDisplay, 'C₆H₁₂O₆');
 assert.equal(mol.multiple, 6);
 
 assert.throws(() => solveMolecularFormula({ empiricalFormula: 'CH2O', molarMass: 163 }), (err) => {

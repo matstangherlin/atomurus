@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var SCRIPT_V = '202608282850';
+  var SCRIPT_V = '202608282910';
   var loaded = {};
 
   function loadScript(src) {
@@ -78,11 +78,13 @@
   }
 
   function flagshipCard(href, title, lede, points, locked, t, escapeHtml, tool) {
-    var lock = '<span class="ws-lab-badge">' + escapeHtml(t('pro')) + '</span>';
+    var lock = locked
+      ? '<span class="ws-lab-badge">' + escapeHtml(t('pro')) + '</span>'
+      : '';
     var cta = locked
-      ? '<span class="ws-btn ws-btn-primary ws-btn-sm">' + escapeHtml(t('upgrade')) + '</span>'
+      ? '<span class="ws-btn ws-btn-primary ws-btn-sm">' + escapeHtml(t('seePro')) + '</span>'
       : '<span class="ws-btn ws-btn-primary ws-btn-sm">' + escapeHtml(t('open')) + '</span>';
-    return '<a class="ws-lab-card is-flagship' + (locked ? ' is-locked' : '') + '" data-lab-tool="' + escapeHtml(tool || '') + '" href="' + escapeHtml(locked ? '/pricing' : href) + '">' +
+    return '<a class="ws-lab-card is-flagship' + (locked ? ' is-locked' : '') + '" data-lab-tool="' + escapeHtml(tool || '') + '" href="' + escapeHtml(href) + '">' +
       lock +
       '<h3 class="ws-lab-card-title">' + escapeHtml(title) + '</h3>' +
       '<p class="ws-lab-card-copy">' + escapeHtml(lede) + '</p>' +
@@ -96,15 +98,15 @@
       '<p class="ws-kicker">' + esc(t('chemistrySolverKicker')) + '</p>' +
       flagshipCard(labHref('reactions'), t('labReactions'), t('labReactionsLede'), t('labReactionsPoints'), locked, t, esc, 'reactions') +
       '<div class="ws-lab-grid">' +
-      card(locked ? '/pricing' : labHref('formula'), t('labFormula'), t('labFormulaLede'), locked, t, esc, 'formula') +
-      card(locked ? '/pricing' : labHref('solutions'), t('labSolutions'), t('labSolutionsLede'), locked, t, esc, 'solutions') +
+      card(labHref('formula'), t('labFormula'), t('labFormulaLede'), locked, t, esc, 'formula') +
+      card(labHref('solutions'), t('labSolutions'), t('labSolutionsLede'), locked, t, esc, 'solutions') +
       '</div>' +
       '<p class="ws-kicker">' + esc(t('labAnalysis')) + '</p>' +
       '<div class="ws-lab-grid">' +
-      card(locked ? '/pricing' : labHref('calculations'), t('labCalc'), t('labCalcLede'), locked, t, esc, 'calculations') +
-      card(locked ? '/pricing' : labHref('elements'), t('labElements'), t('labElementsLede'), locked, t, esc, 'elements') +
-      card(locked ? '/pricing' : labHref('molecules'), t('labMolecules'), t('labMoleculesLede'), locked, t, esc, 'molecules') +
-      card(locked ? '/pricing' : labHref('atomic'), t('labAtomic'), t('labAtomicLede'), locked, t, esc, 'atomic') +
+      card(labHref('calculations'), t('labCalc'), t('labCalcLede'), locked, t, esc, 'calculations') +
+      card(labHref('elements'), t('labElements'), t('labElementsLede'), locked, t, esc, 'elements') +
+      card(labHref('molecules'), t('labMolecules'), t('labMoleculesLede'), locked, t, esc, 'molecules') +
+      card(labHref('atomic'), t('labAtomic'), t('labAtomicLede'), locked, t, esc, 'atomic') +
       '</div></div>';
   }
 

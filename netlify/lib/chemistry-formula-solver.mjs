@@ -3,7 +3,7 @@
  */
 
 import { ATOMIC_WEIGHTS, formatSig, molarMassOf } from './chemistry-calc.mjs';
-import { parseFormulaStrict } from './chemistry-formula-strict.mjs';
+import { formatFormulaDisplay, parseFormulaStrict } from './chemistry-formula-strict.mjs';
 import {
   PERCENT_TOTAL_MAX,
   PERCENT_TOTAL_MIN,
@@ -111,14 +111,14 @@ export function solveEmpiricalFormula(input = {}) {
   const mm = molarMassOf(formula);
   steps.push({
     title: 'Smallest integer ratio',
-    body: `× ${fitted.multiplier} → ${formula}`
+    body: `× ${fitted.multiplier} → ${formatFormulaDisplay(formula)}`
   });
 
   return {
     ok: true,
     solverVersion: SOLVER_VERSION,
     empiricalFormula: formula,
-    empiricalFormulaDisplay: formula.replace(/(\d+)/g, (_, d) => d.split('').map((c) => '₀₁₂₃₄₅₆₇₈₉'[Number(c)]).join('')),
+    empiricalFormulaDisplay: formatFormulaDisplay(formula),
     molarMass: mm.molarMass,
     counts: Object.fromEntries(moles.map((row, i) => [row.symbol, fitted.counts[i]])),
     steps
@@ -151,11 +151,13 @@ export function solveMolecularFormula(input = {}) {
     multiple: nearest,
     multipleRaw: n,
     molecularFormula: formula,
+    molecularFormulaDisplay: formatFormulaDisplay(formula),
+    empiricalFormulaDisplay: formatFormulaDisplay(parsed.formula),
     molarMass: mol.molarMass,
     steps: [
       {
         title: 'Empirical formula mass',
-        body: `${parsed.formula} = ${formatSig(emp.molarMass, 4)} g/mol`
+        body: `${formatFormulaDisplay(parsed.formula)} = ${formatSig(emp.molarMass, 4)} g/mol`
       },
       {
         title: 'Find multiple',
@@ -163,7 +165,7 @@ export function solveMolecularFormula(input = {}) {
       },
       {
         title: 'Molecular formula',
-        body: formula
+        body: formatFormulaDisplay(formula)
       }
     ]
   };

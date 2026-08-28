@@ -14,13 +14,23 @@ test('Free Reaction Workbench is a locked preview with no solver API calls', asy
   let solverCalls = 0;
   await installApi(page, { kind: 'free' });
   page.on('request', (req) => {
-    if (req.url().includes('/api/pro-lab/reaction/')) solverCalls += 1;
+    if (req.url().includes('/api/pro-lab/reaction/') || req.url().includes('/api/pro-lab/formula/') || req.url().includes('/api/pro-lab/solutions/')) {
+      solverCalls += 1;
+    }
   });
-  await gotoWorkspace(page, '/app?section=pro-lab&tool=reactions');
+  await gotoWorkspace(page, '/app?section=pro-lab');
+  await expect(page.locator('#ws-lab-home')).toBeVisible({ timeout: 20_000 });
+  const workbench = page.locator('[data-lab-tool="reactions"]');
+  await expect(workbench).toBeVisible();
+  await expect(workbench).toHaveAttribute('href', /section=pro-lab&tool=reactions/);
+  await expect(page.locator('[data-lab-tool="formula"]')).toHaveAttribute('href', /tool=formula/);
+  await expect(page.locator('[data-lab-tool="solutions"]')).toHaveAttribute('href', /tool=solutions/);
+  await workbench.click();
   await expect(page.locator('#app-study')).toContainText(/Reaction Workbench|Laboratório de Reações/);
   await expect(page.locator('#app-study')).toContainText(/PRO/);
   await expect(page.locator('#app-study').getByRole('link', { name: /Upgrade|Assinar/i })).toBeVisible();
   await expect(page.locator('#ws-lab-balance')).toHaveCount(0);
+  await expect(page.locator('#ws-lab-equation')).toHaveCount(0);
   expect(solverCalls).toBe(0);
   await saveShot(page, 'desktop-solver-locked-free');
 });
@@ -72,6 +82,13 @@ test('Formula Solver and Solution Builder', async ({ page }) => {
   await page.locator('#ws-lab-formula-solve').click();
   await expect(page.locator('#ws-lab-formula-answer')).toContainText(/CH₂O|CH2O/);
   await saveShot(page, 'desktop-formula-solver');
+
+  await page.locator('#ws-lab-formula-mode-molecular').click();
+  await page.locator('#ws-lab-empirical-formula').fill('CH2O');
+  await page.locator('#ws-lab-molar-mass').fill('180.16');
+  await page.locator('#ws-lab-formula-solve').click();
+  await expect(page.locator('#ws-lab-formula-answer')).toContainText(/C₆H₁₂O₆|C6H12O6/);
+  await saveShot(page, 'desktop-formula-molecular');
 
   await gotoWorkspace(page, '/app?section=pro-lab&tool=solutions');
   await expect(page.locator('#ws-lab-sol-solve')).toBeVisible();
