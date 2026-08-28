@@ -862,7 +862,18 @@
     window.dispatchEvent(new CustomEvent('atomurus:iso3d-ready'));
   }
 
+  function isExplorePage() {
+    return /\/explore\//.test(location.pathname || '');
+  }
+
   function ensureAndInit() {
+    if (!isExplorePage()) {
+      if (typeof window.atomurusHasPremiumFeature === 'function') {
+        if (!window.atomurusHasPremiumFeature('isomerismViewer')) return;
+      } else {
+        return;
+      }
+    }
     if (window.__iso3dStarted) return;
     window.__iso3dStarted = true;
     var panels = document.querySelectorAll('.iso-3d-panel');
@@ -924,36 +935,39 @@
     initOverviewToggle();
     var panels = document.querySelectorAll('.iso-3d-panel');
     if (!panels.length) return;
-    // Primary path: lazy-load three.js when a panel nears the viewport.
+    var explore = isExplorePage();
     panels.forEach(function (panel) {
       var canvas = panel.querySelector('.iso-3d-stage canvas') || panel.querySelector('canvas');
       if (!canvas) return;
-      if (window.atomurusBootViewer) {
-        window.atomurusBootViewer(canvas, ensureAndInit);
+      if (explore) {
+        if (window.atomurusBootViewer) {
+          window.atomurusBootViewer(canvas, ensureAndInit);
+        }
+        panel.addEventListener('pointerdown', ensureAndInit, { once: true });
+        panel.addEventListener('wheel', ensureAndInit, { once: true, passive: true });
+      } else if (window.atomurusBootProViewer) {
+        window.atomurusBootProViewer(canvas, 'isomerismViewer', ensureAndInit);
       }
-      // Interaction fallback: start immediately on first click / wheel.
-      panel.addEventListener('pointerdown', ensureAndInit, { once: true });
-      panel.addEventListener('wheel', ensureAndInit, { once: true, passive: true });
     });
-    if (typeof THREE !== 'undefined') setTimeout(ensureAndInit, 0);
-    // Viewport-proximity fallback (covers observers that never fire, e.g. some
-    // embedded/headless contexts): poll cheaply until a panel is near the viewport.
-    var tries = 0;
-    var iv = setInterval(function () {
-      tries++;
-      if (window.__iso3dStarted) { clearInterval(iv); return; }
-      var near = false;
-      panels.forEach(function (p) {
-        var r = p.getBoundingClientRect();
-        if (r && r.top < (window.innerHeight + 240) && r.bottom > -240) near = true;
-      });
-      if (near) {
-        clearInterval(iv);
-        ensureAndInit();
-      } else if (tries > 60) {
-        clearInterval(iv);
-      }
-    }, 500);
+    if (explore) {
+      if (typeof THREE !== 'undefined') setTimeout(ensureAndInit, 0);
+      var tries = 0;
+      var iv = setInterval(function () {
+        tries++;
+        if (window.__iso3dStarted) { clearInterval(iv); return; }
+        var near = false;
+        panels.forEach(function (p) {
+          var r = p.getBoundingClientRect();
+          if (r && r.top < (window.innerHeight + 240) && r.bottom > -240) near = true;
+        });
+        if (near) {
+          clearInterval(iv);
+          ensureAndInit();
+        } else if (tries > 60) {
+          clearInterval(iv);
+        }
+      }, 500);
+    }
   }
 
   boot();

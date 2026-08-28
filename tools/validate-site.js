@@ -190,8 +190,23 @@ function assertPerfGuards() {
   if (/cdnjs\.cloudflare\.com\/ajax\/libs\/three\.js/.test(molecules)) {
     fail('viewer/molecules.html still loads three.min.js eagerly');
   }
-  if (!molecules.includes('atomurusBootViewer') || !molecules.includes('load-three.js')) {
-    fail('viewer/molecules.html is not using lazy Three.js boot');
+  if (!molecules.includes('atomurusBootProViewer') || !molecules.includes('load-three.js')) {
+    fail('viewer/molecules.html is not using entitlement-gated Three.js boot');
+  }
+  if (molecules.includes('const molData = {')) {
+    fail('viewer/molecules.html still embeds molecule coordinates');
+  }
+  const gate = read('assets/lab-tool-gate.js');
+  if (!gate.includes('conversion UI only') || !gate.includes('authorized server-side')) {
+    fail('lab-tool-gate.js is still described as a security boundary');
+  }
+  const atomic = read('viewer/atomic-models.html');
+  if (!atomic.includes('atomurusBootProViewer')) {
+    fail('viewer/atomic-models.html is not using entitlement-gated Three.js boot');
+  }
+  const netlify = read('netlify.toml');
+  if (!netlify.includes('/api/pro-lab/thermodynamics/solve') || !netlify.includes('/api/pro-lab/viewer/molecule')) {
+    fail('netlify.toml missing Pro viewer/thermo routes');
   }
 
   const ptable = read('periodic-table.html');

@@ -189,7 +189,7 @@ const pricing = readFileSync(new URL('../pricing-page.js', import.meta.url), 'ut
 assert.match(pricing, /PRO CHEMISTRY SOLVER/);
 assert.match(pricing, /Reaction balancing/);
 assert.match(pricing, /Limiting-reagent/);
-assert.match(pricing, /From periodic table to complete chemistry problems/);
+assert.match(pricing, /Solve, visualize, analyze and study chemistry/);
 assert.doesNotMatch(pricing, /AI tutor|AI powered|AI study/i);
 assert.doesNotMatch(pricing, /alert\s*\(/);
 assert.match(pricing, /annualSavePercent/);
@@ -199,6 +199,9 @@ assert.match(pricing, /Extra calculators with a free account/);
 assert.match(pricing, /3D molecule viewer, atomic models, allotropes and isomerism/);
 assert.doesNotMatch(pricing, /calculators and viewers stay open/);
 assert.match(pricing, /comingTitle/);
+assert.match(pricing, /OPEN LAB/);
+assert.match(pricing, /FREE ACCOUNT/);
+assert.match(pricing, /No card required/);
 assert.doesNotMatch(pricing, /Study Library, notes and calculator history/);
 assert.doesNotMatch(pricing, /Pro Lab advanced tools/);
 

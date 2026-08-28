@@ -42,7 +42,19 @@ function features(on) {
     limitingReagentSolver: on,
     yieldSolver: on,
     formulaSolver: on,
-    solutionBuilder: on
+    solutionBuilder: on,
+    scientificCalculator: true,
+    unitConverter: true,
+    idealGasCalculator: true,
+    phCalculator: true,
+    interactiveViewers: on,
+    atomicModelViewer: on,
+    moleculeViewer: on,
+    allotropeViewer: on,
+    isomerismViewer: on,
+    publicStoichiometry: on,
+    publicThermodynamics: on,
+    publicElementCompare: on
   };
 }
 
@@ -678,6 +690,30 @@ async function installApi(page, options = {}) {
         return json(route, 200, solveSolution(body));
       } catch (err) {
         return json(route, err.status || 400, { ok: false, error: err.message, code: err.code || 'invalid_request' });
+      }
+    }
+    if (path === '/api/pro-lab/thermodynamics/solve' && method === 'POST') {
+      const body = req.postDataJSON() || {};
+      if (body.isPro != null || body.feature != null || body.features != null) {
+        return json(route, 400, { ok: false, code: 'invalid_request', error: 'Client entitlements are ignored.' });
+      }
+      try {
+        const { solveThermodynamics } = await import('../netlify/lib/chemistry-thermodynamics.mjs');
+        return json(route, 200, { ok: true, ...solveThermodynamics(body) });
+      } catch (err) {
+        return json(route, err.status || 400, { ok: false, error: err.message, code: err.code || 'invalid_request' });
+      }
+    }
+    if (path === '/api/pro-lab/viewer/molecule' && method === 'GET') {
+      const key = String(url.searchParams.get('key') || '').trim().toLowerCase();
+      try {
+        const { viewerMoleculePayload, isSafeMoleculeKey } = await import('../netlify/lib/viewer-molecule-coords.mjs');
+        if (!isSafeMoleculeKey(key)) return json(route, 400, { ok: false, code: 'invalid_molecule_key' });
+        const molecule = viewerMoleculePayload(key);
+        if (!molecule) return json(route, 404, { ok: false, code: 'molecule_not_found' });
+        return json(route, 200, { ok: true, molecule });
+      } catch (err) {
+        return json(route, 500, { ok: false, error: err.message });
       }
     }
 

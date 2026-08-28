@@ -52,7 +52,7 @@
       "name": "Atomurus Calculators",
       "alternateName": "Calculadoras Atomurus",
       "url": "https://atomurus.com/calculators",
-      "description": "Precision chemistry calculators — scientific expressions, molar mass, dilution, ideal gas and pH.",
+      "description": "Molar mass and dilution are open without an account. Scientific, unit, ideal gas and pH calculators unlock with a free account. Stoichiometry and thermodynamics are Atomurus Pro.",
       "applicationCategory": "EducationalApplication",
       "applicationSubCategory": "Chemistry",
       "operatingSystem": "Web",
@@ -95,7 +95,7 @@
 <link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
 <noscript><link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630"></noscript>
 <link rel="stylesheet" href="/assets/public-shell.css?v=202608282800">
-<script src="/assets/public-workspace.js?v=202608282400"></script>
+<script src="/assets/public-workspace.js?v=202608282500"></script>
 
 <style>
   *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1239,63 +1239,26 @@
               <div class="calc-panel-h">
                 <span class="calc-panel-kicker" data-i18n="calc.sc07Kicker">07 — Stoichiometry</span>
                 <h2 class="calc-panel-title" data-i18n="calc.sc07Title">moles and masses from a balanced reaction</h2>
-                <p class="calc-panel-desc" data-i18n="calc.sc07Desc">Type a balanced equation, pick one substance and its mass — get the moles and theoretical masses of every species in the reaction.</p>
+                <p class="calc-panel-desc" data-i18n="calc.sc07Desc">For balancing, limiting reagent, yield and step-by-step stoichiometry, open the Reaction Workbench — the canonical Pro engine.</p>
               </div>
             </div>
 
-            <div class="calc-formula-strip">
-              <div>
-                <span class="calc-formula-label" data-i18n="calc.formulaUsed">Formula used</span>
-                <span class="calc-formula-value">n = m / M · ratio = coef</span>
-              </div>
-              <span class="calc-formula-pill" data-i18n="calc.stoichPill">balanced coefficients</span>
-            </div>
-
-            <div class="calc-field">
-              <label class="calc-field-l" data-i18n="calc.stoichEquation">Balanced equation</label>
-              <input id="sc-equation" class="calc-input" type="text" spellcheck="false" value="2 H2 + O2 -> 2 H2O" placeholder="2 H2 + O2 -> 2 H2O" oninput="updateStoichSpecies()">
-            </div>
-
-            <div class="calc-field">
-              <label class="calc-field-l" data-i18n="calc.stoichKnown">Known substance</label>
-              <select id="sc-species" class="calc-select" onchange="runStoich()"></select>
-            </div>
-            <div class="calc-field">
-              <label class="calc-field-l" data-i18n="calc.stoichMass">Mass of known <span class="calc-help" style="display:inline-block;margin:0;">g</span></label>
-              <input id="sc-mass" class="calc-input" type="number" step="any" value="4">
-            </div>
-
-            <div class="calc-chip-row" aria-label="Stoichiometry presets">
-              <span class="calc-chip-label" data-i18n="calc.presets">Presets</span>
-              <button class="calc-chip" type="button" data-sc-preset='{"eq":"2 H2 + O2 -> 2 H2O","species":"H2O","mass":"36"}'>H₂ combustion</button>
-              <button class="calc-chip" type="button" data-sc-preset='{"eq":"N2 + 3 H2 -> 2 NH3","species":"NH3","mass":"34"}'>Haber · NH₃</button>
-              <button class="calc-chip" type="button" data-sc-preset='{"eq":"2 H2O2 -> 2 H2O + O2","species":"H2O2","mass":"68"}'>H₂O₂ breakdown</button>
-            </div>
-
-            <div class="calc-actions">
-              <button class="calc-btn-run" onclick="runStoich()" data-i18n="calc.compute">Compute</button>
-              <button class="calc-btn-reset" onclick="resetStoich()" data-i18n="calc.reset">Reset</button>
+            <div class="pro-canonical-preview" data-pro-canonical="stoichiometry">
+              <p class="calc-panel-desc" data-i18n="calc.stoichCanonicalBody">The public stoichiometry tab no longer runs a separate calculator. Reaction Workbench is the only scientific engine for balancing, stoichiometry, limiting reagent and yield.</p>
+              <p class="calc-actions" style="margin-top:16px">
+                <a class="calc-btn-run" href="/app?section=pro-lab&tool=reactions" data-i18n="calc.solverDiscoverCta">Open Reaction Workbench</a>
+              </p>
             </div>
 
             <details class="calc-how">
               <summary data-i18n="calc.howTitle">How this works</summary>
               <div class="calc-how-body" data-i18n-html="calc.stoichHowHtml">
-                The known mass is divided by its molar mass to get moles, then every other species is scaled by the coefficient ratio from the balanced equation. Results are theoretical — the chosen substance is treated as the limiting reagent.
+                A balanced equation gives mole ratios from its coefficients. The Reaction Workbench uses those ratios with limiting-reagent analysis — this public tab is a preview of that Pro workflow.
               </div>
             </details>
-
-            <div class="calc-result" id="sc-result">
-              <div class="calc-result-head">
-                <span class="calc-result-head-main"><span class="lc-st-dot"></span><span data-i18n="calc.output">output</span></span>
-                <span class="calc-result-meta"><span id="sc-result-meta" data-i18n="calc.awaiting">awaiting input…</span><button class="calc-copy-btn" type="button" data-copy-result="sc-result-body" data-i18n="calc.copy">Copy</button></span>
-              </div>
-              <div class="calc-result-body" id="sc-result-body">
-                <div class="calc-result-empty" data-i18n-html="calc.scEmptyHtml">type a balanced equation and press <strong style="color:var(--lc-ink);font-weight:500;">Compute</strong></div>
-              </div>
-            </div>
           </section>
 
-          <!-- ─── 08 · THERMODYNAMICS ─── -->
+                    <!-- ─── 08 · THERMODYNAMICS ─── -->
           <section id="tab-thermo" class="calc-tab" role="tabpanel">
             <div class="calc-panel-head">
               <div class="calc-panel-h">
@@ -3052,140 +3015,25 @@ function resetUnit() {
 updateUnitCategory();
 
 // ════════════════════════════════════════
-// 05 · STOICHIOMETRY
+// 05 · STOICHIOMETRY (canonical: Reaction Workbench)
 // ════════════════════════════════════════
-var SC_STATE = { species: [], eq: '' };
-
-function scMM(formula) {
-  var counts = parseFormula(formula);
-  var total = 0;
-  for (var sym in counts) {
-    if (AW[sym] == null) return null;
-    total += AW[sym] * counts[sym];
-  }
-  return total;
-}
-function scParseTerm(term) {
-  var i = 0;
-  while (i < term.length && /\d/.test(term[i])) i++;
-  return { coef: i > 0 ? parseInt(term.slice(0, i), 10) : 1, formula: term.slice(i) };
-}
-function parseEquation(expr) {
-  var s = String(expr || '').replace(/\s+/g, '').replace(/→/g, '->').replace(/⇌/g, '->');
-  var parts = s.split(/->|=>|=|→/);
-  if (parts.length < 2) return null;
-  var left = parts[0], right = parts.slice(1).join('->');
-  function parseSide(side) {
-    return side.split('+').map(scParseTerm).filter(function (t) { return t.formula; });
-  }
-  var L = parseSide(left), R = parseSide(right);
-  if (!L.length || !R.length) return null;
-  return { left: L, right: R };
-}
-function scSpeciesList(parsed) {
-  return parsed.left.concat(parsed.right);
-}
-function scPretty(term) {
-  return (term.coef > 1 ? term.coef : '') + term.formula;
-}
-function scEquationText(parsed) {
-  return parsed.left.map(scPretty).join(' + ') + ' → ' + parsed.right.map(scPretty).join(' + ');
-}
-function updateStoichSpecies() {
-  var eqInput = document.getElementById('sc-equation');
-  var sel = document.getElementById('sc-species');
-  var parsed = parseEquation(eqInput.value);
-  SC_STATE.species = parsed ? scSpeciesList(parsed) : [];
-  var prev = sel.value;
-  if (!SC_STATE.species.length) {
-    sel.innerHTML = '<option value="">—</option>';
-    return;
-  }
-  sel.innerHTML = SC_STATE.species.map(function (t, i) {
-    var mm = scMM(t.formula);
-    return '<option value="' + i + '">' + scPretty(t) + (mm ? ' · ' + mm.toFixed(2) + ' g/mol' : '') + '</option>';
-  }).join('');
-  var keep = false;
-  for (var k = 0; k < SC_STATE.species.length; k++) { if (String(k) === prev) keep = true; }
-  sel.value = keep ? prev : '0';
-}
 function runStoich() {
-  var eqInput = document.getElementById('sc-equation');
-  var sel = document.getElementById('sc-species');
-  var mass = parseFloat(document.getElementById('sc-mass').value);
-  var body = document.getElementById('sc-result-body');
-  var meta = document.getElementById('sc-result-meta');
-  var parsed = parseEquation(eqInput.value);
-  if (!parsed || !SC_STATE.species.length) {
-    body.innerHTML = '<div class="calc-result-empty" style="color:var(--lc-amber)">' + solverT('scEquationInvalid') + '</div>';
-    meta.textContent = solverT('invalid');
-    return;
-  }
-  if (!isFinite(mass) || mass <= 0) {
-    body.innerHTML = '<div class="calc-result-empty" style="color:var(--lc-amber)">' + solverT('positiveNum') + '</div>';
-    meta.textContent = solverT('invalid');
-    return;
-  }
-  var idx = parseInt(sel.value, 10);
-  if (!(idx >= 0 && idx < SC_STATE.species.length)) {
-    body.innerHTML = '<div class="calc-result-empty" style="color:var(--lc-amber)">' + solverT('scEquationInvalid') + '</div>';
-    meta.textContent = solverT('invalid');
-    return;
-  }
-  var known = SC_STATE.species[idx];
-  var mmKnown = scMM(known.formula);
-  if (!mmKnown) {
-    body.innerHTML = '<div class="calc-result-empty" style="color:var(--lc-amber)">' + solverT('scUnknownElement') + '</div>';
-    meta.textContent = solverT('invalid');
-    return;
-  }
-  var nKnown = mass / mmKnown;
-  var html = '<div class="calc-result-formula">' + scEquationText(parsed) + '</div>';
-  for (var i = 0; i < SC_STATE.species.length; i++) {
-    var t = SC_STATE.species[i];
-    var mm = scMM(t.formula);
-    if (!mm) continue;
-    var moles = nKnown * (t.coef / known.coef);
-    var g = moles * mm;
-    var isKnown = i === idx;
-    html += '<div class="calc-result-row">'
-      + '<span class="calc-result-k">' + (isKnown ? solverT('scKnown', { label: scPretty(t) }) + ' ✓' : scPretty(t)) + '</span>'
-      + '<span class="calc-result-v' + (isKnown ? ' big' : '') + '">' + fmt(moles) + ' mol · ' + fmt(g) + ' g</span></div>';
-  }
-  html += '<div class="calc-result-formula">' + solverT('scNote', { label: scPretty(known) }) + '</div>';
-  body.innerHTML = html;
-  meta.textContent = solverT('scSolvedFor', { label: scPretty(known) });
+  /* Legacy public stoichiometry engine removed — Reaction Workbench is canonical. */
+  return;
 }
-function resetStoich() {
-  document.getElementById('sc-result-body').innerHTML = solverMsg('scEmpty');
-  document.getElementById('sc-result-meta').textContent = solverT('awaiting');
-}
-function applyStoichPreset(btn) {
-  try {
-    var p = JSON.parse(btn.dataset.scPreset || '{}');
-    if (!p.eq) return;
-    setCalcValue('sc-equation', p.eq);
-    updateStoichSpecies();
-    if (p.species) {
-      var target = -1;
-      for (var i = 0; i < SC_STATE.species.length; i++) {
-        if (SC_STATE.species[i].formula === p.species) { target = i; break; }
-      }
-      if (target >= 0) setCalcValue('sc-species', String(target));
-    }
-    setCalcValue('sc-mass', p.mass || '');
-    runStoich();
-  } catch (e) {}
-}
-updateStoichSpecies();
-runStoich();
+function resetStoich() {}
+function applyStoichPreset() {}
+function updateStoichSpecies() {}
+
 
 // ─── 08 · THERMODYNAMICS ───
-var THERMO_C = { water: 4.184, ice: 2.09, iron: 0.449, aluminum: 0.897, copper: 0.385 };
-
 function runThermo() {
   var body = document.getElementById('tm-result-body');
   var meta = document.getElementById('tm-result-meta');
+  if (!body || !meta) return;
+  if (typeof window.atomurusHasPremiumFeature === 'function' && !window.atomurusHasPremiumFeature('publicThermodynamics')) {
+    return;
+  }
   var dh = parseFloat(document.getElementById('tm-dh').value);
   var ds = parseFloat(document.getElementById('tm-ds').value);
   var tC = parseFloat(document.getElementById('tm-t').value);
@@ -3193,36 +3041,48 @@ function runThermo() {
   var sub = subSel.value;
   var mass = parseFloat(document.getElementById('tm-mass').value);
   var dt = parseFloat(document.getElementById('tm-dt').value);
-  if (!isFinite(dh) || !isFinite(ds) || !isFinite(tC) ||
-      !isFinite(mass) || !isFinite(dt) || !THERMO_C[sub]) {
-    body.innerHTML = '<div class="calc-result-empty" style="color:var(--lc-amber)">' + solverT('tmInvalid') + '</div>';
+  var payload = {
+    gibbs: { deltaH: dh, deltaS: ds, T: tC, TUnit: 'C' },
+    heat: { substance: sub, mass: mass, deltaT: dt }
+  };
+  body.innerHTML = '<div class="calc-result-empty">' + solverT('awaiting') + '</div>';
+  meta.textContent = solverT('awaiting');
+  fetch('/api/pro-lab/thermodynamics/solve', {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+    cache: 'no-store',
+    body: JSON.stringify(payload)
+  }).then(function (res) {
+    return res.json().then(function (data) {
+      if (!res.ok || !data || !data.ok || !data.gibbs || !data.heat) {
+        throw new Error((data && data.error) || solverT('tmInvalid'));
+      }
+      var g = data.gibbs;
+      var h = data.heat;
+      var subLabel = subSel.options[subSel.selectedIndex] ? subSel.options[subSel.selectedIndex].text : sub;
+      var verdict = g.spontaneity === 'equilibrium' ? solverT('tmEquilibrium')
+        : (g.spontaneity === 'spontaneous' ? solverT('tmSpont') : solverT('tmNonSpont'));
+      var html = '<div class="calc-result-formula">ΔG = ΔH − T·ΔS</div>';
+      html += '<div class="calc-result-row"><span class="calc-result-k">' + solverT('tmGibbsIn', { h: fmt(g.deltaH), s: fmt(g.deltaS), t: fmt(g.T), tk: fmt(g.Tkelvin) }) + '</span></div>';
+      html += '<div class="calc-result-row"><span class="calc-result-k">ΔG</span><span class="calc-result-v big">' + fmt(g.deltaG) + ' kJ/mol</span></div>';
+      html += '<div class="calc-result-row"><span class="calc-result-k">' + verdict + '</span></div>';
+      if (g.crossover) {
+        html += '<div class="calc-result-formula">' + solverT('tmCrossover', { tk: fmt(g.crossover.Tkelvin), tc: fmt(g.crossover.Tcelsius), dir: g.crossover.direction === 'above' ? solverT('tmAbove') : solverT('tmBelow') }) + '</div>';
+      }
+      var q = h.q;
+      var direction = h.direction === 'endothermic' ? solverT('tmEndo') : (h.direction === 'exothermic' ? solverT('tmExo') : '');
+      html += '<div class="calc-result-formula">q = m·c·ΔT</div>';
+      html += '<div class="calc-result-row"><span class="calc-result-k">' + solverT('tmHeatIn', { sub: subLabel, m: fmt(h.mass), c: fmt(h.c), dt: fmt(h.deltaT) }) + '</span></div>';
+      html += '<div class="calc-result-row"><span class="calc-result-k">q</span><span class="calc-result-v big">' + (q < 0 ? '−' : '+') + fmt(Math.abs(q)) + ' J · ' + (q < 0 ? '−' : '+') + fmt(Math.abs(q) / 1000) + ' kJ</span></div>';
+      if (direction) html += '<div class="calc-result-row"><span class="calc-result-k">' + direction + '</span></div>';
+      body.innerHTML = html;
+      meta.textContent = solverT('tmSolved', { g: fmt(g.deltaG), q: fmt(q / 1000) });
+    });
+  }).catch(function (err) {
+    body.innerHTML = '<div class="calc-result-empty" style="color:var(--lc-amber)">' + (err && err.message ? err.message : solverT('tmInvalid')) + '</div>';
     meta.textContent = solverT('invalid');
-    return;
-  }
-  var subLabel = subSel.options[subSel.selectedIndex] ? subSel.options[subSel.selectedIndex].text : sub;
-  var T = tC + 273.15;
-  var dg = dh - (ds / 1000) * T; // kJ/mol
-  var verdict;
-  if (Math.abs(dg) < 1e-9) verdict = solverT('tmEquilibrium');
-  else if (dg < 0) verdict = solverT('tmSpont');
-  else verdict = solverT('tmNonSpont');
-  var html = '<div class="calc-result-formula">ΔG = ΔH − T·ΔS</div>';
-  html += '<div class="calc-result-row"><span class="calc-result-k">' + solverT('tmGibbsIn', { h: fmt(dh), s: fmt(ds), t: fmt(tC), tk: fmt(T) }) + '</span></div>';
-  html += '<div class="calc-result-row"><span class="calc-result-k">ΔG</span><span class="calc-result-v big">' + fmt(dg) + ' kJ/mol</span></div>';
-  html += '<div class="calc-result-row"><span class="calc-result-k">' + verdict + '</span></div>';
-  if (dh !== 0 && ds !== 0 && (dh > 0) === (ds > 0)) {
-    var tStarK = dh / (ds / 1000);
-    var tStarC = tStarK - 273.15;
-    html += '<div class="calc-result-formula">' + solverT('tmCrossover', { tk: fmt(tStarK), tc: fmt(tStarC), dir: dh > 0 ? solverT('tmAbove') : solverT('tmBelow') }) + '</div>';
-  }
-  var q = mass * THERMO_C[sub] * dt; // J
-  var direction = q >= 0 ? solverT('tmEndo') : solverT('tmExo');
-  html += '<div class="calc-result-formula">q = m·c·ΔT</div>';
-  html += '<div class="calc-result-row"><span class="calc-result-k">' + solverT('tmHeatIn', { sub: subLabel, m: fmt(mass), c: fmt(THERMO_C[sub]), dt: fmt(dt) }) + '</span></div>';
-  html += '<div class="calc-result-row"><span class="calc-result-k">q</span><span class="calc-result-v big">' + (q < 0 ? '−' : '+') + fmt(Math.abs(q)) + ' J · ' + (q < 0 ? '−' : '+') + fmt(Math.abs(q) / 1000) + ' kJ</span></div>';
-  html += '<div class="calc-result-row"><span class="calc-result-k">' + direction + '</span></div>';
-  body.innerHTML = html;
-  meta.textContent = solverT('tmSolved', { g: fmt(dg), q: fmt(q / 1000) });
+  });
 }
 function resetThermo() {
   document.getElementById('tm-result-body').innerHTML = solverMsg('tmEmpty');
@@ -3241,13 +3101,13 @@ function applyThermoPreset(btn) {
     runThermo();
   } catch (e) {}
 }
-runThermo();
+// Thermo waits for Pro entitlement + Compute.
 
 // Re-render every calculator after i18n (deferred) finishes loading, so no
 // tab ever shows literal keys in its initial output.
 document.addEventListener('DOMContentLoaded', function () {
   setTimeout(function () {
-    var list = ['runMolar', 'runScientific', 'runUnit', 'runIdeal', 'runDilution', 'runPH', 'runStoich', 'runThermo'];
+    var list = ['runMolar', 'runScientific', 'runUnit', 'runIdeal', 'runDilution', 'runPH'];
     for (var i = 0; i < list.length; i++) {
       var fn = list[i];
       if (typeof window[fn] !== 'function') continue;

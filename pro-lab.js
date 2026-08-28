@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var SCRIPT_V = '202608283300';
+  var SCRIPT_V = '202608282500';
   var loaded = {};
 
   function loadScript(src) {
@@ -101,12 +101,15 @@
       card(labHref('formula'), t('labFormula'), t('labFormulaLede'), locked, t, esc, 'formula') +
       card(labHref('solutions'), t('labSolutions'), t('labSolutionsLede'), locked, t, esc, 'solutions') +
       '</div>' +
+      '<p class="ws-kicker">' + esc(t('labVisualize') || 'Visualize') + '</p>' +
+      '<div class="ws-lab-grid">' +
+      card(labHref('molecules'), t('labMolecules'), t('labMoleculesLede'), locked, t, esc, 'molecules') +
+      card(labHref('atomic'), t('labAtomic'), t('labAtomicLede'), locked, t, esc, 'atomic') +
+      '</div>' +
       '<p class="ws-kicker">' + esc(t('labAnalysis')) + '</p>' +
       '<div class="ws-lab-grid">' +
       card(labHref('calculations'), t('labCalc'), t('labCalcLede'), locked, t, esc, 'calculations') +
       card(labHref('elements'), t('labElements'), t('labElementsLede'), locked, t, esc, 'elements') +
-      card(labHref('molecules'), t('labMolecules'), t('labMoleculesLede'), locked, t, esc, 'molecules') +
-      card(labHref('atomic'), t('labAtomic'), t('labAtomicLede'), locked, t, esc, 'atomic') +
       '</div></div>';
   }
 

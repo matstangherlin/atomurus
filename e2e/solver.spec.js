@@ -206,7 +206,7 @@ test('Public calculator solver discovery is not a modal', async ({ page }) => {
 
 test('Pricing lists Chemistry Solver separately', async ({ page }) => {
   await page.goto('/pricing');
-  await expect(page.locator('#pricing-title-copy')).toContainText(/periodic table|tabela periódica/i);
+  await expect(page.locator('#pricing-title-copy')).toContainText(/Solve, visualize, analyze and study chemistry|Resolva, visualize, analise e estude química/i);
   await expect(page.locator('#pricing-pro-list')).toContainText(/PRO CHEMISTRY SOLVER/);
   await expect(page.locator('#pricing-pro-list')).toContainText(/Reaction balancing|Balanceamento/);
   await saveShot(page, 'desktop-pricing-solver');

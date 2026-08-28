@@ -262,6 +262,16 @@
   to     = "/.netlify/functions/pro-lab-solutions-solve"
   status = 200
 
+[[redirects]]
+  from   = "/api/pro-lab/thermodynamics/solve"
+  to     = "/.netlify/functions/pro-lab-thermodynamics-solve"
+  status = 200
+
+[[redirects]]
+  from   = "/api/pro-lab/viewer/molecule"
+  to     = "/.netlify/functions/pro-lab-viewer-molecule"
+  status = 200
+
 # Auth pages. Explicit rewrites keep these stable alongside pretty URLs.
 [[redirects]]
   from   = "/login"

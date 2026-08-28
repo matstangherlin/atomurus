@@ -80,7 +80,126 @@
     });
   }
 
+  function langIsPt() {
+    return (document.documentElement.lang || '').toLowerCase().indexOf('pt') === 0;
+  }
+
+  function statusHost(el) {
+    if (!el) return null;
+    return el.closest('.canvas-wrap, .iso-3d-panel, .viewer') || el.parentElement || el;
+  }
+
+  function clearProViewerStatus(el) {
+    var host = statusHost(el);
+    if (!host) return;
+    var box = host.querySelector(':scope > .pro-viewer-status');
+    if (box) box.remove();
+  }
+
+  function showProViewerStatus(el, kind, message, retryFn) {
+    var host = statusHost(el);
+    if (!host) return;
+    if (host !== el && getComputedStyle(host).position === 'static') host.style.position = 'relative';
+    clearProViewerStatus(el);
+    if (kind === 'clear') return;
+    var box = document.createElement('div');
+    box.className = 'pro-viewer-status';
+    box.setAttribute('data-kind', kind);
+    box.setAttribute('role', 'status');
+    box.style.cssText = 'position:absolute;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center;pointer-events:auto;background:rgba(242,239,231,.55)';
+    var p = document.createElement('p');
+    p.textContent = message;
+    p.style.cssText = 'margin:0;font-size:15px;color:inherit';
+    box.appendChild(p);
+    if (kind === 'error' && typeof retryFn === 'function') {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = langIsPt() ? 'Tentar de novo' : 'Try again';
+      btn.style.cssText = 'min-height:40px;padding:0 14px;border:0;border-radius:8px;background:#1E6A50;color:#F8F5EC;font:inherit;font-weight:600;cursor:pointer';
+      btn.addEventListener('click', retryFn);
+      box.appendChild(btn);
+    }
+    host.appendChild(box);
+  }
+
+  function adsSession() {
+    var ads = global.__ATOMURUS_ADS__ || {};
+    var auth = global.__ATOMURUS_AUTH__ || {};
+    var user = ads.user || auth.user || null;
+    return {
+      ready: Boolean(ads.ready || auth.ready),
+      user: user,
+      features: (user && user.features) || {}
+    };
+  }
+
+  function hasPremiumFeature(featureKey) {
+    var session = adsSession();
+    if (!session.ready) return false;
+    if (!featureKey) return false;
+    return Boolean(session.features[featureKey]);
+  }
+
+  function whenAdsReady(callback) {
+    if (typeof callback !== 'function') return;
+    if (adsSession().ready) {
+      callback();
+      return;
+    }
+    document.addEventListener('atomurus-ads-ready', function onReady() {
+      document.removeEventListener('atomurus-ads-ready', onReady);
+      callback();
+    });
+  }
+
+  /**
+   * Boot a Premium viewer only after auth is ready and the feature is true.
+   * Locked / pending / failed-auth: do not load Three.js.
+   */
+  function bootProViewer(el, featureKey, fn, options) {
+    options = options || {};
+    var started = false;
+    function start() {
+      if (started) return;
+      started = true;
+      showProViewerStatus(
+        el,
+        'loading',
+        langIsPt() ? 'Carregando visualizador 3D…' : 'Loading 3D viewer…'
+      );
+      bootViewer(el, function (THREE) {
+        clearProViewerStatus(el);
+        return fn(THREE);
+      }, options).catch(function () {
+        started = false;
+        showProViewerStatus(
+          el,
+          'error',
+          langIsPt() ? 'O visualizador 3D não carregou.' : "3D viewer couldn't load.",
+          start
+        );
+      });
+    }
+    whenAdsReady(function () {
+      if (!hasPremiumFeature(featureKey)) {
+        clearProViewerStatus(el);
+        return;
+      }
+      start();
+    });
+  }
+
   global.atomurusLoadThree = loadThree;
   global.atomurusWhenVisible = whenVisible;
   global.atomurusBootViewer = bootViewer;
+  global.atomurusBootProViewer = bootProViewer;
+  global.atomurusHasPremiumFeature = hasPremiumFeature;
+  global.atomurusShowProViewerError = function (el) {
+    showProViewerStatus(
+      el,
+      'error',
+      langIsPt() ? 'O visualizador 3D não carregou.' : "3D viewer couldn't load.",
+      function () { location.reload(); }
+    );
+  };
 })(typeof window !== 'undefined' ? window : this);

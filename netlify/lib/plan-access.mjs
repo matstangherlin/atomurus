@@ -119,6 +119,7 @@ export function accessForUser(user) {
 
   const isPro = plan === 'paid' || plan === 'admin';
   const signedIn = Boolean(user?.id || user?.email);
+  const interactiveViewers = isPro;
   const cancelAtPeriodEnd = isPaidSubscriptionStatus(subscriptionStatus) && truthyFlag(app.cancel_at_period_end);
   const currentPeriodEnd = parseIso(app.current_period_end)
     ? new Date(parseIso(app.current_period_end)).toISOString()
@@ -177,7 +178,11 @@ export function accessForUser(user) {
       unitConverter: signedIn,
       idealGasCalculator: signedIn,
       phCalculator: signedIn,
-      interactiveViewers: isPro,
+      interactiveViewers,
+      atomicModelViewer: interactiveViewers,
+      moleculeViewer: interactiveViewers,
+      allotropeViewer: interactiveViewers,
+      isomerismViewer: interactiveViewers,
       publicStoichiometry: isPro,
       publicThermodynamics: isPro,
       publicElementCompare: isPro

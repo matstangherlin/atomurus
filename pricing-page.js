@@ -6,8 +6,8 @@
 
   var COPY = {
     en: {
-      title: 'From periodic table to complete chemistry problems.',
-      desc: 'Atomurus Pro adds reaction solving, stoichiometry, advanced analysis and a complete study system.',
+      title: 'Solve, visualize, analyze and study chemistry.',
+      desc: 'Atomurus Pro adds reaction balancing, stoichiometry, 3D chemistry tools, advanced analysis, Study Sets, flashcards and Smart Review.',
       currencyNote: 'Prices follow country and language. New accounts start with 30 days of Pro. No card is required to begin the trial.',
       statusGuest: 'public lab · free access',
       freeTag: 'Free forever',
@@ -148,11 +148,25 @@
       annualAmountUSD: '$60',
       annualEqUSD: '≈ $5/month',
       freeZeroBRL: 'R$0',
-      freeZeroUSD: '$0'
+      freeZeroUSD: '$0',
+      ladderTitle: 'How access works',
+      ladderOpenKicker: 'OPEN LAB',
+      ladderOpenPrice: 'No account',
+      ladderOpenBody: 'Periodic Table, 118 element pages, Explore, Molar Mass, Dilution.',
+      ladderFreeKicker: 'FREE ACCOUNT',
+      ladderFreePriceBRL: 'R$0',
+      ladderFreePriceUSD: '$0',
+      ladderFreeBody: 'Everything in Open, plus Scientific Calculator, Unit Converter, Ideal Gas and pH / pOH. After the 30-day trial the account remains Free.',
+      ladderProKicker: 'PRO',
+      ladderProBody: 'Interactive 3D viewers, Element Compare, Chemistry Solver, Reaction Workbench, Pro Lab, Study Library, Study Sets, flashcards, Smart Review, Focus Review, Study Insights, saved sessions, no ads.',
+      ladderTrial: 'New accounts: Free account + 30 days of Pro automatically. No card required to start the trial. After the trial, the account remains Free — creating an account does not require payment.',
+      ladderOpenPos: 'Learn and explore chemistry.',
+      ladderFreePos: 'Use more everyday chemistry tools.',
+      ladderProPos: 'Solve, visualize, analyze and study chemistry.'
     },
     pt: {
-      title: 'Da tabela periódica à resolução completa de problemas de química.',
-      desc: 'O Atomurus Pro adiciona resolução de reações, estequiometria, análise avançada e um sistema completo de estudos.',
+      title: 'Resolva, visualize, analise e estude química.',
+      desc: 'O Atomurus Pro adiciona balanceamento de reações, estequiometria, ferramentas 3D, análise avançada, Study Sets, flashcards e Smart Review.',
       currencyNote: 'Os preços seguem país e idioma. Contas novas começam com 30 dias de Pro. Não é preciso cartão para iniciar o trial.',
       statusGuest: 'lab público · acesso gratuito',
       freeTag: 'Grátis para sempre',
@@ -293,7 +307,21 @@
       annualAmountUSD: 'US$60',
       annualEqUSD: '≈ US$5/mês',
       freeZeroBRL: 'R$0',
-      freeZeroUSD: 'US$0'
+      freeZeroUSD: 'US$0',
+      ladderTitle: 'Como o acesso funciona',
+      ladderOpenKicker: 'ABERTO',
+      ladderOpenPrice: 'Sem conta',
+      ladderOpenBody: 'Tabela periódica, 118 páginas de elementos, Explore, massa molar, diluição.',
+      ladderFreeKicker: 'CONTA GRÁTIS',
+      ladderFreePriceBRL: 'R$0',
+      ladderFreePriceUSD: 'US$0',
+      ladderFreeBody: 'Tudo do Aberto, mais Calculadora científica, Conversor de unidades, Gás ideal e pH / pOH. Depois do trial de 30 dias a conta continua gratuita.',
+      ladderProKicker: 'PRO',
+      ladderProBody: 'Visualizadores 3D, Comparação de elementos, Chemistry Solver, Laboratório de Reações, Pro Lab, Biblioteca, Study Sets, flashcards, Smart Review, Focus Review, Insights, sessões salvas, sem anúncios.',
+      ladderTrial: 'Contas novas: conta grátis + 30 dias de Pro automaticamente. Não é preciso cartão para começar o trial. Depois do trial, a conta continua gratuita — criar conta não exige pagamento.',
+      ladderOpenPos: 'Aprenda e explore química.',
+      ladderFreePos: 'Use mais ferramentas de química.',
+      ladderProPos: 'Resolva, visualize, analise e estude química.'
     }
   };
 
@@ -497,6 +525,20 @@
     }
     setText('pricing-keep-free-title', t('keepFreeTitle'));
     setText('pricing-keep-free-copy', t('keepFree'));
+    setText('pricing-ladder-title', t('ladderTitle'));
+    setText('ladder-open-kicker', t('ladderOpenKicker'));
+    setText('ladder-open-price', t('ladderOpenPrice'));
+    setText('ladder-open-body', t('ladderOpenBody'));
+    setText('ladder-open-pos', t('ladderOpenPos'));
+    setText('ladder-free-kicker', t('ladderFreeKicker'));
+    setText('ladder-free-price', currency === 'brl' ? t('ladderFreePriceBRL') : t('ladderFreePriceUSD'));
+    setText('ladder-free-body', t('ladderFreeBody'));
+    setText('ladder-free-pos', t('ladderFreePos'));
+    setText('ladder-pro-kicker', t('ladderProKicker'));
+    setText('ladder-pro-price', period === 'annual' ? pricing.annualAmount : pricing.monthlyAmount);
+    setText('ladder-pro-body', t('ladderProBody'));
+    setText('ladder-pro-pos', t('ladderProPos'));
+    setText('ladder-trial-note', t('ladderTrial'));
     setText('pricing-trial-note', t('trialBadge'));
     var current = document.getElementById('pricing-current');
     if (current) {

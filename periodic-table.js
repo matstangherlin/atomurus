@@ -2777,6 +2777,7 @@ function renderCompareLegacy() {
 }
 
 function renderCompare() {
+  if (document.body && document.body.getAttribute('data-compare-canonical') === 'pro-lab') return;
   const z1 = cmpSelection[1];
   const z2 = cmpSelection[2];
 

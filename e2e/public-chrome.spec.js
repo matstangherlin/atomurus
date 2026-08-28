@@ -198,7 +198,8 @@ test('settings, compare, docs and articles keep the workspace pattern', async ({
   await expect(page.locator('.pt-tab.active')).toBeVisible();
   const cmpTab = await page.locator('.pt-tab.active').evaluate((el) => getComputedStyle(el).color);
   expect(cmpTab).toMatch(/rgb\(\s*30,\s*106,\s*80\s*\)/);
-  await expect(page.locator('.cmp-slot').first()).toBeVisible();
+  await expect(page.locator('[data-pro-canonical="element-compare"]')).toBeVisible();
+  await expect(page.locator('[data-i18n="ptable.cmpOpenAdvanced"]')).toBeVisible();
   await expect(page.locator('.data-strip').first()).toBeHidden();
   await saveShot(page, 'desktop-public-compare');
 

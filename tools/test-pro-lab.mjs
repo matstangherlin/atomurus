@@ -14,6 +14,8 @@ import balanceHandler from '../netlify/functions/pro-lab-reaction-balance.mjs';
 import solveHandler from '../netlify/functions/pro-lab-reaction-solve.mjs';
 import formulaHandler from '../netlify/functions/pro-lab-formula-solve.mjs';
 import solutionsHandler from '../netlify/functions/pro-lab-solutions-solve.mjs';
+import thermoHandler from '../netlify/functions/pro-lab-thermodynamics-solve.mjs';
+import viewerMoleculeHandler from '../netlify/functions/pro-lab-viewer-molecule.mjs';
 
 const originalEnv = { ...process.env };
 const originalFetch = globalThis.fetch;
@@ -399,8 +401,10 @@ assert.match(planAccess, /stoichiometrySolver: isPro/);
 assert.match(planAccess, /formulaSolver: isPro/);
 assert.match(planAccess, /solutionBuilder: isPro/);
 assert.match(planAccess, /scientificCalculator: signedIn/);
-assert.match(planAccess, /interactiveViewers: isPro/);
+assert.match(planAccess, /const interactiveViewers = isPro/);
 assert.match(planAccess, /publicStoichiometry: isPro/);
+assert.match(planAccess, /publicThermodynamics: isPro/);
+assert.match(planAccess, /moleculeViewer: interactiveViewers/);
 
 const calcFn = readFileSync(new URL('../netlify/functions/pro-lab-calculate.mjs', import.meta.url), 'utf8');
 assert.match(calcFn, /requireFeature\(request, 'advancedCalculations'\)/);
@@ -424,7 +428,8 @@ await withLabEnv(async () => {
     [balanceHandler, 'https://atomurus.com/api/pro-lab/reaction/balance', 'POST', 'reactionBalancer'],
     [solveHandler, 'https://atomurus.com/api/pro-lab/reaction/solve', 'POST', 'stoichiometrySolver'],
     [formulaHandler, 'https://atomurus.com/api/pro-lab/formula/solve', 'POST', 'formulaSolver'],
-    [solutionsHandler, 'https://atomurus.com/api/pro-lab/solutions/solve', 'POST', 'solutionBuilder']
+    [solutionsHandler, 'https://atomurus.com/api/pro-lab/solutions/solve', 'POST', 'solutionBuilder'],
+    [thermoHandler, 'https://atomurus.com/api/pro-lab/thermodynamics/solve', 'POST', 'publicThermodynamics']
   ]) {
     const free = await handler(cookieRequest(url, {
       method,
@@ -688,5 +693,38 @@ await withLabEnv(async () => {
 
 const reactionState = validateSessionState('reaction', { equation: 'H2 + O2 -> H2O', quantities: [] });
 assert.equal(reactionState.solverVersion, 1);
+
+await withLabEnv(async () => {
+  const unsigned = await viewerMoleculeHandler(cookieRequest('https://atomurus.com/api/pro-lab/viewer/molecule?key=water'));
+  assert.equal(unsigned.status, 401);
+  const free = await viewerMoleculeHandler(cookieRequest('https://atomurus.com/api/pro-lab/viewer/molecule?key=water', {
+    cookies: sessionCookie('access-free')
+  }));
+  assert.equal(free.status, 403);
+  const paid = await viewerMoleculeHandler(cookieRequest('https://atomurus.com/api/pro-lab/viewer/molecule?key=water', {
+    cookies: sessionCookie('access-pro-a')
+  }));
+  const paidJson = await readJson(paid);
+  assert.equal(paid.status, 200);
+  assert.equal(paidJson.ok, true);
+  assert.ok(paidJson.molecule.atoms.length >= 3);
+  assertPrivate(paid, paidJson);
+});
+
+await withLabEnv(async () => {
+  const body = {
+    gibbs: { deltaH: 100, deltaS: 200, T: 25, TUnit: 'C' },
+    heat: { substance: 'water', mass: 10, deltaT: 10 }
+  };
+  const trial = await thermoHandler(cookieRequest('https://atomurus.com/api/pro-lab/thermodynamics/solve', {
+    method: 'POST',
+    cookies: sessionCookie('access-trial'),
+    body
+  }));
+  const json = await readJson(trial);
+  assert.equal(trial.status, 200);
+  assert.equal(json.ok, true);
+  assertPrivate(trial, json);
+});
 
 console.log('pro-lab tests passed');

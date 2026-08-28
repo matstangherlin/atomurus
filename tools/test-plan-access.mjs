@@ -15,7 +15,13 @@ assert.equal(fresh.planSource, 'trial');
 assert.equal(fresh.adsFree, true);
 assert.equal(fresh.features.scientificCalculator, true);
 assert.equal(fresh.features.interactiveViewers, true);
+assert.equal(fresh.features.moleculeViewer, true);
+assert.equal(fresh.features.atomicModelViewer, true);
+assert.equal(fresh.features.allotropeViewer, true);
+assert.equal(fresh.features.isomerismViewer, true);
 assert.equal(fresh.features.publicStoichiometry, true);
+assert.equal(fresh.features.publicThermodynamics, true);
+assert.equal(fresh.features.publicElementCompare, true);
 assert.ok(fresh.trialEndsAt);
 
 const expired = accessForUser({ createdAt: daysAgo(40), email: 'a@b.com' });
@@ -26,6 +32,8 @@ assert.equal(expired.features.unitConverter, true);
 assert.equal(expired.features.idealGasCalculator, true);
 assert.equal(expired.features.phCalculator, true);
 assert.equal(expired.features.interactiveViewers, false);
+assert.equal(expired.features.moleculeViewer, false);
+assert.equal(expired.features.atomicModelViewer, false);
 assert.equal(expired.features.publicStoichiometry, false);
 assert.equal(expired.features.publicThermodynamics, false);
 assert.equal(expired.features.publicElementCompare, false);
@@ -33,6 +41,7 @@ assert.equal(expired.features.publicElementCompare, false);
 const guest = accessForUser({});
 assert.equal(guest.features.scientificCalculator, false);
 assert.equal(guest.features.interactiveViewers, false);
+assert.equal(guest.features.moleculeViewer, false);
 
 const paid = accessForUser({
   createdAt: daysAgo(40),
@@ -68,6 +77,14 @@ assert.equal(paid.features.limitingReagentSolver, true);
 assert.equal(paid.features.yieldSolver, true);
 assert.equal(paid.features.formulaSolver, true);
 assert.equal(paid.features.solutionBuilder, true);
+assert.equal(paid.features.interactiveViewers, true);
+assert.equal(paid.features.moleculeViewer, true);
+assert.equal(paid.features.atomicModelViewer, true);
+assert.equal(paid.features.allotropeViewer, true);
+assert.equal(paid.features.isomerismViewer, true);
+assert.equal(paid.features.publicStoichiometry, true);
+assert.equal(paid.features.publicThermodynamics, true);
+assert.equal(paid.features.publicElementCompare, true);
 
 const expiredStudy = accessForUser({ createdAt: daysAgo(40), email: 'a@b.com' });
 assert.equal(expiredStudy.features.studyCloud, false);
@@ -120,6 +137,8 @@ assert.equal(admin.features.advancedAtomicCompare, true);
 assert.equal(admin.features.savedLabSessions, true);
 assert.equal(admin.features.chemistrySolver, true);
 assert.equal(admin.features.reactionWorkbench, true);
+assert.equal(admin.features.moleculeViewer, true);
+assert.equal(admin.features.publicThermodynamics, true);
 
 const pub = publicUser({
   id: '1',

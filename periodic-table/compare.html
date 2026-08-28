@@ -47,14 +47,14 @@
       "@type": ["WebPage", "LearningResource"],
       "@id": "https://atomurus.com/periodic-table/compare#webpage",
       "name": "Compare Chemical Elements — Atomurus",
-      "description": "Compare two chemical elements side by side: atomic properties, mass, electronegativity, electron configuration and more.",
+      "description": "Compare two chemical elements side by side with Atomurus Pro. The public page is a preview; Advanced Element Compare in Pro Lab is the canonical engine.",
       "url": "https://atomurus.com/periodic-table/compare",
       "inLanguage": ["en", "pt-BR"],
-      "learningResourceType": "Interactive Resource",
+      "learningResourceType": "Overview",
       "educationalLevel": ["secondary education", "higher education"],
       "isPartOf": { "@id": "https://atomurus.com/#website" },
       "publisher": { "@id": "https://atomurus.com/#org" },
-      "isAccessibleForFree": true,
+      "isAccessibleForFree": false,
       "about": { "@id": "https://atomurus.com/periodic-table#dataset" }
     },
     {
@@ -80,7 +80,7 @@
 <link rel="stylesheet" href="../atomurus-lab-console.css?v=202608041630" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
 <noscript><link rel="stylesheet" href="../atomurus-lab-console.css?v=202608041630"></noscript>
 <link rel="stylesheet" href="/assets/public-shell.css?v=202608281830">
-<script src="/assets/public-workspace.js?v=202608282400"></script>
+<script src="/assets/public-workspace.js?v=202608282500"></script>
 <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>
 <script src="../lazy-ads.js?v=202608041630" defer></script>
 <!-- i18n (EN default, PT fallback) — precedes periodic-table.js so I18N is defined before its initLang runs -->
@@ -103,7 +103,7 @@
   })();
 </script>
 </head>
-<body data-pt-tab="comparar">
+<body data-pt-tab="comparar" data-compare-canonical="pro-lab">
 
 <!-- ════════════ SIDEBAR ════════════ -->
 <aside class="sidebar">
@@ -335,8 +335,19 @@
         <div class="compare-wrap">
           <div style="margin-bottom:8px">
             <h2 style="font-size:18px;color:var(--text-1);margin-bottom:4px" data-i18n="ptable.cmpTitle">Element Comparator</h2>
-            <p style="font-size:13px;color:var(--text-2)" data-i18n="ptable.cmpDesc">Select one or two elements to view their properties.</p>
+            <p style="font-size:13px;color:var(--text-2)" data-i18n="ptable.cmpDesc">Compare periodic properties side by side with Atomurus Pro. Advanced Element Compare in Pro Lab is the canonical engine.</p>
           </div>
+          <div class="pro-canonical-preview" data-pro-canonical="element-compare" style="margin:16px 0 24px;max-width:36rem">
+            <p style="font-size:14px;line-height:1.5;color:var(--text-2);margin:0 0 14px" data-i18n="ptable.cmpProPreview">Compare atomic number, mass, electronegativity, electron configuration and more — using canonical element data. Heatmap, trends and isotopes stay open on the public table.</p>
+            <a class="lc-topnav-cta" href="/app?section=pro-lab&tool=elements" style="text-decoration:none;display:inline-flex" data-i18n="ptable.cmpOpenAdvanced">Open Advanced Compare</a>
+          </div>
+          <style>
+            body[data-compare-canonical="pro-lab"] .compare-selectors,
+            body[data-compare-canonical="pro-lab"] .cmp-model-bar,
+            body[data-compare-canonical="pro-lab"] .cmp-scale-view,
+            body[data-compare-canonical="pro-lab"] .cmp-empty-state,
+            body[data-compare-canonical="pro-lab"] #compare-result { display:none !important; }
+          </style>
           <div class="compare-selectors">
             <!-- Slot 1 -->
             <div class="cmp-slot" id="cmp-slot-1" data-slot="1">

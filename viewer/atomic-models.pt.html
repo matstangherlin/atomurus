@@ -46,10 +46,10 @@
       "@type": ["CollectionPage", "LearningResource"],
       "@id": "https://atomurus.com/viewer/atomic-models#webpage",
       "name": "Atomic Models — Atomurus",
-      "description": "Historical atomic models in interactive 3D: Dalton (1803), Thomson (1897), Rutherford (1911), Bohr (1913) and Quantum (Schrödinger 1926).",
+      "description": "Historical atomic models (Dalton, Thomson, Rutherford, Bohr, quantum). The documentary page is public; interactive 3D rendering is part of Atomurus Pro.",
       "url": "https://atomurus.com/viewer/atomic-models",
       "inLanguage": ["en", "pt-BR"],
-      "learningResourceType": "Interactive Resource",
+      "learningResourceType": "Overview",
       "educationalLevel": ["secondary education", "higher education"],
       "isPartOf": { "@id": "https://atomurus.com/#website" },
       "publisher": { "@id": "https://atomurus.com/#org" },
@@ -1124,7 +1124,7 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
 <link rel="stylesheet" href="../atomurus-lab-console.css?v=202608041630" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
 <noscript><link rel="stylesheet" href="../atomurus-lab-console.css?v=202608041630"></noscript>
 <link rel="stylesheet" href="/assets/public-shell.css?v=202608281830">
-<script src="/assets/public-workspace.js?v=202608282400"></script>
+<script src="/assets/public-workspace.js?v=202608282500"></script>
 </head>
 <body>
 
@@ -1720,10 +1720,10 @@ function toggleMobileSidebar(){
 }
 </script>
 
-<script src="load-three.js?v=202608041630"></script>
+<script src="load-three.js?v=202608282500"></script>
 <script>
 // ═════════ 3D VIEWER ═════════
-atomurusBootViewer(document.getElementById('viewer3d'), function () {
+atomurusBootProViewer(document.getElementById('viewer3d'), 'atomicModelViewer', function () {
 (function(){
   const canvas = document.getElementById('viewer3d');
   const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:false });

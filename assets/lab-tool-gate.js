@@ -1,6 +1,8 @@
 /**
- * Client gate for public-lab tools.
- * Pages stay crawlable. Interactive panels overlay until login or Pro.
+ * Public-lab access presentation.
+ *
+ * This module controls previews and conversion UI only.
+ * Premium execution/data must also be authorized server-side.
  */
 (function () {
   'use strict';
@@ -17,6 +19,15 @@
     ph: 'login',
     stoich: 'pro',
     thermo: 'pro'
+  };
+
+  var CALC_TAB_FEATURE = {
+    scientific: 'scientificCalculator',
+    unit: 'unitConverter',
+    ideal: 'idealGasCalculator',
+    ph: 'phCalculator',
+    stoich: 'publicStoichiometry',
+    thermo: 'publicThermodynamics'
   };
 
   var STYLE = [
@@ -56,30 +67,55 @@
 
   function pagePolicy(pathname) {
     var path = compactPath(pathname);
-    if (path.indexOf('/explore/') !== -1) return { need: 'public', kind: 'page' };
-    if (/\/periodic-table\/compare$/.test(path)) return { need: 'pro', kind: 'compare' };
-    if (/\/viewer\/molecules/.test(path) || /(^|\/)molecules$/.test(path)) return { need: 'pro', kind: 'viewer' };
-    if (/\/viewer\/atomic-models/.test(path) || /\/atomic-models(\/|$)/.test(path)) return { need: 'pro', kind: 'viewer' };
-    if (/\/viewer\/allotropes/.test(path) || /(^|\/)allotropes$/.test(path)) return { need: 'pro', kind: 'viewer' };
-    if (/\/viewer\/isomerism/.test(path) || /(^|\/)isomerism(\/|$)/.test(path)) return { need: 'pro', kind: 'viewer' };
-    return { need: 'public', kind: 'page' };
+    if (path.indexOf('/explore/') !== -1) return { need: 'public', kind: 'page', feature: null };
+    if (/\/periodic-table\/compare$/.test(path)) {
+      return { need: 'pro', kind: 'compare', feature: 'publicElementCompare' };
+    }
+    if (/\/viewer\/molecules/.test(path) || /(^|\/)molecules$/.test(path)) {
+      return { need: 'pro', kind: 'viewer', feature: 'moleculeViewer' };
+    }
+    if (/\/viewer\/atomic-models/.test(path) || /\/atomic-models(\/|$)/.test(path)) {
+      return { need: 'pro', kind: 'viewer', feature: 'atomicModelViewer' };
+    }
+    if (/\/viewer\/allotropes/.test(path) || /(^|\/)allotropes$/.test(path)) {
+      return { need: 'pro', kind: 'viewer', feature: 'allotropeViewer' };
+    }
+    if (/\/viewer\/isomerism/.test(path) || /(^|\/)isomerism(\/|$)/.test(path)) {
+      return { need: 'pro', kind: 'viewer', feature: 'isomerismViewer' };
+    }
+    return { need: 'public', kind: 'page', feature: null };
   }
 
   function sessionOf() {
     var ads = window.__ATOMURUS_ADS__ || {};
     var auth = window.__ATOMURUS_AUTH__ || {};
     var user = ads.user || auth.user || null;
+    var features = (user && user.features) || {};
     return {
       signedIn: Boolean(ads.signedIn || auth.signedIn || (user && (user.id || user.email))),
       isPro: Boolean((user && user.isPro) || ads.isPro),
-      ready: Boolean(ads.ready || auth.ready)
+      ready: Boolean(ads.ready || auth.ready),
+      user: user,
+      features: features
     };
   }
 
-  function allowed(need, session) {
+  function hasFeature(session, featureKey) {
+    if (!featureKey) return false;
+    return Boolean(session.features && session.features[featureKey]);
+  }
+
+  function allowed(need, session, featureKey) {
     if (!need || need === 'public') return true;
-    if (need === 'login') return Boolean(session.signedIn);
-    if (need === 'pro') return Boolean(session.isPro);
+    if (need === 'login') {
+      if (featureKey) return hasFeature(session, featureKey) || Boolean(session.signedIn && session.ready);
+      return Boolean(session.signedIn);
+    }
+    if (need === 'pro') {
+      if (!session.ready) return false;
+      if (featureKey) return hasFeature(session, featureKey);
+      return false;
+    }
     return true;
   }
 
@@ -111,8 +147,8 @@
         kicker: t('PRO', 'PRO'),
         title: t('Stoichiometry and thermodynamics are Pro.', 'Estequiometria e termodinâmica são Pro.'),
         body: t(
-          'The public stoichiometry and thermo calculators are part of Atomurus Pro. New accounts include a 30-day Pro trial.',
-          'As calculadoras públicas de estequiometria e termo fazem parte do Atomurus Pro. Contas novas incluem 30 dias de trial.'
+          'Reaction Workbench and the thermo solver are part of Atomurus Pro. New accounts include a 30-day Pro trial — no card required to start.',
+          'O Laboratório de Reações e o solver termo fazem parte do Atomurus Pro. Contas novas incluem 30 dias de trial — sem cartão para começar.'
         )
       };
     }
@@ -121,8 +157,8 @@
         kicker: t('PRO', 'PRO'),
         title: t('Element compare is part of Atomurus Pro.', 'A comparação de elementos faz parte do Atomurus Pro.'),
         body: t(
-          'Side-by-side element compare stays in Pro. The periodic table, heatmap, trends and isotopes remain open. New accounts include a 30-day trial.',
-          'A comparação lado a lado fica no Pro. Tabela, mapa de calor, tendências e isótopos continuam abertos. Contas novas incluem 30 dias de trial.'
+          'Advanced Element Compare lives in Pro Lab. The periodic table, heatmap, trends and isotopes remain open. New accounts include a 30-day trial.',
+          'A Comparação avançada de elementos fica no Pro Lab. Tabela, mapa de calor, tendências e isótopos continuam abertos. Contas novas incluem 30 dias de trial.'
         )
       };
     }
@@ -130,8 +166,8 @@
       kicker: t('PRO', 'PRO'),
       title: t('This tool is part of Atomurus Pro.', 'Esta ferramenta faz parte do Atomurus Pro.'),
       body: t(
-        'Interactive 3D viewers, isomerism and allotropes stay in Pro. New accounts include a 30-day Pro trial.',
-        'Visualizadores 3D, isomeria e alótropos ficam no Pro. Contas novas incluem 30 dias de trial.'
+        'Interactive 3D viewers stay in Pro. The page remains a public preview. New accounts include a 30-day Pro trial — no card required to start.',
+        'Visualizadores 3D ficam no Pro. A página continua como prévia pública. Contas novas incluem 30 dias de trial — sem cartão para começar.'
       )
     };
   }
@@ -155,8 +191,15 @@
 
   function overlay(host, need, id, kind) {
     if (!host) return;
+    var session = sessionOf();
     var existing = host.querySelector(':scope > .lab-tool-gate');
-    if (existing && existing.getAttribute('data-need') === need && existing.getAttribute('data-kind') === String(kind || '')) {
+    var signedKey = session.signedIn ? '1' : '0';
+    if (
+      existing &&
+      existing.getAttribute('data-need') === need &&
+      existing.getAttribute('data-kind') === String(kind || '') &&
+      existing.getAttribute('data-signed') === signedKey
+    ) {
       if (id === 'lab-tool-gate') host.classList.add('lab-tool-gate-host');
       setInert(host, true);
       return;
@@ -168,6 +211,7 @@
     box.id = id || 'lab-tool-gate';
     box.setAttribute('data-need', need);
     box.setAttribute('data-kind', kind || '');
+    box.setAttribute('data-signed', signedKey);
     box.setAttribute('role', 'dialog');
     box.setAttribute('aria-modal', 'true');
     box.setAttribute('aria-label', copy.title);
@@ -186,26 +230,30 @@
       var signup = document.createElement('a');
       signup.className = 'lab-tool-gate-primary';
       signup.href = signupHref();
-      signup.textContent = t('Create account', 'Criar conta');
+      signup.textContent = t('Create a free account', 'Criar conta gratuita');
       var login = document.createElement('a');
       login.className = 'lab-tool-gate-secondary';
       login.href = loginHref();
       login.textContent = t('Sign in', 'Entrar');
       actions.appendChild(signup);
       actions.appendChild(login);
+    } else if (!session.signedIn) {
+      var trial = document.createElement('a');
+      trial.className = 'lab-tool-gate-primary';
+      trial.href = signupHref();
+      trial.textContent = t('Start 30-day Pro trial', 'Começar trial Pro de 30 dias');
+      actions.appendChild(trial);
+      var sign = document.createElement('a');
+      sign.className = 'lab-tool-gate-secondary';
+      sign.href = loginHref();
+      sign.textContent = t('Sign in', 'Entrar');
+      actions.appendChild(sign);
     } else {
       var upgrade = document.createElement('a');
       upgrade.className = 'lab-tool-gate-primary';
       upgrade.href = '/pricing';
       upgrade.textContent = t('Upgrade to Pro', 'Assinar o Pro');
       actions.appendChild(upgrade);
-      if (!sessionOf().signedIn) {
-        var sign = document.createElement('a');
-        sign.className = 'lab-tool-gate-secondary';
-        sign.href = loginHref();
-        sign.textContent = t('Sign in', 'Entrar');
-        actions.appendChild(sign);
-      }
     }
     box.appendChild(card);
     host.appendChild(box);
@@ -253,7 +301,7 @@
     var session = sessionOf();
     var page = pagePolicy(location.pathname);
     var host = pageHost();
-    if (page.need !== 'public' && !allowed(page.need, session)) {
+    if (page.need !== 'public' && !allowed(page.need, session, page.feature)) {
       overlay(host, page.need, 'lab-tool-gate', page.kind);
     } else {
       clearOverlay(host);
@@ -263,7 +311,8 @@
       var tabHost = calcHost(tab);
       if (!tabHost) return;
       var need = CALC_TAB_POLICY[tab];
-      if (allowed(need, session)) clearOverlay(tabHost);
+      var feature = CALC_TAB_FEATURE[tab] || null;
+      if (allowed(need, session, feature)) clearOverlay(tabHost);
       else overlay(tabHost, need, 'lab-tool-gate-' + tab, 'calc');
     });
   }
@@ -280,7 +329,16 @@
   window.AtomurusLabToolGate = {
     pagePolicy: pagePolicy,
     calcTabPolicy: function (tab) { return CALC_TAB_POLICY[tab] || 'public'; },
+    calcTabFeature: function (tab) { return CALC_TAB_FEATURE[tab] || null; },
     allow: allowed,
+    hasFeature: hasFeature,
+    sessionOf: sessionOf,
     apply: apply
+  };
+
+  window.atomurusHasPremiumFeature = function (featureKey) {
+    var session = sessionOf();
+    if (!session.ready) return false;
+    return hasFeature(session, featureKey);
   };
 })();

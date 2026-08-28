@@ -22,7 +22,7 @@ const CHECKS = [
     path: '/viewer/molecules',
     test: (html) => {
       assert(html.includes('load-three.js'), 'missing load-three.js');
-      assert(html.includes('atomurusBootViewer'), 'missing atomurusBootViewer');
+      assert(html.includes('atomurusBootProViewer'), 'missing atomurusBootProViewer');
       assert(!/cdnjs\.cloudflare\.com\/ajax\/libs\/three\.js/.test(html), 'eager three.min.js still present');
     }
   },
