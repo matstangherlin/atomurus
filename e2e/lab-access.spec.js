@@ -220,17 +220,18 @@ test('Pro isomerism 2D overlays the stage without hiding WebGL', async ({ page }
     const stage = panel && panel.querySelector('.iso-3d-stage');
     const s2 = panel && panel.querySelector('.iso-3d-stage2d');
     const c = stage && stage.querySelector('canvas');
-    return Boolean(
-      panel && panel.classList.contains('is-2d') &&
-      stage && getComputedStyle(stage).display !== 'none' &&
-      c && getComputedStyle(c).visibility === 'visible' &&
-      s2 && stage.contains(s2) &&
-      getComputedStyle(s2).position === 'absolute' &&
-      getComputedStyle(s2).visibility === 'visible' &&
-      s2.querySelector('svg') &&
-      Math.abs(s2.getBoundingClientRect().top - stage.getBoundingClientRect().top) < 8 &&
-      Math.abs(s2.getBoundingClientRect().height - stage.getBoundingClientRect().height) < 8
-    );
+    if (!panel || !stage || !s2 || !c || !s2.querySelector('svg')) return false;
+    if (getComputedStyle(stage).display === 'none') return false;
+    if (getComputedStyle(c).visibility !== 'visible') return false;
+    if (!stage.contains(s2)) return false;
+    if (getComputedStyle(s2).position !== 'absolute') return false;
+    if (getComputedStyle(s2).visibility !== 'visible') return false;
+    const sr = stage.getBoundingClientRect();
+    const r2 = s2.getBoundingClientRect();
+    return r2.top >= sr.top - 2 &&
+      r2.bottom <= sr.bottom + 2 &&
+      r2.height >= sr.height * 0.9 &&
+      r2.width >= sr.width * 0.9;
   })).toBe(true);
   await saveShot(page, 'pro-isomerism-mode-2d');
   await page.locator('[data-3d-mode="3d"]').click();

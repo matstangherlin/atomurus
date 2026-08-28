@@ -19,10 +19,10 @@
     var s = document.createElement('style');
     s.id = 'iso-3d-mode-css';
     s.textContent =
-      '.iso-3d-stage{overflow:hidden}' +
-      '.iso-3d-stage2d{position:absolute!important;inset:0!important;top:0!important;right:0!important;bottom:0!important;left:0!important;' +
-      'width:auto!important;height:auto!important;z-index:2;display:flex!important;align-items:center;justify-content:center;' +
-      'padding:12px;box-sizing:border-box;visibility:hidden;pointer-events:none}' +
+      '.iso-3d-stage{overflow:hidden;position:relative}' +
+      '.iso-3d-stage2d{position:absolute!important;top:0!important;right:0!important;bottom:0!important;left:0!important;' +
+      'width:100%!important;height:100%!important;max-height:none!important;z-index:2;display:flex!important;align-items:center;justify-content:center;' +
+      'padding:12px;box-sizing:border-box;margin:0!important;visibility:hidden;pointer-events:none}' +
       '.iso-3d-panel.is-2d .iso-3d-stage2d{visibility:visible!important;pointer-events:auto!important}' +
       '.iso-3d-panel.is-2d .iso-3d-stage canvas{pointer-events:none}';
     document.head.appendChild(s);
@@ -526,6 +526,7 @@
     if (!stage) return;
     ensureModeStyles();
     stage.style.overflow = 'hidden';
+    if (getComputedStyle(stage).position === 'static') stage.style.position = 'relative';
     var head = panel.querySelector('.iso-3d-head');
     if (head && !head.querySelector('.iso-3d-badge')) {
       var badge = document.createElement('span');
@@ -550,9 +551,6 @@
       stage2d = document.createElement('div');
       stage2d.className = 'iso-3d-stage2d';
       stage2d.setAttribute('aria-hidden', 'true');
-      // Overlay the WebGL stage. Hiding .iso-3d-stage with display:none
-      // blanks 3D when switching back, and a sibling 2D stage landed under the footer.
-      stage2d.style.cssText = 'position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box;width:100%;height:100%;visibility:hidden;pointer-events:none';
       stage.appendChild(stage2d);
     }
     var meta = document.createElement('div');
