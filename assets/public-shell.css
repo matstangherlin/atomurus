@@ -483,7 +483,7 @@ html[lang^="pt"] .logo-tag::after { content: 'laboratório'; }
 }
 
 .data-strip {
-  background: var(--lc-paper);
+  background: var(--lc-paper) !important;
   color: var(--lc-ink-2);
   border-bottom: 1px solid var(--lc-rule);
   font-size: 11px;
@@ -491,7 +491,7 @@ html[lang^="pt"] .logo-tag::after { content: 'laboratório'; }
   padding: 8px 18px;
 }
 [data-theme="dark"] .data-strip {
-  background: var(--lc-paper);
+  background: var(--lc-paper) !important;
   border-bottom-color: var(--lc-rule);
 }
 .data-strip .ds-k {
@@ -536,6 +536,30 @@ html[lang^="pt"] .logo-tag::after { content: 'laboratório'; }
   font-family: 'Instrument Serif', Georgia, serif;
   font-weight: 400;
 }
+.calc-panel-kicker {
+  font-family: var(--lc-mono, ui-monospace, monospace);
+  font-size: 11px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--lc-ink-3);
+}
+.calc-btn-run {
+  height: 44px;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: var(--ps-radius-md);
+  background: var(--lc-green) !important;
+  border-color: var(--lc-green) !important;
+  color: #F8F5EC !important;
+  font-weight: 600;
+}
+[data-theme="dark"] .calc-btn-run { color: #0E0D0C !important; }
+.calc-btn-reset {
+  height: 44px;
+  min-height: 44px;
+  border-radius: var(--ps-radius-md);
+}
+.h-no { display: none; }
 
 /* ── Docs, login, pricing ── */
 .lc-doc { font-size: 15px; }
@@ -547,6 +571,21 @@ html[lang^="pt"] .logo-tag::after { content: 'laboratório'; }
 }
 
 .price-card { border-radius: var(--ps-radius-md) !important; }
+
+.auth-primary-btn,
+.auth-panel .lc-form button[type=submit] {
+  height: 44px;
+  min-height: 44px;
+  border-radius: var(--ps-radius-md);
+  background: var(--lc-green) !important;
+  border-color: var(--lc-green) !important;
+  color: #F8F5EC !important;
+  font-weight: 600;
+}
+[data-theme="dark"] .auth-primary-btn,
+[data-theme="dark"] .auth-panel .lc-form button[type=submit] {
+  color: #0E0D0C !important;
+}
 .currency-toggle button,
 .period-toggle button {
   border-radius: var(--ps-radius-sm);

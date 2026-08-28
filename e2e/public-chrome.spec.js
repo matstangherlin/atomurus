@@ -51,6 +51,9 @@ test('public table, calculators, login and pricing share the new chrome', async 
   await page.goto('/calculators.html');
   await expect(page.locator('.calc-menu-item[data-target="molar"]')).toBeVisible();
   await expect(page.locator('.calc-menu-item[data-target="scientific"]')).toBeVisible();
+  await page.locator('.calc-chip[data-mm-example="H2O"]').click();
+  await page.locator('.calc-btn-run').first().click();
+  await expect(page.locator('#mm-result-body')).toContainText(/18\.02/);
   await saveShot(page, 'desktop-public-calculators');
 
   await page.goto('/login.html');
