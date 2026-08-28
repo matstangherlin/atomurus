@@ -142,6 +142,8 @@ test('public table, calculators, login and pricing share the new chrome', async 
   await page.goto('/pricing.html');
   await expect(page.locator('.price-card, .lc-doc-title').first()).toBeVisible();
   await expect.poll(() => fontFamily(page.locator('.lc-topnav-name'))).toMatch(/Instrument Serif/i);
+  await expect.poll(() => fontFamily(page.locator('.price-card h3').first())).toMatch(/Instrument Serif/i);
+  await expect(page.locator('.lc-doc-kicker .pill')).toBeHidden();
   await saveShot(page, 'desktop-public-pricing');
 });
 
@@ -185,6 +187,11 @@ test('settings, compare, docs and articles keep the workspace pattern', async ({
   await expect(page.locator('.data-strip').first()).toBeHidden();
   await expect(page.locator('.vz-tab').first()).toBeVisible();
   await saveShot(page, 'desktop-public-isomerism');
+
+  await page.goto('/viewer/isomerism/constitutional/function.html');
+  await expect(page.locator('.sub-tab.active')).toBeVisible();
+  await expect(page.locator('.sub-num').first()).toBeHidden();
+  await saveShot(page, 'desktop-public-isomerism-function');
 });
 
 test('public home dark mode and mobile keep the workspace chrome', async ({ page }) => {

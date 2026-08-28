@@ -21,6 +21,7 @@ html {
 .lc-tn-no,
 .lc-hero-kicker .pill,
 .lc-hero-kicker::before,
+.lc-doc-kicker .pill,
 .lc-doc-kicker::before,
 .lc-br-bl,
 .lc-br-br,
@@ -28,6 +29,7 @@ html {
 .calc-menu-num,
 .lc-mobile-menu-num,
 .vz-num,
+.sub-num,
 .lc-btn-primary .lc-kbd,
 .lc-topnav-search .lc-kbd,
 .calc-btn-run .lc-kbd,
@@ -1428,4 +1430,60 @@ html body .art-toc {
 
 .lc-footer-bottom > span:has(.lc-st-dot) {
   display: none !important;
+}
+
+html body .price-card h3 {
+  font-family: 'Instrument Serif', Georgia, serif !important;
+  font-size: 28px !important;
+  font-weight: 400 !important;
+}
+html body .share-trigger {
+  min-height: 40px;
+  border-radius: var(--ps-radius-md) !important;
+  font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif) !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+html body .share-host-compact .share-trigger,
+html body .topbar .share-host-compact .share-trigger,
+html body .lc-topnav .share-host-compact .share-trigger {
+  width: 40px !important;
+  height: 40px !important;
+}
+html body .cmp-picker-title {
+  font-family: 'Instrument Serif', Georgia, serif !important;
+  font-weight: 400 !important;
+}
+html body .art-toc .toc-label {
+  font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif) !important;
+  letter-spacing: .12em !important;
+}
+html body .sub-tab {
+  min-height: 36px;
+  border-radius: var(--ps-radius-md) !important;
+  font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif) !important;
+}
+html body .sub-tab.active {
+  background: color-mix(in oklab, var(--lc-green) 10%, transparent) !important;
+  color: var(--lc-green) !important;
+}
+html body .settings-about .logo-mark {
+  border-radius: var(--ps-radius-sm) !important;
+}
+html body .about-logo > div > div:first-child {
+  font-family: 'Instrument Serif', Georgia, serif !important;
+  font-size: 22px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+#aco-cookie-banner {
+  font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif) !important;
+}
+#aco-cookie-banner .aco-title {
+  font-family: 'Instrument Serif', Georgia, serif !important;
+}
+#aco-cookie-banner button {
+  min-height: 40px;
+  border-radius: var(--ps-radius-md) !important;
 }
