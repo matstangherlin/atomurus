@@ -23,37 +23,42 @@ test.beforeEach(async ({ page }) => {
 
 test('public home uses workspace chrome, not lab-console ticker', async ({ page }) => {
   await page.goto('/index.html');
+  await expect(page.locator('.ps-shell')).toBeVisible();
+  await expect(page.locator('.ps-pub-sidebar')).toBeVisible();
   await expect(page.locator('.lc-topnav-name')).toBeVisible();
   await expect.poll(() => fontFamily(page.locator('.lc-topnav-name'))).toMatch(/Instrument Serif/i);
   await expect(page.locator('.lc-tn-no').first()).toBeHidden();
+  await expect(page.locator('.lc-topnav-links')).toBeHidden();
   await expect(page.locator('.lc-landing .data-strip, .data-strip').first()).toBeHidden();
   await expect(page.locator('.lc-statusbar')).toBeHidden();
 
-  const ctaBg = await page.locator('.lc-topnav-cta').evaluate((el) => getComputedStyle(el).backgroundColor);
-  expect(ctaBg).toMatch(/rgb\(\s*30,\s*106,\s*80\s*\)/);
+  const areas = await page.locator('.ps-shell').evaluate((el) => getComputedStyle(el).gridTemplateAreas);
+  expect(areas).toMatch(/topbar/);
 
   await expect(page.locator('.lc-hero-title')).toBeVisible();
   await expect(page.locator('#preview-grid .lc-preview-cell').first()).toBeVisible();
   await expect(page.locator('.lc-mod-card')).toHaveCount(4);
+  const openBg = await page.locator('.lc-mod-go').first().evaluate((el) => getComputedStyle(el).backgroundColor);
+  expect(openBg).toMatch(/rgb\(\s*30,\s*106,\s*80\s*\)/);
   await expect(page.locator('.lc-footer-bottom > span:has(.lc-st-dot)')).toBeHidden();
   await saveShot(page, 'desktop-public-home');
 });
 
 test('public table, calculators, login and pricing share the new chrome', async ({ page }) => {
   await page.goto('/periodic-table.html');
-  await expect(page.locator('.logo-text')).toBeVisible();
-  await expect.poll(() => fontFamily(page.locator('.logo-text'))).toMatch(/Instrument Serif/i);
+  await expect(page.locator('.ps-shell')).toBeVisible();
+  await expect(page.locator('.ps-shell > .topbar .logo-text')).toBeVisible();
+  await expect.poll(() => fontFamily(page.locator('.ps-shell > .topbar .logo-text'))).toMatch(/Instrument Serif/i);
   await expect(page.locator('.nl-no').first()).toBeHidden();
   await expect(page.locator('.data-strip').first()).toBeHidden();
-  const topbar = await page.locator('main.main > .topbar').evaluate((el) => {
+  const shell = await page.locator('.ps-shell').evaluate((el) => {
     const s = getComputedStyle(el);
-    return { position: s.position, top: s.top, left: s.left };
+    return { areas: s.gridTemplateAreas, columns: s.gridTemplateColumns };
   });
-  expect(topbar.position).toBe('fixed');
-  expect(topbar.top).toBe('0px');
-  expect(topbar.left).toBe('0px');
-  const logoPos = await page.locator('aside.sidebar > .logo-wrap').evaluate((el) => getComputedStyle(el).position);
-  expect(logoPos).toBe('fixed');
+  expect(shell.areas).toMatch(/topbar/);
+  expect(shell.columns.split(/\s+/).filter(Boolean).length).toBeGreaterThanOrEqual(2);
+  const brandInTopbar = await page.locator('.ps-shell > .topbar .logo-wrap').count();
+  expect(brandInTopbar).toBe(1);
   const dlBg = await page.locator('#dl-action-btn').evaluate((el) => getComputedStyle(el).backgroundColor);
   expect(dlBg).toMatch(/rgb\(\s*30,\s*106,\s*80\s*\)/);
   const tabColor = await page.locator('.pt-tab.active').evaluate((el) => getComputedStyle(el).color);
@@ -134,6 +139,8 @@ test('public table, calculators, login and pricing share the new chrome', async 
   await saveShot(page, 'desktop-public-element');
 
   await page.goto('/login.html');
+  await expect(page.locator('.ps-shell')).toBeVisible();
+  await expect(page.locator('.ps-pub-sidebar')).toBeVisible();
   await expect(page.locator('.lc-topnav-name')).toBeVisible();
   await expect.poll(() => fontFamily(page.locator('.lc-topnav-name'))).toMatch(/Instrument Serif/i);
   await expect(page.locator('#auth-email')).toBeVisible();
@@ -142,6 +149,7 @@ test('public table, calculators, login and pricing share the new chrome', async 
   await saveShot(page, 'desktop-public-login');
 
   await page.goto('/pricing.html');
+  await expect(page.locator('.ps-shell')).toBeVisible();
   await expect(page.locator('.price-card, .lc-doc-title').first()).toBeVisible();
   await expect.poll(() => fontFamily(page.locator('.lc-topnav-name'))).toMatch(/Instrument Serif/i);
   await expect.poll(() => fontFamily(page.locator('.price-card h3').first())).toMatch(/Instrument Serif/i);
@@ -151,6 +159,7 @@ test('public table, calculators, login and pricing share the new chrome', async 
 
 test('settings, compare, docs and articles keep the workspace pattern', async ({ page }) => {
   await page.goto('/config.html');
+  await expect(page.locator('.ps-shell')).toBeVisible();
   await expect(page.locator('.data-strip').first()).toBeHidden();
   const toggleBg = await page.locator('.settings-toggle.active').first().evaluate((el) => getComputedStyle(el).backgroundColor);
   expect(toggleBg).toMatch(/rgb\(\s*30,\s*106,\s*80\s*\)/);

@@ -29,7 +29,27 @@ function retagBrand(html) {
   );
 }
 
-const PUBLIC_SHELL_V = '202608281610';
+const PUBLIC_SHELL_V = '202608281730';
+const PUBLIC_WORKSPACE_V = '202608281730';
+
+function ensurePublicWorkspace(html) {
+  if (!/atomurus-lab-console\.css/.test(html)) return html;
+  const src = `/assets/public-workspace.js?v=${PUBLIC_WORKSPACE_V}`;
+  const tag = `<script src="${src}"></script>`;
+  if (/public-workspace\.js/.test(html)) {
+    return html.replace(
+      /src=["'][^"']*public-workspace\.js[^"']*["']/g,
+      `src="${src}"`
+    );
+  }
+  if (/public-shell\.css/.test(html)) {
+    return html.replace(
+      /(<link rel=["']stylesheet["'] href=["'][^"']*public-shell\.css[^"']*["']\s*>)/,
+      `$1\n${tag}`
+    );
+  }
+  return html + '\n' + tag;
+}
 
 function ensurePublicShell(html) {
   html = retagBrand(html);
@@ -37,27 +57,28 @@ function ensurePublicShell(html) {
 
   const href = `/assets/public-shell.css?v=${PUBLIC_SHELL_V}`;
   if (/public-shell\.css/.test(html)) {
-    return html.replace(
+    html = html.replace(
       /href=["'][^"']*public-shell\.css[^"']*["']/g,
       `href="${href}"`
     );
+  } else {
+    const tag = `<link rel="stylesheet" href="${href}">`;
+    const noscriptRe = /<noscript>\s*<link rel=["']stylesheet["'] href=["'][^"']*atomurus-lab-console\.css[^"']*["']\s*>\s*<\/noscript>/i;
+    if (noscriptRe.test(html)) {
+      html = html.replace(noscriptRe, (m) => `${m}\n${tag}`);
+    } else {
+      const links = [];
+      const linkRe = /<link\b[^>]*atomurus-lab-console\.css[^>]*>/gi;
+      let m;
+      while ((m = linkRe.exec(html))) links.push(m);
+      if (links.length) {
+        const last = links[links.length - 1];
+        const idx = last.index + last[0].length;
+        html = html.slice(0, idx) + '\n' + tag + html.slice(idx);
+      }
+    }
   }
-
-  const tag = `<link rel="stylesheet" href="${href}">`;
-
-  const noscriptRe = /<noscript>\s*<link rel=["']stylesheet["'] href=["'][^"']*atomurus-lab-console\.css[^"']*["']\s*>\s*<\/noscript>/i;
-  if (noscriptRe.test(html)) {
-    return html.replace(noscriptRe, (m) => `${m}\n${tag}`);
-  }
-
-  const links = [];
-  const linkRe = /<link\b[^>]*atomurus-lab-console\.css[^>]*>/gi;
-  let m;
-  while ((m = linkRe.exec(html))) links.push(m);
-  if (!links.length) return html;
-  const last = links[links.length - 1];
-  const idx = last.index + last[0].length;
-  return html.slice(0, idx) + '\n' + tag + html.slice(idx);
+  return ensurePublicWorkspace(html);
 }
 
 module.exports = { ensurePublicShell, SKIP_FILES, SKIP_DIRS };
