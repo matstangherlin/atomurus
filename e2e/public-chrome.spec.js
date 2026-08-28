@@ -81,6 +81,9 @@ test('public table, calculators, login and pricing share the new chrome', async 
   await expect(page.locator('.sidebar-foot a[href*="login"]')).toBeVisible();
   await expect(page.locator('.sidebar-foot a[href*="pricing"]')).toBeVisible();
   await expect(page.locator('.data-strip').first()).toBeHidden();
+  await expect.poll(() => fontFamily(page.locator('.ph-title'))).toMatch(/Instrument Serif/i);
+  const innerMax = await page.locator('.content-inner').evaluate((el) => getComputedStyle(el).maxWidth);
+  expect(innerMax).toBe('none');
   await expect(page.locator('.calc-menu-item[data-target="molar"]')).toBeVisible();
   await expect(page.locator('.calc-menu-item[data-target="scientific"]')).toBeVisible();
   const idealTitle = page.locator('.calc-menu-item[data-target="ideal"] .calc-menu-title');
@@ -96,6 +99,12 @@ test('public table, calculators, login and pricing share the new chrome', async 
   await expect(page.locator('#mm-result-body')).toContainText(/g\s*·\s*mol/);
   const resultHeadBg = await page.locator('#mm-result .calc-result-head').evaluate((el) => getComputedStyle(el).backgroundColor);
   expect(resultHeadBg).not.toBe('rgb(20, 18, 14)');
+  const copyColor = await page.locator('#mm-result .calc-copy-btn').evaluate((el) => getComputedStyle(el).color);
+  const copyR = Number((copyColor.match(/rgb\(\s*(\d+)/) || [0, '0'])[1]);
+  expect(copyR).toBeLessThan(80);
+  const metaOverflow = await page.locator('#mm-result-meta').evaluate((el) => getComputedStyle(el).overflow);
+  expect(metaOverflow).toBe('visible');
+  await expect(page.locator('#mm-result-meta')).toContainText(/element/i);
   await page.locator('.calc-menu-item[data-target="scientific"]').click();
   await expect(page.locator('.scc-device')).toBeVisible();
   const deviceBg = await page.locator('.scc-device').evaluate((el) => getComputedStyle(el).backgroundColor);

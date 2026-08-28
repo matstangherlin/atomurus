@@ -711,6 +711,37 @@ html body.ps-body.lc-doc .ps-shell {
 .ph-title { font-size: clamp(28px, 4vw, 40px); margin-bottom: 8px; }
 .ph-desc { font-size: 16px; }
 
+/* lab-console loads async after this file and uses body:not(.lc-landing) !important
+   on tool headers. Beat it so Calculators (and other tool pages) match /app. */
+html body.ps-body .ps-shell .ph-title {
+  font-family: 'Instrument Serif', Georgia, serif !important;
+  font-weight: 400 !important;
+  font-size: clamp(28px, 4vw, 42px) !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.08 !important;
+}
+html body.ps-body .ps-shell .ph-kicker {
+  font-size: 11px !important;
+  font-weight: 400 !important;
+  letter-spacing: .16em !important;
+  color: var(--lc-ink-3) !important;
+}
+html body.ps-body .ps-shell .ph-desc {
+  font-size: 16px !important;
+  line-height: 1.5 !important;
+  max-width: 54ch !important;
+}
+html body.ps-body .ps-shell .content-inner {
+  max-width: none !important;
+  width: 100%;
+  margin: 0 !important;
+}
+html body.ps-body .ps-shell .nav-item.nav-home {
+  opacity: 1 !important;
+  font-size: 14px !important;
+  font-weight: 550 !important;
+}
+
 .calc-shell {
   grid-template-columns: minmax(220px, 248px) minmax(0, 1fr) !important;
   border-radius: var(--ps-radius-lg);
@@ -718,6 +749,10 @@ html body.ps-body.lc-doc .ps-shell {
   margin-top: 12px;
   max-width: none;
   box-shadow: none;
+}
+html body.ps-body .ps-shell .calc-shell {
+  box-shadow: none !important;
+  border-radius: var(--ps-radius-lg) !important;
 }
 .calc-menu {
   background: color-mix(in oklab, var(--lc-paper) 88%, var(--lc-bg));
@@ -1040,6 +1075,61 @@ body .ptable {
   letter-spacing: .12em;
   padding: 10px 16px !important;
   border-bottom: 1px solid var(--lc-rule);
+}
+html body.ps-body .ps-shell .calc-result-head {
+  font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif) !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+html body.ps-body .ps-shell .calc-result-meta,
+html body.ps-body .ps-shell .calc-result-meta span {
+  overflow: visible !important;
+  text-overflow: unset !important;
+  white-space: normal !important;
+  font-family: inherit !important;
+  min-width: 0;
+}
+html body.ps-body .ps-shell .calc-copy-btn {
+  background: transparent !important;
+  color: var(--lc-ink) !important;
+  border: 1px solid var(--lc-rule) !important;
+  border-radius: 999px !important;
+  height: 32px !important;
+  padding: 0 10px !important;
+}
+html body.ps-body .ps-shell .calc-copy-btn:hover,
+html body.ps-body .ps-shell .calc-copy-btn:focus-visible {
+  background: color-mix(in oklab, var(--lc-green) 8%, transparent) !important;
+  border-color: color-mix(in oklab, var(--lc-green) 40%, var(--lc-rule)) !important;
+  color: var(--lc-ink) !important;
+}
+html body.ps-body .ps-shell .calc-menu-label {
+  font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif) !important;
+  font-size: 11px !important;
+  letter-spacing: .08em !important;
+}
+html body.ps-body .ps-shell .calc-menu-sub {
+  font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif) !important;
+  font-size: 12px !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  white-space: normal !important;
+}
+html body.ps-body .ps-shell .calc-menu-title {
+  overflow: visible !important;
+  text-overflow: unset !important;
+  white-space: normal !important;
+}
+html body.ps-body .ps-shell .calc-row-2 {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  max-width: none !important;
+}
+html body.ps-body .ps-shell .calc-select {
+  min-width: 0 !important;
+  width: 100% !important;
 }
 [data-theme="dark"] .calc-result-head {
   background: color-mix(in oklab, var(--lc-paper) 70%, var(--lc-bg)) !important;
