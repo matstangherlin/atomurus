@@ -311,7 +311,7 @@
   function loadLabGate() {
     if (document.querySelector('script[data-lab-tool-gate]')) return;
     var s = document.createElement('script');
-    s.src = '/assets/lab-tool-gate.js?v=202608282400';
+    s.src = '/assets/lab-tool-gate.js?v=202608282445';
     s.defer = true;
     s.setAttribute('data-lab-tool-gate', '1');
     document.head.appendChild(s);

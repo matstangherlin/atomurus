@@ -23,6 +23,7 @@
     '.lab-tool-gate{position:absolute;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;',
     'padding:24px;background:rgba(242,239,231,.92);backdrop-filter:blur(6px);text-align:center;pointer-events:auto}',
     '[data-theme="dark"] .lab-tool-gate{background:rgba(18,16,14,.88)}',
+    '.lab-tool-gate-host{position:relative;overflow:hidden;min-height:28rem;max-height:min(72vh,760px)}',
     '.lab-tool-gate-card{max-width:28rem}',
     '.lab-tool-gate-kicker{margin:0 0 8px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--lc-ink-3,#8E8978)}',
     '.lab-tool-gate-title{margin:0 0 8px;font-family:"Instrument Serif",Georgia,serif;font-size:28px;line-height:1.2;color:var(--lc-ink,#14120E)}',
@@ -156,6 +157,7 @@
     if (!host) return;
     var existing = host.querySelector(':scope > .lab-tool-gate');
     if (existing && existing.getAttribute('data-need') === need && existing.getAttribute('data-kind') === String(kind || '')) {
+      if (id === 'lab-tool-gate') host.classList.add('lab-tool-gate-host');
       setInert(host, true);
       return;
     }
@@ -207,6 +209,7 @@
     }
     box.appendChild(card);
     host.appendChild(box);
+    if (id === 'lab-tool-gate') host.classList.add('lab-tool-gate-host');
     setInert(host, true);
   }
 
@@ -214,6 +217,7 @@
     if (!host) return;
     var existing = host.querySelector(':scope > .lab-tool-gate');
     if (existing) existing.remove();
+    host.classList.remove('lab-tool-gate-host');
     setInert(host, false);
   }
 
@@ -222,7 +226,8 @@
   }
 
   function pageHost() {
-    return document.getElementById('canvas-wrap') ||
+    return document.querySelector('.viewer') ||
+      document.getElementById('canvas-wrap') ||
       document.querySelector('.canvas-wrap') ||
       document.querySelector('.compare-wrap') ||
       document.getElementById('tab-comparar') ||
