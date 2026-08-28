@@ -32,6 +32,15 @@ test('Free Reaction Workbench is a locked preview with no solver API calls', asy
   await expect(page.locator('#ws-lab-balance')).toHaveCount(0);
   await expect(page.locator('#ws-lab-equation')).toHaveCount(0);
   expect(solverCalls).toBe(0);
+  await page.locator('#app-study a[href*="section=pro-lab"]').first().click();
+  await expect(page.locator('#ws-lab-home')).toBeVisible();
+  await page.locator('[data-lab-tool="formula"]').click();
+  await expect(page.locator('#ws-lab-formula-solve')).toHaveCount(0);
+  await page.locator('#app-study a[href*="section=pro-lab"]').first().click();
+  await expect(page.locator('#ws-lab-home')).toBeVisible();
+  await page.locator('[data-lab-tool="solutions"]').click();
+  await expect(page.locator('#ws-lab-sol-solve')).toHaveCount(0);
+  expect(solverCalls).toBe(0);
   await saveShot(page, 'desktop-solver-locked-free');
 });
 
@@ -55,7 +64,10 @@ test('Pro Reaction Workbench: balance, stoichiometry, save and reopen', async ({
   await firstQty.locator('[name="amount"]').fill('10');
   await saveShot(page, 'desktop-reaction-stoich-inputs');
   await page.locator('#ws-lab-solve').click();
-  await expect(page.locator('#ws-lab-result')).toContainText(/Limiting reagent|Reagente limitante/i);
+  await expect(page.locator('#ws-lab-basis')).toBeVisible();
+  await expect(page.locator('#ws-lab-basis')).toContainText(/C₂H₆|C2H6/);
+  await expect(page.locator('#ws-lab-result')).not.toContainText(/Limiting reagent|Reagente limitante/i);
+  await expect(page.locator('#ws-lab-basis-note')).toContainText(/excess|excesso/i);
   await saveShot(page, 'desktop-reaction-limiting');
   await page.locator('#ws-lab-show-steps').click();
   await expect(page.locator('#ws-lab-steps')).toBeVisible();
@@ -83,6 +95,16 @@ test('Formula Solver and Solution Builder', async ({ page }) => {
   await expect(page.locator('#ws-lab-formula-answer')).toContainText(/CH₂O|CH2O/);
   await saveShot(page, 'desktop-formula-solver');
 
+  await rows.nth(0).locator('[name="unit"]').selectOption('g');
+  await rows.nth(1).locator('[name="unit"]').selectOption('g');
+  await rows.nth(2).locator('[name="unit"]').selectOption('g');
+  await rows.nth(0).locator('[name="value"]').fill('12');
+  await rows.nth(1).locator('[name="value"]').fill('2');
+  await rows.nth(2).locator('[name="value"]').fill('16');
+  await page.locator('#ws-lab-formula-solve').click();
+  await expect(page.locator('#ws-lab-formula-answer')).toContainText(/CH₂O|CH2O/);
+  await saveShot(page, 'desktop-formula-mass');
+
   await page.locator('#ws-lab-formula-mode-molecular').click();
   await page.locator('#ws-lab-empirical-formula').fill('CH2O');
   await page.locator('#ws-lab-molar-mass').fill('180.16');
@@ -97,7 +119,48 @@ test('Formula Solver and Solution Builder', async ({ page }) => {
   await page.locator('#ws-lab-vol').fill('1');
   await page.locator('#ws-lab-sol-solve').click();
   await expect(page.locator('#ws-lab-sol-answer')).toContainText(/29\.2/);
+  await expect(page.locator('#app-study')).toContainText(/additive solution volumes|volumes de solução aditivos/i);
   await saveShot(page, 'desktop-solution-builder');
+});
+
+test('Limiting reagent, stoichiometric mixture, calculation basis and hydrate display', async ({ page }) => {
+  await installApi(page, { kind: 'pro' });
+  await gotoWorkspace(page, '/app?section=pro-lab&tool=reactions');
+  await page.locator('#ws-lab-equation').fill('H2 + O2 -> H2O');
+  await page.locator('#ws-lab-balance').click();
+  await expect(page.locator('#ws-lab-balanced-heading')).toBeVisible();
+  await expect(page.locator('#ws-lab-balanced')).toBeVisible();
+  const qtys = page.locator('.ws-solver-qty');
+  await qtys.nth(0).locator('[name="kind"]').selectOption('amount');
+  await qtys.nth(0).locator('[name="amount"]').fill('2');
+  await page.locator('#ws-lab-solve').click();
+  await expect(page.locator('#ws-lab-basis')).toBeVisible();
+  await expect(page.locator('#ws-lab-basis')).toContainText(/H₂|H2/);
+  await expect(page.locator('#ws-lab-limiting')).toHaveCount(0);
+  await expect(page.locator('#ws-lab-result')).not.toContainText(/Limiting reagent|Reagente limitante/i);
+  await saveShot(page, 'desktop-calculation-basis');
+
+  await qtys.nth(0).locator('[name="kind"]').selectOption('mass');
+  await qtys.nth(0).locator('[name="amount"]').fill('10');
+  await qtys.nth(1).locator('[name="amount"]').fill('40');
+  await page.locator('#ws-lab-solve').click();
+  await expect(page.locator('#ws-lab-limiting')).toContainText(/O₂|O2/);
+  await expect(page.locator('#ws-lab-basis')).toHaveCount(0);
+  await saveShot(page, 'desktop-complete-limiting');
+
+  await qtys.nth(0).locator('[name="kind"]').selectOption('amount');
+  await qtys.nth(0).locator('[name="amount"]').fill('2');
+  await qtys.nth(1).locator('[name="kind"]').selectOption('amount');
+  await qtys.nth(1).locator('[name="amount"]').fill('1');
+  await page.locator('#ws-lab-solve').click();
+  await expect(page.locator('#ws-lab-mixture')).toBeVisible();
+  await expect(page.locator('#ws-lab-limiting')).toHaveCount(0);
+  await saveShot(page, 'desktop-stoichiometric-mixture');
+
+  await page.locator('#ws-lab-equation').fill('CuSO4·5H2O -> CuSO4 + H2O');
+  await page.locator('#ws-lab-balance').click();
+  await expect(page.locator('#ws-lab-balanced')).toContainText('CuSO₄·5H₂O');
+  await saveShot(page, 'desktop-hydrate-display');
 });
 
 test('Reaction Workbench mobile and dark', async ({ page }) => {
