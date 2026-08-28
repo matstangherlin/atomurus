@@ -8,7 +8,13 @@
   --ps-radius-lg: 16px;
   --ps-topbar: 64px;
   --ps-dur: 180ms;
+  --ps-sidebar: 248px;
   --sidebar-w: 248px;
+}
+
+/* Beat lab-console :root (loads async after this file). */
+html {
+  --sidebar-w: 248px !important;
 }
 
 /* ── Hide Bloomberg / lab-console chrome ── */
@@ -30,8 +36,8 @@
   display: none !important;
 }
 
-.lc-landing .data-strip,
-.lc-doc .data-strip,
+.data-strip,
+.av-substrip,
 .lc-statusbar {
   display: none !important;
 }
@@ -408,7 +414,7 @@ html[lang^="pt"] .logo-tag::after { content: 'laboratório'; }
 /* ── Tool sidebar = workspace nav ── */
 .sidebar {
   background: color-mix(in oklab, var(--lc-paper) 88%, var(--lc-bg));
-  width: var(--sidebar-w) !important;
+  width: var(--ps-sidebar) !important;
   padding-bottom: 12px !important;
 }
 .logo-wrap {
@@ -454,12 +460,13 @@ html[lang^="pt"] .logo-tag::after { content: 'laboratório'; }
   padding: 12px 8px 16px;
 }
 
-/* ── Tool topbar + quiet data strip ── */
+/* ── Tool topbar = workspace topbar ── */
 .topbar {
   height: var(--ps-topbar);
   padding: 0 18px;
   gap: 12px;
   background: var(--lc-paper);
+  border-bottom: 1px solid var(--lc-rule);
 }
 .search-box {
   height: 40px;
@@ -467,6 +474,7 @@ html[lang^="pt"] .logo-tag::after { content: 'laboratório'; }
   width: min(420px, 42vw);
   padding: 0 12px;
   font-family: var(--lc-sans);
+  background: var(--lc-bg);
 }
 .search-box input {
   font-family: var(--lc-sans);
@@ -486,28 +494,43 @@ html[lang^="pt"] .logo-tag::after { content: 'laboratório'; }
   text-transform: none;
 }
 
-.data-strip {
-  background: var(--lc-paper) !important;
-  color: var(--lc-ink-2);
-  border-bottom: 1px solid var(--lc-rule);
-  font-size: 11px;
-  letter-spacing: .04em;
-  padding: 8px 18px;
+/* Desktop: full-width topbar + brand lockup, sidebar nav below — same as /app.
+   Do not use display:contents on <main> (landmark). Logo stays in the DOM. */
+@media (min-width: 761px) {
+  html body:has(> aside.sidebar):has(> main.main) {
+    padding-top: var(--ps-topbar) !important;
+    box-sizing: border-box !important;
+  }
+  html body:has(> aside.sidebar):has(> main.main) > main.main > .topbar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: var(--ps-topbar) !important;
+    z-index: 60 !important;
+    margin: 0 !important;
+    padding-left: calc(var(--ps-sidebar) + 8px) !important;
+    box-sizing: border-box !important;
+    background: var(--lc-paper) !important;
+    border-bottom: 1px solid var(--lc-rule) !important;
+  }
+  html body:has(> aside.sidebar):has(> main.main) > aside.sidebar > .logo-wrap {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    z-index: 61 !important;
+    width: var(--ps-sidebar) !important;
+    height: var(--ps-topbar) !important;
+    margin: 0 !important;
+    padding: 0 16px !important;
+    border-bottom: 1px solid var(--lc-rule) !important;
+    border-right: 0 !important;
+    background: var(--lc-paper) !important;
+    box-sizing: border-box !important;
+  }
 }
-[data-theme="dark"] .data-strip {
-  background: var(--lc-paper) !important;
-  border-bottom-color: var(--lc-rule);
-}
-.data-strip .ds-k {
-  color: var(--lc-ink-3);
-}
-.data-strip .ds-v,
-.data-strip .ds-v.ds-hi {
-  color: var(--lc-ink);
-  font-weight: 500;
-}
-.data-strip .ds-v.ds-hi { color: var(--lc-green); }
-.data-strip .ds-sep { background: var(--lc-rule); }
 
 /* ── Page headers + calculator shell ── */
 .content { padding: 24px 28px 40px; }
@@ -591,6 +614,42 @@ html[lang^="pt"] .logo-tag::after { content: 'laboratório'; }
 
 .price-card { border-radius: var(--ps-radius-md) !important; }
 
+.auth-panel h2,
+.lc-doc-prose h2 {
+  font-family: 'Instrument Serif', Georgia, serif !important;
+  font-weight: 400 !important;
+}
+.lc-doc-cards {
+  gap: 12px !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+.lc-doc-card {
+  border: 1px solid var(--lc-rule) !important;
+  border-radius: var(--ps-radius-md) !important;
+}
+.lc-doc-tag {
+  border-radius: 999px !important;
+}
+.lc-form input,
+.lc-form select,
+.auth-panel .lc-form input {
+  height: 44px !important;
+  border-radius: var(--ps-radius-md) !important;
+  font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif) !important;
+  font-size: 14px !important;
+}
+.lc-form textarea {
+  border-radius: var(--ps-radius-md) !important;
+}
+.lc-form input:focus,
+.lc-form select:focus,
+.lc-form textarea:focus,
+.auth-panel .lc-form input:focus {
+  border-color: var(--lc-green) !important;
+  box-shadow: 0 0 0 3px var(--accent-ring, rgba(30, 106, 80, .2)) !important;
+}
+
 .auth-primary-btn,
 .auth-panel .lc-form button[type=submit] {
   height: 44px;
@@ -651,6 +710,27 @@ html[lang^="pt"] .logo-tag::after { content: 'laboratório'; }
 }
 
 @media (max-width: 760px) {
+  html body:has(> aside.sidebar):has(> main.main) {
+    padding-top: 0 !important;
+  }
+  html body:has(> aside.sidebar):has(> main.main) > main.main > .topbar {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    width: auto !important;
+    height: var(--ps-topbar) !important;
+    padding-left: 12px !important;
+    z-index: 40 !important;
+  }
+  html body:has(> aside.sidebar):has(> main.main) > aside.sidebar > .logo-wrap {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    width: auto !important;
+    height: auto !important;
+    padding: 16px 12px 14px !important;
+  }
   .lc-topnav { height: var(--ps-topbar); padding: 0 12px; }
   .lc-topnav-name,
   .logo-text,
@@ -997,4 +1077,186 @@ html body .viewer .pill.active {
   .calc-menu-title {
     white-space: nowrap;
   }
+}
+
+/* ── Sitewide workspace pattern: chips, table family, elements, viewers ── */
+
+html body .pt-tabs {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 4px !important;
+  width: fit-content !important;
+  max-width: 100% !important;
+  margin: 14px 0 16px !important;
+  padding: 4px !important;
+  border: 1px solid var(--lc-rule) !important;
+  border-radius: var(--ps-radius-md) !important;
+  background: color-mix(in oklab, var(--lc-paper) 70%, var(--lc-bg)) !important;
+  box-shadow: none !important;
+}
+html body .pt-tab {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  min-height: 36px !important;
+  margin: 0 !important;
+  padding: 6px 12px !important;
+  border: 0 !important;
+  border-radius: var(--ps-radius-md) !important;
+  background: transparent !important;
+  color: var(--lc-ink-2) !important;
+  font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif) !important;
+  font-size: 13px !important;
+  font-weight: 550 !important;
+  letter-spacing: 0 !important;
+  box-shadow: none !important;
+}
+html body .pt-tab:hover {
+  color: var(--lc-ink) !important;
+  background: color-mix(in oklab, var(--lc-green) 8%, transparent) !important;
+}
+html body .pt-tab.active,
+html body .pt-tab.active:visited {
+  color: var(--lc-green) !important;
+  background: color-mix(in oklab, var(--lc-green) 10%, transparent) !important;
+  border-bottom-color: transparent !important;
+}
+
+html body .legend {
+  border-radius: 0 !important;
+  gap: 6px !important;
+}
+html body .legend-item,
+html body .legend-clear {
+  min-height: 32px !important;
+  padding: 4px 10px !important;
+  border-radius: 999px !important;
+  font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif) !important;
+  font-size: 12px !important;
+  letter-spacing: 0 !important;
+}
+html body .legend-dot {
+  border-radius: 999px !important;
+}
+html body .legend-item.active-filter {
+  background: color-mix(in oklab, var(--lc-green) 10%, transparent) !important;
+  color: var(--lc-green) !important;
+  border-color: color-mix(in oklab, var(--lc-green) 40%, var(--lc-rule)) !important;
+}
+[data-theme="dark"] html body .legend-item.active-filter {
+  color: var(--lc-green) !important;
+}
+
+html body .ex-pill {
+  min-height: 36px !important;
+  padding: 0 12px !important;
+  border-radius: 999px !important;
+  font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif) !important;
+  font-size: 13px !important;
+  font-weight: 550 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  background: transparent !important;
+  color: var(--lc-ink-2) !important;
+}
+html body .ex-pill:hover {
+  color: var(--lc-ink) !important;
+  border-color: color-mix(in oklab, var(--lc-green) 40%, var(--lc-rule)) !important;
+  background: color-mix(in oklab, var(--lc-green) 8%, transparent) !important;
+}
+html body .ex-pill.active {
+  background: color-mix(in oklab, var(--lc-green) 10%, transparent) !important;
+  color: var(--lc-green) !important;
+  border-color: color-mix(in oklab, var(--lc-green) 40%, var(--lc-rule)) !important;
+}
+[data-theme="dark"] html body .ex-pill.active {
+  color: var(--lc-green) !important;
+}
+
+html body .lc-el-name {
+  font-family: 'Instrument Serif', Georgia, serif !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.02em !important;
+}
+html body .lc-el-card {
+  border-radius: var(--ps-radius-lg) !important;
+}
+html body .lc-el-card-sym {
+  font-family: 'Instrument Serif', Georgia, serif !important;
+  font-weight: 400 !important;
+}
+html body .lc-el-props,
+html body .lc-el-nav {
+  border-radius: var(--ps-radius-lg) !important;
+  overflow: hidden;
+}
+html body .lc-el-nav a:hover {
+  background: color-mix(in oklab, var(--lc-green) 8%, var(--lc-paper)) !important;
+}
+
+html body .hm-select,
+html body .cmp-slot-pick,
+html body .iso-selector-btn,
+html body .iso-selector-link,
+html body .iso-group-btn {
+  height: 44px !important;
+  min-height: 44px !important;
+  border-radius: var(--ps-radius-md) !important;
+  font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif) !important;
+  font-size: 14px !important;
+}
+html body .heatmap-legend,
+html body .cmp-slot,
+html body .iso-selector {
+  border-radius: var(--ps-radius-lg) !important;
+  background: var(--lc-paper) !important;
+  border-color: var(--lc-rule) !important;
+}
+
+html body .viewer-controls,
+html body .viewer-zoom {
+  background: var(--lc-paper) !important;
+  border: 1px solid var(--lc-rule) !important;
+  border-radius: var(--ps-radius-md) !important;
+  box-shadow: none !important;
+}
+html body .viewer-controls .vc-btn,
+html body .viewer-zoom .vc-btn {
+  color: var(--lc-ink-2) !important;
+  background: transparent !important;
+  border-radius: var(--ps-radius-sm) !important;
+}
+html body .viewer-controls .vc-btn:hover,
+html body .viewer-zoom .vc-btn:hover {
+  background: color-mix(in oklab, var(--lc-green) 8%, transparent) !important;
+  color: var(--lc-ink) !important;
+}
+html body .viewer-controls .vc-btn.active {
+  background: var(--lc-green) !important;
+  color: #F8F5EC !important;
+}
+[data-theme="dark"] html body .viewer-controls .vc-btn.active {
+  color: #0E0D0C !important;
+}
+
+html body .art-kicker .art-cat {
+  min-height: 28px;
+  border-radius: 999px !important;
+}
+html body .toast {
+  background: var(--lc-paper) !important;
+  color: var(--lc-ink) !important;
+  border: 1px solid var(--lc-rule) !important;
+  border-radius: var(--ps-radius-md) !important;
+  font-family: var(--lc-sans, 'Inter Tight', system-ui, sans-serif) !important;
+  letter-spacing: 0 !important;
+}
+
+body .lc-el-card,
+body .lc-el-props,
+body .lc-el-nav,
+body .pt-tabs,
+body .legend,
+body .art-wrap {
+  max-width: none;
 }
