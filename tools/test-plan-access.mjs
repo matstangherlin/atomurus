@@ -45,6 +45,14 @@ assert.equal(paid.features.advancedElementCompare, true);
 assert.equal(paid.features.advancedMoleculeCompare, true);
 assert.equal(paid.features.advancedAtomicCompare, true);
 assert.equal(paid.features.savedLabSessions, true);
+assert.equal(paid.features.chemistrySolver, true);
+assert.equal(paid.features.reactionWorkbench, true);
+assert.equal(paid.features.reactionBalancer, true);
+assert.equal(paid.features.stoichiometrySolver, true);
+assert.equal(paid.features.limitingReagentSolver, true);
+assert.equal(paid.features.yieldSolver, true);
+assert.equal(paid.features.formulaSolver, true);
+assert.equal(paid.features.solutionBuilder, true);
 
 const expiredStudy = accessForUser({ createdAt: daysAgo(40), email: 'a@b.com' });
 assert.equal(expiredStudy.features.studyCloud, false);
@@ -59,6 +67,10 @@ assert.equal(expiredStudy.features.advancedElementCompare, false);
 assert.equal(expiredStudy.features.advancedMoleculeCompare, false);
 assert.equal(expiredStudy.features.advancedAtomicCompare, false);
 assert.equal(expiredStudy.features.savedLabSessions, false);
+assert.equal(expiredStudy.features.chemistrySolver, false);
+assert.equal(expiredStudy.features.reactionWorkbench, false);
+assert.equal(expiredStudy.features.formulaSolver, false);
+assert.equal(expiredStudy.features.solutionBuilder, false);
 
 const trialStudy = accessForUser({ createdAt: daysAgo(2), email: 'a@b.com' });
 assert.equal(trialStudy.features.studyCloud, true);
@@ -72,6 +84,10 @@ assert.equal(trialStudy.features.advancedElementCompare, true);
 assert.equal(trialStudy.features.advancedMoleculeCompare, true);
 assert.equal(trialStudy.features.advancedAtomicCompare, true);
 assert.equal(trialStudy.features.savedLabSessions, true);
+assert.equal(trialStudy.features.chemistrySolver, true);
+assert.equal(trialStudy.features.reactionWorkbench, true);
+assert.equal(trialStudy.features.formulaSolver, true);
+assert.equal(trialStudy.features.solutionBuilder, true);
 
 const admin = accessForUser({ role: 'admin', createdAt: daysAgo(100) });
 assert.equal(admin.plan, 'admin');
@@ -87,6 +103,8 @@ assert.equal(admin.features.advancedElementCompare, true);
 assert.equal(admin.features.advancedMoleculeCompare, true);
 assert.equal(admin.features.advancedAtomicCompare, true);
 assert.equal(admin.features.savedLabSessions, true);
+assert.equal(admin.features.chemistrySolver, true);
+assert.equal(admin.features.reactionWorkbench, true);
 
 const pub = publicUser({
   id: '1',

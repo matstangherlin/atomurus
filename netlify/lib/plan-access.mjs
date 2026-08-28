@@ -163,7 +163,15 @@ export function accessForUser(user) {
       advancedElementCompare: isPro,
       advancedMoleculeCompare: isPro,
       advancedAtomicCompare: isPro,
-      savedLabSessions: isPro
+      savedLabSessions: isPro,
+      chemistrySolver: isPro,
+      reactionWorkbench: isPro,
+      reactionBalancer: isPro,
+      stoichiometrySolver: isPro,
+      limitingReagentSolver: isPro,
+      yieldSolver: isPro,
+      formulaSolver: isPro,
+      solutionBuilder: isPro
     }
   };
 }

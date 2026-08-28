@@ -1,5 +1,6 @@
 import { clampText, studyError } from './study-cloud.mjs';
 import { CALCULATORS, runProCalculation } from './chemistry-calc.mjs';
+import { SOLVER_VERSION } from './chemistry-units.mjs';
 import {
   ELEMENT_CHART_KEYS,
   ELEMENT_PROPERTY_KEYS,
@@ -13,7 +14,16 @@ export const SESSION_TYPES = Object.freeze([
   'calculation',
   'element_compare',
   'molecule_compare',
-  'atomic_compare'
+  'atomic_compare',
+  'reaction',
+  'formula_solver',
+  'solution_builder'
+]);
+
+export const SOLVER_SESSION_TYPES = Object.freeze([
+  'reaction',
+  'formula_solver',
+  'solution_builder'
 ]);
 
 export const PRO_LAB_LIMITS = Object.freeze({
@@ -136,6 +146,76 @@ export function validateSessionState(sessionType, raw) {
     return state;
   }
 
+  if (type === 'reaction') {
+    const equation = clampText(raw.equation, 1000, 'equation', true);
+    const quantities = Array.isArray(raw.quantities) ? raw.quantities.slice(0, 12) : [];
+    const state = {
+      solverVersion: SOLVER_VERSION,
+      equation,
+      quantities: quantities.map((row) => ({
+        formula: clampText(row?.formula, 200, 'formula', true),
+        amount: row?.amount,
+        unit: String(row?.unit || 'g').slice(0, 12),
+        kind: String(row?.kind || '').slice(0, 16) || undefined,
+        concentration: row?.concentration,
+        concUnit: row?.concUnit ? String(row.concUnit).slice(0, 12) : undefined,
+        volume: row?.volume,
+        volUnit: row?.volUnit ? String(row.volUnit).slice(0, 8) : undefined,
+        P: row?.P,
+        PUnit: row?.PUnit ? String(row.PUnit).slice(0, 8) : undefined,
+        T: row?.T,
+        TUnit: row?.TUnit ? String(row.TUnit).slice(0, 4) : undefined
+      })),
+      target: raw.target && raw.target.formula
+        ? { formula: clampText(raw.target.formula, 200, 'target', true), unit: String(raw.target.unit || 'g').slice(0, 8) }
+        : undefined,
+      actualYield: raw.actualYield && raw.actualYield.amount != null
+        ? { amount: raw.actualYield.amount, unit: String(raw.actualYield.unit || 'g').slice(0, 8) }
+        : undefined
+    };
+    assertStateSize(state);
+    return state;
+  }
+
+  if (type === 'formula_solver') {
+    const composition = Array.isArray(raw.composition) ? raw.composition.slice(0, 12) : [];
+    const state = {
+      solverVersion: SOLVER_VERSION,
+      mode: String(raw.mode || 'empirical').slice(0, 16),
+      composition: composition.map((row) => ({
+        symbol: String(row?.symbol || '').slice(0, 2),
+        value: row?.value,
+        unit: String(row?.unit || 'percent').slice(0, 12)
+      })),
+      empiricalFormula: raw.empiricalFormula ? clampText(raw.empiricalFormula, 200, 'formula', true) : undefined,
+      molarMass: raw.molarMass
+    };
+    assertStateSize(state);
+    return state;
+  }
+
+  if (type === 'solution_builder') {
+    const solutions = Array.isArray(raw.solutions) ? raw.solutions.slice(0, 8) : [];
+    const state = {
+      solverVersion: SOLVER_VERSION,
+      mode: String(raw.mode || 'prepare').slice(0, 16),
+      formula: raw.formula ? clampText(raw.formula, 200, 'formula', true) : undefined,
+      concentration: raw.concentration,
+      concUnit: raw.concUnit ? String(raw.concUnit).slice(0, 12) : undefined,
+      volume: raw.volume,
+      volUnit: raw.volUnit ? String(raw.volUnit).slice(0, 8) : undefined,
+      massUnit: raw.massUnit ? String(raw.massUnit).slice(0, 8) : undefined,
+      solutions: solutions.map((row) => ({
+        concentration: row?.concentration,
+        concUnit: row?.concUnit ? String(row.concUnit).slice(0, 12) : undefined,
+        volume: row?.volume,
+        volUnit: row?.volUnit ? String(row.volUnit).slice(0, 8) : undefined
+      }))
+    };
+    assertStateSize(state);
+    return state;
+  }
+
   const atomicNumbers = normalizeAtomicNumbers(raw.atomicNumbers || raw.elements, 2);
   const state = { atomicNumbers };
   assertStateSize(state);
@@ -170,6 +250,8 @@ export function publicLabSessionSummary(row) {
     sessionType: row.session_type,
     title: row.title || '',
     calculator: state.calculator || null,
+    equation: typeof state.equation === 'string' ? state.equation : null,
+    solverVersion: state.solverVersion || null,
     updatedAt: row.updated_at,
     createdAt: row.created_at
   };
