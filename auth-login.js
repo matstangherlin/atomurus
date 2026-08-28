@@ -308,7 +308,7 @@
 
     var identifier = ($('auth-email').value || '').trim();
     var password = $('auth-password').value || '';
-    setBusy(button, true, t('common.auth.entering', 'Entering…'));
+    setBusy(button, true, t('common.auth.signingIn', t('common.auth.entering', 'Signing in…')));
     setFormBusy(form, true);
     try {
       await auth().login(identifier, password);
@@ -478,12 +478,33 @@
     }
   }
 
+  function bindPasswordHints() {
+    ['auth-signup-password', 'auth-new-password'].forEach(function (id) {
+      var input = $(id);
+      var box = document.querySelector('[data-pw-for="' + id + '"]');
+      if (!input || !box || box.dataset.bound === '1') return;
+      box.dataset.bound = '1';
+      function paint() {
+        var value = input.value || '';
+        box.querySelectorAll('[data-req]').forEach(function (item) {
+          var ok = false;
+          if (item.getAttribute('data-req') === 'length') ok = value.length >= 9;
+          if (item.getAttribute('data-req') === 'special') ok = /[!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.test(value);
+          item.classList.toggle('is-ok', ok);
+        });
+      }
+      input.addEventListener('input', paint);
+      paint();
+    });
+  }
+
   function bindAuthPage() {
     if (authPageBound) return;
     authPageBound = true;
     bindModeLinks();
     bindAuthForms();
     bindPasswordToggles();
+    bindPasswordHints();
   }
 
   async function startAuthPage() {

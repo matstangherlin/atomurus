@@ -68,11 +68,18 @@
       setName: t('setName', pt ? 'Nome do set' : 'Set title'),
       createSet: t('createSet', pt ? 'Criar' : 'Create'),
       addedTo: t('addedTo', pt ? 'Adicionado a' : 'Added to'),
-      cardsCreated: t('cardsCreated', pt ? 'cards criados' : 'cards created'),
+      cardsCreated: t('cardsCreated', pt ? 'flashcards criados' : 'flashcards created'),
+      cardsNoneNeeded: t('cardsNoneNeeded', pt ? 'Nenhum card novo era necessário. Esses flashcards já existem neste Study Set.' : 'No new cards were needed. These flashcards already exist in this Study Set.'),
       signIn: t('signIn', pt ? 'Entre para salvar no Study Cloud.' : 'Sign in to save to Study Cloud.'),
-      proOnly: t('proOnly', pt ? 'Study Cloud está no Atomurus Pro.' : 'Study Cloud is included with Atomurus Pro.'),
-      upgrade: t('upgrade', pt ? 'Ver planos' : 'See plans'),
+      proOnly: t('proOnly', pt ? 'A Biblioteca é um recurso Pro' : 'Study Library is a Pro feature'),
+      upgrade: t('upgrade', pt ? 'Assinar o Pro' : 'Upgrade to Pro'),
       login: t('login', pt ? 'Entrar' : 'Sign in'),
+      createAccount: t('createAccount', pt ? 'Criar conta' : 'Create account'),
+      saveTitle: t('saveTitle', pt ? 'Salve isto na sua Biblioteca' : 'Save this to your Study Library'),
+      saveBody: t('saveBody', pt ? 'Crie uma conta Atomurus e comece seu trial Pro de 30 dias para salvar e sincronizar material de estudo.' : 'Create an Atomurus account and start your 30-day Pro trial to save and sync study material.'),
+      lockedBody: t('lockedBody', pt ? 'Salve materiais, notas e progresso de estudo em todos os dispositivos.' : 'Save materials, notes and study progress across devices.'),
+      proBadge: t('proBadge', 'PRO'),
+      couldNotSave: t('couldNotSave', pt ? 'Não foi possível salvar. Tente de novo.' : 'Could not save. Try again.'),
       nothingToSave: t('nothingToSave', pt ? 'Execute a calculadora primeiro e depois salve o resultado.' : 'Run the calculator first, then save the result.')
     };
   }
@@ -99,6 +106,22 @@
     return '/login?next=' + encodeURIComponent(currentPath());
   }
 
+  function signupHref() {
+    return '/signup?next=' + encodeURIComponent(currentPath());
+  }
+
+  function sessionHint() {
+    var ads = window.__ATOMURUS_ADS__;
+    if (ads && ads.ready) {
+      return { signedIn: Boolean(ads.signedIn), isPro: Boolean(ads.user && ads.user.isPro), user: ads.user };
+    }
+    var managed = window.__ATOMURUS_AUTH__;
+    if (managed && managed.ready) {
+      return { signedIn: Boolean(managed.signedIn), isPro: Boolean(managed.user && managed.user.isPro), user: managed.user };
+    }
+    return { signedIn: false, isPro: false, user: null };
+  }
+
   function goLogin() {
     var client = window.AtomurusAuth;
     if (client && typeof client.redirectToLogin === 'function') {
@@ -119,6 +142,7 @@
       '#atomurus-study-save button{font:inherit;letter-spacing:.08em;text-transform:uppercase;font-size:10.5px;padding:7px 10px;border:1px solid var(--lc-rule,rgba(30,106,80,.35));background:transparent;color:inherit;border-radius:2px;cursor:pointer}',
       '#atomurus-study-save button[disabled]{opacity:.6;cursor:wait}',
       '#atomurus-study-save button.saved{color:var(--lc-green,#1E6A50);border-color:color-mix(in oklab,var(--lc-green,#1E6A50) 40%,transparent)}',
+      '#atomurus-study-save .study-pro-badge{margin-left:6px;font-family:var(--lc-mono,ui-monospace,monospace);font-size:9px;letter-spacing:.12em;color:var(--lc-green,#1E6A50)}',
       '#atomurus-study-save .study-save-msg{font-size:11.5px;letter-spacing:.02em;color:var(--lc-ink-3,#667)}',
       '#atomurus-study-save .study-save-msg a{color:inherit}',
       '#atomurus-study-save .study-save-fields{display:none;margin-top:10px;max-width:420px}',
@@ -224,15 +248,43 @@
       setMsg(msgNode, labels.proOnly, err.upgradeUrl || '/pricing', labels.upgrade);
       return;
     }
-    setMsg(msgNode, err.message || 'Could not save.');
+    setMsg(msgNode, labels.couldNotSave || (langIsPt() ? 'Não foi possível salvar. Tente de novo.' : 'Could not save. Try again.'));
   }
 
   function paintSaved(button, labels, on) {
     if (!button) return;
     button.classList.toggle('saved', on);
-    button.textContent = on
+    var base = on
       ? labels.saved
       : (isCalculatorsPage() ? labels.saveResult : labels.save);
+    button.textContent = (!on && !sessionHint().isPro) ? (base + '  ' + labels.proBadge) : base;
+  }
+
+  function openSaveGate(labels, hint) {
+    var ui = window.AtomurusWorkspaceUI;
+    if (!ui || typeof ui.openDialog !== 'function') {
+      if (!hint.signedIn) location.assign(signupHref());
+      else location.assign('/pricing');
+      return;
+    }
+    if (!hint.signedIn) {
+      ui.openDialog({
+        title: labels.saveTitle,
+        body: labels.saveBody,
+        actions: [
+          { label: labels.createAccount, kind: 'ws-btn-primary', href: signupHref() },
+          { label: labels.login, kind: 'ws-btn-ghost', href: loginHref() }
+        ]
+      });
+      return;
+    }
+    ui.openDialog({
+      title: labels.proOnly,
+      body: labels.lockedBody,
+      actions: [
+        { label: labels.upgrade, kind: 'ws-btn-primary', href: '/pricing' }
+      ]
+    });
   }
 
   function readFields(host) {
@@ -263,6 +315,7 @@
 
   function hydrateLibrary(ctx, host, button, labels) {
     if (!ctx || ctx.kind !== 'library') return;
+    if (!sessionHint().isPro) return;
     withStudy(function (api) {
       if (!api) return null;
       return api.items({ type: ctx.itemType, itemKey: ctx.itemKey, limit: 1 }).then(function (data) {
@@ -289,7 +342,7 @@
     row.className = 'study-save-row';
     var button = document.createElement('button');
     button.type = 'button';
-    button.textContent = labels.save;
+    paintSaved(button, labels, false);
     var details = document.createElement('button');
     details.type = 'button';
     details.textContent = labels.note;
@@ -432,6 +485,11 @@
     }
 
     addBtn.addEventListener('click', function () {
+      var hint = sessionHint();
+      if (!hint.isPro) {
+        openSaveGate(labels, hint);
+        return;
+      }
       setStatus.textContent = '';
       withStudy(function (api) {
         if (!api) return null;
@@ -469,8 +527,11 @@
         return withStudy(function (api) {
           if (!api) return null;
           return api.generateCards({ setId: lastSet.id, itemId: item.id }).then(function (data) {
-            var count = data.created || 0;
-            addedMessage(lastSet, String(count) + ' ' + labels.cardsCreated);
+            var created = Number(data.created) || 0;
+            var skipped = Number(data.skipped) || 0;
+            if (created > 0) addedMessage(lastSet, String(created) + ' ' + labels.cardsCreated);
+            else if (skipped > 0) setStatus.textContent = labels.cardsNoneNeeded;
+            else addedMessage(lastSet, '0 ' + labels.cardsCreated);
           });
         });
       }).catch(function (err) {
@@ -483,6 +544,11 @@
     });
 
     button.addEventListener('click', function () {
+      var hint = sessionHint();
+      if (!hint.isPro) {
+        openSaveGate(labels, hint);
+        return;
+      }
       if (pending) return;
       pending = true;
       paintSaved(button, labels, true);
@@ -572,7 +638,7 @@
     row.className = 'study-save-row';
     var button = document.createElement('button');
     button.type = 'button';
-    button.textContent = labels.saveResult;
+    paintSaved(button, labels, false);
     var msg = document.createElement('div');
     msg.className = 'study-save-msg';
     row.appendChild(button);
@@ -582,6 +648,11 @@
     captureCalculatorRun();
 
     button.addEventListener('click', function () {
+      var hint = sessionHint();
+      if (!hint.isPro) {
+        openSaveGate(labels, hint);
+        return;
+      }
       var run = lastCalculatorRun || captureCalculatorRun();
       if (!run) {
         setMsg(msg, labels.nothingToSave);

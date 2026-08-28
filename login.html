@@ -231,6 +231,16 @@
     line-height: 1.6;
     margin-top: 10px;
   }
+  .auth-pw-reqs {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--lc-ink-3, #8E8978);
+  }
+  .auth-pw-reqs li.is-ok { color: var(--lc-green, #1E6A50); }
   .auth-panel .lc-form .feedback { margin-top: 14px; }
   .auth-panel .lc-form .feedback.show {
     display: block !important;
@@ -322,7 +332,7 @@
       <span class="pill">live</span>
     </div>
     <h1 class="auth-rail-title" data-i18n="common.auth.railTitle">Your chemistry workspace starts here.</h1>
-    <p class="auth-rail-copy" data-i18n="common.auth.railCopy">The public lab stays open for everyone. Create an optional account only when you want the private workspace, saved access and future study progress.</p>
+    <p class="auth-rail-copy" data-i18n="common.auth.railCopy">The public lab stays open for everyone. Create an account when you want a private study system — Library, flashcards and Smart Review, with 30 days of Pro included.</p>
     <div class="auth-rail-list">
       <div class="auth-rail-stat"><span class="lbl" data-i18n="common.auth.statLogin">login</span><span class="v" data-i18n="common.auth.statLoginVal">email or username</span></div>
       <div class="auth-rail-stat"><span class="lbl" data-i18n="common.auth.statSession">session</span><span class="v" data-i18n="common.auth.statSessionVal">secure HttpOnly cookie</span></div>
@@ -375,7 +385,7 @@
 
     <section class="auth-panel" id="auth-panel-signup" data-auth-panel="signup">
       <h2 data-i18n="common.auth.signupTitle">Create account</h2>
-      <p class="auth-panel-copy" data-i18n="common.auth.signupCopy">Create your Atomurus account with full name, unique username, email and password. If email confirmation is enabled, check your inbox before the first sign-in.</p>
+      <p class="auth-panel-copy" data-i18n="common.auth.signupCopy">Create your Atomurus account. Includes 30 days of Atomurus Pro. No separate Study Cloud account required.</p>
 
       <form class="lc-form" id="auth-signup-form" novalidate>
       <div class="field">
@@ -396,6 +406,10 @@
           <input id="auth-signup-password" name="password" type="password" required minlength="9" autocomplete="new-password">
           <button class="auth-toggle-password" type="button" data-password-toggle="auth-signup-password" aria-pressed="false" data-i18n="common.auth.showPassword" data-i18n-attr="aria-label:common.auth.showPassword" aria-label="Show password">Show</button>
         </div>
+        <ul class="auth-pw-reqs" data-pw-for="auth-signup-password">
+          <li data-req="length" data-i18n="common.auth.pwLenOk">9+ characters</li>
+          <li data-req="special" data-i18n="common.auth.pwSpecialOk">Special character</li>
+        </ul>
       </div>
       <div class="field">
         <label for="auth-signup-password-confirm" data-i18n="common.auth.repeatPassword">Repeat password</label>
@@ -458,6 +472,10 @@
             <input id="auth-new-password" name="password" type="password" required minlength="9" autocomplete="new-password">
             <button class="auth-toggle-password" type="button" data-password-toggle="auth-new-password" aria-pressed="false" data-i18n="common.auth.showPassword" data-i18n-attr="aria-label:common.auth.showPassword" aria-label="Show password">Show</button>
           </div>
+          <ul class="auth-pw-reqs" data-pw-for="auth-new-password">
+            <li data-req="length" data-i18n="common.auth.pwLenOk">9+ characters</li>
+            <li data-req="special" data-i18n="common.auth.pwSpecialOk">Special character</li>
+          </ul>
         </div>
         <button class="auth-primary-btn" type="submit" id="auth-password-submit">
           <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M1 7l5 5 7-10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>

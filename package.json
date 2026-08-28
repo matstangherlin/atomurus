@@ -15,13 +15,14 @@
     "test:study": "node tools/test-study-cloud.mjs",
     "test:review": "node tools/test-review.mjs",
     "test:billing": "node tools/test-billing-geo.mjs",
+    "test:ux": "node tools/test-workspace-ux.mjs",
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
     "supabase:db:push": "supabase db push",
     "validate": "node tools/validate-site.js",
     "warm:cache": "node tools/warm-edge-cache.js",
     "smoke:prod": "node tools/smoke-prod.js",
-    "ci": "npm run build && npm run test:plan && npm run test:auth && npm run test:study && npm run test:review && npm run test:billing && npm run validate"
+    "ci": "npm run build && npm run test:plan && npm run test:auth && npm run test:study && npm run test:review && npm run test:billing && npm run test:ux && npm run validate"
   },
   "dependencies": {
     "stripe": "^22.3.0"

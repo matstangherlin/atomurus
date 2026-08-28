@@ -6,6 +6,8 @@
 
   var version = '202608280200';
   var files = [
+    '/workspace-logic.js?v=' + version,
+    '/workspace-ui.js?v=' + version,
     '/study-client.js?v=' + version,
     '/study-save.js?v=' + version,
     '/study-progress.js?v=' + version

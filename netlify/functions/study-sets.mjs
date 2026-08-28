@@ -8,6 +8,7 @@ import {
 } from '../lib/netlify-identity-utils.mjs';
 import { createUserDataClient, ensureOwnProfile } from '../lib/supabase-user-db.mjs';
 import { assertNoClientUserId } from '../lib/study-cloud.mjs';
+import { isMastered } from '../lib/review-scheduler.mjs';
 import {
   normalizeDescription,
   normalizeTitle,
@@ -35,13 +36,32 @@ export default async function handler(request) {
     const userId = auth.user.id;
 
     if (request.method === 'GET') {
-      const { rows } = await db.select(
-        'study_sets',
-        `select=${setSelect()}&user_id=eq.${userId}&order=updated_at.desc,id.desc&limit=${STUDY_SET_LIMITS.maxSets}`
-      );
+      const now = Date.now();
+      const [{ rows }, cards] = await Promise.all([
+        db.select(
+          'study_sets',
+          `select=${setSelect()}&user_id=eq.${userId}&order=updated_at.desc,id.desc&limit=${STUDY_SET_LIMITS.maxSets}`
+        ),
+        db.select(
+          'study_cards',
+          `select=study_set_id,interval_days,due_at,suspended&user_id=eq.${userId}&limit=${STUDY_SET_LIMITS.maxCards}`
+        )
+      ]);
+      const stats = new Map();
+      for (const row of cards.rows || []) {
+        const current = stats.get(row.study_set_id) || { cardCount: 0, dueCount: 0, masteredCount: 0 };
+        current.cardCount += 1;
+        if (!row.suspended && Date.parse(row.due_at) <= now) current.dueCount += 1;
+        if (!row.suspended && isMastered(row.interval_days)) current.masteredCount += 1;
+        stats.set(row.study_set_id, current);
+      }
       return cookieResponse(auth, 200, {
         ok: true,
-        sets: rows.map((row) => publicStudySet(row))
+        sets: rows.map((row) => publicStudySet(row, stats.get(row.id) || {
+          cardCount: 0,
+          dueCount: 0,
+          masteredCount: 0
+        }))
       });
     }
 

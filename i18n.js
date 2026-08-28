@@ -242,7 +242,8 @@
       link.id === 'pricing-workspace-link' ||
       link.id === 'pricing-create-account-link' ||
       link.id === 'pricing-login-link' ||
-      link.id === 'pricing-trial-cta'
+      link.id === 'pricing-trial-cta' ||
+      link.id === 'pricing-pro-cta'
     );
   }
 
@@ -265,11 +266,14 @@
       link.setAttribute('href', signedIn ? '/app' : '/login');
       const label = link.querySelector('[data-i18n], span') || link;
       setAuthLabel(label, signedIn ? display : (label.dataset.authGuestLabel || 'Login'), signedIn ? null : 'common.nav.login');
+      syncPlanBadge(link, user, signedIn);
     });
 
     document.querySelectorAll('.lc-topnav-cta[href]').forEach(function (link) {
       if (isPricingActionLink(link)) return;
       if (link.dataset.authGuestHref == null) link.dataset.authGuestHref = link.getAttribute('href') || '/login';
+      var guestHref = String(link.dataset.authGuestHref || '').toLowerCase();
+      if (!/login|signup|account/.test(guestHref)) return;
       link.setAttribute('href', signedIn ? '/app' : link.dataset.authGuestHref);
       const label = link.querySelector('span') || link;
       setAuthLabel(
@@ -279,7 +283,37 @@
       );
       link.setAttribute('aria-label', signedIn ? ('Open workspace for ' + display) : (label.dataset.authGuestLabel || 'Account'));
       link.setAttribute('title', signedIn ? ('Signed in as ' + display) : (label.dataset.authGuestLabel || 'Account'));
+      syncPlanBadge(link, user, signedIn);
     });
+  }
+
+  function planBadgeLabel(user) {
+    if (!user) return '';
+    if (user.planSource === 'trial' || user.planSource === 'billing_trial') return 'TRIAL';
+    if (user.isPro) return 'PRO';
+    return '';
+  }
+
+  function syncPlanBadge(link, user, signedIn) {
+    if (!link) return;
+    if (!document.getElementById('atomurus-plan-badge-style')) {
+      var style = document.createElement('style');
+      style.id = 'atomurus-plan-badge-style';
+      style.textContent = '.lc-plan-badge{display:inline-flex;margin-left:6px;vertical-align:middle;height:18px;padding:0 6px;border-radius:999px;font-family:var(--lc-mono,ui-monospace,monospace);font-size:9px;letter-spacing:.12em;border:1px solid color-mix(in oklab,var(--lc-green,#1E6A50) 40%,var(--lc-rule,#D8D2BF));color:var(--lc-green,#1E6A50)}';
+      document.head.appendChild(style);
+    }
+    var badge = link.querySelector('.lc-plan-badge');
+    var label = planBadgeLabel(user);
+    if (!signedIn || !label) {
+      if (badge) badge.remove();
+      return;
+    }
+    if (!badge) {
+      badge = document.createElement('span');
+      badge.className = 'lc-plan-badge';
+      link.appendChild(badge);
+    }
+    badge.textContent = label;
   }
 
   function apply(root) {

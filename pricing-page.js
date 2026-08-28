@@ -6,60 +6,74 @@
 
   var COPY = {
     en: {
-      title: 'Start with 30 days of Pro free, then upgrade when you are ready.',
-      desc: 'Every new Atomurus account gets 1 month of Pro at no cost — ad-free workspace, saved progress and richer study tools. After that, keep studying on Free or subscribe monthly or annually in BRL or USD.',
-      currencyNote: 'Prices are auto-selected by country and language. New accounts always start with 30 days of Pro free.',
+      title: 'Study chemistry. Remember more.',
+      desc: 'Atomurus Pro turns the public chemistry lab into your personal study system with Study Library, flashcards and Smart Review.',
+      currencyNote: 'Prices follow country and language. New accounts start with 30 days of Pro. No card is required to begin the trial.',
       statusGuest: 'public lab · free access',
       freeTag: 'Free forever',
-      freeName: 'Free',
-      freeSub: 'open chemistry reference · ads supported',
+      freeName: 'Atomurus Free',
+      freeSub: 'Explore chemistry',
       freeFeatures: [
-        'Periodic table and 118 element pages',
-        '3D models, molecules, allotropes and isomerism',
-        'Core calculators and Explore articles',
-        'No account required for the public lab'
+        'Periodic Table',
+        'Calculators',
+        'Atomic models',
+        'Molecule viewer',
+        'Explore',
+        'Public chemistry content'
       ],
       freeCta: 'Open lab',
-      monthlyTag: 'Pro monthly · 30-day trial',
-      monthlyName: 'Pro Monthly',
-      monthlySub: '1 month free on new accounts · cancel anytime',
-      annualTag: 'Best value · 30-day trial',
-      annualName: 'Pro Annual',
-      annualSub: '1 month free on new accounts · billed yearly',
+      popular: 'Most popular',
+      proTag: 'Atomurus Pro',
+      proName: 'Build your study system',
+      proSub: 'Everything in Free, plus a personal study system',
       proFeatures: [
-        'Ad-free workspace across the site',
-        'Favorites, history and saved study flow',
-        'PDF/export tools and richer study materials',
-        'Flashcards, exercises, guided tracks and AI tutor rollout'
+        'Everything in Free',
+        'No ads',
+        'Study Library',
+        'Notes & tags',
+        'Calculator History',
+        'Study Progress',
+        'Study Sets',
+        'Flashcards',
+        'Automatic card generation',
+        'Smart Review',
+        'Spaced repetition'
       ],
-      checkoutGuest: 'Start 30-day free trial',
-      checkoutTrial: 'Subscribe · billing after trial',
-      checkoutFree: 'Upgrade in Stripe',
-      checkoutPaid: 'Change plan in Stripe',
-      trialCtaGuest: 'Start 30-day free trial',
+      checkoutGuest: 'Create account',
+      checkoutTrial: 'Subscribe after trial',
+      checkoutFree: 'Upgrade to Pro',
+      checkoutPaid: 'Your current plan',
+      trialCtaGuest: 'Create account',
       workspace: 'Open workspace',
       signedIn: 'Signed in as ',
       signedInFree: 'free plan',
       signedInTrial: 'trial active',
       signedInPaid: 'pro active',
       signedInAdmin: 'admin access',
-      compareTitle: 'Why Pro exists',
-      compare: [
-        '<strong>30 days of Pro free.</strong> Create an account and the first month runs as Pro automatically — no card required to start.',
-        '<strong>Free stays generous.</strong> The periodic table, element encyclopedia, articles, calculators and basic visualization stay public.',
-        '<strong>Pro sells convenience.</strong> Remove distractions, keep your study context, export clean material and return to a workspace that remembers you.',
-        '<strong>Pro also sells depth.</strong> Guided paths, question banks, flashcards and tutor workflows are easier to build when your account carries progress.'
+      compareTitle: 'Compare plans',
+      matrixFeature: 'Feature',
+      matrix: [
+        ['Periodic Table', 'yes', 'yes'],
+        ['Calculators', 'yes', 'yes'],
+        ['Atomic models', 'yes', 'yes'],
+        ['Study Library', 'no', 'yes'],
+        ['Study Sets', 'no', 'yes'],
+        ['Smart Review', 'no', 'yes'],
+        ['Spaced repetition', 'no', 'yes'],
+        ['Ads', 'ads', 'noads']
+      ],
+      yes: 'Yes',
+      no: '—',
+      adsYes: 'Yes',
+      adsNo: 'No',
+      howTitle: 'How Smart Review works',
+      steps: [
+        ['01 Save', 'Save an element or molecule.'],
+        ['02 Generate', 'Turn it into flashcards.'],
+        ['03 Review', 'Atomurus schedules what you should review next.']
       ],
       keepFreeTitle: 'What stays free',
-      keepFree: 'Atomurus will keep the SEO and classroom-facing surfaces open: periodic table, element pages, articles, basic calculators and simple simulations. Billing should never become a gate in front of chemistry fundamentals.',
-      nextTitle: 'What Pro is building toward',
-      next: [
-        'A calmer study workspace with no ads or detours',
-        'Saved labs, favorites and project continuity',
-        'Advanced simulations, larger molecular library and richer exports',
-        'Teacher/student flows and guided chemistry learning paths'
-      ],
-      annualBadge: '2 months free equivalent',
+      keepFree: 'The periodic table, element pages, articles, calculators and viewers stay open. Billing should never become a gate in front of chemistry fundamentals.',
       geoBRL: 'Brazil pricing',
       geoUSD: 'International pricing',
       periodMonthly: 'Monthly',
@@ -67,64 +81,88 @@
       asideLogin: 'Login',
       billedMonthly: 'billed monthly',
       billedAnnual: 'billed annually',
-      trialBadge: '1 month of Pro free on every new account',
-      checkoutBusy: 'Opening Stripe...'
+      trialBadge: '30 days of Pro on every new account',
+      checkoutBusy: 'Opening secure checkout…',
+      checkoutRetry: 'Could not open checkout. Try again.',
+      savePercent: 'Save ~{n}%',
+      currentPlan: 'Your current plan',
+      trialActive: 'Your Pro trial is active. {n} days remaining.',
+      monthlyAmountBRL: 'R$24,90',
+      annualAmountBRL: 'R$180',
+      annualEqBRL: '≈ R$15/month',
+      monthlyAmountUSD: '$10',
+      annualAmountUSD: '$60',
+      annualEqUSD: '≈ $5/month'
     },
     pt: {
-      title: 'Comece com 30 dias de Pro grátis e faça upgrade quando quiser.',
-      desc: 'Toda conta nova no Atomurus ganha 1 mês de Pro sem custo — workspace sem anúncios, progresso salvo e ferramentas de estudo mais ricas. Depois disso, continue no Free ou assine mensal ou anual em BRL ou USD.',
-      currencyNote: 'Os preços são escolhidos por país e idioma. Contas novas sempre começam com 30 dias de Pro grátis.',
+      title: 'Estude química. Lembre por mais tempo.',
+      desc: 'O Atomurus Pro transforma o laboratório público em um sistema pessoal de estudos com biblioteca, flashcards e revisão inteligente.',
+      currencyNote: 'Os preços seguem país e idioma. Contas novas começam com 30 dias de Pro. Não é preciso cartão para iniciar o trial.',
       statusGuest: 'lab público · acesso gratuito',
       freeTag: 'Grátis para sempre',
-      freeName: 'Free',
-      freeSub: 'referência de química aberta · com anúncios',
+      freeName: 'Atomurus Free',
+      freeSub: 'Explore química',
       freeFeatures: [
-        'Tabela periódica e 118 páginas de elementos',
-        'Modelos 3D, moléculas, alótropos e isomeria',
-        'Calculadoras essenciais e artigos Explore',
-        'Sem conta obrigatória para o lab público'
+        'Tabela periódica',
+        'Calculadoras',
+        'Modelos atômicos',
+        'Visualizador de moléculas',
+        'Explore',
+        'Conteúdo público de química'
       ],
       freeCta: 'Abrir lab',
-      monthlyTag: 'Pro mensal · 30 dias grátis',
-      monthlyName: 'Pro Mensal',
-      monthlySub: '1 mês grátis em contas novas · cancele quando quiser',
-      annualTag: 'Melhor valor · 30 dias grátis',
-      annualName: 'Pro Anual',
-      annualSub: '1 mês grátis em contas novas · cobrado no ano',
+      popular: 'Mais popular',
+      proTag: 'Atomurus Pro',
+      proName: 'Monte seu sistema de estudos',
+      proSub: 'Tudo do Free, mais um sistema pessoal de estudos',
       proFeatures: [
-        'Workspace sem anúncios em todo o site',
-        'Favoritos, histórico e continuidade de estudo',
-        'Ferramentas de PDF/export e material de estudo mais rico',
-        'Flashcards, exercícios, trilhas guiadas e tutor de IA em rollout'
+        'Tudo do Free',
+        'Sem anúncios',
+        'Biblioteca de estudos',
+        'Notas e tags',
+        'Histórico de calculadoras',
+        'Progresso de estudo',
+        'Study Sets',
+        'Flashcards',
+        'Geração automática de cards',
+        'Smart Review',
+        'Repetição espaçada'
       ],
-      checkoutGuest: 'Comece 30 dias grátis',
-      checkoutTrial: 'Assinar · cobrança após o trial',
-      checkoutFree: 'Fazer upgrade no Stripe',
-      checkoutPaid: 'Trocar plano no Stripe',
-      trialCtaGuest: 'Comece 30 dias grátis',
+      checkoutGuest: 'Criar conta',
+      checkoutTrial: 'Assinar após o trial',
+      checkoutFree: 'Assinar o Pro',
+      checkoutPaid: 'Seu plano atual',
+      trialCtaGuest: 'Criar conta',
       workspace: 'Abrir workspace',
       signedIn: 'Sessão ativa: ',
       signedInFree: 'plano free',
       signedInTrial: 'trial ativo',
       signedInPaid: 'pro ativo',
       signedInAdmin: 'acesso admin',
-      compareTitle: 'Por que o Pro existe',
-      compare: [
-        '<strong>30 dias de Pro grátis.</strong> Crie uma conta e o primeiro mês já roda como Pro automaticamente — sem cartão para começar.',
-        '<strong>O Free continua generoso.</strong> Tabela periódica, enciclopédia dos elementos, artigos, calculadoras e visualizações básicas continuam públicas.',
-        '<strong>O Pro vende conveniência.</strong> Remove distrações, preserva seu contexto de estudo, exporta material limpo e devolve você a um workspace que lembra de você.',
-        '<strong>O Pro também vende profundidade.</strong> Trilhas guiadas, bancos de questões, flashcards e fluxos com tutor ficam melhores quando sua conta carrega progresso.'
+      compareTitle: 'Compare os planos',
+      matrixFeature: 'Recurso',
+      matrix: [
+        ['Tabela periódica', 'yes', 'yes'],
+        ['Calculadoras', 'yes', 'yes'],
+        ['Modelos atômicos', 'yes', 'yes'],
+        ['Biblioteca de estudos', 'no', 'yes'],
+        ['Study Sets', 'no', 'yes'],
+        ['Smart Review', 'no', 'yes'],
+        ['Repetição espaçada', 'no', 'yes'],
+        ['Anúncios', 'ads', 'noads']
+      ],
+      yes: 'Sim',
+      no: '—',
+      adsYes: 'Sim',
+      adsNo: 'Não',
+      howTitle: 'Como o Smart Review funciona',
+      steps: [
+        ['01 Salvar', 'Salve um elemento ou molécula.'],
+        ['02 Gerar', 'Transforme em flashcards.'],
+        ['03 Revisar', 'O Atomurus agenda o que você deve revisar a seguir.']
       ],
       keepFreeTitle: 'O que continua grátis',
-      keepFree: 'O Atomurus vai manter abertas as superfícies de SEO e de sala de aula: tabela periódica, páginas dos elementos, artigos, calculadoras básicas e simulações simples. Billing não deve virar uma barreira na frente dos fundamentos de química.',
-      nextTitle: 'Para onde o Pro está indo',
-      next: [
-        'Um workspace de estudo mais calmo, sem anúncios nem desvios',
-        'Labs salvos, favoritos e continuidade de projeto',
-        'Simulações avançadas, biblioteca molecular maior e exportações mais ricas',
-        'Fluxos professor/aluno e trilhas guiadas de aprendizado em química'
-      ],
-      annualBadge: 'equivale a 2 meses grátis',
+      keepFree: 'A tabela periódica, as páginas dos elementos, artigos, calculadoras e visualizadores continuam abertos. Billing não deve virar uma barreira na frente dos fundamentos de química.',
       geoBRL: 'preço Brasil',
       geoUSD: 'preço internacional',
       periodMonthly: 'Mensal',
@@ -132,8 +170,18 @@
       asideLogin: 'Entrar',
       billedMonthly: 'cobrado por mês',
       billedAnnual: 'cobrado por ano',
-      trialBadge: '1 mês de Pro grátis em toda conta nova',
-      checkoutBusy: 'Abrindo Stripe...'
+      trialBadge: '30 dias de Pro em toda conta nova',
+      checkoutBusy: 'Abrindo checkout seguro…',
+      checkoutRetry: 'Não foi possível abrir o checkout. Tente de novo.',
+      savePercent: 'Economize ~{n}%',
+      currentPlan: 'Seu plano atual',
+      trialActive: 'Seu trial Pro está ativo. {n} dias restantes.',
+      monthlyAmountBRL: 'R$24,90',
+      annualAmountBRL: 'R$180',
+      annualEqBRL: '≈ R$15/mês',
+      monthlyAmountUSD: 'US$10',
+      annualAmountUSD: 'US$60',
+      annualEqUSD: '≈ US$5/mês'
     }
   };
 
@@ -147,19 +195,37 @@
     return dict[key];
   }
 
+  function interpolate(template, vars) {
+    var text = String(template || '');
+    Object.keys(vars || {}).forEach(function (key) {
+      text = text.split('{' + key + '}').join(String(vars[key]));
+    });
+    return text;
+  }
+
+  function annualSavePercent(monthly, annual) {
+    var month = Number(monthly);
+    var year = Number(annual);
+    if (!(month > 0) || !(year > 0)) return 0;
+    return Math.round((1 - year / (month * 12)) * 100);
+  }
+
+  function trialDaysLeft(iso) {
+    var end = Date.parse(iso);
+    if (!Number.isFinite(end)) return null;
+    return Math.max(0, Math.ceil((end - Date.now()) / 86400000));
+  }
+
   function pricingData(currency) {
-    var source = window.__ATOMURUS_ADS__ && window.__ATOMURUS_ADS__.pricingContext;
-    var current = currency || (source && source.currency) || 'usd';
-    current = current === 'brl' ? 'brl' : 'usd';
+    var current = currency === 'brl' ? 'brl' : 'usd';
+    var save = current === 'brl' ? annualSavePercent(24.9, 180) : annualSavePercent(10, 60);
     return {
       currency: current,
       geoLabel: current === 'brl' ? t('geoBRL') : t('geoUSD'),
-      monthly: current === 'brl'
-        ? { amount: 'R$24,90', meta: t('billedMonthly'), badge: null }
-        : { amount: 'US$10', meta: t('billedMonthly'), badge: null },
-      annual: current === 'brl'
-        ? { amount: 'R$180', meta: 'R$15/mês · ' + t('billedAnnual'), badge: t('annualBadge') }
-        : { amount: 'US$60', meta: 'US$5/month · ' + t('billedAnnual'), badge: t('annualBadge') }
+      monthlyAmount: current === 'brl' ? t('monthlyAmountBRL') : t('monthlyAmountUSD'),
+      annualAmount: current === 'brl' ? t('annualAmountBRL') : t('annualAmountUSD'),
+      annualEq: current === 'brl' ? t('annualEqBRL') : t('annualEqUSD'),
+      save: save
     };
   }
 
@@ -168,33 +234,19 @@
     if (node) node.textContent = value;
   }
 
-  function setHtml(id, value) {
-    var node = document.getElementById(id);
-    if (node) node.innerHTML = value;
-  }
-
-  function setList(id, items, html) {
+  function setList(id, items) {
     var node = document.getElementById(id);
     if (!node) return;
-    node.innerHTML = items.map(function (item) {
-      return '<li>' + (html ? item : escapeHtml(item)) + '</li>';
-    }).join('');
-  }
-
-  function escapeHtml(value) {
-    return String(value == null ? '' : value)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
+    node.textContent = '';
+    items.forEach(function (item) {
+      var li = document.createElement('li');
+      li.textContent = item;
+      node.appendChild(li);
+    });
   }
 
   function readStorage(key, fallback) {
-    try {
-      return localStorage.getItem(key) || fallback;
-    } catch (_err) {
-      return fallback;
-    }
+    try { return localStorage.getItem(key) || fallback; } catch (_err) { return fallback; }
   }
 
   function writeStorage(key, value) {
@@ -220,40 +272,6 @@
     return user && (user.displayName || user.fullName || user.username || user.email) || 'Workspace';
   }
 
-  function hydrateCopy(currency) {
-    var pricing = pricingData(currency);
-    setText('pricing-status', activeState().signedIn ? (t('signedIn') + displayName(activeState().user) + ' · ' + userPlanLabel(activeState().user)) : t('statusGuest'));
-    setText('pricing-currency-note', t('currencyNote'));
-    setText('pricing-title-copy', t('title'));
-    setText('pricing-desc-copy', t('desc'));
-    setText('pricing-geo-badge', pricing.geoLabel);
-    setText('pricing-free-tag', t('freeTag'));
-    setText('pricing-free-name', t('freeName'));
-    setText('pricing-free-sub', t('freeSub'));
-    setList('pricing-free-list', t('freeFeatures'));
-    setText('pricing-monthly-tag', t('monthlyTag'));
-    setText('pricing-monthly-name', t('monthlyName'));
-    setText('pricing-monthly-amount', pricing.monthly.amount);
-    setText('pricing-monthly-sub', t('monthlySub'));
-    setText('pricing-monthly-meta', pricing.monthly.meta);
-    setList('pricing-pro-monthly-list', t('proFeatures'));
-    setText('pricing-annual-tag', t('annualTag'));
-    setText('pricing-annual-name', t('annualName'));
-    setText('pricing-annual-amount', pricing.annual.amount);
-    setText('pricing-annual-sub', t('annualSub'));
-    setText('pricing-annual-meta', pricing.annual.meta);
-    setText('pricing-annual-badge', pricing.annual.badge);
-    setList('pricing-pro-annual-list', t('proFeatures'));
-    setText('pricing-compare-title', t('compareTitle'));
-    setList('pricing-compare-list', t('compare'), true);
-    setText('pricing-keep-free-title', t('keepFreeTitle'));
-    setText('pricing-keep-free-copy', t('keepFree'));
-    setText('pricing-next-title', t('nextTitle'));
-    setList('pricing-next-list', t('next'));
-    setText('pricing-trial-note', t('trialBadge'));
-    syncButtons();
-  }
-
   function selectedCurrency() {
     var stored = readStorage(CURRENCY_KEY, '');
     if (stored === 'brl' || stored === 'usd') return stored;
@@ -263,6 +281,104 @@
 
   function selectedPeriod() {
     return readStorage(PERIOD_KEY, 'annual') === 'monthly' ? 'monthly' : 'annual';
+  }
+
+  function checkoutLabel(user, signedIn) {
+    if (!signedIn) return t('checkoutGuest');
+    if (user && (user.planSource === 'trial' || user.planSource === 'billing_trial')) return t('checkoutTrial');
+    if (user && user.isPro) return t('checkoutPaid');
+    return t('checkoutFree');
+  }
+
+  function cellMark(code) {
+    if (code === 'yes') return t('yes');
+    if (code === 'no') return t('no');
+    if (code === 'ads') return t('adsYes');
+    if (code === 'noads') return t('adsNo');
+    return code;
+  }
+
+  function hydrateCopy(currency) {
+    var pricing = pricingData(currency);
+    var period = selectedPeriod();
+    var state = activeState();
+    var user = state.user || null;
+    setText('pricing-status', state.signedIn ? (t('signedIn') + displayName(user) + ' · ' + userPlanLabel(user)) : t('statusGuest'));
+    setText('pricing-currency-note', t('currencyNote'));
+    setText('pricing-title-copy', t('title'));
+    setText('pricing-desc-copy', t('desc'));
+    setText('pricing-geo-badge', pricing.geoLabel);
+    setText('pricing-free-tag', t('freeTag'));
+    setText('pricing-free-name', t('freeName'));
+    setText('pricing-free-sub', t('freeSub'));
+    setList('pricing-free-list', t('freeFeatures'));
+    setText('pricing-popular', t('popular'));
+    setText('pricing-pro-tag', t('proTag'));
+    setText('pricing-pro-name', t('proName'));
+    setText('pricing-pro-sub', t('proSub'));
+    setList('pricing-pro-list', t('proFeatures'));
+    if (period === 'annual') {
+      setText('pricing-pro-amount', pricing.annualAmount);
+      setText('pricing-pro-meta', pricing.annualEq + ' · ' + t('billedAnnual'));
+      var save = document.getElementById('pricing-save-badge');
+      if (save) {
+        save.hidden = false;
+        save.textContent = interpolate(t('savePercent'), { n: pricing.save });
+      }
+    } else {
+      setText('pricing-pro-amount', pricing.monthlyAmount);
+      setText('pricing-pro-meta', t('billedMonthly'));
+      var saveBadge = document.getElementById('pricing-save-badge');
+      if (saveBadge) saveBadge.hidden = true;
+    }
+    setText('pricing-compare-title', t('compareTitle'));
+    setText('pricing-matrix-feature', t('matrixFeature'));
+    var body = document.getElementById('pricing-matrix-body');
+    if (body) {
+      body.textContent = '';
+      t('matrix').forEach(function (row) {
+        var tr = document.createElement('tr');
+        row.forEach(function (cell, idx) {
+          var td = document.createElement(idx === 0 ? 'th' : 'td');
+          td.textContent = idx === 0 ? cell : cellMark(cell);
+          tr.appendChild(td);
+        });
+        body.appendChild(tr);
+      });
+    }
+    setText('pricing-how-title', t('howTitle'));
+    var steps = document.getElementById('pricing-steps');
+    if (steps) {
+      steps.textContent = '';
+      t('steps').forEach(function (step) {
+        var card = document.createElement('div');
+        card.className = 'price-step';
+        var num = document.createElement('div');
+        num.className = 'price-step-num';
+        num.textContent = step[0];
+        var p = document.createElement('p');
+        p.textContent = step[1];
+        card.appendChild(num);
+        card.appendChild(p);
+        steps.appendChild(card);
+      });
+    }
+    setText('pricing-keep-free-title', t('keepFreeTitle'));
+    setText('pricing-keep-free-copy', t('keepFree'));
+    setText('pricing-trial-note', t('trialBadge'));
+    var current = document.getElementById('pricing-current');
+    if (current) {
+      if (state.signedIn && user && (user.planSource === 'trial' || user.planSource === 'billing_trial')) {
+        current.hidden = false;
+        current.textContent = interpolate(t('trialActive'), { n: trialDaysLeft(user.trialEndsAt) || 0 });
+      } else if (state.signedIn && user && user.isPro) {
+        current.hidden = false;
+        current.textContent = t('currentPlan');
+      } else {
+        current.hidden = true;
+      }
+    }
+    syncButtons();
   }
 
   function syncToggleButtons() {
@@ -278,21 +394,11 @@
     });
   }
 
-  function checkoutLabel(user, signedIn) {
-    if (!signedIn) return t('checkoutGuest');
-    if (user && (user.planSource === 'trial' || user.planSource === 'billing_trial')) {
-      return t('checkoutTrial');
-    }
-    if (user && user.isPro) return t('checkoutPaid');
-    return t('checkoutFree');
-  }
-
   function syncButtons() {
     var state = activeState();
     var user = state.user || null;
     var freeCta = document.getElementById('pricing-free-cta');
-    var monthlyCta = document.getElementById('pricing-monthly-cta');
-    var annualCta = document.getElementById('pricing-annual-cta');
+    var proCta = document.getElementById('pricing-pro-cta');
     var workspace = document.getElementById('pricing-workspace-link');
     var asidePrimary = document.getElementById('pricing-create-account-link');
     var asideSecondary = document.getElementById('pricing-login-link');
@@ -311,19 +417,28 @@
       asideSecondary.textContent = state.signedIn ? ('→ ' + t('signedIn') + displayName(user)) : ('→ ' + t('asideLogin'));
       asideSecondary.href = state.signedIn ? '/app' : '/login';
     }
-    [monthlyCta, annualCta].forEach(function (button) {
-      if (!button) return;
-      button.disabled = false;
-      button.textContent = checkoutLabelText;
-      button.dataset.signedIn = state.signedIn ? 'true' : 'false';
-    });
+    if (proCta) {
+      proCta.disabled = false;
+      proCta.textContent = checkoutLabelText;
+      proCta.dataset.signedIn = state.signedIn ? 'true' : 'false';
+    }
     syncToggleButtons();
   }
 
-  async function startCheckout(period) {
-    var button = document.getElementById(period === 'annual' ? 'pricing-annual-cta' : 'pricing-monthly-cta');
+  async function startCheckout() {
+    var button = document.getElementById('pricing-pro-cta');
+    var errBox = document.getElementById('pricing-checkout-err');
+    if (errBox) {
+      errBox.classList.remove('show');
+      errBox.textContent = '';
+    }
     if (!activeState().signedIn) {
-      location.assign('/signup');
+      location.assign('/signup?next=' + encodeURIComponent('/pricing'));
+      return;
+    }
+    var user = activeState().user;
+    if (user && user.isPro && user.planSource !== 'trial' && user.planSource !== 'billing_trial') {
+      location.assign('/app?section=account');
       return;
     }
     if (button) {
@@ -340,14 +455,17 @@
         },
         body: JSON.stringify({
           currency: selectedCurrency(),
-          period: period
+          period: selectedPeriod()
         })
       });
       var data = await res.json().catch(function () { return {}; });
-      if (!res.ok || !data || !data.url) throw new Error((data && data.error) || 'Checkout failed');
+      if (!res.ok || !data || !data.url) throw new Error('checkout');
       location.assign(data.url);
-    } catch (err) {
-      alert(err.message || 'Checkout failed');
+    } catch (_err) {
+      if (errBox) {
+        errBox.textContent = t('checkoutRetry');
+        errBox.classList.add('show');
+      }
       syncButtons();
     }
   }
@@ -355,21 +473,18 @@
   function bind() {
     document.querySelectorAll('[data-currency]').forEach(function (button) {
       button.addEventListener('click', function () {
-        var currency = button.getAttribute('data-currency') === 'brl' ? 'brl' : 'usd';
-        writeStorage(CURRENCY_KEY, currency);
-        hydrateCopy(currency);
+        writeStorage(CURRENCY_KEY, button.getAttribute('data-currency') === 'brl' ? 'brl' : 'usd');
+        hydrateCopy(selectedCurrency());
       });
     });
     document.querySelectorAll('[data-period]').forEach(function (button) {
       button.addEventListener('click', function () {
         writeStorage(PERIOD_KEY, button.getAttribute('data-period') === 'monthly' ? 'monthly' : 'annual');
-        syncToggleButtons();
+        hydrateCopy(selectedCurrency());
       });
     });
-    var monthly = document.getElementById('pricing-monthly-cta');
-    var annual = document.getElementById('pricing-annual-cta');
-    if (monthly) monthly.addEventListener('click', function () { startCheckout('monthly'); });
-    if (annual) annual.addEventListener('click', function () { startCheckout('annual'); });
+    var pro = document.getElementById('pricing-pro-cta');
+    if (pro) pro.addEventListener('click', startCheckout);
   }
 
   function boot() {

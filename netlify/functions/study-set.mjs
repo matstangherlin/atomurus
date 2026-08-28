@@ -14,6 +14,7 @@ import {
   publicStudyItem,
   studyError
 } from '../lib/study-cloud.mjs';
+import { MASTERED_INTERVAL_DAYS } from '../lib/review-scheduler.mjs';
 import {
   cardCursorFilter,
   cardSelect,
@@ -93,7 +94,7 @@ export default async function handler(request) {
     const cursor = decodeCardCursor(url.searchParams.get('cursor'));
     const extra = cardCursorFilter(cursor);
 
-    const [itemLinks, cardPage, cardCount, dueCount] = await Promise.all([
+    const [itemLinks, cardPage, cardCount, dueCount, masteredCount] = await Promise.all([
       db.select(
         'study_set_items',
         `select=id,item_id,created_at&user_id=eq.${userId}&study_set_id=eq.${encodeURIComponent(id)}&order=created_at.desc,id.desc&limit=100`
@@ -113,6 +114,10 @@ export default async function handler(request) {
       db.count(
         'study_cards',
         `user_id=eq.${userId}&study_set_id=eq.${encodeURIComponent(id)}&suspended=eq.false&due_at=lte.${encodeURIComponent(new Date().toISOString())}`
+      ),
+      db.count(
+        'study_cards',
+        `user_id=eq.${userId}&study_set_id=eq.${encodeURIComponent(id)}&suspended=eq.false&interval_days=gte.${MASTERED_INTERVAL_DAYS}`
       )
     ]);
 
@@ -133,6 +138,7 @@ export default async function handler(request) {
       set: publicStudySet(set, {
         cardCount,
         dueCount,
+        masteredCount,
         itemCount: itemLinks.rows.length
       }),
       items: itemLinks.rows.map((row) => publicSetItem(row, itemById.get(row.item_id) || null)),

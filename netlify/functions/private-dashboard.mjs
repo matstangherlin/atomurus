@@ -33,10 +33,10 @@ export default async function handler(request) {
     },
     {
       id: 'export-pdf',
-      label: 'PDF export',
-      description: 'Export table views and study sheets from the periodic table (Pro).',
-      href: user.isPro ? '/periodic-table' : '/pricing',
-      state: features.exportPdf ? 'available' : 'locked'
+      label: 'Study sheet PDF',
+      description: 'Study-sheet PDF export is not available yet. The public periodic table can still be downloaded from the table page.',
+      href: '/periodic-table',
+      state: 'coming'
     },
     {
       id: 'study-library',
