@@ -159,7 +159,7 @@ test('Visual regression: public lab, pricing and /app at 360px', async ({ page }
     localStorage.setItem('atomurus-lang', 'en');
   });
   await page.goto('/calculators.html');
-  await expect(page.locator('.ps-shell, .content-inner, #molar-mass, body')).toBeVisible();
+  await expect(page.locator('.ps-shell')).toBeVisible();
   await saveShot(page, 'mobile-360-calculators');
   await page.goto('/periodic-table.html');
   await saveShot(page, 'mobile-360-periodic-table');
