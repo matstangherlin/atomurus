@@ -198,6 +198,52 @@ test('Pro loads the molecule runtime after entitlement', async ({ page }) => {
   await saveShot(page, 'pro-molecules-mode-3d');
 });
 
+test('Pro isomerism 2D overlays the stage without hiding WebGL', async ({ page }) => {
+  await installApi(page, { kind: 'pro' });
+  await page.goto('/viewer/isomerism/constitutional/function.html');
+  await expect.poll(() => page.evaluate(() => {
+    const ads = window.__ATOMURUS_ADS__ || {};
+    const user = ads.user || {};
+    return Boolean(ads.ready && user.features && user.features.isomerismViewer);
+  })).toBe(true);
+  await expect(page.locator('#lab-tool-gate')).toHaveCount(0);
+  const canvas = page.locator('.iso-3d-stage canvas').first();
+  await canvas.scrollIntoViewIfNeeded();
+  await expect.poll(() => page.evaluate(() => Boolean(
+    window.THREE && document.querySelector('[data-3d-mode="2d"]')
+  ))).toBe(true);
+  await page.locator('[data-3d-mode="2d"]').click();
+  await expect(page.locator('.iso-3d-panel').first()).toHaveClass(/is-2d/);
+  await expect(page.locator('[data-3d-mode="2d"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect.poll(() => page.evaluate(() => {
+    const panel = document.querySelector('.iso-3d-panel');
+    const stage = panel && panel.querySelector('.iso-3d-stage');
+    const s2 = panel && panel.querySelector('.iso-3d-stage2d');
+    const c = stage && stage.querySelector('canvas');
+    return Boolean(
+      panel && panel.classList.contains('is-2d') &&
+      stage && getComputedStyle(stage).display !== 'none' &&
+      c && getComputedStyle(c).visibility === 'visible' &&
+      s2 && stage.contains(s2) &&
+      getComputedStyle(s2).visibility === 'visible' &&
+      s2.querySelector('svg')
+    );
+  })).toBe(true);
+  await saveShot(page, 'pro-isomerism-mode-2d');
+  await page.locator('[data-3d-mode="3d"]').click();
+  await expect(page.locator('.iso-3d-panel').first()).not.toHaveClass(/is-2d/);
+  await expect(page.locator('[data-3d-mode="3d"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect.poll(() => page.evaluate(() => {
+    const s2 = document.querySelector('.iso-3d-stage2d');
+    const c = document.querySelector('.iso-3d-stage canvas');
+    return Boolean(
+      c && getComputedStyle(c).visibility === 'visible' &&
+      s2 && getComputedStyle(s2).visibility === 'hidden'
+    );
+  })).toBe(true);
+  await saveShot(page, 'pro-isomerism-mode-3d');
+});
+
 test('guest periodic table stays fully public', async ({ page }) => {
   await page.goto('/periodic-table.html');
   await expect(page.locator('#lab-tool-gate')).toHaveCount(0);

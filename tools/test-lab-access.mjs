@@ -179,6 +179,9 @@ const iso3d = read('viewer/isomerism/isomerism-3d.js');
 assert.match(iso3d, /atomurusBootProViewer/);
 assert.match(iso3d, /isomerismViewer/);
 assert.match(iso3d, /isExplorePage/);
+assert.match(iso3d, /classList.toggle\('is-2d'/);
+assert.doesNotMatch(iso3d, /stageEl\.style\.display = 'none'/);
+assert.match(iso3d, /stage\.appendChild\(stage2d\)/);
 
 const calculators = read('calculators.html');
 assert.match(calculators, /Open Reaction Workbench/);

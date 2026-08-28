@@ -525,16 +525,19 @@
       modeWrap.setAttribute('role', 'group');
       modeWrap.setAttribute('aria-label', 'View mode');
       modeWrap.innerHTML =
-        '<button type="button" class="iso-3d-mode-btn active" data-3d-mode="3d">3D</button>' +
-        '<button type="button" class="iso-3d-mode-btn" data-3d-mode="2d">2D</button>';
+        '<button type="button" class="iso-3d-mode-btn active" data-3d-mode="3d" aria-pressed="true">3D</button>' +
+        '<button type="button" class="iso-3d-mode-btn" data-3d-mode="2d" aria-pressed="false">2D</button>';
       head.appendChild(modeWrap);
     }
     var stage2d = panel.querySelector('.iso-3d-stage2d');
     if (has2D && !stage2d) {
       stage2d = document.createElement('div');
       stage2d.className = 'iso-3d-stage2d';
-      stage2d.style.display = 'none';
-      stage.parentNode.insertBefore(stage2d, stage.nextSibling);
+      stage2d.setAttribute('aria-hidden', 'true');
+      // Overlay the WebGL stage. Hiding .iso-3d-stage with display:none
+      // blanks 3D when switching back, and a sibling 2D stage landed under the footer.
+      stage2d.style.cssText = 'position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box;width:100%;height:100%;visibility:hidden;pointer-events:none';
+      stage.appendChild(stage2d);
     }
     var meta = document.createElement('div');
     meta.className = 'iso-3d-meta';
@@ -718,23 +721,29 @@
     }
     function setMode(m) {
       mode = m === '2d' ? '2d' : '3d';
-      var stageEl = panel.querySelector('.iso-3d-stage');
+      var is3d = mode === '3d';
+      panel.classList.toggle('is-2d', !is3d);
+      if (canvas) {
+        canvas.style.visibility = 'visible';
+        canvas.style.pointerEvents = is3d ? 'auto' : 'none';
+      }
+      if (stage2d) {
+        stage2d.style.visibility = is3d ? 'hidden' : 'visible';
+        stage2d.style.pointerEvents = is3d ? 'none' : 'auto';
+        stage2d.setAttribute('aria-hidden', is3d ? 'true' : 'false');
+      }
       var ctrls = panel.querySelector('.iso-3d-controls');
       var diffEl = panel.querySelector('.iso-3d-diff');
       var diffBtn = panel.querySelector('[data-3d-act="diff"]');
-      if (mode === '2d') {
-        if (stageEl) stageEl.style.display = 'none';
-        if (stage2d) stage2d.style.display = '';
-        if (ctrls) ctrls.style.display = 'none';
+      if (ctrls) ctrls.style.display = is3d ? '' : 'none';
+      if (!is3d) {
         if (diffEl) { diffEl.classList.remove('show'); diffEl.textContent = ''; }
         if (diffBtn) diffBtn.classList.remove('diff-active');
         diffOn = false;
         render2D();
       } else {
-        if (stageEl) stageEl.style.display = '';
-        if (stage2d) stage2d.style.display = 'none';
-        if (ctrls) ctrls.style.display = '';
         resize();
+        renderer.render(scene, camera);
       }
     }
 
@@ -852,7 +861,11 @@
     if (has2D) {
       panel.querySelectorAll('[data-3d-mode]').forEach(function (btn) {
         btn.addEventListener('click', function () {
-          panel.querySelectorAll('[data-3d-mode]').forEach(function (b) { b.classList.toggle('active', b === btn); });
+          panel.querySelectorAll('[data-3d-mode]').forEach(function (b) {
+            var on = b === btn;
+            b.classList.toggle('active', on);
+            b.setAttribute('aria-pressed', on ? 'true' : 'false');
+          });
           setMode(btn.getAttribute('data-3d-mode'));
         });
       });
