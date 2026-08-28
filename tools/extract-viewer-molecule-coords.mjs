@@ -152,7 +152,7 @@ function patchHtml(file, keys) {
 
   html = html.replace(
     'src="load-three.js?v=202608041630"',
-    'src="load-three.js?v=202608282500"'
+    'src="load-three.js?v=202608282800"'
   );
 
   fs.writeFileSync(file, html);

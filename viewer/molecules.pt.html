@@ -273,7 +273,14 @@ body{
 .mol-search-none{font-family:'DM Mono',monospace;font-size:11px;color:var(--viewer-text-3);padding:4px 2px 12px}
 
 .canvas-wrap{position:relative}
-canvas#viewer3d{width:100%;height:460px;display:block;cursor:grab;background:var(--canvas-bg-1);transition:background .25s}
+canvas#viewer3d{width:100%;height:460px;display:block;cursor:grab;background:var(--canvas-bg-1);transition:background .25s,visibility .15s}
+canvas#viewer2d-full{
+  position:absolute;top:0;left:0;width:100%;height:460px;
+  display:block;background:var(--canvas-bg-1);cursor:grab;
+  visibility:hidden;pointer-events:none;z-index:1;
+}
+.canvas-wrap.is-2d canvas#viewer3d{visibility:hidden;pointer-events:none}
+.canvas-wrap.is-2d canvas#viewer2d-full{visibility:visible;pointer-events:auto}
 
 .viewer-controls{
   position:absolute;top:12px;right:12px;z-index:5;
@@ -320,7 +327,7 @@ canvas#viewer3d{width:100%;height:460px;display:block;cursor:grab;background:var
   padding:2px 8px;width:auto;height:24px;border-radius:2px;
 }
 
-canvas#viewer2d-full{display:none;width:100%;height:460px;background:var(--canvas-bg-1);cursor:grab}
+canvas#viewer2d-full{width:100%;height:460px;background:var(--canvas-bg-1);cursor:grab}
 
 .info-bar{
   padding:16px 24px;border-top:1px solid var(--viewer-rule);
@@ -632,8 +639,8 @@ html[data-theme="dark"] .chiral-rs-item{background:rgba(255,255,255,0.04)}
 
         <div class="canvas-wrap" id="canvas-wrap">
           <div class="viewer-mode-toggle">
-            <button class="vc-btn active" id="mode-btn-3d" onclick="setViewerMode('3d')" data-tip="3D">3D</button>
-            <button class="vc-btn" id="mode-btn-2d" onclick="setViewerMode('2d')" data-tip="2D">2D</button>
+            <button class="vc-btn active" id="mode-btn-3d" onclick="setViewerMode('3d')" data-tip="3D" aria-pressed="true">3D</button>
+            <button class="vc-btn" id="mode-btn-2d" onclick="setViewerMode('2d')" data-tip="2D" aria-pressed="false">2D</button>
           </div>
 
           <canvas id="viewer3d" aria-label="3D Molecules Viewer" data-i18n-attr="aria-label:molecules.viewerAria"></canvas>
@@ -766,10 +773,10 @@ function toggleNavGroup(name){
 })();
 </script>
 
-<script src="load-three.js?v=202608282500"></script>
+<script src="load-three.js?v=202608282800"></script>
 <script>
 atomurusBootProViewer(document.getElementById('viewer3d'), 'moleculeViewer', function () {
-(function(){
+return (function(){
   const canvas = document.getElementById('viewer3d');
   const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:false });
   renderer.setPixelRatio(window.devicePixelRatio);
@@ -1054,13 +1061,14 @@ atomurusBootProViewer(document.getElementById('viewer3d'), 'moleculeViewer', fun
   let panStart   = { x:0, y:0 };
 
   function resize2d(){
-    const w = viewer2d.clientWidth || canvas.clientWidth || 800;
-    const h = viewer2d.clientHeight || 460;
+    const wrap = document.getElementById('canvas-wrap');
+    const w = (wrap && wrap.clientWidth) || canvas.clientWidth || 800;
+    const h = (wrap && wrap.clientHeight) || canvas.clientHeight || 460;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    viewer2d.width  = w * dpr;
-    viewer2d.height = h * dpr;
-    viewer2d.style.width  = w + 'px';
-    viewer2d.style.height = h + 'px';
+    viewer2d.width  = Math.max(1, w) * dpr;
+    viewer2d.height = Math.max(1, h) * dpr;
+    viewer2d.style.width  = '100%';
+    viewer2d.style.height = Math.max(1, h) + 'px';
     ctx2d.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
@@ -1341,10 +1349,14 @@ atomurusBootProViewer(document.getElementById('viewer3d'), 'moleculeViewer', fun
       window.history.replaceState({ mol:key }, '', url);
     } catch (_) {}
   }
+  let molRequest = 0;
   window.setMolecule = function(key, skipUrl){
-    fetchMolecule(key).then(function () {
+    const req = ++molRequest;
+    return fetchMolecule(key).then(function () {
+      if (req !== molRequest) return;
       applyMolecule(key, skipUrl);
     }).catch(function () {
+      if (req !== molRequest) return;
       if (typeof window.atomurusShowProViewerError === 'function') {
         window.atomurusShowProViewerError(document.getElementById('viewer3d'));
       }
@@ -1477,12 +1489,26 @@ atomurusBootProViewer(document.getElementById('viewer3d'), 'moleculeViewer', fun
     if (mode !== '2d' && mode !== '3d') return;
     viewMode = mode;
     const is3d = mode === '3d';
-    canvas.style.display     = is3d ? 'block' : 'none';
-    viewer2d.style.display   = is3d ? 'none'  : 'block';
-    document.getElementById('mode-btn-3d').classList.toggle('active', is3d);
-    document.getElementById('mode-btn-2d').classList.toggle('active', !is3d);
-    document.getElementById('vc-rotate').style.display = is3d ? '' : 'none';
-    document.getElementById('av-view').textContent = is3d ? '3d' : '2d';
+    const wrap = document.getElementById('canvas-wrap');
+    if (wrap) wrap.classList.toggle('is-2d', !is3d);
+    canvas.style.visibility = is3d ? 'visible' : 'hidden';
+    canvas.style.pointerEvents = is3d ? 'auto' : 'none';
+    viewer2d.style.visibility = is3d ? 'hidden' : 'visible';
+    viewer2d.style.pointerEvents = is3d ? 'none' : 'auto';
+    const b3 = document.getElementById('mode-btn-3d');
+    const b2 = document.getElementById('mode-btn-2d');
+    if (b3) {
+      b3.classList.toggle('active', is3d);
+      b3.setAttribute('aria-pressed', is3d ? 'true' : 'false');
+    }
+    if (b2) {
+      b2.classList.toggle('active', !is3d);
+      b2.setAttribute('aria-pressed', is3d ? 'true' : 'false');
+    }
+    const rot = document.getElementById('vc-rotate');
+    if (rot) rot.style.display = is3d ? '' : 'none';
+    const av = document.getElementById('av-view');
+    if (av) av.textContent = is3d ? '3d' : '2d';
     if (!is3d) {
       setTimeout(() => { resize2d(); draw2DMolecule(anim2dEnabled ? t : _t2dFrozen); }, 20);
     } else {
@@ -1553,27 +1579,22 @@ atomurusBootProViewer(document.getElementById('viewer3d'), 'moleculeViewer', fun
     const qMol = new URLSearchParams(location.search).get('mol');
     if (qMol && isSafeMolKey(qMol)) initialMol = qMol;
   } catch (_) {}
-  fetchMolecule(initialMol).then(function () {
-    window.setMolecule(initialMol, true);
-    animate();
-  }).catch(function () {
-    if (typeof window.atomurusShowProViewerError === 'function') {
-      window.atomurusShowProViewerError(document.getElementById('viewer3d'));
-    }
-  });
-
   // Re-render molecule strings when user switches language (and retry until I18N is ready)
   (function wireI18n(){
     if (window.I18N && window.I18N.onChange) {
       window.I18N.onChange(function () {
         if (currentMolecule) window.setMolecule(currentMolecule, true);
       });
-      // Re-apply now in case I18N loaded after our initial setMolecule
-      if (currentMolecule) window.setMolecule(currentMolecule, true);
     } else {
       setTimeout(wireI18n, 50);
     }
   })();
+
+  const bootReq = ++molRequest;
+  return fetchMolecule(initialMol).then(function () {
+    if (bootReq === molRequest) applyMolecule(initialMol, true);
+    animate();
+  });
 })();
 });
 </script>

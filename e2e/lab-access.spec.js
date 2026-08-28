@@ -65,6 +65,12 @@ test('guest 3D molecule viewer stays a preview without Three.js', async ({ page 
   expect(runtime.script).toBe(false);
   await saveShot(page, 'guest-molecules-pro-gate');
 
+  const errors = [];
+  page.on('pageerror', (err) => errors.push(String(err.message || err)));
+  await page.locator('#mode-btn-2d').click({ force: true });
+  await page.locator('#mode-btn-3d').click({ force: true });
+  expect(errors.some((e) => /is not defined/.test(e))).toBe(false);
+
   await page.goto('/explore/what-is-isomerism.html');
   await expect(page.locator('.art-title, h1').first()).toBeVisible();
   await expect(page.locator('#lab-tool-gate')).toHaveCount(0);
@@ -146,7 +152,25 @@ test('Pro loads the molecule runtime after entitlement', async ({ page }) => {
   await page.locator('#viewer3d').scrollIntoViewIfNeeded();
   await expect.poll(() => page.evaluate(() => Boolean(document.querySelector('script[data-atomurus-dep="three"]') || window.THREE))).toBe(true);
   await expect.poll(() => moleculeHits).toBeGreaterThan(0);
+  await expect(page.locator('.pro-viewer-status')).toHaveCount(0);
   await saveShot(page, 'pro-molecules-runtime');
+
+  await expect.poll(() => page.evaluate(() => {
+    const fn = window.setViewerMode;
+    return typeof fn === 'function' && String(fn).indexOf('is-2d') !== -1;
+  })).toBe(true);
+  await page.locator('#mode-btn-2d').click();
+  await expect(page.locator('#canvas-wrap')).toHaveClass(/is-2d/);
+  await expect(page.locator('#mode-btn-2d')).toHaveAttribute('aria-pressed', 'true');
+  await expect.poll(() => page.evaluate(() => {
+    const c = document.getElementById('viewer2d-full');
+    return Boolean(c && c.width > 100 && c.height > 100);
+  })).toBe(true);
+  await saveShot(page, 'pro-molecules-mode-2d');
+  await page.locator('#mode-btn-3d').click();
+  await expect(page.locator('#canvas-wrap')).not.toHaveClass(/is-2d/);
+  await expect(page.locator('#mode-btn-3d')).toHaveAttribute('aria-pressed', 'true');
+  await saveShot(page, 'pro-molecules-mode-3d');
 });
 
 test('guest periodic table stays fully public', async ({ page }) => {

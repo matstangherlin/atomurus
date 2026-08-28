@@ -63,18 +63,16 @@
 
   /**
    * Boot a viewer: wait until `el` is near viewport, then load Three, then run `fn`.
-   * Returns a Promise that resolves with fn's return value.
+   * Returns a Promise that resolves with fn's return value (waits if fn is thenable).
    */
   function bootViewer(el, fn, options) {
     options = options || {};
     return new Promise(function (resolve, reject) {
       whenVisible(el, function () {
         loadThree(options.src).then(function (THREE) {
-          try {
-            resolve(fn(THREE));
-          } catch (err) {
-            reject(err);
-          }
+          Promise.resolve()
+            .then(function () { return fn(THREE); })
+            .then(resolve, reject);
         }, reject);
       }, options);
     });
@@ -86,7 +84,13 @@
 
   function statusHost(el) {
     if (!el) return null;
-    return el.closest('.canvas-wrap, .iso-3d-panel, .viewer') || el.parentElement || el;
+    // Prefer .viewer so loading covers model pills and the 3D/2D toggle,
+    // not only the WebGL canvas (those controls are live HTML onclick handlers).
+    return el.closest('.viewer') ||
+      el.closest('.iso-3d-panel') ||
+      el.closest('.canvas-wrap') ||
+      el.parentElement ||
+      el;
   }
 
   function clearProViewerStatus(el) {
@@ -155,6 +159,7 @@
   /**
    * Boot a Premium viewer only after auth is ready and the feature is true.
    * Locked / pending / failed-auth: do not load Three.js.
+   * Loading overlay stays up until `fn` finishes (including returned thenables).
    */
   function bootProViewer(el, featureKey, fn, options) {
     options = options || {};
@@ -168,9 +173,10 @@
         langIsPt() ? 'Carregando visualizador 3D…' : 'Loading 3D viewer…'
       );
       bootViewer(el, function (THREE) {
-        clearProViewerStatus(el);
         return fn(THREE);
-      }, options).catch(function () {
+      }, options).then(function () {
+        clearProViewerStatus(el);
+      }).catch(function () {
         started = false;
         showProViewerStatus(
           el,
@@ -188,6 +194,20 @@
       start();
     });
   }
+
+  // HTML onclick handlers exist before Pro runtime boots. Keep them callable
+  // so 3D/2D and model pills do not throw `X is not defined`.
+  var VIEWER_CONTROL_STUBS = [
+    'setViewerMode', 'setMolecule', 'setMoleculeByElement', 'setAtomModel',
+    'toggleAutoRotate', 'toggleStatic', 'resetView', 'zoomBy', 'toggleLabels',
+    'toggleFullscreen', 'toggle2DAnim', 'toggleMirror', 'changeCharge',
+    'resetCharge', 'downloadViewer', 'setAlloElement', 'setAllotrope'
+  ];
+  VIEWER_CONTROL_STUBS.forEach(function (name) {
+    if (typeof global[name] !== 'function') {
+      global[name] = function () {};
+    }
+  });
 
   global.atomurusLoadThree = loadThree;
   global.atomurusWhenVisible = whenVisible;
