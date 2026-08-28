@@ -32,6 +32,7 @@ test('Free Reaction Workbench is a locked preview with no solver API calls', asy
   await expect(page.locator('#ws-lab-balance')).toHaveCount(0);
   await expect(page.locator('#ws-lab-equation')).toHaveCount(0);
   expect(solverCalls).toBe(0);
+  await saveShot(page, 'desktop-solver-locked-free');
   await page.locator('#app-study a[href*="section=pro-lab"]').first().click();
   await expect(page.locator('#ws-lab-home')).toBeVisible();
   await page.locator('[data-lab-tool="formula"]').click();
@@ -41,7 +42,6 @@ test('Free Reaction Workbench is a locked preview with no solver API calls', asy
   await page.locator('[data-lab-tool="solutions"]').click();
   await expect(page.locator('#ws-lab-sol-solve')).toHaveCount(0);
   expect(solverCalls).toBe(0);
-  await saveShot(page, 'desktop-solver-locked-free');
 });
 
 test('Pro Reaction Workbench: balance, stoichiometry, save and reopen', async ({ page }) => {
@@ -160,6 +160,7 @@ test('Limiting reagent, stoichiometric mixture, calculation basis and hydrate di
   await page.locator('#ws-lab-equation').fill('CuSO4·5H2O -> CuSO4 + H2O');
   await page.locator('#ws-lab-balance').click();
   await expect(page.locator('#ws-lab-balanced')).toContainText('CuSO₄·5H₂O');
+  await expect(page.locator('#ws-lab-result')).toHaveText('');
   await saveShot(page, 'desktop-hydrate-display');
 });
 

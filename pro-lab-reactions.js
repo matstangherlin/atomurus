@@ -468,6 +468,8 @@
 
     function applyBalance(data) {
       balanced = data;
+      lastSolve = null;
+      resultHost.textContent = '';
       showError(err, textarea, '');
       eqHead.hidden = false;
       eqOut.hidden = false;
