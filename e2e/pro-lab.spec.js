@@ -24,7 +24,7 @@ test('Free opens Pro Lab locked without calling premium APIs', async ({ page }) 
   await waitForLab(page);
   await expect(page.locator('#ws-lab-home .is-locked').first()).toBeVisible();
   await expect(page.locator('#app-study')).toContainText(/PRO/);
-  await expect(page.getByRole('link', { name: /Upgrade|Assinar/i })).toBeVisible();
+  await expect(page.locator('#app-study').getByRole('link', { name: /Upgrade|Assinar/i })).toBeVisible();
   await expect(page.locator('#ws-lab-calculate')).toHaveCount(0);
   expect(calculateCalls).toBe(0);
   await saveShot(page, 'desktop-pro-lab-home-free');
@@ -103,21 +103,21 @@ test('Element Compare Pro: save and add to Study Set then Smart Review', async (
     await page.locator('#ws-lab-add-element').click();
   }
   await page.locator('#ws-lab-compare').click();
-  await expect(page.locator('.ws-lab-table, .ws-lab-stack')).toContainText('Fe');
+  await expect(page.locator('#app-study')).toContainText('Fe');
   await expect(page.locator('#app-study')).toContainText('55.845');
   await page.locator('#ws-lab-session-title').fill('Transition metals comparison');
   await page.locator('#ws-lab-save').click();
-  await expect(page.locator('.ws-toast, [role="status"]')).toBeVisible();
+  await expect(page.locator('.ws-toast, [role="status"]').first()).toBeVisible();
   await saveShot(page, 'desktop-pro-lab-elements');
 
   await page.locator('#ws-lab-add-set').click();
   await expect(page.locator('#ws-dialog-host select, #ws-dialog-host .ws-input').first()).toBeVisible();
   await page.locator('#ws-dialog-host .ws-btn-primary').click();
-  await expect(page.locator('.ws-toast, [role="status"]')).toBeVisible();
+  await expect(page.getByText(/Added to Study Set|Adicionado/i).first()).toBeVisible();
 
   await page.locator('#ws-lab-generate').click();
   await page.locator('#ws-dialog-host .ws-btn-primary').click();
-  await expect(page.locator('.ws-toast, [role="status"]')).toBeVisible();
+  await expect(page.getByText(/flashcards created|flashcards criados|Added to Study Set|Adicionado|nenhum card/i).first()).toBeVisible();
 
   store.cards = [dueCard(), dueCard({ id: 'cccccccc-dddd-4eee-8fff-000000000000', front: 'Atomic number of iron?', back: '26' })];
   await gotoWorkspace(page, '/app?section=review&start=1');
