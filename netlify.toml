@@ -263,6 +263,16 @@
   status = 200
 
 [[redirects]]
+  from   = "/api/pro-lab/equilibrium/solve"
+  to     = "/.netlify/functions/pro-lab-equilibrium-solve"
+  status = 200
+
+[[redirects]]
+  from   = "/api/pro-lab/acid-base/solve"
+  to     = "/.netlify/functions/pro-lab-acid-base-solve"
+  status = 200
+
+[[redirects]]
   from   = "/api/pro-lab/thermodynamics/solve"
   to     = "/.netlify/functions/pro-lab-thermodynamics-solve"
   status = 200

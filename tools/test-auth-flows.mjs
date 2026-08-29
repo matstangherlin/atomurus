@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { authConfirm, authLogin, authLogout, authRecover, authRefresh, authReset, authSession, authSignup } from '../netlify/lib/auth-provider.mjs';
 import { isProtectedPath, safeNextPath } from '../netlify/lib/auth-redirect.mjs';
 import { loginIdentifierLimiter, refreshIpLimiter, resetAuthRateLimiters } from '../netlify/lib/auth-rate-limit.mjs';
+import { usernameFromEmail, usernameCandidates, validUsername } from '../netlify/lib/netlify-identity-utils.mjs';
 import { resetRefreshFlights } from '../netlify/lib/supabase-auth.mjs';
 import loginHandler from '../netlify/functions/auth-login.mjs';
 import meHandler from '../netlify/functions/auth-me.mjs';
@@ -751,6 +752,36 @@ await withAuthEnv(async () => {
   assert.equal(refreshCalls, 1);
   assert.equal(first.user.email, 'alice@atomurus.com');
   assert.equal(second.user.email, 'alice@atomurus.com');
+});
+
+assert.equal(usernameFromEmail('foo+tag@atomurus.com'), 'foo');
+assert.equal(usernameFromEmail('Matheus.Stan@atomurus.com'), 'matheus.stan');
+assert.ok(validUsername(usernameFromEmail('a@atomurus.com')));
+assert.ok(usernameCandidates('alice').includes('alice'));
+assert.ok(usernameCandidates('alice').includes('alice2'));
+
+await withAuthEnv(async () => {
+  resetAuthRateLimiters();
+  let captured;
+  installSupabaseMock([{
+    match: (url, method) => method === 'POST' && url.includes('/signup'),
+    respond: async (_url, _method, options) => {
+      captured = JSON.parse(options.body);
+      return jsonRes(200, { user: demoUser({ email: 'onlymail@atomurus.com', email_confirmed_at: null, user_metadata: { username: captured.data.username } }) });
+    }
+  }]);
+  const res = await signupHandler(cookieRequest('https://atomurus.com/api/auth/signup', {
+    method: 'POST',
+    body: {
+      email: 'onlymail@atomurus.com',
+      password: 'Correct#Pass',
+      passwordConfirm: 'Correct#Pass'
+    }
+  }));
+  const json = await readJson(res);
+  assert.equal(res.status, 200);
+  assert.equal(captured.data.username, 'onlymail');
+  assert.equal(json.ok, true);
 });
 
 console.log('test-auth-flows: ok');

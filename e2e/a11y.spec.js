@@ -14,7 +14,7 @@ test('skip link, dialog focus trap, Escape and restored focus', async ({ page })
   await expect(dialog).toBeVisible();
   await expect(page.locator('#ws-new-set-name')).toBeFocused({ timeout: 5_000 });
   await page.keyboard.press('Tab');
-  await expect(dialog.locator('textarea, button, input').nth(1)).toBeFocused();
+  await expect(page.locator('#ws-new-set-desc')).toBeFocused();
   await page.keyboard.press('Escape');
   await expect(dialog).toHaveCount(0);
   await expect(page.locator('#app-set-open')).toBeFocused();

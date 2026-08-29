@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { validUsername, usernameFromEmail, usernameCandidates } from './netlify-identity-utils.mjs';
 import {
   clearSessionCookieHeaders,
   readSessionTokens,
@@ -473,6 +474,24 @@ async function getProfileByUsername(username) {
   if (res.status === 404) return null;
   const data = await parseSupabaseResponse(res);
   return Array.isArray(data) ? (data[0] || null) : null;
+}
+
+export async function allocateUniqueUsername(base) {
+  const candidates = usernameCandidates(base || usernameFromEmail(base));
+  for (const candidate of candidates) {
+    if (!validUsername(candidate)) continue;
+    try {
+      await assertUsernameAvailable(candidate);
+      return candidate;
+    } catch (err) {
+      if (err?.code === 'username_taken') continue;
+      throw err;
+    }
+  }
+  const err = new Error('This username is already in use.');
+  err.status = 409;
+  err.code = 'username_taken';
+  throw err;
 }
 
 async function assertUsernameAvailable(username) {
