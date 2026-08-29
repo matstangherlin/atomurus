@@ -148,32 +148,63 @@ assert.match(loadThree, /el\.closest\('\.viewer'\)/);
 assert.match(loadThree, /Loading 3D viewer/);
 assert.match(loadThree, /couldn't load/);
 assert.match(loadThree, /hasPremiumFeature\(featureKey\)/);
+assert.match(loadThree, /atomurusLoadViewerRuntime/);
+assert.match(loadThree, /VIEWER_RUNTIME_SRC/);
+assert.match(loadThree, /atomic-viewer\.js/);
+assert.doesNotMatch(loadThree, /VIEWER_RUNTIME_SRC\[name\] \+|src = name/);
 
 const molecules = read('viewer/molecules.html');
 assert.match(molecules, /atomurusBootProViewer/);
+assert.match(molecules, /atomurusLoadViewerRuntime\('molecule-viewer\.js'\)/);
 assert.doesNotMatch(molecules, /const molData = \{/);
 assert.doesNotMatch(molecules, /atoms:\[\{pos:/);
-assert.match(molecules, /\/api\/pro-lab\/viewer\/molecule/);
+assert.doesNotMatch(molecules, /WebGLRenderer/);
 assert.match(molecules, /canvas-wrap\.is-2d/);
 assert.doesNotMatch(molecules, /\.canvas-wrap\.is-2d canvas#viewer3d\{visibility:hidden/);
-assert.match(molecules, /canvas\.style\.visibility = 'visible'/);
-assert.match(molecules, /return fetchMolecule\(initialMol\)/);
 assert.match(molecules, /learningResourceType": "Overview"/);
+
+const molRuntime = read('viewer/runtime/molecule-viewer.js');
+assert.match(molRuntime, /\/api\/pro-lab\/viewer\/molecule/);
+assert.match(molRuntime, /canvas\.style\.visibility = 'visible'/);
+assert.match(molRuntime, /return fetchMolecule\(initialMol\)/);
+assert.match(molRuntime, /atomurusInitMoleculeViewer/);
 
 const moleculesPt = read('viewer/molecules.pt.html');
 assert.match(moleculesPt, /atomurusBootProViewer/);
+assert.match(moleculesPt, /atomurusLoadViewerRuntime\('molecule-viewer\.js'\)/);
 assert.doesNotMatch(moleculesPt, /const molData = \{/);
+assert.doesNotMatch(moleculesPt, /WebGLRenderer/);
 
 const atomic = read('viewer/atomic-models.html');
 assert.match(atomic, /atomurusBootProViewer/);
 assert.match(atomic, /atomicModelViewer/);
+assert.match(atomic, /atomurusLoadViewerRuntime\('atomic-viewer\.js'\)/);
 assert.match(atomic, /canvas-wrap\.is-2d/);
 assert.doesNotMatch(atomic, /\.canvas-wrap\.is-2d canvas#viewer3d\{visibility:hidden/);
 assert.doesNotMatch(atomic, /cdnjs\.cloudflare\.com\/ajax\/libs\/three\.js/);
+assert.doesNotMatch(atomic, /WebGLRenderer/);
+
+const atomicRuntime = read('viewer/runtime/atomic-viewer.js');
+assert.match(atomicRuntime, /atomurusInitAtomicViewer/);
+assert.match(atomicRuntime, /WebGLRenderer/);
+assert.match(atomicRuntime, /viewer3d\.style\.visibility = 'visible'/);
 
 const allotropes = read('viewer/allotropes.html');
 assert.match(allotropes, /atomurusBootProViewer/);
 assert.match(allotropes, /allotropeViewer/);
+assert.match(allotropes, /atomurusLoadViewerRuntime\('allotrope-viewer\.js'\)/);
+assert.doesNotMatch(allotropes, /WebGLRenderer/);
+
+const alloRuntime = read('viewer/runtime/allotrope-viewer.js');
+assert.match(alloRuntime, /atomurusInitAllotropeViewer/);
+assert.match(alloRuntime, /WebGLRenderer/);
+
+const isoPage = read('viewer/isomerism/constitutional/function.html');
+assert.match(isoPage, /atomurusLoadViewerRuntime\('isomerism-3d\.js'\)/);
+assert.doesNotMatch(isoPage, /src="\.\.\/isomerism-3d\.js/);
+
+const exploreIso = read('explore/what-is-isomerism.html');
+assert.match(exploreIso, /isomerism-3d\.js/);
 
 const iso3d = read('viewer/isomerism/isomerism-3d.js');
 assert.match(iso3d, /atomurusBootProViewer/);

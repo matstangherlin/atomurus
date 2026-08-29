@@ -209,10 +209,41 @@
     }
   });
 
+  // Interactive viewer engines are not in the public HTML. After
+  // entitlement, load one allowlisted runtime — never a free-form path.
+  var VIEWER_RUNTIME_SRC = {
+    'atomic-viewer.js': '/viewer/runtime/atomic-viewer.js?v=202608290200',
+    'molecule-viewer.js': '/viewer/runtime/molecule-viewer.js?v=202608290200',
+    'allotrope-viewer.js': '/viewer/runtime/allotrope-viewer.js?v=202608290200',
+    'isomerism-3d.js': '/viewer/isomerism/isomerism-3d.js?v=202608290200'
+  };
+  var runtimePending = Object.create(null);
+
+  function loadViewerRuntime(name) {
+    var src = VIEWER_RUNTIME_SRC[name];
+    if (!src) return Promise.reject(new Error('Unknown viewer runtime'));
+    if (runtimePending[name]) return runtimePending[name];
+    runtimePending[name] = new Promise(function (resolve, reject) {
+      var s = document.createElement('script');
+      s.src = src;
+      s.async = true;
+      s.dataset.atomurusDep = 'viewer-runtime';
+      s.dataset.atomurusRuntime = name;
+      s.onload = function () { resolve(name); };
+      s.onerror = function () {
+        runtimePending[name] = null;
+        reject(new Error('Failed to load viewer runtime'));
+      };
+      document.head.appendChild(s);
+    });
+    return runtimePending[name];
+  }
+
   global.atomurusLoadThree = loadThree;
   global.atomurusWhenVisible = whenVisible;
   global.atomurusBootViewer = bootViewer;
   global.atomurusBootProViewer = bootProViewer;
+  global.atomurusLoadViewerRuntime = loadViewerRuntime;
   global.atomurusHasPremiumFeature = hasPremiumFeature;
   global.atomurusShowProViewerError = function (el) {
     showProViewerStatus(

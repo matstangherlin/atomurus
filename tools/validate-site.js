@@ -193,6 +193,9 @@ function assertPerfGuards() {
   if (!molecules.includes('atomurusBootProViewer') || !molecules.includes('load-three.js')) {
     fail('viewer/molecules.html is not using entitlement-gated Three.js boot');
   }
+  if (!molecules.includes('atomurusLoadViewerRuntime') || molecules.includes('WebGLRenderer')) {
+    fail('viewer/molecules.html still embeds the interactive molecule runtime');
+  }
   if (molecules.includes('const molData = {')) {
     fail('viewer/molecules.html still embeds molecule coordinates');
   }
@@ -203,6 +206,9 @@ function assertPerfGuards() {
   const atomic = read('viewer/atomic-models.html');
   if (!atomic.includes('atomurusBootProViewer')) {
     fail('viewer/atomic-models.html is not using entitlement-gated Three.js boot');
+  }
+  if (!atomic.includes('atomurusLoadViewerRuntime') || atomic.includes('WebGLRenderer')) {
+    fail('viewer/atomic-models.html still embeds the interactive atomic runtime');
   }
   const netlify = read('netlify.toml');
   if (!netlify.includes('/api/pro-lab/thermodynamics/solve') || !netlify.includes('/api/pro-lab/viewer/molecule')) {

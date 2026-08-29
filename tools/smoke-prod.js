@@ -23,6 +23,8 @@ const CHECKS = [
     test: (html) => {
       assert(html.includes('load-three.js'), 'missing load-three.js');
       assert(html.includes('atomurusBootProViewer'), 'missing atomurusBootProViewer');
+      assert(html.includes('atomurusLoadViewerRuntime'), 'missing lazy viewer runtime');
+      assert(!html.includes('WebGLRenderer'), 'interactive runtime still in HTML');
       assert(!/cdnjs\.cloudflare\.com\/ajax\/libs\/three\.js/.test(html), 'eager three.min.js still present');
     }
   },

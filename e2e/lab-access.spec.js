@@ -59,10 +59,12 @@ test('guest 3D molecule viewer stays a preview without Three.js', async ({ page 
   await page.waitForTimeout(800);
   const runtime = await page.evaluate(() => ({
     three: typeof window.THREE !== 'undefined',
-    script: Boolean(document.querySelector('script[data-atomurus-dep="three"]'))
+    script: Boolean(document.querySelector('script[data-atomurus-dep="three"]')),
+    viewer: Boolean(document.querySelector('script[data-atomurus-dep="viewer-runtime"]'))
   }));
   expect(runtime.three).toBe(false);
   expect(runtime.script).toBe(false);
+  expect(runtime.viewer).toBe(false);
   await saveShot(page, 'guest-molecules-pro-gate');
 
   const errors = [];
@@ -90,11 +92,13 @@ test('removing the overlay does not boot the Pro molecule runtime', async ({ pag
   const runtime = await page.evaluate(() => ({
     three: typeof window.THREE !== 'undefined',
     script: Boolean(document.querySelector('script[data-atomurus-dep="three"]')),
+    viewer: Boolean(document.querySelector('script[data-atomurus-dep="viewer-runtime"]')),
     overlay: Boolean(document.querySelector('.lab-tool-gate'))
   }));
   expect(runtime.overlay).toBe(false);
   expect(runtime.three).toBe(false);
   expect(runtime.script).toBe(false);
+  expect(runtime.viewer).toBe(false);
 });
 
 test('signed-in free unlocks scientific but not molecules', async ({ page }) => {
@@ -129,10 +133,12 @@ test('signed-in free unlocks scientific but not molecules', async ({ page }) => 
   await expect(page.locator('#lab-tool-gate a.lab-tool-gate-secondary')).toHaveCount(0);
   const runtime = await page.evaluate(() => ({
     three: typeof window.THREE !== 'undefined',
-    script: Boolean(document.querySelector('script[data-atomurus-dep="three"]'))
+    script: Boolean(document.querySelector('script[data-atomurus-dep="three"]')),
+    viewer: Boolean(document.querySelector('script[data-atomurus-dep="viewer-runtime"]'))
   }));
   expect(runtime.three).toBe(false);
   expect(runtime.script).toBe(false);
+  expect(runtime.viewer).toBe(false);
 });
 
 test('Pro loads the molecule runtime after entitlement', async ({ page }) => {
@@ -150,7 +156,9 @@ test('Pro loads the molecule runtime after entitlement', async ({ page }) => {
   })).toBe(true);
   await expect(page.locator('#lab-tool-gate')).toHaveCount(0);
   await page.locator('#viewer3d').scrollIntoViewIfNeeded();
-  await expect.poll(() => page.evaluate(() => Boolean(document.querySelector('script[data-atomurus-dep="three"]') || window.THREE))).toBe(true);
+  await expect.poll(() => page.evaluate(() => Boolean(
+    window.THREE && document.querySelector('script[data-atomurus-dep="viewer-runtime"]')
+  ))).toBe(true);
   await expect.poll(() => moleculeHits).toBeGreaterThan(0);
   await expect(page.locator('.pro-viewer-status')).toHaveCount(0);
   await saveShot(page, 'pro-molecules-runtime');

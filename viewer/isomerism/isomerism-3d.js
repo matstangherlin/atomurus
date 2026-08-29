@@ -1021,21 +1021,16 @@
     initOverviewToggle();
     var panels = document.querySelectorAll('.iso-3d-panel');
     if (!panels.length) return;
-    var explore = isExplorePage();
-    panels.forEach(function (panel) {
-      var canvas = panel.querySelector('.iso-3d-stage canvas') || panel.querySelector('canvas');
-      if (!canvas) return;
-      if (explore) {
+    if (isExplorePage()) {
+      panels.forEach(function (panel) {
+        var canvas = panel.querySelector('.iso-3d-stage canvas') || panel.querySelector('canvas');
+        if (!canvas) return;
         if (window.atomurusBootViewer) {
           window.atomurusBootViewer(canvas, ensureAndInit);
         }
         panel.addEventListener('pointerdown', ensureAndInit, { once: true });
         panel.addEventListener('wheel', ensureAndInit, { once: true, passive: true });
-      } else if (window.atomurusBootProViewer) {
-        window.atomurusBootProViewer(canvas, 'isomerismViewer', ensureAndInit);
-      }
-    });
-    if (explore) {
+      });
       if (typeof THREE !== 'undefined') setTimeout(ensureAndInit, 0);
       var tries = 0;
       var iv = setInterval(function () {
@@ -1053,7 +1048,21 @@
           clearInterval(iv);
         }
       }, 500);
+      return;
     }
+    // Viewer pages: either Three.js is already loaded by bootProViewer
+    // (lazy runtime) or we still need to wait for entitlement.
+    if (typeof THREE !== 'undefined') {
+      ensureAndInit();
+      return;
+    }
+    panels.forEach(function (panel) {
+      var canvas = panel.querySelector('.iso-3d-stage canvas') || panel.querySelector('canvas');
+      if (!canvas) return;
+      if (window.atomurusBootProViewer) {
+        window.atomurusBootProViewer(canvas, 'isomerismViewer', ensureAndInit);
+      }
+    });
   }
 
   boot();
