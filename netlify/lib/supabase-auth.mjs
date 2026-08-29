@@ -4,6 +4,7 @@ import {
   readSessionTokens,
   sessionCookieHeaders
 } from './auth-cookies.mjs';
+import { isUpstreamTimeoutError, upstreamFetch } from './upstream-fetch.mjs';
 
 const DEFAULT_ACCESS_TTL = 3600;
 
@@ -118,6 +119,12 @@ function redirectBase() {
 export function classifySupabaseAuthError(err) {
   const code = String(err?.code || '').toLowerCase();
   const message = String(err?.message || '').toLowerCase();
+  if (isUpstreamTimeoutError(err) || code === 'upstream_timeout') {
+    err.status = 503;
+    err.code = 'upstream_timeout';
+    err.publicMessage = 'Authentication is temporarily unavailable. Try again shortly.';
+    return err;
+  }
   if (code === 'email_not_confirmed' || message.includes('email not confirmed')) {
     err.status = 401;
     err.code = 'email_not_confirmed';
@@ -147,7 +154,7 @@ export async function supabaseSignup(email, password, profile = {}) {
       await assertUsernameAvailable(username);
     }
     const redirectTo = encodeURIComponent(`${redirectBase()}/login`);
-    const res = await fetch(authUrl(`/signup?redirect_to=${redirectTo}`), {
+    const res = await upstreamFetch(authUrl(`/signup?redirect_to=${redirectTo}`), {
       method: 'POST',
       headers: anonHeaders(),
       body: JSON.stringify({
@@ -187,7 +194,7 @@ export async function supabaseSignup(email, password, profile = {}) {
 export async function supabaseLogin(identifier, password) {
   try {
     const email = await resolveLoginEmail(identifier);
-    const res = await fetch(authUrl('/token?grant_type=password'), {
+    const res = await upstreamFetch(authUrl('/token?grant_type=password'), {
       method: 'POST',
       headers: anonHeaders(),
       body: JSON.stringify({ email, password })
@@ -227,7 +234,7 @@ export function resetRefreshFlights() {
 
 export async function supabaseGetUser(accessToken) {
   if (!accessToken) return null;
-  const res = await fetch(authUrl('/user'), {
+  const res = await upstreamFetch(authUrl('/user'), {
     method: 'GET',
     headers: anonHeaders({ Authorization: `Bearer ${accessToken}` })
   });
@@ -237,7 +244,7 @@ export async function supabaseGetUser(accessToken) {
 }
 
 async function supabaseRefreshOnce(refreshToken) {
-  const res = await fetch(authUrl('/token?grant_type=refresh_token'), {
+  const res = await upstreamFetch(authUrl('/token?grant_type=refresh_token'), {
     method: 'POST',
     headers: anonHeaders(),
     body: JSON.stringify({ refresh_token: refreshToken })
@@ -271,9 +278,11 @@ export async function supabaseRefresh(refreshToken) {
 export async function supabaseLogout(accessToken) {
   if (accessToken) {
     try {
-      await fetch(authUrl('/logout'), {
+      await upstreamFetch(authUrl('/logout'), {
         method: 'POST',
-        headers: anonHeaders({ Authorization: `Bearer ${accessToken}` })
+        headers: anonHeaders({ Authorization: `Bearer ${accessToken}` }),
+        retries: 0,
+        timeoutMs: 4000
       });
     } catch (_err) {
       // Always clear local cookies even if remote logout fails.
@@ -284,7 +293,7 @@ export async function supabaseLogout(accessToken) {
 
 export async function supabaseRecover(email) {
   const redirectTo = String(process.env.AUTH_PASSWORD_REDIRECT || `${redirectBase()}/reset-password`).replace(/\/$/, '');
-  const res = await fetch(authUrl('/recover'), {
+  const res = await upstreamFetch(authUrl('/recover'), {
     method: 'POST',
     headers: anonHeaders(),
     body: JSON.stringify({ email, redirect_to: redirectTo })
@@ -312,7 +321,7 @@ export async function supabaseUpdatePassword(accessToken, password) {
     err.code = 'session_expired';
     throw err;
   }
-  const res = await fetch(authUrl('/user'), {
+  const res = await upstreamFetch(authUrl('/user'), {
     method: 'PUT',
     headers: anonHeaders({ Authorization: `Bearer ${accessToken}` }),
     body: JSON.stringify({ password })
@@ -322,7 +331,7 @@ export async function supabaseUpdatePassword(accessToken, password) {
 }
 
 export async function supabaseVerifyToken(token, type = 'signup') {
-  const res = await fetch(authUrl('/verify'), {
+  const res = await upstreamFetch(authUrl('/verify'), {
     method: 'POST',
     headers: anonHeaders(),
     body: JSON.stringify({ token_hash: token, type })
@@ -351,7 +360,7 @@ export async function supabaseResetPassword(token, password, type = 'recovery') 
     throw err;
   }
 
-  const res = await fetch(authUrl('/user'), {
+  const res = await upstreamFetch(authUrl('/user'), {
     method: 'PUT',
     headers: anonHeaders({ Authorization: `Bearer ${accessToken}` }),
     body: JSON.stringify({ password })
@@ -410,7 +419,7 @@ export async function supabaseAdminUpdateUser(userId, payload = {}) {
     err.status = 400;
     throw err;
   }
-  const res = await fetch(authUrl(`/admin/users/${encodeURIComponent(userId)}`), {
+  const res = await upstreamFetch(authUrl(`/admin/users/${encodeURIComponent(userId)}`), {
     method: 'PUT',
     headers: serviceHeaders(),
     body: JSON.stringify(payload)
@@ -435,7 +444,7 @@ export async function supabaseAdminPatchAppMetadata(userId, patch = {}) {
 
 export async function supabaseAdminGetUser(userId) {
   if (!userId) return null;
-  const res = await fetch(authUrl(`/admin/users/${encodeURIComponent(userId)}`), {
+  const res = await upstreamFetch(authUrl(`/admin/users/${encodeURIComponent(userId)}`), {
     method: 'GET',
     headers: serviceHeaders()
   });
@@ -466,7 +475,7 @@ async function getProfileByUsername(username) {
   const cfg = supabaseConfig();
   if (!cfg) return null;
   const url = `${cfg.url}/rest/v1/profiles?select=id,email,username&username=eq.${encodeURIComponent(username)}&limit=1`;
-  const res = await fetch(url, {
+  const res = await upstreamFetch(url, {
     method: 'GET',
     headers: serviceHeaders()
   });
@@ -496,7 +505,7 @@ async function saveProfileIdentity({ userId, email, username, fullName }) {
   try {
     const cfg = supabaseConfig();
     const url = `${cfg.url}/rest/v1/profiles?id=eq.${encodeURIComponent(userId)}`;
-    const res = await fetch(url, {
+    const res = await upstreamFetch(url, {
       method: 'PATCH',
       headers: serviceHeaders({ Prefer: 'return=minimal' }),
       body: JSON.stringify({

@@ -45,6 +45,7 @@ function jsonRes(status, body) {
   return {
     ok: status >= 200 && status < 300,
     status,
+    headers: new Headers(),
     text: async () => JSON.stringify(body)
   };
 }
@@ -751,6 +752,49 @@ await withAuthEnv(async () => {
   assert.equal(refreshCalls, 1);
   assert.equal(first.user.email, 'alice@atomurus.com');
   assert.equal(second.user.email, 'alice@atomurus.com');
+});
+
+await withAuthEnv(async () => {
+  // Hung GoTrue body read must fail closed instead of sitting on "Signing in…"
+  process.env.SUPABASE_FETCH_TIMEOUT_MS = '40';
+  process.env.SUPABASE_FETCH_RETRIES = '0';
+  installSupabaseMock([{
+    match: (url, method) => method === 'POST' && url.includes('/token?grant_type=password'),
+    respond: () => new Promise(() => {})
+  }]);
+  const started = Date.now();
+  const res = await loginHandler(cookieRequest('https://atomurus.com/api/auth/login', {
+    method: 'POST',
+    body: { identifier: 'alice@atomurus.com', password: 'Correct#Pass' }
+  }));
+  assert.ok(Date.now() - started < 1500);
+  assert.equal(res.status, 503);
+  const body = await readJson(res);
+  assert.equal(body.ok, false);
+  assert.equal(body.code, 'upstream_timeout');
+});
+
+await withAuthEnv(async () => {
+  process.env.SUPABASE_FETCH_TIMEOUT_MS = '40';
+  process.env.SUPABASE_FETCH_RETRIES = '1';
+  let calls = 0;
+  installSupabaseMock([{
+    match: (url, method) => method === 'POST' && url.includes('/token?grant_type=password'),
+    respond: async () => {
+      calls += 1;
+      if (calls === 1) return new Promise(() => {});
+      return jsonRes(200, sessionBody());
+    }
+  }]);
+  const res = await loginHandler(cookieRequest('https://atomurus.com/api/auth/login', {
+    method: 'POST',
+    body: { identifier: 'alice@atomurus.com', password: 'Correct#Pass' }
+  }));
+  assert.equal(calls, 2);
+  assert.equal(res.status, 200);
+  const body = await readJson(res);
+  assert.equal(body.ok, true);
+  assert.equal(body.user.email, 'alice@atomurus.com');
 });
 
 console.log('test-auth-flows: ok');
