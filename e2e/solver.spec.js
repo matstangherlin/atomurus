@@ -263,14 +263,15 @@ test('Pro Equilibrium Workbench: Kc, ICE, save and reopen', async ({ page }) => 
   await installApi(page, { kind: 'pro', store });
   await gotoWorkspace(page, '/app?section=pro-lab&tool=equilibrium');
   await expect(page.locator('#ws-lab-eq-equation')).toBeVisible();
-  await page.locator('#ws-lab-eq-equation').fill('H2(g) + I2(g) ⇌ 2HI(g)');
-  const valueRows = page.locator('#ws-lab-eq-values .ws-lab-scenario');
-  await valueRows.nth(0).locator('[name="value"]').fill('1');
-  await valueRows.nth(1).locator('[name="value"]').fill('1');
-  await valueRows.nth(2).locator('[name="value"]').fill('2');
+  await expect(page.locator('#ws-lab-eq-equation')).toHaveValue(/H2\(g\).*I2\(g\).*2HI\(g\)/);
   await page.locator('#ws-lab-eq-solve').click();
   await expect(page.locator('#ws-lab-eq-answer')).toContainText(/Kc = 4|4\.00/);
   await saveShot(page, 'desktop-equilibrium-kc');
+  await page.locator('#ws-lab-eq-kind-kp').click();
+  await page.locator('#ws-lab-eq-solve').click();
+  await expect(page.locator('#ws-lab-eq-answer')).toContainText(/Kp = 4|4\.00/);
+  await saveShot(page, 'desktop-equilibrium-kp');
+  await page.locator('#ws-lab-eq-kind-kc').click();
   await page.locator('#ws-lab-eq-mode-quotient').click();
   await page.locator('#ws-lab-eq-k').fill('50');
   await page.locator('#ws-lab-eq-solve').click();
@@ -314,6 +315,14 @@ test('Pro Acid–Base Workbench: weak acid and buffer', async ({ page }) => {
   await page.locator('#ws-lab-ab-solve').click();
   await expect(page.locator('#ws-lab-ab-answer')).toContainText(/pH = 4\.76/);
   await saveShot(page, 'desktop-acid-base-buffer');
+  await page.locator('#ws-lab-session-title').fill('Acetate buffer');
+  await page.locator('#ws-lab-save').click();
+  await expect(page.locator('.ws-toast, [role="status"]').first()).toBeVisible();
+  await gotoWorkspace(page, '/app?section=pro-lab');
+  await expect(page.locator('#ws-lab-sessions')).toContainText('Acetate buffer');
+  await page.locator('#ws-lab-session-list a').first().click();
+  await expect(page.locator('#ws-lab-ab-solve')).toBeVisible();
+  await expect(page.locator('#ws-lab-ab-answer')).toContainText(/pH = 4\.76/);
 });
 
 test('Basic pH calculator still works and points at Acid–Base Workbench', async ({ page }) => {

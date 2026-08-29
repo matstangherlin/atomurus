@@ -4,7 +4,7 @@
   if (window.__atomurusStudyBoot) return;
   window.__atomurusStudyBoot = true;
 
-  var version = '202608280600';
+  var version = '202608291030';
   var files = [
     '/workspace-logic.js?v=' + version,
     '/workspace-ui.js?v=' + version,

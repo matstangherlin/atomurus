@@ -213,6 +213,7 @@
         });
         btn.setAttribute('aria-pressed', 'true');
         syncMode();
+        clearOutput();
       });
       tools.appendChild(btn);
     });
@@ -225,6 +226,7 @@
     eqInput.spellcheck = false;
     eqInput.setAttribute('aria-label', t('equationLabel'));
     eqInput.placeholder = 'H2(g) + I2(g) ⇌ 2HI(g)';
+    eqInput.value = 'H2(g) + I2(g) ⇌ 2HI(g)';
     eqWrap.appendChild(field(t('equationLabel'), eqInput));
     node.appendChild(eqWrap);
 
@@ -243,6 +245,7 @@
         });
         btn.setAttribute('aria-pressed', 'true');
         syncUnits();
+        clearOutput();
       });
       kindRow.appendChild(btn);
     });
@@ -253,6 +256,7 @@
     kInput.step = 'any';
     kInput.id = 'ws-lab-eq-k';
     kInput.setAttribute('aria-label', t('equilibriumConstantK'));
+    kInput.value = '50';
     var kField = field(t('equilibriumConstantK'), kInput);
     kField.id = 'ws-lab-eq-k-field';
     node.appendChild(kField);
@@ -283,9 +287,9 @@
     valuesHead.textContent = t('equilibriumValues');
     var valuesList = el('div');
     valuesList.id = 'ws-lab-eq-values';
-    valuesList.appendChild(speciesRow(t, { formula: 'H2' }, kind));
-    valuesList.appendChild(speciesRow(t, { formula: 'I2' }, kind));
-    valuesList.appendChild(speciesRow(t, { formula: 'HI' }, kind));
+    valuesList.appendChild(speciesRow(t, { formula: 'H2', value: 1 }, kind));
+    valuesList.appendChild(speciesRow(t, { formula: 'I2', value: 1 }, kind));
+    valuesList.appendChild(speciesRow(t, { formula: 'HI', value: 2 }, kind));
     var addValues = el('button', 'ws-btn');
     addValues.type = 'button';
     addValues.id = 'ws-lab-eq-add-value';
@@ -389,6 +393,13 @@
       var info = ctx.logic && ctx.logic.uxError ? ctx.logic.uxError(fault) : null;
       if (info && info.kind === 'solver') return ctx.t(info.bodyKey);
       return (fault && fault.body && fault.body.error) || t('errGenericBody');
+    }
+
+    function clearOutput() {
+      err.hidden = true;
+      err.textContent = '';
+      live.textContent = '';
+      resultHost.textContent = '';
     }
 
     function showResult(data) {

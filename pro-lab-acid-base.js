@@ -110,6 +110,7 @@
         });
         btn.setAttribute('aria-pressed', 'true');
         syncMode();
+        clearOutput();
       });
       tools.appendChild(btn);
     });
@@ -271,6 +272,13 @@
       return (fault && fault.body && fault.body.error) || t('errGenericBody');
     }
 
+    function clearOutput() {
+      err.hidden = true;
+      err.textContent = '';
+      live.textContent = '';
+      resultHost.textContent = '';
+    }
+
     function payload() {
       if (mode === 'weak-acid') {
         return { mode: mode, C: cAcid.value, Ka: ka.value || undefined, pKa: pka.value || undefined };
@@ -308,23 +316,40 @@
     }
 
     function persistState() {
-      return {
+      var state = {
         solverVersion: 1,
         mode: mode,
         type: bufType.value,
         inputMode: inputMode.value,
-        action: action.value,
-        C: mode === 'weak-base' ? cBase.value : cAcid.value,
-        Ka: ka.value || bufKa.value || cKa.value,
-        pKa: pka.value || bufPka.value || cPka.value,
-        Kb: kb.value || bufKb.value || cKb.value,
-        pKb: pkb.value || cPkb.value,
-        acid: ha.value,
-        base: aMinus.value,
-        acidMoles: nHA.value,
-        baseMoles: nA.value,
-        volume: vol.value
+        action: action.value
       };
+      if (mode === 'weak-acid') {
+        state.C = cAcid.value;
+        if (ka.value) state.Ka = ka.value;
+        if (pka.value) state.pKa = pka.value;
+      } else if (mode === 'weak-base') {
+        state.C = cBase.value;
+        if (kb.value) state.Kb = kb.value;
+        if (pkb.value) state.pKb = pkb.value;
+      } else if (mode === 'buffer') {
+        state.acid = ha.value;
+        state.base = aMinus.value;
+        state.acidMoles = nHA.value;
+        state.baseMoles = nA.value;
+        state.volume = vol.value;
+        if (bufType.value === 'base') {
+          if (bufKb.value) state.Kb = bufKb.value;
+        } else {
+          if (bufKa.value) state.Ka = bufKa.value;
+          if (bufPka.value) state.pKa = bufPka.value;
+        }
+      } else {
+        if (cKa.value) state.Ka = cKa.value;
+        if (cPka.value) state.pKa = cPka.value;
+        if (cKb.value) state.Kb = cKb.value;
+        if (cPkb.value) state.pKb = cPkb.value;
+      }
+      return state;
     }
 
     function applyState(state) {
