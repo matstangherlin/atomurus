@@ -184,6 +184,13 @@ assert.doesNotMatch(iso3d, /stageEl\.style\.display = 'none'/);
 assert.match(iso3d, /stage\.appendChild\(stage2d\)/);
 assert.match(iso3d, /ensureModeStyles/);
 assert.match(iso3d, /iso-3d-mode-css/);
+assert.match(iso3d, /sizeClonedIsoSvg/);
+assert.match(iso3d, /pinIsoOverlay/);
+
+const labCss = read('atomurus-lab-console.css');
+assert.match(labCss, /\.iso-3d-stage \{\n  position: relative;/);
+assert.doesNotMatch(labCss, /'\.iso-3d-stage/);
+assert.match(labCss, /\.iso-3d-stage2d svg \{\n  width: auto;/);
 
 const calculators = read('calculators.html');
 assert.match(calculators, /Open Reaction Workbench/);

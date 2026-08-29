@@ -19,13 +19,66 @@
     var s = document.createElement('style');
     s.id = 'iso-3d-mode-css';
     s.textContent =
-      '.iso-3d-stage{overflow:hidden;position:relative}' +
+      '.iso-3d-stage{overflow:hidden;position:relative;width:100%;height:300px;background:#F6F3EC}' +
+      '.iso-3d-stage canvas{display:block;width:100%;height:100%;visibility:visible}' +
       '.iso-3d-stage2d{position:absolute!important;top:0!important;right:0!important;bottom:0!important;left:0!important;' +
-      'width:100%!important;height:100%!important;max-height:none!important;z-index:2;display:flex!important;align-items:center;justify-content:center;' +
-      'padding:12px;box-sizing:border-box;margin:0!important;visibility:hidden;pointer-events:none}' +
+      'width:100%!important;height:100%!important;max-height:none!important;z-index:2;display:flex!important;' +
+      'align-items:center;justify-content:center;padding:12px;box-sizing:border-box;margin:0!important;' +
+      'background:#F6F3EC;visibility:hidden;pointer-events:none}' +
+      '.iso-3d-stage2d svg{width:auto!important;height:auto!important;max-width:100%!important;max-height:100%!important;display:block}' +
       '.iso-3d-panel.is-2d .iso-3d-stage2d{visibility:visible!important;pointer-events:auto!important}' +
-      '.iso-3d-panel.is-2d .iso-3d-stage canvas{pointer-events:none}';
+      '.iso-3d-panel.is-2d .iso-3d-stage canvas{pointer-events:none}' +
+      '.iso-3d-panel.is-2d .iso-3d-hint{visibility:hidden}' +
+      '[data-theme="dark"] .iso-3d-stage,[data-theme="dark"] .iso-3d-stage2d{background:#151412}' +
+      '@media (max-width:640px){.iso-3d-stage{height:240px}}';
     document.head.appendChild(s);
+  }
+
+  function pinIsoStage(stage) {
+    if (!stage) return;
+    stage.style.position = 'relative';
+    stage.style.overflow = 'hidden';
+  }
+
+  function pinIsoOverlay(el) {
+    if (!el) return;
+    el.style.position = 'absolute';
+    el.style.top = '0';
+    el.style.right = '0';
+    el.style.bottom = '0';
+    el.style.left = '0';
+    el.style.width = '100%';
+    el.style.height = '100%';
+    el.style.maxHeight = 'none';
+    el.style.margin = '0';
+    el.style.zIndex = '2';
+    el.style.display = 'flex';
+    el.style.alignItems = 'center';
+    el.style.justifyContent = 'center';
+    el.style.boxSizing = 'border-box';
+    el.style.padding = el.style.padding || '12px';
+  }
+
+  function sizeClonedIsoSvg(svg, host) {
+    if (!svg || !host) return;
+    svg.removeAttribute('width');
+    svg.removeAttribute('height');
+    var box = host.getBoundingClientRect();
+    var maxW = Math.max(40, box.width - 24);
+    var maxH = Math.max(40, box.height - 24);
+    var vb = svg.viewBox && svg.viewBox.baseVal;
+    var aspect = (vb && vb.width > 0 && vb.height > 0) ? (vb.width / vb.height) : (260 / 120);
+    var w = maxW;
+    var h = w / aspect;
+    if (h > maxH) {
+      h = maxH;
+      w = h * aspect;
+    }
+    svg.style.width = Math.round(w) + 'px';
+    svg.style.height = Math.round(h) + 'px';
+    svg.style.maxWidth = '100%';
+    svg.style.maxHeight = '100%';
+    svg.style.display = 'block';
   }
 
   var MOL = {
@@ -525,8 +578,7 @@
     var stage = panel.querySelector('.iso-3d-stage');
     if (!stage) return;
     ensureModeStyles();
-    stage.style.overflow = 'hidden';
-    if (getComputedStyle(stage).position === 'static') stage.style.position = 'relative';
+    pinIsoStage(stage);
     var head = panel.querySelector('.iso-3d-head');
     if (head && !head.querySelector('.iso-3d-badge')) {
       var badge = document.createElement('span');
@@ -553,6 +605,7 @@
       stage2d.setAttribute('aria-hidden', 'true');
       stage.appendChild(stage2d);
     }
+    if (stage2d) pinIsoOverlay(stage2d);
     var meta = document.createElement('div');
     meta.className = 'iso-3d-meta';
     meta.innerHTML = '<span class="iso-3d-meta-tag"></span>' +
@@ -727,21 +780,27 @@
     }
     function render2D() {
       if (!stage2d) return;
+      pinIsoOverlay(stage2d);
       var idx = current === 'b' ? 1 : 0;
       if (mirrorable && mirrored) idx = idx === 0 ? 1 : 0;
       var src = document.querySelectorAll('.mol-card .mol-svg-wrap svg')[idx];
       stage2d.innerHTML = '';
-      if (src) stage2d.appendChild(src.cloneNode(true));
+      if (!src) return;
+      var svg = src.cloneNode(true);
+      stage2d.appendChild(svg);
+      sizeClonedIsoSvg(svg, stage2d);
     }
     function setMode(m) {
       mode = m === '2d' ? '2d' : '3d';
       var is3d = mode === '3d';
       panel.classList.toggle('is-2d', !is3d);
+      pinIsoStage(panel.querySelector('.iso-3d-stage'));
       if (canvas) {
         canvas.style.visibility = 'visible';
         canvas.style.pointerEvents = is3d ? 'auto' : 'none';
       }
       if (stage2d) {
+        pinIsoOverlay(stage2d);
         stage2d.style.visibility = is3d ? 'hidden' : 'visible';
         stage2d.style.pointerEvents = is3d ? 'none' : 'auto';
         stage2d.setAttribute('aria-hidden', is3d ? 'true' : 'false');
@@ -750,13 +809,13 @@
       var diffEl = panel.querySelector('.iso-3d-diff');
       var diffBtn = panel.querySelector('[data-3d-act="diff"]');
       if (ctrls) ctrls.style.display = is3d ? '' : 'none';
+      resize();
       if (!is3d) {
         if (diffEl) { diffEl.classList.remove('show'); diffEl.textContent = ''; }
         if (diffBtn) diffBtn.classList.remove('diff-active');
         diffOn = false;
         render2D();
       } else {
-        resize();
         renderer.render(scene, camera);
       }
     }
