@@ -107,6 +107,12 @@ const unconfirmed = classifySupabaseAuthError(Object.assign(new Error('Email not
 assert.equal(unconfirmed.code, 'email_not_confirmed');
 assert.equal(unconfirmed.status, 401);
 
+const timedOut = classifySupabaseAuthError(Object.assign(new Error('aborted'), {
+  name: 'AbortError'
+}));
+assert.equal(timedOut.code, 'upstream_timeout');
+assert.equal(timedOut.status, 503);
+
 const logs = [];
 const originalWarn = console.warn;
 console.warn = (line) => logs.push(String(line));
@@ -139,6 +145,8 @@ assert.match(loginBoot, /event\.persisted !== true/);
 assert.match(loginBoot, /auth-login-ok[\s\S]*signupOk|signupOk[\s\S]*auth-login-ok/);
 assert.match(loginBoot, /forgot-password\?|authScreenPath/);
 assert.match(loginBoot, /handlePasswordResetSubmit[\s\S]*passwordPolicyError\(password\)/);
+assert.match(loginBoot, /code === 'timeout'|upstream_timeout/);
+assert.match(loginBoot, /var signedIn = false/);
 assert.doesNotMatch(loginBoot, /addEventListener\(['"]load['"]/);
 assert.doesNotMatch(loginBoot, /withRefresh\s*\(/);
 
@@ -151,7 +159,14 @@ assert.match(authClient, /isProtectedPath\(location\.pathname\)/);
 assert.match(authClient, /publishSync\('signed-out'\)/);
 assert.match(authClient, /publishSync\('signed-in'\)/);
 assert.match(authClient, /action === 'revalidate'/);
+assert.match(authClient, /controller\.abort\(\)/);
+assert.match(authClient, /aborted \? 'timeout'/);
 assert.doesNotMatch(authClient, /withRefresh\s*\(/);
+
+const upstreamFetchSrc = readFileSync(new URL('../netlify/lib/upstream-fetch.mjs', import.meta.url), 'utf8');
+assert.match(upstreamFetchSrc, /setDefaultResultOrder\('ipv4first'\)/);
+assert.match(upstreamFetchSrc, /upstream_timeout/);
+assert.match(upstreamFetchSrc, /res\.text\(\)/);
 
 const authSync = readFileSync(new URL('../auth-sync.js', import.meta.url), 'utf8');
 assert.doesNotMatch(authSync, /access_token|refresh_token|password|email/);

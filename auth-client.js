@@ -152,16 +152,23 @@
   async function request(url, options) {
     var opts = options || {};
     var headers = Object.assign({ Accept: 'application/json' }, opts.headers || {});
+    var timeoutMs = Number(opts.timeoutMs);
+    if (!Number.isFinite(timeoutMs) || timeoutMs <= 0) timeoutMs = 20000;
+    var controller = new AbortController();
+    var timer = setTimeout(function () { controller.abort(); }, timeoutMs);
     var res;
     try {
       res = await fetch(url, Object.assign({
         credentials: 'include'
-      }, opts, { headers: headers }));
+      }, opts, { headers: headers, signal: opts.signal || controller.signal }));
     } catch (_err) {
-      var networkErr = new Error('network');
-      networkErr.status = 0;
-      networkErr.code = 'network';
+      var aborted = _err && (_err.name === 'AbortError' || _err.name === 'TimeoutError');
+      var networkErr = new Error(aborted ? 'timeout' : 'network');
+      networkErr.status = aborted ? 503 : 0;
+      networkErr.code = aborted ? 'timeout' : 'network';
       throw networkErr;
+    } finally {
+      clearTimeout(timer);
     }
     var data = await res.json().catch(function () { return {}; });
     if (!res.ok || data.ok === false) {

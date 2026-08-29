@@ -99,6 +99,21 @@ export default async function handler(request) {
         code: 'email_not_confirmed'
       });
     }
+    if (err?.code === 'upstream_timeout' || status === 503) {
+      logAuthEvent('auth-login', {
+        ok: false,
+        errorType: 'upstream_timeout',
+        ip,
+        status: 503,
+        level: 'error',
+        summary: `Rejected credential attempt from ${ip}: 503`
+      });
+      return json(503, {
+        ok: false,
+        error: 'Authentication unavailable',
+        code: 'upstream_timeout'
+      });
+    }
     if (isAuthConfigError(err) || status >= 500) {
       logAuthEvent('auth-login', {
         ok: false,
