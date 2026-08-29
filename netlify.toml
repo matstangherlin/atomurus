@@ -43,20 +43,6 @@
   node_bundler = "esbuild"
   included_files = ["elements-data.js", "assets/i18n/molecules.json"]
 
-# Unsigned /app never receives app.html. Cookie presence is the only check
-# here; stale atm_* cookies still fall through to /api/auth/me in the browser.
-[[edge_functions]]
-  path = "/app"
-  function = "protect-app"
-
-[[edge_functions]]
-  path = "/app.html"
-  function = "protect-app"
-
-[[edge_functions]]
-  path = "/app/*"
-  function = "protect-app"
-
 # Pretty URL for the reCAPTCHA verifier:
 #   POST /api/recaptcha-verify  →  /.netlify/functions/recaptcha-verify
 [[redirects]]

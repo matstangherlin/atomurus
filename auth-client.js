@@ -10,7 +10,9 @@
     '/reset-password': true,
     '/login/reset': true
   };
-  var PROTECTED_PREFIXES = ['/app'];
+  // The workspace shell is public. Sensitive data remains protected by its
+  // authenticated APIs and entitlement checks.
+  var PROTECTED_PREFIXES = [];
   var listeners = [];
   var verified = false;
   var refreshTimer = null;
@@ -66,6 +68,11 @@
     return PROTECTED_PREFIXES.some(function (prefix) {
       return path === prefix || path.indexOf(prefix + '/') === 0;
     });
+  }
+
+  function isWorkspacePath(pathname) {
+    var path = pathnameOf(pathname);
+    return path === '/app' || path === '/app.html' || path.indexOf('/app/') === 0;
   }
 
   function fullyDecode(value) {
@@ -199,6 +206,10 @@
     if (action === 'sign-out') {
       stopRefreshTimer();
       applyUser(null, true);
+      if (isWorkspacePath(location.pathname)) {
+        location.replace('/app');
+        return;
+      }
       hidePrivateWorkspace();
       if (isProtectedPath(location.pathname)) redirectToLogin(currentNextCandidate());
       return;

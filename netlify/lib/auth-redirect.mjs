@@ -6,7 +6,8 @@ export const PUBLIC_AUTH_PATHS = [
   '/login/reset'
 ];
 
-export const PROTECTED_PATHS = ['/app'];
+// The /app shell is public; protected data lives behind authenticated APIs.
+export const PROTECTED_PATHS = [];
 
 const DEFAULT_ORIGIN = 'https://atomurus.invalid';
 

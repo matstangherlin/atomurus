@@ -1,13 +1,15 @@
 const { test, expect } = require('@playwright/test');
-const { installApi, preparePage } = require('./helpers');
+const { installApi } = require('./helpers');
 
-test('signed-out /app redirects to login preserving next', async ({ page }) => {
-  await preparePage(page);
-  await page.goto('/app?section=library');
-  await page.waitForURL(/\/login/, { timeout: 15_000 });
-  const url = new URL(page.url());
-  expect(url.pathname.replace(/\.html$/, '')).toBe('/login');
-  expect(url.searchParams.get('next')).toMatch(/\/app/);
+test('signed-out workspace shows Pro navigation and explains locked features', async ({ page }) => {
+  await installApi(page, { kind: 'guest', signedIn: false });
+  await page.goto('/app');
+  await expect(page.locator('#ws-nav-main')).toContainText(/Library|Biblioteca/, { timeout: 15_000 });
+  await expect(page).toHaveURL(/\/app/);
+  await page.locator('#ws-nav-main a[href="/app?section=library"]').click();
+  await expect(page.locator('#ws-dialog-host')).toContainText(/available only|disponível somente/i);
+  await expect(page.locator('#ws-dialog-host a[href^="/login"]')).toBeVisible();
+  await expect(page.locator('#ws-dialog-host a[href="/pricing"]')).toBeVisible();
 });
 
 test('login preserves next and lands on /app', async ({ page }) => {

@@ -8,7 +8,7 @@
     en: {
       overview: 'Overview', library: 'Library', sets: 'Study Sets', review: 'Smart Review',
       history: 'Calculator History', notes: 'Notes', progress: 'Continue Studying',
-      account: 'Account', plan: 'Plan', logout: 'Logout', upgrade: 'Upgrade to Pro',
+      account: 'Account', plan: 'Plan', logout: 'Logout', login: 'Sign in', upgrade: 'Upgrade to Pro',
       menu: 'Menu', workspaceTag: 'study workspace',
       greetingMorning: 'Good morning, {name}', greetingAfternoon: 'Good afternoon, {name}',
       greetingEvening: 'Good evening, {name}', greetingFallback: 'Ready for your next study session?',
@@ -81,7 +81,7 @@
       paymentIssueBody: 'Update your payment method to keep Pro active.',
       genPartial: 'Added to Study Set, but flashcards could not be generated.',
       tryGenerate: 'Try generating again',
-      loading: 'Loading workspace…', loadError: 'Could not load your private workspace.',
+      loading: 'Loading workspace…', loadError: 'Could not load the workspace.',
       retry: 'Retry', loadMore: 'Load more', previous: 'Previous', next: 'Next',
       lockedLibraryTitle: 'Study Library', lockedLibraryBody: 'Save materials, notes and study progress across devices.',
       lockedSetsTitle: 'Study Sets', lockedSetsBody: 'Group saved chemistry into focused collections and generate flashcards.',
@@ -92,6 +92,9 @@
       premium: 'Premium', pro: 'PRO',
       errSessionTitle: 'Your session expired.', errSessionBody: 'Sign in again to continue.',
       errLockedTitle: 'This is an Atomurus Pro feature.', errLockedBody: 'Upgrade to unlock your saved study workspace.',
+      proNoticeTitle: 'Available with Atomurus Pro',
+      proNoticeGuestBody: '{feature} is available only with Atomurus Pro. Sign in if you already have access, or view the Pro plans.',
+      proNoticeFreeBody: '{feature} is available only with Atomurus Pro. Upgrade your plan to unlock it.',
       errNetworkTitle: "We couldn't connect to Atomurus.", errNetworkBody: 'Check your connection and try again.',
       errServerTitle: 'Something went wrong.', errServerBody: 'Please try again in a moment.',
       errGenericTitle: 'Could not complete this action.', errGenericBody: 'Try again.',
@@ -258,7 +261,7 @@
     pt: {
       overview: 'Visão geral', library: 'Biblioteca', sets: 'Study Sets', review: 'Smart Review',
       history: 'Histórico', notes: 'Notas', progress: 'Continuar estudando',
-      account: 'Conta', plan: 'Plano', logout: 'Sair', upgrade: 'Assinar o Pro',
+      account: 'Conta', plan: 'Plano', logout: 'Sair', login: 'Entrar', upgrade: 'Assinar o Pro',
       menu: 'Menu', workspaceTag: 'workspace de estudo',
       greetingMorning: 'Bom dia, {name}', greetingAfternoon: 'Boa tarde, {name}',
       greetingEvening: 'Boa noite, {name}', greetingFallback: 'Pronto para a próxima sessão?',
@@ -342,6 +345,9 @@
       premium: 'Premium', pro: 'PRO',
       errSessionTitle: 'Sua sessão expirou.', errSessionBody: 'Entre de novo para continuar.',
       errLockedTitle: 'Este é um recurso do Atomurus Pro.', errLockedBody: 'Faça upgrade para liberar o workspace de estudos.',
+      proNoticeTitle: 'Disponível no Atomurus Pro',
+      proNoticeGuestBody: '{feature} está disponível somente no Atomurus Pro. Entre se já tiver acesso ou conheça os planos Pro.',
+      proNoticeFreeBody: '{feature} está disponível somente no Atomurus Pro. Assine o plano para liberar o recurso.',
       errNetworkTitle: 'Não foi possível conectar ao Atomurus.', errNetworkBody: 'Verifique a conexão e tente de novo.',
       errServerTitle: 'Algo deu errado.', errServerBody: 'Tente de novo em instantes.',
       errGenericTitle: 'Não foi possível concluir esta ação.', errGenericBody: 'Tente de novo.',
@@ -655,25 +661,56 @@
     {
       key: 'navGroupStudy',
       items: [
-        ['overview', 'overview'],
-        ['library', 'library'],
-        ['sets', 'sets'],
-        ['review', 'review'],
-        ['insights', 'insights']
+        ['overview', 'overview', false],
+        ['library', 'library', true],
+        ['sets', 'sets', true],
+        ['review', 'review', true],
+        ['insights', 'insights', true]
       ]
     },
-    { key: 'navGroupLab', items: [['pro-lab', 'proLab']] },
+    { key: 'navGroupLab', items: [['pro-lab', 'proLab', true]] },
     {
       key: 'navGroupActivity',
       items: [
-        ['history', 'history'],
-        ['notes', 'notes'],
-        ['progress', 'progress']
+        ['history', 'history', true],
+        ['notes', 'notes', true],
+        ['progress', 'progress', true]
       ]
     }
   ];
 
   function proUser(user) { return logic().isProUser(user); }
+
+  function showProNotice(section, labelKey) {
+    var feature = t(labelKey);
+    var guest = !currentUser;
+    var next = '/app?section=' + encodeURIComponent(section);
+    var client = auth();
+    var loginHref = client && typeof client.loginUrl === 'function'
+      ? client.loginUrl(next)
+      : '/login?next=' + encodeURIComponent(next);
+    var actions = [
+      { label: t('cancel'), kind: 'ws-btn-ghost', onClick: function () {} }
+    ];
+    if (guest) actions.push({ label: t('login'), kind: 'ws-btn-secondary', href: loginHref });
+    actions.push({ label: t('viewPlans'), kind: 'ws-btn-primary', href: '/pricing' });
+    ui().openDialog({
+      title: t('proNoticeTitle'),
+      body: t(guest ? 'proNoticeGuestBody' : 'proNoticeFreeBody', '', { feature: feature }),
+      actions: actions
+    });
+  }
+
+  function bindProNav(container) {
+    if (!container || container.dataset.proNavBound === '1') return;
+    container.dataset.proNavBound = '1';
+    container.addEventListener('click', function (event) {
+      var link = event.target && event.target.closest && event.target.closest('[data-pro-nav]');
+      if (!link || proUser(currentUser)) return;
+      event.preventDefault();
+      showProNotice(link.getAttribute('data-pro-nav'), link.getAttribute('data-pro-label'));
+    });
+  }
 
   function renderNav(user) {
     var current = studySection();
@@ -686,28 +723,42 @@
         return '<div class="ws-nav-block"><h2 class="ws-nav-group">' + escapeHtml(t(group.key)) + '</h2>' +
           group.items.map(function (pair) {
             var active = pair[0] === current ? ' is-active' : '';
-            var meta = proUser(user) ? '' : '<span class="ws-nav-meta">' + escapeHtml(t('pro')) + '</span>';
-            return '<a class="ws-nav-item' + active + '" href="/app?section=' + pair[0] + '">' +
+            var locked = pair[2] && !proUser(user);
+            var meta = locked ? '<span class="ws-nav-meta">' + escapeHtml(t('pro')) + '</span>' : '';
+            var gate = locked ? ' data-pro-nav="' + pair[0] + '" data-pro-label="' + pair[1] + '"' : '';
+            return '<a class="ws-nav-item' + active + (locked ? ' is-locked' : '') + '" href="/app?section=' + pair[0] + '"' + gate + '>' +
               icon(pair[0]) + '<span class="ws-nav-label">' + escapeHtml(t(pair[1])) + '</span>' + meta + '</a>';
           }).join('') + '</div>';
       }).join('');
+      bindProNav(main);
     }
     if (foot) {
-      var upgrade = proUser(user) ? '' :
-        '<a class="ws-nav-item is-upgrade" href="/pricing">' + icon('plan') + '<span class="ws-nav-label">' + escapeHtml(t('upgrade')) + '</span></a>';
-      foot.innerHTML =
-        '<a class="ws-nav-item' + (current === 'account' ? ' is-active' : '') + '" href="/app?section=account">' + icon('account') + '<span class="ws-nav-label">' + escapeHtml(t('account')) + '</span></a>' +
-        '<a class="ws-nav-item" href="/pricing">' + icon('plan') + '<span class="ws-nav-label">' + escapeHtml(t('plan')) + '</span></a>' +
-        '<button type="button" class="ws-nav-item" id="app-logout-aside">' + icon('logout') + '<span class="ws-nav-label">' + escapeHtml(t('logout')) + '</span></button>' +
-        upgrade;
-      var aside = $('app-logout-aside');
-      if (aside) aside.addEventListener('click', doLogout);
+      if (!user) {
+        foot.innerHTML =
+          '<a class="ws-nav-item" href="/login?next=%2Fapp">' + icon('account') + '<span class="ws-nav-label">' + escapeHtml(t('login')) + '</span></a>' +
+          '<a class="ws-nav-item is-upgrade" href="/pricing">' + icon('plan') + '<span class="ws-nav-label">' + escapeHtml(t('viewPlans')) + '</span></a>';
+      } else {
+        var upgrade = proUser(user) ? '' :
+          '<a class="ws-nav-item is-upgrade" href="/pricing">' + icon('plan') + '<span class="ws-nav-label">' + escapeHtml(t('upgrade')) + '</span></a>';
+        foot.innerHTML =
+          '<a class="ws-nav-item' + (current === 'account' ? ' is-active' : '') + '" href="/app?section=account">' + icon('account') + '<span class="ws-nav-label">' + escapeHtml(t('account')) + '</span></a>' +
+          '<a class="ws-nav-item" href="/pricing">' + icon('plan') + '<span class="ws-nav-label">' + escapeHtml(t('plan')) + '</span></a>' +
+          '<button type="button" class="ws-nav-item" id="app-logout-aside">' + icon('logout') + '<span class="ws-nav-label">' + escapeHtml(t('logout')) + '</span></button>' +
+          upgrade;
+        var aside = $('app-logout-aside');
+        if (aside) aside.addEventListener('click', doLogout);
+      }
     }
     if (bottom) {
-      var primary = [['overview', 'overview'], ['library', 'library'], ['review', 'reviewShort'], ['pro-lab', 'labShort'], ['account', 'account']];
+      var primary = [['overview', 'overview', false], ['library', 'library', true], ['review', 'reviewShort', true], ['pro-lab', 'labShort', true], ['account', 'account', false]];
       bottom.innerHTML = primary.map(function (pair) {
-        return '<a class="' + (pair[0] === current ? 'is-active' : '') + '" href="/app?section=' + pair[0] + '">' + icon(pair[0]) + '<span>' + escapeHtml(t(pair[1])) + '</span></a>';
+        var guestAccount = pair[0] === 'account' && !user;
+        var locked = pair[2] && !proUser(user);
+        var href = guestAccount ? '/login?next=%2Fapp%3Fsection%3Daccount' : '/app?section=' + pair[0];
+        var gate = locked ? ' data-pro-nav="' + pair[0] + '" data-pro-label="' + pair[1] + '"' : '';
+        return '<a class="' + (pair[0] === current ? 'is-active' : '') + (locked ? ' is-locked' : '') + '" href="' + href + '"' + gate + '>' + icon(pair[0]) + '<span>' + escapeHtml(t(pair[1])) + '</span></a>';
       }).join('');
+      bindProNav(bottom);
     }
     var skip = $('ws-skip');
     if (skip) skip.textContent = t('skipToContent');
@@ -717,6 +768,8 @@
     if (bottomNav) bottomNav.setAttribute('aria-label', t('workspaceTag'));
     var chip = $('ws-user-name');
     if (chip) chip.textContent = displayName(user);
+    var userChip = $('ws-userchip');
+    if (userChip) userChip.hidden = !user;
     var planBadge = $('ws-plan-badge');
     if (planBadge) {
       if (badge.kind === 'pro' || badge.kind === 'trial' || badge.kind === 'admin') {
@@ -2250,7 +2303,16 @@
     if (!node) return;
     var section = studySection();
     if (section === 'account') {
-      renderAccount(user);
+      if (user) renderAccount(user);
+      else renderFreeOverview(null);
+      return;
+    }
+    if (!proUser(user)) {
+      if (section === 'overview') renderFreeOverview(user);
+      else if (section === 'insights') renderLockedInsights();
+      else if (section === 'pro-lab') {
+        node.innerHTML = sectionHead(t('proLab'), t('proLabLede'), true) + lockedState('proLab', 'labLockedBody');
+      } else showStudyLocked(node);
       return;
     }
     if (section === 'pro-lab') {
@@ -2281,12 +2343,6 @@
           }
         }, 40);
       });
-    }
-    if (!proUser(user)) {
-      if (section === 'overview') renderFreeOverview(user);
-      else if (section === 'insights') renderLockedInsights();
-      else showStudyLocked(node);
-      return;
     }
     var api = window.AtomurusStudy;
     if (!api) {
@@ -2326,10 +2382,10 @@
     var client = auth();
     if (client) {
       try { await client.logout(); } catch (_err) {}
-      client.redirectToLogin(location.pathname + location.search);
+      window.location.replace('/app');
       return;
     }
-    window.location.replace('/login?next=' + encodeURIComponent('/app'));
+    window.location.replace('/app');
   }
 
   function closeDropdowns(except) {
@@ -2414,7 +2470,14 @@
       return;
     }
     try {
-      await client.requireSession({ next: workspaceNext() });
+      var session = await client.getSession({ force: true });
+      if (!session.signedIn) {
+        await loadStudyCloud(null);
+        var guestLoading = $('app-loading');
+        if (guestLoading) guestLoading.style.display = 'none';
+        markReady();
+        return;
+      }
       var dash = await fetch('/api/private/dashboard', { credentials: 'include', headers: { Accept: 'application/json' } }).then(function (res) {
         return res.json().then(function (data) {
           if (!res.ok || data.ok === false) {
@@ -2433,7 +2496,10 @@
       markReady();
     } catch (err) {
       if (err && (err.status === 401 || err.status === 404 || err.code === 'session_expired')) {
-        client.redirectToLogin(workspaceNext());
+        await loadStudyCloud(null);
+        var expiredLoading = $('app-loading');
+        if (expiredLoading) expiredLoading.style.display = 'none';
+        markReady();
         return;
       }
       showError();
@@ -2458,14 +2524,7 @@
 
   window.addEventListener('pageshow', function (event) {
     if (!event.persisted) return;
-    var client = auth();
-    if (!client) return;
-    client.getSession({ force: true }).then(function (session) {
-      if (!session.signedIn) client.redirectToLogin(workspaceNext());
-    }).catch(function (err) {
-      if (err && (err.status === 0 || err.code === 'network' || err.status >= 500)) return;
-      client.redirectToLogin(workspaceNext());
-    });
+    void loadWorkspace();
   });
 
   document.addEventListener('DOMContentLoaded', boot);

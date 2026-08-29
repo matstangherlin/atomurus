@@ -243,7 +243,7 @@ await withAuthEnv(async () => {
   const dash = await dashboardHandler(cookieRequest('https://atomurus.com/api/private/dashboard'));
   assert.equal(dash.status, 401);
   assert.equal(clearsSessionCookies(dash), false);
-  assert.equal(isProtectedPath('/app'), true);
+  assert.equal(isProtectedPath('/app'), false);
 });
 
 await withAuthEnv(async () => {

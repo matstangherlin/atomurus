@@ -224,6 +224,8 @@
 }
 .ws-nav-item svg { flex: 0 0 18px; opacity: .85; }
 .ws-nav-item:hover { background: color-mix(in oklab, var(--lc-green) 8%, transparent); color: var(--lc-ink); }
+.ws-nav-item.is-locked { cursor: pointer; }
+.ws-nav-item.is-locked .ws-nav-meta { opacity: .9; }
 .ws-nav-item.is-active {
   color: var(--lc-green, #1E6A50);
   background: color-mix(in oklab, var(--lc-green) 10%, transparent);

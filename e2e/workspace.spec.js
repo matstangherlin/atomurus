@@ -19,6 +19,11 @@ test('Free sees premium nav locked and cannot use Study Cloud', async ({ page })
   await expect(page.locator('#ws-nav-main')).toContainText(/PRO/);
   await saveShot(page, 'desktop-free-overview');
 
+  await page.locator('#ws-nav-main a[href="/app?section=sets"]').click();
+  await expect(page.locator('#ws-dialog-host')).toContainText(/Atomurus Pro/);
+  await expect(page).toHaveURL(/\/app$/);
+  await page.locator('#ws-dialog-host button').first().click();
+
   await gotoWorkspace(page, '/app?section=library');
   await expect(page.locator('#app-study')).toContainText(/Premium|PRO|Upgrade|Assinar/);
   await expect(page.locator('#ws-lib-list')).toHaveCount(0);
