@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var SCRIPT_V = '202608282500';
+  var SCRIPT_V = '202608290400';
   var loaded = {};
 
   function loadScript(src) {
@@ -62,14 +62,14 @@
     }
   }
 
-  function card(href, title, lede, locked, t, escapeHtml, tool) {
+  function card(href, title, lede, locked, t, escapeHtml, tool, featured) {
     var lock = locked
       ? '<span class="ws-lab-badge">' + escapeHtml(t('pro')) + '</span>'
       : '';
     var cta = locked
       ? '<span class="ws-btn ws-btn-secondary ws-btn-sm">' + escapeHtml(t('seePro')) + '</span>'
       : '<span class="ws-btn ws-btn-primary ws-btn-sm">' + escapeHtml(t('open')) + '</span>';
-    return '<a class="ws-lab-card' + (locked ? ' is-locked' : '') + '" data-lab-tool="' + escapeHtml(tool || '') + '" href="' + escapeHtml(href) + '">' +
+    return '<a class="ws-lab-card' + (featured ? ' is-flagship' : '') + (locked ? ' is-locked' : '') + '" data-lab-tool="' + escapeHtml(tool || '') + '" href="' + escapeHtml(href) + '">' +
       lock +
       '<h3 class="ws-lab-card-title">' + escapeHtml(title) + '</h3>' +
       '<p class="ws-lab-card-copy">' + escapeHtml(lede) + '</p>' +
@@ -97,6 +97,10 @@
     return '<div id="ws-lab-home">' +
       '<p class="ws-kicker">' + esc(t('chemistrySolverKicker')) + '</p>' +
       flagshipCard(labHref('reactions'), t('labReactions'), t('labReactionsLede'), t('labReactionsPoints'), locked, t, esc, 'reactions') +
+      '<div class="ws-lab-grid">' +
+      card(labHref('equilibrium'), t('labEquilibrium'), t('labEquilibriumLede'), locked, t, esc, 'equilibrium', true) +
+      card(labHref('acid-base'), t('labAcidBase'), t('labAcidBaseLede'), locked, t, esc, 'acid-base') +
+      '</div>' +
       '<div class="ws-lab-grid">' +
       card(labHref('formula'), t('labFormula'), t('labFormulaLede'), locked, t, esc, 'formula') +
       card(labHref('solutions'), t('labSolutions'), t('labSolutionsLede'), locked, t, esc, 'solutions') +
@@ -136,6 +140,12 @@
     } else if (tool === 'solutions') {
       title = t('labSolutions');
       body = t('labSolutionsLede');
+    } else if (tool === 'equilibrium') {
+      title = t('labEquilibrium');
+      body = t('labEquilibriumLede');
+    } else if (tool === 'acid-base') {
+      title = t('labAcidBase');
+      body = t('labAcidBaseLede');
     }
     node.innerHTML =
       '<p class="ws-kicker"><a href="' + esc(labHref('home')) + '">' + esc(t('proLab')) + '</a></p>' +
@@ -229,6 +239,8 @@
     if (type === 'reaction') return 'reactions';
     if (type === 'formula_solver') return 'formula';
     if (type === 'solution_builder') return 'solutions';
+    if (type === 'equilibrium') return 'equilibrium';
+    if (type === 'acid_base') return 'acid-base';
     return 'calculations';
   }
 
@@ -239,6 +251,8 @@
     if (type === 'reaction') return t('labReactions');
     if (type === 'formula_solver') return t('labFormula');
     if (type === 'solution_builder') return t('labSolutions');
+    if (type === 'equilibrium') return t('labEquilibrium');
+    if (type === 'acid_base') return t('labAcidBase');
     return t('labCalc');
   }
 
@@ -369,6 +383,14 @@
       lockedTool(node, ctx, 'solutions');
       return;
     }
+    if (tool === 'equilibrium' && !hasFeature(ctx.user, 'equilibriumWorkbench')) {
+      lockedTool(node, ctx, 'equilibrium');
+      return;
+    }
+    if (tool === 'acid-base' && !hasFeature(ctx.user, 'acidBaseWorkbench')) {
+      lockedTool(node, ctx, 'acid-base');
+      return;
+    }
 
     if (locked) {
       lockedHome(node, ctx);
@@ -399,6 +421,8 @@
       reactions: '/pro-lab-reactions.js?v=' + SCRIPT_V,
       formula: '/pro-lab-formula.js?v=' + SCRIPT_V,
       solutions: '/pro-lab-solutions.js?v=' + SCRIPT_V,
+      equilibrium: '/pro-lab-equilibrium.js?v=' + SCRIPT_V,
+      'acid-base': '/pro-lab-acid-base.js?v=' + SCRIPT_V,
       sessions: '/pro-lab-calculations.js?v=' + SCRIPT_V
     };
     if (tool === 'sessions') {
@@ -425,7 +449,9 @@
       atomic: window.AtomurusProLabAtomic,
       reactions: window.AtomurusProLabReactions,
       formula: window.AtomurusProLabFormula,
-      solutions: window.AtomurusProLabSolutions
+      solutions: window.AtomurusProLabSolutions,
+      equilibrium: window.AtomurusProLabEquilibrium,
+      'acid-base': window.AtomurusProLabAcidBase
     };
     var runner = runners[tool];
     if (runner && typeof runner.mount === 'function') {

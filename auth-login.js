@@ -77,10 +77,6 @@
     });
   }
 
-  function validUsername(username) {
-    return /^[a-z0-9](?:[a-z0-9._-]{1,28}[a-z0-9])?$/.test(username);
-  }
-
   function passwordPolicyError(password) {
     if (password.length < 9) return t('common.auth.passwordLength', 'Use a password with at least 9 characters.');
     if (!/[!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.test(password)) {
@@ -330,19 +326,9 @@
     hide(okBox);
     hide(errBox);
 
-    var fullName = ($('auth-signup-name').value || '').trim();
-    var username = ($('auth-signup-username').value || '').trim().toLowerCase();
     var email = ($('auth-signup-email').value || '').trim();
     var password = $('auth-signup-password').value || '';
     var passwordConfirm = $('auth-signup-password-confirm').value || '';
-    if (fullName.length < 2) {
-      show(errBox, t('common.auth.nameInvalid', 'Enter your name with at least 2 characters.'));
-      return;
-    }
-    if (!validUsername(username)) {
-      show(errBox, t('common.auth.usernameInvalid', 'Choose a username with 3 to 30 letters, numbers, dot, underscore or hyphen.'));
-      return;
-    }
     var passwordError = passwordPolicyError(password);
     if (passwordError) {
       show(errBox, passwordError);
@@ -356,8 +342,6 @@
     setFormBusy(form, true);
     try {
       var data = await auth().signup({
-        fullName: fullName,
-        username: username,
         email: email,
         password: password,
         passwordConfirm: passwordConfirm

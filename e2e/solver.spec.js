@@ -1,7 +1,7 @@
 const { test, expect } = require('@playwright/test');
 const path = require('node:path');
 const fs = require('node:fs');
-const { installApi, createStore, gotoWorkspace } = require('./helpers');
+const { installApi, createStore, gotoWorkspace, userFixture } = require('./helpers');
 
 const SHOTS = path.resolve(__dirname, '../test-results/e2e-screenshots');
 
@@ -14,7 +14,7 @@ test('Free Reaction Workbench is a locked preview with no solver API calls', asy
   let solverCalls = 0;
   await installApi(page, { kind: 'free' });
   page.on('request', (req) => {
-    if (req.url().includes('/api/pro-lab/reaction/') || req.url().includes('/api/pro-lab/formula/') || req.url().includes('/api/pro-lab/solutions/')) {
+    if (req.url().includes('/api/pro-lab/reaction/') || req.url().includes('/api/pro-lab/formula/') || req.url().includes('/api/pro-lab/solutions/') || req.url().includes('/api/pro-lab/equilibrium') || req.url().includes('/api/pro-lab/acid-base')) {
       solverCalls += 1;
     }
   });
@@ -25,6 +25,8 @@ test('Free Reaction Workbench is a locked preview with no solver API calls', asy
   await expect(workbench).toHaveAttribute('href', /section=pro-lab&tool=reactions/);
   await expect(page.locator('[data-lab-tool="formula"]')).toHaveAttribute('href', /tool=formula/);
   await expect(page.locator('[data-lab-tool="solutions"]')).toHaveAttribute('href', /tool=solutions/);
+  await expect(page.locator('[data-lab-tool="equilibrium"]')).toHaveAttribute('href', /tool=equilibrium/);
+  await expect(page.locator('[data-lab-tool="acid-base"]')).toHaveAttribute('href', /tool=acid-base/);
   await workbench.click();
   await expect(page.locator('#app-study')).toContainText(/Reaction Workbench|Laboratório de Reações/);
   await expect(page.locator('#app-study')).toContainText(/PRO/);
@@ -41,6 +43,15 @@ test('Free Reaction Workbench is a locked preview with no solver API calls', asy
   await expect(page.locator('#ws-lab-home')).toBeVisible();
   await page.locator('[data-lab-tool="solutions"]').click();
   await expect(page.locator('#ws-lab-sol-solve')).toHaveCount(0);
+  await page.locator('#app-study a[href*="section=pro-lab"]').first().click();
+  await expect(page.locator('#ws-lab-home')).toBeVisible();
+  await page.locator('[data-lab-tool="equilibrium"]').click();
+  await expect(page.locator('#ws-lab-eq-solve')).toHaveCount(0);
+  await expect(page.locator('#app-study')).toContainText(/Calculate Kc and Kp|Calcule Kc e Kp/);
+  await page.locator('#app-study a[href*="section=pro-lab"]').first().click();
+  await expect(page.locator('#ws-lab-home')).toBeVisible();
+  await page.locator('[data-lab-tool="acid-base"]').click();
+  await expect(page.locator('#ws-lab-ab-solve')).toHaveCount(0);
   expect(solverCalls).toBe(0);
 });
 
@@ -177,6 +188,22 @@ test('Reaction Workbench mobile and dark', async ({ page }) => {
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 2);
   expect(overflow).toBeFalsy();
 
+  await gotoWorkspace(page, '/app?section=pro-lab&tool=equilibrium');
+  await page.locator('#ws-lab-eq-equation').fill('H2(g) + I2(g) ⇌ 2HI(g)');
+  await page.locator('#ws-lab-eq-mode-ice').click();
+  await page.locator('#ws-lab-eq-k').fill('50');
+  await page.locator('#ws-lab-eq-solve').click();
+  await expect(page.locator('#ws-lab-ice-table')).toBeVisible();
+  await saveShot(page, 'mobile-360-ice-table');
+  const iceOverflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 2);
+  expect(iceOverflow).toBeFalsy();
+  await gotoWorkspace(page, '/app?section=pro-lab&tool=acid-base');
+  await page.locator('#ws-lab-ab-C').fill('0.1');
+  await page.locator('#ws-lab-ab-Ka').fill('1e-5');
+  await page.locator('#ws-lab-ab-solve').click();
+  await expect(page.locator('#ws-lab-ab-answer')).toContainText(/pH = /);
+  await saveShot(page, 'mobile-360-weak-acid');
+
   await page.setViewportSize({ width: 390, height: 844 });
   await page.locator('.ws-solver-qty').first().locator('[name="amount"]').fill('10');
   await page.locator('#ws-lab-solve').click();
@@ -194,6 +221,12 @@ test('Reaction Workbench mobile and dark', async ({ page }) => {
   await gotoWorkspace(page, '/app?section=pro-lab&tool=reactions');
   await expect(page.locator('#ws-lab-equation')).toBeVisible();
   await saveShot(page, 'dark-reaction-workbench');
+  await gotoWorkspace(page, '/app?section=pro-lab&tool=equilibrium');
+  await expect(page.locator('#ws-lab-eq-equation')).toBeVisible();
+  await saveShot(page, 'dark-equilibrium-workbench');
+  await gotoWorkspace(page, '/app?section=pro-lab&tool=acid-base');
+  await expect(page.locator('#ws-lab-ab-solve')).toBeVisible();
+  await saveShot(page, 'dark-acid-base-workbench');
 });
 
 test('Public calculator solver discovery is not a modal', async ({ page }) => {
@@ -207,7 +240,87 @@ test('Public calculator solver discovery is not a modal', async ({ page }) => {
 test('Pricing lists Chemistry Solver separately', async ({ page }) => {
   await page.goto('/pricing');
   await expect(page.locator('#pricing-title-copy')).toContainText(/Solve, visualize, analyze and study chemistry|Resolva, visualize, analise e estude química/i);
-  await expect(page.locator('#pricing-pro-list')).toContainText(/PRO CHEMISTRY SOLVER/);
+  await expect(page.locator('#pricing-pro-list')).toContainText(/ADVANCED CHEMISTRY SOLVERS/);
   await expect(page.locator('#pricing-pro-list')).toContainText(/Reaction balancing|Balanceamento/);
+  await expect(page.locator('#pricing-pro-list')).toContainText(/Chemical equilibrium|Equilíbrio químico/);
   await saveShot(page, 'desktop-pricing-solver');
+});
+
+test('Pro Equilibrium Workbench: Kc, ICE, save and reopen', async ({ page }) => {
+  const store = createStore();
+  await installApi(page, { kind: 'pro', store });
+  await gotoWorkspace(page, '/app?section=pro-lab&tool=equilibrium');
+  await expect(page.locator('#ws-lab-eq-equation')).toBeVisible();
+  await page.locator('#ws-lab-eq-equation').fill('H2(g) + I2(g) ⇌ 2HI(g)');
+  const valueRows = page.locator('#ws-lab-eq-values .ws-lab-scenario');
+  await valueRows.nth(0).locator('[name="value"]').fill('1');
+  await valueRows.nth(1).locator('[name="value"]').fill('1');
+  await valueRows.nth(2).locator('[name="value"]').fill('2');
+  await page.locator('#ws-lab-eq-solve').click();
+  await expect(page.locator('#ws-lab-eq-answer')).toContainText(/Kc = 4|4\.00/);
+  await saveShot(page, 'desktop-equilibrium-kc');
+  await page.locator('#ws-lab-eq-mode-quotient').click();
+  await page.locator('#ws-lab-eq-k').fill('50');
+  await page.locator('#ws-lab-eq-solve').click();
+  await expect(page.locator('#ws-lab-eq-answer')).toContainText(/Q/);
+  await saveShot(page, 'desktop-equilibrium-q');
+  await page.locator('#ws-lab-eq-mode-ice').click();
+  await page.locator('#ws-lab-eq-k').fill('50');
+  await page.locator('#ws-lab-eq-solve').click();
+  await expect(page.locator('#ws-lab-ice-table')).toBeVisible();
+  await expect(page.locator('#ws-lab-ice-table thead th')).toHaveCount(4);
+  await saveShot(page, 'desktop-equilibrium-ice');
+  await page.locator('#ws-lab-session-title').fill('HI ICE');
+  await page.locator('#ws-lab-save').click();
+  await expect(page.locator('.ws-toast, [role="status"]').first()).toBeVisible();
+  await gotoWorkspace(page, '/app?section=pro-lab');
+  await expect(page.locator('#ws-lab-sessions')).toContainText('HI ICE');
+  await page.locator('#ws-lab-session-list a').first().click();
+  await expect(page.locator('#ws-lab-eq-equation')).toHaveValue(/HI/);
+  await expect(page.locator('#ws-lab-ice-table, #ws-lab-eq-answer').first()).toBeVisible();
+});
+
+test('Pro Acid–Base Workbench: weak acid and buffer', async ({ page }) => {
+  await installApi(page, { kind: 'pro' });
+  await gotoWorkspace(page, '/app?section=pro-lab&tool=acid-base');
+  await expect(page.locator('#ws-lab-ab-solve')).toBeVisible();
+  await page.locator('#ws-lab-ab-C').fill('0.1');
+  await page.locator('#ws-lab-ab-Ka').fill('1e-5');
+  await page.locator('#ws-lab-ab-solve').click();
+  await expect(page.locator('#ws-lab-ab-answer')).toContainText(/pH = /);
+  await saveShot(page, 'desktop-acid-base-weak-acid');
+  await page.locator('#ws-lab-ab-mode-weak-base').click();
+  await page.locator('#ws-lab-ab-Cb').fill('0.1');
+  await page.locator('#ws-lab-ab-Kb').fill('1e-5');
+  await page.locator('#ws-lab-ab-solve').click();
+  await expect(page.locator('#ws-lab-ab-answer')).toContainText(/pH = /);
+  await saveShot(page, 'desktop-acid-base-weak-base');
+  await page.locator('#ws-lab-ab-mode-buffer').click();
+  await page.locator('#ws-lab-ab-HA').fill('0.1');
+  await page.locator('#ws-lab-ab-A').fill('0.1');
+  await page.locator('#ws-lab-ab-buf-pKa').fill('4.76');
+  await page.locator('#ws-lab-ab-solve').click();
+  await expect(page.locator('#ws-lab-ab-answer')).toContainText(/pH = 4\.76/);
+  await saveShot(page, 'desktop-acid-base-buffer');
+});
+
+test('Basic pH calculator still works and points at Acid–Base Workbench', async ({ page }) => {
+  const free = userFixture('free');
+  await page.route('**/api/ads-config', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ ok: true, adsEnabled: true, signedIn: true, user: free })
+    });
+  });
+  await page.goto('/calculators.html');
+  await expect.poll(() => page.evaluate(() => Boolean(window.AtomurusLabToolGate))).toBe(true);
+  await page.locator('.calc-menu-item[data-target="ph"]').click();
+  await expect(page.locator('#lab-tool-gate-ph')).toHaveCount(0);
+  await page.locator('#tab-ph .calc-btn-run').click();
+  await expect(page.locator('#ph-result-body')).toContainText(/pH/);
+  await expect(page.locator('#ph-acid-base-discover a')).toHaveAttribute('href', /tool=acid-base/);
+  await page.locator('.calc-menu-item[data-target="equilibrium"]').click();
+  await expect(page.locator('#tab-equilibrium')).toBeVisible();
+  await expect(page.locator('#tab-equilibrium a[href*="tool=equilibrium"]')).toBeVisible();
 });

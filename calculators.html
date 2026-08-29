@@ -441,13 +441,13 @@
                 <span class="calc-menu-sub" data-i18n="calc.navThermoDesc">ΔH, ΔG, entropy</span>
               </span>
             </button>
-            <button class="calc-menu-item" disabled>
+            <button class="calc-menu-item" data-target="equilibrium" role="tab">
               <span class="calc-menu-num">09</span>
               <span class="calc-menu-copy">
                 <span class="calc-menu-title" data-i18n="calc.tabEquilibrium">Equilibrium</span>
                 <span class="calc-menu-sub" data-i18n="calc.navEquilibriumDesc">K, Q, ICE tables</span>
               </span>
-              <span class="calc-menu-badge" data-i18n="calc.navQueued">Queued</span>
+              <span class="calc-menu-badge">PRO</span>
             </button>
             <button class="calc-menu-item" disabled>
               <span class="calc-menu-num">10</span>
@@ -1231,6 +1231,13 @@
                 <div class="calc-result-empty" data-i18n-html="calc.phEmptyHtml">choose an input mode and press <strong style="color:var(--lc-ink);font-weight:500;">Compute</strong></div>
               </div>
             </div>
+
+            <div class="pro-canonical-preview" data-pro-canonical="acid-base" id="ph-acid-base-discover">
+              <p class="calc-panel-desc" data-i18n="calc.phAcidBaseDiscover">Working with weak acids or buffers? Open Acid–Base Workbench.</p>
+              <p class="calc-actions" style="margin-top:16px">
+                <a class="calc-btn-run" href="/app?section=pro-lab&tool=acid-base" data-i18n="calc.acidBaseDiscoverCta">Open Acid–Base Workbench</a>
+              </p>
+            </div>
           </section>
 
           <!-- ── 05 · STOICHIOMETRY ── -->
@@ -1254,6 +1261,30 @@
               <summary data-i18n="calc.howTitle">How this works</summary>
               <div class="calc-how-body" data-i18n-html="calc.stoichHowHtml">
                 A balanced equation gives mole ratios from its coefficients. The Reaction Workbench uses those ratios with limiting-reagent analysis — this public tab is a preview of that Pro workflow.
+              </div>
+            </details>
+          </section>
+
+          <section id="tab-equilibrium" class="calc-tab" role="tabpanel">
+            <div class="calc-panel-head">
+              <div class="calc-panel-h">
+                <span class="calc-panel-kicker" data-i18n="calc.eq09Kicker">09 — Equilibrium</span>
+                <h2 class="calc-panel-title" data-i18n="calc.eq09Title">Kc, Q and ICE tables</h2>
+                <p class="calc-panel-desc" data-i18n="calc.eq09Desc">For Kc, Kp, reaction quotient and ICE tables, open the Equilibrium Workbench — the canonical Pro engine.</p>
+              </div>
+            </div>
+
+            <div class="pro-canonical-preview" data-pro-canonical="equilibrium">
+              <p class="calc-panel-desc" data-i18n="calc.eqCanonicalBody">The public equilibrium tab does not run a separate calculator. Equilibrium Workbench is the only scientific engine for Kc, Kp, Q and ICE tables.</p>
+              <p class="calc-actions" style="margin-top:16px">
+                <a class="calc-btn-run" href="/app?section=pro-lab&tool=equilibrium" data-i18n="calc.eqDiscoverCta">Open Equilibrium Workbench</a>
+              </p>
+            </div>
+
+            <details class="calc-how">
+              <summary data-i18n="calc.howTitle">How this works</summary>
+              <div class="calc-how-body" data-i18n-html="calc.eqHowHtml">
+                K compares equilibrium composition with the balanced coefficients. Q uses the current composition to tell which way the system must shift. ICE tables solve equilibrium concentrations from Kc and the initial amounts. This public tab is a preview of that Pro workflow.
               </div>
             </details>
           </section>
@@ -1461,7 +1492,7 @@ const AW = {
 // TAB SWITCHING
 // ═════════════════════════════════════════
 const tabs = document.querySelectorAll('.calc-menu-item[data-target]');
-const TAB_NAMES = { molar:'Molar Mass', scientific:'Scientific Calculator', unit:'Unit Converter', ideal:'Ideal Gas', dilute:'Dilution', ph:'pH · pOH', stoich:'Stoichiometry', thermo:'Thermodynamics' };
+const TAB_NAMES = { molar:'Molar Mass', scientific:'Scientific Calculator', unit:'Unit Converter', ideal:'Ideal Gas', dilute:'Dilution', ph:'pH · pOH', stoich:'Stoichiometry', thermo:'Thermodynamics', equilibrium:'Equilibrium' };
 tabs.forEach(t => t.addEventListener('click', () => switchTab(t.dataset.target, t)));
 function switchTab(target, el) {
   tabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected','false'); });

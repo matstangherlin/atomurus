@@ -21,3 +21,13 @@ test('login preserves next and lands on /app', async ({ page }) => {
   expect(page.url()).toMatch(/section=library/);
   await expect(page.locator('#ws-nav-main a').first()).toBeVisible({ timeout: 15_000 });
 });
+
+test('create account does not ask for full name or username', async ({ page }) => {
+  await preparePage(page);
+  await page.goto('/signup');
+  await expect(page.locator('#auth-signup-form')).toBeVisible();
+  await expect(page.locator('#auth-signup-email')).toBeVisible();
+  await expect(page.locator('#auth-signup-name')).toHaveCount(0);
+  await expect(page.locator('#auth-signup-username')).toHaveCount(0);
+  await expect(page.locator('#auth-signup-form')).not.toContainText(/Nome completo|Full name|Usuário|Username/i);
+});

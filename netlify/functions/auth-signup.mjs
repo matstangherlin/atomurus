@@ -20,8 +20,10 @@ import {
   tooManyRequests,
   validEmail,
   validUsername,
-  verifySameOrigin
+  verifySameOrigin,
+  usernameFromEmail
 } from '../lib/netlify-identity-utils.mjs';
+import { allocateUniqueUsername } from '../lib/supabase-auth.mjs';
 
 export default async function handler(request) {
   if (request.method === 'OPTIONS') return options();
@@ -48,14 +50,12 @@ export default async function handler(request) {
   }
 
   const email = normalizeEmail(body.email);
-  const fullName = String(body.fullName || body.name || '').trim();
-  const username = normalizeUsername(body.username);
+  const providedName = String(body.fullName || body.name || '').trim();
+  const fullName = providedName.length >= 2 && providedName.length <= 120 ? providedName : '';
+  let username = normalizeUsername(body.username);
   const password = String(body.password || '');
   const passwordConfirm = String(body.passwordConfirm || '');
-  if (!fullName || fullName.length < 2 || fullName.length > 120) {
-    return json(400, { ok: false, error: 'Use your name with at least 2 characters.' });
-  }
-  if (!validUsername(username)) {
+  if (username && !validUsername(username)) {
     return json(400, { ok: false, error: 'Choose a unique username with 3 to 30 letters, numbers, dot, underscore or hyphen.' });
   }
   const passwordError = passwordPolicyError(password);
@@ -64,6 +64,17 @@ export default async function handler(request) {
   }
   if (password !== passwordConfirm) {
     return json(400, { ok: false, error: 'Password confirmation does not match.' });
+  }
+  if (!username) {
+    try {
+      username = await allocateUniqueUsername(usernameFromEmail(email));
+    } catch (err) {
+      return json(statusFromError(err, 400), {
+        ok: false,
+        error: err?.publicMessage || err?.message || 'Could not create this account. Try signing in or use another email.',
+        code: err?.code || null
+      });
+    }
   }
 
   const ip = clientIp(request);

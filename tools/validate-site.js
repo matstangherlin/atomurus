@@ -279,17 +279,21 @@ function assertStudyCloud() {
     'netlify/functions/pro-lab-reaction-solve.mjs',
     'netlify/functions/pro-lab-formula-solve.mjs',
     'netlify/functions/pro-lab-solutions-solve.mjs',
+    'netlify/functions/pro-lab-equilibrium-solve.mjs',
+    'netlify/functions/pro-lab-acid-base-solve.mjs',
     'pro-lab.js',
     'pro-lab-reactions.js',
     'pro-lab-formula.js',
     'pro-lab-solutions.js',
+    'pro-lab-equilibrium.js',
+    'pro-lab-acid-base.js',
     'assets/workspace-foundation.css'
   ];
   files.forEach((rel) => {
     if (!fs.existsSync(path.join(ROOT, rel))) fail(`${rel} is missing`);
   });
   const netlify = read('netlify.toml');
-  ['/api/study/overview', '/api/study/items', '/api/study/item', '/api/study/calculator-history', '/api/study/progress', '/api/study/sets', '/api/study/review/queue', '/api/study/insights', '/api/study/cards/generate', '/api/pro-lab/sessions', '/api/pro-lab/calculate', '/api/pro-lab/elements/compare', '/api/pro-lab/reaction/balance', '/api/pro-lab/reaction/solve', '/api/pro-lab/formula/solve', '/api/pro-lab/solutions/solve'].forEach((route) => {
+  ['/api/study/overview', '/api/study/items', '/api/study/item', '/api/study/calculator-history', '/api/study/progress', '/api/study/sets', '/api/study/review/queue', '/api/study/insights', '/api/study/cards/generate', '/api/pro-lab/sessions', '/api/pro-lab/calculate', '/api/pro-lab/elements/compare', '/api/pro-lab/reaction/balance', '/api/pro-lab/reaction/solve', '/api/pro-lab/formula/solve', '/api/pro-lab/solutions/solve', '/api/pro-lab/equilibrium/solve', '/api/pro-lab/acid-base/solve'].forEach((route) => {
     if (!netlify.includes(route)) fail(`netlify.toml missing ${route}`);
   });
   const client = read('study-client.js');
@@ -300,7 +304,7 @@ function assertStudyCloud() {
   if (/(?:^|[^/\w])eval\s*\(/.test(calc) || /new Function\s*\(/.test(calc)) {
     fail('chemistry-calc.mjs must not use eval or new Function');
   }
-  ['chemistry-reactions.mjs', 'chemistry-stoichiometry.mjs', 'chemistry-formula-solver.mjs', 'chemistry-solutions.mjs'].forEach((name) => {
+  ['chemistry-reactions.mjs', 'chemistry-stoichiometry.mjs', 'chemistry-formula-solver.mjs', 'chemistry-solutions.mjs', 'chemistry-equilibrium.mjs', 'chemistry-acid-base.mjs', 'chemistry-numerics.mjs'].forEach((name) => {
     const src = read('netlify/lib/' + name);
     if (/(?:^|[^/\w])eval\s*\(/.test(src) || /new Function\s*\(/.test(src)) {
       fail(`${name} must not use eval or new Function`);

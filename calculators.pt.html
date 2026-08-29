@@ -441,13 +441,13 @@
                 <span class="calc-menu-sub" data-i18n="calc.navThermoDesc">ΔH, ΔG, entropy</span>
               </span>
             </button>
-            <button class="calc-menu-item" disabled>
+            <button class="calc-menu-item" data-target="equilibrium" role="tab">
               <span class="calc-menu-num">09</span>
               <span class="calc-menu-copy">
-                <span class="calc-menu-title" data-i18n="calc.tabEquilibrium">Equilibrium</span>
-                <span class="calc-menu-sub" data-i18n="calc.navEquilibriumDesc">K, Q, ICE tables</span>
+                <span class="calc-menu-title" data-i18n="calc.tabEquilibrium">Equilíbrio</span>
+                <span class="calc-menu-sub" data-i18n="calc.navEquilibriumDesc">K, Q, tabelas ICE</span>
               </span>
-              <span class="calc-menu-badge" data-i18n="calc.navQueued">Queued</span>
+              <span class="calc-menu-badge">PRO</span>
             </button>
             <button class="calc-menu-item" disabled>
               <span class="calc-menu-num">10</span>
@@ -1231,6 +1231,13 @@
                 <div class="calc-result-empty" data-i18n-html="calc.phEmptyHtml">choose an input mode and press <strong style="color:var(--lc-ink);font-weight:500;">Compute</strong></div>
               </div>
             </div>
+
+            <div class="pro-canonical-preview" data-pro-canonical="acid-base" id="ph-acid-base-discover">
+              <p class="calc-panel-desc" data-i18n="calc.phAcidBaseDiscover">Trabalhando com ácidos fracos ou tampões? Abra o Laboratório Ácido–Base.</p>
+              <p class="calc-actions" style="margin-top:16px">
+                <a class="calc-btn-run" href="/app?section=pro-lab&tool=acid-base" data-i18n="calc.acidBaseDiscoverCta">Abrir Laboratório Ácido–Base</a>
+              </p>
+            </div>
           </section>
 
           <!-- ── 05 · STOICHIOMETRY ── -->
@@ -1254,6 +1261,30 @@
               <summary data-i18n="calc.howTitle">How this works</summary>
               <div class="calc-how-body" data-i18n-html="calc.stoichHowHtml">
                 A balanced equation gives mole ratios from its coefficients. The Reaction Workbench uses those ratios with limiting-reagent analysis — this public tab is a preview of that Pro workflow.
+              </div>
+            </details>
+          </section>
+
+          <section id="tab-equilibrium" class="calc-tab" role="tabpanel">
+            <div class="calc-panel-head">
+              <div class="calc-panel-h">
+                <span class="calc-panel-kicker" data-i18n="calc.eq09Kicker">09 — Equilíbrio</span>
+                <h2 class="calc-panel-title" data-i18n="calc.eq09Title">Kc, Q e tabelas ICE</h2>
+                <p class="calc-panel-desc" data-i18n="calc.eq09Desc">Para Kc, Kp, quociente de reação e tabelas ICE, abra o Laboratório de Equilíbrio — o motor Pro canônico.</p>
+              </div>
+            </div>
+
+            <div class="pro-canonical-preview" data-pro-canonical="equilibrium">
+              <p class="calc-panel-desc" data-i18n="calc.eqCanonicalBody">A aba pública de equilíbrio não executa um calculador separado. O Laboratório de Equilíbrio é o único motor científico para Kc, Kp, Q e tabelas ICE.</p>
+              <p class="calc-actions" style="margin-top:16px">
+                <a class="calc-btn-run" href="/app?section=pro-lab&tool=equilibrium" data-i18n="calc.eqDiscoverCta">Abrir Laboratório de Equilíbrio</a>
+              </p>
+            </div>
+
+            <details class="calc-how">
+              <summary data-i18n="calc.howTitle">How this works</summary>
+              <div class="calc-how-body" data-i18n-html="calc.eqHowHtml">
+                K compara a composição no equilíbrio com os coeficientes balanceados. Q usa a composição atual para indicar o sentido do deslocamento. Tabelas ICE resolvem as concentrações no equilíbrio a partir de Kc e das quantidades iniciais.
               </div>
             </details>
           </section>
@@ -1461,7 +1492,7 @@ const AW = {
 // TAB SWITCHING
 // ═════════════════════════════════════════
 const tabs = document.querySelectorAll('.calc-menu-item[data-target]');
-const TAB_NAMES = { molar:'Molar Mass', scientific:'Scientific Calculator', unit:'Unit Converter', ideal:'Ideal Gas', dilute:'Dilution', ph:'pH · pOH', stoich:'Stoichiometry', thermo:'Thermodynamics' };
+const TAB_NAMES = { molar:'Molar Mass', scientific:'Scientific Calculator', unit:'Unit Converter', ideal:'Ideal Gas', dilute:'Dilution', ph:'pH · pOH', stoich:'Stoichiometry', thermo:'Thermodynamics', equilibrium:'Equilibrium' };
 tabs.forEach(t => t.addEventListener('click', () => switchTab(t.dataset.target, t)));
 function switchTab(target, el) {
   tabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected','false'); });

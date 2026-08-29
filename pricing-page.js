@@ -71,7 +71,7 @@
           ]
         },
         {
-          title: 'PRO CHEMISTRY SOLVER',
+          title: 'ADVANCED CHEMISTRY SOLVERS',
           items: [
             'Reaction balancing',
             'Stoichiometry',
@@ -80,6 +80,11 @@
             'Empirical formula solver',
             'Molecular formula solver',
             'Solution preparation',
+            'Chemical equilibrium',
+            'Weak acid and weak base',
+            'Buffers',
+            'ICE tables',
+            'Reaction quotient Q',
             'Saved solver sessions'
           ]
         }
@@ -230,7 +235,7 @@
           ]
         },
         {
-          title: 'PRO CHEMISTRY SOLVER',
+          title: 'ADVANCED CHEMISTRY SOLVERS',
           items: [
             'Balanceamento de reações',
             'Estequiometria',
@@ -239,6 +244,11 @@
             'Solver de fórmula empírica',
             'Solver de fórmula molecular',
             'Preparação de soluções',
+            'Equilíbrio químico',
+            'Ácido fraco e base fraca',
+            'Soluções tampão',
+            'Tabelas ICE',
+            'Quociente de reação Q',
             'Sessões salvas do solver'
           ]
         }
