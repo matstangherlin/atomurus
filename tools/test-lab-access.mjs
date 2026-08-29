@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { accessForUser } from '../netlify/lib/plan-access.mjs';
 import {
   allowTool,
@@ -151,6 +153,7 @@ assert.match(loadThree, /hasPremiumFeature\(featureKey\)/);
 assert.match(loadThree, /atomurusLoadViewerRuntime/);
 assert.match(loadThree, /VIEWER_RUNTIME_SRC/);
 assert.match(loadThree, /atomic-viewer\.js/);
+assert.match(loadThree, /function nearViewport/);
 assert.doesNotMatch(loadThree, /VIEWER_RUNTIME_SRC\[name\] \+|src = name/);
 
 const molecules = read('viewer/molecules.html');
@@ -199,9 +202,26 @@ const alloRuntime = read('viewer/runtime/allotrope-viewer.js');
 assert.match(alloRuntime, /atomurusInitAllotropeViewer/);
 assert.match(alloRuntime, /WebGLRenderer/);
 
-const isoPage = read('viewer/isomerism/constitutional/function.html');
-assert.match(isoPage, /atomurusLoadViewerRuntime\('isomerism-3d\.js'\)/);
-assert.doesNotMatch(isoPage, /src="\.\.\/isomerism-3d\.js/);
+function listHtml(dir, acc = []) {
+  for (const ent of readdirSync(dir, { withFileTypes: true })) {
+    const p = join(dir, ent.name);
+    if (ent.isDirectory()) listHtml(p, acc);
+    else if (ent.name.endsWith('.html')) acc.push(p);
+  }
+  return acc;
+}
+
+const isoPages = listHtml(fileURLToPath(new URL('../viewer/isomerism', import.meta.url)));
+assert.ok(isoPages.length >= 14, 'expected isomerism viewer pages');
+for (const file of isoPages) {
+  const html = readFileSync(file, 'utf8');
+  assert.match(html, /atomurusLoadViewerRuntime\('isomerism-3d\.js'\)/, file);
+  assert.match(html, /<script src="\.\.\/\.\.\/load-three\.js\?v=[^"]+"><\/script>/, file);
+  assert.doesNotMatch(html, /<script defer>\s*atomurusBootProViewer/, file);
+  assert.doesNotMatch(html, /load-three\.js[^"']*["']\s+defer/, file);
+  assert.doesNotMatch(html, /src="\.\.\/isomerism-3d\.js/, file);
+  assert.doesNotMatch(html, /WebGLRenderer/, file);
+}
 
 const exploreIso = read('explore/what-is-isomerism.html');
 assert.match(exploreIso, /isomerism-3d\.js/);
@@ -210,6 +230,7 @@ const iso3d = read('viewer/isomerism/isomerism-3d.js');
 assert.match(iso3d, /atomurusBootProViewer/);
 assert.match(iso3d, /isomerismViewer/);
 assert.match(iso3d, /isExplorePage/);
+assert.match(iso3d, /loadedAsProRuntime/);
 assert.match(iso3d, /classList.toggle\('is-2d'/);
 assert.doesNotMatch(iso3d, /stageEl\.style\.display = 'none'/);
 assert.match(iso3d, /stage\.appendChild\(stage2d\)/);

@@ -319,12 +319,6 @@
             <span class="iso-3d-hint" data-i18n="isomerism.iso3dHint">arraste · scroll · dois cliques p/ auto-rotação</span>
           </div>
         </div>
-        <script src="../../load-three.js?v=202608290200" defer></script>
-        <script defer>
-        atomurusBootProViewer(document.getElementById('iso-3d-canvas') || document.querySelector('.iso-3d-stage canvas'), 'isomerismViewer', function () {
-          return atomurusLoadViewerRuntime('isomerism-3d.js');
-        });
-        </script>
         <div class="iso-crosslink iso-callout iso-callout-purple" data-i18n-html="isomerism.posicao.linkGeometric"></div>
 
     </div>
@@ -407,6 +401,12 @@ function toggleNavGroup(name){
     });
   });
 })();
+</script>
+<script src="../../load-three.js?v=202608290330"></script>
+<script>
+atomurusBootProViewer(document.getElementById('iso-3d-canvas') || document.querySelector('.iso-3d-stage canvas'), 'isomerismViewer', function () {
+  return atomurusLoadViewerRuntime('isomerism-3d.js');
+});
 </script>
 <script type="text/javascript">
     (window.atomurusRunAutoTag||function(){})({

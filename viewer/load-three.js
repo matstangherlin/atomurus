@@ -42,21 +42,42 @@
     }
 
     var rootMargin = (options && options.rootMargin) || '240px';
+    var marginPx = parseInt(rootMargin, 10);
+    if (isNaN(marginPx)) marginPx = 240;
+    var fired = false;
+    var io = null;
 
-    if (!('IntersectionObserver' in global)) {
+    function fire() {
+      if (fired) return;
+      fired = true;
+      if (io) io.disconnect();
       callback();
+    }
+
+    function nearViewport() {
+      var rect = el.getBoundingClientRect();
+      var vh = global.innerHeight || 800;
+      return rect.bottom > -marginPx && rect.top < vh + marginPx;
+    }
+
+    if (nearViewport()) {
+      fire();
       return;
     }
 
-    var io = new IntersectionObserver(function (entries) {
+    if (!('IntersectionObserver' in global)) {
+      fire();
+      return;
+    }
+
+    io = new IntersectionObserver(function (entries) {
       for (var i = 0; i < entries.length; i++) {
         if (entries[i].isIntersecting) {
-          io.disconnect();
-          callback();
+          fire();
           return;
         }
       }
-    }, { rootMargin: rootMargin });
+    }, { rootMargin: typeof rootMargin === 'string' ? rootMargin : (marginPx + 'px 0px') });
 
     io.observe(el);
   }
@@ -215,7 +236,7 @@
     'atomic-viewer.js': '/viewer/runtime/atomic-viewer.js?v=202608290200',
     'molecule-viewer.js': '/viewer/runtime/molecule-viewer.js?v=202608290200',
     'allotrope-viewer.js': '/viewer/runtime/allotrope-viewer.js?v=202608290200',
-    'isomerism-3d.js': '/viewer/isomerism/isomerism-3d.js?v=202608290200'
+    'isomerism-3d.js': '/viewer/isomerism/isomerism-3d.js?v=202608290330'
   };
   var runtimePending = Object.create(null);
 

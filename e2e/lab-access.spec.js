@@ -76,6 +76,18 @@ test('guest 3D molecule viewer stays a preview without Three.js', async ({ page 
   await page.goto('/explore/what-is-isomerism.html');
   await expect(page.locator('.art-title, h1').first()).toBeVisible();
   await expect(page.locator('#lab-tool-gate')).toHaveCount(0);
+
+  await page.goto('/viewer/isomerism/constitutional/function.html');
+  await expect.poll(() => page.evaluate(() => Boolean(window.AtomurusLabToolGate))).toBe(true);
+  await expect(page.locator('#lab-tool-gate')).toBeVisible();
+  await page.locator('.iso-3d-stage canvas').first().scrollIntoViewIfNeeded();
+  await page.waitForTimeout(800);
+  const isoRuntime = await page.evaluate(() => ({
+    three: typeof window.THREE !== 'undefined',
+    viewer: Boolean(document.querySelector('script[data-atomurus-dep="viewer-runtime"]'))
+  }));
+  expect(isoRuntime.three).toBe(false);
+  expect(isoRuntime.viewer).toBe(false);
 });
 
 test('removing the overlay does not boot the Pro molecule runtime', async ({ page }) => {
@@ -218,7 +230,9 @@ test('Pro isomerism 2D overlays the stage without hiding WebGL', async ({ page }
   const canvas = page.locator('.iso-3d-stage canvas').first();
   await canvas.scrollIntoViewIfNeeded();
   await expect.poll(() => page.evaluate(() => Boolean(
-    window.THREE && document.querySelector('[data-3d-mode="2d"]')
+    window.THREE &&
+    document.querySelector('script[data-atomurus-runtime="isomerism-3d.js"]') &&
+    document.querySelector('[data-3d-mode="2d"]')
   ))).toBe(true);
   await page.locator('[data-3d-mode="2d"]').click();
   await expect(page.locator('.iso-3d-panel').first()).toHaveClass(/is-2d/);

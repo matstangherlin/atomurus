@@ -210,6 +210,16 @@ function assertPerfGuards() {
   if (!atomic.includes('atomurusLoadViewerRuntime') || atomic.includes('WebGLRenderer')) {
     fail('viewer/atomic-models.html still embeds the interactive atomic runtime');
   }
+  const isomerism = read('viewer/isomerism/constitutional/function.html');
+  if (!isomerism.includes('atomurusBootProViewer') || !isomerism.includes('atomurusLoadViewerRuntime')) {
+    fail('isomerism viewer pages are not using entitlement-gated runtime loading');
+  }
+  if (/<script defer>\s*atomurusBootProViewer/.test(isomerism) || /load-three\.js[^"']*["']\s+defer/.test(isomerism)) {
+    fail('isomerism viewer boot still uses defer on an inline script (runs before load-three.js)');
+  }
+  if (isomerism.includes('WebGLRenderer') || /src="\.\.\/isomerism-3d\.js/.test(isomerism)) {
+    fail('isomerism viewer HTML still embeds the interactive 3D runtime');
+  }
   const netlify = read('netlify.toml');
   if (!netlify.includes('/api/pro-lab/thermodynamics/solve') || !netlify.includes('/api/pro-lab/viewer/molecule')) {
     fail('netlify.toml missing Pro viewer/thermo routes');

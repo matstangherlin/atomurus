@@ -952,8 +952,15 @@
     return /\/explore\//.test(location.pathname || '');
   }
 
+  function loadedAsProRuntime() {
+    return Boolean(document.querySelector('script[data-atomurus-runtime="isomerism-3d.js"]'));
+  }
+
   function ensureAndInit() {
-    if (!isExplorePage()) {
+    // Explore stays public. Viewer pages loaded through the allowlisted
+    // runtime already passed atomurusBootProViewer — do not re-gate here,
+    // because lab-tool-gate may overwrite atomurusHasPremiumFeature.
+    if (!isExplorePage() && !loadedAsProRuntime()) {
       if (typeof window.atomurusHasPremiumFeature === 'function') {
         if (!window.atomurusHasPremiumFeature('isomerismViewer')) return;
       } else {
@@ -1050,9 +1057,10 @@
       }, 500);
       return;
     }
-    // Viewer pages: either Three.js is already loaded by bootProViewer
-    // (lazy runtime) or we still need to wait for entitlement.
-    if (typeof THREE !== 'undefined') {
+    // Viewer pages: Three.js is already loaded by bootProViewer
+    // (lazy runtime). Init immediately — the HTML stub already waited
+    // for entitlement and viewport.
+    if (typeof THREE !== 'undefined' || loadedAsProRuntime()) {
       ensureAndInit();
       return;
     }
