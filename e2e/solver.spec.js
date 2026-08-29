@@ -203,6 +203,18 @@ test('Reaction Workbench mobile and dark', async ({ page }) => {
   await page.locator('#ws-lab-ab-solve').click();
   await expect(page.locator('#ws-lab-ab-answer')).toContainText(/pH = /);
   await saveShot(page, 'mobile-360-weak-acid');
+  await page.locator('#ws-lab-ab-mode-buffer').click();
+  await page.locator('#ws-lab-ab-HA').fill('0.1');
+  await page.locator('#ws-lab-ab-A').fill('0.1');
+  await page.locator('#ws-lab-ab-buf-pKa').fill('4.76');
+  await page.locator('#ws-lab-ab-solve').click();
+  await expect(page.locator('#ws-lab-ab-answer')).toContainText(/pH = 4\.76/);
+  await saveShot(page, 'mobile-360-buffer');
+
+  await gotoWorkspace(page, '/app?section=pro-lab&tool=reactions');
+  await page.locator('#ws-lab-equation').fill('C2H6 + O2 -> CO2 + H2O');
+  await page.locator('#ws-lab-balance').click();
+  await expect(page.locator('#ws-lab-balanced')).toBeVisible();
 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.locator('.ws-solver-qty').first().locator('[name="amount"]').fill('10');
@@ -317,7 +329,7 @@ test('Basic pH calculator still works and points at Acid–Base Workbench', asyn
   await expect.poll(() => page.evaluate(() => Boolean(window.AtomurusLabToolGate))).toBe(true);
   await page.locator('.calc-menu-item[data-target="ph"]').click();
   await expect(page.locator('#lab-tool-gate-ph')).toHaveCount(0);
-  await page.locator('#tab-ph .calc-btn-run').click();
+  await page.locator('#tab-ph button.calc-btn-run').click();
   await expect(page.locator('#ph-result-body')).toContainText(/pH/);
   await expect(page.locator('#ph-acid-base-discover a')).toHaveAttribute('href', /tool=acid-base/);
   await page.locator('.calc-menu-item[data-target="equilibrium"]').click();
