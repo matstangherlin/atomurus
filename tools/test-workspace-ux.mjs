@@ -189,6 +189,7 @@ assert.match(appHtml, /Explore the Atomurus study workspace/);
 assert.match(appHtml, /ws-skip/);
 assert.match(appHtml, /pro-lab\.js/);
 assert.match(appHtml, /id="app-study"/);
+assert.match(appHtml, /id="ws-study-nav"/);
 assert.match(appHtml, /<html lang="en-US" data-theme="dark"/);
 assert.match(appHtml, /data-i18n="common\.brandTag">chemistry lab/);
 

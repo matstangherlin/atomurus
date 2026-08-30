@@ -68,8 +68,8 @@ test('Pro Insights: 30 days, set filter, Needs attention, Focus Review, Good', a
   const store = insightsStore();
   await installApi(page, { kind: 'pro', store });
   await gotoWorkspace(page, '/app');
-  await expect(page.locator('#ws-nav-main')).toContainText(/Insights/);
-  await page.locator('#ws-nav-main a[href*="section=insights"]').click();
+  await expect(page.locator('#ws-study-nav')).toContainText(/Insights/);
+  await page.locator('#ws-study-nav a[href*="section=insights"]').click();
   await expect(page.locator('#app-study')).toContainText(/Study Insights|Insights de Estudo/);
   await expect(page.locator('#app-study')).toContainText(/30 days|30 dias/);
   await expect(page.locator('#app-study')).toContainText(/Confident reviews|Revisões confiantes/);
@@ -198,6 +198,7 @@ test('Overview hierarchy: Pro due hero and Free workspace copy', async ({ page }
   await expect(page.locator('#app-study').getByRole('link', { name: /Open Insights|Abrir Insights/i })).toBeVisible();
   await expect(page.locator('#app-study')).not.toContainText(/Nothing in progress yet|Nada em andamento/);
   await expect(page.locator('#ws-nav-main .ws-nav-group').first()).toBeVisible();
+  await expect(page.locator('#ws-study-nav .ws-study-nav-item').first()).toBeVisible();
   await saveShot(page, 'desktop-overview-pro-hero');
 
   await gotoWorkspace(page, '/app?section=review');

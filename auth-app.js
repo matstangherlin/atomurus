@@ -150,6 +150,11 @@
       upgradeForList: 'Library · Study Sets · Smart Review · Insights · Pro Lab',
       explorePro: 'Explore Pro', openTable: 'Periodic Table',
       openViewer: 'Viewer', openExplore: 'Explore',
+      publicTool: 'Open tool',
+      tableCardCopy: 'Explore all 118 elements and their periodic properties.',
+      calcCardCopy: 'Use the open chemistry calculators without leaving the lab.',
+      viewerCardCopy: 'Inspect atomic models and interactive structures.',
+      exploreCardCopy: 'Read chemistry concepts, stories and deep dives.',
       masteredTip: 'Cards with a review interval at or above the mastery threshold.',
       setProgress: 'Progress', learningCount: 'Learning {n}', newCount: 'New {n}',
       weekdayMon: 'Mon', weekdayTue: 'Tue', weekdayWed: 'Wed', weekdayThu: 'Thu',
@@ -158,7 +163,7 @@
       deleteSessionBody: 'This cannot be undone.',
       sessionOpen: 'Open', moreActions: 'More',
       reviewCta: 'Review',
-      reviewShort: 'Review', labShort: 'Lab',
+      reviewShort: 'Review', labShort: 'Lab', insightsNav: 'Insights', continueNav: 'Continue',
       stateNew: 'New', stateLearning: 'Learning', stateReview: 'Review',
       focusCards: '{n} cards',
       navGroupStudy: 'Study', navGroupLab: 'Lab', navGroupActivity: 'Activity',
@@ -405,6 +410,11 @@
       upgradeForList: 'Biblioteca · Study Sets · Smart Review · Insights · Pro Lab',
       explorePro: 'Conhecer o Pro', openTable: 'Tabela Periódica',
       openViewer: 'Visualizador', openExplore: 'Explorar',
+      publicTool: 'Ferramenta aberta',
+      tableCardCopy: 'Explore os 118 elementos e suas propriedades periódicas.',
+      calcCardCopy: 'Use as calculadoras abertas sem sair do laboratório.',
+      viewerCardCopy: 'Visualize modelos atômicos e estruturas interativas.',
+      exploreCardCopy: 'Leia conceitos, histórias e aprofundamentos de química.',
       masteredTip: 'Cards com intervalo de revisão no limiar de domínio ou acima.',
       setProgress: 'Progresso', learningCount: 'Aprendendo {n}', newCount: 'Novos {n}',
       weekdayMon: 'seg', weekdayTue: 'ter', weekdayWed: 'qua', weekdayThu: 'qui',
@@ -413,7 +423,7 @@
       deleteSessionBody: 'Isso não pode ser desfeito.',
       sessionOpen: 'Abrir', moreActions: 'Mais',
       reviewCta: 'Revisar',
-      reviewShort: 'Revisão', labShort: 'Lab',
+      reviewShort: 'Revisão', labShort: 'Lab', insightsNav: 'Insights', continueNav: 'Continuar',
       stateNew: 'Novo', stateLearning: 'Aprendendo', stateReview: 'Revisão',
       focusCards: '{n} cards',
       navGroupStudy: 'Estudo', navGroupLab: 'Lab', navGroupActivity: 'Atividade',
@@ -673,17 +683,17 @@
         ['overview', 'overview', false],
         ['library', 'library', true],
         ['sets', 'sets', true],
-        ['review', 'review', true],
-        ['insights', 'insights', true]
+        ['review', 'review', true, 'reviewShort'],
+        ['insights', 'insights', true, 'insightsNav']
       ]
     },
-    { key: 'navGroupLab', items: [['pro-lab', 'proLab', true]] },
+    { key: 'navGroupLab', items: [['pro-lab', 'proLab', true, 'labShort']] },
     {
       key: 'navGroupActivity',
       items: [
         ['history', 'history', true],
         ['notes', 'notes', true],
-        ['progress', 'progress', true]
+        ['progress', 'progress', true, 'continueNav']
       ]
     }
   ];
@@ -734,27 +744,31 @@
     var current = studySection();
     var badge = logic().planBadge(user);
     var main = $('ws-nav-main');
+    var studyNav = $('ws-study-nav');
     var foot = $('ws-nav-foot');
     var bottom = $('ws-bottom');
     if (main) {
       var siteNav = '<div class="ws-nav-block ws-nav-site"><h2 class="ws-nav-group">' + escapeHtml(t('navGroupSite')) + '</h2>' +
         SITE_NAV.map(function (pair) {
-          var context = pair[0] === '/app' ? ' is-context' : '';
+          var context = pair[0] === '/app' ? ' is-active' : '';
           return '<a class="ws-nav-item' + context + '" href="' + pair[0] + '">' + icon(pair[2]) +
             '<span class="ws-nav-label">' + escapeHtml(t(pair[1])) + '</span></a>';
         }).join('') + '</div>';
-      main.innerHTML = siteNav + NAV_GROUPS.map(function (group) {
-        return '<div class="ws-nav-block"><h2 class="ws-nav-group">' + escapeHtml(t(group.key)) + '</h2>' +
-          group.items.map(function (pair) {
-            var active = pair[0] === current ? ' is-active' : '';
-            var locked = pair[2] && !proUser(user);
-            var meta = locked ? '<span class="ws-nav-meta">' + escapeHtml(t('pro')) + '</span>' : '';
-            var gate = locked ? ' data-pro-nav="' + pair[0] + '" data-pro-label="' + pair[1] + '"' : '';
-            return '<a class="ws-nav-item' + active + (locked ? ' is-locked' : '') + '" href="/app?section=' + pair[0] + '"' + gate + '>' +
-              icon(pair[0]) + '<span class="ws-nav-label">' + escapeHtml(t(pair[1])) + '</span>' + meta + '</a>';
-          }).join('') + '</div>';
-      }).join('');
+      main.innerHTML = siteNav;
       bindProNav(main);
+    }
+    if (studyNav) {
+      studyNav.innerHTML = NAV_GROUPS.map(function (group) {
+        return group.items.map(function (pair) {
+          var active = pair[0] === current ? ' is-active' : '';
+          var locked = pair[2] && !proUser(user);
+          var meta = locked ? '<span class="ws-study-nav-meta">' + escapeHtml(t('pro')) + '</span>' : '';
+          var gate = locked ? ' data-pro-nav="' + pair[0] + '" data-pro-label="' + pair[1] + '"' : '';
+          return '<a class="ws-study-nav-item' + active + (locked ? ' is-locked' : '') + '" href="/app?section=' + pair[0] + '"' + gate + '>' +
+            icon(pair[0]) + '<span>' + escapeHtml(t(pair[3] || pair[1])) + '</span>' + meta + '</a>';
+        }).join('');
+      }).join('');
+      bindProNav(studyNav);
     }
     if (foot) {
       if (!user) {
@@ -788,6 +802,7 @@
     if (skip) skip.textContent = t('skipToContent');
     var mainNav = $('ws-nav-main');
     if (mainNav) mainNav.setAttribute('aria-label', t('workspaceTag'));
+    if (studyNav) studyNav.setAttribute('aria-label', t('navGroupStudy'));
     var bottomNav = $('ws-bottom');
     if (bottomNav) bottomNav.setAttribute('aria-label', t('workspaceTag'));
     var chip = $('ws-user-name');
@@ -2307,11 +2322,11 @@
       '<p class="ws-hero-copy">' + escapeHtml(t('upgradeFor')) + ' ' + escapeHtml(t('upgradeForList')) + '</p>' +
       '<a class="ws-btn ws-btn-primary" href="/pricing">' + escapeHtml(t('explorePro')) + '</a></div></section>' +
       '<section class="ws-solver-shortcut is-locked"><span class="ws-lab-badge">' + escapeHtml(t('pro')) + '</span><h2 class="ws-h2">' + escapeHtml(t('chemistrySolver')) + '</h2><p class="ws-lede">' + escapeHtml(t('freeSolverPreview')) + '</p><a class="ws-btn ws-btn-secondary" href="/pricing">' + escapeHtml(t('explorePro')) + '</a></section>' +
-      '<div class="ws-grid ws-grid-3">' +
-      '<a class="ws-lab-card" href="/periodic-table.html"><h3 class="ws-lab-card-title">' + escapeHtml(t('openTable')) + '</h3></a>' +
-      '<a class="ws-lab-card" href="/calculators.html"><h3 class="ws-lab-card-title">' + escapeHtml(t('publicCalc')) + '</h3></a>' +
-      '<a class="ws-lab-card" href="/viewer/atomic-models.html"><h3 class="ws-lab-card-title">' + escapeHtml(t('openViewer')) + '</h3></a>' +
-      '<a class="ws-lab-card" href="/explore.html"><h3 class="ws-lab-card-title">' + escapeHtml(t('openExplore')) + '</h3></a>' +
+      '<div class="ws-grid ws-public-grid">' +
+      '<a class="ws-lab-card" href="/periodic-table.html"><span class="ws-lab-badge">' + escapeHtml(t('publicTool')) + '</span><h3 class="ws-lab-card-title">' + escapeHtml(t('openTable')) + '</h3><p class="ws-lab-card-copy">' + escapeHtml(t('tableCardCopy')) + '</p><span class="ws-card-arrow" aria-hidden="true">→</span></a>' +
+      '<a class="ws-lab-card" href="/calculators.html"><span class="ws-lab-badge">' + escapeHtml(t('publicTool')) + '</span><h3 class="ws-lab-card-title">' + escapeHtml(t('publicCalc')) + '</h3><p class="ws-lab-card-copy">' + escapeHtml(t('calcCardCopy')) + '</p><span class="ws-card-arrow" aria-hidden="true">→</span></a>' +
+      '<a class="ws-lab-card" href="/viewer/atomic-models.html"><span class="ws-lab-badge">' + escapeHtml(t('pro')) + '</span><h3 class="ws-lab-card-title">' + escapeHtml(t('openViewer')) + '</h3><p class="ws-lab-card-copy">' + escapeHtml(t('viewerCardCopy')) + '</p><span class="ws-card-arrow" aria-hidden="true">→</span></a>' +
+      '<a class="ws-lab-card" href="/explore.html"><span class="ws-lab-badge">' + escapeHtml(t('publicTool')) + '</span><h3 class="ws-lab-card-title">' + escapeHtml(t('openExplore')) + '</h3><p class="ws-lab-card-copy">' + escapeHtml(t('exploreCardCopy')) + '</p><span class="ws-card-arrow" aria-hidden="true">→</span></a>' +
       '</div>';
   }
 

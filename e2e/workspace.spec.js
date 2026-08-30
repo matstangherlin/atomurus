@@ -13,13 +13,13 @@ function saveShot(page, name) {
 test('Free sees premium nav locked and cannot use Study Cloud', async ({ page }) => {
   await installApi(page, { kind: 'free' });
   await gotoWorkspace(page, '/app');
-  await expect(page.locator('#ws-nav-main')).toContainText(/Library|Biblioteca/);
-  await expect(page.locator('#ws-nav-main')).toContainText(/Study Sets/);
-  await expect(page.locator('#ws-nav-main')).toContainText(/Smart Review/);
-  await expect(page.locator('#ws-nav-main')).toContainText(/PRO/);
+  await expect(page.locator('#ws-study-nav')).toContainText(/Library|Biblioteca/);
+  await expect(page.locator('#ws-study-nav')).toContainText(/Study Sets/);
+  await expect(page.locator('#ws-study-nav')).toContainText(/Smart Review/);
+  await expect(page.locator('#ws-study-nav')).toContainText(/PRO/);
   await saveShot(page, 'desktop-free-overview');
 
-  await page.locator('#ws-nav-main a[href="/app?section=sets"]').click();
+  await page.locator('#ws-study-nav a[href="/app?section=sets"]').click();
   await expect(page.locator('#ws-dialog-host')).toContainText(/Atomurus Pro/);
   await expect(page).toHaveURL(/\/app$/);
   await page.locator('#ws-dialog-host button').first().click();
@@ -171,13 +171,13 @@ test('Payment issue offers Manage billing', async ({ page }) => {
 test('PT/EN workspace rerender', async ({ page }) => {
   await installApi(page, { kind: 'pro', lang: 'en' });
   await gotoWorkspace(page, '/app');
-  await expect(page.locator('#ws-nav-main')).toContainText(/Overview|Library/);
+  await expect(page.locator('#ws-study-nav')).toContainText(/Overview|Library/);
   await page.locator('[data-i18n-toggle]').first().click();
-  await expect(page.locator('#ws-nav-main')).toContainText('Visão geral');
-  await expect(page.locator('#ws-nav-main')).toContainText('Biblioteca');
+  await expect(page.locator('#ws-study-nav')).toContainText('Visão geral');
+  await expect(page.locator('#ws-study-nav')).toContainText('Biblioteca');
   await saveShot(page, 'app-overview-pt');
   await page.locator('[data-i18n-toggle]').first().click();
-  await expect(page.locator('#ws-nav-main')).toContainText('Overview');
+  await expect(page.locator('#ws-study-nav')).toContainText('Overview');
   await saveShot(page, 'app-overview-en');
 });
 
