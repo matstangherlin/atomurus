@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en-US" data-theme="light" class="auth-pending">
+<html lang="en-US" data-theme="dark" class="auth-pending">
 <head>
 <style>html.lang-pt-pending [data-i18n],html.lang-pt-pending [data-i18n-html],html.lang-pt-pending [data-i18n-attr],html.lang-pt-pending [data-page-field]{visibility:hidden!important}html[data-theme="dark"] #icon-theme-light,html[data-theme="light"] #icon-theme-dark{display:none!important}html[data-theme="dark"] #icon-theme-dark,html[data-theme="light"] #icon-theme-light{display:block!important}</style>
 <script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var KEY='atomurus-lang';var p=new URLSearchParams(location.search).get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem(KEY);if(l!=='pt'&&l!=='en'){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}try{localStorage.setItem(KEY,l);}catch(e){}if(l==='pt'){document.documentElement.lang='pt-BR';document.documentElement.classList.add('lang-pt-pending');setTimeout(function(){document.documentElement.classList.remove('lang-pt-pending');},120);}else{document.documentElement.lang='en-US';}}catch(e){}})();</script>
@@ -31,12 +31,12 @@
 <link rel="stylesheet" href="/assets/critical-lab.css?v=202608041630">
 <link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630">
 <link rel="stylesheet" href="assets/workspace-foundation.css?v=202608282240">
-<link rel="stylesheet" href="assets/app-workspace.css?v=202608283200">
+<link rel="stylesheet" href="assets/app-workspace.css?v=202608292200">
 <script src="workspace-logic.js?v=202608283200" defer></script>
 <script src="workspace-ui.js?v=202608282240" defer></script>
 <script src="study-client.js?v=202608282000" defer></script>
 <script src="pro-lab.js?v=202608283300" defer></script>
-<script src="auth-app.js?v=202608283200" defer></script>
+<script src="auth-app.js?v=202608292200" defer></script>
 </head>
 <body class="ws-body">
 <a class="ws-skip" href="#app-study" id="ws-skip">Skip to content</a>
@@ -56,7 +56,7 @@
       </div>
       <div>
         <div class="ws-brand-name">Atomurus</div>
-        <div class="ws-brand-tag" data-i18n="common.ws.workspaceTag">study workspace</div>
+        <div class="ws-brand-tag" data-i18n="common.brandTag">chemistry lab</div>
       </div>
     </a>
     <form class="ws-search" action="/periodic-table.html" method="get" role="search">

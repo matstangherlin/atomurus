@@ -9,7 +9,9 @@
       overview: 'Overview', library: 'Library', sets: 'Study Sets', review: 'Smart Review',
       history: 'Calculator History', notes: 'Notes', progress: 'Continue Studying',
       account: 'Account', plan: 'Plan', logout: 'Logout', login: 'Sign in', upgrade: 'Upgrade to Pro',
-      menu: 'Menu', workspaceTag: 'study workspace',
+      menu: 'Menu', workspaceTag: 'chemistry lab',
+      navGroupSite: 'Laboratory', homeNav: 'Home', periodicNav: 'Periodic Table',
+      viewerNav: 'Viewer', calculatorsNav: 'Calculators', exploreNav: 'Explore',
       greetingMorning: 'Good morning, {name}', greetingAfternoon: 'Good afternoon, {name}',
       greetingEvening: 'Good evening, {name}', greetingFallback: 'Ready for your next study session?',
       dueHeroTitle: '{n} cards ready for review', dueHeroTitleOne: '{n} card ready for review',
@@ -262,7 +264,9 @@
       overview: 'Visão geral', library: 'Biblioteca', sets: 'Study Sets', review: 'Smart Review',
       history: 'Histórico', notes: 'Notas', progress: 'Continuar estudando',
       account: 'Conta', plan: 'Plano', logout: 'Sair', login: 'Entrar', upgrade: 'Assinar o Pro',
-      menu: 'Menu', workspaceTag: 'workspace de estudo',
+      menu: 'Menu', workspaceTag: 'laboratório de química',
+      navGroupSite: 'Laboratório', homeNav: 'Início', periodicNav: 'Tabela Periódica',
+      viewerNav: 'Visualizador', calculatorsNav: 'Calculadoras', exploreNav: 'Explorar',
       greetingMorning: 'Bom dia, {name}', greetingAfternoon: 'Boa tarde, {name}',
       greetingEvening: 'Boa noite, {name}', greetingFallback: 'Pronto para a próxima sessão?',
       dueHeroTitle: '{n} cards prontos para revisar', dueHeroTitleOne: '{n} card pronto para revisar',
@@ -654,6 +658,11 @@
       lock: '<path d="M5 7V5.5a3 3 0 0 1 6 0V7M4 7h8v6H4z"/>',
       logout: '<path d="M6 3H3.5A1.5 1.5 0 0 0 2 4.5v7A1.5 1.5 0 0 0 3.5 13H6M10 11l3-3-3-3M13 8H6"/>'
     };
+    paths.home = '<path d="M2.5 7.5 8 3l5.5 4.5M4 6.5V13h8V6.5M6.5 13V9h3v4"/>';
+    paths.periodic = '<path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/>';
+    paths.viewer = '<circle cx="8" cy="8" r="2"/><ellipse cx="8" cy="8" rx="6" ry="2.5"/><ellipse cx="8" cy="8" rx="6" ry="2.5" transform="rotate(60 8 8)"/>';
+    paths.calculators = '<rect x="3" y="2" width="10" height="12" rx="1"/><path d="M5 5h6M5.5 8h1M9.5 8h1M5.5 11h1M9.5 11h1"/>';
+    paths.explore = '<path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/>';
     return '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none">' + (paths[name] || paths.overview) + '</g></svg>';
   }
 
@@ -677,6 +686,15 @@
         ['progress', 'progress', true]
       ]
     }
+  ];
+
+  var SITE_NAV = [
+    ['/', 'homeNav', 'home'],
+    ['/periodic-table.html', 'periodicNav', 'periodic'],
+    ['/viewer/atomic-models.html', 'viewerNav', 'viewer'],
+    ['/calculators.html', 'calculatorsNav', 'calculators'],
+    ['/explore.html', 'exploreNav', 'explore'],
+    ['/app', 'study', 'progress']
   ];
 
   function proUser(user) { return logic().isProUser(user); }
@@ -719,7 +737,13 @@
     var foot = $('ws-nav-foot');
     var bottom = $('ws-bottom');
     if (main) {
-      main.innerHTML = NAV_GROUPS.map(function (group) {
+      var siteNav = '<div class="ws-nav-block ws-nav-site"><h2 class="ws-nav-group">' + escapeHtml(t('navGroupSite')) + '</h2>' +
+        SITE_NAV.map(function (pair) {
+          var context = pair[0] === '/app' ? ' is-context' : '';
+          return '<a class="ws-nav-item' + context + '" href="' + pair[0] + '">' + icon(pair[2]) +
+            '<span class="ws-nav-label">' + escapeHtml(t(pair[1])) + '</span></a>';
+        }).join('') + '</div>';
+      main.innerHTML = siteNav + NAV_GROUPS.map(function (group) {
         return '<div class="ws-nav-block"><h2 class="ws-nav-group">' + escapeHtml(t(group.key)) + '</h2>' +
           group.items.map(function (pair) {
             var active = pair[0] === current ? ' is-active' : '';
@@ -767,9 +791,12 @@
     var bottomNav = $('ws-bottom');
     if (bottomNav) bottomNav.setAttribute('aria-label', t('workspaceTag'));
     var chip = $('ws-user-name');
-    if (chip) chip.textContent = displayName(user);
+    if (chip) chip.textContent = user ? displayName(user) : t('account');
     var userChip = $('ws-userchip');
-    if (userChip) userChip.hidden = !user;
+    if (userChip) {
+      userChip.hidden = false;
+      userChip.href = user ? '/app?section=account' : '/login?next=%2Fapp%3Fsection%3Daccount';
+    }
     var planBadge = $('ws-plan-badge');
     if (planBadge) {
       if (badge.kind === 'pro' || badge.kind === 'trial' || badge.kind === 'admin') {
