@@ -12,8 +12,8 @@
 <meta name="apple-mobile-web-app-title" content="Atomurus">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex,nofollow">
-<link rel="icon" type="image/png" href="assets/atomurus-logo.png?v=202608041630">
-<link rel="apple-touch-icon" href="assets/atomurus-logo.png?v=202608041630">
+<link rel="icon" type="image/png" href="assets/atomurus-logo.png?v=202608301050">
+<link rel="apple-touch-icon" href="assets/atomurus-logo.png?v=202608301050">
   <title>Login — Atomurus</title>
 <meta name="description" content="Atomurus login and account creation with email and password.">
 <meta property="og:title" content="Login — Atomurus">
@@ -21,18 +21,19 @@
 <link rel="canonical" href="https://atomurus.com/login">
 <link rel="preload" href="/assets/fonts/inter-tight-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/instrument-serif-400-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202608041630">
-<script src="auth-sync.js?v=202608272400"></script>
-<script src="auth-client.js?v=202608272400"></script>
-<script src="ads-gate.js?v=202608041630"></script>
-<script src="cookie-consent.js?v=202608041630" defer></script>
-<script src="i18n.js?v=202608272240" defer></script>
-<script src="meta-i18n.js?v=202608041630" defer></script>
-<link rel="stylesheet" href="/assets/critical-lab.css?v=202608041630">
-<link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630">
-<link rel="stylesheet" href="/assets/public-shell.css?v=202608281830">
-<script src="/assets/public-workspace.js?v=202608282500"></script>
-<script src="atomurus-mobile-nav.js?v=202608041630" defer></script>
+<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202608301050">
+<script src="auth-sync.js?v=202608301050"></script>
+<script src="auth-client.js?v=202608301050"></script>
+<script src="ads-gate.js?v=202608301050"></script>
+<script src="cookie-consent.js?v=202608301050" defer></script>
+<script src="i18n.js?v=202608301050" defer></script>
+<script src="meta-i18n.js?v=202608301050" defer></script>
+<link rel="stylesheet" href="/assets/critical-lab.css?v=202608301050">
+<link rel="stylesheet" href="atomurus-lab-console.css?v=202608301050" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="atomurus-lab-console.css?v=202608301050"></noscript>
+<link rel="stylesheet" href="/assets/public-shell.css?v=202608301050">
+<script src="/assets/public-workspace.js?v=202608301050"></script>
+<script src="atomurus-mobile-nav.js?v=202608301050" defer></script>
 <style>
   /* Login must stay readable on the default light cream theme.
      Hardcoded white/glass text previously vanished on --lc-bg. */
@@ -391,14 +392,6 @@
 
       <form class="lc-form" id="auth-signup-form" novalidate>
       <div class="field">
-        <label for="auth-signup-name" data-i18n="common.auth.fullName">Full name</label>
-        <input id="auth-signup-name" name="fullName" type="text" required autocomplete="name" maxlength="120" placeholder="Matheus Stan Gherlin">
-      </div>
-      <div class="field">
-        <label for="auth-signup-username" data-i18n="common.auth.username">Username</label>
-        <input id="auth-signup-username" name="username" type="text" required autocomplete="username" maxlength="30" pattern="^[a-z0-9](?:[a-z0-9._-]{1,28}[a-z0-9])?$" placeholder="matheusstan">
-      </div>
-      <div class="field">
         <label for="auth-signup-email" data-i18n="common.auth.email">Email</label>
         <input id="auth-signup-email" name="email" type="email" required autocomplete="email" maxlength="200">
       </div>
@@ -424,7 +417,7 @@
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 2v9M2 6.5h9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
         <span data-i18n="common.auth.createAccount">Create account</span>
       </button>
-      <div class="auth-fineprint" data-i18n="common.auth.fineprint">Use your full natural name and a unique public username. Passwords must have at least 9 characters and one special character, and are never stored in raw form by Atomurus.</div>
+      <div class="auth-fineprint" data-i18n="common.auth.fineprint">Passwords must have at least 9 characters and one special character, and are never stored in raw form by Atomurus.</div>
       <div class="feedback ok" id="auth-signup-ok" aria-live="polite" data-i18n="common.auth.signupOk">Account created. Check your email if confirmation is required, then sign in.</div>
       <div class="feedback err" id="auth-signup-err" role="alert" aria-live="polite" data-i18n="common.auth.signupError">Could not create this account. Try signing in or use another email.</div>
       </form>
@@ -566,10 +559,10 @@
 function toggleTheme(){var h=document.documentElement;var d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');localStorage.setItem('atomurus-theme',d?'light':'dark')}
 (function(){var s=localStorage.getItem('atomurus-theme');if(s)document.documentElement.setAttribute('data-theme',s)})();
 </script>
-<script src="auth-login.js?v=202608272330"></script>
+<script src="auth-login.js?v=202608301050"></script>
 <script type="text/javascript">
     (window.atomurusRunAutoTag||function(){})({ zoneId: '6p1sooifu8' });
 </script>
-<script src="lazy-ads.js?v=202608041630" defer></script>
+<script src="lazy-ads.js?v=202608301050" defer></script>
 </body>
 </html>

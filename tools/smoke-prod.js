@@ -54,6 +54,20 @@ const CHECKS = [
       assert(status === 401, 'expected 401');
       assert(data.ok === false, 'expected ok:false');
     }
+  },
+  {
+    name: 'auth/login with credentials returns instead of hanging',
+    path: '/api/auth/login',
+    method: 'POST',
+    json: true,
+    timeoutMs: 12000,
+    origin: true,
+    body: { identifier: 'smoke-timeout@example.com', password: 'WrongPass1!' },
+    allowStatus: [401, 403, 429, 503],
+    test: (data, _h, status) => {
+      assert(status !== 504, 'login still hanging to 504');
+      assert(data && data.ok === false, 'expected ok:false');
+    }
   }
 ];
 
@@ -62,10 +76,30 @@ function assert(cond, msg) {
 }
 
 async function runCheck(check) {
-  const res = await fetch(BASE + check.path, {
-    redirect: 'follow',
-    headers: { Accept: check.json ? 'application/json' : 'text/html', 'User-Agent': 'AtomurusSmoke/1.0' }
-  });
+  const timeoutMs = Number(check.timeoutMs) > 0 ? Number(check.timeoutMs) : 20000;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  let res;
+  try {
+    const headers = {
+      Accept: check.json ? 'application/json' : 'text/html',
+      'User-Agent': 'AtomurusSmoke/1.0'
+    };
+    if (check.origin) headers.Origin = BASE;
+    if (check.body) headers['Content-Type'] = 'application/json';
+    res = await fetch(BASE + check.path, {
+      method: check.method || 'GET',
+      redirect: 'follow',
+      headers,
+      body: check.body ? JSON.stringify(check.body) : undefined,
+      signal: controller.signal
+    });
+  } catch (err) {
+    if (err && err.name === 'AbortError') throw new Error(`timed out after ${timeoutMs}ms`);
+    throw err;
+  } finally {
+    clearTimeout(timer);
+  }
   const status = res.status;
   const allowed = check.allowStatus || [200];
   if (!allowed.includes(status) && status !== 200) {
