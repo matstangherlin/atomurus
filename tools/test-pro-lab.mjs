@@ -14,6 +14,8 @@ import balanceHandler from '../netlify/functions/pro-lab-reaction-balance.mjs';
 import solveHandler from '../netlify/functions/pro-lab-reaction-solve.mjs';
 import formulaHandler from '../netlify/functions/pro-lab-formula-solve.mjs';
 import solutionsHandler from '../netlify/functions/pro-lab-solutions-solve.mjs';
+import equilibriumHandler from '../netlify/functions/pro-lab-equilibrium-solve.mjs';
+import acidBaseHandler from '../netlify/functions/pro-lab-acid-base-solve.mjs';
 import thermoHandler from '../netlify/functions/pro-lab-thermodynamics-solve.mjs';
 import viewerMoleculeHandler from '../netlify/functions/pro-lab-viewer-molecule.mjs';
 
@@ -400,6 +402,15 @@ assert.match(planAccess, /reactionBalancer: isPro/);
 assert.match(planAccess, /stoichiometrySolver: isPro/);
 assert.match(planAccess, /formulaSolver: isPro/);
 assert.match(planAccess, /solutionBuilder: isPro/);
+assert.match(planAccess, /equilibriumWorkbench: isPro/);
+assert.match(planAccess, /equilibriumSolver: isPro/);
+assert.match(planAccess, /reactionQuotient: isPro/);
+assert.match(planAccess, /iceTableSolver: isPro/);
+assert.match(planAccess, /acidBaseWorkbench: isPro/);
+assert.match(planAccess, /weakAcidSolver: isPro/);
+assert.match(planAccess, /weakBaseSolver: isPro/);
+assert.match(planAccess, /bufferSolver: isPro/);
+assert.match(planAccess, /acidBaseConstants: isPro/);
 assert.match(planAccess, /scientificCalculator: signedIn/);
 assert.match(planAccess, /const interactiveViewers = isPro/);
 assert.match(planAccess, /publicStoichiometry: isPro/);
@@ -429,6 +440,8 @@ await withLabEnv(async () => {
     [solveHandler, 'https://atomurus.com/api/pro-lab/reaction/solve', 'POST', 'stoichiometrySolver'],
     [formulaHandler, 'https://atomurus.com/api/pro-lab/formula/solve', 'POST', 'formulaSolver'],
     [solutionsHandler, 'https://atomurus.com/api/pro-lab/solutions/solve', 'POST', 'solutionBuilder'],
+    [equilibriumHandler, 'https://atomurus.com/api/pro-lab/equilibrium/solve', 'POST', 'equilibriumSolver'],
+    [acidBaseHandler, 'https://atomurus.com/api/pro-lab/acid-base/solve', 'POST', 'weakAcidSolver'],
     [thermoHandler, 'https://atomurus.com/api/pro-lab/thermodynamics/solve', 'POST', 'publicThermodynamics']
   ]) {
     const free = await handler(cookieRequest(url, {
@@ -694,6 +707,19 @@ await withLabEnv(async () => {
 const reactionState = validateSessionState('reaction', { equation: 'H2 + O2 -> H2O', quantities: [] });
 assert.equal(reactionState.solverVersion, 1);
 
+const eqState = validateSessionState('equilibrium', {
+  equation: 'H2(g) + I2(g) ⇌ 2HI(g)',
+  mode: 'ice',
+  K: 50,
+  initials: [{ formula: 'H2', value: 1, unit: 'mol/L' }]
+});
+assert.equal(eqState.solverVersion, 1);
+assert.equal(eqState.mode, 'ice');
+
+const abState = validateSessionState('acid_base', { mode: 'weak-acid', C: 0.1, Ka: 1e-5 });
+assert.equal(abState.solverVersion, 1);
+assert.equal(abState.Ka, 1e-5);
+
 await withLabEnv(async () => {
   const unsigned = await viewerMoleculeHandler(cookieRequest('https://atomurus.com/api/pro-lab/viewer/molecule?key=water'));
   assert.equal(unsigned.status, 401);
@@ -725,6 +751,66 @@ await withLabEnv(async () => {
   assert.equal(trial.status, 200);
   assert.equal(json.ok, true);
   assertPrivate(trial, json);
+});
+
+await withLabEnv(async () => {
+  const unsigned = await equilibriumHandler(cookieRequest('https://atomurus.com/api/pro-lab/equilibrium/solve', {
+    method: 'POST',
+    body: { mode: 'constant', equation: 'A <-> B', values: [{ formula: 'A', value: 0.2 }, { formula: 'B', value: 0.8 }] }
+  }));
+  assert.equal(unsigned.status, 401);
+
+  const iceLocked = await equilibriumHandler(cookieRequest('https://atomurus.com/api/pro-lab/equilibrium/solve', {
+    method: 'POST',
+    cookies: sessionCookie('access-free'),
+    body: { mode: 'ice', equation: 'A <-> B', K: 4, initials: [{ formula: 'A', value: 1 }, { formula: 'B', value: 0 }] }
+  }));
+  const iceJson = await readJson(iceLocked);
+  assert.equal(iceLocked.status, 403);
+  assert.equal(iceJson.feature, 'iceTableSolver');
+
+  const paid = await equilibriumHandler(cookieRequest('https://atomurus.com/api/pro-lab/equilibrium/solve', {
+    method: 'POST',
+    cookies: sessionCookie('access-pro-a'),
+    body: {
+      mode: 'constant',
+      equation: 'A <-> B',
+      values: [{ formula: 'A', value: 0.2, unit: 'mol/L' }, { formula: 'B', value: 0.8, unit: 'mol/L' }]
+    }
+  }));
+  const paidJson = await readJson(paid);
+  assert.equal(paid.status, 200);
+  assert.equal(paidJson.K, 4);
+  assertPrivate(paid, paidJson);
+
+  const trialAb = await acidBaseHandler(cookieRequest('https://atomurus.com/api/pro-lab/acid-base/solve', {
+    method: 'POST',
+    cookies: sessionCookie('access-trial'),
+    body: { mode: 'weak-acid', C: 0.1, Ka: 1e-5 }
+  }));
+  const abJson = await readJson(trialAb);
+  assert.equal(trialAb.status, 200);
+  assert.equal(abJson.pKa, 5);
+  assertPrivate(trialAb, abJson);
+
+  const created = await sessionsHandler(cookieRequest('https://atomurus.com/api/pro-lab/sessions', {
+    method: 'POST',
+    cookies: sessionCookie('access-pro-a'),
+    body: {
+      sessionType: 'equilibrium',
+      title: 'HI equilibrium',
+      state: {
+        equation: 'H2(g) + I2(g) ⇌ 2HI(g)',
+        mode: 'constant',
+        KClient: 99,
+        values: [{ formula: 'H2', value: 1 }]
+      }
+    }
+  }));
+  const createdJson = await readJson(created);
+  assert.equal(created.status, 200);
+  assert.equal(createdJson.session.state.solverVersion, 1);
+  assert.equal(createdJson.session.state.KClient, undefined);
 });
 
 console.log('pro-lab tests passed');

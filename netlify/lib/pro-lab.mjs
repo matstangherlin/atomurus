@@ -1,6 +1,8 @@
 import { clampText, studyError } from './study-cloud.mjs';
 import { CALCULATORS, runProCalculation } from './chemistry-calc.mjs';
 import { SOLVER_VERSION } from './chemistry-units.mjs';
+import { EQUILIBRIUM_SOLVER_VERSION } from './chemistry-equilibrium.mjs';
+import { ACID_BASE_SOLVER_VERSION } from './chemistry-acid-base.mjs';
 import {
   ELEMENT_CHART_KEYS,
   ELEMENT_PROPERTY_KEYS,
@@ -17,13 +19,17 @@ export const SESSION_TYPES = Object.freeze([
   'atomic_compare',
   'reaction',
   'formula_solver',
-  'solution_builder'
+  'solution_builder',
+  'equilibrium',
+  'acid_base'
 ]);
 
 export const SOLVER_SESSION_TYPES = Object.freeze([
   'reaction',
   'formula_solver',
-  'solution_builder'
+  'solution_builder',
+  'equilibrium',
+  'acid_base'
 ]);
 
 export const PRO_LAB_LIMITS = Object.freeze({
@@ -211,6 +217,56 @@ export function validateSessionState(sessionType, raw) {
         volume: row?.volume,
         volUnit: row?.volUnit ? String(row.volUnit).slice(0, 8) : undefined
       }))
+    };
+    assertStateSize(state);
+    return state;
+  }
+
+  if (type === 'equilibrium') {
+    const values = Array.isArray(raw.values) ? raw.values.slice(0, 16) : [];
+    const initials = Array.isArray(raw.initials) ? raw.initials.slice(0, 16) : [];
+    const mapRow = (row) => {
+      const formula = clampText(row?.formula || row?.species || '', 80, 'formula', false).trim();
+      if (!formula) return null;
+      return {
+        formula,
+        value: row?.value,
+        unit: row?.unit ? String(row.unit).slice(0, 12) : undefined
+      };
+    };
+    const state = {
+      solverVersion: EQUILIBRIUM_SOLVER_VERSION,
+      mode: String(raw.mode || 'constant').slice(0, 16),
+      kind: String(raw.kind || 'kc').slice(0, 8),
+      equation: raw.equation ? clampText(raw.equation, 1000, 'equation', true) : undefined,
+      K: raw.K,
+      T: raw.T,
+      TUnit: raw.TUnit ? String(raw.TUnit).slice(0, 4) : undefined,
+      convert: raw.convert === true ? true : undefined,
+      values: values.map(mapRow).filter(Boolean),
+      initials: initials.map(mapRow).filter(Boolean)
+    };
+    assertStateSize(state);
+    return state;
+  }
+
+  if (type === 'acid_base') {
+    const state = {
+      solverVersion: ACID_BASE_SOLVER_VERSION,
+      mode: String(raw.mode || 'weak-acid').slice(0, 16),
+      type: raw.type ? String(raw.type).slice(0, 8) : undefined,
+      inputMode: raw.inputMode ? String(raw.inputMode).slice(0, 16) : undefined,
+      action: raw.action ? String(raw.action).slice(0, 16) : undefined,
+      C: raw.C,
+      Ka: raw.Ka,
+      pKa: raw.pKa,
+      Kb: raw.Kb,
+      pKb: raw.pKb,
+      acid: raw.acid,
+      base: raw.base,
+      acidMoles: raw.acidMoles,
+      baseMoles: raw.baseMoles,
+      volume: raw.volume
     };
     assertStateSize(state);
     return state;

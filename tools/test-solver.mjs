@@ -192,12 +192,17 @@ assert.equal(free.features.limitingReagentSolver, false);
 assert.equal(free.features.yieldSolver, false);
 assert.equal(free.features.formulaSolver, false);
 assert.equal(free.features.solutionBuilder, false);
+assert.equal(free.features.equilibriumWorkbench, false);
+assert.equal(free.features.acidBaseWorkbench, false);
+assert.equal(free.features.iceTableSolver, false);
 
 const trial = accessForUser({ createdAt: new Date().toISOString(), email: 't@b.com' });
 assert.equal(trial.features.chemistrySolver, true);
 assert.equal(trial.features.reactionWorkbench, true);
 assert.equal(trial.features.formulaSolver, true);
 assert.equal(trial.features.solutionBuilder, true);
+assert.equal(trial.features.equilibriumSolver, true);
+assert.equal(trial.features.weakAcidSolver, true);
 
 const paid = accessForUser({
   createdAt: '2020-01-01T00:00:00.000Z',
@@ -215,7 +220,10 @@ const files = [
   'netlify/lib/chemistry-reactions.mjs',
   'netlify/lib/chemistry-stoichiometry.mjs',
   'netlify/lib/chemistry-formula-solver.mjs',
-  'netlify/lib/chemistry-solutions.mjs'
+  'netlify/lib/chemistry-solutions.mjs',
+  'netlify/lib/chemistry-equilibrium.mjs',
+  'netlify/lib/chemistry-acid-base.mjs',
+  'netlify/lib/chemistry-numerics.mjs'
 ];
 for (const rel of files) {
   const src = readFileSync(new URL('../' + rel, import.meta.url), 'utf8');

@@ -8,6 +8,7 @@
 #   CONTACT_TO           = contato@atomurus.com         # inbox that receives form messages
 #   SUPABASE_URL         = https://<project>.supabase.co
 #   SUPABASE_ANON_KEY    = <supabase anon key>
+#   SUPABASE_FETCH_TIMEOUT_MS = 8000  # optional: abort hung GoTrue body reads
 #
 # OPTIONAL ENVIRONMENT VARIABLES:
 #   SUPABASE_SERVICE_ROLE_KEY = <supabase service role key> # server-only: username lookup, billing metadata
@@ -246,6 +247,16 @@
 [[redirects]]
   from   = "/api/pro-lab/solutions/solve"
   to     = "/.netlify/functions/pro-lab-solutions-solve"
+  status = 200
+
+[[redirects]]
+  from   = "/api/pro-lab/equilibrium/solve"
+  to     = "/.netlify/functions/pro-lab-equilibrium-solve"
+  status = 200
+
+[[redirects]]
+  from   = "/api/pro-lab/acid-base/solve"
+  to     = "/.netlify/functions/pro-lab-acid-base-solve"
   status = 200
 
 [[redirects]]

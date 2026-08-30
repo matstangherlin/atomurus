@@ -43,6 +43,15 @@ function features(on) {
     yieldSolver: on,
     formulaSolver: on,
     solutionBuilder: on,
+    equilibriumWorkbench: on,
+    equilibriumSolver: on,
+    reactionQuotient: on,
+    iceTableSolver: on,
+    acidBaseWorkbench: on,
+    weakAcidSolver: on,
+    weakBaseSolver: on,
+    bufferSolver: on,
+    acidBaseConstants: on,
     scientificCalculator: true,
     unitConverter: true,
     idealGasCalculator: true,
@@ -688,6 +697,24 @@ async function installApi(page, options = {}) {
       try {
         const { solveSolution } = await import('../netlify/lib/chemistry-solutions.mjs');
         return json(route, 200, solveSolution(body));
+      } catch (err) {
+        return json(route, err.status || 400, { ok: false, error: err.message, code: err.code || 'invalid_request' });
+      }
+    }
+    if (path === '/api/pro-lab/equilibrium/solve' && method === 'POST') {
+      const body = req.postDataJSON() || {};
+      try {
+        const { solveEquilibrium } = await import('../netlify/lib/chemistry-equilibrium.mjs');
+        return json(route, 200, solveEquilibrium(body));
+      } catch (err) {
+        return json(route, err.status || 400, { ok: false, error: err.message, code: err.code || 'invalid_request' });
+      }
+    }
+    if (path === '/api/pro-lab/acid-base/solve' && method === 'POST') {
+      const body = req.postDataJSON() || {};
+      try {
+        const { solveAcidBase } = await import('../netlify/lib/chemistry-acid-base.mjs');
+        return json(route, 200, solveAcidBase(body));
       } catch (err) {
         return json(route, err.status || 400, { ok: false, error: err.message, code: err.code || 'invalid_request' });
       }
