@@ -69,6 +69,35 @@ export function validUsername(username) {
   return /^[a-z0-9](?:[a-z0-9._-]{1,28}[a-z0-9])?$/.test(username);
 }
 
+/** Public username from an email local-part when the signup form does not collect one. */
+export function usernameFromEmail(email) {
+  const local = String(email || '').split('@')[0] || '';
+  const withoutTag = local.split('+')[0];
+  let s = withoutTag.toLowerCase().replace(/[^a-z0-9._-]/g, '');
+  s = s.replace(/^[._-]+/g, '').replace(/[._-]+$/g, '');
+  if (s.length > 30) s = s.slice(0, 30).replace(/[._-]+$/g, '');
+  if (s.length < 3) s = (s + 'user').slice(0, 30);
+  if (!validUsername(s)) {
+    const alnum = (s.replace(/[^a-z0-9]/g, '') || 'user');
+    s = alnum.length >= 3 ? alnum.slice(0, 30) : (alnum + 'user').slice(0, 30);
+  }
+  if (!validUsername(s)) s = 'user000';
+  return s;
+}
+
+export function usernameCandidates(base) {
+  const root = validUsername(base) ? String(base) : usernameFromEmail(base);
+  const out = [root];
+  for (let i = 2; i <= 30; i += 1) {
+    const suffix = String(i);
+    const trimmed = root.slice(0, Math.max(1, 30 - suffix.length)).replace(/[._-]+$/g, '');
+    let next = `${trimmed}${suffix}`.slice(0, 30);
+    if (!validUsername(next)) next = `user${suffix}`.slice(0, 30);
+    if (next && !out.includes(next)) out.push(next);
+  }
+  return out;
+}
+
 export function passwordPolicyError(password) {
   const value = String(password || '');
   if (value.length < 9 || value.length > 1024) {

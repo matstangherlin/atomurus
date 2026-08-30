@@ -77,6 +77,12 @@
     },
     solveSolution: function (body) {
       return request('/api/pro-lab/solutions/solve', { method: 'POST', body: JSON.stringify(body || {}) });
+    },
+    solveEquilibrium: function (body) {
+      return request('/api/pro-lab/equilibrium/solve', { method: 'POST', body: JSON.stringify(body || {}) });
+    },
+    solveAcidBase: function (body) {
+      return request('/api/pro-lab/acid-base/solve', { method: 'POST', body: JSON.stringify(body || {}) });
     }
   };
 })();

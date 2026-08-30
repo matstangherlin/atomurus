@@ -38,15 +38,17 @@ function patch(html) {
     return html;
   }
 
+  const hasCritical = html.includes('critical-lab.css');
   return html.replace(LINK_RE, (full, href) => {
     // Extract version query if present
     const vMatch = href.match(/\?v=(\d+)/);
     const v = vMatch ? `?v=${vMatch[1]}` : '';
-    return [
-      `<link rel="stylesheet" href="/assets/critical-lab.css${v}">`,
+    const asyncCss = [
       `<link rel="stylesheet" href="${href}" media="print" onload="this.media='all'">`,
-      `<noscript><link rel="stylesheet" href="${href}"></noscript>`,
-    ].join('\n');
+      `<noscript><link rel="stylesheet" href="${href}"></noscript>`
+    ];
+    if (hasCritical) return asyncCss.join('\n');
+    return [`<link rel="stylesheet" href="/assets/critical-lab.css${v}">`, ...asyncCss].join('\n');
   });
 }
 

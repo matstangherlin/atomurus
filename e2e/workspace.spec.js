@@ -15,7 +15,7 @@ test('Free sees premium nav locked and cannot use Study Cloud', async ({ page })
   await gotoWorkspace(page, '/app');
   await expect(page.locator('#ws-study-nav')).toContainText(/Library|Biblioteca/);
   await expect(page.locator('#ws-study-nav')).toContainText(/Study Sets/);
-  await expect(page.locator('#ws-study-nav')).toContainText(/Smart Review/);
+  await expect(page.locator('#ws-study-nav')).toContainText(/Review/);
   await expect(page.locator('#ws-study-nav')).toContainText(/PRO/);
   await saveShot(page, 'desktop-free-overview');
 

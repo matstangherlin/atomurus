@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { authConfirm, authLogin, authLogout, authRecover, authRefresh, authReset, authSession, authSignup } from '../netlify/lib/auth-provider.mjs';
 import { isProtectedPath, safeNextPath } from '../netlify/lib/auth-redirect.mjs';
 import { loginIdentifierLimiter, refreshIpLimiter, resetAuthRateLimiters } from '../netlify/lib/auth-rate-limit.mjs';
+import { usernameFromEmail, usernameCandidates, validUsername } from '../netlify/lib/netlify-identity-utils.mjs';
 import { resetRefreshFlights } from '../netlify/lib/supabase-auth.mjs';
 import loginHandler from '../netlify/functions/auth-login.mjs';
 import meHandler from '../netlify/functions/auth-me.mjs';
@@ -45,6 +46,7 @@ function jsonRes(status, body) {
   return {
     ok: status >= 200 && status < 300,
     status,
+    headers: new Headers(),
     text: async () => JSON.stringify(body)
   };
 }
@@ -751,6 +753,81 @@ await withAuthEnv(async () => {
   assert.equal(refreshCalls, 1);
   assert.equal(first.user.email, 'alice@atomurus.com');
   assert.equal(second.user.email, 'alice@atomurus.com');
+});
+
+assert.equal(usernameFromEmail('foo+tag@atomurus.com'), 'foo');
+assert.equal(usernameFromEmail('Matheus.Stan@atomurus.com'), 'matheus.stan');
+assert.ok(validUsername(usernameFromEmail('a@atomurus.com')));
+assert.ok(usernameCandidates('alice').includes('alice'));
+assert.ok(usernameCandidates('alice').includes('alice2'));
+
+await withAuthEnv(async () => {
+  resetAuthRateLimiters();
+  let captured;
+  installSupabaseMock([{
+    match: (url, method) => method === 'POST' && url.includes('/signup'),
+    respond: async (_url, _method, options) => {
+      captured = JSON.parse(options.body);
+      return jsonRes(200, { user: demoUser({ email: 'onlymail@atomurus.com', email_confirmed_at: null, user_metadata: { username: captured.data.username } }) });
+    }
+  }]);
+  const res = await signupHandler(cookieRequest('https://atomurus.com/api/auth/signup', {
+    method: 'POST',
+    body: {
+      email: 'onlymail@atomurus.com',
+      password: 'Correct#Pass',
+      passwordConfirm: 'Correct#Pass'
+    }
+  }));
+  const json = await readJson(res);
+  assert.equal(res.status, 200);
+  assert.equal(captured.data.username, 'onlymail');
+  assert.equal(json.ok, true);
+});
+
+await withAuthEnv(async () => {
+  // Hung GoTrue body read must fail closed instead of sitting on "Signing in…"
+  resetAuthRateLimiters();
+  process.env.SUPABASE_FETCH_TIMEOUT_MS = '40';
+  process.env.SUPABASE_FETCH_RETRIES = '0';
+  installSupabaseMock([{
+    match: (url, method) => method === 'POST' && url.includes('/token?grant_type=password'),
+    respond: () => new Promise(() => {})
+  }]);
+  const started = Date.now();
+  const res = await loginHandler(cookieRequest('https://atomurus.com/api/auth/login', {
+    method: 'POST',
+    body: { identifier: 'alice@atomurus.com', password: 'Correct#Pass' }
+  }));
+  assert.ok(Date.now() - started < 1500);
+  assert.equal(res.status, 503);
+  const body = await readJson(res);
+  assert.equal(body.ok, false);
+  assert.equal(body.code, 'upstream_timeout');
+});
+
+await withAuthEnv(async () => {
+  resetAuthRateLimiters();
+  process.env.SUPABASE_FETCH_TIMEOUT_MS = '40';
+  process.env.SUPABASE_FETCH_RETRIES = '1';
+  let calls = 0;
+  installSupabaseMock([{
+    match: (url, method) => method === 'POST' && url.includes('/token?grant_type=password'),
+    respond: async () => {
+      calls += 1;
+      if (calls === 1) return new Promise(() => {});
+      return jsonRes(200, sessionBody());
+    }
+  }]);
+  const res = await loginHandler(cookieRequest('https://atomurus.com/api/auth/login', {
+    method: 'POST',
+    body: { identifier: 'alice@atomurus.com', password: 'Correct#Pass' }
+  }));
+  assert.equal(calls, 2);
+  assert.equal(res.status, 200);
+  const body = await readJson(res);
+  assert.equal(body.ok, true);
+  assert.equal(body.user.email, 'alice@atomurus.com');
 });
 
 console.log('test-auth-flows: ok');

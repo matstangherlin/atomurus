@@ -77,10 +77,6 @@
     });
   }
 
-  function validUsername(username) {
-    return /^[a-z0-9](?:[a-z0-9._-]{1,28}[a-z0-9])?$/.test(username);
-  }
-
   function passwordPolicyError(password) {
     if (password.length < 9) return t('common.auth.passwordLength', 'Use a password with at least 9 characters.');
     if (!/[!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.test(password)) {
@@ -97,6 +93,9 @@
     }
     if (code === 'network' || status === 0) {
       return t('common.auth.networkError', 'Network problem. Check your connection and try again.');
+    }
+    if (code === 'timeout' || code === 'upstream_timeout' || status === 503) {
+      return t('common.auth.unavailable', 'Authentication is temporarily unavailable. Try again shortly.');
     }
     if (status === 403) {
       return t('common.auth.originBlocked', 'Sign-in was blocked for this site address. Open atomurus.com/login and try again.');
@@ -310,14 +309,19 @@
     var password = $('auth-password').value || '';
     setBusy(button, true, t('common.auth.signingIn', t('common.auth.entering', 'Signing in…')));
     setFormBusy(form, true);
+    var signedIn = false;
     try {
       await auth().login(identifier, password);
+      signedIn = true;
       show(okBox, t('common.auth.loginOk', 'Signed in. Opening your workspace…'));
       auth().redirectAfterLogin();
     } catch (err) {
       show(errBox, friendlyLoginError(err));
-      setBusy(button, false);
-      setFormBusy(form, false);
+    } finally {
+      if (!signedIn) {
+        setBusy(button, false);
+        setFormBusy(form, false);
+      }
     }
   }
 
@@ -330,19 +334,9 @@
     hide(okBox);
     hide(errBox);
 
-    var fullName = ($('auth-signup-name').value || '').trim();
-    var username = ($('auth-signup-username').value || '').trim().toLowerCase();
     var email = ($('auth-signup-email').value || '').trim();
     var password = $('auth-signup-password').value || '';
     var passwordConfirm = $('auth-signup-password-confirm').value || '';
-    if (fullName.length < 2) {
-      show(errBox, t('common.auth.nameInvalid', 'Enter your name with at least 2 characters.'));
-      return;
-    }
-    if (!validUsername(username)) {
-      show(errBox, t('common.auth.usernameInvalid', 'Choose a username with 3 to 30 letters, numbers, dot, underscore or hyphen.'));
-      return;
-    }
     var passwordError = passwordPolicyError(password);
     if (passwordError) {
       show(errBox, passwordError);
@@ -356,8 +350,6 @@
     setFormBusy(form, true);
     try {
       var data = await auth().signup({
-        fullName: fullName,
-        username: username,
         email: email,
         password: password,
         passwordConfirm: passwordConfirm

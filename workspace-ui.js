@@ -9,10 +9,16 @@
   var lastFocus = null;
   var inertNodes = [];
 
+  function isShown(el) {
+    if (!el || el.disabled) return false;
+    if (el.hasAttribute('hidden') || el.closest('[hidden]')) return false;
+    return el.getClientRects().length > 0;
+  }
+
   function focusables(root) {
     if (!root) return [];
     return Array.prototype.slice.call(root.querySelectorAll(FOCUSABLE)).filter(function (el) {
-      return el.offsetParent !== null || el === document.activeElement;
+      return isShown(el) || el === document.activeElement;
     });
   }
 
