@@ -2431,12 +2431,10 @@
       else renderFreeOverview(null);
       return;
     }
-    if (!proUser(user)) {
+    if (!proUser(user) && section !== 'pro-lab') {
       if (section === 'overview') renderFreeOverview(user);
       else if (section === 'insights') renderLockedInsights();
-      else if (section === 'pro-lab') {
-        node.innerHTML = sectionHead(t('proLab'), t('proLabLede'), true) + lockedState('proLab', 'labLockedBody');
-      } else showStudyLocked(node);
+      else showStudyLocked(node);
       return;
     }
     if (section === 'pro-lab') {

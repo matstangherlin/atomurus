@@ -112,6 +112,7 @@ assert.match(authApp, /tCount/);
 assert.match(authApp, /tCount\('reviewEstimate', 'reviewEstimateOne'/);
 assert.match(authApp, /openInsights/);
 assert.match(authApp, /reviewShort/);
+assert.match(authApp, /!proUser\(user\) && section !== 'pro-lab'/);
 assert.match(authApp, /confirmDialog/);
 assert.match(authApp, /chemistrySolver/);
 assert.match(authApp, /chemistrySolverLede/);
