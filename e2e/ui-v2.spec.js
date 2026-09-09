@@ -96,10 +96,16 @@ test('key pages emit shared chrome in source HTML', async ({ request }) => {
     const text = await (await request.get(url)).text();
     expect(text, url).not.toContain('assets/ui/index.css');
   }
-  for (const url of ['/index.html', '/login.html', '/pricing.html', '/about.html', '/contact.html', '/privacy.html', '/terms.html', '/404.html']) {
+  for (const url of ['/index.html', '/login.html', '/pricing.html', '/about.html', '/contact.html', '/privacy.html', '/terms.html', '/404.html', '/explore.html']) {
     const text = await (await request.get(url)).text();
     expect(text, url).toContain('assets/ui/index.css');
   }
+  const explore = await (await request.get('/explore.html')).text();
+  expect(explore).toContain('assets/layouts/explore.css');
+  expect(explore).toContain('id="ex-search-input"');
+  const article = await (await request.get('/explore/what-is-an-atom.html')).text();
+  expect(article).toContain('assets/ui/index.css');
+  expect(article).toContain('assets/layouts/article.css');
   const home = await (await request.get('/index.html')).text();
   expect(home).toContain('assets/layouts/home.css');
   expect(home).toContain('assets/product-catalog.js');

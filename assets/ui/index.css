@@ -1,5 +1,5 @@
 /* Atomurus UI V2 — bundle
-   Load after fonts.css. Login, pricing/docs, and Home load this bundle; /app does not yet. */
+   Load after fonts.css. Login, pricing/docs, Home, and Explore load this bundle; /app does not yet. */
 
 @import url("tokens.css");
 @import url("base.css");

@@ -24,10 +24,13 @@ const required = [
   'docs/ui-v2-auth.md',
   'docs/ui-v2-pricing.md',
   'docs/ui-v2-home.md',
+  'docs/ui-v2-explore.md',
   'assets/layouts/auth.css',
   'assets/layouts/pricing.css',
   'assets/layouts/docs.css',
   'assets/layouts/home.css',
+  'assets/layouts/explore.css',
+  'assets/layouts/article.css',
   'assets/product-catalog.js',
   'tools/build-product-catalog.js'
 ];
@@ -64,7 +67,8 @@ const migrated = [
   'contact.html',
   'privacy.html',
   'terms.html',
-  '404.html'
+  '404.html',
+  'explore.html'
 ];
 for (const rel of migrated) {
   const html = read(rel);
@@ -157,6 +161,25 @@ if (!home.includes(`data-catalog="calculators">${catalog.calculators}`)) {
 }
 if (!home.includes(`data-catalog="elements">${catalog.elements}`)) {
   fail('Home elements fallback must match the generated catalog');
+}
+
+const explore = read('explore.html');
+if (!explore.includes('assets/ui/index.css')) fail('explore.html must load UI V2');
+if (!explore.includes('assets/layouts/explore.css')) fail('explore.html must load explore layout CSS');
+if ([...explore.matchAll(/<style>[\s\S]*?<\/style>/g)].some((m) => m[0].includes('.ex-card'))) {
+  fail('explore.html must not keep .ex-card in a page style block');
+}
+if (!explore.includes('id="ex-search-input"') || !explore.includes('id="ex-articles"')) {
+  fail('explore.html must keep #ex-search-input and #ex-articles');
+}
+if (!explore.includes('class="ex-title"') || !explore.includes('class="ex-pill active"')) {
+  fail('explore.html must keep .ex-title and .ex-pill');
+}
+const atom = read('explore/what-is-an-atom.html');
+if (!atom.includes('assets/ui/index.css')) fail('explore articles must load UI V2');
+if (!atom.includes('assets/layouts/article.css')) fail('explore articles must load article layout CSS');
+if (!atom.includes('id="art-body"') || !atom.includes('class="art-title"')) {
+  fail('articles must keep .art-title and #art-body');
 }
 
 const tokens = read('assets/ui/tokens.css');

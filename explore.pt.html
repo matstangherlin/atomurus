@@ -86,6 +86,8 @@
 <noscript><link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630"></noscript>
 <link rel="stylesheet" href="/assets/public-shell.css?v=202608281830">
 <script src="/assets/public-workspace.js?v=202608282500"></script>
+<link rel="stylesheet" href="/assets/ui/index.css?v=202609090500">
+<link rel="stylesheet" href="/assets/layouts/explore.css?v=202609090500">
 <script src="atomurus-mobile-nav.js?v=202608041630" defer></script>
 <style>
   *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -148,371 +150,6 @@
     .content { overflow: visible; }
   }
 
-  /* ─── Element category color tokens (mirrors periodic-table.css) ─── */
-  :root {
-    --c-nonmetal:       #C8E0C8; --c-nonmetal-t:    #1A3A1A; --c-nonmetal-b:  #98C898;
-    --c-noble:          #FFF0B0; --c-noble-t:       #6A4800; --c-noble-b:     #D8C060;
-    --c-alkali:         #FFCACA; --c-alkali-t:      #7A1010; --c-alkali-b:    #E89090;
-    --c-alkaline:       #FFE0B0; --c-alkaline-t:    #6A3800; --c-alkaline-b:  #E8B860;
-    --c-metalloid:      #DDD8FF; --c-metalloid-t:   #2E1E78; --c-metalloid-b: #B0A0F0;
-    --c-polyatomic:     #BFE8E8; --c-polyatomic-t:  #003A3A; --c-polyatomic-b:#80C8C8;
-    --c-posttrans:      #D0D0D0; --c-posttrans-t:   #2A2A2A; --c-posttrans-b: #A0A0A0;
-    --c-transition:     #E4E0D4; --c-transition-t:  #38321C; --c-transition-b:#C4C0A8;
-    --c-lanthanide:     #FFD8E8; --c-lanthanide-t:  #6A0040; --c-lanthanide-b:#E0A0C0;
-    --c-actinide:       #FFE0D0; --c-actinide-t:    #6A2810; --c-actinide-b:  #E0A088;
-  }
-  html[data-theme="dark"] {
-    --c-nonmetal:       #122418; --c-nonmetal-t:    #7AC890; --c-nonmetal-b:  #1E3A28;
-    --c-noble:          #28220A; --c-noble-t:       #C8A028; --c-noble-b:     #403800;
-    --c-alkali:         #280C0C; --c-alkali-t:      #D87070; --c-alkali-b:    #421818;
-    --c-alkaline:       #281800; --c-alkaline-t:    #D8A050; --c-alkaline-b:  #422800;
-    --c-metalloid:      #140E28; --c-metalloid-t:   #9E90E8; --c-metalloid-b: #241848;
-    --c-polyatomic:     #0A2424; --c-polyatomic-t:  #70C8C8; --c-polyatomic-b:#163838;
-    --c-posttrans:      #1E1E1E; --c-posttrans-t:   #A0A0A0; --c-posttrans-b: #2A2A2A;
-    --c-transition:     #1C1A14; --c-transition-t:  #A8A080; --c-transition-b:#2C2A1E;
-    --c-lanthanide:     #28101C; --c-lanthanide-t:  #E090B8; --c-lanthanide-b:#421830;
-    --c-actinide:       #281408; --c-actinide-t:    #E09078; --c-actinide-b:  #422010;
-  }
-
-  /* ─── Layout ─── */
-  .ex-shell { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
-
-  /* ─── Search hero ─── */
-  .ex-hero {
-    padding: 36px 24px 22px;
-    border-bottom: 1px solid var(--lc-rule);
-  }
-  .ex-hero-inner { max-width: 1180px; margin: 0 auto; }
-  .ex-kicker {
-    font-family: var(--lc-mono);
-    font-size: 11px;
-    letter-spacing: .14em;
-    color: var(--lc-ink-3);
-    text-transform: uppercase;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-  .ex-kicker .pill {
-    border: 1px solid var(--lc-rule);
-    padding: 3px 8px;
-    border-radius: 999px;
-    color: var(--lc-ink-2);
-  }
-  .ex-title {
-    font-family: 'Instrument Serif', serif;
-    font-size: clamp(34px, 5vw, 54px);
-    line-height: 1.05;
-    letter-spacing: -.01em;
-    margin: 0 0 10px;
-    color: var(--lc-ink);
-    font-weight: 400;
-  }
-  .ex-title em { font-style: italic; color: var(--lc-green); }
-  .ex-desc {
-    font-size: 15px;
-    color: var(--lc-ink-2);
-    max-width: 62ch;
-    line-height: 1.55;
-    margin: 0 0 22px;
-  }
-
-  /* search box */
-  .ex-search-wrap {
-    position: sticky;
-    top: 0;
-    background: var(--lc-bg);
-    z-index: 20;
-    padding: 14px 0 8px;
-    margin-top: 4px;
-  }
-  .ex-search {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: var(--lc-surface-2, var(--lc-surface, #fff));
-    border: 1px solid var(--lc-rule);
-    border-radius: 12px;
-    padding: 10px 14px;
-    transition: border-color .15s, box-shadow .15s;
-  }
-  .ex-search:focus-within {
-    border-color: var(--lc-green);
-    box-shadow: 0 0 0 3px rgba(30, 106, 80, .12);
-  }
-  .ex-search svg { flex-shrink: 0; color: var(--lc-ink-3); }
-  .ex-search input {
-    flex: 1;
-    border: none;
-    outline: none;
-    background: transparent;
-    color: var(--lc-ink);
-    font-size: 15px;
-    font-family: inherit;
-    min-width: 0;
-  }
-  .ex-search input::placeholder { color: var(--lc-ink-3); }
-  .ex-search-kbd {
-    font-family: var(--lc-mono);
-    font-size: 10.5px;
-    color: var(--lc-ink-3);
-    border: 1px solid var(--lc-rule);
-    padding: 2px 6px;
-    border-radius: 4px;
-    letter-spacing: .04em;
-  }
-  .ex-search-clear {
-    background: none;
-    border: none;
-    color: var(--lc-ink-3);
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 4px;
-    display: none;
-  }
-  .ex-search-clear:hover { color: var(--lc-ink); background: var(--lc-rule); }
-  .ex-search.has-query .ex-search-clear { display: inline-flex; }
-
-  /* counter under search */
-  .ex-search-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-family: var(--lc-mono);
-    font-size: 11px;
-    color: var(--lc-ink-3);
-    margin: 8px 2px 0;
-    letter-spacing: .04em;
-  }
-  .ex-search-meta .ex-count strong { color: var(--lc-ink); font-weight: 600; }
-  .ex-jump {
-    display: flex;
-    gap: 4px;
-    flex-wrap: wrap;
-  }
-  .ex-jump a {
-    color: var(--lc-ink-3);
-    text-decoration: none;
-    border: 1px solid transparent;
-    padding: 3px 7px;
-    border-radius: 5px;
-    transition: color .12s, border-color .12s;
-  }
-  .ex-jump a:hover { color: var(--lc-green); border-color: var(--lc-rule); }
-
-  /* ─── Sections ─── */
-  .ex-section { padding: 38px 24px 4px; max-width: 1180px; margin: 0 auto; }
-  .ex-section + .ex-section { padding-top: 32px; }
-  .ex-section.is-empty { display: none; }
-  .ex-section-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 16px;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .ex-section-head h2 {
-    font-family: 'Instrument Serif', serif;
-    font-weight: 400;
-    font-size: 26px;
-    letter-spacing: -.005em;
-    color: var(--lc-ink);
-  }
-  .ex-section-head h2 .h-no {
-    font-family: var(--lc-mono);
-    font-size: 10.5px;
-    color: var(--lc-ink-3);
-    letter-spacing: .14em;
-    text-transform: uppercase;
-    margin-right: 8px;
-    font-weight: 500;
-  }
-  .ex-section-sub {
-    font-size: 12.5px;
-    color: var(--lc-ink-3);
-    font-family: var(--lc-mono);
-    letter-spacing: .04em;
-  }
-
-  /* category pills */
-  .ex-pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 14px;
-  }
-  .ex-pill {
-    font-family: var(--lc-mono);
-    font-size: 11px;
-    letter-spacing: .04em;
-    padding: 5px 10px;
-    border: 1px solid var(--lc-rule);
-    border-radius: 999px;
-    color: var(--lc-ink-2);
-    background: transparent;
-    cursor: pointer;
-    transition: all .12s;
-    text-transform: uppercase;
-  }
-  .ex-pill:hover { color: var(--lc-ink); border-color: var(--lc-ink-3); }
-  .ex-pill.active {
-    background: var(--lc-ink);
-    color: var(--lc-bg);
-    border-color: var(--lc-ink);
-  }
-  html[data-theme="dark"] .ex-pill.active { background: var(--lc-green); border-color: var(--lc-green); color: #0E0D0C; }
-
-  /* element grid */
-  .ex-el-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
-    gap: 8px;
-  }
-  .ex-el {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 9px 10px 10px;
-    border: 1px solid var(--lc-rule);
-    border-radius: 8px;
-    text-decoration: none;
-    color: inherit;
-    background: var(--lc-surface-2, transparent);
-    min-height: 80px;
-    transition: transform .12s, box-shadow .12s, border-color .12s;
-    position: relative;
-  }
-  .ex-el:hover {
-    transform: translateY(-1px);
-    border-color: var(--lc-green);
-    box-shadow: 0 4px 14px rgba(0,0,0,.06);
-  }
-  .ex-el .ex-el-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    font-family: var(--lc-mono);
-    font-size: 10.5px;
-    opacity: .75;
-  }
-  .ex-el .ex-el-sym {
-    font-family: 'Instrument Serif', serif;
-    font-size: 24px;
-    font-weight: 500;
-    line-height: 1;
-    margin: 4px 0 2px;
-    letter-spacing: -.01em;
-  }
-  .ex-el .ex-el-name {
-    font-size: 12px;
-    color: var(--lc-ink-2);
-    letter-spacing: .01em;
-  }
-  /* category tinting */
-  .ex-el.c-nonmetal   { background: var(--c-nonmetal);   color: var(--c-nonmetal-t);   border-color: var(--c-nonmetal-b); }
-  .ex-el.c-noble      { background: var(--c-noble);      color: var(--c-noble-t);      border-color: var(--c-noble-b); }
-  .ex-el.c-alkali     { background: var(--c-alkali);     color: var(--c-alkali-t);     border-color: var(--c-alkali-b); }
-  .ex-el.c-alkaline   { background: var(--c-alkaline);   color: var(--c-alkaline-t);   border-color: var(--c-alkaline-b); }
-  .ex-el.c-metalloid  { background: var(--c-metalloid);  color: var(--c-metalloid-t);  border-color: var(--c-metalloid-b); }
-  .ex-el.c-polyatomic { background: var(--c-polyatomic); color: var(--c-polyatomic-t); border-color: var(--c-polyatomic-b); }
-  .ex-el.c-posttrans  { background: var(--c-posttrans);  color: var(--c-posttrans-t);  border-color: var(--c-posttrans-b); }
-  .ex-el.c-transition { background: var(--c-transition); color: var(--c-transition-t); border-color: var(--c-transition-b); }
-  .ex-el.c-lanthanide { background: var(--c-lanthanide); color: var(--c-lanthanide-t); border-color: var(--c-lanthanide-b); }
-  .ex-el.c-actinide   { background: var(--c-actinide);   color: var(--c-actinide-t);   border-color: var(--c-actinide-b); }
-  .ex-el .ex-el-name { color: inherit; opacity: .85; }
-  .ex-el .ex-el-top { color: inherit; }
-
-  /* card grid (used for non-element categories) */
-  .ex-card-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 12px;
-  }
-  .ex-card {
-    display: flex;
-    gap: 12px;
-    padding: 16px;
-    border: 1px solid var(--lc-rule);
-    border-radius: 10px;
-    text-decoration: none;
-    color: inherit;
-    background: var(--lc-surface-2, transparent);
-    transition: transform .12s, border-color .12s, box-shadow .12s;
-    align-items: flex-start;
-  }
-  .ex-card:hover {
-    transform: translateY(-1px);
-    border-color: var(--lc-green);
-    box-shadow: 0 4px 14px rgba(0,0,0,.06);
-  }
-  .ex-card-icon {
-    flex-shrink: 0;
-    width: 38px;
-    height: 38px;
-    border-radius: 8px;
-    background: var(--lc-rule);
-    color: var(--lc-ink-2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .ex-card:hover .ex-card-icon { background: var(--lc-green); color: #fff; }
-  .ex-card-body { flex: 1; min-width: 0; }
-  .ex-card-kicker {
-    font-family: var(--lc-mono);
-    font-size: 10px;
-    letter-spacing: .14em;
-    color: var(--lc-ink-3);
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-  .ex-card-title {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--lc-ink);
-    margin-bottom: 4px;
-    letter-spacing: -.005em;
-  }
-  .ex-card-desc {
-    font-size: 12.5px;
-    color: var(--lc-ink-2);
-    line-height: 1.45;
-  }
-
-  /* empty state */
-  .ex-empty {
-    display: none;
-    padding: 60px 24px;
-    text-align: center;
-    color: var(--lc-ink-3);
-    font-family: var(--lc-mono);
-    font-size: 13px;
-    letter-spacing: .04em;
-    max-width: 1180px;
-    margin: 0 auto;
-  }
-  .ex-empty.show { display: block; }
-  .ex-empty strong { color: var(--lc-ink); font-family: 'Instrument Serif', serif; font-size: 22px; display: block; margin-bottom: 8px; font-weight: 400; }
-
-  /* hidden when filtered out */
-  .ex-hide { display: none !important; }
-
-  /* highlight match (keyword bold) */
-  mark.ex-hl { background: transparent; color: var(--lc-green); font-weight: 600; padding: 0; }
-
-  /* responsive */
-  @media (max-width: 720px) {
-    .ex-hero { padding: 24px 16px 16px; }
-    .ex-section { padding: 28px 16px 4px; }
-    .ex-shell, .ex-hero-inner, .ex-section, .ex-empty { padding-left: 16px; padding-right: 16px; }
-    .ex-el-grid { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); }
-    .ex-el { min-height: 72px; padding: 8px 8px 9px; }
-    .ex-el .ex-el-sym { font-size: 20px; }
-    .ex-card-grid { grid-template-columns: 1fr; }
-  }
 </style>
 </head>
 
@@ -749,7 +386,7 @@
   </div>
 
   <div class="ex-card-grid" id="ex-articles">
-    <a class="ex-card" data-cat="conceitos" data-search="atomo o que e um atomo estrutura atomica proton neutron eletron nucleo camada eletronica numero atomico massa atomica particulas subatomicas dalton thomson rutherford bohr modelo quantico ion cation anion elemento materia quimica basica" href="explore/what-is-an-atom.html?lang=pt-BR">
+    <a class="ex-card ui-card ui-card-interactive" data-cat="conceitos" data-search="atomo o que e um atomo estrutura atomica proton neutron eletron nucleo camada eletronica numero atomico massa atomica particulas subatomicas dalton thomson rutherford bohr modelo quantico ion cation anion elemento materia quimica basica" href="explore/what-is-an-atom.html?lang=pt-BR">
       <div class="ex-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="2.2" fill="currentColor"/><ellipse cx="10" cy="10" rx="8.5" ry="3.6" stroke="currentColor" stroke-width="1.2" fill="none"/><ellipse cx="10" cy="10" rx="8.5" ry="3.6" stroke="currentColor" stroke-width="1.2" fill="none" transform="rotate(60 10 10)"/><ellipse cx="10" cy="10" rx="8.5" ry="3.6" stroke="currentColor" stroke-width="1.2" fill="none" transform="rotate(120 10 10)"/></svg></div>
       <div class="ex-card-body">
         <div class="ex-card-kicker">conceitos</div>
@@ -758,7 +395,7 @@
       </div>
     </a>
 
-    <a class="ex-card" data-cat="conceitos" data-search="isotopos o que sao isotopos estaveis radioativos radioisotopos massa atomica neutrons massa atomica relativa carbono-14 carbono-12 deuterio tritio uranio-235 uranio-238 meia-vida datacao por carbono medicina nuclear abundancia media ponderada" href="explore/what-are-isotopes.html?lang=pt-BR">
+    <a class="ex-card ui-card ui-card-interactive" data-cat="conceitos" data-search="isotopos o que sao isotopos estaveis radioativos radioisotopos massa atomica neutrons massa atomica relativa carbono-14 carbono-12 deuterio tritio uranio-235 uranio-238 meia-vida datacao por carbono medicina nuclear abundancia media ponderada" href="explore/what-are-isotopes.html?lang=pt-BR">
       <div class="ex-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="6.5" stroke="currentColor" stroke-width="1.2" fill="none" opacity=".55"/><circle cx="7.6" cy="10" r="2.1" fill="currentColor"/><circle cx="11.8" cy="8.4" r="2.1" fill="currentColor" opacity=".75"/><circle cx="11.6" cy="11.8" r="2.1" fill="currentColor" opacity=".5"/></svg></div>
       <div class="ex-card-body">
         <div class="ex-card-kicker">conceitos</div>
@@ -767,7 +404,7 @@
       </div>
     </a>
 
-    <a class="ex-card" data-cat="conceitos" data-search="radioatividade decaimento radioativo meia-vida radiacao alfa beta gama henri becquerel marie curie pierre curie rutherford isotopos quimica nuclear uranio radio polonio radiacao ionizante sievert becquerel datacao por carbono medicina nuclear" href="explore/what-is-radioactivity.html?lang=pt-BR">
+    <a class="ex-card ui-card ui-card-interactive" data-cat="conceitos" data-search="radioatividade decaimento radioativo meia-vida radiacao alfa beta gama henri becquerel marie curie pierre curie rutherford isotopos quimica nuclear uranio radio polonio radiacao ionizante sievert becquerel datacao por carbono medicina nuclear" href="explore/what-is-radioactivity.html?lang=pt-BR">
       <div class="ex-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><ellipse cx="10" cy="10" rx="8" ry="3.4" stroke="currentColor" stroke-width="1.2" opacity=".55"/><circle cx="10" cy="10" r="2.4" fill="currentColor"/><circle cx="16.4" cy="6.6" r="1.3" fill="currentColor" opacity=".8"/><circle cx="4.6" cy="14" r="1.1" fill="currentColor" opacity=".55"/></svg></div>
       <div class="ex-card-body">
         <div class="ex-card-kicker">conceitos</div>
@@ -776,7 +413,7 @@
       </div>
     </a>
 
-    <a class="ex-card" data-cat="conceitos" data-search="ligacao quimica ionica covalente metalica regra do octeto eletrons de valencia configuracao eletronica eletronegatividade polaridade ligacao covalente polar estrutura molecular vsepr lewis agua cloreto de sodio metano forcas intermoleculares ligacao de hidrogenio" href="explore/what-is-chemical-bonding.html?lang=pt-BR">
+    <a class="ex-card ui-card ui-card-interactive" data-cat="conceitos" data-search="ligacao quimica ionica covalente metalica regra do octeto eletrons de valencia configuracao eletronica eletronegatividade polaridade ligacao covalente polar estrutura molecular vsepr lewis agua cloreto de sodio metano forcas intermoleculares ligacao de hidrogenio" href="explore/what-is-chemical-bonding.html?lang=pt-BR">
       <div class="ex-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="5.5" cy="10" r="3" fill="currentColor" opacity=".9"/><circle cx="14.5" cy="10" r="3" fill="currentColor" opacity=".55"/><line x1="8.5" y1="10" x2="11.5" y2="10" stroke="currentColor" stroke-width="1.7"/></svg></div>
       <div class="ex-card-body">
         <div class="ex-card-kicker">conceitos</div>
@@ -785,7 +422,7 @@
       </div>
     </a>
 
-    <a class="ex-card" data-cat="historia seguranca" data-search="chernobyl desastre reator rbmk explosao 1986 contaminacao radioativa zona de exclusao pripyat liquidadores sarcofago cesio-137 iodo-131 estroncio-90 seguranca nuclear ucrânia uniao sovietica fusao radiacao precipitacao radioativa" href="explore/chernobyl-disaster.html?lang=pt-BR">
+    <a class="ex-card ui-card ui-card-interactive" data-cat="historia seguranca" data-search="chernobyl desastre reator rbmk explosao 1986 contaminacao radioativa zona de exclusao pripyat liquidadores sarcofago cesio-137 iodo-131 estroncio-90 seguranca nuclear ucrânia uniao sovietica fusao radiacao precipitacao radioativa" href="explore/chernobyl-disaster.html?lang=pt-BR">
       <div class="ex-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><g fill="currentColor" opacity=".85"><polygon points="10,2.8 7.7,8.2 12.3,8.2"/><polygon points="10,2.8 7.7,8.2 12.3,8.2" transform="rotate(120 10 10)"/><polygon points="10,2.8 7.7,8.2 12.3,8.2" transform="rotate(240 10 10)"/></g><circle cx="10" cy="10" r="1.8" fill="currentColor"/></svg></div>
       <div class="ex-card-body">
         <div class="ex-card-kicker">história · segurança</div>
@@ -794,7 +431,7 @@
       </div>
     </a>
 
-    <a class="ex-card" data-cat="historia seguranca" data-search="bhopal isocianato de metila mic union carbide acidente desastre tragedia madre teresa calcuta 1984 seguranca quimica industrial india" href="explore/bhopal-disaster.html?lang=pt-BR">
+    <a class="ex-card ui-card ui-card-interactive" data-cat="historia seguranca" data-search="bhopal isocianato de metila mic union carbide acidente desastre tragedia madre teresa calcuta 1984 seguranca quimica industrial india" href="explore/bhopal-disaster.html?lang=pt-BR">
       <div class="ex-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2l8 14H2L10 2z" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linejoin="round"/><line x1="10" y1="8" x2="10" y2="12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="10" cy="14" r=".9" fill="currentColor"/></svg></div>
       <div class="ex-card-body">
         <div class="ex-card-kicker">história · segurança</div>
@@ -803,7 +440,7 @@
       </div>
     </a>
 
-    <a class="ex-card" data-cat="conceitos" data-search="tabela periodica elementos quimicos mendeleev moseley numero atomico periodos grupos blocos tendencias periodicas lei periodica configuracao eletronica" href="explore/what-is-the-periodic-table.html?lang=pt-BR">
+    <a class="ex-card ui-card ui-card-interactive" data-cat="conceitos" data-search="tabela periodica elementos quimicos mendeleev moseley numero atomico periodos grupos blocos tendencias periodicas lei periodica configuracao eletronica" href="explore/what-is-the-periodic-table.html?lang=pt-BR">
       <div class="ex-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="1.5" y="1.5" width="7" height="7" rx="1.5" fill="currentColor" opacity=".9"/><rect x="11.5" y="1.5" width="7" height="7" rx="1.5" fill="currentColor" opacity=".5"/><rect x="1.5" y="11.5" width="7" height="7" rx="1.5" fill="currentColor" opacity=".5"/><rect x="11.5" y="11.5" width="7" height="7" rx="1.5" fill="currentColor" opacity=".3"/></svg></div>
       <div class="ex-card-body">
         <div class="ex-card-kicker">conceitos</div>
@@ -812,7 +449,7 @@
       </div>
     </a>
 
-    <a class="ex-card" data-cat="conceitos" data-search="isomeria isomeros isomeria plana constitucional cadeia posicao funcao metameria tautomeria estereoisomeria espacial geometrica cis trans optica quiralidade enantiomeros quimica organica" href="explore/what-is-isomerism.html?lang=pt-BR">
+    <a class="ex-card ui-card ui-card-interactive" data-cat="conceitos" data-search="isomeria isomeros isomeria plana constitucional cadeia posicao funcao metameria tautomeria estereoisomeria espacial geometrica cis trans optica quiralidade enantiomeros quimica organica" href="explore/what-is-isomerism.html?lang=pt-BR">
       <div class="ex-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="5" cy="10" r="2.5" fill="currentColor" opacity=".85"/><circle cx="15" cy="10" r="2.5" fill="currentColor" opacity=".85"/><line x1="10" y1="1" x2="10" y2="19" stroke="currentColor" stroke-width="1" stroke-dasharray="2,1.5" opacity=".5"/></svg></div>
       <div class="ex-card-body">
         <div class="ex-card-kicker">conceitos</div>
@@ -828,7 +465,7 @@
     <span>Tente outra palavra-chave — um tema (bhopal), um conceito (isomeria) ou uma categoria (história).</span>
   </div>
 
-  <p style="font-family:var(--lc-mono);font-size:11.5px;color:var(--lc-ink-3);margin-top:18px;letter-spacing:.03em;">Mais artigos a caminho — novos temas de história, conceitos e segurança química são publicados regularmente.</p>
+  <p class="ex-more">Mais artigos a caminho — novos temas de história, conceitos e segurança química são publicados regularmente.</p>
 </section>
 
 <!-- ── FERRAMENTAS DO LABORATÓRIO ──────────────────────────── -->
@@ -838,7 +475,7 @@
     <span class="ex-section-sub">explore os elementos e modelos</span>
   </div>
   <div class="ex-card-grid">
-    <a class="ex-card" href="periodic-table.html">
+    <a class="ex-card ui-card ui-card-interactive" href="periodic-table.html">
       <div class="ex-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="1.5" y="1.5" width="7" height="7" rx="1.5" fill="currentColor" opacity=".9"/><rect x="11.5" y="1.5" width="7" height="7" rx="1.5" fill="currentColor" opacity=".5"/><rect x="1.5" y="11.5" width="7" height="7" rx="1.5" fill="currentColor" opacity=".5"/><rect x="11.5" y="11.5" width="7" height="7" rx="1.5" fill="currentColor" opacity=".3"/></svg></div>
       <div class="ex-card-body">
         <div class="ex-card-kicker">ferramenta</div>
@@ -846,7 +483,7 @@
         <div class="ex-card-desc">Todos os 118 elementos com dados completos, mapa de calor e tendências.</div>
       </div>
     </a>
-    <a class="ex-card" href="viewer/atomic-models.html">
+    <a class="ex-card ui-card ui-card-interactive" href="viewer/atomic-models.html">
       <div class="ex-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="1.6" fill="currentColor"/><ellipse cx="10" cy="10" rx="8" ry="3.5" stroke="currentColor" stroke-width="1.2" fill="none"/><ellipse cx="10" cy="10" rx="8" ry="3.5" stroke="currentColor" stroke-width="1.2" fill="none" transform="rotate(60 10 10)"/><ellipse cx="10" cy="10" rx="8" ry="3.5" stroke="currentColor" stroke-width="1.2" fill="none" transform="rotate(120 10 10)"/></svg></div>
       <div class="ex-card-body">
         <div class="ex-card-kicker">ferramenta</div>
@@ -854,7 +491,7 @@
         <div class="ex-card-desc">Modelos atômicos, moléculas, alótropos e isomeria em 3D interativo.</div>
       </div>
     </a>
-    <a class="ex-card" href="calculators.html">
+    <a class="ex-card ui-card ui-card-interactive" href="calculators.html">
       <div class="ex-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="2" width="14" height="16" rx="2" stroke="currentColor" stroke-width="1.3" fill="none"/><line x1="6" y1="6" x2="14" y2="6" stroke="currentColor" stroke-width="1.2"/><line x1="6" y1="10" x2="14" y2="10" stroke="currentColor" stroke-width="1.2"/><line x1="6" y1="14" x2="11" y2="14" stroke="currentColor" stroke-width="1.2"/></svg></div>
       <div class="ex-card-body">
         <div class="ex-card-kicker">ferramenta</div>
@@ -899,7 +536,7 @@
   </div>
   <div class="lc-footer-bottom">
     <span><span class="lc-st-dot" style="width:6px;height:6px;border-radius:50%;background:#1E6A50;display:inline-block"></span> <span data-i18n="common.footer.systemNominal">sistema nominal</span></span>
-    <span data-i18n="common.footer.copy">© 2026 Atomurus · v1.11</span>
+    <span data-i18n="common.footer.copy">© 2026 Atomurus</span>
   </div>
 </footer>
 </div><!-- /.content -->
