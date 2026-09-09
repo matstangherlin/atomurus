@@ -354,6 +354,7 @@ function assertUiV2() {
     'docs/ui-v2-config.md',
     'docs/ui-v2-periodic-table.md',
     'docs/ui-v2-viewer.md',
+    'docs/ui-v2-workspace.md',
     'assets/layouts/auth.css',
     'assets/layouts/pricing.css',
     'assets/layouts/docs.css',
@@ -364,6 +365,7 @@ function assertUiV2() {
     'assets/layouts/config.css',
     'assets/layouts/periodic-table.css',
     'assets/layouts/viewer.css',
+    'assets/layouts/workspace.css',
     'assets/product-catalog.js',
     'tools/build-product-catalog.js'
   ];
@@ -398,8 +400,8 @@ function assertUiV2() {
   if (!read('index.html').includes('assets/layouts/home.css')) {
     fail('index.html must load assets/layouts/home.css');
   }
-  if (read('app.html').includes('assets/ui/index.css')) {
-    fail('app.html must not load UI V2 until the workspace alignment step');
+  if (!read('app.html').includes('assets/ui/index.css')) {
+    fail('app.html must load UI V2 after the workspace alignment step');
   }
   const inject = read('tools/inject-public-shell.js');
   if (!inject.includes("'dev'")) fail('inject-public-shell.js must skip the dev/ gallery');
@@ -451,7 +453,8 @@ function assertUiV2() {
     'viewer/atomic-models.html',
     'viewer/molecules.html',
     'viewer/allotropes.html',
-    'viewer/isomerism.html'
+    'viewer/isomerism.html',
+    'app.html'
   ].forEach((rel) => {
     if (!read(rel).includes('assets/ui/index.css')) fail(`${rel} must load UI V2`);
   });
@@ -491,8 +494,18 @@ function assertUiV2() {
   if (app.includes('id="ps-shell"') || app.includes('public-shell.css')) {
     fail('app.html must stay on workspace chrome, not public-shell');
   }
+  if (!app.includes('assets/layouts/workspace.css')) {
+    fail('app.html must load assets/layouts/workspace.css');
+  }
   if (!app.includes('id="ws-search-q"') || !app.includes('id="ws-userchip"')) {
     fail('app.html must keep workspace search and user chip ids');
+  }
+  if (!/<html\b[^>]*data-theme="light"/.test(app)) {
+    fail('app.html must default to light theme like public pages');
+  }
+  const workspaceLayout = read('assets/layouts/workspace.css').replace(/\/\*[\s\S]*?\*\//g, '');
+  if (/\.ws-chart\b|\.ws-spark|\.ws-lab-z\b/.test(workspaceLayout)) {
+    fail('workspace layout CSS must not restyle study charts or Pro Lab science');
   }
   const home = read('index.html');
   if (!home.includes('assets/layouts/home.css') || !home.includes('assets/product-catalog.js')) {

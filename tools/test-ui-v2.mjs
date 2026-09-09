@@ -36,9 +36,11 @@ const required = [
   'docs/ui-v2-config.md',
   'docs/ui-v2-periodic-table.md',
   'docs/ui-v2-viewer.md',
+  'docs/ui-v2-workspace.md',
   'assets/layouts/config.css',
   'assets/layouts/periodic-table.css',
   'assets/layouts/viewer.css',
+  'assets/layouts/workspace.css',
   'assets/product-catalog.js',
   'tools/build-product-catalog.js'
 ];
@@ -85,7 +87,8 @@ const migrated = [
   'viewer/atomic-models.html',
   'viewer/molecules.html',
   'viewer/allotropes.html',
-  'viewer/isomerism.html'
+  'viewer/isomerism.html',
+  'app.html'
 ];
 for (const rel of migrated) {
   const html = read(rel);
@@ -133,6 +136,19 @@ if (!read('build-i18n.js').includes('(<html\\b[^>]*)\\blang=')) {
 }
 if (read('app.html').includes('id="ps-shell"') || read('app.html').includes('public-shell.css')) {
   fail('app.html must not use public chrome');
+}
+const app = read('app.html');
+if (!app.includes('assets/ui/index.css')) fail('app.html must load UI V2');
+if (!app.includes('assets/layouts/workspace.css')) fail('app.html must load workspace layout CSS');
+if (!app.includes('id="ws-search-q"') || !app.includes('id="ws-userchip"') || !app.includes('id="app-study"')) {
+  fail('app.html must keep #ws-search-q, #ws-userchip and #app-study');
+}
+if (!/<html\b[^>]*data-theme="light"/.test(app)) {
+  fail('app.html must default to light theme like public pages');
+}
+if (/requireSession\(/.test(app)) fail('app.html must stay a public guest workspace');
+if (!read('workspace-ui.js').includes('ui-btn-accent')) {
+  fail('workspace dialog primary must dual-class ui-btn-accent (green), not ui-btn-primary');
 }
 if (!read('assets/public-workspace.js').includes('enhanceExistingShell')) {
   fail('public-workspace.js must keep runtime enhanceExistingShell');
@@ -326,6 +342,11 @@ for (const rel of [
   if (!read(rel).includes('assets/layouts/viewer.css')) {
     fail(`${rel} must load viewer layout CSS`);
   }
+}
+
+const workspaceLayout = read('assets/layouts/workspace.css').replace(/\/\*[\s\S]*?\*\//g, '');
+if (/\.ws-chart\b|\.ws-spark|\.ws-lab-z\b/.test(workspaceLayout)) {
+  fail('workspace layout CSS must not restyle study charts or Pro Lab science');
 }
 
 const atom = read('explore/what-is-an-atom.html');

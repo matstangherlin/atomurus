@@ -58,7 +58,7 @@ test('UI V2 gallery: buttons, focus-visible, disabled, forms, dialog, mobile', a
   expect(overflow).toBeLessThanOrEqual(1);
 });
 
-test('Home, calculators, settings and table chrome load UI V2; element pages stay legacy', async ({ page }) => {
+test('Home through workspace chrome load UI V2; element pages stay legacy', async ({ page }) => {
   await page.goto('/dev/ui');
   await page.locator('[data-ui-theme="dark"]').click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
@@ -96,6 +96,14 @@ test('Home, calculators, settings and table chrome load UI V2; element pages sta
   );
   expect(viewerUi).toBe(true);
 
+  await page.goto('/app');
+  const appUi = await page.evaluate(() =>
+    [...document.styleSheets].some((sheet) => (sheet.href || '').includes('/assets/ui/'))
+  );
+  expect(appUi).toBe(true);
+  await expect.poll(async () => page.locator('.ws-brand-name').evaluate((el) => getComputedStyle(el).fontFamily))
+    .toMatch(/Instrument Serif/i);
+
   await page.goto('/periodic-table/hydrogenium.html');
   const elementUi = await page.evaluate(() =>
     [...document.styleSheets].some((sheet) => (sheet.href || '').includes('/assets/ui/'))
@@ -122,7 +130,7 @@ test('key pages emit shared chrome in source HTML', async ({ request }) => {
     const text = await (await request.get(url)).text();
     expect(text, url).not.toContain('assets/ui/index.css');
   }
-  for (const url of ['/index.html', '/login.html', '/pricing.html', '/about.html', '/contact.html', '/privacy.html', '/terms.html', '/404.html', '/explore.html', '/calculators.html', '/config.html', '/periodic-table.html', '/viewer/atomic-models.html', '/viewer/molecules.html', '/viewer/allotropes.html', '/viewer/isomerism.html']) {
+  for (const url of ['/index.html', '/login.html', '/pricing.html', '/about.html', '/contact.html', '/privacy.html', '/terms.html', '/404.html', '/explore.html', '/calculators.html', '/config.html', '/periodic-table.html', '/viewer/atomic-models.html', '/viewer/molecules.html', '/viewer/allotropes.html', '/viewer/isomerism.html', '/app.html']) {
     const text = await (await request.get(url)).text();
     expect(text, url).toContain('assets/ui/index.css');
   }
@@ -163,15 +171,18 @@ test('key pages emit shared chrome in source HTML', async ({ request }) => {
   const molecules = await (await request.get('/viewer/molecules.html')).text();
   expect(molecules).toContain('assets/layouts/viewer.css');
   expect(molecules).toContain('id="viewer3d"');
+  const app = await (await request.get('/app.html')).text();
+  expect(app).toContain('assets/ui/index.css');
+  expect(app).toContain('assets/layouts/workspace.css');
+  expect(app).toMatch(/<html\b[^>]*data-theme="light"/);
+  expect(app).not.toContain('id="ps-shell"');
+  expect(app).not.toContain('public-shell.css');
+  expect(app).toContain('id="ws-search-q"');
+  expect(app).toContain('id="ws-userchip"');
   const login = await (await request.get('/login.html')).text();
   expect(login).toMatch(/lc-topnav-cta"[^>]*periodic-table/);
   expect(login).toContain('Open lab');
   expect(login).toContain('assets/ui/index.css');
   expect(login).toContain('assets/layouts/auth.css');
   expect(login).not.toMatch(/auth\.access|secure HttpOnly cookie|managed authentication|secure account flow/);
-  const app = await (await request.get('/app.html')).text();
-  expect(app).not.toContain('id="ps-shell"');
-  expect(app).not.toContain('public-shell.css');
-  expect(app).toContain('id="ws-search-q"');
-  expect(app).toContain('id="ws-userchip"');
 });

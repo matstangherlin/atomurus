@@ -190,7 +190,9 @@ assert.match(appHtml, /ws-skip/);
 assert.match(appHtml, /pro-lab\.js/);
 assert.match(appHtml, /id="app-study"/);
 assert.match(appHtml, /id="ws-study-nav"/);
-assert.match(appHtml, /<html lang="en-US" data-theme="dark"/);
+assert.match(appHtml, /<html lang="en-US" data-theme="light"/);
+assert.match(appHtml, /assets\/ui\/index\.css/);
+assert.match(appHtml, /assets\/layouts\/workspace\.css/);
 assert.match(appHtml, /data-i18n="common\.brandTag">chemistry lab/);
 
 const pricing = readFileSync(new URL('../pricing-page.js', import.meta.url), 'utf8');
