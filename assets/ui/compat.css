@@ -59,7 +59,8 @@
 .lc-mod-card.ui-card,
 .price-card.ui-card,
 .ex-card.ui-card,
-.calc-result.ui-card {
+.calc-result.ui-card,
+.settings-section.ui-card {
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
   background: var(--color-surface);

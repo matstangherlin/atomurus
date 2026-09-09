@@ -203,6 +203,8 @@ test('settings, compare, docs and articles keep the workspace pattern', async ({
   await page.goto('/config.html');
   await expect(page.locator('.ps-shell')).toBeVisible();
   await expect(page.locator('.data-strip').first()).toBeHidden();
+  await expect.poll(() => fontFamily(page.locator('.ph-title'))).toMatch(/Instrument Serif/i);
+  await expect.poll(() => fontFamily(page.locator('.settings-section-title').first())).toMatch(/Inter Tight/i);
   const toggleBg = await page.locator('.settings-toggle.active').first().evaluate((el) => getComputedStyle(el).backgroundColor);
   expect(toggleBg).toMatch(/rgb\(\s*30,\s*106,\s*80\s*\)/);
   const segBg = await page.locator('.seg-btn.active').first().evaluate((el) => getComputedStyle(el).backgroundColor);

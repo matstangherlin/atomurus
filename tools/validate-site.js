@@ -351,6 +351,7 @@ function assertUiV2() {
     'docs/ui-v2-home.md',
     'docs/ui-v2-explore.md',
     'docs/ui-v2-calculators.md',
+    'docs/ui-v2-config.md',
     'assets/layouts/auth.css',
     'assets/layouts/pricing.css',
     'assets/layouts/docs.css',
@@ -358,6 +359,7 @@ function assertUiV2() {
     'assets/layouts/explore.css',
     'assets/layouts/article.css',
     'assets/layouts/calculators.css',
+    'assets/layouts/config.css',
     'assets/product-catalog.js',
     'tools/build-product-catalog.js'
   ];
@@ -414,6 +416,7 @@ function assertUiV2() {
     'pricing.html',
     'about.html',
     'calculators.html',
+    'config.html',
     'periodic-table.html',
     'contact.html',
     'privacy.html',
@@ -437,7 +440,8 @@ function assertUiV2() {
     'terms.html',
     '404.html',
     'explore.html',
-    'calculators.html'
+    'calculators.html',
+    'config.html'
   ].forEach((rel) => {
     if (!read(rel).includes('assets/ui/index.css')) fail(`${rel} must load UI V2`);
   });
@@ -527,6 +531,16 @@ function assertUiV2() {
   }
   if (!calc.includes('data-target="molar"') || !calc.includes('id="mm-result-body"')) {
     fail('calculators.html must keep molar mass DOM');
+  }
+  const config = read('config.html');
+  if (!config.includes('assets/layouts/config.css')) {
+    fail('config.html must load assets/layouts/config.css');
+  }
+  if (!config.includes('id="lang-select"') || !config.includes('settings-toggle')) {
+    fail('config.html must keep #lang-select and .settings-toggle');
+  }
+  if ([...config.matchAll(/<style>[\s\S]*?<\/style>/g)].some((m) => m[0].includes('.settings-section-title'))) {
+    fail('config.html must not keep .settings-section-title in a page style block');
   }
   const atom = read('explore/what-is-an-atom.html');
   if (!atom.includes('assets/ui/index.css') || !atom.includes('assets/layouts/article.css')) {

@@ -33,6 +33,8 @@ const required = [
   'assets/layouts/article.css',
   'assets/layouts/calculators.css',
   'docs/ui-v2-calculators.md',
+  'docs/ui-v2-config.md',
+  'assets/layouts/config.css',
   'assets/product-catalog.js',
   'tools/build-product-catalog.js'
 ];
@@ -45,6 +47,7 @@ const chromePages = [
   'pricing.html',
   'about.html',
   'calculators.html',
+  'config.html',
   'periodic-table.html',
   'contact.html',
   'privacy.html',
@@ -71,7 +74,8 @@ const migrated = [
   'terms.html',
   '404.html',
   'explore.html',
-  'calculators.html'
+  'calculators.html',
+  'config.html'
 ];
 for (const rel of migrated) {
   const html = read(rel);
@@ -209,6 +213,22 @@ if (!calc.includes('id="mm-input"') || !calc.includes('id="mm-result-body"')) {
 }
 if (!read('calculators.pt.html').includes('assets/layouts/calculators.css')) {
   fail('calculators.pt.html must load calculators layout CSS');
+}
+
+const config = read('config.html');
+if (!config.includes('assets/ui/index.css')) fail('config.html must load UI V2');
+if (!config.includes('assets/layouts/config.css')) fail('config.html must load config layout CSS');
+if (!config.includes('id="lang-select"') || !config.includes('settings-toggle')) {
+  fail('config.html must keep #lang-select and .settings-toggle');
+}
+if (!config.includes('id="toggle-anim"') || !config.includes('id="theme-seg"')) {
+  fail('config.html must keep #toggle-anim and #theme-seg');
+}
+if ([...config.matchAll(/<style>[\s\S]*?<\/style>/g)].some((m) => m[0].includes('.settings-section-title'))) {
+  fail('config.html must not keep .settings-section-title in a page style block');
+}
+if (!read('config.pt.html').includes('assets/layouts/config.css')) {
+  fail('config.pt.html must load config layout CSS');
 }
 
 const atom = read('explore/what-is-an-atom.html');

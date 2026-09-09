@@ -78,6 +78,12 @@ test('Home and calculators load UI V2; table stays on legacy CSS', async ({ page
   );
   expect(calcUi).toBe(true);
 
+  await page.goto('/config.html');
+  const configUi = await page.evaluate(() =>
+    [...document.styleSheets].some((sheet) => (sheet.href || '').includes('/assets/ui/'))
+  );
+  expect(configUi).toBe(true);
+
   await page.goto('/periodic-table.html');
   const tableUi = await page.evaluate(() =>
     [...document.styleSheets].some((sheet) => (sheet.href || '').includes('/assets/ui/'))
@@ -92,6 +98,7 @@ test('key pages emit shared chrome in source HTML', async ({ request }) => {
     '/pricing.html',
     '/about.html',
     '/calculators.html',
+    '/config.html',
     '/periodic-table.html'
   ];
   for (const url of pages) {
@@ -102,7 +109,7 @@ test('key pages emit shared chrome in source HTML', async ({ request }) => {
     const text = await (await request.get(url)).text();
     expect(text, url).not.toContain('assets/ui/index.css');
   }
-  for (const url of ['/index.html', '/login.html', '/pricing.html', '/about.html', '/contact.html', '/privacy.html', '/terms.html', '/404.html', '/explore.html', '/calculators.html']) {
+  for (const url of ['/index.html', '/login.html', '/pricing.html', '/about.html', '/contact.html', '/privacy.html', '/terms.html', '/404.html', '/explore.html', '/calculators.html', '/config.html']) {
     const text = await (await request.get(url)).text();
     expect(text, url).toContain('assets/ui/index.css');
   }
@@ -112,6 +119,10 @@ test('key pages emit shared chrome in source HTML', async ({ request }) => {
   const calculators = await (await request.get('/calculators.html')).text();
   expect(calculators).toContain('assets/layouts/calculators.css');
   expect(calculators).toContain('data-target="molar"');
+  const config = await (await request.get('/config.html')).text();
+  expect(config).toContain('assets/layouts/config.css');
+  expect(config).toContain('id="lang-select"');
+  expect(config).toContain('settings-toggle');
   const article = await (await request.get('/explore/what-is-an-atom.html')).text();
   expect(article).toContain('assets/ui/index.css');
   expect(article).toContain('assets/layouts/article.css');
