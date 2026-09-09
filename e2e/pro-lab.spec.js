@@ -21,10 +21,11 @@ test('Free opens Pro Lab locked without calling premium APIs', async ({ page }) 
     if (req.url().includes('/api/pro-lab/')) calculateCalls += 1;
   });
   await gotoWorkspace(page, '/app?section=pro-lab');
-  await waitForLab(page);
-  await expect(page.locator('#ws-lab-home .is-locked').first()).toBeVisible();
+  await expect(page.locator('#app-study')).toContainText(/Pro Lab/i);
   await expect(page.locator('#app-study')).toContainText(/PRO/);
+  await expect(page.locator('#app-study')).toContainText(/Advanced analysis tools|Ferramentas avançadas/i);
   await expect(page.locator('#app-study').getByRole('link', { name: /Upgrade to Pro|Assinar o Pro/i }).first()).toBeVisible();
+  await expect(page.locator('#ws-lab-home')).toHaveCount(0);
   await expect(page.locator('#ws-lab-calculate')).toHaveCount(0);
   expect(calculateCalls).toBe(0);
   await saveShot(page, 'desktop-pro-lab-home-free');

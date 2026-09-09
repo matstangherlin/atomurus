@@ -28,6 +28,26 @@ function restoreEnv() {
   Object.assign(process.env, originalEnv);
 }
 
+function freezeTime(iso) {
+  const frozenMs = Date.parse(iso);
+  const RealDate = Date;
+  class FrozenDate extends RealDate {
+    constructor(...args) {
+      if (args.length === 0) super(frozenMs);
+      else super(...args);
+    }
+    static now() {
+      return frozenMs;
+    }
+  }
+  FrozenDate.parse = RealDate.parse.bind(RealDate);
+  FrozenDate.UTC = RealDate.UTC.bind(RealDate);
+  globalThis.Date = FrozenDate;
+  return () => {
+    globalThis.Date = RealDate;
+  };
+}
+
 function jsonRes(status, body, extraHeaders = {}) {
   return {
     ok: status >= 200 && status < 300,
@@ -294,6 +314,7 @@ function installMock(store, users) {
 
 async function withEnv(fn) {
   restoreEnv();
+  const thaw = freezeTime(FIXED_NOW);
   Object.assign(process.env, {
     SUPABASE_URL: 'https://demo.supabase.co',
     SUPABASE_ANON_KEY: 'anon-key',
@@ -308,6 +329,7 @@ async function withEnv(fn) {
   } finally {
     globalThis.fetch = originalFetch;
     restoreEnv();
+    thaw();
   }
 }
 
