@@ -39,12 +39,12 @@
   outline-offset: 2px;
 }
 
-.ui-root a {
+.ui-root a:not(.ui-btn) {
   color: var(--color-brand);
   text-underline-offset: 3px;
 }
 
-.ui-root a:hover {
+.ui-root a:not(.ui-btn):hover {
   color: var(--color-text);
 }
 
@@ -80,13 +80,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ui-root,
   .ui-root *,
   .ui-root *::before,
   .ui-root *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    animation: none !important;
+    transition: none !important;
     scroll-behavior: auto !important;
   }
 }

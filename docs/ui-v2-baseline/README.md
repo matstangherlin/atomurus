@@ -18,7 +18,7 @@ Captured **before any UI V2 code changes**, from commit `e933377` (`cursor/ui-v2
 | `mobile-light/` | 390×844 | light |
 | `mobile-dark/` | 390×844 | dark |
 
-Each folder contains: `home`, `login`, `pricing`, `about`, `periodic-table`, `calculators`, `explore`, `viewer`, `app`.
+Each folder contains: `home`, `login`, `pricing`, `about`, `periodic-table`, `calculators`, `explore`, `viewer`, `app`, and (Prompt 02) `ui-gallery`.
 
 See `manifest.json` for per-shot timing and byte sizes.
 

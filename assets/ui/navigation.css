@@ -142,3 +142,16 @@
   background: var(--color-brand-soft);
   border-color: color-mix(in oklab, var(--color-brand) 25%, var(--color-border));
 }
+
+@media (max-width: 768px) {
+  .ui-topbar {
+    height: auto;
+    min-height: var(--ui-topbar);
+    flex-wrap: wrap;
+    padding: var(--space-2) var(--space-3);
+  }
+  .ui-search {
+    flex: 1 1 100%;
+    order: 3;
+  }
+}
