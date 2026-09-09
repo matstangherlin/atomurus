@@ -1274,6 +1274,14 @@
       '<a class="ws-dest-card" href="/app?section=review"><h2 class="ws-h2">' + escapeHtml(t('review')) + '</h2></a>' +
       '<a class="ws-dest-card" href="/app?section=insights"><h2 class="ws-h2">' + escapeHtml(t('insights')) + '</h2></a>' +
       '</div></section>';
+    var insightsPreview = review
+      ? '<section class="ws-overview-block"><h2 class="ws-h2">' + escapeHtml(t('insights')) + '</h2>' +
+        '<div class="ws-metrics">' +
+        [['dueToday', dueNow], ['metricCards', review.totalCards || 0]].map(function (row) {
+          return '<div class="ws-metric"><div class="ws-metric-value">' + escapeHtml(String(row[1])) + '</div><div class="ws-metric-label">' + escapeHtml(t(row[0])) + '</div></div>';
+        }).join('') + '</div>' +
+        '<p><a class="ws-btn ws-btn-secondary" href="/app?section=insights">' + escapeHtml(t('openInsights')) + '</a></p></section>'
+      : '';
     var solveBlock = '<section class="ws-overview-block"><h2 class="ws-h2">' + escapeHtml(t('solveAnalyzeTitle')) + '</h2>' +
       '<div class="ws-dest-grid">' +
       '<a class="ws-dest-card" data-dest="solver" href="/app?section=pro-lab&tool=reactions"><h2 class="ws-h2">' + escapeHtml(t('chemistrySolver')) + '</h2><p class="ws-lede">' + escapeHtml(t('chemistrySolverLede')) + '</p></a>' +
@@ -1290,7 +1298,7 @@
     node.innerHTML =
       crumbTrail('overview') +
       '<p class="ws-kicker">Atomurus</p><h1 class="ws-title">' + escapeHtml(greet) + '</h1><p class="ws-lede">' + escapeHtml(t('continueChemistry')) + '</p>' +
-      attention + continueBlock + studyBlock + solveBlock + visualizeBlock;
+      attention + continueBlock + studyBlock + insightsPreview + solveBlock + visualizeBlock;
   }
 
   function libraryRow(item) {

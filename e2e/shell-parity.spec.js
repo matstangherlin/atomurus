@@ -16,7 +16,7 @@ async function chromeMetrics(page) {
     const side = document.querySelector('#ps-pub-sidebar, .ps-shell > aside.sidebar, .ws-sidebar');
     const brand = document.querySelector('.lc-topnav-name, .logo-text, .ws-brand-name');
     const search = document.querySelector('.lc-topnav-search, .ps-search, .search-box, .ws-search');
-    const lang = document.querySelector('[data-i18n-toggle]');
+    const lang = document.querySelector('[data-i18n-toggle], button[aria-label*="anguage" i], button[title*="anguage" i], button[aria-label*="idioma" i]');
     const theme = document.querySelector('#theme-toggle, .theme-btn, [onclick="toggleTheme()"]');
     const account = document.querySelector('[data-atomurus-account-chip], .lc-topnav-cta, #ws-userchip');
     const box = (el) => {

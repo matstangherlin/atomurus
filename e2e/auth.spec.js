@@ -25,7 +25,7 @@ test('login next keeps calculator query string', async ({ page }) => {
   await page.locator('#auth-email').fill('pro@atomurus.test');
   await page.locator('#auth-password').fill('correct-horse');
   await page.locator('#auth-login-submit').click();
-  await page.waitForURL(/calculators/, { timeout: 15_000 });
+  await page.waitForURL((url) => /\/calculators(?:\.html)?$/.test(url.pathname), { timeout: 15_000 });
   expect(page.url()).toMatch(/tab=stoich/);
 });
 

@@ -22,7 +22,8 @@ test('Free Reaction Workbench is a locked preview with no solver API calls', asy
   await expect(page.locator('#app-study')).toContainText(/Pro Lab/i);
   await expect(page.locator('#app-study')).toContainText(/PRO/);
   await expect(page.locator('#app-study').getByRole('link', { name: /Upgrade|Assinar/i })).toBeVisible();
-  await expect(page.locator('#ws-lab-home')).toHaveCount(0);
+  await expect(page.locator('#ws-lab-home')).toBeVisible();
+  await expect(page.locator('#ws-lab-home .is-locked').first()).toBeVisible();
   await expect(page.locator('#ws-lab-balance')).toHaveCount(0);
   await expect(page.locator('#ws-lab-equation')).toHaveCount(0);
   expect(solverCalls).toBe(0);
