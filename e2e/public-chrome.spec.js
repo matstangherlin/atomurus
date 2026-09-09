@@ -44,7 +44,7 @@ test('public home uses workspace chrome, not lab-console ticker', async ({ page 
   await expect(page.locator('.lc-mod-card').nth(3)).toHaveAttribute('href', /\/app/);
   await expect(page.locator('.lc-hero-actions a').first()).toHaveAttribute('href', /periodic-table/);
   await expect(page.locator('.lc-hero-stats')).not.toContainText('5 Calculators');
-  await expect(page.locator('.lc-mod-card')).not.toContainText('5 instruments');
+  await expect(page.locator('.lc-modules')).not.toContainText('5 instruments');
   const openBg = await page.locator('.lc-mod-go').first().evaluate((el) => getComputedStyle(el).backgroundColor);
   expect(openBg).toMatch(/rgb\(\s*30,\s*106,\s*80\s*\)/);
   await expect(page.locator('.lc-footer-bottom > span:has(.lc-st-dot)')).toBeHidden();
