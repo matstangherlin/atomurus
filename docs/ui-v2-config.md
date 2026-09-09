@@ -19,7 +19,7 @@ Keep:
 - `toggleSetting`, `setTheme`, `setElSize`, `setFontSize`, `setLanguage`, `clearSiteCache`
 - `localStorage` keys `atomurus-theme`, `atomurus-anim`, `atomurus-heatmap`, `atomurus-fblock`, `atomurus-mass`, `atomurus-elsize`, `atomurus-fontsize`, `atomurus-lang`
 
-Privacy link fallback copy (“No accounts”) is Prompt 14, not this remessa.
+Privacy-row copy is product-truth (`config.pagePrivacyDesc`). Do not restore “No accounts”.
 
 ## What this step does not do
 

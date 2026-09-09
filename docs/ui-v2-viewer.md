@@ -25,7 +25,7 @@ Chrome only:
 - Restyling WebGL, 2D canvas drawing, or embed-mode iframe sizing
 - `/app`, element pages
 - Removing `public-shell.css` / hoist (Prompt 13)
-- Product-truth copy on kickers that still say `§` (Prompt 14)
+- Product-truth copy on kickers (Prompt 14 — `.ph-kicker` fallbacks must match the dictionary)
 
 ## Tests
 

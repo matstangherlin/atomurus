@@ -18,7 +18,6 @@
 
 - Explore hub, calculators, table, viewer, `/app` restyle
 - Removing `public-shell.css` / hoist
-- Replacing `lang-pt-pending` on every other page (Prompt 14)
 - Protecting `/app`
 
 ## Tests

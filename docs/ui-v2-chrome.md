@@ -55,7 +55,7 @@ Auth user chip is runtime. Do not fake it in HTML.
 | Mobile drawer | **Runtime** (landing: `atomurus-mobile-nav.js`; tools: existing `toggleMobileSidebar`) |
 | Account / user chip | **Runtime** (`auth-sync`) |
 | `loadLabGate` | **Runtime** (validate-site contract) |
-| `polishCopy` | Runtime until Prompt 14 |
+| `polishCopy` | Runtime belt for leftover kicker marks (Prompt 14 cleaned the HTML source) |
 
 When `#ps-shell` is already in the document, `enhanceExistingShell()` runs `markActive` / search / CTA / Study. There is no `ps-boot` hide and no document rebuild if the shell is missing (two compact `explore/viewer/methyl-isocyanate` pages keep their own chrome).
 

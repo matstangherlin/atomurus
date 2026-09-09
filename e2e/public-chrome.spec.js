@@ -158,6 +158,7 @@ test('public table, calculators, login and pricing share the new chrome', async 
   expect(vzTabBg).not.toBe('rgb(20, 18, 14)');
   await expect(page.locator('.data-strip').first()).toBeHidden();
   await expect(page.locator('.av-substrip').first()).toBeHidden();
+  await expect(page.locator('.ph-kicker').first()).not.toContainText('§');
   const vcBg = await page.locator('.viewer-controls').first().evaluate((el) => getComputedStyle(el).backgroundColor);
   expect(vcBg).not.toBe('rgba(20, 18, 14, 0.78)');
   await saveShot(page, 'desktop-public-viewer');
@@ -276,6 +277,7 @@ test('molecules, allotropes and 404 drop leftover console chrome', async ({ page
   });
   expect(molPill.bg).toMatch(/rgb\(\s*30,\s*106,\s*80\s*\)/);
   expect(molPill.color).not.toMatch(/rgb\(\s*91,\s*33,\s*182\s*\)/);
+  await expect(page.locator('.ph-kicker').first()).not.toContainText('§');
   await expect.poll(() => fontFamily(page.locator('.mol-search'))).toMatch(/Inter Tight/i);
   await saveShot(page, 'desktop-public-molecules');
 
@@ -286,6 +288,7 @@ test('molecules, allotropes and 404 drop leftover console chrome', async ({ page
   });
   expect(alloPill.bg).toMatch(/rgb\(\s*30,\s*106,\s*80\s*\)/);
   expect(alloPill.color).not.toMatch(/rgb\(\s*91,\s*33,\s*182\s*\)/);
+  await expect(page.locator('.ph-kicker').first()).not.toContainText('§');
   await expect.poll(() => fontFamily(page.locator('.allo-search'))).toMatch(/Inter Tight/i);
   await saveShot(page, 'desktop-public-allotropes');
 

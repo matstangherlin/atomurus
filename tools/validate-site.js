@@ -356,6 +356,7 @@ function assertUiV2() {
     'docs/ui-v2-viewer.md',
     'docs/ui-v2-workspace.md',
     'docs/ui-v2-hoist.md',
+    'docs/ui-v2-i18n.md',
     'assets/layouts/auth.css',
     'assets/layouts/pricing.css',
     'assets/layouts/docs.css',
@@ -455,6 +456,28 @@ function assertUiV2() {
     }
     if (!html.includes('id="ps-shell"')) {
       fail(`${rel} loads public-workspace.js but has no #ps-shell`);
+    }
+  }
+  for (const file of walkHtml(ROOT)) {
+    const rel = path.relative(ROOT, file).replace(/\\/g, '/');
+    const html = fs.readFileSync(file, 'utf8');
+    if (/html\.lang-pt-pending\s*\[data-i18n\]/.test(html) || /classList\.add\(['"]lang-pt-pending['"]\)/.test(html)) {
+      fail(`${rel} must not hide copy behind lang-pt-pending`);
+    }
+    if (/class="ph-kicker"[^>]*>§/.test(html)) {
+      fail(`${rel} ph-kicker fallback must not use Bloomberg § marks`);
+    }
+  }
+  if (/No accounts/.test(read('config.html')) || /No accounts/.test(read('config.pt.html'))) {
+    fail('config privacy row must not say No accounts');
+  }
+  const i18nDir = path.join(ROOT, 'assets', 'i18n');
+  for (const name of fs.readdirSync(i18nDir)) {
+    if (name.endsWith('.js')) fail('assets/i18n must publish JSON only; stale JS chunks lag the dictionary');
+    if (!name.endsWith('.json')) continue;
+    const chunk = read(`assets/i18n/${name}`);
+    if (/does not offer user accounts|we do not run a user database|completely open, no accounts required/.test(chunk)) {
+      fail(`assets/i18n/${name} must not deny that accounts exist`);
     }
   }
   [

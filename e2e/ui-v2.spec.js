@@ -120,6 +120,20 @@ test('public chrome paints without ps-boot', async ({ page }) => {
   }
 });
 
+test('Portuguese pages paint without hiding i18n copy', async ({ page }) => {
+  await page.goto('/periodic-table.html?lang=pt-BR');
+  await expect(page.locator('html.lang-pt-pending')).toHaveCount(0);
+  await expect(page.locator('#ct-periodic h1.ph-title')).toBeVisible();
+  await page.goto('/viewer/atomic-models.html?lang=pt-BR');
+  await expect(page.locator('.ph-kicker').first()).toBeVisible();
+  await expect(page.locator('.ph-kicker').first()).not.toContainText('§');
+  await page.goto('/config.html');
+  await expect(page.locator('[data-i18n="config.pagePrivacyDesc"]')).not.toContainText(/No accounts/i);
+  await page.goto('/app.html?lang=pt-BR');
+  await expect(page.locator('html.lang-pt-pending')).toHaveCount(0);
+  await expect(page.locator('#ws-search-q')).toBeVisible();
+});
+
 test('key pages emit shared chrome in source HTML', async ({ request }) => {
   const pages = [
     '/index.html',
@@ -153,6 +167,7 @@ test('key pages emit shared chrome in source HTML', async ({ request }) => {
   expect(config).toContain('assets/layouts/config.css');
   expect(config).toContain('id="lang-select"');
   expect(config).toContain('settings-toggle');
+  expect(config).not.toContain('No accounts');
   const article = await (await request.get('/explore/what-is-an-atom.html')).text();
   expect(article).toContain('assets/ui/index.css');
   expect(article).toContain('assets/layouts/article.css');
@@ -199,4 +214,9 @@ test('key pages emit shared chrome in source HTML', async ({ request }) => {
   expect(workspaceJs).not.toMatch(/hoistToolShell|hoistLandingShell|buildPublicSidebar|ps-boot/);
   const shellCss = await (await request.get('/assets/public-shell.css')).text();
   expect(shellCss).not.toContain('ps-boot');
+  expect(atomic).toContain('data-i18n="atomicModels.kicker">visualization');
+  expect(atomic).not.toMatch(/html\.lang-pt-pending\s*\[data-i18n\]/);
+  const i18nRuntime = await (await request.get('/i18n.js')).text();
+  expect(i18nRuntime).toContain('.json');
+  expect(i18nRuntime).not.toContain('__ATOMURUS_I18N_CHUNKS__');
 });

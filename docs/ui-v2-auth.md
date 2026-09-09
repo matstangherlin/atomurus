@@ -9,7 +9,7 @@ assets/ui/index.css          tokens + primitives (login only among production pa
 assets/layouts/auth.css     grid, panel show/hide, password wrap, pw reqs
 ```
 
-The ~261-line inline `<style>` is gone. The FOUC theme/lang `<style>` in `<head>` stays (Prompt 12/14).
+The ~261-line inline `<style>` is gone. The FOUC theme/lang `<style>` in `<head>` stays for theme icons. Prompt 14 removed `lang-pt-pending` hiding.
 
 Home and `/app` still do **not** load `assets/ui/index.css`.
 

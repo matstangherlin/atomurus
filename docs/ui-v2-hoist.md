@@ -16,7 +16,7 @@
 - Deleting `public-workspace.js` or `public-shell.css`
 - Mass-deleting public-shell `!important` that still beats lab-console
 - Mass-deleting `.lc-*` from HTML
-- Protecting `/app`, restyling element science, or Prompt 14 copy/i18n
+- Protecting `/app`, restyling element science, or remaining public-shell `!important`
 
 ## Tests
 

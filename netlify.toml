@@ -847,8 +847,9 @@
 #
 # Why only `/` and not every page: internal navigation after the first
 # visit inherits language from localStorage via the inline FOUC script
-# in each HTML head (the `lang-pt-pending` class), so subsequent pages
-# don't flash. Deep-linking into /about etc. is rare without query already.
+# in each HTML head (English fallbacks stay visible until i18n.js applies),
+# so subsequent pages don't go blank. Deep-linking into /about etc. is rare
+# without a query already.
 [[redirects]]
   from       = "/"
   to         = "/index.pt.html"
