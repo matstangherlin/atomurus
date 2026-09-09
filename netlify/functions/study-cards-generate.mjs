@@ -24,7 +24,7 @@ export default async function handler(request) {
   if (request.method === 'OPTIONS') return options();
   if (request.method !== 'POST') return json(405, { ok: false, error: 'Method not allowed' });
 
-  const auth = await requireFeature(request, 'flashcards');
+  const auth = await requireFeature(request, 'automatedPractice');
   if (auth.response) return auth.response;
 
   try {

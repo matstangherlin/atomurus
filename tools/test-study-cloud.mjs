@@ -389,11 +389,9 @@ await withStudyEnv(async () => {
     body: { itemType: 'element', itemKey: 'aurum', title: 'Gold' }
   }));
   const freeJson = await readJson(free);
-  assert.equal(free.status, 403);
-  assert.equal(freeJson.code, 'feature_locked');
-  assert.equal(freeJson.feature, 'studyCloud');
-  assert.equal(freeJson.upgradeUrl, '/pricing');
-  assertPrivate(free, freeJson);
+  assert.equal(free.status, 200);
+  assert.equal(freeJson.ok, true);
+  assert.ok(freeJson.item.id);
 });
 
 await withStudyEnv(async ({ store }) => {
@@ -557,8 +555,10 @@ await withStudyEnv(async ({ store }) => {
     cookies: sessionCookie('access-cancelled')
   }));
   const cancelledJson = await readJson(cancelled);
-  assert.equal(cancelled.status, 403);
-  assert.equal(cancelledJson.code, 'feature_locked');
+  assert.equal(cancelled.status, 200);
+  assert.equal(cancelledJson.ok, true);
+  assert.equal(cancelledJson.items.length, 1);
+  assert.equal(cancelledJson.items[0].note, 'keep-me');
 
   // Entitlement ended: 403 on Pro APIs, but rows stay in the store for reactivation.
   assert.equal(store.items.length, 1);

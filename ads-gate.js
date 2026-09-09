@@ -30,6 +30,7 @@
     isPro: false,
     plan: 'free',
     user: null,
+    features: {},
     pricingContext: null
   };
 
@@ -208,9 +209,10 @@
         state.adsEnabled = data.adsEnabled !== false;
         state.signedIn = Boolean(data.signedIn);
         state.user = data.user || null;
+        state.features = data.features || (data.user && data.user.features) || {};
         state.pricingContext = data.pricingContext || null;
+        state.isPro = Boolean(data.isPro || (data.user && data.user.isPro));
         if (data.user) {
-          state.isPro = Boolean(data.user.isPro);
           state.plan = data.user.plan || 'free';
         }
         if (window.AtomurusAuth && typeof window.AtomurusAuth.ingestPublicSession === 'function') {

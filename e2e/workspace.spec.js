@@ -10,7 +10,7 @@ function saveShot(page, name) {
   return page.screenshot({ path: path.join(SHOTS, `${name}.png`), fullPage: true });
 }
 
-test('Free sees premium nav locked and cannot use Study Cloud', async ({ page }) => {
+test('Free uses Study Cloud and still sees Review as Pro', async ({ page }) => {
   await installApi(page, { kind: 'free' });
   await gotoWorkspace(page, '/app');
   await expect(page.locator('#ws-study-nav')).toContainText(/Overview|Visão geral/);
@@ -20,17 +20,16 @@ test('Free sees premium nav locked and cannot use Study Cloud', async ({ page })
   await expect(page.locator('#ws-study-nav')).toContainText(/Library|Biblioteca/);
   await expect(page.locator('#ws-study-nav')).toContainText(/Study Sets/);
   await expect(page.locator('#ws-study-nav a[href="/app?section=review"]')).toContainText(/Review/);
-  await expect(page.locator('#ws-study-nav')).toContainText(/PRO/);
+  await expect(page.locator('#ws-study-nav a[href="/app?section=review"]')).toContainText(/PRO/);
   await saveShot(page, 'desktop-free-overview');
 
   await page.locator('#ws-study-nav a[href="/app?section=sets"]').click();
-  await expect(page.locator('#ws-dialog-host')).toContainText(/Atomurus Pro/);
-  await expect(page).toHaveURL(/section=library/);
-  await page.locator('#ws-dialog-host button').first().click();
+  await expect(page.locator('#app-study')).toContainText(/Study Sets/);
+  await expect(page.locator('#ws-dialog-host')).toHaveCount(0);
 
   await gotoWorkspace(page, '/app?section=library');
-  await expect(page.locator('#app-study')).toContainText(/Premium|PRO|Upgrade|Assinar/);
-  await expect(page.locator('#ws-lib-list')).toHaveCount(0);
+  await expect(page.locator('#ws-lib-list')).toContainText('Iron');
+  await expect(page.locator('[data-generate-item]')).toHaveCount(0);
 
   const api = await page.evaluate(async () => {
     const res = await fetch('/api/study/items?exclude=calculator', {
@@ -40,8 +39,10 @@ test('Free sees premium nav locked and cannot use Study Cloud', async ({ page })
     const body = await res.json().catch(() => ({}));
     return { status: res.status, code: body.code };
   });
-  expect(api.status).toBe(403);
-  expect(api.code).toBe('feature_locked');
+  expect(api.status).toBe(200);
+
+  await gotoWorkspace(page, '/app?section=review');
+  await expect(page.locator('#app-study')).toContainText(/Premium|PRO|Upgrade|Assinar/);
 });
 
 test('Trial unlocks study features and shows PRO TRIAL without billing portal', async ({ page }) => {

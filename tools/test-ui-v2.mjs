@@ -44,6 +44,7 @@ const required = [
   'docs/ui-v2-report.md',
   'docs/ui-v2-global-shell.md',
   'docs/ui-v2-product-shell-final.md',
+  'docs/access-model-v2.md',
   'tools/capture-ui-v2.mjs',
   'assets/layouts/config.css',
   'assets/layouts/periodic-table.css',
@@ -52,6 +53,7 @@ const required = [
   'assets/layouts/shell.css',
   'assets/product-catalog.js',
   'assets/pro-features.js',
+  'assets/access-policy.js',
   'templates/chrome/account-control.html',
   'tools/build-product-catalog.js'
 ];
@@ -241,6 +243,9 @@ if (!read('assets/public-workspace.js').includes('enhanceExistingShell')) {
 const publicWorkspace = read('assets/public-workspace.js');
 if (/hoistToolShell|hoistLandingShell|buildPublicSidebar|ps-boot/.test(publicWorkspace)) {
   fail('public-workspace.js must not hoist or hide the body behind ps-boot');
+}
+if (!publicWorkspace.includes('access-policy.js')) {
+  fail('public-workspace.js must still inject access-policy.js');
 }
 if (!publicWorkspace.includes('lab-tool-gate.js')) {
   fail('public-workspace.js must still inject lab-tool-gate.js');

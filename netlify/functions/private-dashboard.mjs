@@ -91,7 +91,7 @@ export default async function handler(request) {
       id: 'favorites',
       label: 'Favorites & history',
       description: 'Your Study Cloud library and calculator history live in this workspace.',
-      href: user.isPro ? '/app?section=library' : '/pricing',
+      href: '/app?section=library',
       state: features.favorites ? 'available' : 'locked'
     },
     {

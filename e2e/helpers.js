@@ -10,51 +10,103 @@ function daysFromNow(n) {
 }
 
 function features(on) {
+  const isPro = Boolean(on);
   return {
     labWorkspace: true,
-    premiumLessons: on,
-    studyCloud: on,
-    studyProgress: on,
-    favorites: on,
-    calculatorHistory: on,
-    studyNotes: on,
-    studyTags: on,
-    studySets: on,
-    flashcards: on,
-    smartReview: on,
-    spacedRepetition: on,
-    studyInsights: on,
-    focusReview: on,
-    advancedStudyStats: on,
-    exportPdf: on,
-    adsFree: on,
+    premiumLessons: isPro,
+    studyCloud: true,
+    studyProgress: true,
+    favorites: true,
+    calculatorHistory: true,
+    studyNotes: true,
+    studyTags: true,
+    studySets: true,
+    flashcards: true,
+    smartReview: isPro,
+    spacedRepetition: isPro,
+    studyInsights: isPro,
+    focusReview: isPro,
+    advancedStudyStats: isPro,
+    exportPdf: isPro,
+    adsFree: isPro,
     adminConsole: false,
-    proLab: on,
-    advancedCalculations: on,
-    advancedElementCompare: on,
-    advancedMoleculeCompare: on,
-    advancedAtomicCompare: on,
-    savedLabSessions: on,
-    chemistrySolver: on,
-    reactionWorkbench: on,
-    reactionBalancer: on,
-    stoichiometrySolver: on,
-    limitingReagentSolver: on,
-    yieldSolver: on,
-    formulaSolver: on,
-    solutionBuilder: on,
+    automatedPractice: isPro,
+    proLab: isPro,
+    advancedCalculations: isPro,
+    advancedElementCompare: isPro,
+    advancedMoleculeCompare: isPro,
+    advancedAtomicCompare: isPro,
+    savedLabSessions: isPro,
+    chemistrySolver: isPro,
+    reactionWorkbench: isPro,
+    reactionBalancer: isPro,
+    stoichiometrySolver: isPro,
+    limitingReagentSolver: isPro,
+    yieldSolver: isPro,
+    formulaSolver: isPro,
+    solutionBuilder: isPro,
     scientificCalculator: true,
     unitConverter: true,
     idealGasCalculator: true,
     phCalculator: true,
-    interactiveViewers: on,
-    atomicModelViewer: on,
-    moleculeViewer: on,
-    allotropeViewer: on,
-    isomerismViewer: on,
-    publicStoichiometry: on,
-    publicThermodynamics: on,
-    publicElementCompare: on
+    interactiveViewers: true,
+    atomicModelViewer: true,
+    moleculeViewer: true,
+    allotropeViewer: true,
+    isomerismViewer: true,
+    publicStoichiometry: isPro,
+    publicThermodynamics: isPro,
+    publicElementCompare: true
+  };
+}
+
+function guestFeatures() {
+  return {
+    labWorkspace: true,
+    premiumLessons: false,
+    studyCloud: false,
+    studyProgress: false,
+    favorites: false,
+    calculatorHistory: false,
+    studyNotes: false,
+    studyTags: false,
+    studySets: false,
+    flashcards: false,
+    smartReview: false,
+    spacedRepetition: false,
+    studyInsights: false,
+    focusReview: false,
+    advancedStudyStats: false,
+    exportPdf: false,
+    adsFree: false,
+    adminConsole: false,
+    automatedPractice: false,
+    proLab: false,
+    advancedCalculations: false,
+    advancedElementCompare: false,
+    advancedMoleculeCompare: false,
+    advancedAtomicCompare: false,
+    savedLabSessions: false,
+    chemistrySolver: false,
+    reactionWorkbench: false,
+    reactionBalancer: false,
+    stoichiometrySolver: false,
+    limitingReagentSolver: false,
+    yieldSolver: false,
+    formulaSolver: false,
+    solutionBuilder: false,
+    scientificCalculator: true,
+    unitConverter: true,
+    idealGasCalculator: true,
+    phCalculator: true,
+    interactiveViewers: true,
+    atomicModelViewer: true,
+    moleculeViewer: true,
+    allotropeViewer: true,
+    isomerismViewer: true,
+    publicStoichiometry: false,
+    publicThermodynamics: false,
+    publicElementCompare: true
   };
 }
 
@@ -152,7 +204,8 @@ function adsConfig(user) {
     signedIn: Boolean(user),
     adsEnabled: user ? !user.adsFree : true,
     isPro: Boolean(user && user.isPro),
-    user: user || null
+    user: user || null,
+    features: user?.features || guestFeatures()
   };
 }
 
@@ -309,7 +362,14 @@ async function installApi(page, options = {}) {
     const locked = !user.isPro;
     if (path.startsWith('/api/study/')) {
       if (!signedIn) return json(route, 401, { ok: false, code: 'session_expired' });
-      if (locked) return json(route, 403, { ok: false, code: 'feature_locked', feature: 'studyCloud', upgradeUrl: '/pricing' });
+      const feature =
+        path.startsWith('/api/study/insights') ? 'studyInsights' :
+        path.startsWith('/api/study/review') ? 'smartReview' :
+        path === '/api/study/cards/generate' ? 'automatedPractice' :
+        'studyCloud';
+      if (!user.features || user.features[feature] !== true) {
+        return json(route, 403, { ok: false, code: 'feature_locked', feature, upgradeUrl: '/pricing' });
+      }
     }
 
     if (path === '/api/study/overview') {
@@ -549,6 +609,19 @@ async function installApi(page, options = {}) {
       return json(route, 200, { ok: true, items: [], nextCursor: null });
     }
 
+    if (path === '/api/pro-lab/viewer/molecule' && method === 'GET') {
+      const key = String(url.searchParams.get('key') || '').trim().toLowerCase();
+      try {
+        const { viewerMoleculePayload, isSafeMoleculeKey } = await import('../netlify/lib/viewer-molecule-coords.mjs');
+        if (!isSafeMoleculeKey(key)) return json(route, 400, { ok: false, code: 'invalid_molecule_key' });
+        const molecule = viewerMoleculePayload(key);
+        if (!molecule) return json(route, 404, { ok: false, code: 'molecule_not_found' });
+        return json(route, 200, { ok: true, molecule });
+      } catch (err) {
+        return json(route, 500, { ok: false, error: err.message });
+      }
+    }
+
     if (path.startsWith('/api/pro-lab/')) {
       if (!signedIn) return json(route, 401, { ok: false, code: 'session_expired', error: 'Sign in required' });
       if (locked) return json(route, 403, { ok: false, code: 'feature_locked', feature: 'proLab', upgradeUrl: '/pricing' });
@@ -723,18 +796,6 @@ async function installApi(page, options = {}) {
         return json(route, 200, { ok: true, ...solveThermodynamics(body) });
       } catch (err) {
         return json(route, err.status || 400, { ok: false, error: err.message, code: err.code || 'invalid_request' });
-      }
-    }
-    if (path === '/api/pro-lab/viewer/molecule' && method === 'GET') {
-      const key = String(url.searchParams.get('key') || '').trim().toLowerCase();
-      try {
-        const { viewerMoleculePayload, isSafeMoleculeKey } = await import('../netlify/lib/viewer-molecule-coords.mjs');
-        if (!isSafeMoleculeKey(key)) return json(route, 400, { ok: false, code: 'invalid_molecule_key' });
-        const molecule = viewerMoleculePayload(key);
-        if (!molecule) return json(route, 404, { ok: false, code: 'molecule_not_found' });
-        return json(route, 200, { ok: true, molecule });
-      } catch (err) {
-        return json(route, 500, { ok: false, error: err.message });
       }
     }
 

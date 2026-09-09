@@ -16,6 +16,7 @@ import formulaHandler from '../netlify/functions/pro-lab-formula-solve.mjs';
 import solutionsHandler from '../netlify/functions/pro-lab-solutions-solve.mjs';
 import thermoHandler from '../netlify/functions/pro-lab-thermodynamics-solve.mjs';
 import viewerMoleculeHandler from '../netlify/functions/pro-lab-viewer-molecule.mjs';
+import { FEATURES } from '../netlify/lib/feature-catalog.mjs';
 
 const originalEnv = { ...process.env };
 const originalFetch = globalThis.fetch;
@@ -387,24 +388,22 @@ assert.match(proLabSrc, /deleteSessionTitle/);
 assert.match(proLabSrc, /tone: 'danger'/);
 assert.doesNotMatch(proLabSrc, /toast\([^)]+,\s*'danger'\s*\)/);
 
-const planAccess = readFileSync(new URL('../netlify/lib/plan-access.mjs', import.meta.url), 'utf8');
-assert.match(planAccess, /proLab: isPro/);
-assert.match(planAccess, /advancedCalculations: isPro/);
-assert.match(planAccess, /advancedElementCompare: isPro/);
-assert.match(planAccess, /advancedMoleculeCompare: isPro/);
-assert.match(planAccess, /advancedAtomicCompare: isPro/);
-assert.match(planAccess, /savedLabSessions: isPro/);
-assert.match(planAccess, /chemistrySolver: isPro/);
-assert.match(planAccess, /reactionWorkbench: isPro/);
-assert.match(planAccess, /reactionBalancer: isPro/);
-assert.match(planAccess, /stoichiometrySolver: isPro/);
-assert.match(planAccess, /formulaSolver: isPro/);
-assert.match(planAccess, /solutionBuilder: isPro/);
-assert.match(planAccess, /scientificCalculator: signedIn/);
-assert.match(planAccess, /const interactiveViewers = isPro/);
-assert.match(planAccess, /publicStoichiometry: isPro/);
-assert.match(planAccess, /publicThermodynamics: isPro/);
-assert.match(planAccess, /moleculeViewer: interactiveViewers/);
+assert.equal(FEATURES.proLab.access, 'pro');
+assert.equal(FEATURES.advancedCalculations.access, 'pro');
+assert.equal(FEATURES.advancedElementCompare.access, 'pro');
+assert.equal(FEATURES.advancedMoleculeCompare.access, 'pro');
+assert.equal(FEATURES.advancedAtomicCompare.access, 'pro');
+assert.equal(FEATURES.savedLabSessions.access, 'pro');
+assert.equal(FEATURES.chemistrySolver.access, 'pro');
+assert.equal(FEATURES.reactionWorkbench.access, 'pro');
+assert.equal(FEATURES.reactionBalancer.access, 'pro');
+assert.equal(FEATURES.stoichiometrySolver.access, 'pro');
+assert.equal(FEATURES.formulaSolver.access, 'pro');
+assert.equal(FEATURES.solutionBuilder.access, 'pro');
+assert.equal(FEATURES.scientificCalculator.access, 'public');
+assert.equal(FEATURES.moleculeViewer.access, 'public');
+assert.equal(FEATURES.publicStoichiometry.access, 'pro');
+assert.equal(FEATURES.publicThermodynamics.access, 'pro');
 
 const calcFn = readFileSync(new URL('../netlify/functions/pro-lab-calculate.mjs', import.meta.url), 'utf8');
 assert.match(calcFn, /requireFeature\(request, 'advancedCalculations'\)/);
@@ -696,11 +695,14 @@ assert.equal(reactionState.solverVersion, 1);
 
 await withLabEnv(async () => {
   const unsigned = await viewerMoleculeHandler(cookieRequest('https://atomurus.com/api/pro-lab/viewer/molecule?key=water'));
-  assert.equal(unsigned.status, 401);
+  const unsignedJson = await readJson(unsigned);
+  assert.equal(unsigned.status, 200);
+  assert.equal(unsignedJson.ok, true);
+  assert.ok(unsignedJson.molecule.atoms.length >= 3);
   const free = await viewerMoleculeHandler(cookieRequest('https://atomurus.com/api/pro-lab/viewer/molecule?key=water', {
     cookies: sessionCookie('access-free')
   }));
-  assert.equal(free.status, 403);
+  assert.equal(free.status, 200);
   const paid = await viewerMoleculeHandler(cookieRequest('https://atomurus.com/api/pro-lab/viewer/molecule?key=water', {
     cookies: sessionCookie('access-pro-a')
   }));
@@ -708,7 +710,6 @@ await withLabEnv(async () => {
   assert.equal(paid.status, 200);
   assert.equal(paidJson.ok, true);
   assert.ok(paidJson.molecule.atoms.length >= 3);
-  assertPrivate(paid, paidJson);
 });
 
 await withLabEnv(async () => {

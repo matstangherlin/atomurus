@@ -1,42 +1,24 @@
 /**
  * Access policy for public-lab tools that already exist.
  *
- * OPEN LAB (guest): periodic table, element pages, Explore, molar mass, dilution.
- * FREE ACCOUNT (signed-in): plus scientific calculator, unit converter, ideal gas, pH.
- * PRO / trial: plus 3D viewers, isomerism, allotropes, element compare,
- *              and the public stoichiometry / thermodynamics calculators.
- *
- * This file is the presentation policy matrix. Premium execution is authorized
- * with requireFeature() on the server — not by this module alone.
+ * Presentation matrix is derived from netlify/lib/feature-catalog.mjs.
+ * Premium execution is authorized with requireFeature() on the server —
+ * not by this module alone.
  */
 
-export const CALC_TAB_POLICY = Object.freeze({
-  molar: 'public',
-  dilute: 'public',
-  scientific: 'login',
-  unit: 'login',
-  ideal: 'login',
-  ph: 'login',
-  stoich: 'pro',
-  thermo: 'pro'
-});
+import { FEATURES, LAB_TABS, PAGE_TOOLS } from './feature-catalog.mjs';
 
-export const CALC_TAB_FEATURE = Object.freeze({
-  scientific: 'scientificCalculator',
-  unit: 'unitConverter',
-  ideal: 'idealGasCalculator',
-  ph: 'phCalculator',
-  stoich: 'publicStoichiometry',
-  thermo: 'publicThermodynamics'
-});
+export const CALC_TAB_POLICY = Object.freeze(
+  Object.fromEntries(Object.entries(LAB_TABS).map(([tab, spec]) => [tab, spec.access]))
+);
 
-export const PAGE_TOOL_FEATURE = Object.freeze({
-  elementCompare: 'publicElementCompare',
-  moleculeViewer: 'moleculeViewer',
-  atomicModels: 'atomicModelViewer',
-  allotropes: 'allotropeViewer',
-  isomerism: 'isomerismViewer'
-});
+export const CALC_TAB_FEATURE = Object.freeze(
+  Object.fromEntries(Object.entries(LAB_TABS).map(([tab, spec]) => [tab, spec.feature]))
+);
+
+export const PAGE_TOOL_FEATURE = Object.freeze(
+  Object.fromEntries(Object.entries(PAGE_TOOLS).map(([tool, spec]) => [tool, spec.feature]))
+);
 
 function compactPath(pathname) {
   return String(pathname || '')
@@ -47,26 +29,51 @@ function compactPath(pathname) {
     .replace(/\/+$/, '') || '/';
 }
 
+function needForFeature(featureKey, fallback = 'public') {
+  const spec = FEATURES[featureKey];
+  return spec?.access || fallback;
+}
+
 export function pageToolPolicy(pathname) {
   const path = compactPath(pathname);
   if (path.includes('/explore/')) return { need: 'public', tool: null, feature: null };
   if (/\/periodic-table\/compare$/.test(path)) {
-    return { need: 'pro', tool: 'elementCompare', feature: 'publicElementCompare' };
+    return {
+      need: needForFeature('publicElementCompare'),
+      tool: 'elementCompare',
+      feature: 'publicElementCompare'
+    };
   }
   if (
     /\/viewer\/molecules/.test(path) ||
     /(^|\/)molecules$/.test(path)
   ) {
-    return { need: 'pro', tool: 'moleculeViewer', feature: 'moleculeViewer' };
+    return {
+      need: needForFeature('moleculeViewer'),
+      tool: 'moleculeViewer',
+      feature: 'moleculeViewer'
+    };
   }
   if (/\/viewer\/atomic-models/.test(path) || /\/atomic-models(\/|$)/.test(path)) {
-    return { need: 'pro', tool: 'atomicModels', feature: 'atomicModelViewer' };
+    return {
+      need: needForFeature('atomicModelViewer'),
+      tool: 'atomicModels',
+      feature: 'atomicModelViewer'
+    };
   }
   if (/\/viewer\/allotropes/.test(path) || /(^|\/)allotropes$/.test(path)) {
-    return { need: 'pro', tool: 'allotropes', feature: 'allotropeViewer' };
+    return {
+      need: needForFeature('allotropeViewer'),
+      tool: 'allotropes',
+      feature: 'allotropeViewer'
+    };
   }
   if (/\/viewer\/isomerism/.test(path) || /(^|\/)isomerism(\/|$)/.test(path)) {
-    return { need: 'pro', tool: 'isomerism', feature: 'isomerismViewer' };
+    return {
+      need: needForFeature('isomerismViewer'),
+      tool: 'isomerism',
+      feature: 'isomerismViewer'
+    };
   }
   return { need: 'public', tool: null, feature: null };
 }
@@ -82,7 +89,7 @@ export function calcTabFeature(tab) {
 export function allowTool(need, session = {}, featureKey = null) {
   const required = String(need || 'public');
   if (required === 'public') return true;
-  if (required === 'login') {
+  if (required === 'login' || required === 'account') {
     if (featureKey && session.features) return Boolean(session.features[featureKey] || session.signedIn);
     return Boolean(session.signedIn);
   }

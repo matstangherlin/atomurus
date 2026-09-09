@@ -212,9 +212,11 @@ test('Overview hierarchy: Pro due hero and Free workspace copy', async ({ page }
 
   await installApi(page, { kind: 'free' });
   await gotoWorkspace(page, '/app');
-  await expect(page.locator('#app-study')).toContainText(/chemistry workspace|workspace de química/i);
-  await expect(page.locator('#app-study').getByRole('link', { name: /Explore Pro|Conhecer o Pro/i }).first()).toBeVisible();
-  await expect(page.locator('#app-study')).toContainText(/Insights/);
-  await expect(page.locator('#app-study a[href="/calculators.html"]')).toContainText(/Calculators|Calculadoras/);
+  await expect(page.locator('#app-study')).toContainText(/Continue your chemistry work|Continue seu trabalho de química/i);
+  await expect(page.locator('#app-study a[href="/app?section=library"]')).toContainText(/Library|Biblioteca/);
+  await expect(page.locator('#app-study a[href="/app?section=sets"]')).toContainText(/Study Sets/);
+  await expect(page.locator('#app-study a[href="/app?section=insights"]').first()).toBeVisible();
+  await expect(page.locator('#app-study a[href="/viewer/atomic-models.html"]')).toBeVisible();
+  await expect(page.locator('#app-study')).not.toContainText(/chemistry workspace|workspace de química/i);
   await saveShot(page, 'desktop-overview-free');
 });

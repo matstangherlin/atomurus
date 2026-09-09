@@ -121,13 +121,19 @@ function assertPricingSurface() {
   if (!fs.existsSync(path.join(ROOT, 'netlify', 'lib', 'plan-access.mjs'))) {
     fail('netlify/lib/plan-access.mjs is missing');
   }
-  if (!fs.existsSync(path.join(ROOT, 'netlify', 'lib', 'lab-tool-access.mjs'))) {
-    fail('netlify/lib/lab-tool-access.mjs is missing');
+  if (!fs.existsSync(path.join(ROOT, 'netlify', 'lib', 'feature-catalog.mjs'))) {
+    fail('netlify/lib/feature-catalog.mjs is missing');
+  }
+  if (!fs.existsSync(path.join(ROOT, 'assets', 'access-policy.js'))) {
+    fail('assets/access-policy.js is missing');
   }
   if (!fs.existsSync(path.join(ROOT, 'assets', 'lab-tool-gate.js'))) {
     fail('assets/lab-tool-gate.js is missing');
   }
   const workspace = read('assets/public-workspace.js');
+  if (!workspace.includes('access-policy.js')) {
+    fail('public-workspace.js must inject access-policy.js');
+  }
   if (!workspace.includes('lab-tool-gate.js')) {
     fail('public-workspace.js must inject lab-tool-gate.js');
   }
@@ -362,6 +368,7 @@ function assertUiV2() {
     'docs/ui-v2-report.md',
     'docs/ui-v2-global-shell.md',
     'docs/ui-v2-product-shell-final.md',
+    'docs/access-model-v2.md',
     'tools/capture-ui-v2.mjs',
     'assets/layouts/auth.css',
     'assets/layouts/pricing.css',
@@ -377,6 +384,7 @@ function assertUiV2() {
     'assets/layouts/shell.css',
     'assets/product-catalog.js',
     'assets/pro-features.js',
+    'assets/access-policy.js',
     'templates/chrome/account-control.html',
     'tools/build-product-catalog.js'
   ];
@@ -423,6 +431,9 @@ function assertUiV2() {
   }
   if (/hoistToolShell|hoistLandingShell|buildPublicSidebar|ps-boot/.test(workspace)) {
     fail('public-workspace.js must not hoist or hide the body behind ps-boot');
+  }
+  if (!workspace.includes('access-policy.js')) {
+    fail('public-workspace.js must keep access-policy.js');
   }
   if (!workspace.includes('lab-tool-gate.js')) {
     fail('public-workspace.js must keep lab-tool-gate.js');

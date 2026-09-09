@@ -154,11 +154,27 @@
     return {
       ready: Boolean(ads.ready || auth.ready),
       user: user,
-      features: (user && user.features) || {}
+      features: (user && user.features) || ads.features || {}
     };
   }
 
+  function catalogAccess(featureKey) {
+    var cat = global.ATOMURUS_ACCESS && global.ATOMURUS_ACCESS.FEATURES;
+    if (cat && cat[featureKey] && cat[featureKey].access) return cat[featureKey].access;
+    return '';
+  }
+
+  function isPublicViewerFeature(featureKey) {
+    if (catalogAccess(featureKey) === 'public') return true;
+    return featureKey === 'atomicModelViewer' ||
+      featureKey === 'moleculeViewer' ||
+      featureKey === 'allotropeViewer' ||
+      featureKey === 'isomerismViewer' ||
+      featureKey === 'interactiveViewers';
+  }
+
   function hasPremiumFeature(featureKey) {
+    if (isPublicViewerFeature(featureKey)) return true;
     var session = adsSession();
     if (!session.ready) return false;
     if (!featureKey) return false;
@@ -178,7 +194,8 @@
   }
 
   /**
-   * Boot a Premium viewer only after auth is ready and the feature is true.
+   * Boot a viewer after entitlement. Public educational viewers load
+   * immediately. Pro viewers wait for ads/auth and a true feature flag.
    * Locked / pending / failed-auth: do not load Three.js.
    * Loading overlay stays up until `fn` finishes (including returned thenables).
    */
@@ -206,6 +223,10 @@
           start
         );
       });
+    }
+    if (isPublicViewerFeature(featureKey)) {
+      start();
+      return;
     }
     whenAdsReady(function () {
       if (!hasPremiumFeature(featureKey)) {

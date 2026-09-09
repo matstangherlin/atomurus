@@ -7,7 +7,7 @@
   var COPY = {
     en: {
       title: 'Solve, visualize, analyze and study chemistry.',
-      desc: 'Atomurus Pro adds reaction balancing, stoichiometry, 3D chemistry tools, advanced analysis, Study Sets, flashcards and Smart Review.',
+      desc: 'Atomurus Pro adds reaction balancing, stoichiometry, advanced analysis, Smart Review and the Chemistry Solver.',
       currencyNote: 'Prices follow country and language. New accounts start with 30 days of Pro. No card is required to begin the trial.',
       statusGuest: 'public lab · free access',
       freeTag: 'Free forever',
@@ -18,9 +18,10 @@
         'Periodic Table',
         'Element pages',
         'Trends & isotopes',
-        'Molar mass and dilution',
-        'Extra calculators with a free account',
-        'Explore chemistry content'
+        '3D Atomic Models, Molecules, Allotropes and Isomerism',
+        'Molar mass, dilution, scientific, unit, gas and pH calculators',
+        'Explore chemistry content',
+        'Free account: library, notes, Study Sets and flashcards'
       ],
       freeCta: 'Open lab',
       popular: 'Most popular',
@@ -32,16 +33,11 @@
       proFeatures: [
         'Everything in Free',
         'No ads',
-        'Study Library',
-        'Notes & tags',
-        'Study Sets',
-        'Flashcards',
         'Smart Review',
         'Spaced repetition',
         'Study Insights',
         'Focus Review',
-        'Study progress',
-        'Calculator History',
+        'Automated practice',
         'Advanced calculations',
         'Multi-element analysis',
         'Molecule comparison',
@@ -54,15 +50,11 @@
           items: [
             'Everything in Free',
             'No ads',
-            'Study Library',
-            'Notes & tags',
-            'Study Sets',
-            'Flashcards',
             'Smart Review',
             'Spaced repetition',
             'Study Insights',
             'Focus Review',
-            'Study progress'
+            'Automated practice'
           ]
         },
         {
@@ -89,8 +81,8 @@
         {
           title: 'Visualize',
           items: [
-            '3D molecule viewer, atomic models, allotropes and isomerism',
-            'Public element compare, stoichiometry and thermo'
+            'Advanced Element, molecule and atomic compare in Pro Lab',
+            'Saved analytical lab sessions'
           ]
         }
       ],
@@ -111,18 +103,10 @@
       matrixFeature: 'Feature',
       matrix: [
         ['Periodic Table', 'yes', 'yes'],
-        ['Molar mass and dilution', 'yes', 'yes'],
-        ['Extra calculators (after sign-in)', 'yes', 'yes'],
-        ['3D viewers, compare, public stoich/thermo', 'no', 'yes'],
-        ['Study Library', 'no', 'yes'],
-        ['Study Sets', 'no', 'yes'],
-        ['Smart Review', 'no', 'yes'],
-        ['Study Insights', 'no', 'yes'],
-        ['Focus Review', 'no', 'yes'],
-        ['Spaced repetition', 'no', 'yes'],
-        ['Pro Lab', 'no', 'yes'],
-        ['Chemistry Solver', 'no', 'yes'],
-        ['Reaction Workbench', 'no', 'yes'],
+        ['3D viewers and basic calculators', 'yes', 'yes'],
+        ['Study Library, notes, Study Sets, flashcards', 'yes', 'yes'],
+        ['Smart Review, Insights, Focus Review', 'no', 'yes'],
+        ['Pro Lab / Chemistry Solver / Reaction Workbench', 'no', 'yes'],
         ['Saved Lab sessions', 'no', 'yes'],
         ['Ads', 'ads', 'noads']
       ],
@@ -137,7 +121,7 @@
         ['03 Review', 'Atomurus schedules what you should review next.']
       ],
       keepFreeTitle: 'What stays free',
-      keepFree: 'The periodic table, element pages, Explore articles, molar mass and dilution stay open — no account required. Extra calculators unlock after you create a free account. 3D viewers, compare and public stoichiometry/thermo are Pro. Billing should never become a wall in front of the table.',
+      keepFree: 'The periodic table, element pages, Explore articles, 3D viewers, molar mass and dilution, and other basic calculators stay open — no account required. A free account saves your library, notes and Study Sets. Pro is for solving, analyzing and Smart Review. Billing should never become a wall in front of the table.',
       geoBRL: 'Brazil pricing',
       geoUSD: 'International pricing',
       periodMonthly: 'Monthly',
@@ -162,21 +146,21 @@
       ladderTitle: 'How access works',
       ladderOpenKicker: 'OPEN LAB',
       ladderOpenPrice: 'No account',
-      ladderOpenBody: 'Periodic Table, 118 element pages, Explore, Molar Mass, Dilution.',
+      ladderOpenBody: 'Periodic Table, 118 element pages, Explore, 3D viewers, Element Compare, Molar Mass, Dilution, Scientific, Unit, Ideal Gas, pH.',
       ladderFreeKicker: 'FREE ACCOUNT',
       ladderFreePriceBRL: 'R$0',
       ladderFreePriceUSD: '$0',
-      ladderFreeBody: 'Everything in Open, plus Scientific Calculator, Unit Converter, Ideal Gas and pH / pOH. After the 30-day trial the account remains Free.',
+      ladderFreeBody: 'Everything in Open Lab, plus Study Library, notes, Study Sets, manual flashcards, calculator history and study progress. After the 30-day trial the account remains Free.',
       ladderProKicker: 'PRO',
-      ladderProBody: 'Interactive 3D viewers, Element Compare, Chemistry Solver, Reaction Workbench, Pro Lab, Study Library, Study Sets, flashcards, Smart Review, Focus Review, Study Insights, saved sessions, no ads.',
+      ladderProBody: 'Chemistry Solver, Reaction Workbench, stoichiometry and thermodynamics, advanced compare, saved lab sessions, Smart Review, Focus Review, Study Insights, automated practice, no ads.',
       ladderTrial: 'New accounts: Free account + 30 days of Pro automatically. No card required to start the trial. After the trial, the account remains Free — creating an account does not require payment.',
       ladderOpenPos: 'Learn and explore chemistry.',
-      ladderFreePos: 'Use more everyday chemistry tools.',
-      ladderProPos: 'Solve, visualize, analyze and study chemistry.'
+      ladderFreePos: 'Save, organize and continue learning.',
+      ladderProPos: 'Solve, simulate, analyze and experiment.'
     },
     pt: {
       title: 'Resolva, visualize, analise e estude química.',
-      desc: 'O Atomurus Pro adiciona balanceamento de reações, estequiometria, ferramentas 3D, análise avançada, Study Sets, flashcards e Smart Review.',
+      desc: 'O Atomurus Pro adiciona balanceamento de reações, estequiometria, análise avançada, Smart Review e o Chemistry Solver.',
       currencyNote: 'Os preços seguem país e idioma. Contas novas começam com 30 dias de Pro. Não é preciso cartão para iniciar o trial.',
       statusGuest: 'lab público · acesso gratuito',
       freeTag: 'Grátis para sempre',
@@ -187,9 +171,10 @@
         'Tabela periódica',
         'Páginas dos elementos',
         'Tendências e isótopos',
-        'Massa molar e diluição',
-        'Calculadoras extras com conta gratuita',
-        'Conteúdo Explore de química'
+        'Modelos atômicos, moléculas, alótropos e isomeria em 3D',
+        'Massa molar, diluição, científica, unidades, gás e pH',
+        'Conteúdo Explore de química',
+        'Conta gratuita: biblioteca, notas, Study Sets e flashcards'
       ],
       freeCta: 'Abrir lab',
       popular: 'Mais popular',
@@ -201,16 +186,11 @@
       proFeatures: [
         'Tudo do Free',
         'Sem anúncios',
-        'Biblioteca de estudos',
-        'Notas e tags',
-        'Study Sets',
-        'Flashcards',
         'Smart Review',
         'Repetição espaçada',
         'Insights de Estudo',
         'Focus Review',
-        'Progresso de estudo',
-        'Histórico de calculadoras',
+        'Prática automática',
         'Cálculos avançados',
         'Análise de vários elementos',
         'Comparação de moléculas',
@@ -223,15 +203,11 @@
           items: [
             'Tudo do Free',
             'Sem anúncios',
-            'Biblioteca de estudos',
-            'Notas e tags',
-            'Study Sets',
-            'Flashcards',
             'Smart Review',
             'Repetição espaçada',
             'Insights de Estudo',
             'Focus Review',
-            'Progresso de estudo'
+            'Prática automática'
           ]
         },
         {
@@ -258,8 +234,8 @@
         {
           title: 'Visualizar',
           items: [
-            'Visualizador 3D, modelos atômicos, alótropos e isomeria',
-            'Comparação pública, estequiometria e termo públicos'
+            'Comparação avançada de elementos, moléculas e átomos no Pro Lab',
+            'Sessões analíticas salvas'
           ]
         }
       ],
@@ -280,18 +256,10 @@
       matrixFeature: 'Recurso',
       matrix: [
         ['Tabela periódica', 'yes', 'yes'],
-        ['Massa molar e diluição', 'yes', 'yes'],
-        ['Calculadoras extras (após login)', 'yes', 'yes'],
-        ['3D, comparação, esteq./termo públicos', 'no', 'yes'],
-        ['Biblioteca de estudos', 'no', 'yes'],
-        ['Study Sets', 'no', 'yes'],
-        ['Smart Review', 'no', 'yes'],
-        ['Insights de Estudo', 'no', 'yes'],
-        ['Focus Review', 'no', 'yes'],
-        ['Repetição espaçada', 'no', 'yes'],
-        ['Pro Lab', 'no', 'yes'],
-        ['Chemistry Solver', 'no', 'yes'],
-        ['Laboratório de Reações', 'no', 'yes'],
+        ['Visualizadores 3D e calculadoras básicas', 'yes', 'yes'],
+        ['Biblioteca, notas, Study Sets, flashcards', 'yes', 'yes'],
+        ['Smart Review, Insights, Focus Review', 'no', 'yes'],
+        ['Pro Lab / Chemistry Solver / Laboratório de Reações', 'no', 'yes'],
         ['Sessões salvas do Lab', 'no', 'yes'],
         ['Anúncios', 'ads', 'noads']
       ],
@@ -306,7 +274,7 @@
         ['03 Revisar', 'O Atomurus agenda o que você deve revisar a seguir.']
       ],
       keepFreeTitle: 'O que continua grátis',
-      keepFree: 'Tabela periódica, páginas dos elementos, artigos Explore, massa molar e diluição continuam abertos — sem conta. Calculadoras extras liberam depois de criar uma conta gratuita. Visualizadores 3D, comparação e estequiometria/termo públicos são Pro. Billing não deve virar um muro na frente da tabela.',
+      keepFree: 'Tabela periódica, páginas dos elementos, artigos Explore, visualizadores 3D, massa molar e diluição, e outras calculadoras básicas continuam abertos — sem conta. Uma conta gratuita salva biblioteca, notas e Study Sets. O Pro é para resolver, analisar e o Smart Review. Billing não deve virar um muro na frente da tabela.',
       geoBRL: 'preço Brasil',
       geoUSD: 'preço internacional',
       periodMonthly: 'Mensal',
@@ -331,17 +299,17 @@
       ladderTitle: 'Como o acesso funciona',
       ladderOpenKicker: 'ABERTO',
       ladderOpenPrice: 'Sem conta',
-      ladderOpenBody: 'Tabela periódica, 118 páginas de elementos, Explore, massa molar, diluição.',
+      ladderOpenBody: 'Tabela periódica, 118 páginas de elementos, Explore, visualizadores 3D, comparação de elementos, massa molar, diluição, científica, unidades, gás ideal, pH.',
       ladderFreeKicker: 'CONTA GRÁTIS',
       ladderFreePriceBRL: 'R$0',
       ladderFreePriceUSD: 'US$0',
-      ladderFreeBody: 'Tudo do Aberto, mais Calculadora científica, Conversor de unidades, Gás ideal e pH / pOH. Depois do trial de 30 dias a conta continua gratuita.',
+      ladderFreeBody: 'Tudo do Lab Aberto, mais Biblioteca, notas, Study Sets, flashcards manuais, histórico e progresso. Depois do trial de 30 dias a conta continua gratuita.',
       ladderProKicker: 'PRO',
-      ladderProBody: 'Visualizadores 3D, Comparação de elementos, Chemistry Solver, Laboratório de Reações, Pro Lab, Biblioteca, Study Sets, flashcards, Smart Review, Focus Review, Insights, sessões salvas, sem anúncios.',
+      ladderProBody: 'Chemistry Solver, Laboratório de Reações, estequiometria e termodinâmica, comparação avançada, sessões salvas, Smart Review, Focus Review, Insights, prática automática, sem anúncios.',
       ladderTrial: 'Contas novas: conta grátis + 30 dias de Pro automaticamente. Não é preciso cartão para começar o trial. Depois do trial, a conta continua gratuita — criar conta não exige pagamento.',
       ladderOpenPos: 'Aprenda e explore química.',
-      ladderFreePos: 'Use mais ferramentas de química.',
-      ladderProPos: 'Resolva, visualize, analise e estude química.'
+      ladderFreePos: 'Salve, organize e continue aprendendo.',
+      ladderProPos: 'Resolva, simule, analise e experimente.'
     }
   };
 
@@ -375,7 +343,9 @@
       solve: lang() === 'pt'
         ? ['Balanceamento de reações', 'Cálculos de reagente limitante']
         : ['Reaction balancing', 'Limiting-reagent calculations'],
-      visualize: ['3D molecule viewer, atomic models, allotropes and isomerism']
+      visualize: lang() === 'pt'
+        ? ['Comparação avançada de estruturas no Pro Lab']
+        : ['Advanced structure compare in Pro Lab']
     };
     return catalog.grouped().map(function (group) {
       var title = group.id === 'solve' ? t('proLabGroup') : group.title;

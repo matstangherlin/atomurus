@@ -11,12 +11,12 @@
   ];
 
   var FEATURES = [
-    { id: 'studyLibrary', category: 'study', access: 'pro', status: 'live', route: '/app?section=library', titleEn: 'Study Library', titlePt: 'Biblioteca', shortEn: 'Save elements, molecules and articles.', shortPt: 'Salve elementos, moléculas e artigos.' },
-    { id: 'studySets', category: 'study', access: 'pro', status: 'live', route: '/app?section=sets', titleEn: 'Study Sets', titlePt: 'Study Sets', shortEn: 'Group material into collections.', shortPt: 'Agrupe material em coleções.' },
+    { id: 'studyLibrary', category: 'study', access: 'account', status: 'live', route: '/app?section=library', titleEn: 'Study Library', titlePt: 'Biblioteca', shortEn: 'Save elements, molecules and articles.', shortPt: 'Salve elementos, moléculas e artigos.' },
+    { id: 'studySets', category: 'study', access: 'account', status: 'live', route: '/app?section=sets', titleEn: 'Study Sets', titlePt: 'Study Sets', shortEn: 'Group material into collections.', shortPt: 'Agrupe material em coleções.' },
     { id: 'smartReview', category: 'study', access: 'pro', status: 'live', route: '/app?section=review', titleEn: 'Smart Review', titlePt: 'Smart Review', shortEn: 'Spaced flashcards when they are due.', shortPt: 'Flashcards com repetição espaçada.' },
     { id: 'focusReview', category: 'study', access: 'pro', status: 'live', route: '/app?section=review', titleEn: 'Focus Review', titlePt: 'Focus Review', shortEn: 'Review the cards that need extra attention.', shortPt: 'Revise os cards que mais precisam de atenção.' },
     { id: 'studyInsights', category: 'study', access: 'pro', status: 'live', route: '/app?section=insights', titleEn: 'Study Insights', titlePt: 'Insights', shortEn: 'See how your study is progressing.', shortPt: 'Veja como o estudo está avançando.' },
-    { id: 'studyProgress', category: 'study', access: 'pro', status: 'live', route: '/app?section=progress', titleEn: 'Progress', titlePt: 'Progresso', shortEn: 'Pick up where you left off.', shortPt: 'Retome de onde parou.' },
+    { id: 'studyProgress', category: 'study', access: 'account', status: 'live', route: '/app?section=progress', titleEn: 'Progress', titlePt: 'Progresso', shortEn: 'Pick up where you left off.', shortPt: 'Retome de onde parou.' },
     { id: 'reactionWorkbench', category: 'solve', access: 'pro', status: 'live', route: '/app?section=pro-lab&tool=reactions', titleEn: 'Reaction Workbench', titlePt: 'Laboratório de Reações', shortEn: 'Balance equations and continue into stoichiometry.', shortPt: 'Balanceie equações e siga para a estequiometria.' },
     { id: 'formulaSolver', category: 'solve', access: 'pro', status: 'live', route: '/app?section=pro-lab&tool=formula', titleEn: 'Formula Solver', titlePt: 'Formula Solver', shortEn: 'Work with empirical and molecular formulas.', shortPt: 'Trabalhe fórmulas empíricas e moleculares.' },
     { id: 'solutionBuilder', category: 'solve', access: 'pro', status: 'live', route: '/app?section=pro-lab&tool=solutions', titleEn: 'Solution Builder', titlePt: 'Preparação de Soluções', shortEn: 'Prepare and compare solution calculations.', shortPt: 'Prepare e compare cálculos de soluções.' },
@@ -25,10 +25,10 @@
     { id: 'moleculeCompare', category: 'analyze', access: 'pro', status: 'live', route: '/app?section=pro-lab&tool=molecules', titleEn: 'Molecule Compare', titlePt: 'Comparar moléculas', shortEn: 'Compare molecular composition.', shortPt: 'Compare a composição molecular.' },
     { id: 'atomicCompare', category: 'analyze', access: 'pro', status: 'live', route: '/app?section=pro-lab&tool=atomic', titleEn: 'Atomic Compare', titlePt: 'Comparar átomos', shortEn: 'Compare electronic structure.', shortPt: 'Compare a estrutura eletrônica.' },
     { id: 'labSessions', category: 'analyze', access: 'pro', status: 'live', route: '/app?section=pro-lab&tool=sessions', titleEn: 'Saved Lab Sessions', titlePt: 'Sessões salvas', shortEn: 'Reopen analyses in Pro Lab.', shortPt: 'Reabra análises no Pro Lab.' },
-    { id: 'atomicModelViewer', category: 'visualize', access: 'pro', status: 'live', route: '/viewer/atomic-models.html', titleEn: 'Atomic Models', titlePt: 'Modelos atômicos', shortEn: 'Inspect atomic models in 3D.', shortPt: 'Veja modelos atômicos em 3D.' },
-    { id: 'moleculeViewer', category: 'visualize', access: 'pro', status: 'live', route: '/viewer/molecules.html', titleEn: 'Molecules', titlePt: 'Moléculas', shortEn: 'Explore molecular structures.', shortPt: 'Explore estruturas moleculares.' },
-    { id: 'allotropeViewer', category: 'visualize', access: 'pro', status: 'live', route: '/viewer/allotropes.html', titleEn: 'Allotropes', titlePt: 'Alótropos', shortEn: 'Compare allotrope structures.', shortPt: 'Explore estruturas alotrópicas.' },
-    { id: 'isomerismViewer', category: 'visualize', access: 'pro', status: 'live', route: '/viewer/isomerism.html', titleEn: 'Isomerism', titlePt: 'Isomeria', shortEn: 'Inspect isomerism in 3D.', shortPt: 'Veja isomeria em 3D.' }
+    { id: 'atomicModelViewer', category: 'visualize', access: 'public', status: 'live', route: '/viewer/atomic-models.html', titleEn: 'Atomic Models', titlePt: 'Modelos atômicos', shortEn: 'Inspect atomic models in 3D.', shortPt: 'Veja modelos atômicos em 3D.' },
+    { id: 'moleculeViewer', category: 'visualize', access: 'public', status: 'live', route: '/viewer/molecules.html', titleEn: 'Molecules', titlePt: 'Moléculas', shortEn: 'Explore molecular structures.', shortPt: 'Explore estruturas moleculares.' },
+    { id: 'allotropeViewer', category: 'visualize', access: 'public', status: 'live', route: '/viewer/allotropes.html', titleEn: 'Allotropes', titlePt: 'Alótropos', shortEn: 'Compare allotrope structures.', shortPt: 'Explore estruturas alotrópicas.' },
+    { id: 'isomerismViewer', category: 'visualize', access: 'public', status: 'live', route: '/viewer/isomerism.html', titleEn: 'Isomerism', titlePt: 'Isomeria', shortEn: 'Inspect isomerism in 3D.', shortPt: 'Veja isomeria em 3D.' }
   ];
 
   function ptLang() {
@@ -49,8 +49,12 @@
     };
   }
 
-  function byCategory(id) {
-    return FEATURES.filter(function (row) { return row.category === id; }).map(localize);
+  function byCategory(id, access) {
+    return FEATURES.filter(function (row) {
+      if (row.category !== id) return false;
+      if (access) return row.access === access;
+      return true;
+    }).map(localize);
   }
 
   root.AtomurusProFeatures = {
@@ -69,9 +73,9 @@
           id: cat.id,
           title: pt ? cat.titlePt : cat.titleEn,
           lede: pt ? cat.ledePt : cat.ledeEn,
-          features: byCategory(cat.id)
+          features: byCategory(cat.id, 'pro')
         };
-      });
+      }).filter(function (group) { return group.features.length; });
     }
   };
 })(typeof window !== 'undefined' ? window : this);

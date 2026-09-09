@@ -18,7 +18,7 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
-test('guest molar mass stays open and extra calculators ask for an account', async ({ page }) => {
+test('guest molar mass stays open and extra calculators stay public except solvers', async ({ page }) => {
   await page.goto('/calculators.html');
   await expect.poll(() => page.evaluate(() => Boolean(window.AtomurusLabToolGate))).toBe(true);
   await page.locator('.calc-chip[data-mm-example="H2O"]').click();
@@ -30,15 +30,12 @@ test('guest molar mass stays open and extra calculators ask for an account', asy
   await expect(page.locator('#lab-tool-gate-dilute')).toHaveCount(0);
 
   await page.locator('.calc-menu-item[data-target="scientific"]').click();
-  await expect(page.locator('#lab-tool-gate-scientific')).toBeVisible();
-  await expect(page.locator('#lab-tool-gate-scientific')).toContainText(/Sign in to use this calculator/i);
-  await expect(page.locator('#lab-tool-gate-scientific a.lab-tool-gate-primary')).toHaveAttribute('href', /signup/);
-  await expect(page.locator('#lab-tool-gate-scientific a.lab-tool-gate-primary')).toHaveText(/Create a free account/i);
-  await saveShot(page, 'guest-scientific-login-gate');
+  await expect(page.locator('#lab-tool-gate-scientific')).toHaveCount(0);
+  await expect(page.locator('.scc-device')).toBeVisible();
+  await saveShot(page, 'guest-scientific-open');
 
   await page.locator('.calc-menu-item[data-target="ideal"]').click();
-  await expect(page.locator('#lab-tool-gate-ideal')).toBeVisible();
-  await expect(page.locator('#lab-tool-gate-ideal a.lab-tool-gate-primary')).toHaveText(/Create a free account/i);
+  await expect(page.locator('#lab-tool-gate-ideal')).toHaveCount(0);
 
   await page.locator('.calc-menu-item[data-target="stoich"]').click();
   await expect(page.locator('#lab-tool-gate-stoich')).toBeVisible();
@@ -48,24 +45,15 @@ test('guest molar mass stays open and extra calculators ask for an account', asy
   await saveShot(page, 'guest-stoich-pro-gate');
 });
 
-test('guest 3D molecule viewer stays a preview without Three.js', async ({ page }) => {
+test('guest 3D molecule viewer loads without a PRO overlay', async ({ page }) => {
   await page.goto('/viewer/molecules.html');
   await expect.poll(() => page.evaluate(() => Boolean(window.AtomurusLabToolGate))).toBe(true);
-  await expect(page.locator('#lab-tool-gate')).toBeVisible();
-  await expect(page.locator('#lab-tool-gate')).toContainText(/Atomurus Pro/i);
-  await expect(page.locator('#lab-tool-gate a.lab-tool-gate-primary')).toHaveAttribute('href', /signup/);
-  await expect(page.locator('#lab-tool-gate a.lab-tool-gate-primary')).toHaveText(/Start 30-day Pro trial/i);
+  await expect(page.locator('#lab-tool-gate')).toHaveCount(0);
   await page.locator('#viewer3d').scrollIntoViewIfNeeded();
-  await page.waitForTimeout(800);
-  const runtime = await page.evaluate(() => ({
-    three: typeof window.THREE !== 'undefined',
-    script: Boolean(document.querySelector('script[data-atomurus-dep="three"]')),
-    viewer: Boolean(document.querySelector('script[data-atomurus-dep="viewer-runtime"]'))
-  }));
-  expect(runtime.three).toBe(false);
-  expect(runtime.script).toBe(false);
-  expect(runtime.viewer).toBe(false);
-  await saveShot(page, 'guest-molecules-pro-gate');
+  await expect.poll(() => page.evaluate(() => Boolean(
+    window.THREE && document.querySelector('script[data-atomurus-dep="viewer-runtime"]')
+  ))).toBe(true);
+  await saveShot(page, 'guest-molecules-open');
 
   const errors = [];
   page.on('pageerror', (err) => errors.push(String(err.message || err)));
@@ -79,41 +67,33 @@ test('guest 3D molecule viewer stays a preview without Three.js', async ({ page 
 
   await page.goto('/viewer/isomerism/constitutional/function.html');
   await expect.poll(() => page.evaluate(() => Boolean(window.AtomurusLabToolGate))).toBe(true);
-  await expect(page.locator('#lab-tool-gate')).toBeVisible();
+  await expect(page.locator('#lab-tool-gate')).toHaveCount(0);
   await page.locator('.iso-3d-stage canvas').first().scrollIntoViewIfNeeded();
-  await page.waitForTimeout(800);
-  const isoRuntime = await page.evaluate(() => ({
-    three: typeof window.THREE !== 'undefined',
-    viewer: Boolean(document.querySelector('script[data-atomurus-dep="viewer-runtime"]'))
-  }));
-  expect(isoRuntime.three).toBe(false);
-  expect(isoRuntime.viewer).toBe(false);
+  await expect.poll(() => page.evaluate(() => Boolean(
+    window.THREE && document.querySelector('script[data-atomurus-dep="viewer-runtime"]')
+  ))).toBe(true);
 });
 
-test('removing the overlay does not boot the Pro molecule runtime', async ({ page }) => {
-  await page.goto('/viewer/molecules.html');
+test('guest atomic models, allotropes and element compare stay open', async ({ page }) => {
+  await page.goto('/viewer/atomic-models.html');
   await expect.poll(() => page.evaluate(() => Boolean(window.AtomurusLabToolGate))).toBe(true);
-  await expect(page.locator('#lab-tool-gate')).toBeVisible();
-  await page.evaluate(() => {
-    document.querySelectorAll('.lab-tool-gate').forEach((el) => el.remove());
-    document.querySelectorAll('[inert]').forEach((el) => el.removeAttribute('inert'));
-  });
-  const canvas = page.locator('#viewer3d');
-  if (await canvas.count()) await canvas.scrollIntoViewIfNeeded();
-  await page.waitForTimeout(1000);
-  const runtime = await page.evaluate(() => ({
-    three: typeof window.THREE !== 'undefined',
-    script: Boolean(document.querySelector('script[data-atomurus-dep="three"]')),
-    viewer: Boolean(document.querySelector('script[data-atomurus-dep="viewer-runtime"]')),
-    overlay: Boolean(document.querySelector('.lab-tool-gate'))
-  }));
-  expect(runtime.overlay).toBe(false);
-  expect(runtime.three).toBe(false);
-  expect(runtime.script).toBe(false);
-  expect(runtime.viewer).toBe(false);
+  await expect(page.locator('#lab-tool-gate')).toHaveCount(0);
+  await page.locator('#viewer3d').scrollIntoViewIfNeeded();
+  await expect.poll(() => page.evaluate(() => Boolean(
+    window.THREE && document.querySelector('script[data-atomurus-dep="viewer-runtime"]')
+  ))).toBe(true);
+  await saveShot(page, 'guest-atomic-models-open');
+
+  await page.goto('/viewer/allotropes.html');
+  await expect.poll(() => page.evaluate(() => Boolean(window.AtomurusLabToolGate))).toBe(true);
+  await expect(page.locator('#lab-tool-gate')).toHaveCount(0);
+
+  await page.goto('/periodic-table/compare.html');
+  await expect.poll(() => page.evaluate(() => Boolean(window.AtomurusLabToolGate))).toBe(true);
+  await expect(page.locator('#lab-tool-gate')).toHaveCount(0);
 });
 
-test('signed-in free unlocks scientific but not molecules', async ({ page }) => {
+test('signed-in free uses scientific and molecules; solvers stay Pro', async ({ page }) => {
   const free = userFixture('free');
   await page.route('**/api/ads-config', async (route) => {
     await route.fulfill({
@@ -123,7 +103,8 @@ test('signed-in free unlocks scientific but not molecules', async ({ page }) => 
         ok: true,
         adsEnabled: true,
         signedIn: true,
-        user: free
+        user: free,
+        features: free.features
       })
     });
   });
@@ -139,18 +120,17 @@ test('signed-in free unlocks scientific but not molecules', async ({ page }) => 
 
   await page.goto('/viewer/molecules.html');
   await expect.poll(() => page.evaluate(() => Boolean(window.AtomurusLabToolGate && window.__ATOMURUS_ADS__ && window.__ATOMURUS_ADS__.ready))).toBe(true);
-  await expect(page.locator('#lab-tool-gate')).toBeVisible();
-  await expect(page.locator('#lab-tool-gate a.lab-tool-gate-primary')).toHaveAttribute('href', /pricing/);
-  await expect(page.locator('#lab-tool-gate a.lab-tool-gate-primary')).toHaveText(/Upgrade to Pro/i);
-  await expect(page.locator('#lab-tool-gate a.lab-tool-gate-secondary')).toHaveCount(0);
-  const runtime = await page.evaluate(() => ({
-    three: typeof window.THREE !== 'undefined',
-    script: Boolean(document.querySelector('script[data-atomurus-dep="three"]')),
-    viewer: Boolean(document.querySelector('script[data-atomurus-dep="viewer-runtime"]'))
-  }));
-  expect(runtime.three).toBe(false);
-  expect(runtime.script).toBe(false);
-  expect(runtime.viewer).toBe(false);
+  await expect(page.locator('#lab-tool-gate')).toHaveCount(0);
+  await page.locator('#viewer3d').scrollIntoViewIfNeeded();
+  await expect.poll(() => page.evaluate(() => Boolean(
+    window.THREE && document.querySelector('script[data-atomurus-dep="viewer-runtime"]')
+  ))).toBe(true);
+
+  await page.goto('/calculators.html');
+  await page.locator('.calc-menu-item[data-target="stoich"]').click();
+  await expect(page.locator('#lab-tool-gate-stoich')).toBeVisible();
+  await expect(page.locator('#lab-tool-gate-stoich a.lab-tool-gate-primary')).toHaveAttribute('href', /pricing/);
+  await expect(page.locator('#lab-tool-gate-stoich a.lab-tool-gate-primary')).toHaveText(/Upgrade to Pro/i);
 });
 
 test('Pro loads the molecule runtime after entitlement', async ({ page }) => {
@@ -286,6 +266,7 @@ test('pricing access ladder and keep-free copy', async ({ page }) => {
   await page.goto('/pricing.html');
   await expect(page.locator('#pricing-keep-free-copy')).toContainText(/molar mass and dilution/i);
   await expect(page.locator('#pricing-keep-free-copy')).toContainText(/3D viewers/i);
+  await expect(page.locator('#pricing-keep-free-copy')).not.toContainText(/3D viewers, compare and public stoichiometry/i);
   await expect(page.locator('#access-ladder')).toContainText(/OPEN LAB/i);
   await expect(page.locator('#access-ladder')).toContainText(/FREE ACCOUNT/i);
   await expect(page.locator('#ladder-trial-note')).toContainText(/No card required/i);
