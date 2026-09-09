@@ -155,13 +155,18 @@
     return true;
   }
 
-  function loadLabGate() {
-    if (document.querySelector('script[data-lab-tool-gate]')) return;
+  function loadScript(src, attr) {
+    if (document.querySelector('script[' + attr + ']')) return;
     var s = document.createElement('script');
-    s.src = '/assets/lab-tool-gate.js?v=202608282500';
+    s.src = src;
     s.defer = true;
-    s.setAttribute('data-lab-tool-gate', '1');
+    s.setAttribute(attr.replace(/"/g, ''), '1');
     document.head.appendChild(s);
+  }
+
+  function loadLabGate() {
+    loadScript('/assets/access-policy.js?v=202609090100', 'data-access-policy');
+    loadScript('/assets/lab-tool-gate.js?v=202609090100', 'data-lab-tool-gate');
   }
 
   function run() {

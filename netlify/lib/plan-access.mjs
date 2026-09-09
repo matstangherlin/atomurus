@@ -1,3 +1,5 @@
+import { featuresForAccess } from './feature-catalog.mjs';
+
 const TRIAL_DAYS = 30;
 const MS_DAY = 24 * 60 * 60 * 1000;
 
@@ -119,7 +121,6 @@ export function accessForUser(user) {
 
   const isPro = plan === 'paid' || plan === 'admin';
   const signedIn = Boolean(user?.id || user?.email);
-  const interactiveViewers = isPro;
   const cancelAtPeriodEnd = isPaidSubscriptionStatus(subscriptionStatus) && truthyFlag(app.cancel_at_period_end);
   const currentPeriodEnd = parseIso(app.current_period_end)
     ? new Date(parseIso(app.current_period_end)).toISOString()
@@ -141,52 +142,7 @@ export function accessForUser(user) {
     currentPeriodEnd,
     hasStripeCustomer,
     canManageBilling,
-    features: {
-      labWorkspace: true,
-      premiumLessons: isPro,
-      studyCloud: isPro,
-      studyProgress: isPro,
-      favorites: isPro,
-      calculatorHistory: isPro,
-      studyNotes: isPro,
-      studyTags: isPro,
-      studySets: isPro,
-      flashcards: isPro,
-      smartReview: isPro,
-      spacedRepetition: isPro,
-      studyInsights: isPro,
-      focusReview: isPro,
-      advancedStudyStats: isPro,
-      exportPdf: isPro,
-      adsFree: isPro,
-      adminConsole: isAdmin,
-      proLab: isPro,
-      advancedCalculations: isPro,
-      advancedElementCompare: isPro,
-      advancedMoleculeCompare: isPro,
-      advancedAtomicCompare: isPro,
-      savedLabSessions: isPro,
-      chemistrySolver: isPro,
-      reactionWorkbench: isPro,
-      reactionBalancer: isPro,
-      stoichiometrySolver: isPro,
-      limitingReagentSolver: isPro,
-      yieldSolver: isPro,
-      formulaSolver: isPro,
-      solutionBuilder: isPro,
-      scientificCalculator: signedIn,
-      unitConverter: signedIn,
-      idealGasCalculator: signedIn,
-      phCalculator: signedIn,
-      interactiveViewers,
-      atomicModelViewer: interactiveViewers,
-      moleculeViewer: interactiveViewers,
-      allotropeViewer: interactiveViewers,
-      isomerismViewer: interactiveViewers,
-      publicStoichiometry: isPro,
-      publicThermodynamics: isPro,
-      publicElementCompare: isPro
-    }
+    features: featuresForAccess({ signedIn, isPro, isAdmin })
   };
 }
 

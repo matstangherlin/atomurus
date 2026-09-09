@@ -31,17 +31,19 @@ assert.equal(expired.features.scientificCalculator, true);
 assert.equal(expired.features.unitConverter, true);
 assert.equal(expired.features.idealGasCalculator, true);
 assert.equal(expired.features.phCalculator, true);
-assert.equal(expired.features.interactiveViewers, false);
-assert.equal(expired.features.moleculeViewer, false);
-assert.equal(expired.features.atomicModelViewer, false);
+assert.equal(expired.features.interactiveViewers, true);
+assert.equal(expired.features.moleculeViewer, true);
+assert.equal(expired.features.atomicModelViewer, true);
 assert.equal(expired.features.publicStoichiometry, false);
 assert.equal(expired.features.publicThermodynamics, false);
-assert.equal(expired.features.publicElementCompare, false);
+assert.equal(expired.features.publicElementCompare, true);
 
 const guest = accessForUser({});
-assert.equal(guest.features.scientificCalculator, false);
-assert.equal(guest.features.interactiveViewers, false);
-assert.equal(guest.features.moleculeViewer, false);
+assert.equal(guest.features.scientificCalculator, true);
+assert.equal(guest.features.interactiveViewers, true);
+assert.equal(guest.features.moleculeViewer, true);
+assert.equal(guest.features.studyCloud, false);
+assert.equal(guest.features.automatedPractice, false);
 
 const paid = accessForUser({
   createdAt: daysAgo(40),
@@ -58,6 +60,7 @@ assert.equal(paid.features.studyTags, true);
 assert.equal(paid.features.studyProgress, true);
 assert.equal(paid.features.studySets, true);
 assert.equal(paid.features.flashcards, true);
+assert.equal(paid.features.automatedPractice, true);
 assert.equal(paid.features.smartReview, true);
 assert.equal(paid.features.studyInsights, true);
 assert.equal(paid.features.focusReview, true);
@@ -87,12 +90,14 @@ assert.equal(paid.features.publicThermodynamics, true);
 assert.equal(paid.features.publicElementCompare, true);
 
 const expiredStudy = accessForUser({ createdAt: daysAgo(40), email: 'a@b.com' });
-assert.equal(expiredStudy.features.studyCloud, false);
+assert.equal(expiredStudy.features.studyCloud, true);
+assert.equal(expiredStudy.features.studySets, true);
+assert.equal(expiredStudy.features.flashcards, true);
 assert.equal(expiredStudy.features.smartReview, false);
 assert.equal(expiredStudy.features.studyInsights, false);
 assert.equal(expiredStudy.features.focusReview, false);
 assert.equal(expiredStudy.features.advancedStudyStats, false);
-assert.equal(expiredStudy.features.studySets, false);
+assert.equal(expiredStudy.features.automatedPractice, false);
 assert.equal(expiredStudy.features.proLab, false);
 assert.equal(expiredStudy.features.advancedCalculations, false);
 assert.equal(expiredStudy.features.advancedElementCompare, false);
@@ -163,11 +168,13 @@ assert.equal(pastDue.isPro, true);
 assert.equal(pastDue.canManageBilling, true);
 
 const canceledStatus = accessForUser({
+  id: 'user-canceled',
+  email: 'canceled@atomurus.com',
   createdAt: daysAgo(40),
   appMetadata: { atomurus_plan: 'paid', subscription_status: 'canceled' }
 });
 assert.equal(canceledStatus.plan, 'free');
-assert.equal(canceledStatus.features.studyCloud, false);
+assert.equal(canceledStatus.features.studyCloud, true);
 assert.equal(canceledStatus.features.proLab, false);
 
 const memberPub = publicUser({

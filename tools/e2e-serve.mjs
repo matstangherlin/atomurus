@@ -48,8 +48,48 @@ function send(res, status, body, headers = {}) {
   res.end(body);
 }
 
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
   const url = new URL(req.url || '/', `http://127.0.0.1:${PORT}`);
+  if (url.pathname === '/api/ads-config') {
+    const { accessForUser } = await import('../netlify/lib/plan-access.mjs');
+    const access = accessForUser({});
+    send(res, 200, JSON.stringify({
+      ok: true,
+      signedIn: false,
+      adsEnabled: true,
+      isPro: false,
+      user: null,
+      features: access.features
+    }), {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Cache-Control': 'no-store'
+    });
+    return;
+  }
+  if (url.pathname === '/api/pro-lab/viewer/molecule') {
+    const { isSafeMoleculeKey, viewerMoleculePayload } = await import('../netlify/lib/viewer-molecule-coords.mjs');
+    const key = String(url.searchParams.get('key') || '').trim().toLowerCase();
+    if (!isSafeMoleculeKey(key)) {
+      send(res, 400, JSON.stringify({ ok: false, code: 'invalid_molecule_key' }), {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'no-store'
+      });
+      return;
+    }
+    const molecule = viewerMoleculePayload(key);
+    if (!molecule) {
+      send(res, 404, JSON.stringify({ ok: false, code: 'molecule_not_found' }), {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'no-store'
+      });
+      return;
+    }
+    send(res, 200, JSON.stringify({ ok: true, molecule }), {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Cache-Control': 'no-store'
+    });
+    return;
+  }
   if (url.pathname.startsWith('/api/')) {
     const payload = JSON.stringify({
       ok: false,

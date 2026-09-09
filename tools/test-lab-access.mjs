@@ -26,21 +26,29 @@ function daysAgo(n) {
   return new Date(Date.now() - n * 24 * 60 * 60 * 1000).toISOString();
 }
 
-const PRO_FEATURES = [
+const PUBLIC_FEATURES = [
   'interactiveViewers',
   'atomicModelViewer',
   'moleculeViewer',
   'allotropeViewer',
   'isomerismViewer',
-  'publicStoichiometry',
-  'publicThermodynamics',
-  'publicElementCompare'
-];
-const LOGIN_FEATURES = [
+  'publicElementCompare',
   'scientificCalculator',
   'unitConverter',
   'idealGasCalculator',
   'phCalculator'
+];
+const ACCOUNT_FEATURES = [
+  'studyCloud',
+  'studySets',
+  'flashcards'
+];
+const PRO_FEATURES = [
+  'publicStoichiometry',
+  'publicThermodynamics',
+  'smartReview',
+  'automatedPractice',
+  'reactionWorkbench'
 ];
 
 function assertFlags(access, keys, expected) {
@@ -50,15 +58,17 @@ function assertFlags(access, keys, expected) {
 }
 
 const guestAccess = accessForUser({});
-assertFlags(guestAccess, LOGIN_FEATURES, false);
+assertFlags(guestAccess, PUBLIC_FEATURES, true);
+assertFlags(guestAccess, ACCOUNT_FEATURES, false);
 assertFlags(guestAccess, PRO_FEATURES, false);
 
 const freeAccess = accessForUser({ createdAt: daysAgo(40), email: 'free@atomurus.com' });
-assertFlags(freeAccess, LOGIN_FEATURES, true);
+assertFlags(freeAccess, PUBLIC_FEATURES, true);
+assertFlags(freeAccess, ACCOUNT_FEATURES, true);
 assertFlags(freeAccess, PRO_FEATURES, false);
 
 const trialAccess = accessForUser({ createdAt: daysAgo(2), email: 'trial@atomurus.com' });
-assertFlags(trialAccess, LOGIN_FEATURES, true);
+assertFlags(trialAccess, PUBLIC_FEATURES, true);
 assertFlags(trialAccess, PRO_FEATURES, true);
 
 const paidAccess = accessForUser({
@@ -73,20 +83,20 @@ assertFlags(adminAccess, PRO_FEATURES, true);
 
 assert.equal(calcTabPolicy('molar'), 'public');
 assert.equal(calcTabPolicy('dilute'), 'public');
-assert.equal(calcTabPolicy('scientific'), 'login');
-assert.equal(calcTabPolicy('ideal'), 'login');
+assert.equal(calcTabPolicy('scientific'), 'public');
+assert.equal(calcTabPolicy('ideal'), 'public');
 assert.equal(calcTabPolicy('stoich'), 'pro');
 assert.equal(calcTabPolicy('thermo'), 'pro');
 assert.equal(calcTabFeature('stoich'), 'publicStoichiometry');
 assert.equal(pageToolPolicy('/periodic-table').need, 'public');
 assert.equal(pageToolPolicy('/explore/what-is-isomerism').need, 'public');
-assert.equal(pageToolPolicy('/viewer/molecules').need, 'pro');
-assert.equal(pageToolPolicy('/periodic-table/compare').need, 'pro');
+assert.equal(pageToolPolicy('/viewer/molecules').need, 'public');
+assert.equal(pageToolPolicy('/periodic-table/compare').need, 'public');
 
-const pending = { signedIn: true, isPro: true, ready: false, features: { moleculeViewer: true } };
-assert.equal(allowTool('pro', pending, 'moleculeViewer'), false);
+const pending = { signedIn: true, isPro: true, ready: false, features: { publicThermodynamics: true } };
+assert.equal(allowTool('pro', pending, 'publicThermodynamics'), false);
 const failedAuth = { signedIn: false, isPro: false, ready: true, features: {} };
-assert.equal(allowTool('pro', failedAuth, 'moleculeViewer'), false);
+assert.equal(allowTool('pro', failedAuth, 'publicThermodynamics'), false);
 
 const water = solveThermodynamics({
   gibbs: { deltaH: 100, deltaS: 200, T: 25, TUnit: 'C' },
@@ -165,6 +175,13 @@ assert.doesNotMatch(molecules, /WebGLRenderer/);
 assert.match(molecules, /canvas-wrap\.is-2d/);
 assert.doesNotMatch(molecules, /\.canvas-wrap\.is-2d canvas#viewer3d\{visibility:hidden/);
 assert.match(molecules, /learningResourceType": "Overview"/);
+assert.match(molecules, /isAccessibleForFree": true/);
+assert.doesNotMatch(molecules, /interactive 3D rendering is part of Atomurus Pro/);
+
+const about = read('about.html');
+assert.doesNotMatch(about, /Interactive 3D is part of Atomurus Pro/);
+assert.doesNotMatch(about, /Included in Atomurus Pro/);
+assert.doesNotMatch(about, /Interactive 3D tools are Pro/);
 
 const molRuntime = read('viewer/runtime/molecule-viewer.js');
 assert.match(molRuntime, /\/api\/pro-lab\/viewer\/molecule/);
@@ -255,7 +272,7 @@ assert.match(calculators, /\/api\/pro-lab\/thermodynamics\/solve/);
 const compare = read('periodic-table/compare.html');
 assert.match(compare, /data-compare-canonical="pro-lab"/);
 assert.match(compare, /Open Advanced Compare/);
-assert.match(compare, /isAccessibleForFree": false/);
+assert.match(compare, /isAccessibleForFree": true/);
 assert.match(compare, /learningResourceType": "Overview"/);
 
 const netlify = read('netlify.toml');
@@ -267,7 +284,7 @@ assert.match(thermoFn, /requireFeature\(request, 'publicThermodynamics'\)/);
 assert.match(thermoFn, /body\.isPro/);
 
 const molFn = read('netlify/functions/pro-lab-viewer-molecule.mjs');
-assert.match(molFn, /requireFeature\(request, 'moleculeViewer'\)/);
+assert.doesNotMatch(molFn, /requireFeature/);
 assert.match(molFn, /isSafeMoleculeKey/);
 
 const pkg = JSON.parse(read('package.json'));
@@ -401,7 +418,10 @@ await withAuthEnv(async () => {
   assert.match(unsignedThermo.headers.get('Cache-Control') || '', /no-store/);
 
   const unsignedMol = await moleculeHandler(cookieRequest('https://atomurus.com/api/pro-lab/viewer/molecule?key=water'));
-  assert.equal(unsignedMol.status, 401);
+  assert.equal(unsignedMol.status, 200);
+  const unsignedMolJson = await readJson(unsignedMol);
+  assert.equal(unsignedMolJson.ok, true);
+  assert.ok(unsignedMolJson.molecule.atoms.length >= 3);
 });
 
 await withAuthEnv(async () => {
@@ -418,8 +438,8 @@ await withAuthEnv(async () => {
     cookies: sessionCookie('access-free')
   }));
   const freeMolJson = await readJson(freeMol);
-  assert.equal(freeMol.status, 403);
-  assert.equal(freeMolJson.feature, 'moleculeViewer');
+  assert.equal(freeMol.status, 200);
+  assert.equal(freeMolJson.ok, true);
 });
 
 await withAuthEnv(async () => {

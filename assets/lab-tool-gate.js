@@ -10,26 +10,6 @@
   if (window.__atomurusLabToolGate) return;
   window.__atomurusLabToolGate = true;
 
-  var CALC_TAB_POLICY = {
-    molar: 'public',
-    dilute: 'public',
-    scientific: 'login',
-    unit: 'login',
-    ideal: 'login',
-    ph: 'login',
-    stoich: 'pro',
-    thermo: 'pro'
-  };
-
-  var CALC_TAB_FEATURE = {
-    scientific: 'scientificCalculator',
-    unit: 'unitConverter',
-    ideal: 'idealGasCalculator',
-    ph: 'phCalculator',
-    stoich: 'publicStoichiometry',
-    thermo: 'publicThermodynamics'
-  };
-
   var STYLE = [
     '.lab-tool-gate{position:absolute;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;',
     'padding:24px;background:rgba(242,239,231,.92);backdrop-filter:blur(6px);text-align:center;pointer-events:auto}',
@@ -47,6 +27,56 @@
     '.calc-tab,.canvas-wrap,.compare-wrap,.content-inner,.viewer{position:relative}',
     '.calc-menu-item .lab-tool-need{margin-left:4px}'
   ].join('');
+
+  function catalog() {
+    return window.ATOMURUS_ACCESS || {};
+  }
+
+  function catalogAccess(featureKey, fallback) {
+    var features = catalog().FEATURES || {};
+    var spec = features[featureKey];
+    return (spec && spec.access) || fallback || 'public';
+  }
+
+  function calcTabPolicyMap() {
+    var tabs = catalog().LAB_TABS;
+    if (tabs) {
+      var out = {};
+      Object.keys(tabs).forEach(function (tab) {
+        out[tab] = tabs[tab].access || 'public';
+      });
+      return out;
+    }
+    return {
+      molar: 'public',
+      dilute: 'public',
+      scientific: 'public',
+      unit: 'public',
+      ideal: 'public',
+      ph: 'public',
+      stoich: 'pro',
+      thermo: 'pro'
+    };
+  }
+
+  function calcTabFeatureMap() {
+    var tabs = catalog().LAB_TABS;
+    if (tabs) {
+      var out = {};
+      Object.keys(tabs).forEach(function (tab) {
+        out[tab] = tabs[tab].feature || null;
+      });
+      return out;
+    }
+    return {
+      scientific: 'scientificCalculator',
+      unit: 'unitConverter',
+      ideal: 'idealGasCalculator',
+      ph: 'phCalculator',
+      stoich: 'publicStoichiometry',
+      thermo: 'publicThermodynamics'
+    };
+  }
 
   function langIsPt() {
     return (document.documentElement.lang || '').toLowerCase().indexOf('pt') === 0;
@@ -69,19 +99,19 @@
     var path = compactPath(pathname);
     if (path.indexOf('/explore/') !== -1) return { need: 'public', kind: 'page', feature: null };
     if (/\/periodic-table\/compare$/.test(path)) {
-      return { need: 'pro', kind: 'compare', feature: 'publicElementCompare' };
+      return { need: catalogAccess('publicElementCompare', 'public'), kind: 'compare', feature: 'publicElementCompare' };
     }
     if (/\/viewer\/molecules/.test(path) || /(^|\/)molecules$/.test(path)) {
-      return { need: 'pro', kind: 'viewer', feature: 'moleculeViewer' };
+      return { need: catalogAccess('moleculeViewer', 'public'), kind: 'viewer', feature: 'moleculeViewer' };
     }
     if (/\/viewer\/atomic-models/.test(path) || /\/atomic-models(\/|$)/.test(path)) {
-      return { need: 'pro', kind: 'viewer', feature: 'atomicModelViewer' };
+      return { need: catalogAccess('atomicModelViewer', 'public'), kind: 'viewer', feature: 'atomicModelViewer' };
     }
     if (/\/viewer\/allotropes/.test(path) || /(^|\/)allotropes$/.test(path)) {
-      return { need: 'pro', kind: 'viewer', feature: 'allotropeViewer' };
+      return { need: catalogAccess('allotropeViewer', 'public'), kind: 'viewer', feature: 'allotropeViewer' };
     }
     if (/\/viewer\/isomerism/.test(path) || /(^|\/)isomerism(\/|$)/.test(path)) {
-      return { need: 'pro', kind: 'viewer', feature: 'isomerismViewer' };
+      return { need: catalogAccess('isomerismViewer', 'public'), kind: 'viewer', feature: 'isomerismViewer' };
     }
     return { need: 'public', kind: 'page', feature: null };
   }
@@ -90,7 +120,7 @@
     var ads = window.__ATOMURUS_ADS__ || {};
     var auth = window.__ATOMURUS_AUTH__ || {};
     var user = ads.user || auth.user || null;
-    var features = (user && user.features) || {};
+    var features = (user && user.features) || ads.features || {};
     return {
       signedIn: Boolean(ads.signedIn || auth.signedIn || (user && (user.id || user.email))),
       isPro: Boolean((user && user.isPro) || ads.isPro),
@@ -107,7 +137,7 @@
 
   function allowed(need, session, featureKey) {
     if (!need || need === 'public') return true;
-    if (need === 'login') {
+    if (need === 'login' || need === 'account') {
       if (featureKey) return hasFeature(session, featureKey) || Boolean(session.signedIn && session.ready);
       return Boolean(session.signedIn);
     }
@@ -132,13 +162,13 @@
   }
 
   function copyFor(need, kind, feature) {
-    if (need === 'login') {
+    if (need === 'login' || need === 'account') {
       return {
         kicker: t('Free account', 'Conta gratuita'),
-        title: t('Sign in to use this calculator.', 'Entre para usar esta calculadora.'),
+        title: t('Sign in to continue.', 'Entre para continuar.'),
         body: t(
-          'Create a free Atomurus account to unlock extra calculators. Molar mass and dilution stay open without signing in.',
-          'Crie uma conta Atomurus gratuita para liberar calculadoras extras. Massa molar e diluição continuam abertas sem login.'
+          'Create a free Atomurus account to save your work and pick up where you left off. Exploring chemistry stays open without signing in.',
+          'Crie uma conta Atomurus gratuita para salvar o que você estuda e continuar depois. Explorar química continua aberto sem login.'
         )
       };
     }
@@ -152,62 +182,12 @@
         )
       };
     }
-    if (kind === 'compare') {
-      return {
-        kicker: t('PRO', 'PRO'),
-        title: t('Element Compare is included with Pro.', 'Comparar elementos está no Pro.'),
-        body: t(
-          'Compare several elements and save the analysis to your workspace. Advanced Element Compare lives in Pro Lab. The periodic table, heatmap, trends and isotopes remain open. New accounts include a 30-day trial.',
-          'Compare vários elementos e salve a análise no workspace. A Comparação avançada de elementos fica no Pro Lab. Tabela, mapa de calor, tendências e isótopos continuam abertos. Contas novas incluem 30 dias de trial.'
-        )
-      };
-    }
-    if (feature === 'moleculeViewer') {
-      return {
-        kicker: t('PRO', 'PRO'),
-        title: t('Molecules is included with Pro.', 'Moléculas está no Pro.'),
-        body: t(
-          'Explore molecular structures in 3D and save the work to your workspace. Interactive 3D viewers stay in Atomurus Pro. New accounts include a 30-day trial.',
-          'Explore estruturas moleculares em 3D e salve o trabalho no workspace. Visualizadores 3D ficam no Atomurus Pro. Contas novas incluem 30 dias de trial.'
-        )
-      };
-    }
-    if (feature === 'atomicModelViewer') {
-      return {
-        kicker: t('PRO', 'PRO'),
-        title: t('Atomic Models is included with Pro.', 'Modelos atômicos está no Pro.'),
-        body: t(
-          'Inspect atomic models in 3D. Interactive 3D viewers stay in Atomurus Pro. New accounts include a 30-day trial.',
-          'Veja modelos atômicos em 3D. Visualizadores 3D ficam no Atomurus Pro. Contas novas incluem 30 dias de trial.'
-        )
-      };
-    }
-    if (feature === 'allotropeViewer') {
-      return {
-        kicker: t('PRO', 'PRO'),
-        title: t('Allotropes is included with Pro.', 'Alótropos está no Pro.'),
-        body: t(
-          'Compare allotrope structures in 3D. Interactive 3D viewers stay in Atomurus Pro. New accounts include a 30-day trial.',
-          'Explore estruturas alotrópicas em 3D. Visualizadores 3D ficam no Atomurus Pro. Contas novas incluem 30 dias de trial.'
-        )
-      };
-    }
-    if (feature === 'isomerismViewer') {
-      return {
-        kicker: t('PRO', 'PRO'),
-        title: t('Isomerism is included with Pro.', 'Isomeria está no Pro.'),
-        body: t(
-          'Inspect isomerism in 3D. Interactive 3D viewers stay in Atomurus Pro. New accounts include a 30-day trial.',
-          'Veja isomeria em 3D. Visualizadores 3D ficam no Atomurus Pro. Contas novas incluem 30 dias de trial.'
-        )
-      };
-    }
     return {
       kicker: t('PRO', 'PRO'),
       title: t('This tool is part of Atomurus Pro.', 'Esta ferramenta faz parte do Atomurus Pro.'),
       body: t(
-        'Interactive 3D viewers stay in Pro. The page remains a public preview. New accounts include a 30-day Pro trial — no card required to start.',
-        'Visualizadores 3D ficam no Pro. A página continua como prévia pública. Contas novas incluem 30 dias de trial — sem cartão para começar.'
+        'Atomurus Pro is for solving, analyzing and experimenting — not for viewing the public lab. New accounts include a 30-day Pro trial — no card required to start.',
+        'O Atomurus Pro é para resolver, analisar e experimentar — não para ver o lab público. Contas novas incluem 30 dias de trial — sem cartão para começar.'
       )
     };
   }
@@ -268,7 +248,7 @@
     card.querySelector('.lab-tool-gate-title').textContent = copy.title;
     card.querySelector('.lab-tool-gate-body').textContent = copy.body;
     var actions = card.querySelector('.lab-tool-gate-actions');
-    if (need === 'login') {
+    if (need === 'login' || need === 'account') {
       var signup = document.createElement('a');
       signup.className = 'lab-tool-gate-primary';
       signup.href = signupHref();
@@ -326,11 +306,17 @@
   }
 
   function markCalcMenu() {
-    Object.keys(CALC_TAB_POLICY).forEach(function (tab) {
-      var need = CALC_TAB_POLICY[tab];
-      if (need === 'public') return;
+    var policy = calcTabPolicyMap();
+    Object.keys(policy).forEach(function (tab) {
+      var need = policy[tab];
       var btn = document.querySelector('.calc-menu-item[data-target="' + tab + '"]');
-      if (!btn || btn.querySelector('.lab-tool-need')) return;
+      if (!btn) return;
+      var existing = btn.querySelector('.lab-tool-need');
+      if (need === 'public') {
+        if (existing) existing.remove();
+        return;
+      }
+      if (existing) return;
       var badge = document.createElement('span');
       badge.className = 'calc-menu-badge lab-tool-need';
       badge.textContent = need === 'pro' ? 'PRO' : t('Account', 'Conta');
@@ -350,11 +336,13 @@
       clearOverlay(host);
     }
     markCalcMenu();
-    Object.keys(CALC_TAB_POLICY).forEach(function (tab) {
+    var policy = calcTabPolicyMap();
+    var features = calcTabFeatureMap();
+    Object.keys(policy).forEach(function (tab) {
       var tabHost = calcHost(tab);
       if (!tabHost) return;
-      var need = CALC_TAB_POLICY[tab];
-      var feature = CALC_TAB_FEATURE[tab] || null;
+      var need = policy[tab];
+      var feature = features[tab] || null;
       if (allowed(need, session, feature)) clearOverlay(tabHost);
       else overlay(tabHost, need, 'lab-tool-gate-' + tab, 'calc', feature);
     });
@@ -371,8 +359,8 @@
 
   window.AtomurusLabToolGate = {
     pagePolicy: pagePolicy,
-    calcTabPolicy: function (tab) { return CALC_TAB_POLICY[tab] || 'public'; },
-    calcTabFeature: function (tab) { return CALC_TAB_FEATURE[tab] || null; },
+    calcTabPolicy: function (tab) { return calcTabPolicyMap()[tab] || 'public'; },
+    calcTabFeature: function (tab) { return calcTabFeatureMap()[tab] || null; },
     allow: allowed,
     hasFeature: hasFeature,
     sessionOf: sessionOf,

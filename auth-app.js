@@ -768,6 +768,10 @@
 
   function proUser(user) { return logic().isProUser(user); }
 
+  function featureOn(user, name) {
+    return Boolean(logic().hasFeature(user, name));
+  }
+
   function showProNotice(section, labelKey) {
     var feature = t(labelKey);
     var guest = !currentUser;
@@ -847,9 +851,9 @@
       var localHtml = '';
       if (area === 'study') {
         localHtml = '<div class="ws-local-nav" role="navigation" aria-label="' + escapeHtml(t('navGroupStudy')) + '">' +
-          [['library', 'library', true], ['sets', 'sets', true], ['review', 'reviewShort', true, 'review'], ['insights', 'insightsNav', true, 'insights']].map(function (pair) {
+          [['library', 'library', 'studyCloud'], ['sets', 'sets', 'studySets'], ['review', 'reviewShort', 'smartReview', 'review'], ['insights', 'insightsNav', 'studyInsights', 'insights']].map(function (pair) {
             var key = pair[3] || pair[0];
-            var locked = pair[2] && !proUser(user);
+            var locked = pair[2] && !featureOn(user, pair[2]);
             return navItemHtml('/app?section=' + pair[0], pair[1], pair[0], current === pair[0], locked, pair[0]);
           }).join('') + '</div>';
       } else if (area === 'lab') {
@@ -861,8 +865,8 @@
           '</div>';
       } else if (area === 'activity') {
         localHtml = '<div class="ws-local-nav" role="navigation" aria-label="' + escapeHtml(t('navGroupActivity')) + '">' +
-          [['history', 'history', true], ['notes', 'notes', true], ['progress', 'continueNav', true]].map(function (pair) {
-            var locked = pair[2] && !proUser(user);
+          [['history', 'history', 'studyCloud'], ['notes', 'notes', 'studyCloud'], ['progress', 'continueNav', 'studyCloud']].map(function (pair) {
+            var locked = pair[2] && !featureOn(user, pair[2]);
             return navItemHtml('/app?section=' + pair[0], pair[1], pair[0], current === pair[0], locked, pair[0]);
           }).join('') + '</div>';
       }
@@ -1376,7 +1380,7 @@
 
   function libraryRow(item) {
     var href = safeHref(item.href);
-    var canGenerate = item.itemType === 'element' || item.itemType === 'molecule';
+    var canGenerate = (item.itemType === 'element' || item.itemType === 'molecule') && featureOn(currentUser, 'automatedPractice');
     var tags = Array.isArray(item.tags) ? item.tags.join(' · ') : '';
     return '<article class="ws-study-item" data-library-id="' + escapeHtml(item.id) + '">' +
       '<div class="ws-item-symbol">' + escapeHtml(itemSymbol(item)) + '</div><div>' +
@@ -2640,15 +2644,24 @@
       else renderFreeOverview(null);
       return;
     }
-    if (!proUser(user)) {
-      if (section === 'overview') renderFreeOverview(user);
-      else if (section === 'insights') renderLockedInsights();
-      else if (section === 'pro-lab') return mountProLab(node, user);
-      else showStudyLocked(node);
-      return;
-    }
     if (section === 'pro-lab') {
       return mountProLab(node, user);
+    }
+    var needed = {
+      overview: 'studyCloud',
+      library: 'studyCloud',
+      sets: 'studySets',
+      notes: 'studyCloud',
+      history: 'studyCloud',
+      progress: 'studyCloud',
+      review: 'smartReview',
+      insights: 'studyInsights'
+    }[section];
+    if (!user || (needed && !featureOn(user, needed))) {
+      if (section === 'overview') renderFreeOverview(user);
+      else if (section === 'insights') renderLockedInsights();
+      else showStudyLocked(node);
+      return;
     }
     var api = window.AtomurusStudy;
     if (!api) {

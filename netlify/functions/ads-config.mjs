@@ -1,5 +1,6 @@
 import { authSession } from '../lib/auth-provider.mjs';
 import { resolvePricingContext } from '../lib/geo-pricing.mjs';
+import { accessForUser } from '../lib/plan-access.mjs';
 import { json, jsonWithCookies, options, publicUser, PLAN_PRICING } from '../lib/netlify-identity-utils.mjs';
 
 export default async function handler(request) {
@@ -12,6 +13,7 @@ export default async function handler(request) {
   // this runs on every public page and would race /app's /me refresh.
   const session = await authSession(request);
   const user = session?.user ? publicUser(session.user) : null;
+  const access = accessForUser(session?.user || {});
   const pricingContext = resolvePricingContext(request);
 
   return jsonWithCookies(
@@ -20,7 +22,9 @@ export default async function handler(request) {
       ok: true,
       signedIn: Boolean(user),
       adsEnabled: user ? !user.adsFree : true,
+      isPro: Boolean(access.isPro),
       user,
+      features: access.features,
       pricing: PLAN_PRICING,
       pricingContext
     },
