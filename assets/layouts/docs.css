@@ -1,0 +1,136 @@
+/* Atomurus UI V2 — public docs / 404 / contact
+   Loaded on about, contact, privacy, terms, 404 (and pricing hero). */
+
+.ps-body.lc-doc {
+  overflow-x: hidden;
+}
+
+.lc-doc-hero {
+  padding: var(--space-7) var(--space-6) var(--space-5);
+}
+
+.lc-doc-title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+}
+
+.lc-doc-kicker {
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-text-muted);
+}
+
+.lc-doc-desc {
+  max-width: 42rem;
+  color: var(--color-text-muted);
+  line-height: var(--leading-relaxed);
+}
+
+.lc-doc-body.ui-root {
+  background: transparent;
+  min-height: 0;
+}
+
+.lc-doc-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+@media (max-width: 640px) {
+  .lc-doc-cards { grid-template-columns: 1fr; }
+}
+
+.lc-doc-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  padding: var(--space-4);
+}
+
+.lc-doc-card.ui-card {
+  box-shadow: none;
+}
+
+html[data-page="404"] .lc-statusbar {
+  font-family: var(--font-mono, var(--lc-mono));
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+.lc-doc-card .lbl {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.doc-effective {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+}
+
+.doc-effective .v {
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  color: var(--color-text);
+}
+
+.lc-doc-prose blockquote {
+  margin: 0 0 var(--space-5);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.lc-form .row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+@media (max-width: 640px) {
+  .lc-form .row { grid-template-columns: 1fr; }
+}
+
+.lc-form .field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.lc-form .ui-label {
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+html body .lc-doc-prose .lc-form button.ui-btn-primary[type=submit] {
+  background: var(--color-text);
+  border-color: var(--color-text);
+  color: var(--color-on-ink);
+}
+
+.lc-form .feedback {
+  display: none;
+  margin-top: var(--space-3);
+}
+
+.lc-form .feedback.show,
+.lc-form .feedback.ok.show,
+.lc-form .feedback.err.show {
+  display: grid;
+}

@@ -76,13 +76,10 @@
 <link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
 <noscript><link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630"></noscript>
 <link rel="stylesheet" href="/assets/public-shell.css?v=202608281830">
+<link rel="stylesheet" href="/assets/ui/index.css?v=202609090500">
+<link rel="stylesheet" href="/assets/layouts/docs.css?v=202609090500">
 <script src="/assets/public-workspace.js?v=202608282500"></script>
 <script src="atomurus-mobile-nav.js?v=202608041630" defer></script>
-<style>
-  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { min-height: 100vh; }
-  body { display: block; overflow-x: hidden; padding-bottom: 22px; }
-</style>
 </head>
 
 <body class="ps-body lc-doc">
@@ -110,7 +107,7 @@
       <span class="lc-tn-no">01</span> <span data-i18n="common.nav.periodic">Periodic Table</span>
     </a>
     <a class="lc-topnav-link" href="viewer/atomic-models.html">
-      <span class="lc-tn-no">02</span> <span data-i18n="common.nav.visualizador">Visualizador</span>
+      <span class="lc-tn-no">02</span> <span data-i18n="common.nav.visualizador">Viewer</span>
     </a>
     <a class="lc-topnav-link" href="calculators.html">
       <span class="lc-tn-no">03</span> <span data-i18n="common.nav.calc">Calculators</span>
@@ -214,11 +211,11 @@
     <span class="pill">§ 01 — project</span>
   </div>
   <h1 class="lc-doc-title" data-i18n-html="about.titleHtml">Chemistry, <em>open</em> to everyone.</h1>
-  <p class="lc-doc-desc" data-i18n="about.desc">An interactive chemistry laboratory built for students, educators and the endlessly curious — completely open, no accounts required.</p>
+  <p class="lc-doc-desc" data-i18n="about.desc">An interactive chemistry laboratory built for students, educators and the endlessly curious — the periodic table stays open, with optional accounts for extra tools and study.</p>
 </header>
 
 <!-- ════════════ BODY ════════════ -->
-<div class="lc-doc-body">
+<div class="lc-doc-body ui-root">
 
   <aside class="lc-doc-aside">
     <div><span class="lbl" data-i18n="about.asideKDocument">document</span><br><span class="v" data-i18n="about.asideDocVal">about</span></div>
@@ -240,12 +237,12 @@
   <article class="lc-doc-prose">
 
     <h2 id="what"><span class="h-no">§ 01</span> <span data-i18n="about.h2What">What is Atomurus?</span></h2>
-    <p data-i18n-html="about.pWhatHtml">Atomurus is a free, browser-based chemistry laboratory. It brings together an <strong>interactive periodic table</strong> with all 118 elements, a <strong>Visualizador</strong> (Bohr, Rutherford, Quantum, Thomson and Dalton models), molecular visualizations and a growing set of chemistry <strong>calculators</strong> — all running directly in your browser, with no installation.</p>
+    <p data-i18n-html="about.pWhatHtml">Atomurus is a browser-based chemistry laboratory. It brings together an <strong>interactive periodic table</strong> with all 118 elements, Explore articles, and <strong>molar mass and dilution</strong> calculators that run in your browser with no account. Extra calculators unlock after sign-in; interactive 3D viewers are part of Atomurus Pro.</p>
 
     <h2 id="mission"><span class="h-no">§ 02</span> <span data-i18n="about.h2Mission">Our mission</span></h2>
-    <p data-i18n="about.pMission">We believe great chemistry tools shouldn't sit behind paywalls, logins or app stores. Atomurus is built around three principles:</p>
+    <p data-i18n="about.pMission">We believe the periodic table and chemistry fundamentals shouldn't sit behind a paywall or an app store. Atomurus is built around three principles:</p>
     <ul>
-      <li data-i18n-html="about.liMission1Html"><strong>Open access.</strong> No sign-ups, no registrations, no email required. Just open and learn.</li>
+      <li data-i18n-html="about.liMission1Html"><strong>Open access.</strong> The periodic table, element pages, articles, molar mass and dilution stay open with no account.</li>
       <li data-i18n-html="about.liMission2Html"><strong>Scientific accuracy.</strong> Atomic data is based on IUPAC 2024 references and CODATA 2022 constants, with masses in unified atomic mass units (u).</li>
       <li data-i18n-html="about.liMission3Html"><strong>Modern, careful design.</strong> Every panel, animation and color was tuned to make complex chemistry feel approachable.</li>
     </ul>
@@ -253,23 +250,23 @@
     <h2 id="inside"><span class="h-no">§ 03</span> <span data-i18n="about.h2Inside">What you'll find inside</span></h2>
     <ul>
       <li data-i18n-html="about.liInside1Html"><strong>Periodic Table</strong> — Click any element to explore atomic mass, electron configuration, electronegativity, oxidation states, occurrence and real-world applications.</li>
-      <li data-i18n-html="about.liInside2Html"><strong>Visualizador</strong> — Rotate and inspect historical and modern models of the atom in real time, powered by WebGL.</li>
-      <li data-i18n-html="about.liInside3Html"><strong>3D Molecules &amp; Allotropes</strong> — Visualize the geometry of common substances such as water, ammonia, methane and rust.</li>
-      <li data-i18n-html="about.liInside4Html"><strong>Calculators</strong> — Molar mass, dilution, ideal gas and pH (with more tools coming soon).</li>
+      <li data-i18n-html="about.liInside2Html"><strong>Viewer</strong> — Historical and modern atomic models in WebGL. Interactive 3D is part of Atomurus Pro.</li>
+      <li data-i18n-html="about.liInside3Html"><strong>3D Molecules &amp; Allotropes</strong> — Geometry of water, ammonia, methane and more. Included in Atomurus Pro.</li>
+      <li data-i18n-html="about.liInside4Html"><strong>Calculators</strong> — Molar mass and dilution stay open. Scientific, units, gas and pH unlock with a free account.</li>
     </ul>
 
     <h2 id="why"><span class="h-no">§ 04</span> <span data-i18n="about.h2Why">Why we built this</span></h2>
     <p data-i18n="about.pWhy">Atomurus started as a personal project to make chemistry feel less like memorization and more like exploration. Most online tables and atomic viewers are either visually outdated, locked behind subscriptions or scattered across separate tools. Atomurus brings them together under one consistent design system, with attention to typography, color and animation that respects the science.</p>
 
     <h2 id="open"><span class="h-no">§ 05</span> <span data-i18n="about.h2Open">Open by default</span></h2>
-    <p data-i18n="about.pOpen">You don't need an account to use any feature on Atomurus. Your preferences (theme, element size, language) are stored locally in your browser — nothing is sent to a server.</p>
+    <p data-i18n="about.pOpen">You do not need an account for the periodic table, element pages, Explore articles, molar mass or dilution. Extra calculators unlock after you create a free account. Interactive 3D tools are Pro. Theme, element size and language stay in your browser.</p>
 
     <div class="lc-doc-tags">
       <span class="lc-doc-tag hi" data-i18n="about.tag1">118 elements</span>
       <span class="lc-doc-tag" data-i18n="about.tag2">IUPAC 2024 · CODATA 2022</span>
       <span class="lc-doc-tag" data-i18n="about.tag3">Open access</span>
       <span class="lc-doc-tag" data-i18n="about.tag4">WebGL 3D</span>
-      <span class="lc-doc-tag" data-i18n="about.tag5">No account needed</span>
+      <span class="lc-doc-tag" data-i18n="about.tag5">Table stays open</span>
     </div>
 
     <h2 id="built"><span class="h-no">§ 06</span> <span data-i18n="about.h2Built">Built with</span></h2>
@@ -318,7 +315,7 @@
     <div class="lc-footer-col">
       <h4 data-i18n="common.footer.modules">Modules</h4>
       <a href="periodic-table.html" data-i18n="common.nav.periodic">Periodic Table</a>
-      <a href="viewer/atomic-models.html" data-i18n="common.nav.viewer3d">Visualizador</a>
+      <a href="viewer/atomic-models.html" data-i18n="common.nav.viewer3d">Viewer</a>
       <a href="calculators.html" data-i18n="common.nav.calc">Calculators</a>
       <a href="explore.html" data-i18n="common.nav.explore">Explore</a>
     </div>

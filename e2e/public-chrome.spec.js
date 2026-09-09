@@ -182,6 +182,8 @@ test('public table, calculators, login and pricing share the new chrome', async 
   await expect(page.locator('.lc-doc-kicker .pill')).toBeHidden();
   await expect(page.locator('.ps-shell > .lc-topnav .lc-topnav-cta')).toHaveAttribute('href', /login/);
   await expect(page.locator('.ps-shell > .lc-topnav .lc-topnav-cta')).toContainText(/Account/i);
+  await expect.poll(async () => page.locator('#pricing-pro-cta').evaluate((el) => getComputedStyle(el).backgroundColor))
+    .toMatch(/rgb\(\s*20,\s*18,\s*14\s*\)/);
   await saveShot(page, 'desktop-public-pricing');
 });
 

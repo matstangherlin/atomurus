@@ -79,13 +79,10 @@
 <link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
 <noscript><link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630"></noscript>
 <link rel="stylesheet" href="/assets/public-shell.css?v=202608281830">
+<link rel="stylesheet" href="/assets/ui/index.css?v=202609090500">
+<link rel="stylesheet" href="/assets/layouts/docs.css?v=202609090500">
 <script src="/assets/public-workspace.js?v=202608282500"></script>
 <script src="atomurus-mobile-nav.js?v=202608041630" defer></script>
-<style>
-  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { min-height: 100vh; }
-  body { display: block; overflow-x: hidden; padding-bottom: 22px; }
-</style>
 </head>
 
 <body class="ps-body lc-doc">
@@ -109,7 +106,7 @@
 
   <div class="lc-topnav-links">
     <a class="lc-topnav-link" href="periodic-table.html"><span class="lc-tn-no">01</span> <span data-i18n="common.nav.periodic">Periodic Table</span></a>
-    <a class="lc-topnav-link" href="viewer/atomic-models.html"><span class="lc-tn-no">02</span> <span data-i18n="common.nav.visualizador">Visualizador</span></a>
+    <a class="lc-topnav-link" href="viewer/atomic-models.html"><span class="lc-tn-no">02</span> <span data-i18n="common.nav.visualizador">Viewer</span></a>
     <a class="lc-topnav-link" href="calculators.html"><span class="lc-tn-no">03</span> <span data-i18n="common.nav.calc">Calculators</span></a>
     <a class="lc-topnav-link" href="explore.html"><span class="lc-tn-no">04</span> <span data-i18n="common.nav.explore">Explore</span></a>
   </div>
@@ -198,7 +195,7 @@
   <p class="lc-doc-desc" data-i18n="privacy.desc">How Atomurus handles data, cookies and advertising. Plain language, short on jargon.</p>
 </header>
 
-<div class="lc-doc-body">
+<div class="lc-doc-body ui-root">
 
   <aside class="lc-doc-aside">
     <div><span class="lbl">document</span><br><span class="v">privacy</span></div>
@@ -207,7 +204,7 @@
     <hr>
     <div><span class="lbl">contents</span></div>
     <a href="#who">Who we are</a>
-    <a href="#no-collect">Information we do not collect</a>
+    <a href="#no-collect">Information we do not collect directly</a>
     <a href="#local">Information stored locally in your browser</a>
     <a href="#analytics">Analytics — Google Analytics 4</a>
     <a href="#ads">Advertising — Google AdSense</a>
@@ -224,22 +221,22 @@
   </aside>
 
   <article class="lc-doc-prose">
-    <div style="display:flex;justify-content:space-between;align-items:baseline;padding:14px 18px;background:var(--lc-paper);border:1px solid var(--lc-rule);margin-bottom:18px">
-      <span style="font-family:var(--lc-mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--lc-ink-3)">Effective date</span>
-      <span style="font-family:var(--lc-mono);font-size:13px;color:var(--lc-ink);font-weight:500" data-i18n="privacy.effectiveDate">May 16, 2026</span>
+    <div class="doc-effective">
+      <span class="k">Effective date</span>
+      <span class="v" data-i18n="privacy.effectiveDate">May 16, 2026</span>
     </div>
 
-    <blockquote data-i18n-html="privacy.calloutHtml">Atomurus does <strong>not</strong> require an account, an email or any personal registration to use any feature. We do not run a user database, and we do not collect or store personally identifiable information on our servers.</blockquote>
+    <blockquote data-i18n-html="privacy.calloutHtml">Atomurus keeps the public chemistry lab open without requiring an account, but now offers optional accounts for the private workspace. Account creation and login are handled through a secure authentication provider, and the site does not store raw passwords.</blockquote>
 
     <h2 id="who"><span class="h-no">§ 01</span> <span data-i18n="privacy.h2_1">Who we are</span></h2>
     <p data-i18n-html="privacy.p_1Html">Atomurus ("we", "us", "our") operates the website at <strong>atomurus.com</strong>. This Privacy Policy explains what data is collected when you visit Atomurus, by whom, and what choices you have.</p>
 
-    <h2 id="no-collect"><span class="h-no">§ 02</span> <span data-i18n="privacy.h2_2">Information we do not collect</span></h2>
-    <p data-i18n-html="privacy.p_2Html">Because Atomurus is open and account-free, we do <strong>not</strong> collect:</p>
+    <h2 id="no-collect"><span class="h-no">§ 02</span> <span data-i18n="privacy.h2_2">Information we do not collect directly</span></h2>
+    <p data-i18n-html="privacy.p_2Html">Even with optional accounts, Atomurus does <strong>not</strong> directly collect or store:</p>
     <ul>
-      <li data-i18n="privacy.li_2_1">Your name, email address or phone number</li>
-      <li data-i18n="privacy.li_2_2">Passwords or login credentials (there is no login)</li>
-      <li data-i18n="privacy.li_2_3">Payment information (the site is free)</li>
+      <li data-i18n="privacy.li_2_1">Your raw password or password reset secrets</li>
+      <li data-i18n="privacy.li_2_2">Payment details inside the site database</li>
+      <li data-i18n="privacy.li_2_3">Sensitive personal profile data beyond what is required for account access</li>
     </ul>
 
     <h2 id="local"><span class="h-no">§ 03</span> <span data-i18n="privacy.h2_3">Information stored locally in your browser</span></h2>
@@ -332,7 +329,7 @@
     <div class="lc-footer-col">
       <h4 data-i18n="common.footer.modules">Modules</h4>
       <a href="periodic-table.html" data-i18n="common.nav.periodic">Periodic Table</a>
-      <a href="viewer/atomic-models.html" data-i18n="common.nav.viewer3d">Visualizador</a>
+      <a href="viewer/atomic-models.html" data-i18n="common.nav.viewer3d">Viewer</a>
       <a href="calculators.html" data-i18n="common.nav.calc">Calculators</a>
       <a href="explore.html" data-i18n="common.nav.explore">Explore</a>
     </div>

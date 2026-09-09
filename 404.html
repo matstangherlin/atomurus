@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-ps-chrome="1" lang="en-US" data-theme="light">
+<html data-ps-chrome="1" lang="en-US" data-theme="light" data-page="404">
 <head>
 <style>html.lang-pt-pending [data-i18n],html.lang-pt-pending [data-i18n-html],html.lang-pt-pending [data-i18n-attr],html.lang-pt-pending [data-page-field]{visibility:hidden!important}html[data-theme="dark"] #icon-theme-light,html[data-theme="light"] #icon-theme-dark{display:none!important}html[data-theme="dark"] #icon-theme-dark,html[data-theme="light"] #icon-theme-light{display:block!important}</style>
 <script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var KEY='atomurus-lang';var p=new URLSearchParams(location.search).get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem(KEY);if(l!=='pt'&&l!=='en'){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}try{localStorage.setItem(KEY,l);}catch(e){}if(l==='pt'){document.documentElement.lang='pt-BR';document.documentElement.classList.add('lang-pt-pending');setTimeout(function(){document.documentElement.classList.remove('lang-pt-pending');},120);}else{document.documentElement.lang='en-US';}}catch(e){}})();</script>
@@ -33,13 +33,10 @@
 <link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
 <noscript><link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630"></noscript>
 <link rel="stylesheet" href="/assets/public-shell.css?v=202608281830">
+<link rel="stylesheet" href="/assets/ui/index.css?v=202609090500">
+<link rel="stylesheet" href="/assets/layouts/docs.css?v=202609090500">
 <script src="/assets/public-workspace.js?v=202608282500"></script>
 <script src="atomurus-mobile-nav.js?v=202608041630" defer></script>
-<style>
-  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { min-height: 100vh; }
-  body { display: block; overflow-x: hidden; padding-bottom: 22px; }
-</style>
 </head>
 
 <body class="ps-body lc-doc">
@@ -63,7 +60,7 @@
 
   <div class="lc-topnav-links">
     <a class="lc-topnav-link" href="periodic-table.html"><span class="lc-tn-no">01</span> <span data-i18n="common.nav.periodic">Periodic Table</span></a>
-    <a class="lc-topnav-link" href="viewer/atomic-models.html"><span class="lc-tn-no">02</span> <span data-i18n="common.nav.visualizador">Visualizador</span></a>
+    <a class="lc-topnav-link" href="viewer/atomic-models.html"><span class="lc-tn-no">02</span> <span data-i18n="common.nav.visualizador">Viewer</span></a>
     <a class="lc-topnav-link" href="calculators.html"><span class="lc-tn-no">03</span> <span data-i18n="common.nav.calc">Calculators</span></a>
     <a class="lc-topnav-link" href="explore.html"><span class="lc-tn-no">04</span> <span data-i18n="common.nav.explore">Explore</span></a>
   </div>
@@ -150,7 +147,7 @@
   <p class="lc-doc-desc">The address you requested doesn't map to anything in the Atomurus lab. It may have moved, been renamed, or never existed. Pick a stable orbit below.</p>
 </header>
 
-<div class="lc-doc-body">
+<div class="lc-doc-body ui-root">
 
   <aside class="lc-doc-aside">
     <div><span class="lbl">status</span><br><span class="v">404 · not found</span></div>
@@ -166,11 +163,11 @@
     <h2><span class="h-no">§ 01</span> Where to next</h2>
     <p>Try one of the main modules, or head back to the homepage. If you reached this from a link inside Atomurus, please let us know on the <a href="contact.html">contact page</a>.</p>
     <div class="lc-doc-cards" style="margin-top:14px;">
-      <a class="lc-doc-card" href="periodic-table.html" style="text-decoration:none;color:inherit;">
+      <a class="lc-doc-card ui-card" href="periodic-table.html" style="text-decoration:none;color:inherit;">
         <div class="lbl">Periodic Table</div>
         <div class="v">Browse every element with full data.</div>
       </a>
-      <a class="lc-doc-card" href="explore.html" style="text-decoration:none;color:inherit;">
+      <a class="lc-doc-card ui-card" href="explore.html" style="text-decoration:none;color:inherit;">
         <div class="lbl">Explore</div>
         <div class="v">Chemistry articles, history and concepts.</div>
       </a>
@@ -211,7 +208,7 @@
     <div class="lc-footer-col">
       <h4 data-i18n="common.footer.modules">Modules</h4>
       <a href="periodic-table.html" data-i18n="common.nav.periodic">Periodic Table</a>
-      <a href="viewer/atomic-models.html" data-i18n="common.nav.viewer3d">Visualizador</a>
+      <a href="viewer/atomic-models.html" data-i18n="common.nav.viewer3d">Viewer</a>
       <a href="calculators.html" data-i18n="common.nav.calc">Calculators</a>
       <a href="explore.html" data-i18n="common.nav.explore">Explore</a>
     </div>
@@ -244,7 +241,7 @@
 <div class="lc-statusbar">
   <span><span class="lc-st-dot"></span> ready</span>
   <span class="lc-st-sep">·</span>
-  <span>error / 404</span>
+  <span>page not found</span>
   <span class="lc-st-spacer"></span>
   <a href="index.html">→ home</a>
   <span class="lc-st-sep">·</span>

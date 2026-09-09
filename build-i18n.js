@@ -179,8 +179,8 @@ function buildVariant(srcAbs, dstAbs, lang, dict) {
 
   let out = src;
 
-  // <html lang="...">
-  out = out.replace(/<html\s+lang="[^"]*"/, `<html lang="${HTML_LANG[lang]}"`);
+  // <html lang="..."> — keep extra attributes such as data-ps-chrome
+  out = out.replace(/(<html\b[^>]*)\blang="[^"]*"/, `$1lang="${HTML_LANG[lang]}"`);
 
   // <title data-i18n="...">...</title>
   out = out.replace(
@@ -298,7 +298,7 @@ function buildElementEnVariant(srcAbs, ctx) {
 
   let out = src;
 
-  out = out.replace(/<html\s+lang="[^"]*"/, '<html lang="en"');
+  out = out.replace(/(<html\b[^>]*)\blang="[^"]*"/, '$1lang="en"');
   out = out.replace(/<title>[^<]*<\/title>/, `<title>${escText(title)}</title>`);
   out = out.replace(
     /<meta\s+name="description"\s+content="[^"]*">/,

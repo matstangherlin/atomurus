@@ -82,13 +82,10 @@
 <link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
 <noscript><link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630"></noscript>
 <link rel="stylesheet" href="/assets/public-shell.css?v=202608281830">
+<link rel="stylesheet" href="/assets/ui/index.css?v=202609090500">
+<link rel="stylesheet" href="/assets/layouts/docs.css?v=202609090500">
 <script src="/assets/public-workspace.js?v=202608282500"></script>
 <script src="atomurus-mobile-nav.js?v=202608041630" defer></script>
-<style>
-  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { min-height: 100vh; }
-  body { display: block; overflow-x: hidden; padding-bottom: 22px; }
-</style>
 </head>
 
 <body class="ps-body lc-doc">
@@ -112,7 +109,7 @@
 
   <div class="lc-topnav-links">
     <a class="lc-topnav-link" href="periodic-table.html"><span class="lc-tn-no">01</span> <span data-i18n="common.nav.periodic">Periodic Table</span></a>
-    <a class="lc-topnav-link" href="viewer/atomic-models.html"><span class="lc-tn-no">02</span> <span data-i18n="common.nav.visualizador">Visualizador</span></a>
+    <a class="lc-topnav-link" href="viewer/atomic-models.html"><span class="lc-tn-no">02</span> <span data-i18n="common.nav.visualizador">Viewer</span></a>
     <a class="lc-topnav-link" href="calculators.html"><span class="lc-tn-no">03</span> <span data-i18n="common.nav.calc">Calculators</span></a>
     <a class="lc-topnav-link" href="explore.html"><span class="lc-tn-no">04</span> <span data-i18n="common.nav.explore">Explore</span></a>
   </div>
@@ -201,7 +198,7 @@
   <p class="lc-doc-desc" data-i18n="contact.desc">Bug reports, scientific corrections, partnerships, press inquiries and feedback. Replies usually come within 2–3 working days.</p>
 </header>
 
-<div class="lc-doc-body">
+<div class="lc-doc-body ui-root">
 
   <aside class="lc-doc-aside">
     <div><span class="lbl" data-i18n="contact.asideKChannel">channel</span><br><span class="v" data-i18n="contact.asideChannelVal">form · email</span></div>
@@ -240,18 +237,18 @@
     -->
     <form class="lc-form" id="cform" action="/api/contact-send" method="POST" novalidate>
       <div class="row">
-        <div class="field">
-          <label for="cf-name" data-i18n="contact.labelName">Name</label>
-          <input id="cf-name" name="name" type="text" required autocomplete="name">
+        <div class="field ui-field">
+          <label class="ui-label" for="cf-name" data-i18n="contact.labelName">Name</label>
+          <input class="ui-input" id="cf-name" name="name" type="text" required autocomplete="name">
         </div>
-        <div class="field">
-          <label for="cf-email" data-i18n="contact.labelEmail">E-mail</label>
-          <input id="cf-email" name="email" type="email" required autocomplete="email">
+        <div class="field ui-field">
+          <label class="ui-label" for="cf-email" data-i18n="contact.labelEmail">E-mail</label>
+          <input class="ui-input" id="cf-email" name="email" type="email" required autocomplete="email">
         </div>
       </div>
-      <div class="field">
-        <label for="cf-topic" data-i18n="contact.labelSubject">Subject</label>
-        <select id="cf-topic" name="topic" required>
+      <div class="field ui-field">
+        <label class="ui-label" for="cf-topic" data-i18n="contact.labelSubject">Subject</label>
+        <select class="ui-select" id="cf-topic" name="topic" required>
           <option value="" disabled selected data-i18n="contact.subjectChoose">Choose a subject…</option>
           <option value="bug" data-i18n="contact.subjectBug">Report a bug or scientific error</option>
           <option value="feedback" data-i18n="contact.subjectFeedback">Feedback / suggestion</option>
@@ -260,12 +257,12 @@
           <option value="other" data-i18n="contact.subjectOther">Other</option>
         </select>
       </div>
-      <div class="field">
-        <label for="cf-message" data-i18n="contact.labelMessage">Message</label>
-        <textarea id="cf-message" name="message" required minlength="10"></textarea>
+      <div class="field ui-field">
+        <label class="ui-label" for="cf-message" data-i18n="contact.labelMessage">Message</label>
+        <textarea class="ui-textarea" id="cf-message" name="message" required minlength="10"></textarea>
       </div>
       <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;width:1px;height:1px">
-      <button type="submit" id="cf-submit">
+      <button type="submit" class="ui-btn ui-btn-primary" id="cf-submit">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7l5 5 7-10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <span data-i18n="contact.submit">Send message</span>
       </button>
@@ -276,19 +273,19 @@
 
     <h2 id="what"><span class="h-no">§ 03</span> <span data-i18n="contact.h2What">What to send</span></h2>
     <div class="lc-doc-cards">
-      <div class="lc-doc-card">
+      <div class="lc-doc-card ui-card">
         <div class="lbl" data-i18n="contact.alt.bugLabel">Bug reports</div>
         <div class="v" data-i18n="contact.alt.bugBody">Use the subject "Report a bug" and describe step-by-step. Include browser, operating system and the affected element/page if applicable.</div>
       </div>
-      <div class="lc-doc-card">
+      <div class="lc-doc-card ui-card">
         <div class="lbl" data-i18n="contact.alt.pressLabel">Press &amp; partnerships</div>
         <div class="v" data-i18n="contact.alt.pressBody">Press, partnership and educational licensing requests are welcome. Mention your institution and intended use case.</div>
       </div>
-      <div class="lc-doc-card">
-        <div class="lbl" data-i18n="contact.alt.accountsLabel">No accounts</div>
-        <div class="v" data-i18n="contact.alt.accountsBody">There is no sign-up or login on Atomurus. The form above is the primary point of contact — for casual updates and announcements, follow us on social media.</div>
+      <div class="lc-doc-card ui-card">
+        <div class="lbl" data-i18n="contact.alt.accountsLabel">Accounts</div>
+        <div class="v" data-i18n="contact.alt.accountsBody">Atomurus now supports account creation and login for the private workspace. Use /login to create an account, sign in and keep your study access linked to your email.</div>
       </div>
-      <div class="lc-doc-card">
+      <div class="lc-doc-card ui-card">
         <div class="lbl" data-i18n="contact.alt.privacyLabel">Privacy</div>
         <div class="v" data-i18n="contact.alt.privacyBody">Messages are delivered to our inbox through Mailgun (our email provider). We do not store your contact in any database.</div>
       </div>
@@ -361,7 +358,7 @@
     <div class="lc-footer-col">
       <h4 data-i18n="common.footer.modules">Modules</h4>
       <a href="periodic-table.html" data-i18n="common.nav.periodic">Periodic Table</a>
-      <a href="viewer/atomic-models.html" data-i18n="common.nav.viewer3d">Visualizador</a>
+      <a href="viewer/atomic-models.html" data-i18n="common.nav.viewer3d">Viewer</a>
       <a href="calculators.html" data-i18n="common.nav.calc">Calculators</a>
       <a href="explore.html" data-i18n="common.nav.explore">Explore</a>
     </div>

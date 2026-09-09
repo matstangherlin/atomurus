@@ -76,13 +76,10 @@
 <link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
 <noscript><link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630"></noscript>
 <link rel="stylesheet" href="/assets/public-shell.css?v=202608281830">
+<link rel="stylesheet" href="/assets/ui/index.css?v=202609090500">
+<link rel="stylesheet" href="/assets/layouts/docs.css?v=202609090500">
 <script src="/assets/public-workspace.js?v=202608282500"></script>
 <script src="atomurus-mobile-nav.js?v=202608041630" defer></script>
-<style>
-  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { min-height: 100vh; }
-  body { display: block; overflow-x: hidden; padding-bottom: 22px; }
-</style>
 </head>
 
 <body class="ps-body lc-doc">
@@ -110,7 +107,7 @@
       <span class="lc-tn-no">01</span> <span data-i18n="common.nav.periodic">Periodic Table</span>
     </a>
     <a class="lc-topnav-link" href="viewer/atomic-models.html">
-      <span class="lc-tn-no">02</span> <span data-i18n="common.nav.visualizador">Visualizador</span>
+      <span class="lc-tn-no">02</span> <span data-i18n="common.nav.visualizador">Viewer</span>
     </a>
     <a class="lc-topnav-link" href="calculators.html">
       <span class="lc-tn-no">03</span> <span data-i18n="common.nav.calc">Calculators</span>
@@ -218,7 +215,7 @@
 </header>
 
 <!-- ════════════ BODY ════════════ -->
-<div class="lc-doc-body">
+<div class="lc-doc-body ui-root">
 
   <aside class="lc-doc-aside">
     <div><span class="lbl" data-i18n="about.asideKDocument">document</span><br><span class="v" data-i18n="about.asideDocVal">about</span></div>
@@ -240,7 +237,7 @@
   <article class="lc-doc-prose">
 
     <h2 id="what"><span class="h-no">§ 01</span> <span data-i18n="about.h2What">What is Atomurus?</span></h2>
-    <p data-i18n-html="about.pWhatHtml">Atomurus is a free, browser-based chemistry laboratory. It brings together an <strong>interactive periodic table</strong> with all 118 elements, a <strong>Visualizador</strong> (Bohr, Rutherford, Quantum, Thomson and Dalton models), molecular visualizations and a growing set of chemistry <strong>calculators</strong> — all running directly in your browser, with no installation.</p>
+    <p data-i18n-html="about.pWhatHtml">Atomurus is a browser-based chemistry laboratory. It brings together an <strong>interactive periodic table</strong> with all 118 elements, Explore articles, and <strong>molar mass and dilution</strong> calculators that run in your browser with no account. Extra calculators unlock after sign-in; interactive 3D viewers are part of Atomurus Pro.</p>
 
     <h2 id="mission"><span class="h-no">§ 02</span> <span data-i18n="about.h2Mission">Our mission</span></h2>
     <p data-i18n="about.pMission">We believe the periodic table and chemistry fundamentals shouldn't sit behind a paywall or an app store. Atomurus is built around three principles:</p>
@@ -318,7 +315,7 @@
     <div class="lc-footer-col">
       <h4 data-i18n="common.footer.modules">Modules</h4>
       <a href="periodic-table.html" data-i18n="common.nav.periodic">Periodic Table</a>
-      <a href="viewer/atomic-models.html" data-i18n="common.nav.viewer3d">Visualizador</a>
+      <a href="viewer/atomic-models.html" data-i18n="common.nav.viewer3d">Viewer</a>
       <a href="calculators.html" data-i18n="common.nav.calc">Calculators</a>
       <a href="explore.html" data-i18n="common.nav.explore">Explore</a>
     </div>

@@ -347,7 +347,10 @@ function assertUiV2() {
     'tools/inject-ui-chrome.js',
     'docs/ui-v2-chrome.md',
     'docs/ui-v2-auth.md',
-    'assets/layouts/auth.css'
+    'docs/ui-v2-pricing.md',
+    'assets/layouts/auth.css',
+    'assets/layouts/pricing.css',
+    'assets/layouts/docs.css'
   ];
   files.forEach((rel) => {
     if (!fs.existsSync(path.join(ROOT, rel))) fail(`${rel} is missing`);
@@ -399,13 +402,44 @@ function assertUiV2() {
     'pricing.html',
     'about.html',
     'calculators.html',
-    'periodic-table.html'
+    'periodic-table.html',
+    'contact.html',
+    'privacy.html',
+    'terms.html',
+    '404.html'
   ].forEach((rel) => {
     const html = read(rel);
     if (!html.includes('id="ps-shell"')) fail(`${rel} must emit #ps-shell in source HTML`);
     if (!html.includes('data-ps-chrome')) fail(`${rel} must mark emitted chrome with data-ps-chrome`);
-    if (html.includes('assets/ui/index.css')) fail(`${rel} must not load UI V2 yet`);
   });
+  ['index.html', 'calculators.html', 'periodic-table.html'].forEach((rel) => {
+    if (read(rel).includes('assets/ui/index.css')) fail(`${rel} must not load UI V2 yet`);
+  });
+  [
+    'login.html',
+    'pricing.html',
+    'about.html',
+    'contact.html',
+    'privacy.html',
+    'terms.html',
+    '404.html'
+  ].forEach((rel) => {
+    if (!read(rel).includes('assets/ui/index.css')) fail(`${rel} must load UI V2`);
+  });
+  const pricingHtml = read('pricing.html');
+  if (pricingHtml.includes('app-workspace.css')) fail('pricing.html must not load app-workspace.css');
+  if (!pricingHtml.includes('assets/layouts/pricing.css')) fail('pricing.html must load assets/layouts/pricing.css');
+  if (/<style>[\s\S]*\.price-grid/.test(pricingHtml)) {
+    fail('pricing.html must not keep .price-grid in a page style block');
+  }
+  for (const rel of ['terms.html', 'privacy.html']) {
+    if (/does not offer user accounts|there is no login|we do not run a user database/.test(read(rel))) {
+      fail(`${rel} must not claim the site has no accounts or login`);
+    }
+  }
+  if (!read('build-i18n.js').includes('(<html\\b[^>]*)\\blang=')) {
+    fail('build-i18n.js must match html tags that already have attributes before lang');
+  }
   const loginHtml = read('login.html');
   if (!loginHtml.includes('id="ps-shell"')) fail('login.html must emit #ps-shell in source HTML');
   if (!loginHtml.includes('data-ps-chrome')) fail('login.html must mark emitted chrome with data-ps-chrome');

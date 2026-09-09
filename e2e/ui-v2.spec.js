@@ -86,10 +86,22 @@ test('key pages emit shared chrome in source HTML', async ({ request }) => {
     const text = await (await request.get(url)).text();
     expect(text, url).toContain('id="ps-shell"');
   }
-  for (const url of ['/index.html', '/pricing.html', '/about.html', '/calculators.html', '/periodic-table.html']) {
+  for (const url of ['/index.html', '/calculators.html', '/periodic-table.html']) {
     const text = await (await request.get(url)).text();
     expect(text, url).not.toContain('assets/ui/index.css');
   }
+  for (const url of ['/login.html', '/pricing.html', '/about.html', '/contact.html', '/privacy.html', '/terms.html', '/404.html']) {
+    const text = await (await request.get(url)).text();
+    expect(text, url).toContain('assets/ui/index.css');
+  }
+  const pricing = await (await request.get('/pricing.html')).text();
+  expect(pricing).not.toContain('app-workspace.css');
+  expect(pricing).toContain('assets/layouts/pricing.css');
+  expect(pricing).not.toMatch(/does not offer user accounts|there is no login/);
+  const terms = await (await request.get('/terms.html')).text();
+  expect(terms).not.toMatch(/does not offer user accounts/);
+  const privacy = await (await request.get('/privacy.html')).text();
+  expect(privacy).not.toMatch(/there is no login|we do not run a user database/);
   const table = await (await request.get('/periodic-table.html')).text();
   expect(table).toMatch(/data-i18n="common\.brandTag">chemistry lab/);
   const login = await (await request.get('/login.html')).text();
