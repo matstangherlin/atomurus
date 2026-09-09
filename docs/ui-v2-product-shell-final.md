@@ -62,6 +62,7 @@ Free still has Periodic Table, free calculators, and Explore. Pro structure is v
 ## Metrics (source)
 
 - One shared account control template instead of landing CTA vs missing tool CTA
+- `/app` plan badge is a single child of the Account host (no duplicate PRO pill)
 - Injector patched 323 HTML files that already had `#ps-shell`
 - No DOM reparenting (`hoistToolShell` remains absent)
 - Pending auth hides the chip with reserved width (no Login → Matheus swap)

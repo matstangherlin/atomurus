@@ -87,6 +87,7 @@ test('Pro chip is the same on Home, Periodic Table and Workspace', async ({ page
   await page.goto('/app');
   await expect(page.locator('#ws-userchip')).toContainText(/Pro User/i, { timeout: 15_000 });
   await expect(page.locator('#ws-plan-badge')).toContainText(/PRO/);
+  await expect(page.locator('.ws-topbar [data-atomurus-plan-badge]')).toHaveCount(1);
   await saveShot(page, 'shell-pro-app');
 });
 
