@@ -96,6 +96,8 @@
 <noscript><link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630"></noscript>
 <link rel="stylesheet" href="/assets/public-shell.css?v=202608282800">
 <script src="/assets/public-workspace.js?v=202608282500"></script>
+<link rel="stylesheet" href="/assets/ui/index.css?v=202609090500">
+<link rel="stylesheet" href="/assets/layouts/calculators.css?v=202609090500">
 
 <style>
   *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -393,9 +395,9 @@
       <p class="ph-desc" data-i18n="calc.desc">A compact chemical computation suite for formula mass, scientific expressions, gas laws, dilutions and acid-base diagnostics. Pick an instrument, load a preset, inspect the formula and copy a clean result.</p>
       <div data-pro-lab-tool="calculations"></div>
       <aside class="solver-discover" id="solver-discover">
-        <span class="solver-discover-badge">PRO</span>
+        <span class="solver-discover-badge ui-badge ui-badge-pro">PRO</span>
         <p data-i18n="calc.solverDiscover">Precisa resolver uma reação completa? Balanceie equações, calcule o reagente limitante e resolva a estequiometria.</p>
-        <a class="solver-discover-cta" href="/app?section=pro-lab&tool=reactions" data-i18n="calc.solverDiscoverCta">Abrir Laboratório de Reações</a>
+        <a class="solver-discover-cta ui-btn ui-btn-accent" href="/app?section=pro-lab&tool=reactions" data-i18n="calc.solverDiscoverCta">Abrir Laboratório de Reações</a>
       </aside>
 
       <div class="calc-shell">
@@ -511,7 +513,7 @@
             <div class="calc-field">
               <label class="calc-field-l" for="mm-input"><span data-i18n="calc.formulaLabel">Formula</span> <span class="req">*</span></label>
               <div>
-                <input id="mm-input" class="calc-input" type="text" value="H2SO4"
+                <input id="mm-input" class="calc-input ui-input" type="text" value="H2SO4"
                        placeholder="e.g. C6H12O6, CuSO4·5H2O, Ca(OH)2"
                        data-i18n-attr="placeholder:calc.formulaPlaceholder"
                        spellcheck="false" autocomplete="off">
@@ -522,9 +524,9 @@
             <div class="calc-field">
               <label class="calc-field-l" for="mm-amount" data-i18n="calc.sampleAmount">Sample amount</label>
               <div class="calc-row-2">
-                <input id="mm-amount" class="calc-input" type="number" step="any" placeholder="optional · e.g. 10"
+                <input id="mm-amount" class="calc-input ui-input" type="number" step="any" placeholder="optional · e.g. 10"
                        data-i18n-attr="placeholder:calc.sampleOptional">
-                <select id="mm-amount-unit" class="calc-select">
+                <select id="mm-amount-unit" class="calc-select ui-select">
                   <option value="g" data-i18n="calc.unitGrams">grams (g)</option>
                   <option value="mol" selected data-i18n="calc.unitMoles">moles (mol)</option>
                   <option value="kg" data-i18n="calc.unitKilograms">kilograms (kg)</option>
@@ -541,11 +543,11 @@
             </div>
 
             <div class="calc-actions">
-              <button class="calc-btn-run" onclick="runMolar()">
+              <button class="calc-btn-run ui-btn ui-btn-accent" onclick="runMolar()">
                 <span data-i18n="calc.compute">Compute</span>
                 <span class="lc-kbd" style="background:rgba(255,255,255,.18);">↵</span>
               </button>
-              <button class="calc-btn-reset" onclick="resetMolar()" data-i18n="calc.reset">Reset</button>
+              <button class="calc-btn-reset ui-btn ui-btn-secondary" onclick="resetMolar()" data-i18n="calc.reset">Reset</button>
             </div>
 
             <details class="calc-how">
@@ -555,7 +557,7 @@
               </div>
             </details>
 
-            <div class="calc-result" id="mm-result">
+            <div class="calc-result ui-card ui-card-data" id="mm-result">
               <div class="calc-result-head">
                 <span class="calc-result-head-main"><span class="lc-st-dot"></span><span data-i18n="calc.output">output</span></span>
                 <span class="calc-result-meta"><span id="mm-result-meta" data-i18n="calc.awaiting">awaiting input…</span><button class="calc-copy-btn" type="button" data-copy-result="mm-result-body" data-i18n="calc.copy">Copy</button></span>
@@ -594,7 +596,7 @@
               <label class="calc-field-l" for="sci-input" data-i18n="calc.expressionLabel">Expression</label>
               <div>
                 <div class="sci-input-wrap">
-                  <input id="sci-input" class="calc-input" type="text" value="pH(1e-3)"
+                  <input id="sci-input" class="calc-input ui-input" type="text" value="pH(1e-3)"
                          placeholder="pH(1e-3), molarMass(&quot;H2SO4&quot;), dilution(1,25,0.1)"
                          data-i18n-attr="placeholder:calc.expressionPlaceholder"
                          spellcheck="false" autocomplete="off" aria-describedby="sci-syntax-help">
@@ -611,14 +613,14 @@
             </div>
 
             <div class="calc-actions">
-              <button class="calc-btn-run" onclick="runScientific()">
+              <button class="calc-btn-run ui-btn ui-btn-accent" onclick="runScientific()">
                 <span data-i18n="calc.compute">Compute</span>
                 <span class="lc-kbd" style="background:rgba(255,255,255,.18);">Enter</span>
               </button>
-              <button class="calc-btn-reset" onclick="resetScientific()" data-i18n="calc.clear">Clear</button>
+              <button class="calc-btn-reset ui-btn ui-btn-secondary" onclick="resetScientific()" data-i18n="calc.clear">Clear</button>
             </div>
 
-            <div class="calc-result sci-console" id="sci-result" aria-live="polite">
+            <div class="calc-result sci-console ui-card ui-card-data" id="sci-result" aria-live="polite">
               <div class="calc-result-head sci-console-head">
                 <span class="calc-result-head-main"><span class="lc-st-dot"></span><span data-i18n="calc.output">output</span></span>
                 <span class="calc-result-meta"><span id="sci-result-meta" data-i18n="calc.consoleReady">console ready</span><button class="calc-copy-btn" type="button" id="sci-copy-value" data-copy-value="" data-i18n="calc.copyValue">Copy value</button></span>
@@ -956,7 +958,7 @@
 
             <div class="calc-field">
               <label class="calc-field-l" data-i18n="calc.ucCategory">Category</label>
-              <select id="uc-cat" class="calc-select" onchange="updateUnitCategory()">
+              <select id="uc-cat" class="calc-select ui-select" onchange="updateUnitCategory()">
                 <option value="mass" data-i18n="calc.ucCatMass">Mass</option>
                 <option value="volume" data-i18n="calc.ucCatVolume">Volume</option>
                 <option value="pressure" data-i18n="calc.ucCatPressure">Pressure</option>
@@ -969,15 +971,15 @@
 
             <div class="calc-field">
               <label class="calc-field-l" data-i18n="calc.ucValue">Value</label>
-              <input id="uc-value" class="calc-input" type="number" step="any" value="1">
+              <input id="uc-value" class="calc-input ui-input" type="number" step="any" value="1">
             </div>
             <div class="calc-field">
               <label class="calc-field-l" data-i18n="calc.ucFrom">From</label>
-              <select id="uc-from" class="calc-select" onchange="runUnit()"></select>
+              <select id="uc-from" class="calc-select ui-select" onchange="runUnit()"></select>
             </div>
             <div class="calc-field">
               <label class="calc-field-l" data-i18n="calc.ucTo">To</label>
-              <select id="uc-to" class="calc-select" onchange="runUnit()"></select>
+              <select id="uc-to" class="calc-select ui-select" onchange="runUnit()"></select>
             </div>
 
             <div class="calc-chip-row" aria-label="Unit converter presets">
@@ -989,8 +991,8 @@
             </div>
 
             <div class="calc-actions">
-              <button class="calc-btn-run" onclick="runUnit()" data-i18n="calc.compute">Compute</button>
-              <button class="calc-btn-reset" onclick="resetUnit()" data-i18n="calc.reset">Reset</button>
+              <button class="calc-btn-run ui-btn ui-btn-accent" onclick="runUnit()" data-i18n="calc.compute">Compute</button>
+              <button class="calc-btn-reset ui-btn ui-btn-secondary" onclick="resetUnit()" data-i18n="calc.reset">Reset</button>
             </div>
 
             <details class="calc-how">
@@ -1000,7 +1002,7 @@
               </div>
             </details>
 
-            <div class="calc-result" id="uc-result">
+            <div class="calc-result ui-card ui-card-data" id="uc-result">
               <div class="calc-result-head">
                 <span class="calc-result-head-main"><span class="lc-st-dot"></span><span data-i18n="calc.output">output</span></span>
                 <span class="calc-result-meta"><span id="uc-result-meta" data-i18n="calc.awaiting">awaiting input…</span><button class="calc-copy-btn" type="button" data-copy-result="uc-result-body" data-i18n="calc.copy">Copy</button></span>
@@ -1030,7 +1032,7 @@
 
             <div class="calc-field">
               <label class="calc-field-l" data-i18n="calc.solveFor">Solve for</label>
-              <select id="ig-solve" class="calc-select" onchange="updateIdealFields()">
+              <select id="ig-solve" class="calc-select ui-select" onchange="updateIdealFields()">
                 <option value="P" data-i18n="calc.optP">Pressure (P)</option>
                 <option value="V" selected data-i18n="calc.optV">Volume (V)</option>
                 <option value="n" data-i18n="calc.optN">Moles (n)</option>
@@ -1041,8 +1043,8 @@
             <div class="calc-field" data-ig="P">
               <label class="calc-field-l" data-i18n="calc.optP">Pressure (P)</label>
               <div class="calc-row-2">
-                <input id="ig-P" class="calc-input" type="number" step="any" value="101325">
-                <select id="ig-P-u" class="calc-select">
+                <input id="ig-P" class="calc-input ui-input" type="number" step="any" value="101325">
+                <select id="ig-P-u" class="calc-select ui-select">
                   <option value="Pa" selected data-i18n="calc.unitPa">Pascal (Pa)</option>
                   <option value="kPa" data-i18n="calc.unitKPa">kilopascal (kPa)</option>
                   <option value="atm">atm</option>
@@ -1054,8 +1056,8 @@
             <div class="calc-field" data-ig="V">
               <label class="calc-field-l" data-i18n="calc.optV">Volume (V)</label>
               <div class="calc-row-2">
-                <input id="ig-V" class="calc-input" type="number" step="any" value="">
-                <select id="ig-V-u" class="calc-select">
+                <input id="ig-V" class="calc-input ui-input" type="number" step="any" value="">
+                <select id="ig-V-u" class="calc-select ui-select">
                   <option value="L" selected data-i18n="calc.unitL">liter (L)</option>
                   <option value="mL" data-i18n="calc.unitMl">milliliter (mL)</option>
                   <option value="m3" data-i18n="calc.unitM3">cubic meter (m³)</option>
@@ -1065,14 +1067,14 @@
 
             <div class="calc-field" data-ig="n">
               <label class="calc-field-l" data-i18n="calc.optN">Moles (n)</label>
-              <input id="ig-n" class="calc-input" type="number" step="any" value="1">
+              <input id="ig-n" class="calc-input ui-input" type="number" step="any" value="1">
             </div>
 
             <div class="calc-field" data-ig="T">
               <label class="calc-field-l" data-i18n="calc.optT">Temperature (T)</label>
               <div class="calc-row-2">
-                <input id="ig-T" class="calc-input" type="number" step="any" value="25">
-                <select id="ig-T-u" class="calc-select">
+                <input id="ig-T" class="calc-input ui-input" type="number" step="any" value="25">
+                <select id="ig-T-u" class="calc-select ui-select">
                   <option value="C" selected>°C</option>
                   <option value="K">K</option>
                   <option value="F">°F</option>
@@ -1088,8 +1090,8 @@
             </div>
 
             <div class="calc-actions">
-              <button class="calc-btn-run" onclick="runIdeal()" data-i18n="calc.compute">Compute</button>
-              <button class="calc-btn-reset" onclick="resetIdeal()" data-i18n="calc.reset">Reset</button>
+              <button class="calc-btn-run ui-btn ui-btn-accent" onclick="runIdeal()" data-i18n="calc.compute">Compute</button>
+              <button class="calc-btn-reset ui-btn ui-btn-secondary" onclick="resetIdeal()" data-i18n="calc.reset">Reset</button>
             </div>
 
             <details class="calc-how">
@@ -1099,7 +1101,7 @@
               </div>
             </details>
 
-            <div class="calc-result" id="ig-result">
+            <div class="calc-result ui-card ui-card-data" id="ig-result">
               <div class="calc-result-head">
                 <span class="calc-result-head-main"><span class="lc-st-dot"></span><span data-i18n="calc.output">output</span></span>
                 <span class="calc-result-meta"><span id="ig-result-meta" data-i18n="calc.awaiting">awaiting input…</span><button class="calc-copy-btn" type="button" data-copy-result="ig-result-body" data-i18n="calc.copy">Copy</button></span>
@@ -1130,7 +1132,7 @@
 
             <div class="calc-field">
               <label class="calc-field-l" data-i18n="calc.solveFor">Solve for</label>
-              <select id="dl-solve" class="calc-select" onchange="updateDilField()">
+              <select id="dl-solve" class="calc-select ui-select" onchange="updateDilField()">
                 <option value="C1" data-i18n="calc.dlOptC1">C₁ — initial concentration</option>
                 <option value="V1" data-i18n="calc.dlOptV1">V₁ — initial volume</option>
                 <option value="C2" data-i18n="calc.dlOptC2">C₂ — final concentration</option>
@@ -1140,19 +1142,19 @@
 
             <div class="calc-field" data-dl="C1">
               <label class="calc-field-l">C₁ <span class="calc-help" style="display:inline-block;margin:0;">mol/L</span></label>
-              <input id="dl-C1" class="calc-input" type="number" step="any" value="1.0">
+              <input id="dl-C1" class="calc-input ui-input" type="number" step="any" value="1.0">
             </div>
             <div class="calc-field" data-dl="V1">
               <label class="calc-field-l">V₁ <span class="calc-help" style="display:inline-block;margin:0;">mL</span></label>
-              <input id="dl-V1" class="calc-input" type="number" step="any" value="25">
+              <input id="dl-V1" class="calc-input ui-input" type="number" step="any" value="25">
             </div>
             <div class="calc-field" data-dl="C2">
               <label class="calc-field-l">C₂ <span class="calc-help" style="display:inline-block;margin:0;">mol/L</span></label>
-              <input id="dl-C2" class="calc-input" type="number" step="any" value="0.1">
+              <input id="dl-C2" class="calc-input ui-input" type="number" step="any" value="0.1">
             </div>
             <div class="calc-field" data-dl="V2">
               <label class="calc-field-l">V₂ <span class="calc-help" style="display:inline-block;margin:0;">mL</span></label>
-              <input id="dl-V2" class="calc-input" type="number" step="any" value="">
+              <input id="dl-V2" class="calc-input ui-input" type="number" step="any" value="">
             </div>
 
             <div class="calc-chip-row" aria-label="Dilution presets">
@@ -1163,8 +1165,8 @@
             </div>
 
             <div class="calc-actions">
-              <button class="calc-btn-run" onclick="runDilution()" data-i18n="calc.compute">Compute</button>
-              <button class="calc-btn-reset" onclick="resetDilution()" data-i18n="calc.reset">Reset</button>
+              <button class="calc-btn-run ui-btn ui-btn-accent" onclick="runDilution()" data-i18n="calc.compute">Compute</button>
+              <button class="calc-btn-reset ui-btn ui-btn-secondary" onclick="resetDilution()" data-i18n="calc.reset">Reset</button>
             </div>
 
             <details class="calc-how">
@@ -1174,7 +1176,7 @@
               </div>
             </details>
 
-            <div class="calc-result" id="dl-result">
+            <div class="calc-result ui-card ui-card-data" id="dl-result">
               <div class="calc-result-head">
                 <span class="calc-result-head-main"><span class="lc-st-dot"></span><span data-i18n="calc.output">output</span></span>
                 <span class="calc-result-meta"><span id="dl-result-meta" data-i18n="calc.awaiting">awaiting input…</span><button class="calc-copy-btn" type="button" data-copy-result="dl-result-body" data-i18n="calc.copy">Copy</button></span>
@@ -1205,7 +1207,7 @@
 
             <div class="calc-field">
               <label class="calc-field-l" data-i18n="calc.phInputMode">Input mode</label>
-              <select id="ph-mode" class="calc-select" onchange="updatePhFields()">
+              <select id="ph-mode" class="calc-select ui-select" onchange="updatePhFields()">
                 <option value="H" selected data-i18n="calc.phOptH">[H⁺] — hydrogen ion concentration</option>
                 <option value="OH" data-i18n="calc.phOptOH">[OH⁻] — hydroxide concentration</option>
                 <option value="pH" data-i18n="calc.phOptPH">pH directly</option>
@@ -1215,19 +1217,19 @@
 
             <div class="calc-field" data-ph="H">
               <label class="calc-field-l">[H⁺] <span class="calc-help" style="display:inline-block;margin:0;">mol/L</span></label>
-              <input id="ph-H" class="calc-input" type="number" step="any" value="1e-3">
+              <input id="ph-H" class="calc-input ui-input" type="number" step="any" value="1e-3">
             </div>
             <div class="calc-field" data-ph="OH" style="display:none;">
               <label class="calc-field-l">[OH⁻] <span class="calc-help" style="display:inline-block;margin:0;">mol/L</span></label>
-              <input id="ph-OH" class="calc-input" type="number" step="any" value="1e-4">
+              <input id="ph-OH" class="calc-input ui-input" type="number" step="any" value="1e-4">
             </div>
             <div class="calc-field" data-ph="pH" style="display:none;">
               <label class="calc-field-l">pH</label>
-              <input id="ph-pH" class="calc-input" type="number" step="any" value="7.4">
+              <input id="ph-pH" class="calc-input ui-input" type="number" step="any" value="7.4">
             </div>
             <div class="calc-field" data-ph="pOH" style="display:none;">
               <label class="calc-field-l">pOH</label>
-              <input id="ph-pOH" class="calc-input" type="number" step="any" value="6.6">
+              <input id="ph-pOH" class="calc-input ui-input" type="number" step="any" value="6.6">
             </div>
 
             <div class="calc-chip-row" aria-label="pH presets">
@@ -1238,8 +1240,8 @@
             </div>
 
             <div class="calc-actions">
-              <button class="calc-btn-run" onclick="runPH()" data-i18n="calc.compute">Compute</button>
-              <button class="calc-btn-reset" onclick="resetPH()" data-i18n="calc.reset">Reset</button>
+              <button class="calc-btn-run ui-btn ui-btn-accent" onclick="runPH()" data-i18n="calc.compute">Compute</button>
+              <button class="calc-btn-reset ui-btn ui-btn-secondary" onclick="resetPH()" data-i18n="calc.reset">Reset</button>
             </div>
 
             <details class="calc-how">
@@ -1249,7 +1251,7 @@
               </div>
             </details>
 
-            <div class="calc-result" id="ph-result">
+            <div class="calc-result ui-card ui-card-data" id="ph-result">
               <div class="calc-result-head">
                 <span class="calc-result-head-main"><span class="lc-st-dot"></span><span data-i18n="calc.output">output</span></span>
                 <span class="calc-result-meta"><span id="ph-result-meta" data-i18n="calc.awaiting">awaiting input…</span><button class="calc-copy-btn" type="button" data-copy-result="ph-result-body" data-i18n="calc.copy">Copy</button></span>
@@ -1273,7 +1275,7 @@
             <div class="pro-canonical-preview" data-pro-canonical="stoichiometry">
               <p class="calc-panel-desc" data-i18n="calc.stoichCanonicalBody">The public stoichiometry tab no longer runs a separate calculator. Reaction Workbench is the only scientific engine for balancing, stoichiometry, limiting reagent and yield.</p>
               <p class="calc-actions" style="margin-top:16px">
-                <a class="calc-btn-run" href="/app?section=pro-lab&tool=reactions" data-i18n="calc.solverDiscoverCta">Open Reaction Workbench</a>
+                <a class="calc-btn-run ui-btn ui-btn-accent" href="/app?section=pro-lab&tool=reactions" data-i18n="calc.solverDiscoverCta">Open Reaction Workbench</a>
               </p>
             </div>
 
@@ -1307,23 +1309,23 @@
             <div class="calc-row-2">
               <div class="calc-field">
                 <label class="calc-field-l" data-i18n="calc.thermoDeltaH">Enthalpy change ΔH <span class="calc-help" style="display:inline-block;margin:0;">kJ/mol</span></label>
-                <input id="tm-dh" class="calc-input" type="number" step="any" value="6.01">
+                <input id="tm-dh" class="calc-input ui-input" type="number" step="any" value="6.01">
               </div>
               <div class="calc-field">
                 <label class="calc-field-l" data-i18n="calc.thermoDeltaS">Entropy change ΔS <span class="calc-help" style="display:inline-block;margin:0;">J/mol·K</span></label>
-                <input id="tm-ds" class="calc-input" type="number" step="any" value="22.0">
+                <input id="tm-ds" class="calc-input ui-input" type="number" step="any" value="22.0">
               </div>
             </div>
             <div class="calc-field">
               <label class="calc-field-l" data-i18n="calc.thermoTemp">Temperature <span class="calc-help" style="display:inline-block;margin:0;">°C</span></label>
-              <input id="tm-t" class="calc-input" type="number" step="any" value="25">
+              <input id="tm-t" class="calc-input ui-input" type="number" step="any" value="25">
             </div>
 
             <div class="calc-subhead" data-i18n="calc.thermoHeatTitle">② Heat exchange — q = m·c·ΔT</div>
             <div class="calc-row-2">
               <div class="calc-field">
                 <label class="calc-field-l" data-i18n="calc.thermoSubstance">Substance</label>
-                <select id="tm-sub" class="calc-select" onchange="runThermo()">
+                <select id="tm-sub" class="calc-select ui-select" onchange="runThermo()">
                   <option value="water" data-i18n="calc.tmSubWater">Water (liquid) · 4.18 J/g·°C</option>
                   <option value="ice" data-i18n="calc.tmSubIce">Ice · 2.09 J/g·°C</option>
                   <option value="iron" data-i18n="calc.tmSubIron">Iron · 0.449 J/g·°C</option>
@@ -1333,12 +1335,12 @@
               </div>
               <div class="calc-field">
                 <label class="calc-field-l" data-i18n="calc.thermoMass">Mass <span class="calc-help" style="display:inline-block;margin:0;">g</span></label>
-                <input id="tm-mass" class="calc-input" type="number" step="any" value="100">
+                <input id="tm-mass" class="calc-input ui-input" type="number" step="any" value="100">
               </div>
             </div>
             <div class="calc-field">
               <label class="calc-field-l" data-i18n="calc.thermoDT">Temperature change ΔT <span class="calc-help" style="display:inline-block;margin:0;">°C</span></label>
-              <input id="tm-dt" class="calc-input" type="number" step="any" value="20">
+              <input id="tm-dt" class="calc-input ui-input" type="number" step="any" value="20">
             </div>
 
             <div class="calc-chip-row" aria-label="Thermodynamics presets">
@@ -1349,8 +1351,8 @@
             </div>
 
             <div class="calc-actions">
-              <button class="calc-btn-run" onclick="runThermo()" data-i18n="calc.compute">Compute</button>
-              <button class="calc-btn-reset" onclick="resetThermo()" data-i18n="calc.reset">Reset</button>
+              <button class="calc-btn-run ui-btn ui-btn-accent" onclick="runThermo()" data-i18n="calc.compute">Compute</button>
+              <button class="calc-btn-reset ui-btn ui-btn-secondary" onclick="resetThermo()" data-i18n="calc.reset">Reset</button>
             </div>
 
             <details class="calc-how">
@@ -1360,7 +1362,7 @@
               </div>
             </details>
 
-            <div class="calc-result" id="tm-result">
+            <div class="calc-result ui-card ui-card-data" id="tm-result">
               <div class="calc-result-head">
                 <span class="calc-result-head-main"><span class="lc-st-dot"></span><span data-i18n="calc.output">output</span></span>
                 <span class="calc-result-meta"><span id="tm-result-meta" data-i18n="calc.awaiting">awaiting input…</span><button class="calc-copy-btn" type="button" data-copy-result="tm-result-body" data-i18n="calc.copy">Copy</button></span>

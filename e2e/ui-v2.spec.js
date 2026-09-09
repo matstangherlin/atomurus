@@ -58,7 +58,7 @@ test('UI V2 gallery: buttons, focus-visible, disabled, forms, dialog, mobile', a
   expect(overflow).toBeLessThanOrEqual(1);
 });
 
-test('Home loads UI V2; calculators and table stay on legacy CSS', async ({ page }) => {
+test('Home and calculators load UI V2; table stays on legacy CSS', async ({ page }) => {
   await page.goto('/dev/ui');
   await page.locator('[data-ui-theme="dark"]').click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
@@ -76,7 +76,13 @@ test('Home loads UI V2; calculators and table stay on legacy CSS', async ({ page
   const calcUi = await page.evaluate(() =>
     [...document.styleSheets].some((sheet) => (sheet.href || '').includes('/assets/ui/'))
   );
-  expect(calcUi).toBe(false);
+  expect(calcUi).toBe(true);
+
+  await page.goto('/periodic-table.html');
+  const tableUi = await page.evaluate(() =>
+    [...document.styleSheets].some((sheet) => (sheet.href || '').includes('/assets/ui/'))
+  );
+  expect(tableUi).toBe(false);
 });
 
 test('key pages emit shared chrome in source HTML', async ({ request }) => {
@@ -92,17 +98,20 @@ test('key pages emit shared chrome in source HTML', async ({ request }) => {
     const text = await (await request.get(url)).text();
     expect(text, url).toContain('id="ps-shell"');
   }
-  for (const url of ['/calculators.html', '/periodic-table.html']) {
+  for (const url of ['/periodic-table.html']) {
     const text = await (await request.get(url)).text();
     expect(text, url).not.toContain('assets/ui/index.css');
   }
-  for (const url of ['/index.html', '/login.html', '/pricing.html', '/about.html', '/contact.html', '/privacy.html', '/terms.html', '/404.html', '/explore.html']) {
+  for (const url of ['/index.html', '/login.html', '/pricing.html', '/about.html', '/contact.html', '/privacy.html', '/terms.html', '/404.html', '/explore.html', '/calculators.html']) {
     const text = await (await request.get(url)).text();
     expect(text, url).toContain('assets/ui/index.css');
   }
   const explore = await (await request.get('/explore.html')).text();
   expect(explore).toContain('assets/layouts/explore.css');
   expect(explore).toContain('id="ex-search-input"');
+  const calculators = await (await request.get('/calculators.html')).text();
+  expect(calculators).toContain('assets/layouts/calculators.css');
+  expect(calculators).toContain('data-target="molar"');
   const article = await (await request.get('/explore/what-is-an-atom.html')).text();
   expect(article).toContain('assets/ui/index.css');
   expect(article).toContain('assets/layouts/article.css');

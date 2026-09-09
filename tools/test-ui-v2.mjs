@@ -31,6 +31,8 @@ const required = [
   'assets/layouts/home.css',
   'assets/layouts/explore.css',
   'assets/layouts/article.css',
+  'assets/layouts/calculators.css',
+  'docs/ui-v2-calculators.md',
   'assets/product-catalog.js',
   'tools/build-product-catalog.js'
 ];
@@ -54,7 +56,7 @@ for (const rel of chromePages) {
   if (!html.includes('id="ps-shell"')) fail(`${rel} must contain #ps-shell in source`);
   if (!html.includes('data-ps-chrome')) fail(`${rel} must mark emitted chrome`);
 }
-const stillLegacy = ['calculators.html', 'periodic-table.html'];
+const stillLegacy = ['periodic-table.html'];
 for (const rel of stillLegacy) {
   const html = read(rel);
   if (html.includes('assets/ui/index.css')) fail(`${rel} must not load UI V2 yet`);
@@ -68,7 +70,8 @@ const migrated = [
   'privacy.html',
   'terms.html',
   '404.html',
-  'explore.html'
+  'explore.html',
+  'calculators.html'
 ];
 for (const rel of migrated) {
   const html = read(rel);
@@ -191,6 +194,23 @@ if (!explore.includes('class="ex-title"') || !explore.includes('class="ex-pill a
 }
 assertExploreSearchScriptParses(explore, 'explore.html');
 assertExploreSearchScriptParses(read('explore.pt.html'), 'explore.pt.html');
+
+const calc = read('calculators.html');
+if (!calc.includes('assets/ui/index.css')) fail('calculators.html must load UI V2');
+if (!calc.includes('assets/layouts/calculators.css')) fail('calculators.html must load calculators layout CSS');
+if (!calc.includes('data-target="molar"') || !calc.includes('data-target="scientific"')) {
+  fail('calculators.html must keep molar and scientific tabs');
+}
+if (!calc.includes('class="calc-btn-run ui-btn ui-btn-accent"')) {
+  fail('calculators.html must dual-class Compute as ui-btn-accent');
+}
+if (!calc.includes('id="mm-input"') || !calc.includes('id="mm-result-body"')) {
+  fail('calculators.html must keep molar mass DOM ids');
+}
+if (!read('calculators.pt.html').includes('assets/layouts/calculators.css')) {
+  fail('calculators.pt.html must load calculators layout CSS');
+}
+
 const atom = read('explore/what-is-an-atom.html');
 if (!atom.includes('assets/ui/index.css')) fail('explore articles must load UI V2');
 if (!atom.includes('assets/layouts/article.css')) fail('explore articles must load article layout CSS');

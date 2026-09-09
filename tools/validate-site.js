@@ -350,12 +350,14 @@ function assertUiV2() {
     'docs/ui-v2-pricing.md',
     'docs/ui-v2-home.md',
     'docs/ui-v2-explore.md',
+    'docs/ui-v2-calculators.md',
     'assets/layouts/auth.css',
     'assets/layouts/pricing.css',
     'assets/layouts/docs.css',
     'assets/layouts/home.css',
     'assets/layouts/explore.css',
     'assets/layouts/article.css',
+    'assets/layouts/calculators.css',
     'assets/product-catalog.js',
     'tools/build-product-catalog.js'
   ];
@@ -422,7 +424,7 @@ function assertUiV2() {
     if (!html.includes('id="ps-shell"')) fail(`${rel} must emit #ps-shell in source HTML`);
     if (!html.includes('data-ps-chrome')) fail(`${rel} must mark emitted chrome with data-ps-chrome`);
   });
-  ['calculators.html', 'periodic-table.html'].forEach((rel) => {
+  ['periodic-table.html'].forEach((rel) => {
     if (read(rel).includes('assets/ui/index.css')) fail(`${rel} must not load UI V2 yet`);
   });
   [
@@ -434,7 +436,8 @@ function assertUiV2() {
     'privacy.html',
     'terms.html',
     '404.html',
-    'explore.html'
+    'explore.html',
+    'calculators.html'
   ].forEach((rel) => {
     if (!read(rel).includes('assets/ui/index.css')) fail(`${rel} must load UI V2`);
   });
@@ -517,6 +520,13 @@ function assertUiV2() {
     new Function(exploreScript);
   } catch (err) {
     fail(`explore.html article search script must parse: ${err.message}`);
+  }
+  const calc = read('calculators.html');
+  if (!calc.includes('assets/layouts/calculators.css')) {
+    fail('calculators.html must load assets/layouts/calculators.css');
+  }
+  if (!calc.includes('data-target="molar"') || !calc.includes('id="mm-result-body"')) {
+    fail('calculators.html must keep molar mass DOM');
   }
   const atom = read('explore/what-is-an-atom.html');
   if (!atom.includes('assets/ui/index.css') || !atom.includes('assets/layouts/article.css')) {
