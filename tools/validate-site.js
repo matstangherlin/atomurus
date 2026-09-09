@@ -509,6 +509,15 @@ function assertUiV2() {
   if (!explore.includes('id="ex-search-input"') || !explore.includes('id="ex-articles"')) {
     fail('explore.html must keep #ex-search-input and #ex-articles');
   }
+  const exploreScript = [...explore.matchAll(/<script>([\s\S]*?)<\/script>/g)]
+    .map((m) => m[1])
+    .find((s) => s.includes("getElementById('ex-search-input')"));
+  if (!exploreScript) fail('explore.html must keep the article search script');
+  try {
+    new Function(exploreScript);
+  } catch (err) {
+    fail(`explore.html article search script must parse: ${err.message}`);
+  }
   const atom = read('explore/what-is-an-atom.html');
   if (!atom.includes('assets/ui/index.css') || !atom.includes('assets/layouts/article.css')) {
     fail('explore articles must load UI V2 and article layout CSS');

@@ -597,7 +597,7 @@
   })();
 
   // ── Article hub: search + category filter (scoped to #ex-articles) ──
-  function normalize(s){ return (s || '').toString().toLowerCase().normalize('NFD').replace(/[Ì€-Í¯]/g, ''); }
+  function normalize(s){ return (s || '').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
   var state = { query: '', cat: 'all' };
   var cards, input, clear, countEl, emptyEl, searchWrap;
 

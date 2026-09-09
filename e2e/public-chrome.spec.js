@@ -138,9 +138,12 @@ test('public table, calculators, login and pricing share the new chrome', async 
   expect(pillBg).not.toBe('rgb(20, 18, 14)');
   await expect(page.locator('.data-strip').first()).toBeHidden();
   await expect(page.locator('#ex-search-input')).toBeVisible();
-  await page.locator('#ex-search-input').fill('bhopal');
+  const search = page.locator('#ex-search-input');
+  await search.fill('bhopal');
+  await search.dispatchEvent('input');
   await expect(page.locator('#ex-articles .ex-card:not(.ex-hide)')).toHaveCount(1);
   await expect(page.locator('#ex-articles .ex-card:not(.ex-hide)')).toContainText(/Bhopal/i);
+  await expect(page.locator('#ex-count')).toContainText(/1/);
   await saveShot(page, 'desktop-public-explore');
 
   await page.goto('/viewer/atomic-models.html');

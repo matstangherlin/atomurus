@@ -25,4 +25,5 @@ Every `explore/*.html` (and `explore/viewer/methyl-isocyanate.html`) loads UI V2
 ## Tests
 
 - `test:ui-v2` / `validate` — Explore hub must load UI V2 + `explore.css`; must not keep `.ex-card` in a page style block
-- `e2e/public-chrome.spec.js` — `.ex-title` Instrument Serif, active `.ex-pill` green, article `.art-title` serif
+- `e2e/public-chrome.spec.js` — `.ex-title` Instrument Serif, active `.ex-pill` green, article `.art-title` serif, search “bhopal” filters to one card
+- Search `normalize()` must keep ASCII `[\u0300-\u036f]` escapes so the hub script parses in Chromium

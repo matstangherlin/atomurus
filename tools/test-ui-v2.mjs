@@ -163,6 +163,20 @@ if (!home.includes(`data-catalog="elements">${catalog.elements}`)) {
   fail('Home elements fallback must match the generated catalog');
 }
 
+function assertExploreSearchScriptParses(html, label) {
+  const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1]);
+  const hub = scripts.find((s) => s.includes("getElementById('ex-search-input')"));
+  if (!hub) fail(`${label} must keep the article search script`);
+  if (!hub.includes('\\u0300-\\u036f')) {
+    fail(`${label} search normalize must use ASCII unicode escapes`);
+  }
+  try {
+    new Function(hub);
+  } catch (err) {
+    fail(`${label} article search script must parse: ${err.message}`);
+  }
+}
+
 const explore = read('explore.html');
 if (!explore.includes('assets/ui/index.css')) fail('explore.html must load UI V2');
 if (!explore.includes('assets/layouts/explore.css')) fail('explore.html must load explore layout CSS');
@@ -175,6 +189,8 @@ if (!explore.includes('id="ex-search-input"') || !explore.includes('id="ex-artic
 if (!explore.includes('class="ex-title"') || !explore.includes('class="ex-pill active"')) {
   fail('explore.html must keep .ex-title and .ex-pill');
 }
+assertExploreSearchScriptParses(explore, 'explore.html');
+assertExploreSearchScriptParses(read('explore.pt.html'), 'explore.pt.html');
 const atom = read('explore/what-is-an-atom.html');
 if (!atom.includes('assets/ui/index.css')) fail('explore articles must load UI V2');
 if (!atom.includes('assets/layouts/article.css')) fail('explore articles must load article layout CSS');
