@@ -34,7 +34,9 @@ const required = [
   'assets/layouts/calculators.css',
   'docs/ui-v2-calculators.md',
   'docs/ui-v2-config.md',
+  'docs/ui-v2-periodic-table.md',
   'assets/layouts/config.css',
+  'assets/layouts/periodic-table.css',
   'assets/product-catalog.js',
   'tools/build-product-catalog.js'
 ];
@@ -59,7 +61,7 @@ for (const rel of chromePages) {
   if (!html.includes('id="ps-shell"')) fail(`${rel} must contain #ps-shell in source`);
   if (!html.includes('data-ps-chrome')) fail(`${rel} must mark emitted chrome`);
 }
-const stillLegacy = ['periodic-table.html'];
+const stillLegacy = ['periodic-table/hydrogenium.html'];
 for (const rel of stillLegacy) {
   const html = read(rel);
   if (html.includes('assets/ui/index.css')) fail(`${rel} must not load UI V2 yet`);
@@ -75,7 +77,8 @@ const migrated = [
   '404.html',
   'explore.html',
   'calculators.html',
-  'config.html'
+  'config.html',
+  'periodic-table.html'
 ];
 for (const rel of migrated) {
   const html = read(rel);
@@ -229,6 +232,34 @@ if ([...config.matchAll(/<style>[\s\S]*?<\/style>/g)].some((m) => m[0].includes(
 }
 if (!read('config.pt.html').includes('assets/layouts/config.css')) {
   fail('config.pt.html must load config layout CSS');
+}
+
+const tableLayout = read('assets/layouts/periodic-table.css').replace(/\/\*[\s\S]*?\*\//g, '');
+if (/\.el\b/.test(tableLayout) || /\.ptable\b/.test(tableLayout)) {
+  fail('periodic-table layout CSS must not restyle .el cells or .ptable');
+}
+const table = read('periodic-table.html');
+if (!table.includes('assets/ui/index.css')) fail('periodic-table.html must load UI V2');
+if (!table.includes('assets/layouts/periodic-table.css')) fail('periodic-table.html must load table layout CSS');
+if (!table.includes('id="search-input"') || !table.includes('id="ptable"')) {
+  fail('periodic-table.html must keep #search-input and #ptable');
+}
+if (!table.includes('id="dl-action-btn"') || !table.includes('class="pt-tab active"')) {
+  fail('periodic-table.html must keep #dl-action-btn and .pt-tab');
+}
+if (!table.includes('data-i18n="common.brandTag">chemistry lab')) {
+  fail('periodic-table.html must keep chemistry lab in the DOM');
+}
+for (const rel of [
+  'periodic-table.pt.html',
+  'periodic-table/heatmap.html',
+  'periodic-table/trends.html',
+  'periodic-table/compare.html',
+  'periodic-table/isotopes.html'
+]) {
+  if (!read(rel).includes('assets/layouts/periodic-table.css')) {
+    fail(`${rel} must load table layout CSS`);
+  }
 }
 
 const atom = read('explore/what-is-an-atom.html');

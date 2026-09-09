@@ -58,7 +58,7 @@ test('UI V2 gallery: buttons, focus-visible, disabled, forms, dialog, mobile', a
   expect(overflow).toBeLessThanOrEqual(1);
 });
 
-test('Home and calculators load UI V2; table stays on legacy CSS', async ({ page }) => {
+test('Home, calculators, settings and table chrome load UI V2; element pages stay legacy', async ({ page }) => {
   await page.goto('/dev/ui');
   await page.locator('[data-ui-theme="dark"]').click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
@@ -88,7 +88,13 @@ test('Home and calculators load UI V2; table stays on legacy CSS', async ({ page
   const tableUi = await page.evaluate(() =>
     [...document.styleSheets].some((sheet) => (sheet.href || '').includes('/assets/ui/'))
   );
-  expect(tableUi).toBe(false);
+  expect(tableUi).toBe(true);
+
+  await page.goto('/periodic-table/hydrogenium.html');
+  const elementUi = await page.evaluate(() =>
+    [...document.styleSheets].some((sheet) => (sheet.href || '').includes('/assets/ui/'))
+  );
+  expect(elementUi).toBe(false);
 });
 
 test('key pages emit shared chrome in source HTML', async ({ request }) => {
@@ -105,11 +111,11 @@ test('key pages emit shared chrome in source HTML', async ({ request }) => {
     const text = await (await request.get(url)).text();
     expect(text, url).toContain('id="ps-shell"');
   }
-  for (const url of ['/periodic-table.html']) {
+  for (const url of ['/periodic-table/hydrogenium.html']) {
     const text = await (await request.get(url)).text();
     expect(text, url).not.toContain('assets/ui/index.css');
   }
-  for (const url of ['/index.html', '/login.html', '/pricing.html', '/about.html', '/contact.html', '/privacy.html', '/terms.html', '/404.html', '/explore.html', '/calculators.html', '/config.html']) {
+  for (const url of ['/index.html', '/login.html', '/pricing.html', '/about.html', '/contact.html', '/privacy.html', '/terms.html', '/404.html', '/explore.html', '/calculators.html', '/config.html', '/periodic-table.html']) {
     const text = await (await request.get(url)).text();
     expect(text, url).toContain('assets/ui/index.css');
   }
@@ -141,6 +147,8 @@ test('key pages emit shared chrome in source HTML', async ({ request }) => {
   expect(privacy).not.toMatch(/there is no login|we do not run a user database/);
   const table = await (await request.get('/periodic-table.html')).text();
   expect(table).toMatch(/data-i18n="common\.brandTag">chemistry lab/);
+  expect(table).toContain('assets/layouts/periodic-table.css');
+  expect(table).toContain('id="ptable"');
   const login = await (await request.get('/login.html')).text();
   expect(login).toMatch(/lc-topnav-cta"[^>]*periodic-table/);
   expect(login).toContain('Open lab');

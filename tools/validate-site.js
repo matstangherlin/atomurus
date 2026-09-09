@@ -352,6 +352,7 @@ function assertUiV2() {
     'docs/ui-v2-explore.md',
     'docs/ui-v2-calculators.md',
     'docs/ui-v2-config.md',
+    'docs/ui-v2-periodic-table.md',
     'assets/layouts/auth.css',
     'assets/layouts/pricing.css',
     'assets/layouts/docs.css',
@@ -360,6 +361,7 @@ function assertUiV2() {
     'assets/layouts/article.css',
     'assets/layouts/calculators.css',
     'assets/layouts/config.css',
+    'assets/layouts/periodic-table.css',
     'assets/product-catalog.js',
     'tools/build-product-catalog.js'
   ];
@@ -427,7 +429,7 @@ function assertUiV2() {
     if (!html.includes('id="ps-shell"')) fail(`${rel} must emit #ps-shell in source HTML`);
     if (!html.includes('data-ps-chrome')) fail(`${rel} must mark emitted chrome with data-ps-chrome`);
   });
-  ['periodic-table.html'].forEach((rel) => {
+  ['periodic-table/hydrogenium.html'].forEach((rel) => {
     if (read(rel).includes('assets/ui/index.css')) fail(`${rel} must not load UI V2 yet`);
   });
   [
@@ -441,7 +443,8 @@ function assertUiV2() {
     '404.html',
     'explore.html',
     'calculators.html',
-    'config.html'
+    'config.html',
+    'periodic-table.html'
   ].forEach((rel) => {
     if (!read(rel).includes('assets/ui/index.css')) fail(`${rel} must load UI V2`);
   });
@@ -541,6 +544,17 @@ function assertUiV2() {
   }
   if ([...config.matchAll(/<style>[\s\S]*?<\/style>/g)].some((m) => m[0].includes('.settings-section-title'))) {
     fail('config.html must not keep .settings-section-title in a page style block');
+  }
+  const tableLayout = read('assets/layouts/periodic-table.css').replace(/\/\*[\s\S]*?\*\//g, '');
+  if (/\.el\b/.test(tableLayout) || /\.ptable\b/.test(tableLayout)) {
+    fail('periodic-table layout CSS must not restyle .el cells or .ptable');
+  }
+  const table = read('periodic-table.html');
+  if (!table.includes('assets/layouts/periodic-table.css')) {
+    fail('periodic-table.html must load assets/layouts/periodic-table.css');
+  }
+  if (!table.includes('id="ptable"') || !table.includes('id="dl-action-btn"')) {
+    fail('periodic-table.html must keep table DOM');
   }
   const atom = read('explore/what-is-an-atom.html');
   if (!atom.includes('assets/ui/index.css') || !atom.includes('assets/layouts/article.css')) {
