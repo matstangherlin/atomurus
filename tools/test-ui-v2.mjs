@@ -37,6 +37,7 @@ const chromePages = [
 for (const rel of chromePages) {
   const html = read(rel);
   if (!html.includes('id="ps-shell"')) fail(`${rel} must contain #ps-shell in source`);
+  if (!html.includes('data-ps-chrome')) fail(`${rel} must mark emitted chrome`);
   if (html.includes('assets/ui/index.css')) fail(`${rel} must not load UI V2 yet`);
 }
 if (!read('login.html').includes('Open lab')) fail('login CTA must stay Open lab');

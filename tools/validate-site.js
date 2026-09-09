@@ -394,6 +394,7 @@ function assertUiV2() {
   ].forEach((rel) => {
     const html = read(rel);
     if (!html.includes('id="ps-shell"')) fail(`${rel} must emit #ps-shell in source HTML`);
+    if (!html.includes('data-ps-chrome')) fail(`${rel} must mark emitted chrome with data-ps-chrome`);
     if (html.includes('assets/ui/index.css')) fail(`${rel} must not load UI V2 yet`);
   });
   if (!read('periodic-table.html').includes('data-i18n="common.brandTag">chemistry lab')) {

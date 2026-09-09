@@ -118,6 +118,11 @@ function addClass(openHtml, name) {
   return openHtml.replace(/>$/, ` class="${name}">`);
 }
 
+function addHtmlAttr(html, name, value) {
+  if (new RegExp('\\b' + name + '=').test(html)) return html;
+  return html.replace(/<html\b/i, `<html ${name}="${value}"`);
+}
+
 function addBodyClass(html, name) {
   return html.replace(/<body([^>]*)>/i, (full, attrs) => {
     if (new RegExp(`\\b${name}\\b`).test(attrs)) return full;
@@ -292,7 +297,11 @@ function injectLanding(html, file) {
     after +
     '</main>\n</div>\n' +
     trailing;
-  return addBodyClass(html.slice(0, bodyStart) + wrapped + html.slice(bodyEnd), 'ps-body');
+  return addHtmlAttr(
+    addBodyClass(html.slice(0, bodyStart) + wrapped + html.slice(bodyEnd), 'ps-body'),
+    'data-ps-chrome',
+    '1'
+  );
 }
 
 function injectTool(html, file) {
@@ -328,11 +337,18 @@ function injectTool(html, file) {
     asideHtml + '\n' +
     mainWithout + '\n' +
     '</div>';
-  return addBodyClass(html.slice(0, start) + wrapped + html.slice(end), 'ps-body');
+  return addHtmlAttr(
+    addBodyClass(html.slice(0, start) + wrapped + html.slice(end), 'ps-body'),
+    'data-ps-chrome',
+    '1'
+  );
 }
 
 function injectHtml(html, file) {
-  if (/id=["']ps-shell["']/.test(html)) return { html, status: 'exists' };
+  if (/id=["']ps-shell["']/.test(html)) {
+    const next = addHtmlAttr(html, 'data-ps-chrome', '1');
+    return { html: next, status: next === html ? 'exists' : 'attr' };
+  }
   if (/\bws-body\b/.test(html) || path.basename(file) === 'app.html') {
     return { html, status: 'skip-app' };
   }

@@ -7,7 +7,9 @@
 
   if (/\/app(?:\.html)?\/?$/.test(location.pathname)) return;
 
-  document.documentElement.classList.add('ps-boot');
+  if (!document.documentElement.hasAttribute('data-ps-chrome')) {
+    document.documentElement.classList.add('ps-boot');
+  }
   var released = false;
   function release() {
     if (released) return;

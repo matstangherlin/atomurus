@@ -57,7 +57,7 @@ Auth user chip is runtime. Do not fake it in HTML.
 | `loadLabGate` | **Runtime** (validate-site contract) |
 | `polishCopy` | Runtime until Prompt 14 |
 
-When `#ps-shell` is already in the document, `enhanceExistingShell()` runs and **does not** return before `markActive` / search / CTA / Study.
+When `#ps-shell` is already in the document, `enhanceExistingShell()` runs and **does not** return before `markActive` / search / CTA / Study. Pages with `data-ps-chrome="1"` skip the `ps-boot` visibility hide (that hide exists so unmigrated pages do not flash the old aside+main tree).
 
 ## What this step does not do
 
