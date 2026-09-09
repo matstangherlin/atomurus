@@ -4,16 +4,29 @@ const { installApi } = require('./helpers');
 test('signed-out workspace shows Pro navigation and explains locked features', async ({ page }) => {
   await installApi(page, { kind: 'guest', signedIn: false });
   await page.goto('/app');
-  await expect(page.locator('#ws-study-nav')).toContainText(/Library|Biblioteca/, { timeout: 15_000 });
+  await expect(page.locator('#ws-study-nav')).toContainText(/Study|Estudo/, { timeout: 15_000 });
   await expect(page.locator('#ws-nav-main a[href="/"]')).toContainText(/Home|Início/);
   await expect(page.locator('#ws-nav-main a[href="/periodic-table.html"]')).toBeVisible();
   await expect(page.locator('#ws-nav-main a[href="/viewer/atomic-models.html"]')).toBeVisible();
   await expect(page.locator('#ws-userchip')).toContainText(/Account|Conta/);
   await expect(page).toHaveURL(/\/app/);
-  await page.locator('#ws-study-nav a[href="/app?section=library"]').click();
+  await page.locator('#ws-study-nav a[href="/app?section=library"]').first().click();
+  await expect(page).toHaveURL(/section=library/);
+  await page.locator('#ws-study-nav a[href="/app?section=sets"]').click();
   await expect(page.locator('#ws-dialog-host')).toContainText(/available only|disponível somente/i);
   await expect(page.locator('#ws-dialog-host a[href^="/login"]')).toBeVisible();
   await expect(page.locator('#ws-dialog-host a[href="/pricing"]')).toBeVisible();
+});
+
+test('login next keeps calculator query string', async ({ page }) => {
+  await installApi(page, { kind: 'pro', signedIn: false });
+  await page.goto('/login?next=' + encodeURIComponent('/calculators.html?tab=stoich'));
+  await expect(page.locator('#auth-login-form')).toBeVisible();
+  await page.locator('#auth-email').fill('pro@atomurus.test');
+  await page.locator('#auth-password').fill('correct-horse');
+  await page.locator('#auth-login-submit').click();
+  await page.waitForURL(/calculators/, { timeout: 15_000 });
+  expect(page.url()).toMatch(/tab=stoich/);
 });
 
 test('login preserves next and lands on /app', async ({ page }) => {

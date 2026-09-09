@@ -10,7 +10,7 @@
       history: 'Calculator History', notes: 'Notes', progress: 'Continue Studying',
       account: 'Account', plan: 'Plan', logout: 'Logout', login: 'Sign in', upgrade: 'Upgrade to Pro',
       menu: 'Menu', workspaceTag: 'chemistry lab',
-      navGroupSite: 'Laboratory', homeNav: 'Home', periodicNav: 'Periodic Table',
+      navGroupSite: 'Laboratory', navGroupWorkspace: 'Workspace', homeNav: 'Home', periodicNav: 'Periodic Table',
       viewerNav: 'Viewer', calculatorsNav: 'Calculators', exploreNav: 'Explore',
       greetingMorning: 'Good morning, {name}', greetingAfternoon: 'Good afternoon, {name}',
       greetingEvening: 'Good evening, {name}', greetingFallback: 'Ready for your next study session?',
@@ -167,6 +167,27 @@
       stateNew: 'New', stateLearning: 'Learning', stateReview: 'Review',
       focusCards: '{n} cards',
       navGroupStudy: 'Study', navGroupLab: 'Lab', navGroupActivity: 'Activity',
+      workspaceNav: 'Workspace', planBilling: 'Plan & Billing', accountOverview: 'Overview',
+      accountPreferences: 'Preferences', displayNameLabel: 'Display name',
+      preferencesNote: 'Language and theme stay on this device.',
+      languagePref: 'Language', themePref: 'Theme',
+      toolConfigSeparate: 'Chemistry tool configuration stays in Settings.',
+      noCardTrial: 'No card required during this trial.',
+      yourProIncludes: 'Your Pro workspace includes',
+      workspaceHomeTitle: 'Your Atomurus Workspace',
+      continueChemistry: 'Continue your chemistry work.',
+      unlockWithPro: 'Unlock with Pro',
+      labNavHome: 'Overview', labNavSolve: 'Solve', labNavCompare: 'Compare', labNavSessions: 'Sessions',
+      crumbWorkspace: 'Workspace', signOut: 'Sign out',
+      trialBadgeDays: 'PRO TRIAL · {n} days left',
+      openLabSuite: 'Open Lab',
+      recentLabSessions: 'Recent Lab Sessions',
+      startLabSession: 'Open Pro Lab',
+      visualizeTitle: 'Visualize',
+      labAllotropes: 'Allotropes',
+      labIsomerism: 'Isomerism',
+      solveAnalyzeTitle: 'Solve & Analyze',
+      studyBlockTitle: 'Study',
       focusLandingBody: 'Review the cards that need the most attention.',
       insightsOn: 'Study Insights unlocked', focusOn: 'Focus Review unlocked',
       openInsights: 'Open Insights',
@@ -270,7 +291,7 @@
       history: 'Histórico', notes: 'Notas', progress: 'Continuar estudando',
       account: 'Conta', plan: 'Plano', logout: 'Sair', login: 'Entrar', upgrade: 'Assinar o Pro',
       menu: 'Menu', workspaceTag: 'laboratório de química',
-      navGroupSite: 'Laboratório', homeNav: 'Início', periodicNav: 'Tabela Periódica',
+      navGroupSite: 'Laboratório', navGroupWorkspace: 'Workspace', homeNav: 'Início', periodicNav: 'Tabela Periódica',
       viewerNav: 'Visualizador', calculatorsNav: 'Calculadoras', exploreNav: 'Explorar',
       greetingMorning: 'Bom dia, {name}', greetingAfternoon: 'Boa tarde, {name}',
       greetingEvening: 'Boa noite, {name}', greetingFallback: 'Pronto para a próxima sessão?',
@@ -427,6 +448,27 @@
       stateNew: 'Novo', stateLearning: 'Aprendendo', stateReview: 'Revisão',
       focusCards: '{n} cards',
       navGroupStudy: 'Estudo', navGroupLab: 'Lab', navGroupActivity: 'Atividade',
+      workspaceNav: 'Workspace', planBilling: 'Plano e cobrança', accountOverview: 'Visão geral',
+      accountPreferences: 'Preferências', displayNameLabel: 'Nome',
+      preferencesNote: 'Idioma e tema ficam neste dispositivo.',
+      languagePref: 'Idioma', themePref: 'Tema',
+      toolConfigSeparate: 'A configuração das ferramentas de química continua em Configurações.',
+      noCardTrial: 'Não é preciso cartão durante este trial.',
+      yourProIncludes: 'Seu workspace Pro inclui',
+      workspaceHomeTitle: 'Seu Workspace Atomurus',
+      continueChemistry: 'Continue seu trabalho de química.',
+      unlockWithPro: 'Liberar com o Pro',
+      labNavHome: 'Visão geral', labNavSolve: 'Resolver', labNavCompare: 'Comparar', labNavSessions: 'Sessões',
+      crumbWorkspace: 'Workspace', signOut: 'Sair',
+      trialBadgeDays: 'PRO TRIAL · {n} dias restantes',
+      openLabSuite: 'Abrir Lab',
+      recentLabSessions: 'Sessões recentes do Lab',
+      startLabSession: 'Abrir Pro Lab',
+      visualizeTitle: 'Visualizar',
+      labAllotropes: 'Alótropos',
+      labIsomerism: 'Isomeria',
+      solveAnalyzeTitle: 'Resolver e analisar',
+      studyBlockTitle: 'Estudo',
       focusLandingBody: 'Revise os cards que mais precisam de atenção.',
       insightsOn: 'Insights de Estudo liberados', focusOn: 'Focus Review liberado',
       openInsights: 'Abrir Insights',
@@ -698,14 +740,18 @@
     }
   ];
 
-  var SITE_NAV = [
+  var LAB_NAV = [
     ['/', 'homeNav', 'home'],
     ['/periodic-table.html', 'periodicNav', 'periodic'],
     ['/viewer/atomic-models.html', 'viewerNav', 'viewer'],
     ['/calculators.html', 'calculatorsNav', 'calculators'],
-    ['/explore.html', 'exploreNav', 'explore'],
-    ['/app', 'study', 'progress']
+    ['/explore.html', 'exploreNav', 'explore']
   ];
+
+  var WORKSPACE_NAV = [
+    ['/app', 'workspaceNav', 'progress']
+  ];
+  var SITE_NAV = LAB_NAV;
 
   function proUser(user) { return logic().isProUser(user); }
 
@@ -740,40 +786,76 @@
     });
   }
 
+  function navItemHtml(href, labelKey, iconName, active, locked, sectionKey) {
+    var meta = locked ? '<span class="ws-study-nav-meta">' + escapeHtml(t('pro')) + '</span>' : '';
+    var gate = locked ? ' data-pro-nav="' + sectionKey + '" data-pro-label="' + labelKey + '"' : '';
+    return '<a class="ws-study-nav-item' + (active ? ' is-active' : '') + (locked ? ' is-locked' : '') + '" href="' + href + '"' + gate + '>' +
+      icon(iconName) + '<span>' + escapeHtml(t(labelKey)) + '</span>' + meta + '</a>';
+  }
+
   function renderNav(user) {
     var current = studySection();
+    var area = logic().workspaceArea ? logic().workspaceArea(current) : 'overview';
+    var currentTool = logic().labToolFromQuery ? logic().labToolFromQuery(location.search) : 'home';
     var badge = logic().planBadge(user);
     var main = $('ws-nav-main');
     var studyNav = $('ws-study-nav');
     var foot = $('ws-nav-foot');
     var bottom = $('ws-bottom');
     if (main) {
-      var siteNav = '<div class="ws-nav-block ws-nav-site"><h2 class="ws-nav-group">' + escapeHtml(t('navGroupSite')) + '</h2>' +
-        SITE_NAV.map(function (pair) {
-          var context = pair[0] === '/app' ? ' is-active' : '';
-          return '<a class="ws-nav-item' + context + '" href="' + pair[0] + '">' + icon(pair[2]) +
+      var labNav = '<div class="ws-nav-block ws-nav-site"><h2 class="ws-nav-group">' + escapeHtml(t('navGroupSite')) + '</h2>' +
+        LAB_NAV.map(function (pair) {
+          return '<a class="ws-nav-item" href="' + pair[0] + '">' + icon(pair[2]) +
             '<span class="ws-nav-label">' + escapeHtml(t(pair[1])) + '</span></a>';
         }).join('') + '</div>';
-      main.innerHTML = siteNav;
+      var workspaceNav = '<div class="ws-nav-block ws-nav-workspace"><h2 class="ws-nav-group">' + escapeHtml(t('navGroupWorkspace')) + '</h2>' +
+        WORKSPACE_NAV.map(function (pair) {
+          return '<a class="ws-nav-item is-active" href="' + pair[0] + '" aria-current="page">' + icon(pair[2]) +
+            '<span class="ws-nav-label">' + escapeHtml(t(pair[1])) + '</span></a>';
+        }).join('') + '</div>';
+      main.innerHTML = labNav + workspaceNav;
       bindProNav(main);
     }
     if (studyNav) {
-      studyNav.innerHTML = NAV_GROUPS.map(function (group) {
-        return group.items.map(function (pair) {
-          var active = pair[0] === current ? ' is-active' : '';
-          var locked = pair[2] && !proUser(user);
-          var meta = locked ? '<span class="ws-study-nav-meta">' + escapeHtml(t('pro')) + '</span>' : '';
-          var gate = locked ? ' data-pro-nav="' + pair[0] + '" data-pro-label="' + pair[1] + '"' : '';
-          return '<a class="ws-study-nav-item' + active + (locked ? ' is-locked' : '') + '" href="/app?section=' + pair[0] + '"' + gate + '>' +
-            icon(pair[0]) + '<span>' + escapeHtml(t(pair[3] || pair[1])) + '</span>' + meta + '</a>';
-        }).join('');
-      }).join('');
+      var context = [
+        ['overview', 'overview', 'overview', area === 'overview'],
+        ['library', 'study', 'library', area === 'study'],
+        ['pro-lab', 'navGroupLab', 'pro-lab', area === 'lab'],
+        ['progress', 'navGroupActivity', 'progress', area === 'activity']
+      ];
+      var contextHtml = '<div class="ws-context-nav" role="navigation" aria-label="' + escapeHtml(t('navGroupWorkspace')) + '">' +
+        context.map(function (pair) {
+          return navItemHtml('/app?section=' + pair[0], pair[1], pair[2], pair[3], false, pair[0]);
+        }).join('') + '</div>';
+      var localHtml = '';
+      if (area === 'study') {
+        localHtml = '<div class="ws-local-nav" role="navigation" aria-label="' + escapeHtml(t('navGroupStudy')) + '">' +
+          [['library', 'library', true], ['sets', 'sets', true], ['review', 'reviewShort', true, 'review'], ['insights', 'insightsNav', true, 'insights']].map(function (pair) {
+            var key = pair[3] || pair[0];
+            var locked = pair[2] && !proUser(user);
+            return navItemHtml('/app?section=' + pair[0], pair[1], pair[0], current === pair[0], locked, pair[0]);
+          }).join('') + '</div>';
+      } else if (area === 'lab') {
+        localHtml = '<div class="ws-local-nav" role="navigation" aria-label="' + escapeHtml(t('navGroupLab')) + '">' +
+          navItemHtml('/app?section=pro-lab', 'labNavHome', 'pro-lab', currentTool === 'home', false, 'pro-lab') +
+          navItemHtml('/app?section=pro-lab&tool=reactions', 'labNavSolve', 'pro-lab', /reactions|formula|solutions|calculations/.test(currentTool), false, 'pro-lab') +
+          navItemHtml('/app?section=pro-lab&tool=elements', 'labNavCompare', 'pro-lab', /elements|molecules|atomic/.test(currentTool), false, 'pro-lab') +
+          navItemHtml('/app?section=pro-lab&tool=sessions', 'labNavSessions', 'history', currentTool === 'sessions', false, 'pro-lab') +
+          '</div>';
+      } else if (area === 'activity') {
+        localHtml = '<div class="ws-local-nav" role="navigation" aria-label="' + escapeHtml(t('navGroupActivity')) + '">' +
+          [['history', 'history', true], ['notes', 'notes', true], ['progress', 'continueNav', true]].map(function (pair) {
+            var locked = pair[2] && !proUser(user);
+            return navItemHtml('/app?section=' + pair[0], pair[1], pair[0], current === pair[0], locked, pair[0]);
+          }).join('') + '</div>';
+      }
+      studyNav.innerHTML = contextHtml + localHtml;
       bindProNav(studyNav);
     }
     if (foot) {
       if (!user) {
         foot.innerHTML =
-          '<a class="ws-nav-item" href="/login?next=%2Fapp">' + icon('account') + '<span class="ws-nav-label">' + escapeHtml(t('login')) + '</span></a>' +
+          '<a class="ws-nav-item" href="/login?next=%2Fapp%3Fsection%3Daccount">' + icon('account') + '<span class="ws-nav-label">' + escapeHtml(t('account')) + '</span></a>' +
           '<a class="ws-nav-item is-upgrade" href="/pricing">' + icon('plan') + '<span class="ws-nav-label">' + escapeHtml(t('viewPlans')) + '</span></a>';
       } else {
         var upgrade = proUser(user) ? '' :
@@ -788,23 +870,27 @@
       }
     }
     if (bottom) {
-      var primary = [['overview', 'overview', false], ['library', 'library', true], ['review', 'reviewShort', true], ['pro-lab', 'labShort', true], ['account', 'account', false]];
+      var primary = [
+        ['overview', 'overview', 'overview', area === 'overview'],
+        ['library', 'study', 'study', area === 'study'],
+        ['pro-lab', 'labShort', 'lab', area === 'lab'],
+        ['progress', 'navGroupActivity', 'activity', area === 'activity'],
+        ['account', 'account', 'account', current === 'account']
+      ];
       bottom.innerHTML = primary.map(function (pair) {
         var guestAccount = pair[0] === 'account' && !user;
-        var locked = pair[2] && !proUser(user);
         var href = guestAccount ? '/login?next=%2Fapp%3Fsection%3Daccount' : '/app?section=' + pair[0];
-        var gate = locked ? ' data-pro-nav="' + pair[0] + '" data-pro-label="' + pair[1] + '"' : '';
-        return '<a class="' + (pair[0] === current ? 'is-active' : '') + (locked ? ' is-locked' : '') + '" href="' + href + '"' + gate + '>' + icon(pair[0]) + '<span>' + escapeHtml(t(pair[1])) + '</span></a>';
+        return '<a class="' + (pair[3] ? 'is-active' : '') + '" href="' + href + '">' + icon(pair[0]) + '<span>' + escapeHtml(t(pair[1])) + '</span></a>';
       }).join('');
       bindProNav(bottom);
     }
     var skip = $('ws-skip');
     if (skip) skip.textContent = t('skipToContent');
     var mainNav = $('ws-nav-main');
-    if (mainNav) mainNav.setAttribute('aria-label', t('workspaceTag'));
-    if (studyNav) studyNav.setAttribute('aria-label', t('navGroupStudy'));
+    if (mainNav) mainNav.setAttribute('aria-label', t('navGroupSite'));
+    if (studyNav) studyNav.setAttribute('aria-label', t('navGroupWorkspace'));
     var bottomNav = $('ws-bottom');
-    if (bottomNav) bottomNav.setAttribute('aria-label', t('workspaceTag'));
+    if (bottomNav) bottomNav.setAttribute('aria-label', t('workspaceNav'));
     var chip = $('ws-user-name');
     if (chip) chip.textContent = user ? displayName(user) : t('account');
     var userChip = $('ws-userchip');
@@ -814,10 +900,14 @@
     }
     var planBadge = $('ws-plan-badge');
     if (planBadge) {
-      if (badge.kind === 'pro' || badge.kind === 'trial' || badge.kind === 'admin') {
+      if (badge.label) {
         planBadge.hidden = false;
-        planBadge.className = 'ws-badge ws-badge-' + badge.kind;
+        planBadge.className = 'ws-badge ws-badge-' + badge.kind + ' ps-plan-badge';
         planBadge.textContent = badge.label;
+        if (badge.kind === 'trial') {
+          var daysLeft = logic().trialDaysLeft(user && user.trialEndsAt);
+          if (daysLeft != null) planBadge.textContent = t('trialBadgeDays', '', { n: daysLeft });
+        }
       } else {
         planBadge.hidden = true;
       }
@@ -855,8 +945,36 @@
     node.innerHTML = sectionHead(t(keys[0]), t(keys[1]), true) + lockedState(keys[0], keys[1]);
   }
 
+  function crumbTrail(section) {
+    var area = logic().workspaceArea ? logic().workspaceArea(section) : 'overview';
+    var parts = [escapeHtml(t('crumbWorkspace'))];
+    if (area === 'study') parts.push(escapeHtml(t('navGroupStudy')));
+    if (area === 'lab') parts.push(escapeHtml(t('navGroupLab')));
+    if (area === 'activity') parts.push(escapeHtml(t('navGroupActivity')));
+    if (area === 'account') parts.push(escapeHtml(t('account')));
+    if (section === 'library') parts.push(escapeHtml(t('library')));
+    if (section === 'sets') parts.push(escapeHtml(t('sets')));
+    if (section === 'review') parts.push(escapeHtml(t('review')));
+    if (section === 'insights') parts.push(escapeHtml(t('insights')));
+    if (section === 'history') parts.push(escapeHtml(t('history')));
+    if (section === 'notes') parts.push(escapeHtml(t('notes')));
+    if (section === 'progress') parts.push(escapeHtml(t('continueNav')));
+    return '<nav class="ws-crumb" aria-label="Breadcrumb">' + parts.join(' / ') + '</nav>';
+  }
+
+  function catalogGroupsHtml() {
+    var catalog = window.AtomurusProFeatures;
+    if (!catalog || typeof catalog.grouped !== 'function') return '';
+    return '<div class="ws-pro-pillars">' + catalog.grouped().map(function (group) {
+      return '<section class="ws-account-card"><h3>' + escapeHtml(group.title) + '</h3><p class="ws-lede">' + escapeHtml(group.lede) + '</p><ul>' +
+        group.features.map(function (feat) {
+          return '<li><a href="' + escapeHtml(feat.route) + '">' + escapeHtml(feat.title) + '</a></li>';
+        }).join('') + '</ul></section>';
+    }).join('') + '</div>';
+  }
+
   function sectionHead(title, lede, pro) {
-    return '<header class="ws-section-head"><div><p class="ws-kicker">Atomurus</p><h1 class="ws-title">' + escapeHtml(title) +
+    return crumbTrail(studySection()) + '<header class="ws-section-head"><div><p class="ws-kicker">Atomurus</p><h1 class="ws-title">' + escapeHtml(title) +
       (pro ? ' <span class="ws-badge ws-badge-pro">' + escapeHtml(t('pro')) + '</span>' : '') +
       '</h1><p class="ws-lede">' + escapeHtml(lede) + '</p></div></header>';
   }
@@ -1136,27 +1254,43 @@
     var name = displayName(user);
     var hour = logic().greetingKey();
     var greet = t(hour === 'morning' ? 'greetingMorning' : hour === 'afternoon' ? 'greetingAfternoon' : 'greetingEvening', '', { name: name });
-    var hero = dueNow
+    var attention = dueNow
       ? '<section class="ws-hero is-ready"><div><h2 class="ws-hero-title">' + escapeHtml(t('readyToStudy')) + '</h2><p class="ws-hero-copy">' + escapeHtml(tCount('dueTodayHero', 'dueTodayHeroOne', dueNow)) + '</p><a class="ws-btn ws-btn-primary" href="/app?section=review&start=1">' + escapeHtml(t('startReview')) + '</a></div></section>'
-      : '<section class="ws-hero"><div><h2 class="ws-hero-title">' + escapeHtml(t('caughtUpTitle')) + '</h2><p class="ws-hero-copy">' + escapeHtml(t('caughtUpExplore')) + '</p><a class="ws-btn ws-btn-primary" href="' + escapeHtml(focusReviewHref()) + '">' + escapeHtml(t('startFocusReview')) + '</a> <a class="ws-btn ws-btn-secondary" href="/app?section=sets">' + escapeHtml(t('openSets')) + '</a></div></section>';
+      : '';
     var metrics = review
       ? '<div class="ws-metrics">' +
         [['dueToday', dueNow], ['metricSets', logic().overviewSetCount(review)], ['metricCards', review.totalCards || 0], ['mastered', review.masteredCards || 0]].map(function (row) {
           return '<div class="ws-metric"><div class="ws-metric-value">' + escapeHtml(String(row[1])) + '</div><div class="ws-metric-label">' + escapeHtml(t(row[0])) + '</div></div>';
         }).join('') + '</div>'
       : '';
-    var setsCard = '<section class="ws-dest-card"><h2 class="ws-h2">' + escapeHtml(t('sets')) + '</h2><p class="ws-lede">' + escapeHtml(t('setsLede')) + '</p><a class="ws-btn ws-btn-secondary" href="/app?section=sets">' + escapeHtml(t('openSets')) + '</a></section>';
-    var insightsCard = '<section class="ws-dest-card"><h2 class="ws-h2">' + escapeHtml(t('insights')) + '</h2><p class="ws-lede">' + escapeHtml(t('insightsLede')) + '</p><a class="ws-btn ws-btn-secondary" href="/app?section=insights">' + escapeHtml(t('openInsights')) + '</a></section>';
-    var labCard = '<section class="ws-dest-card"><h2 class="ws-h2">' + escapeHtml(t('proLab')) + '</h2><p class="ws-lede">' + escapeHtml(t('continueLab')) + '</p><a class="ws-btn ws-btn-secondary" href="/app?section=pro-lab">' + escapeHtml(t('openProLab')) + '</a></section>';
-    var solverCard = '<section class="ws-dest-card" data-dest="solver"><h2 class="ws-h2">' + escapeHtml(t('chemistrySolver')) + '</h2><p class="ws-lede">' + escapeHtml(t('chemistrySolverLede')) + '</p><a class="ws-btn ws-btn-secondary" href="/app?section=pro-lab&tool=reactions">' + escapeHtml(t('solveReaction')) + '</a></section>';
     var cont = (overview.continueStudying || []).slice(0, 5);
+    var continueBlock = cont.length
+      ? '<section class="ws-overview-block"><h2 class="ws-h2">' + escapeHtml(t('continueTitle')) + '</h2><div class="ws-grid">' + cont.map(continueCard).join('') + '</div></section>'
+      : '';
+    var studyBlock = '<section class="ws-overview-block"><h2 class="ws-h2">' + escapeHtml(t('studyBlockTitle')) + '</h2>' + metrics +
+      '<div class="ws-dest-grid ws-study-dests">' +
+      '<a class="ws-dest-card" href="/app?section=library"><h2 class="ws-h2">' + escapeHtml(t('library')) + '</h2></a>' +
+      '<a class="ws-dest-card" href="/app?section=sets"><h2 class="ws-h2">' + escapeHtml(t('sets')) + '</h2></a>' +
+      '<a class="ws-dest-card" href="/app?section=review"><h2 class="ws-h2">' + escapeHtml(t('review')) + '</h2></a>' +
+      '<a class="ws-dest-card" href="/app?section=insights"><h2 class="ws-h2">' + escapeHtml(t('insights')) + '</h2></a>' +
+      '</div></section>';
+    var solveBlock = '<section class="ws-overview-block"><h2 class="ws-h2">' + escapeHtml(t('solveAnalyzeTitle')) + '</h2>' +
+      '<div class="ws-dest-grid">' +
+      '<a class="ws-dest-card" data-dest="solver" href="/app?section=pro-lab&tool=reactions"><h2 class="ws-h2">' + escapeHtml(t('chemistrySolver')) + '</h2><p class="ws-lede">' + escapeHtml(t('chemistrySolverLede')) + '</p></a>' +
+      '<a class="ws-dest-card" href="/app?section=pro-lab&tool=calculations"><h3 class="ws-lab-card-title">' + escapeHtml(t('labCalc')) + '</h3><p class="ws-lede">' + escapeHtml(t('labCalcLede')) + '</p></a>' +
+      '<a class="ws-dest-card" href="/app?section=pro-lab&tool=elements"><h3 class="ws-lab-card-title">' + escapeHtml(t('labElements')) + '</h3><p class="ws-lede">' + escapeHtml(t('labElementsLede')) + '</p></a>' +
+      '</div><p><a class="ws-btn ws-btn-secondary" href="/app?section=pro-lab">' + escapeHtml(t('openLabSuite')) + '</a></p></section>';
+    var visualizeBlock = '<section class="ws-overview-block"><h2 class="ws-h2">' + escapeHtml(t('visualizeTitle')) + '</h2>' +
+      '<div class="ws-dest-grid">' +
+      '<a class="ws-dest-card" href="/viewer/atomic-models.html"><h3 class="ws-lab-card-title">' + escapeHtml(t('labAtomic')) + '</h3></a>' +
+      '<a class="ws-dest-card" href="/viewer/molecules.html"><h3 class="ws-lab-card-title">' + escapeHtml(t('labMolecules')) + '</h3></a>' +
+      '<a class="ws-dest-card" href="/viewer/allotropes.html"><h3 class="ws-lab-card-title">' + escapeHtml(t('labAllotropes')) + '</h3></a>' +
+      '<a class="ws-dest-card" href="/viewer/isomerism.html"><h3 class="ws-lab-card-title">' + escapeHtml(t('labIsomerism')) + '</h3></a>' +
+      '</div></section>';
     node.innerHTML =
-      '<p class="ws-kicker">Atomurus</p><h1 class="ws-title">' + escapeHtml(greet) + '</h1><p class="ws-lede">' + escapeHtml(t('greetingFallback')) + '</p>' +
-      hero + metrics +
-      (cont.length
-        ? '<h2 class="ws-h2">' + escapeHtml(t('continueTitle')) + '</h2><div class="ws-grid">' + cont.map(continueCard).join('') + '</div>'
-        : '') +
-      '<div class="ws-dest-grid">' + setsCard + insightsCard + labCard + solverCard + '</div>';
+      crumbTrail('overview') +
+      '<p class="ws-kicker">Atomurus</p><h1 class="ws-title">' + escapeHtml(greet) + '</h1><p class="ws-lede">' + escapeHtml(t('continueChemistry')) + '</p>' +
+      attention + continueBlock + studyBlock + solveBlock + visualizeBlock;
   }
 
   function libraryRow(item) {
@@ -2268,9 +2402,11 @@
     var currency = user.billingCurrency ? String(user.billingCurrency).toUpperCase() : '';
     var when = user.currentPeriodEnd ? logic().formatDate(user.currentPeriodEnd, langIsPt() ? 'pt' : 'en') : '';
     var state = logic().accountPlanState ? logic().accountPlanState(user) : { kind: user.isPro ? 'paid' : 'free', canManage: false };
+    var tab = logic().accountTabFromQuery ? logic().accountTabFromQuery(location.search) : 'overview';
     var planBlock;
     if (state.kind === 'auto_trial') {
       planBlock = '<h3>' + escapeHtml(t('trialPlan')) + '</h3><p>' + escapeHtml(days == null ? '' : t('trialDays', '', { n: days })) + '</p>' +
+        '<p>' + escapeHtml(t('noCardTrial')) + '</p>' +
         '<a class="ws-btn ws-btn-primary" href="/pricing">' + escapeHtml(t('viewPlans')) + '</a>';
     } else if (state.kind === 'payment_issue') {
       planBlock = '<h3>' + escapeHtml(t('paymentIssue')) + '</h3><p>' + escapeHtml(t('paymentIssueBody')) + '</p>' +
@@ -2289,45 +2425,90 @@
       if (currency) meta.push(currency);
       if (user.cancelAtPeriodEnd && when) meta.push(t('cancelsOn', '', { when: when }));
       planBlock = '<h3>' + escapeHtml(t('proPlan')) + '</h3><p>' + escapeHtml(meta.join(' · ')) + '</p>' +
-        '<ul><li>' + escapeHtml(t('adsOff')) + '</li><li>' + escapeHtml(t('cloudOn')) + '</li><li>' + escapeHtml(t('reviewOn')) + '</li><li>' + escapeHtml(t('insightsOn')) + '</li><li>' + escapeHtml(t('focusOn')) + '</li></ul>' +
+        (when ? '<p>' + escapeHtml(when) + '</p>' : '') +
         (state.canManage
           ? '<button type="button" class="ws-btn ws-btn-primary" id="ws-billing-portal">' + escapeHtml(t('managePlan')) + '</button>'
           : '<a class="ws-btn ws-btn-primary" href="/pricing">' + escapeHtml(t('viewPlans')) + '</a>');
     } else {
       planBlock = '<h3>' + escapeHtml(t('freePlan')) + '</h3><p>' + escapeHtml(t('freePlanBody')) + '</p><a class="ws-btn ws-btn-primary" href="/pricing">' + escapeHtml(t('upgrade')) + '</a>';
     }
-    node.innerHTML = sectionHead(t('accountTitle'), displayName(user)) +
-      '<div class="ws-grid ws-grid-2"><section class="ws-account-card"><h3>' + escapeHtml(t('profile')) + '</h3>' +
-      '<div class="ws-plan-row"><span>' + escapeHtml(t('email')) + '</span><strong></strong></div>' +
-      '<div class="ws-plan-row"><span>' + escapeHtml(t('username')) + '</span><span id="ws-acc-user"></span></div>' +
-      '<div class="ws-plan-row"><span>' + escapeHtml(t('security')) + '</span><span>' + escapeHtml(user.emailConfirmed ? t('emailConfirmed') : t('emailPending')) + '</span></div>' +
-      '<div class="ws-plan-row"><span>' + escapeHtml(t('resetPassword')) + '</span><a href="/forgot-password">' + escapeHtml(t('resetPassword')) + '</a></div>' +
-      '</section><section class="ws-account-card" id="ws-plan-card">' + planBlock + '</section></div>';
-    var emailRow = node.querySelector('.ws-account-card strong');
+    var tabs = [
+      ['overview', 'accountOverview'],
+      ['profile', 'profile'],
+      ['security', 'security'],
+      ['plan', 'planBilling'],
+      ['preferences', 'accountPreferences']
+    ];
+    var tabNav = '<div class="ws-account-tabs" role="tablist">' + tabs.map(function (pair) {
+      var on = pair[0] === tab;
+      return '<a role="tab" class="ws-account-tab' + (on ? ' is-active' : '') + '" href="/app?section=account&tab=' + pair[0] + '" aria-selected="' + (on ? 'true' : 'false') + '">' + escapeHtml(t(pair[1])) + '</a>';
+    }).join('') + '</div>';
+    var destinations = '<nav class="ws-account-dests"><a href="/app?section=account&tab=profile">' + escapeHtml(t('profile')) + '</a>' +
+      '<a href="/app?section=account&tab=security">' + escapeHtml(t('security')) + '</a>' +
+      '<a href="/app?section=account&tab=plan">' + escapeHtml(t('planBilling')) + '</a>' +
+      '<a href="/app?section=account&tab=preferences">' + escapeHtml(t('accountPreferences')) + '</a></nav>';
+    var body;
+    if (tab === 'profile') {
+      body = '<section class="ws-account-card"><h2>' + escapeHtml(t('profile')) + '</h2>' +
+        '<div class="ws-plan-row"><span>' + escapeHtml(t('displayNameLabel')) + '</span><strong id="ws-acc-name"></strong></div>' +
+        '<div class="ws-plan-row"><span>' + escapeHtml(t('username')) + '</span><span id="ws-acc-user"></span></div>' +
+        '<div class="ws-plan-row"><span>' + escapeHtml(t('email')) + '</span><strong id="ws-acc-email"></strong></div></section>';
+    } else if (tab === 'security') {
+      body = '<section class="ws-account-card"><h2>' + escapeHtml(t('security')) + '</h2>' +
+        '<div class="ws-plan-row"><span>' + escapeHtml(t('email')) + '</span><span>' + escapeHtml(user.emailConfirmed ? t('emailConfirmed') : t('emailPending')) + '</span></div>' +
+        '<p><a class="ws-btn ws-btn-secondary" href="/forgot-password">' + escapeHtml(t('resetPassword')) + '</a></p>' +
+        '<p><button type="button" class="ws-btn" id="ws-acc-signout">' + escapeHtml(t('logout')) + '</button></p></section>';
+    } else if (tab === 'plan') {
+      body = '<section class="ws-account-card" id="ws-plan-card">' + planBlock + '</section>' +
+        '<section class="ws-account-card"><h2>' + escapeHtml(t('yourProIncludes')) + '</h2>' + catalogGroupsHtml() + '</section>';
+    } else if (tab === 'preferences') {
+      body = '<section class="ws-account-card"><h2>' + escapeHtml(t('accountPreferences')) + '</h2>' +
+        '<p class="ws-lede">' + escapeHtml(t('preferencesNote')) + '</p>' +
+        '<div class="ws-plan-row"><span>' + escapeHtml(t('languagePref')) + '</span><button type="button" class="ws-btn ws-btn-secondary" id="ws-pref-lang"></button></div>' +
+        '<div class="ws-plan-row"><span>' + escapeHtml(t('themePref')) + '</span><button type="button" class="ws-btn ws-btn-secondary" id="ws-pref-theme">' + escapeHtml(t('themePref')) + '</button></div>' +
+        '<p class="ws-lede">' + escapeHtml(t('toolConfigSeparate')) + ' <a href="/config.html">' + escapeHtml(t('navGroupSite')) + '</a></p></section>';
+    } else {
+      body = '<section class="ws-account-card"><h2>' + escapeHtml(displayName(user)) + '</h2>' +
+        '<p>@' + escapeHtml(user.username || '—') + '</p><p id="ws-acc-email-overview"></p></section>' +
+        '<section class="ws-account-card" id="ws-plan-card">' + planBlock + '</section>' + destinations;
+    }
+    node.innerHTML = sectionHead(t('accountTitle'), displayName(user)) + tabNav + body;
+    var nameRow = $('ws-acc-name');
+    if (nameRow) nameRow.textContent = displayName(user);
+    var emailRow = node.querySelector('#ws-acc-email, #ws-acc-email-overview');
     if (emailRow) emailRow.textContent = user.email || '—';
     var userRow = $('ws-acc-user');
     if (userRow) userRow.textContent = user.username || '—';
     var portalBtn = $('ws-billing-portal');
     if (portalBtn) portalBtn.addEventListener('click', function () { openBillingPortal(portalBtn); });
+    var signOutBtn = $('ws-acc-signout');
+    if (signOutBtn) signOutBtn.addEventListener('click', doLogout);
+    var langBtn = $('ws-pref-lang');
+    if (langBtn && window.I18N) {
+      langBtn.textContent = window.I18N.otherLabel ? window.I18N.otherLabel() : 'PT';
+      langBtn.addEventListener('click', function () { window.I18N.toggle(); });
+    }
+    var themeBtn = $('ws-pref-theme');
+    if (themeBtn) themeBtn.addEventListener('click', function () { if (typeof toggleTheme === 'function') toggleTheme(); });
   }
 
   function renderFreeOverview(user) {
     var node = $('app-study');
     var name = displayName(user);
     var hour = logic().greetingKey();
-    var greet = t(hour === 'morning' ? 'greetingMorning' : hour === 'afternoon' ? 'greetingAfternoon' : 'greetingEvening', '', { name: name });
-    node.innerHTML = '<p class="ws-kicker">Atomurus</p><h1 class="ws-title">' + escapeHtml(greet) + '</h1>' +
+    var greet = user
+      ? t(hour === 'morning' ? 'greetingMorning' : hour === 'afternoon' ? 'greetingAfternoon' : 'greetingEvening', '', { name: name })
+      : t('workspaceHomeTitle');
+    node.innerHTML = crumbTrail('overview') + '<p class="ws-kicker">Atomurus</p><h1 class="ws-title">' + escapeHtml(greet) + '</h1>' +
       '<section class="ws-hero"><div><h2 class="ws-hero-title">' + escapeHtml(t('workspaceFreeTitle')) + '</h2>' +
-      '<p class="ws-hero-copy">' + escapeHtml(t('publicLabRemainsFree')) + '</p>' +
-      '<p class="ws-hero-copy">' + escapeHtml(t('upgradeFor')) + ' ' + escapeHtml(t('upgradeForList')) + '</p>' +
-      '<a class="ws-btn ws-btn-primary" href="/pricing">' + escapeHtml(t('explorePro')) + '</a></div></section>' +
-      '<section class="ws-solver-shortcut is-locked"><span class="ws-lab-badge">' + escapeHtml(t('pro')) + '</span><h2 class="ws-h2">' + escapeHtml(t('chemistrySolver')) + '</h2><p class="ws-lede">' + escapeHtml(t('freeSolverPreview')) + '</p><a class="ws-btn ws-btn-secondary" href="/pricing">' + escapeHtml(t('explorePro')) + '</a></section>' +
+      '<p class="ws-hero-copy">' + escapeHtml(t('publicLabRemainsFree')) + '</p></div></section>' +
       '<div class="ws-grid ws-public-grid">' +
-      '<a class="ws-lab-card" href="/periodic-table.html"><span class="ws-lab-badge">' + escapeHtml(t('publicTool')) + '</span><h3 class="ws-lab-card-title">' + escapeHtml(t('openTable')) + '</h3><p class="ws-lab-card-copy">' + escapeHtml(t('tableCardCopy')) + '</p><span class="ws-card-arrow" aria-hidden="true">→</span></a>' +
-      '<a class="ws-lab-card" href="/calculators.html"><span class="ws-lab-badge">' + escapeHtml(t('publicTool')) + '</span><h3 class="ws-lab-card-title">' + escapeHtml(t('publicCalc')) + '</h3><p class="ws-lab-card-copy">' + escapeHtml(t('calcCardCopy')) + '</p><span class="ws-card-arrow" aria-hidden="true">→</span></a>' +
-      '<a class="ws-lab-card" href="/viewer/atomic-models.html"><span class="ws-lab-badge">' + escapeHtml(t('pro')) + '</span><h3 class="ws-lab-card-title">' + escapeHtml(t('openViewer')) + '</h3><p class="ws-lab-card-copy">' + escapeHtml(t('viewerCardCopy')) + '</p><span class="ws-card-arrow" aria-hidden="true">→</span></a>' +
-      '<a class="ws-lab-card" href="/explore.html"><span class="ws-lab-badge">' + escapeHtml(t('publicTool')) + '</span><h3 class="ws-lab-card-title">' + escapeHtml(t('openExplore')) + '</h3><p class="ws-lab-card-copy">' + escapeHtml(t('exploreCardCopy')) + '</p><span class="ws-card-arrow" aria-hidden="true">→</span></a>' +
-      '</div>';
+      '<a class="ws-lab-card" href="/periodic-table.html"><span class="ws-lab-badge">' + escapeHtml(t('publicTool')) + '</span><h3 class="ws-lab-card-title">' + escapeHtml(t('openTable')) + '</h3><p class="ws-lab-card-copy">' + escapeHtml(t('tableCardCopy')) + '</p></a>' +
+      '<a class="ws-lab-card" href="/calculators.html"><span class="ws-lab-badge">' + escapeHtml(t('publicTool')) + '</span><h3 class="ws-lab-card-title">' + escapeHtml(t('publicCalc')) + '</h3><p class="ws-lab-card-copy">' + escapeHtml(t('calcCardCopy')) + '</p></a>' +
+      '<a class="ws-lab-card" href="/explore.html"><span class="ws-lab-badge">' + escapeHtml(t('publicTool')) + '</span><h3 class="ws-lab-card-title">' + escapeHtml(t('openExplore')) + '</h3><p class="ws-lab-card-copy">' + escapeHtml(t('exploreCardCopy')) + '</p></a>' +
+      '</div>' +
+      '<section class="ws-overview-block"><h2 class="ws-h2">' + escapeHtml(t('unlockWithPro')) + '</h2>' + catalogGroupsHtml() +
+      '<p><a class="ws-btn ws-btn-primary" href="/pricing">' + escapeHtml(t('explorePro')) + '</a></p></section>';
   }
 
   function resetStudyRoot() {
@@ -2336,6 +2517,35 @@
     var clone = node.cloneNode(false);
     node.parentNode.replaceChild(clone, node);
     return clone;
+  }
+
+  function mountProLab(node, user) {
+    var mountLab = function () {
+      return window.AtomurusProLab.mount(node, {
+        user: user,
+        t: t,
+        escapeHtml: escapeHtml,
+        logic: logic(),
+        ui: ui(),
+        study: window.AtomurusStudy
+      });
+    };
+    if (window.AtomurusProLab && typeof window.AtomurusProLab.mount === 'function') {
+      return Promise.resolve(mountLab()).catch(function (err) { friendlyCatch(node, err); });
+    }
+    return new Promise(function (resolve) {
+      var tries = 0;
+      var timer = window.setInterval(function () {
+        tries += 1;
+        if (window.AtomurusProLab && typeof window.AtomurusProLab.mount === 'function') {
+          window.clearInterval(timer);
+          resolve(Promise.resolve(mountLab()).catch(function (err) { friendlyCatch(node, err); }));
+        } else if (tries > 50) {
+          window.clearInterval(timer);
+          resolve();
+        }
+      }, 40);
+    });
   }
 
   async function loadStudyCloud(user) {
@@ -2352,39 +2562,12 @@
     if (!proUser(user)) {
       if (section === 'overview') renderFreeOverview(user);
       else if (section === 'insights') renderLockedInsights();
-      else if (section === 'pro-lab') {
-        node.innerHTML = sectionHead(t('proLab'), t('proLabLede'), true) + lockedState('proLab', 'labLockedBody');
-      } else showStudyLocked(node);
+      else if (section === 'pro-lab') return mountProLab(node, user);
+      else showStudyLocked(node);
       return;
     }
     if (section === 'pro-lab') {
-      node.innerHTML = '<p class="ws-kicker">' + escapeHtml(t('proLabKicker')) + '</p><h1 class="ws-title">' + escapeHtml(t('proLab')) + '</h1>';
-      var mountLab = function () {
-        return window.AtomurusProLab.mount(node, {
-          user: user,
-          t: t,
-          escapeHtml: escapeHtml,
-          logic: logic(),
-          ui: ui(),
-          study: window.AtomurusStudy
-        });
-      };
-      if (window.AtomurusProLab && typeof window.AtomurusProLab.mount === 'function') {
-        return Promise.resolve(mountLab()).catch(function (err) { friendlyCatch(node, err); });
-      }
-      return new Promise(function (resolve) {
-        var tries = 0;
-        var timer = window.setInterval(function () {
-          tries += 1;
-          if (window.AtomurusProLab && typeof window.AtomurusProLab.mount === 'function') {
-            window.clearInterval(timer);
-            resolve(Promise.resolve(mountLab()).catch(function (err) { friendlyCatch(node, err); }));
-          } else if (tries > 50) {
-            window.clearInterval(timer);
-            resolve();
-          }
-        }, 40);
-      });
+      return mountProLab(node, user);
     }
     var api = window.AtomurusStudy;
     if (!api) {

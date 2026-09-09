@@ -241,16 +241,19 @@
     </svg>
   </button>
 
-  <a class="lc-topnav-cta" href="login.html" aria-label="Account">
+  <div class="ps-account" data-atomurus-account>
+  <span class="ps-plan-badge" data-atomurus-plan-badge hidden></span>
+  <a class="ps-userchip lc-topnav-cta" href="login.html" data-atomurus-account-chip aria-label="Account">
+    <svg class="ps-userchip-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
     <span data-i18n="pricing.ctaAccount">Account</span>
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-      <path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
   </a>
+</div>
+  
 </nav>
 <aside class="sidebar ps-pub-sidebar" id="ps-pub-sidebar">
   <nav class="sidebar-scroll ps-pub-nav" aria-label="Laboratory">
     <div class="nav-section">
+      <h2 class="ps-nav-group" data-i18n="common.nav.laboratory">Laboratory</h2>
       <a class="nav-item" href="index.html">
         <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M2 8L8 2l6 6M3 7v7h10V7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
         <span data-i18n="common.nav.home">Home</span></a>
@@ -266,15 +269,18 @@
       <a class="nav-item" href="explore.html">
         <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.3" stroke="currentColor" stroke-width="1.1" fill="none"/><rect x="9" y="1" width="6" height="6" rx="1.3" stroke="currentColor" stroke-width="1.1" fill="none"/><rect x="1" y="9" width="6" height="6" rx="1.3" stroke="currentColor" stroke-width="1.1" fill="none"/><circle cx="12" cy="12" r="2.6" stroke="currentColor" stroke-width="1.3" fill="none"/><line x1="14" y1="14" x2="15.5" y2="15.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
         <span data-i18n="common.nav.explore">Explore</span></a>
+    </div>
+    <div class="nav-section">
+      <h2 class="ps-nav-group" data-i18n="common.nav.workspace">Workspace</h2>
       <a class="nav-item" href="/app">
         <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M3 3h4v10H3zM8 5h5v8H8z" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M5 6v4M10.5 8v3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-        <span data-i18n="common.nav.study">Study</span></a>
+        <span data-i18n="common.nav.workspace">Workspace</span></a>
     </div>
   </nav>
   <div class="sidebar-foot">
     <a class="nav-item" href="login.html" data-auth-nav-link="common.nav.login">
       <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="6" r="2.2" stroke="currentColor" stroke-width="1.3"/><path d="M3.5 13c.8-2.2 2.4-3.2 4.5-3.2s3.7 1 4.5 3.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-      <span data-i18n="common.nav.login">Login</span></a>
+      <span data-i18n="common.nav.login">Account</span></a>
     <a class="nav-item" href="config.html">
       <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.2" stroke="currentColor" stroke-width="1.3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M2.93 2.93l1.06 1.06M12.01 12.01l1.06 1.06M2.93 13.07l1.06-1.06M12.01 3.99l1.06-1.06" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
       <span data-i18n="common.nav.settings">Settings</span></a>
@@ -461,7 +467,7 @@
     <a class="lc-mod-card ui-card ui-card-interactive lc-bracket" href="/app">
       <span class="lc-br-bl"></span><span class="lc-br-br"></span>
       <div class="lc-mod-head">
-      <span class="lc-mod-no" data-i18n="home.modules.card4.no">Study</span>
+      <span class="lc-mod-no" data-i18n="home.modules.card4.no">Workspace</span>
         <span class="lc-mod-status ui-badge" data-i18n="home.modules.card4.badge">Guest</span>
       </div>
       <div class="lc-mod-icon">
@@ -471,8 +477,8 @@
           <path d="M8 10v10M22.5 12v8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
         </svg>
       </div>
-      <h3 class="lc-mod-name" data-i18n="home.modules.card4.name">Study</h3>
-      <p class="lc-mod-desc" data-i18n="home.modules.card4.desc">Open the lab workspace as a guest. Study Sets, flashcards and Smart Review stay in the same room — sign in when you want to keep them.</p>
+      <h3 class="lc-mod-name" data-i18n="home.modules.card4.name">Workspace</h3>
+      <p class="lc-mod-desc" data-i18n="home.modules.card4.desc">Open your private chemistry workspace. Study, Pro Lab and Activity stay in the same product — sign in when you want to keep them.</p>
       <span class="lc-mod-go ui-btn ui-btn-accent" data-i18n="home.modules.card4.cta">Open workspace</span>
       <div class="lc-mod-meta">
         <span data-i18n="home.modules.card4.m1">guest workspace</span>
@@ -535,7 +541,7 @@
     <div class="lc-footer-col">
       <h4 data-i18n="common.footer.workspace">Workspace</h4>
       <a href="config.html" data-i18n="common.footer.settings">Settings</a>
-      <a href="/app" data-i18n="common.nav.study">Study</a>
+      <a href="/app" data-i18n="common.nav.workspace">Workspace</a>
       <a href="periodic-table.html#search" data-i18n="common.footer.elementSearch">Element search</a>
       <a href="calculators.html#molar" data-i18n="common.footer.molarMass">Molar mass</a>
     </div>

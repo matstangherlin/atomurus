@@ -358,6 +358,8 @@ function assertUiV2() {
     'docs/ui-v2-hoist.md',
     'docs/ui-v2-i18n.md',
     'docs/ui-v2-report.md',
+    'docs/ui-v2-global-shell.md',
+    'docs/ui-v2-product-shell-final.md',
     'tools/capture-ui-v2.mjs',
     'assets/layouts/auth.css',
     'assets/layouts/pricing.css',
@@ -370,7 +372,10 @@ function assertUiV2() {
     'assets/layouts/periodic-table.css',
     'assets/layouts/viewer.css',
     'assets/layouts/workspace.css',
+    'assets/layouts/shell.css',
     'assets/product-catalog.js',
+    'assets/pro-features.js',
+    'templates/chrome/account-control.html',
     'tools/build-product-catalog.js'
   ];
   files.forEach((rel) => {

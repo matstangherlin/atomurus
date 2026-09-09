@@ -34,6 +34,7 @@
   };
 
   window.__ATOMURUS_ADS__ = state;
+  document.documentElement.classList.add('auth-pending');
 
   var waiters = [];
   var autoTagQueue = window.__ATOMURUS_AUTOTAG_Q || [];
@@ -42,8 +43,15 @@
   var aclibPromise = null;
   var aclibLoadScheduled = false;
 
+  function isWorkspacePage() {
+    return document.body && document.body.classList.contains('ws-body');
+  }
+
   function notify() {
     state.ready = true;
+    if (!isWorkspacePage()) {
+      document.documentElement.classList.remove('auth-pending');
+    }
     document.documentElement.classList.toggle('ads-free', !state.adsEnabled);
     document.dispatchEvent(new CustomEvent('atomurus-ads-ready', { detail: state }));
     var queue = waiters.slice();
@@ -232,5 +240,8 @@
     notify();
   }
 
+  window.setTimeout(function () {
+    if (!state.ready) notify();
+  }, 2500);
   boot();
 })();

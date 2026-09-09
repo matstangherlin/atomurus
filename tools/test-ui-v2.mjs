@@ -40,12 +40,17 @@ const required = [
   'docs/ui-v2-hoist.md',
   'docs/ui-v2-i18n.md',
   'docs/ui-v2-report.md',
+  'docs/ui-v2-global-shell.md',
+  'docs/ui-v2-product-shell-final.md',
   'tools/capture-ui-v2.mjs',
   'assets/layouts/config.css',
   'assets/layouts/periodic-table.css',
   'assets/layouts/viewer.css',
   'assets/layouts/workspace.css',
+  'assets/layouts/shell.css',
   'assets/product-catalog.js',
+  'assets/pro-features.js',
+  'templates/chrome/account-control.html',
   'tools/build-product-catalog.js'
 ];
 for (const rel of required) {
@@ -103,7 +108,30 @@ if (!login.includes('id="ps-shell"')) fail('login.html must contain #ps-shell in
 if (!login.includes('data-ps-chrome')) fail('login.html must mark emitted chrome');
 if (!login.includes('assets/ui/index.css')) fail('login.html must load UI V2');
 if (!login.includes('assets/layouts/auth.css')) fail('login.html must load auth layout CSS');
-if (!login.includes('Open lab')) fail('login CTA must stay Open lab');
+if (!read('login.html').includes('Open lab')) fail('login CTA must stay Open lab');
+if (read('login.html').includes('data-atomurus-account')) {
+  fail('login.html must not replace Open lab with the Account chip');
+}
+if (!read('index.html').includes('data-atomurus-account')) {
+  fail('index.html must emit the Account chip');
+}
+if (!read('periodic-table.html').includes('data-atomurus-account')) {
+  fail('periodic-table.html must emit the Account chip');
+}
+if (!read('calculators.html').includes('data-atomurus-account')) {
+  fail('calculators.html must emit the Account chip');
+}
+if (!read('app.html').includes('data-atomurus-account')) {
+  fail('app.html must keep the Account chip slot');
+}
+if (!read('assets/public-workspace.js').includes('ensureAccountControl')) {
+  fail('public-workspace.js must keep an Account chip fallback');
+}
+const dictSource = read('tools/i18n-dict-source.js');
+if (!/login:\s+'Account'/.test(dictSource)) fail('common.nav.login must be Account');
+if (!read('templates/chrome/public-sidebar.html').includes('common.nav.workspace')) {
+  fail('public sidebar must expose Workspace');
+}
 if (/<style>[\s\S]*\.auth-shell/.test(login)) fail('login.html must not keep auth layout inline');
 if (/auth\.access|secure HttpOnly cookie|managed authentication|secure account flow/.test(login)) {
   fail('login.html must not keep developer-console copy');

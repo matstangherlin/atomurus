@@ -68,7 +68,9 @@ test('Pro Insights: 30 days, set filter, Needs attention, Focus Review, Good', a
   const store = insightsStore();
   await installApi(page, { kind: 'pro', store });
   await gotoWorkspace(page, '/app');
-  await expect(page.locator('#ws-study-nav')).toContainText(/Insights/);
+  await expect(page.locator('#ws-study-nav')).toContainText(/Study|Estudo/);
+  await page.locator('#ws-study-nav a[href="/app?section=library"]').first().click();
+  await expect(page.locator('#ws-study-nav a[href*="section=insights"]')).toBeVisible();
   await page.locator('#ws-study-nav a[href*="section=insights"]').click();
   await expect(page.locator('#app-study')).toContainText(/Study Insights|Insights de Estudo/);
   await expect(page.locator('#app-study')).toContainText(/30 days|30 dias/);

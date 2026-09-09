@@ -95,21 +95,25 @@
 
   function solverHomeInner(locked, t, esc) {
     return '<div id="ws-lab-home">' +
-      '<p class="ws-kicker">' + esc(t('chemistrySolverKicker')) + '</p>' +
+      '<p class="ws-kicker">' + esc(t('labNavSolve') || t('chemistrySolverKicker') || 'Solve') + '</p>' +
       flagshipCard(labHref('reactions'), t('labReactions'), t('labReactionsLede'), t('labReactionsPoints'), locked, t, esc, 'reactions') +
       '<div class="ws-lab-grid">' +
       card(labHref('formula'), t('labFormula'), t('labFormulaLede'), locked, t, esc, 'formula') +
       card(labHref('solutions'), t('labSolutions'), t('labSolutionsLede'), locked, t, esc, 'solutions') +
+      card(labHref('calculations'), t('labCalc'), t('labCalcLede'), locked, t, esc, 'calculations') +
       '</div>' +
-      '<p class="ws-kicker">' + esc(t('labVisualize') || 'Visualize') + '</p>' +
+      '<p class="ws-kicker">' + esc(t('labNavCompare') || 'Compare') + '</p>' +
       '<div class="ws-lab-grid">' +
+      card(labHref('elements'), t('labElements'), t('labElementsLede'), locked, t, esc, 'elements') +
       card(labHref('molecules'), t('labMolecules'), t('labMoleculesLede'), locked, t, esc, 'molecules') +
       card(labHref('atomic'), t('labAtomic'), t('labAtomicLede'), locked, t, esc, 'atomic') +
       '</div>' +
-      '<p class="ws-kicker">' + esc(t('labAnalysis')) + '</p>' +
+      '<p class="ws-kicker">' + esc(t('labVisualize') || 'Visualize') + '</p>' +
       '<div class="ws-lab-grid">' +
-      card(labHref('calculations'), t('labCalc'), t('labCalcLede'), locked, t, esc, 'calculations') +
-      card(labHref('elements'), t('labElements'), t('labElementsLede'), locked, t, esc, 'elements') +
+      card('/viewer/atomic-models.html', t('labAtomic'), t('labAtomicLede'), locked, t, esc, 'atomic-models') +
+      card('/viewer/molecules.html', t('labMolecules'), t('labMoleculesLede'), locked, t, esc, 'viewer-molecules') +
+      card('/viewer/allotropes.html', t('labAllotropes') || 'Allotropes', t('labAtomicLede'), locked, t, esc, 'allotropes') +
+      card('/viewer/isomerism.html', t('labIsomerism') || 'Isomerism', t('labAtomicLede'), locked, t, esc, 'isomerism') +
       '</div></div>';
   }
 

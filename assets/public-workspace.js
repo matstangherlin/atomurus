@@ -37,7 +37,7 @@
       login = document.createElement('a');
       login.className = 'nav-item';
       login.href = p + 'login.html';
-      login.innerHTML = LOGIN_ICON + '<span data-i18n="common.nav.login">Login</span>';
+      login.innerHTML = LOGIN_ICON + '<span data-i18n="common.nav.login">Account</span>';
       foot.insertBefore(login, foot.firstChild);
     }
     login.setAttribute('data-auth-nav-link', 'common.nav.login');
@@ -59,9 +59,9 @@
     a.className = className || 'nav-item';
     a.href = studyHref();
     if ((className || '').indexOf('lc-mobile-menu-item') !== -1) {
-      a.innerHTML = '<span class="lc-mobile-menu-label" data-i18n="common.nav.study">Study</span>';
+      a.innerHTML = '<span class="lc-mobile-menu-label" data-i18n="common.nav.workspace">Workspace</span>';
     } else {
-      a.innerHTML = STUDY_ICON + '<span data-i18n="common.nav.study">Study</span>';
+      a.innerHTML = STUDY_ICON + '<span data-i18n="common.nav.workspace">Workspace</span>';
     }
     return a;
   }
@@ -177,6 +177,7 @@
       var on =
         here === target ||
         (target.indexOf('index.html') !== -1 && (here === '' || here === '/' || /\/index\.html$/.test(here))) ||
+        (target.indexOf('atomic-models') !== -1 && /\/viewer\//.test(here) && here.indexOf('/explore/') === -1) ||
         (target.indexOf('periodic-table') !== -1 && here.indexOf('periodic-table') !== -1) ||
         (target.indexOf('calculators') !== -1 && here.indexOf('calculators') !== -1) ||
         (target.indexOf('explore') !== -1 && here.indexOf('/explore') !== -1) ||
@@ -188,7 +189,9 @@
         (target.indexOf('config') !== -1 && here.indexOf('config') !== -1) ||
         (target.indexOf('pricing') !== -1 && here.indexOf('pricing') !== -1) ||
         (target.indexOf('/app') !== -1 && (here === '/app' || /\/app(?:\.html)?$/.test(here)));
-      if (on) a.classList.add('active');
+      a.classList.toggle('active', on);
+      if (on) a.setAttribute('aria-current', 'page');
+      else a.removeAttribute('aria-current');
     });
   }
 
@@ -201,10 +204,35 @@
     });
   }
 
+  function ensureAccountControl(shell) {
+    if (document.querySelector('[data-atomurus-account]')) return;
+    var path = (location.pathname || '/').replace(/\/+$/, '') || '/';
+    if (/\/(login|404)(?:\.html)?$/.test(path)) return;
+    var bar = shell.querySelector('.lc-topnav, .topbar');
+    if (!bar) return;
+    var wrap = document.createElement('div');
+    wrap.className = 'ps-account';
+    wrap.setAttribute('data-atomurus-account', '');
+    wrap.innerHTML =
+      '<span class="ps-plan-badge" hidden data-atomurus-plan-badge></span>' +
+      '<a class="ps-userchip lc-topnav-cta" href="' +
+      prefix() + 'login.html' +
+      '" data-atomurus-account-chip aria-label="Account">' +
+      '<svg class="ps-userchip-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+      '<span data-i18n="pricing.ctaAccount">Account</span></a>';
+    var existingCta = bar.querySelector('.lc-topnav-cta:not([data-atomurus-account-chip])');
+    if (existingCta && existingCta.parentNode) {
+      existingCta.parentNode.replaceChild(wrap, existingCta);
+    } else {
+      bar.appendChild(wrap);
+    }
+  }
+
   function enhanceExistingShell() {
     var shell = document.querySelector('.ps-shell');
     if (!shell) return false;
     document.body.classList.add('ps-body');
+    ensureAccountControl(shell);
     var pub = document.querySelector('#ps-pub-sidebar, aside.ps-pub-sidebar');
     var topnav = document.querySelector('.ps-shell > .lc-topnav');
     var topbar = document.querySelector('.ps-shell > .topbar');

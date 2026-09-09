@@ -634,17 +634,21 @@ html body.ps-body.lc-doc .ps-shell {
   display: none !important;
 }
 .ps-shell > .lc-topnav .lc-topnav-spacer { display: none; }
-.ps-shell > .lc-topnav .lc-topnav-cta {
+.ps-shell > .lc-topnav .lc-topnav-cta.ps-userchip {
   height: 40px;
   min-height: 40px;
-  padding: 0 12px;
+  min-width: 108px;
+  padding: 0 12px 0 10px;
   border-radius: 999px !important;
   background: transparent !important;
   border: 1px solid var(--lc-rule) !important;
   color: var(--lc-ink) !important;
   font-weight: 600;
 }
-.ps-shell > .lc-topnav .lc-topnav-cta svg { display: none; }
+.ps-shell > .lc-topnav .lc-topnav-cta.ps-userchip svg { display: block; }
+.ps-shell > .topbar .ps-account {
+  margin-left: 4px;
+}
 .ps-shell > aside.sidebar > .logo-wrap { display: none; }
 
 .ps-pub-sidebar {

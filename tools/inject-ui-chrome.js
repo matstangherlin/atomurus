@@ -285,6 +285,7 @@ function injectLanding(html, file) {
   const basename = path.basename(file);
   let navHtml = ensureSearch(nav.html, prefix);
   navHtml = normalizeLandingCta(navHtml, basename, prefix);
+  navHtml = ensureAccountControl(navHtml, prefix, basename);
   const sidebar = fill(readTpl('public-sidebar.html'), prefix);
   const before = rest.slice(0, nav.start);
   const after = rest.slice(nav.end);
@@ -323,6 +324,7 @@ function injectTool(html, file) {
   asideHtml = moved.asideHtml;
   topbarHtml = hideBreadcrumb(moved.topbarHtml);
   topbarHtml = ensureSearch(topbarHtml, prefix);
+  topbarHtml = ensureAccountControl(topbarHtml, prefix, path.basename(file));
   asideHtml = ensureStudy(asideHtml);
   asideHtml = ensureFoot(asideHtml, prefix);
 
@@ -344,10 +346,59 @@ function injectTool(html, file) {
   );
 }
 
+function isLoginOr404(file) {
+  return /^(login|404)(\.pt)?\.html$/i.test(path.basename(file));
+}
+
+function ensureAccountControl(barHtml, prefix, basename) {
+  if (isLoginOr404(basename)) return barHtml;
+  if (/\bdata-atomurus-account\b/.test(barHtml)) return barHtml;
+  const snippet = fill(readTpl('account-control.html'), prefix);
+  const cta = findElementWithClass(barHtml, 'lc-topnav-cta');
+  if (cta && /href=["'][^"']*(login|signup|account)/i.test(cta.html)) {
+    return barHtml.slice(0, cta.start) + snippet + '\n  ' + barHtml.slice(cta.end);
+  }
+  const close = barHtml.lastIndexOf('</');
+  if (close === -1) return barHtml + snippet;
+  return barHtml.slice(0, close) + snippet + '\n  ' + barHtml.slice(close);
+}
+
+function patchPublicSidebar(html, prefix) {
+  const el = findElementWithClass(html, 'ps-pub-sidebar');
+  if (!el) return html;
+  return html.slice(0, el.start) + fill(readTpl('public-sidebar.html'), prefix) + html.slice(el.end);
+}
+
+function relabelChromeCopy(html) {
+  return html
+    .replace(/data-i18n="common\.nav\.study"/g, 'data-i18n="common.nav.workspace"')
+    .replace(/data-i18n="common\.nav\.workspace">(Study|Estudar)<\/span>/g, 'data-i18n="common.nav.workspace">Workspace</span>')
+    .replace(/data-i18n="common\.nav\.login">Login<\/span>/g, 'data-i18n="common.nav.login">Account</span>')
+    .replace(/data-i18n="home\.modules\.card4\.(?:no|name)">Study<\/span>/g, function (m) {
+      return m.replace('Study', 'Workspace');
+    });
+}
+
+function patchEmittedChrome(html, file) {
+  let next = addHtmlAttr(html, 'data-ps-chrome', '1');
+  const prefix = prefixFor(file);
+  const basename = path.basename(file);
+  next = patchPublicSidebar(next, prefix);
+  next = relabelChromeCopy(next);
+  const shell = findElementWithClass(next, 'ps-shell');
+  const scope = shell ? shell.html : next;
+  const bar = findElementWithClass(scope, 'lc-topnav') || findElementWithClass(scope, 'topbar');
+  if (!bar) return next;
+  const patchedBar = ensureAccountControl(bar.html, prefix, basename);
+  if (patchedBar === bar.html) return next;
+  const start = (shell ? shell.start : 0) + bar.start;
+  return next.slice(0, start) + patchedBar + next.slice(start + (bar.end - bar.start));
+}
+
 function injectHtml(html, file) {
   if (/id=["']ps-shell["']/.test(html)) {
-    const next = addHtmlAttr(html, 'data-ps-chrome', '1');
-    return { html: next, status: next === html ? 'exists' : 'attr' };
+    const next = patchEmittedChrome(html, file);
+    return { html: next, status: next === html ? 'exists' : 'patched' };
   }
   if (/\bws-body\b/.test(html) || path.basename(file) === 'app.html') {
     return { html, status: 'skip-app' };
@@ -399,7 +450,9 @@ module.exports = {
   injectFile,
   prefixFor,
   SKIP_DIRS,
-  SKIP_FILES
+  SKIP_FILES,
+  ensureAccountControl,
+  patchEmittedChrome
 };
 
 if (require.main === module) {

@@ -155,10 +155,10 @@
     if (kind === 'compare') {
       return {
         kicker: t('PRO', 'PRO'),
-        title: t('Element compare is part of Atomurus Pro.', 'A comparação de elementos faz parte do Atomurus Pro.'),
+        title: t('Element Compare is included with Pro.', 'Comparar elementos está no Pro.'),
         body: t(
-          'Advanced Element Compare lives in Pro Lab. The periodic table, heatmap, trends and isotopes remain open. New accounts include a 30-day trial.',
-          'A Comparação avançada de elementos fica no Pro Lab. Tabela, mapa de calor, tendências e isótopos continuam abertos. Contas novas incluem 30 dias de trial.'
+          'Compare several elements and save the analysis to your workspace. Advanced Element Compare lives in Pro Lab. The periodic table, heatmap, trends and isotopes remain open. New accounts include a 30-day trial.',
+          'Compare vários elementos e salve a análise no workspace. A Comparação avançada de elementos fica no Pro Lab. Tabela, mapa de calor, tendências e isótopos continuam abertos. Contas novas incluem 30 dias de trial.'
         )
       };
     }
@@ -299,6 +299,7 @@
   function apply() {
     ensureStyle();
     var session = sessionOf();
+    if (!session.ready) return;
     var page = pagePolicy(location.pathname);
     var host = pageHost();
     if (page.need !== 'public' && !allowed(page.need, session, page.feature)) {

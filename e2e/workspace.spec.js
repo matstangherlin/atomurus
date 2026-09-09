@@ -13,6 +13,10 @@ function saveShot(page, name) {
 test('Free sees premium nav locked and cannot use Study Cloud', async ({ page }) => {
   await installApi(page, { kind: 'free' });
   await gotoWorkspace(page, '/app');
+  await expect(page.locator('#ws-study-nav')).toContainText(/Overview|Visão geral/);
+  await expect(page.locator('#ws-study-nav')).toContainText(/Study|Estudo/);
+  await expect(page.locator('#ws-study-nav')).toContainText(/Lab/);
+  await page.locator('#ws-study-nav a[href="/app?section=library"]').first().click();
   await expect(page.locator('#ws-study-nav')).toContainText(/Library|Biblioteca/);
   await expect(page.locator('#ws-study-nav')).toContainText(/Study Sets/);
   await expect(page.locator('#ws-study-nav a[href="/app?section=review"]')).toContainText(/Review/);
@@ -21,7 +25,7 @@ test('Free sees premium nav locked and cannot use Study Cloud', async ({ page })
 
   await page.locator('#ws-study-nav a[href="/app?section=sets"]').click();
   await expect(page.locator('#ws-dialog-host')).toContainText(/Atomurus Pro/);
-  await expect(page).toHaveURL(/\/app$/);
+  await expect(page).toHaveURL(/section=library/);
   await page.locator('#ws-dialog-host button').first().click();
 
   await gotoWorkspace(page, '/app?section=library');
@@ -174,7 +178,7 @@ test('PT/EN workspace rerender', async ({ page }) => {
   await expect(page.locator('#ws-study-nav')).toContainText(/Overview|Library/);
   await page.locator('[data-i18n-toggle]').first().click();
   await expect(page.locator('#ws-study-nav')).toContainText('Visão geral');
-  await expect(page.locator('#ws-study-nav')).toContainText('Biblioteca');
+  await expect(page.locator('#ws-study-nav')).toContainText(/Estudo|Lab|Atividade/);
   await saveShot(page, 'app-overview-pt');
   await page.locator('[data-i18n-toggle]').first().click();
   await expect(page.locator('#ws-study-nav')).toContainText('Overview');
@@ -214,7 +218,7 @@ test('mobile 390x844: bottom nav, drawer, no horizontal overflow', async ({ page
   expect(Math.max(...tops) - Math.min(...tops)).toBeLessThan(8);
   await expect(page.locator('#app-study')).toContainText(/1 card is due today|1 card vence hoje/);
   await expect(page.locator('#app-study')).not.toContainText(/1 cards are due|1 cards vencem/);
-  const destCards = page.locator('.ws-dest-card');
+  const destCards = page.locator('.ws-study-dests .ws-dest-card');
   await expect(destCards).toHaveCount(4);
   const destLayout = await destCards.evaluateAll((els) => els.map((el) => {
     const box = el.getBoundingClientRect();
