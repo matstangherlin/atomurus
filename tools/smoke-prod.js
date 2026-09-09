@@ -54,6 +54,20 @@ const CHECKS = [
       assert(status === 401, 'expected 401');
       assert(data.ok === false, 'expected ok:false');
     }
+  },
+  {
+    name: 'auth/login does not hang to 504',
+    path: '/api/auth/login',
+    method: 'POST',
+    json: true,
+    timeoutMs: 12000,
+    body: { identifier: 'smoke-dummy@atomurus.test', password: 'not-a-real-password' },
+    allowStatus: [401, 403, 429, 503],
+    test: (data, _h, status) => {
+      assert(status !== 504, 'login hung until gateway 504');
+      assert([401, 403, 429, 503].includes(status), `unexpected ${status}`);
+      assert(data && data.ok === false, 'expected ok:false');
+    }
   }
 ];
 
@@ -62,17 +76,43 @@ function assert(cond, msg) {
 }
 
 async function runCheck(check) {
-  const res = await fetch(BASE + check.path, {
-    redirect: 'follow',
-    headers: { Accept: check.json ? 'application/json' : 'text/html', 'User-Agent': 'AtomurusSmoke/1.0' }
-  });
+  const timeoutMs = Number(check.timeoutMs) > 0 ? Number(check.timeoutMs) : 0;
+  const controller = timeoutMs ? new AbortController() : null;
+  const timer = timeoutMs ? setTimeout(() => controller.abort(), timeoutMs) : null;
+  let res;
+  try {
+    res = await fetch(BASE + check.path, {
+      method: check.method || 'GET',
+      redirect: 'follow',
+      signal: controller ? controller.signal : undefined,
+      headers: {
+        Accept: check.json ? 'application/json' : 'text/html',
+        'User-Agent': 'AtomurusSmoke/1.0',
+        ...(check.body ? { 'Content-Type': 'application/json', Origin: BASE } : {})
+      },
+      body: check.body != null ? JSON.stringify(check.body) : undefined
+    });
+  } catch (err) {
+    if (err && (err.name === 'AbortError' || err.name === 'TimeoutError')) {
+      throw new Error(`timed out after ${timeoutMs}ms`);
+    }
+    throw err;
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
   const status = res.status;
   const allowed = check.allowStatus || [200];
   if (!allowed.includes(status) && status !== 200) {
     throw new Error(`HTTP ${status}`);
   }
   if (check.json) {
-    const data = await res.json();
+    const text = await res.text();
+    let data = {};
+    try {
+      data = text ? JSON.parse(text) : {};
+    } catch (_err) {
+      data = { error: text };
+    }
     check.test(data, res.headers, status);
   } else {
     const html = await res.text();

@@ -24,7 +24,7 @@ export function isAuthConfigured() {
 }
 
 export function isAuthConfigError(error) {
-  return error?.name === 'MissingIdentityError' || error?.code === 'auth_not_configured';
+  return error?.code === 'auth_not_configured';
 }
 
 function isRejectedSession(error) {

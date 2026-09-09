@@ -6,6 +6,7 @@ import { isPublicAuthPath, isProtectedPath, loginUrl, safeNextPath } from '../ne
 import { hasSessionCookieHeader } from '../netlify/lib/session-cookie-flag.mjs';
 import { logAuthEvent } from '../netlify/lib/auth-log.mjs';
 import { classifySupabaseAuthError, normalizeSupabaseUser } from '../netlify/lib/supabase-auth.mjs';
+import { upstreamFetch } from '../netlify/lib/upstream-fetch.mjs';
 
 const original = { ...process.env };
 
@@ -105,6 +106,19 @@ const unconfirmed = classifySupabaseAuthError(Object.assign(new Error('Email not
 assert.equal(unconfirmed.code, 'email_not_confirmed');
 assert.equal(unconfirmed.status, 401);
 
+const timedOut = classifySupabaseAuthError(Object.assign(new Error('Authentication provider timed out'), {
+  name: 'TimeoutError',
+  code: 'upstream_timeout'
+}));
+assert.equal(timedOut.code, 'upstream_timeout');
+assert.equal(timedOut.status, 503);
+
+const aborted = classifySupabaseAuthError(Object.assign(new Error('The operation was aborted'), {
+  name: 'AbortError'
+}));
+assert.equal(aborted.code, 'upstream_timeout');
+assert.equal(aborted.status, 503);
+
 const logs = [];
 const originalWarn = console.warn;
 console.warn = (line) => logs.push(String(line));
@@ -137,6 +151,8 @@ assert.match(loginBoot, /event\.persisted !== true/);
 assert.match(loginBoot, /auth-login-ok[\s\S]*signupOk|signupOk[\s\S]*auth-login-ok/);
 assert.match(loginBoot, /forgot-password\?|authScreenPath/);
 assert.match(loginBoot, /handlePasswordResetSubmit[\s\S]*passwordPolicyError\(password\)/);
+assert.match(loginBoot, /revealAuthPanels/);
+assert.match(loginBoot, /setTimeout\(revealAuthPanels, 8000\)/);
 assert.doesNotMatch(loginBoot, /addEventListener\(['"]load['"]/);
 assert.doesNotMatch(loginBoot, /withRefresh\s*\(/);
 
@@ -145,6 +161,8 @@ assert.match(authClient, /encodeURIComponent\(next\)/);
 assert.match(authClient, /url\.origin !== location\.origin/);
 assert.match(authClient, /sessionPromise/);
 assert.match(authClient, /options\.force/);
+assert.match(authClient, /AbortController/);
+assert.match(authClient, /timeoutMs = 20000/);
 assert.match(authClient, /isProtectedPath\(location\.pathname\)/);
 assert.match(authClient, /publishSync\('signed-out'\)/);
 assert.match(authClient, /publishSync\('signed-in'\)/);
@@ -167,6 +185,9 @@ assert.doesNotMatch(studyClient, /localStorage|sessionStorage/);
 
 const loginHtml = readFileSync(new URL('../login.html', import.meta.url), 'utf8');
 assert.match(loginHtml, /auth-sync\.js/);
+assert.match(loginHtml, /class="auth-checking"/);
+assert.match(loginHtml, /id="auth-session-boot"/);
+assert.match(loginHtml, /checkingSession/);
 
 const appHtml = readFileSync(new URL('../app.html', import.meta.url), 'utf8');
 assert.doesNotMatch(appHtml, /requireSession\(\{/);
@@ -176,6 +197,11 @@ assert.doesNotMatch(appHtml, /classList\.add\(['"]lc-loading['"]\)/);
 
 const netlifyToml = readFileSync(new URL('../netlify.toml', import.meta.url), 'utf8');
 assert.doesNotMatch(netlifyToml, /function = "protect-app"/);
+assert.match(netlifyToml, /SUPABASE_FETCH_TIMEOUT_MS/);
+
+const upstreamSrc = readFileSync(new URL('../netlify/lib/upstream-fetch.mjs', import.meta.url), 'utf8');
+assert.match(upstreamSrc, /ipv4first/);
+assert.match(upstreamSrc, /controller\.abort/);
 
 const supabaseConfig = readFileSync(new URL('../supabase/config.toml', import.meta.url), 'utf8');
 assert.match(supabaseConfig, /atomurus\.com\/reset-password/);
@@ -205,6 +231,7 @@ try {
   globalThis.fetch = async () => ({
     ok: false,
     status: 400,
+    headers: new Headers(),
     text: async () => JSON.stringify({ message: 'Invalid Refresh Token' })
   });
 
@@ -223,6 +250,70 @@ try {
 } finally {
   globalThis.fetch = originalFetch;
   restoreEnv();
+}
+
+function abortError() {
+  const err = new Error('The operation was aborted');
+  err.name = 'AbortError';
+  return err;
+}
+
+function hangUntilAbort(options = {}) {
+  return new Promise((_, reject) => {
+    const signal = options.signal;
+    if (!signal) return;
+    if (signal.aborted) {
+      reject(abortError());
+      return;
+    }
+    signal.addEventListener('abort', () => reject(abortError()), { once: true });
+  });
+}
+
+{
+  restoreEnv();
+  process.env.SUPABASE_FETCH_TIMEOUT_MS = '150';
+  process.env.SUPABASE_FETCH_RETRIES = '0';
+  const prevFetch = globalThis.fetch;
+  globalThis.fetch = async (_url, options) => hangUntilAbort(options);
+  const started = Date.now();
+  try {
+    await upstreamFetch('https://demo.supabase.co/auth/v1/token', { method: 'POST' });
+    assert.fail('expected upstream timeout');
+  } catch (err) {
+    assert.equal(err.code, 'upstream_timeout');
+    assert.ok(Date.now() - started < 1500);
+  } finally {
+    globalThis.fetch = prevFetch;
+    restoreEnv();
+  }
+}
+
+{
+  restoreEnv();
+  process.env.SUPABASE_FETCH_TIMEOUT_MS = '150';
+  process.env.SUPABASE_FETCH_RETRIES = '1';
+  const prevFetch = globalThis.fetch;
+  let calls = 0;
+  globalThis.fetch = async (_url, options) => {
+    calls += 1;
+    if (calls === 1) return hangUntilAbort(options);
+    return {
+      ok: true,
+      status: 200,
+      headers: new Headers(),
+      text: async () => JSON.stringify({ access_token: 'ok' })
+    };
+  };
+  try {
+    const res = await upstreamFetch('https://demo.supabase.co/auth/v1/token', { method: 'POST' });
+    assert.equal(calls, 2);
+    assert.equal(res.status, 200);
+    assert.equal(await res.json().then((body) => body.access_token), 'ok');
+  } finally {
+    globalThis.fetch = prevFetch;
+    restoreEnv();
+  }
 }
 
 console.log('test-auth-provider: ok');

@@ -98,6 +98,9 @@
     if (code === 'network' || status === 0) {
       return t('common.auth.networkError', 'Network problem. Check your connection and try again.');
     }
+    if (code === 'timeout' || code === 'upstream_timeout' || status === 503) {
+      return t('common.auth.unavailable', 'Authentication is temporarily unavailable. Try again shortly.');
+    }
     if (status === 403) {
       return t('common.auth.originBlocked', 'Sign-in was blocked for this site address. Open atomurus.com/login and try again.');
     }
@@ -310,14 +313,19 @@
     var password = $('auth-password').value || '';
     setBusy(button, true, t('common.auth.signingIn', t('common.auth.entering', 'Signing in…')));
     setFormBusy(form, true);
+    var signedIn = false;
     try {
       await auth().login(identifier, password);
+      signedIn = true;
       show(okBox, t('common.auth.loginOk', 'Signed in. Opening your workspace…'));
       auth().redirectAfterLogin();
     } catch (err) {
       show(errBox, friendlyLoginError(err));
-      setBusy(button, false);
-      setFormBusy(form, false);
+    } finally {
+      if (!signedIn) {
+        setBusy(button, false);
+        setFormBusy(form, false);
+      }
     }
   }
 
@@ -507,13 +515,25 @@
     bindPasswordHints();
   }
 
+  function revealAuthPanels() {
+    document.documentElement.classList.remove('auth-checking');
+    var boot = $('auth-session-boot');
+    if (boot) boot.hidden = true;
+  }
+
   async function startAuthPage() {
     if (authPageBooted) return;
     authPageBooted = true;
     bindAuthPage();
     setMode(currentMode(), { skipHistory: true });
-    var handledCallback = await initAuthCallbacks();
-    if (!handledCallback) await maybeRedirectSignedIn();
+    var fallback = setTimeout(revealAuthPanels, 8000);
+    try {
+      var handledCallback = await initAuthCallbacks();
+      if (!handledCallback) await maybeRedirectSignedIn();
+    } finally {
+      clearTimeout(fallback);
+      revealAuthPanels();
+    }
   }
 
   function onPageShow(event) {

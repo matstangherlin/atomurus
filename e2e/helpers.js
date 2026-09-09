@@ -224,7 +224,8 @@ async function installApi(page, options = {}) {
     signedIn: signedInOption,
     lang,
     theme,
-    reviewFails = 0
+    reviewFails = 0,
+    loginResult = 'ok'
   } = options;
   await preparePage(page, { lang, theme });
   const user = userFixture(kind === 'guest' ? 'free' : kind);
@@ -258,6 +259,26 @@ async function installApi(page, options = {}) {
       return json(route, 200, { ok: true, user });
     }
     if (path === '/api/auth/login' && method === 'POST') {
+      if (loginResult === 'invalid') {
+        return json(route, 401, { ok: false, error: 'Invalid email or password' });
+      }
+      if (loginResult === 'unconfirmed') {
+        return json(route, 401, {
+          ok: false,
+          code: 'email_not_confirmed',
+          error: 'Confirm your email before signing in.'
+        });
+      }
+      signedIn = true;
+      return json(route, 200, { ok: true, user });
+    }
+    if (path === '/api/auth/signup' && method === 'POST') {
+      return json(route, 200, { ok: true, user, needsConfirmation: true, signedIn: false });
+    }
+    if (path === '/api/auth/recover' && method === 'POST') {
+      return json(route, 200, { ok: true });
+    }
+    if (path === '/api/auth/reset' && method === 'POST') {
       signedIn = true;
       return json(route, 200, { ok: true, user });
     }

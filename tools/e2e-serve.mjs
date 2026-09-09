@@ -12,6 +12,7 @@ const PRETTY = {
   '/pricing': '/pricing.html',
   '/signup': '/login.html',
   '/forgot-password': '/login.html',
+  '/reset-password': '/login.html',
   '/contact': '/contact.html'
 };
 

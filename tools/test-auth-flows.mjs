@@ -42,11 +42,33 @@ function restoreLogs() {
 }
 
 function jsonRes(status, body) {
+  const text = JSON.stringify(body);
   return {
     ok: status >= 200 && status < 300,
     status,
-    text: async () => JSON.stringify(body)
+    statusText: status >= 200 && status < 300 ? 'OK' : 'Error',
+    headers: new Headers({ 'content-type': 'application/json' }),
+    text: async () => text,
+    json: async () => body
   };
+}
+
+function abortError() {
+  const err = new Error('The operation was aborted');
+  err.name = 'AbortError';
+  return err;
+}
+
+function hangUntilAbort(options = {}) {
+  return new Promise((_, reject) => {
+    const signal = options.signal;
+    if (!signal) return;
+    if (signal.aborted) {
+      reject(abortError());
+      return;
+    }
+    signal.addEventListener('abort', () => reject(abortError()), { once: true });
+  });
 }
 
 function demoUser(overrides = {}) {
@@ -751,6 +773,50 @@ await withAuthEnv(async () => {
   assert.equal(refreshCalls, 1);
   assert.equal(first.user.email, 'alice@atomurus.com');
   assert.equal(second.user.email, 'alice@atomurus.com');
+});
+
+await withAuthEnv(async () => {
+  resetAuthRateLimiters();
+  process.env.SUPABASE_FETCH_TIMEOUT_MS = '200';
+  process.env.SUPABASE_FETCH_RETRIES = '0';
+  installSupabaseMock([{
+    match: (url, method) => method === 'POST' && url.includes('/token?grant_type=password'),
+    respond: async (_url, _method, options) => hangUntilAbort(options)
+  }]);
+  const started = Date.now();
+  const hung = await loginHandler(cookieRequest('https://atomurus.com/api/auth/login', {
+    method: 'POST',
+    body: { identifier: 'alice@atomurus.com', password: 'Correct#Pass' }
+  }));
+  const hungJson = await readJson(hung);
+  assert.ok(Date.now() - started < 1500);
+  assert.equal(hung.status, 503);
+  assert.equal(hungJson.ok, false);
+  assert.equal(hungJson.code, 'upstream_timeout');
+});
+
+await withAuthEnv(async () => {
+  resetAuthRateLimiters();
+  process.env.SUPABASE_FETCH_TIMEOUT_MS = '200';
+  process.env.SUPABASE_FETCH_RETRIES = '1';
+  let passwordCalls = 0;
+  installSupabaseMock([{
+    match: (url, method) => method === 'POST' && url.includes('/token?grant_type=password'),
+    respond: async (_url, _method, options) => {
+      passwordCalls += 1;
+      if (passwordCalls === 1) return hangUntilAbort(options);
+      return jsonRes(200, sessionBody());
+    }
+  }]);
+  const recovered = await loginHandler(cookieRequest('https://atomurus.com/api/auth/login', {
+    method: 'POST',
+    body: { identifier: 'alice@atomurus.com', password: 'Correct#Pass' }
+  }));
+  const recoveredJson = await readJson(recovered);
+  assert.equal(passwordCalls, 2);
+  assert.equal(recovered.status, 200);
+  assert.equal(recoveredJson.ok, true);
+  assert.equal(recoveredJson.user.email, 'alice@atomurus.com');
 });
 
 console.log('test-auth-flows: ok');

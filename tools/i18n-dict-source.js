@@ -132,7 +132,8 @@ const DICT = {
           signupTrialNote: 'Includes 30 days of Atomurus Pro. No separate Study Cloud account required. The trial starts with your account — no card is required to begin.',
           pwLenOk: '9+ characters',
           pwSpecialOk: 'Special character',
-          signingIn: 'Signing in…'
+          signingIn: 'Signing in…',
+          checkingSession: 'Checking session…'
         },
         study: {
           save: 'Save',
@@ -2210,7 +2211,8 @@ const DICT = {
           signupTrialNote: 'Inclui 30 dias de Atomurus Pro. Não é preciso uma conta separada do Study Cloud. O trial começa com a conta — sem cartão para iniciar.',
           pwLenOk: '9+ caracteres',
           pwSpecialOk: 'Caractere especial',
-          signingIn: 'Entrando…'
+          signingIn: 'Entrando…',
+          checkingSession: 'Verificando sessão…'
         },
         study: {
           save: 'Salvar',

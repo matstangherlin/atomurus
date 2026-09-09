@@ -33,6 +33,8 @@ In **Site configuration → Environment variables** (and in local `.env` for `ne
 | `AUTH_PASSWORD_REDIRECT` | No | Password recovery landing URL (`https://atomurus.com/reset-password`) |
 | `AUTH_ALLOWED_ORIGINS` | No | Comma-separated extra origins for CORS checks |
 | `ALLOWED_ORIGIN` | No | Legacy single-origin allowlist |
+| `SUPABASE_FETCH_TIMEOUT_MS` | No | Function-side GoTrue/REST timeout in ms (default `8000`, max `20000`). Avoids a 30s 504 when Node `fetch()` hangs after GoTrue already finished. |
+| `SUPABASE_FETCH_RETRIES` | No | Extra attempts after an upstream timeout (default `1`, max `2`) |
 
 ## 4. Auth settings in Supabase
 
@@ -68,16 +70,13 @@ RLS keeps `user A` from reading or writing `user B` rows even if someone calls P
 
 ## 6. Routes
 
-Public:
+Public HTML:
 
 - `/login`
 - `/signup`
 - `/forgot-password`
 - `/reset-password`
-
-Protected (edge cookie gate redirects unsigned visitors to `/login?next=` before `app.html`; stale cookies still fall through to `/api/auth/me`):
-
-- `/app`
+- `/app` — public guest workspace. Signed-out visitors see the study shell; Library, flashcards, and other Pro surfaces prompt for login. There is **no** edge cookie gate on `/app`. Protected data lives behind authenticated APIs (`requireUser` / `requireFeature`), not an HTML route gate.
 
 API:
 
@@ -119,7 +118,7 @@ Stripe webhook sync writes **app metadata** in Supabase. Use the service role ke
 4. Reload `/app` — session should persist.
 5. Open `/app` in a new tab — still signed in.
 6. Test **Forgot password** → `/reset-password` → new password → workspace.
-7. Logout, then click Back — `/app` must not show the private workspace.
+7. Logout from `/app` — you remain on `/app` as a guest (Account chip, not the signed-in library). Click Back; you should not regain a private session without signing in.
 8. Open `/pricing` and confirm trial/Pro badges on `/app`.
 
 Automated coverage: `npm run test:auth`.

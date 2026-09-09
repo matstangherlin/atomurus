@@ -167,8 +167,12 @@ export function jsonWithCookies(status, payload, cookieHeaders = []) {
   });
 }
 
+export function isAuthConfigError(error) {
+  return error?.code === 'auth_not_configured';
+}
+
 export function isIdentityConfigError(error) {
-  return error?.name === 'MissingIdentityError' || error?.code === 'auth_not_configured';
+  return isAuthConfigError(error);
 }
 
 export function statusFromError(error, fallback = 500) {
