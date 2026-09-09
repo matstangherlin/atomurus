@@ -85,6 +85,9 @@ test('key pages emit shared chrome in source HTML', async ({ request }) => {
   for (const url of pages) {
     const text = await (await request.get(url)).text();
     expect(text, url).toContain('id="ps-shell"');
+  }
+  for (const url of ['/index.html', '/pricing.html', '/about.html', '/calculators.html', '/periodic-table.html']) {
+    const text = await (await request.get(url)).text();
     expect(text, url).not.toContain('assets/ui/index.css');
   }
   const table = await (await request.get('/periodic-table.html')).text();
@@ -92,6 +95,9 @@ test('key pages emit shared chrome in source HTML', async ({ request }) => {
   const login = await (await request.get('/login.html')).text();
   expect(login).toMatch(/lc-topnav-cta"[^>]*periodic-table/);
   expect(login).toContain('Open lab');
+  expect(login).toContain('assets/ui/index.css');
+  expect(login).toContain('assets/layouts/auth.css');
+  expect(login).not.toMatch(/auth\.access|secure HttpOnly cookie|managed authentication|secure account flow/);
   const app = await (await request.get('/app.html')).text();
   expect(app).not.toContain('id="ps-shell"');
   expect(app).not.toContain('public-shell.css');

@@ -122,4 +122,4 @@ Do not wrap the public site in `.ui-compat` in this step.
 - `npm run test:ui-v2` — files, scale, almost no `!important`, no inline styles on the gallery
 - `e2e/ui-v2.spec.js` — focus-visible, disabled, hover, form error, password toggle, dialog Escape, dark panel, mobile overflow, Home still not loading `/assets/ui/`
 
-Chrome (Prompt 03) lives in [`docs/ui-v2-chrome.md`](ui-v2-chrome.md) and `templates/chrome/`. Production pages still do not load this bundle.
+Chrome (Prompt 03) lives in [`docs/ui-v2-chrome.md`](ui-v2-chrome.md). Auth (Prompt 04) lives in [`docs/ui-v2-auth.md`](ui-v2-auth.md). Home and `/app` still do not load this bundle.

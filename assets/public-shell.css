@@ -854,8 +854,8 @@ html body.ps-body .ps-shell .calc-shell {
   box-shadow: 0 0 0 3px var(--accent-ring, rgba(30, 106, 80, .2)) !important;
 }
 
-.auth-primary-btn,
-.auth-panel .lc-form button[type=submit] {
+.auth-primary-btn:not(.ui-btn-primary),
+.auth-panel .lc-form button[type=submit]:not(.ui-btn-primary) {
   height: 44px;
   min-height: 44px;
   border-radius: var(--ps-radius-md);
@@ -864,8 +864,8 @@ html body.ps-body .ps-shell .calc-shell {
   color: #F8F5EC !important;
   font-weight: 600;
 }
-[data-theme="dark"] .auth-primary-btn,
-[data-theme="dark"] .auth-panel .lc-form button[type=submit] {
+[data-theme="dark"] .auth-primary-btn:not(.ui-btn-primary),
+[data-theme="dark"] .auth-panel .lc-form button[type=submit]:not(.ui-btn-primary) {
   color: #0E0D0C !important;
 }
 .currency-toggle button,
@@ -1665,7 +1665,7 @@ html body .share-toast {
   text-transform: none !important;
 }
 
-html body .lc-form button[type=submit] {
+html body .lc-form button[type=submit]:not(.ui-btn-primary) {
   height: 44px !important;
   min-height: 44px !important;
   border-radius: var(--ps-radius-md) !important;
@@ -1675,7 +1675,7 @@ html body .lc-form button[type=submit] {
   font-weight: 600 !important;
   transform: none !important;
 }
-[data-theme="dark"] html body .lc-form button[type=submit] {
+[data-theme="dark"] html body .lc-form button[type=submit]:not(.ui-btn-primary) {
   color: #0E0D0C !important;
 }
 

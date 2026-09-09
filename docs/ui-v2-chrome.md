@@ -2,7 +2,7 @@
 
 **Scope:** Prompt 03. One product chrome for public, tool, and workspace **modes**. Layout is HTML. JavaScript does not rebuild the document when `#ps-shell` is already in the source.
 
-Production pages still use Lab Console + `public-shell.css`. They do **not** load `assets/ui/index.css`. This step stops the hoist from being the only way the shell exists.
+Production pages still use Lab Console + `public-shell.css`. **Login** loads `assets/ui/index.css` (Prompt 04). Home and `/app` do **not**. This step stops the hoist from being the only way the shell exists.
 
 ## Modes
 
@@ -62,7 +62,7 @@ When `#ps-shell` is already in the document, `enhanceExistingShell()` runs and *
 ## What this step does not do
 
 - Home content, login body, Viewer science, Periodic Table cells
-- Loading `assets/ui/` on Home or `/app`
+- Loading `assets/ui/` on Home or `/app` (login loads it in Prompt 04)
 - Removing `public-workspace.js` or `public-shell.css`
 - New `!important` war (logo-tag still uses the existing override so Lab Console cannot resurrect `v1.11`)
 - URL, SEO, auth, or i18n changes

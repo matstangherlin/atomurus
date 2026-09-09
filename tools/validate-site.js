@@ -345,7 +345,9 @@ function assertUiV2() {
     'templates/chrome/search.html',
     'templates/chrome/brand.html',
     'tools/inject-ui-chrome.js',
-    'docs/ui-v2-chrome.md'
+    'docs/ui-v2-chrome.md',
+    'docs/ui-v2-auth.md',
+    'assets/layouts/auth.css'
   ];
   files.forEach((rel) => {
     if (!fs.existsSync(path.join(ROOT, rel))) fail(`${rel} is missing`);
@@ -394,7 +396,6 @@ function assertUiV2() {
   }
   [
     'index.html',
-    'login.html',
     'pricing.html',
     'about.html',
     'calculators.html',
@@ -405,6 +406,17 @@ function assertUiV2() {
     if (!html.includes('data-ps-chrome')) fail(`${rel} must mark emitted chrome with data-ps-chrome`);
     if (html.includes('assets/ui/index.css')) fail(`${rel} must not load UI V2 yet`);
   });
+  const loginHtml = read('login.html');
+  if (!loginHtml.includes('id="ps-shell"')) fail('login.html must emit #ps-shell in source HTML');
+  if (!loginHtml.includes('data-ps-chrome')) fail('login.html must mark emitted chrome with data-ps-chrome');
+  if (!loginHtml.includes('assets/ui/index.css')) fail('login.html must load UI V2');
+  if (!loginHtml.includes('assets/layouts/auth.css')) fail('login.html must load assets/layouts/auth.css');
+  if (/<style>[\s\S]*\.auth-shell/.test(loginHtml)) {
+    fail('login.html must not keep auth layout in an inline style block');
+  }
+  if (/auth\.access|secure HttpOnly cookie|managed authentication|secure account flow/.test(loginHtml)) {
+    fail('login.html must not keep developer-console copy in the primary UI');
+  }
   if (!read('periodic-table.html').includes('data-i18n="common.brandTag">chemistry lab')) {
     fail('periodic-table.html must put chemistry lab in the DOM');
   }

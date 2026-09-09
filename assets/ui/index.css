@@ -1,5 +1,5 @@
 /* Atomurus UI V2 — bundle
-   Load after fonts.css. Production pages do not include this yet. */
+   Load after fonts.css. Login (Prompt 04) loads this bundle; Home and /app do not yet. */
 
 @import url("tokens.css");
 @import url("base.css");

@@ -76,7 +76,7 @@ test('password recovery shows the generic success copy', async ({ page }) => {
   await page.locator('#auth-reset-email').fill('pro@atomurus.test');
   await page.locator('#auth-reset-submit').click();
   await expect(page.locator('#auth-reset-ok')).toBeVisible();
-  await expect(page.locator('#auth-reset-ok')).toContainText(/recovery instructions|authentication provider/i);
+  await expect(page.locator('#auth-reset-ok')).toContainText(/recovery instructions/i);
   await page.locator('#auth-panel-recover [data-auth-route="login"]').click();
   await expect(page.locator('#auth-login-form')).toBeVisible();
 });

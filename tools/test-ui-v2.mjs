@@ -20,7 +20,9 @@ const required = [
   'templates/chrome/search.html',
   'templates/chrome/brand.html',
   'tools/inject-ui-chrome.js',
-  'docs/ui-v2-chrome.md'
+  'docs/ui-v2-chrome.md',
+  'docs/ui-v2-auth.md',
+  'assets/layouts/auth.css'
 ];
 for (const rel of required) {
   if (!fs.existsSync(path.join(root, rel))) fail(`missing ${rel}`);
@@ -28,7 +30,6 @@ for (const rel of required) {
 
 const chromePages = [
   'index.html',
-  'login.html',
   'pricing.html',
   'about.html',
   'calculators.html',
@@ -40,7 +41,17 @@ for (const rel of chromePages) {
   if (!html.includes('data-ps-chrome')) fail(`${rel} must mark emitted chrome`);
   if (html.includes('assets/ui/index.css')) fail(`${rel} must not load UI V2 yet`);
 }
-if (!read('login.html').includes('Open lab')) fail('login CTA must stay Open lab');
+const login = read('login.html');
+if (!login.includes('id="ps-shell"')) fail('login.html must contain #ps-shell in source');
+if (!login.includes('data-ps-chrome')) fail('login.html must mark emitted chrome');
+if (!login.includes('assets/ui/index.css')) fail('login.html must load UI V2');
+if (!login.includes('assets/layouts/auth.css')) fail('login.html must load auth layout CSS');
+if (!login.includes('Open lab')) fail('login CTA must stay Open lab');
+if (/<style>[\s\S]*\.auth-shell/.test(login)) fail('login.html must not keep auth layout inline');
+if (/auth\.access|secure HttpOnly cookie|managed authentication|secure account flow/.test(login)) {
+  fail('login.html must not keep developer-console copy');
+}
+if (!login.includes('id="auth-email"')) fail('login.html must keep #auth-email');
 if (read('app.html').includes('id="ps-shell"') || read('app.html').includes('public-shell.css')) {
   fail('app.html must not use public chrome');
 }

@@ -169,6 +169,9 @@ test('public table, calculators, login and pricing share the new chrome', async 
   await expect(page.locator('#auth-email')).toBeVisible();
   const inputRadius = await page.locator('#auth-email').evaluate((el) => getComputedStyle(el).borderRadius);
   expect(parseFloat(inputRadius)).toBeGreaterThanOrEqual(10);
+  await expect.poll(async () => page.locator('#auth-login-submit').evaluate((el) => getComputedStyle(el).backgroundColor))
+    .toMatch(/rgb\(\s*20,\s*18,\s*14\s*\)/);
+  await expect(page.locator('.auth-shell')).not.toContainText(/auth\.access|HttpOnly|managed authentication|secure account flow/i);
   await saveShot(page, 'desktop-public-login');
 
   await page.goto('/pricing.html');
@@ -297,4 +300,23 @@ test('public home dark mode and mobile keep the workspace chrome', async ({ page
     return r.x;
   }).toBeGreaterThanOrEqual(0);
   await saveShot(page, 'mobile-public-calculators');
+});
+
+test('signup and recover keep UI V2 forms and the 30-day trial copy', async ({ page }) => {
+  await page.goto('/signup');
+  await expect(page.locator('#auth-signup-form')).toBeVisible();
+  await expect(page.locator('#auth-panel-signup')).toContainText(/30 days/i);
+  await expect.poll(async () => page.locator('#auth-signup-submit').evaluate((el) => getComputedStyle(el).backgroundColor))
+    .toMatch(/rgb\(\s*20,\s*18,\s*14\s*\)/);
+  await saveShot(page, 'desktop-public-signup');
+
+  await page.goto('/forgot-password');
+  await expect(page.locator('#auth-reset-form')).toBeVisible();
+  await expect(page.locator('#auth-reset-email')).toBeVisible();
+  await saveShot(page, 'desktop-public-recover');
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/login.html');
+  await expect(page.locator('#auth-email')).toBeVisible();
+  await saveShot(page, 'mobile-public-login');
 });
