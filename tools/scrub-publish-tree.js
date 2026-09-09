@@ -23,6 +23,7 @@ const REMOVE_PATHS = [
   'package-lock.json',
   'supabase',
   'propostas',
+  'docs',
   '.env.example',
 ];
 

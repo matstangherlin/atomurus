@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="light">
+<html data-ps-chrome="1" lang="pt-BR" data-theme="light">
 <head>
-<style>html.lang-pt-pending [data-i18n],html.lang-pt-pending [data-i18n-html],html.lang-pt-pending [data-i18n-attr],html.lang-pt-pending [data-page-field]{visibility:hidden!important}html[data-theme="dark"] #icon-theme-light,html[data-theme="light"] #icon-theme-dark{display:none!important}html[data-theme="dark"] #icon-theme-dark,html[data-theme="light"] #icon-theme-light{display:block!important}</style>
-<script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var KEY='atomurus-lang';var p=new URLSearchParams(location.search).get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem(KEY);if(l!=='pt'&&l!=='en'){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}try{localStorage.setItem(KEY,l);}catch(e){}if(l==='pt'){document.documentElement.lang='pt-BR';document.documentElement.classList.add('lang-pt-pending');setTimeout(function(){document.documentElement.classList.remove('lang-pt-pending');},120);}else{document.documentElement.lang='en-US';}}catch(e){}})();</script>
+<style>html[data-theme="dark"] #icon-theme-light,html[data-theme="light"] #icon-theme-dark{display:none!important}html[data-theme="dark"] #icon-theme-dark,html[data-theme="light"] #icon-theme-light{display:block!important}</style>
+<script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var KEY='atomurus-lang';var p=new URLSearchParams(location.search).get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem(KEY);if(l!=='pt'&&l!=='en'){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}try{localStorage.setItem(KEY,l);}catch(e){}if(l==='pt'){document.documentElement.lang='pt-BR';}else{document.documentElement.lang='en-US';}}catch(e){}})();</script>
 <script>(function(){var h=location.hash,q=location.search;if(/^#(confirmation_token|recovery_token)=/.test(h)){location.replace('/login'+h);return;}if(/[?&]token_hash=/.test(q)){location.replace('/login'+q);}})();</script>
 <meta name="google-adsense-account" content="ca-pub-9495821870733084">
 <script src="ads-gate.js?v=202608041630"></script>
@@ -50,7 +50,7 @@
       "name": "Atomurus",
       "alternateName": "Atomurus Chemistry Laboratory",
       "url": "https://atomurus.com/",
-      "description": "Open and interactive chemistry laboratory — periodic table, 40+ 3D models, chemistry calculators, articles and more.",
+      "description": "Open and interactive chemistry laboratory — periodic table, molar mass, dilution, articles and more.",
       "inLanguage": ["en", "pt-BR", "es"],
       "publisher": { "@id": "https://atomurus.com/#org" },
       "potentialAction": {
@@ -75,7 +75,7 @@
         "height": 512
       },
       "image": "https://atomurus.com/assets/og-home.png",
-      "description": "Open and interactive chemistry laboratory — periodic table with 118 elements, 3D atomic, molecular, allotrope and isomerism models, five calculators and chemistry articles.",
+      "description": "Open and interactive chemistry laboratory — periodic table with 118 elements, chemistry articles, molar mass and dilution. Extra calculators after sign-in. 3D viewers in Atomurus Pro.",
       "knowsAbout": [
         "Chemistry",
         "Periodic Table",
@@ -116,7 +116,10 @@
 <link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
 <noscript><link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630"></noscript>
 <link rel="stylesheet" href="/assets/public-shell.css?v=202608281830">
+<script src="assets/global-nav.js?v=202609090500"></script>
 <script src="/assets/public-workspace.js?v=202608282500"></script>
+<link rel="stylesheet" href="/assets/ui/index.css?v=202609090500">
+<link rel="stylesheet" href="/assets/layouts/home.css?v=202609090500">
 <script src="atomurus-mobile-nav.js?v=202608041630" defer></script>
 <!-- i18n (EN default, PT fallback) — must load before page scripts that use I18N.t -->
 <script src="i18n.js?v=202608041630" defer></script>
@@ -125,6 +128,7 @@
 <script src="meta-i18n.js?v=202608041630" defer></script>
 <!-- Compact preview payload for the landing-page mini periodic table -->
 <script src="home-preview-data.js?v=202608041630" defer></script>
+<script src="assets/product-catalog.js?v=202609090500" defer></script>
 
 <style>
   /* Landing page only overrides — the page doesn't have a sidebar */
@@ -134,9 +138,10 @@
 </style>
 </head>
 
-<body class="lc-landing">
+<body class="ps-body lc-landing">
 
 <!-- ════════════ TOPNAV ════════════ -->
+<div class="ps-shell" id="ps-shell">
 <nav class="lc-topnav">
   <a class="lc-topnav-brand" href="index.html">
     <div class="lc-topnav-mark">
@@ -163,20 +168,20 @@
          aria-haspopup="menu"
          aria-expanded="false"
          aria-controls="topnav-viewer-menu">
-      <span class="lc-tn-no">02</span> <span data-i18n="common.nav.visualizador">Visualizador</span>
+      <span class="lc-tn-no">02</span> <span data-i18n="common.nav.visualizador">Viewer</span>
       <svg class="lc-tn-chevron" width="9" height="9" viewBox="0 0 9 9" fill="none" aria-hidden="true"><path d="M2 3.5l2.5 2.5L7 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
       <div class="lc-topnav-menu" role="menu" id="topnav-viewer-menu" aria-labelledby="topnav-viewer-trigger">
         <a href="viewer/atomic-models.html" role="menuitem">
           <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="1.5" fill="currentColor"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/></svg>
-          <span data-i18n="common.nav.atomicModels">Modelos Atômicos</span>
+          <span data-i18n="common.nav.atomicModels">Atomic Models</span>
         </a>
         <a href="viewer/molecules.html" role="menuitem">
           <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="4" cy="4" r="2" fill="currentColor"/><circle cx="12" cy="6" r="2" fill="currentColor" opacity=".7"/><circle cx="8" cy="12" r="2" fill="currentColor" opacity=".5"/><line x1="4" y1="4" x2="12" y2="6" stroke="currentColor" stroke-width="1"/><line x1="12" y1="6" x2="8" y2="12" stroke="currentColor" stroke-width="1"/><line x1="4" y1="4" x2="8" y2="12" stroke="currentColor" stroke-width="1"/></svg>
-          <span data-i18n="common.nav.molecules">Moléculas</span>
+          <span data-i18n="common.nav.molecules">Molecules</span>
         </a>
         <a href="viewer/allotropes.html" role="menuitem">
           <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><polygon points="8,2 14,6 12,13 4,13 2,6" stroke="currentColor" stroke-width="1.2" fill="none"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/></svg>
-          <span data-i18n="common.nav.allotropes">Alótropos</span>
+          <span data-i18n="common.nav.allotropes">Allotropes</span>
         </a>
         <a href="viewer/isomerism/constitutional/function.html" role="menuitem">
           <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
@@ -215,7 +220,7 @@
     <input class="lc-tn-search-input" id="quick-search" type="text"
            placeholder="search element, symbol or Z…" autocomplete="off"
            data-i18n-attr="placeholder:common.searchPlaceholder">
-    <span class="lc-kbd" aria-hidden="true">âŒ˜K</span>
+    <span class="lc-kbd" aria-hidden="true">⌘K</span>
   </div>
 
   <button class="lc-topnav-btn lc-topnav-lang" data-i18n-toggle
@@ -237,13 +242,58 @@
     </svg>
   </button>
 
-  <a class="lc-topnav-cta" href="login.html" aria-label="Account">
+  <div class="ps-account" data-atomurus-account>
+  <span class="ps-plan-badge" data-atomurus-plan-badge hidden></span>
+  <a class="ps-userchip lc-topnav-cta" href="login.html" data-atomurus-account-chip aria-label="Account">
+    <svg class="ps-userchip-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
     <span data-i18n="pricing.ctaAccount">Account</span>
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-      <path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
   </a>
+</div>
+  
 </nav>
+<aside class="ws-sidebar sidebar ps-pub-sidebar" id="ws-sidebar" data-atomurus-sidebar>
+  <nav class="ws-nav" id="ws-nav-main" aria-label="Laboratory" data-atomurus-lab-nav>
+    <div class="ws-nav-block ws-nav-site">
+      <h2 class="ws-nav-group" data-i18n="common.nav.laboratory">Laboratory</h2>
+      <a class="ws-nav-item" href="/" data-nav="home">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M2.5 7.5 8 3l5.5 4.5M4 6.5V13h8V6.5M6.5 13V9h3v4"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.home">Home</span>
+      </a>
+      <a class="ws-nav-item" href="/periodic-table.html" data-nav="periodic">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.periodic">Periodic Table</span>
+      </a>
+      <a class="ws-nav-item" href="/viewer/atomic-models.html" data-nav="viewer">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="8" cy="8" r="2"/><ellipse cx="8" cy="8" rx="6" ry="2.5"/><ellipse cx="8" cy="8" rx="6" ry="2.5" transform="rotate(60 8 8)"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.visualizador">Viewer</span>
+      </a>
+      <a class="ws-nav-item" href="/calculators.html" data-nav="calculators">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="2" width="10" height="12" rx="1"/><path d="M5 5h6M5.5 8h1M9.5 8h1M5.5 11h1M9.5 11h1"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.calc">Calculators</span>
+      </a>
+      <a class="ws-nav-item" href="/explore.html" data-nav="explore">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.explore">Explore</span>
+      </a>
+      <a class="ws-nav-item" href="/app" data-nav="workspace">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 12l4-4 2 2 4-6"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.workspace">Workspace</span>
+      </a>
+    </div>
+  </nav>
+  <div class="ws-nav-foot sidebar-foot" id="ws-nav-foot" data-atomurus-nav-foot>
+    <a class="ws-nav-item" href="/login" data-nav="account" data-auth-nav-link="common.nav.login">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5"/></g></svg>
+      <span class="ws-nav-label" data-i18n="common.nav.login">Account</span>
+    </a>
+    <a class="ws-nav-item" href="/pricing" data-nav="plans">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 5h8v8H4zM6 3v2M10 3v2"/></g></svg>
+      <span class="ws-nav-label" data-i18n="common.nav.plans">Plans</span>
+    </a>
+  </div>
+</aside>
+<main class="ps-main" id="ps-main">
+
 
 <!-- ════════════ DATA STRIP ════════════ -->
 <div class="data-strip">
@@ -251,7 +301,7 @@
   <span class="ds-sep"></span>
   <span class="ds-k" data-i18n="home.strip.elements">elements</span><span class="ds-v">118</span>
   <span class="ds-sep"></span>
-  <span class="ds-k" data-i18n="home.strip.modules">modules</span><span class="ds-v" data-i18n="home.strip.modulesVal">4 live</span>
+  <span class="ds-k" data-i18n="home.strip.modules">modules</span><span class="ds-v" data-i18n="home.strip.modulesVal">four pillars</span>
   <span class="ds-sep"></span>
   <span class="ds-k" data-i18n="home.strip.lastSync">last sync</span><span class="ds-v" id="ds-time" data-i18n="home.strip.loading">— ms ago</span>
   <span class="ds-spacer"></span>
@@ -263,7 +313,6 @@
   <div class="lc-hero-left">
     <div class="lc-hero-kicker">
       <span data-i18n="home.hero.welcome">chemistry lab</span>
-      <span class="pill" data-i18n="home.hero.version">v1.11 · 2026</span>
     </div>
 
     <h1 class="lc-hero-title">
@@ -271,15 +320,14 @@
     </h1>
 
     <p class="lc-hero-desc" data-i18n="home.hero.desc">
-      A single chemistry workspace for 118 elements, periodic trends, 40+ 3D models, five calculators and Explore articles for guided study.
+      A chemistry workspace for 118 elements, periodic trends, molar mass, dilution and Explore articles. Extra calculators after a free account. 3D viewers in Pro.
     </p>
 
     <div class="lc-hero-actions">
-      <a class="lc-btn-primary" href="periodic-table.html">
+      <a class="lc-btn-primary ui-btn ui-btn-accent" href="periodic-table.html">
         <span data-i18n="home.hero.ctaPrimary">Open periodic table</span>
-        <span class="lc-kbd">↵</span>
       </a>
-      <a class="lc-btn-ghost" href="viewer/atomic-models.html">
+      <a class="lc-btn-ghost ui-btn" href="viewer/atomic-models.html">
         <span data-i18n="home.hero.ctaGhost">Viewer</span>
         <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
           <path d="M2 5.5h7M6.5 3l3 2.5-3 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
@@ -289,20 +337,20 @@
 
     <div class="lc-hero-stats">
       <div class="lc-hero-stat">
-        <div class="lc-hero-stat-n">118</div>
+        <div class="lc-hero-stat-n" data-catalog="elements">118</div>
         <div class="lc-hero-stat-l" data-i18n="home.hero.statElements">Elements</div>
       </div>
       <div class="lc-hero-stat">
-        <div class="lc-hero-stat-n">40+</div>
+        <div class="lc-hero-stat-n" data-catalog="models">47</div>
         <div class="lc-hero-stat-l" data-i18n="home.hero.statModels">3D models</div>
       </div>
       <div class="lc-hero-stat">
-        <div class="lc-hero-stat-n">5</div>
+        <div class="lc-hero-stat-n" data-catalog="calculators">8</div>
         <div class="lc-hero-stat-l" data-i18n="home.hero.statCalc">Calculators</div>
       </div>
       <div class="lc-hero-stat">
-        <div class="lc-hero-stat-n"><em>∞</em></div>
-        <div class="lc-hero-stat-l" data-i18n="home.hero.statCuriosity">Curiosity</div>
+        <div class="lc-hero-stat-n" data-catalog="articles">8</div>
+        <div class="lc-hero-stat-l" data-i18n="home.hero.statArticles">Articles</div>
       </div>
     </div>
   </div>
@@ -315,7 +363,7 @@
         <div class="dots">
           <span class="dot ok"></span><span class="dot"></span><span class="dot"></span>
         </div>
-        <span data-i18n="home.hero.previewHead">periodic.tbl · live</span>
+        <span data-i18n="home.hero.previewHead">Periodic table</span>
       </div>
 
       <div class="lc-preview-grid" id="preview-grid"></div>
@@ -332,43 +380,46 @@
 <section class="lc-modules">
   <div class="lc-modules-head">
     <div class="lc-modules-h-left">
-      <span class="lc-modules-kicker" data-i18n="home.modules.kicker">lab tools</span>
-      <h2 class="lc-modules-title" data-i18n="home.modules.title">Four tools. One chemistry lab.</h2>
+      <span class="lc-modules-kicker" data-i18n="home.modules.kicker">Four pillars</span>
+      <h2 class="lc-modules-title" data-i18n="home.modules.title">Explore, visualize, solve and study.</h2>
     </div>
-    <div class="lc-modules-h-right" data-i18n-html="home.modules.headRightHtml">
-      <span class="hi">4</span> live · <span class="hi">40+</span> models
+    <div class="lc-modules-h-right">
+      <span class="hi" data-catalog="articles">8</span> <span data-i18n="home.modules.articlesLabel">articles</span>
+      ·
+      <span class="hi" data-catalog="models">47</span> <span data-i18n="home.modules.modelsLabel">3D models</span>
     </div>
   </div>
 
   <div class="lc-modules-grid">
 
-    <a class="lc-mod-card lc-bracket" href="periodic-table.html">
+    <a class="lc-mod-card ui-card ui-card-interactive lc-bracket" href="explore.html">
       <span class="lc-br-bl"></span><span class="lc-br-br"></span>
       <div class="lc-mod-head">
-      <span class="lc-mod-no" data-i18n="home.modules.card1.no">Reference</span>
-        <span class="lc-mod-status live" data-i18n="home.modules.status">â— live</span>
+      <span class="lc-mod-no" data-i18n="home.modules.card1.no">Explore</span>
+        <span class="lc-mod-status ui-badge" data-i18n="home.modules.status">Open</span>
       </div>
       <div class="lc-mod-icon">
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <rect x="2" y="2" width="11" height="11" rx="1.5" fill="currentColor" opacity=".9"/>
-          <rect x="15" y="2" width="11" height="11" rx="1.5" fill="currentColor" opacity=".5"/>
-          <rect x="2" y="15" width="11" height="11" rx="1.5" fill="currentColor" opacity=".5"/>
-          <rect x="15" y="15" width="11" height="11" rx="1.5" fill="currentColor" opacity=".3"/>
+          <path d="M6 5.5h8.2c1.1 0 1.8.3 1.8 1.2v19.8c0-.9-.7-1.2-1.8-1.2H6V5.5Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <path d="M26 5.5h-8.2c-1.1 0-1.8.3-1.8 1.2v19.8c0-.9.7-1.2 1.8-1.2H26V5.5Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <path d="M9 10h4.5M9 14h4.5M18.5 10H23M18.5 14H23M18.5 18H23" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
         </svg>
       </div>
-      <h3 class="lc-mod-name" data-i18n="home.modules.card1.name">Periodic Table</h3>
-      <p class="lc-mod-desc" data-i18n="home.modules.card1.desc">The 118 confirmed elements with full property cards, heatmap, trend charts, comparator and isotope data. Filter by family, search by name or atomic number, export as PNG/PDF.</p>
-      <span class="lc-mod-go" data-i18n="home.modules.card1.cta">Open table</span>
+      <h3 class="lc-mod-name" data-i18n="home.modules.card1.name">Explore</h3>
+      <p class="lc-mod-desc" data-i18n="home.modules.card1.desc">Articles and deep dives for chemistry concepts and history, including the periodic table, isomerism and Bhopal/methyl isocyanate.</p>
+      <span class="lc-mod-go ui-btn ui-btn-accent" data-i18n="home.modules.card1.cta">Read articles</span>
       <div class="lc-mod-meta">
-        <span data-i18n="home.modules.card1.m1">118 elements</span><span data-i18n="home.modules.card1.m2">10 families</span><span data-i18n="home.modules.card1.m3">5 views</span>
+        <span><span data-catalog="articles">8</span> <span data-i18n="home.modules.card1.m1">articles</span></span>
+        <span data-i18n="home.modules.card1.m2">concepts</span>
+        <span data-i18n="home.modules.card1.m3">history</span>
       </div>
     </a>
 
-    <a class="lc-mod-card lc-bracket" href="viewer/atomic-models.html">
+    <a class="lc-mod-card ui-card ui-card-interactive lc-bracket" href="viewer/atomic-models.html">
       <span class="lc-br-bl"></span><span class="lc-br-br"></span>
       <div class="lc-mod-head">
-      <span class="lc-mod-no" data-i18n="home.modules.card2.no">Visualization</span>
-        <span class="lc-mod-status live" data-i18n="home.modules.card2.badge">PRO</span>
+      <span class="lc-mod-no" data-i18n="home.modules.card2.no">Visualize</span>
+        <span class="lc-mod-status ui-badge ui-badge-pro" data-i18n="home.modules.card2.badge">PRO</span>
       </div>
       <div class="lc-mod-icon">
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
@@ -378,19 +429,21 @@
           <ellipse cx="16" cy="16" rx="13" ry="5.5" stroke="currentColor" stroke-width="1.3" fill="none" transform="rotate(120 16 16)"/>
         </svg>
       </div>
-      <h3 class="lc-mod-name" data-i18n="home.modules.card2.name">3D Viewers</h3>
+      <h3 class="lc-mod-name" data-i18n="home.modules.card2.name">Visualize</h3>
       <p class="lc-mod-desc" data-i18n="home.modules.card2.desc">Atomic models, molecules, allotropes and isomerism in interactive 3D — included in Atomurus Pro, with a 30-day trial on every new account.</p>
-      <span class="lc-mod-go" data-i18n="home.modules.card2.cta">Preview models</span>
+      <span class="lc-mod-go ui-btn ui-btn-accent" data-i18n="home.modules.card2.cta">Preview models</span>
       <div class="lc-mod-meta">
-        <span data-i18n="home.modules.card2.m1">5 atomic models</span><span data-i18n="home.modules.card2.m2">24 molecules</span><span data-i18n="home.modules.card2.m3">isomerism + allotropes</span>
+        <span><span data-catalog="atomicModels">5</span> <span data-i18n="home.modules.card2.m1">atomic models</span></span>
+        <span><span data-catalog="molecules">42</span> <span data-i18n="home.modules.card2.m2">molecules</span></span>
+        <span data-i18n="home.modules.card2.m3">isomerism + allotropes</span>
       </div>
     </a>
 
-    <a class="lc-mod-card lc-bracket" href="calculators.html">
+    <a class="lc-mod-card ui-card ui-card-interactive lc-bracket" href="calculators.html">
       <span class="lc-br-bl"></span><span class="lc-br-br"></span>
       <div class="lc-mod-head">
-      <span class="lc-mod-no" data-i18n="home.modules.card3.no">Compute</span>
-        <span class="lc-mod-status live" data-i18n="home.modules.status">â— live</span>
+      <span class="lc-mod-no" data-i18n="home.modules.card3.no">Solve</span>
+        <span class="lc-mod-status ui-badge" data-i18n="home.modules.status">Open</span>
       </div>
       <div class="lc-mod-icon">
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
@@ -404,32 +457,36 @@
           <circle cx="20.5" cy="22" r="1.2" fill="currentColor"/>
         </svg>
       </div>
-      <h3 class="lc-mod-name" data-i18n="home.modules.card3.name">Calculators</h3>
-      <p class="lc-mod-desc" data-i18n="home.modules.card3.desc">Five chemistry calculators: molar mass, scientific expressions, ideal gas PV=nRT, dilution and pH/pOH diagnostics.</p>
-      <span class="lc-mod-go" data-i18n="home.modules.card3.cta">Use calculators</span>
+      <h3 class="lc-mod-name" data-i18n="home.modules.card3.name">Solve</h3>
+      <p class="lc-mod-desc" data-i18n="home.modules.card3.desc">Molar mass and dilution stay open. Scientific, unit, gas and pH calculators unlock with a free account. Reaction solver is Pro.</p>
+      <span class="lc-mod-go ui-btn ui-btn-accent" data-i18n="home.modules.card3.cta">Use calculators</span>
       <div class="lc-mod-meta">
-        <span data-i18n="home.modules.card3.m1">5 instruments</span><span data-i18n="home.modules.card3.m2">Live formula parser</span><span data-i18n="home.modules.card3.m3">SI units</span>
+        <span><span data-catalog="calculators">8</span> <span data-i18n="home.modules.card3.m1">calculators</span></span>
+        <span data-i18n="home.modules.card3.m2">Live formula parser</span>
+        <span data-i18n="home.modules.card3.m3">SI units</span>
       </div>
     </a>
 
-    <a class="lc-mod-card lc-mod-card-wide lc-bracket" href="explore.html">
+    <a class="lc-mod-card ui-card ui-card-interactive lc-bracket" href="/app">
       <span class="lc-br-bl"></span><span class="lc-br-br"></span>
       <div class="lc-mod-head">
-      <span class="lc-mod-no" data-i18n="home.modules.card4.no">Knowledge</span>
-        <span class="lc-mod-status live" data-i18n="home.modules.status">â— live</span>
+      <span class="lc-mod-no" data-i18n="home.modules.card4.no">Workspace</span>
+        <span class="lc-mod-status ui-badge" data-i18n="home.modules.card4.badge">Guest</span>
       </div>
       <div class="lc-mod-icon">
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <path d="M6 5.5h8.2c1.1 0 1.8.3 1.8 1.2v19.8c0-.9-.7-1.2-1.8-1.2H6V5.5Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
-          <path d="M26 5.5h-8.2c-1.1 0-1.8.3-1.8 1.2v19.8c0-.9.7-1.2 1.8-1.2H26V5.5Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
-          <path d="M9 10h4.5M9 14h4.5M18.5 10H23M18.5 14H23M18.5 18H23" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+          <rect x="3" y="3" width="11" height="26" rx="1.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <rect x="16" y="7" width="13" height="22" rx="1.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <path d="M8 10v10M22.5 12v8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
         </svg>
       </div>
-      <h3 class="lc-mod-name" data-i18n="home.modules.card4.name">Explore</h3>
-      <p class="lc-mod-desc" data-i18n="home.modules.card4.desc">Articles and deep dives for chemistry concepts and history, including the periodic table, isomerism and Bhopal/methyl isocyanate.</p>
-      <span class="lc-mod-go" data-i18n="home.modules.card4.cta">Read articles</span>
+      <h3 class="lc-mod-name" data-i18n="home.modules.card4.name">Workspace</h3>
+      <p class="lc-mod-desc" data-i18n="home.modules.card4.desc">Abra seu workspace de química. Estudo, Pro Lab e Atividade ficam no mesmo produto — entre na conta quando quiser guardar.</p>
+      <span class="lc-mod-go ui-btn ui-btn-accent" data-i18n="home.modules.card4.cta">Open workspace</span>
       <div class="lc-mod-meta">
-        <span data-i18n="home.modules.card4.m1">articles</span><span data-i18n="home.modules.card4.m2">concepts</span><span data-i18n="home.modules.card4.m3">history</span>
+        <span data-i18n="home.modules.card4.m1">guest workspace</span>
+        <span data-i18n="home.modules.card4.m2">study sets</span>
+        <span data-i18n="home.modules.card4.m3">no account to look around</span>
       </div>
     </a>
 
@@ -480,13 +537,14 @@
     <div class="lc-footer-col">
       <h4 data-i18n="common.footer.modules">Modules</h4>
       <a href="periodic-table.html" data-i18n="common.nav.periodic">Periodic Table</a>
-      <a href="viewer/atomic-models.html" data-i18n="common.nav.viewer3d">Visualizador</a>
+      <a href="viewer/atomic-models.html" data-i18n="common.nav.viewer3d">Viewer</a>
       <a href="calculators.html" data-i18n="common.nav.calc">Calculators</a>
       <a href="explore.html" data-i18n="common.nav.explore">Explore</a>
     </div>
     <div class="lc-footer-col">
       <h4 data-i18n="common.footer.workspace">Workspace</h4>
       <a href="config.html" data-i18n="common.footer.settings">Settings</a>
+      <a href="/app" data-i18n="common.nav.workspace">Workspace</a>
       <a href="periodic-table.html#search" data-i18n="common.footer.elementSearch">Element search</a>
       <a href="calculators.html#molar" data-i18n="common.footer.molarMass">Molar mass</a>
     </div>
@@ -516,7 +574,7 @@
   <span class="lc-st-sep">·</span>
   <span data-i18n="home.status.workspace">workspace home</span>
   <span class="lc-st-sep">·</span>
-  <span data-i18n="home.status.modulesReg">4 modules registered</span>
+  <span data-i18n="home.status.modulesReg">Explore · Visualize · Solve · Study</span>
   <span class="lc-st-spacer"></span>
   <a href="periodic-table.html" data-i18n="common.stLinkPeriodic">→ periodic-table</a>
   <span class="lc-st-sep">·</span>
@@ -527,6 +585,8 @@
   <a href="explore.html" data-i18n="common.stLinkExplore">→ explore</a>
 </div>
 
+</main>
+</div>
 <script>
 // ── theme
 function toggleTheme() {
@@ -664,8 +724,20 @@ function buildPreview(){
 // home-preview-data.js is loaded with defer, so HOME_PREVIEW_ELEMENTS isn't yet defined when
 // this inline script runs. Build on DOMContentLoaded — same firing point as
 // when defer scripts finish executing.
-if (typeof HOME_PREVIEW_ELEMENTS !== 'undefined') buildPreview();
-else document.addEventListener('DOMContentLoaded', buildPreview);
+function fillCatalog() {
+  const c = window.ATOMURUS_CATALOG;
+  if (!c) return;
+  document.querySelectorAll('[data-catalog]').forEach((el) => {
+    const key = el.getAttribute('data-catalog');
+    if (c[key] != null) el.textContent = String(c[key]);
+  });
+}
+function bootHomeVisuals() {
+  fillCatalog();
+  buildPreview();
+}
+if (typeof HOME_PREVIEW_ELEMENTS !== 'undefined' && window.ATOMURUS_CATALOG) bootHomeVisuals();
+else document.addEventListener('DOMContentLoaded', bootHomeVisuals);
 
 // ── quick search: navigate to periodic-table.html with the symbol/Z as hash
 const qs = document.getElementById('quick-search');
@@ -675,7 +747,7 @@ qs.addEventListener('keydown', (e) => {
     if (v) location.href = 'periodic-table.html#q=' + encodeURIComponent(v);
   }
 });
-// âŒ˜K / Ctrl+K focuses the search
+// ⌘K / Ctrl+K focuses the search
 window.addEventListener('keydown', (e) => {
   if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
     e.preventDefault();

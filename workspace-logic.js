@@ -7,6 +7,19 @@
   'use strict';
 
   var SECTIONS = ['overview', 'library', 'sets', 'review', 'insights', 'pro-lab', 'history', 'notes', 'progress', 'account'];
+  var ACCOUNT_TABS = ['overview', 'profile', 'security', 'plan', 'preferences'];
+  var AREA_BY_SECTION = {
+    overview: 'overview',
+    library: 'study',
+    sets: 'study',
+    review: 'study',
+    insights: 'study',
+    'pro-lab': 'lab',
+    history: 'activity',
+    notes: 'activity',
+    progress: 'activity',
+    account: 'account'
+  };
   var LAB_TOOLS = ['home', 'reactions', 'formula', 'solutions', 'calculations', 'elements', 'molecules', 'atomic', 'sessions'];
   var UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   var MS_DAY = 24 * 60 * 60 * 1000;
@@ -32,6 +45,27 @@
       return LAB_TOOLS.indexOf(tool) === -1 ? 'home' : tool;
     } catch (_err) {
       return 'home';
+    }
+  }
+
+  function workspaceArea(section) {
+    return AREA_BY_SECTION[normalizeSection(section)] || 'overview';
+  }
+
+  function defaultSectionForArea(area) {
+    if (area === 'study') return 'library';
+    if (area === 'lab') return 'pro-lab';
+    if (area === 'activity') return 'progress';
+    if (area === 'account') return 'account';
+    return 'overview';
+  }
+
+  function accountTabFromQuery(search) {
+    try {
+      var tab = String(new URLSearchParams(search || '').get('tab') || 'overview').trim().toLowerCase();
+      return ACCOUNT_TABS.indexOf(tab) === -1 ? 'overview' : tab;
+    } catch (_err) {
+      return 'overview';
     }
   }
 
@@ -318,6 +352,10 @@
 
   return {
     SECTIONS: SECTIONS,
+    ACCOUNT_TABS: ACCOUNT_TABS,
+    workspaceArea: workspaceArea,
+    defaultSectionForArea: defaultSectionForArea,
+    accountTabFromQuery: accountTabFromQuery,
     UUID_RE: UUID_RE,
     REVIEW_SECONDS_PER_CARD: REVIEW_SECONDS_PER_CARD,
     interpolate: interpolate,

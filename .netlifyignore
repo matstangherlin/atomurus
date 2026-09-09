@@ -17,6 +17,7 @@ sitemap.zip
 # Internal docs, plans and backups — never publish (publish=".")
 *.md
 *.bak*
+docs/
 
 # Repo / backend scaffolding — not part of the public site
 supabase/

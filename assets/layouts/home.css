@@ -1,0 +1,128 @@
+/* Atomurus UI V2 — Home landing
+   Loaded on index.html after public-shell.css. Tokens come from assets/ui/index.css. */
+
+.ps-body.lc-landing {
+  overflow-x: hidden;
+}
+
+html body.ps-body.lc-landing .lc-hero-kicker,
+html body.ps-body.lc-landing .lc-modules-kicker,
+html body.ps-body.lc-landing .lc-manifest-label {
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-text-muted);
+}
+
+.lc-hero-kicker .pill {
+  display: none;
+}
+
+.lc-hero-title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+}
+
+.lc-hero-desc {
+  color: var(--color-text-muted);
+  line-height: var(--leading-relaxed);
+}
+
+.lc-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.lc-hero-actions .ui-btn {
+  min-height: var(--control-height);
+}
+
+html body .lc-landing .lc-hero-actions a.ui-btn-accent,
+html body .lc-landing .lc-hero-actions a.lc-btn-primary.ui-btn-accent {
+  background: var(--color-brand);
+  border-color: var(--color-brand);
+  color: var(--color-on-brand);
+}
+
+.lc-hero-stat-n {
+  font-family: var(--font-serif);
+  font-size: var(--text-3xl);
+  font-weight: 400;
+}
+
+.lc-hero-stat-l {
+  font-family: var(--font-ui);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-text-muted);
+}
+
+.lc-preview-head {
+  font-family: var(--font-ui);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+html body.ps-body.lc-landing .lc-modules-title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+}
+
+.lc-modules-h-right {
+  font-family: var(--font-ui);
+  color: var(--color-text-muted);
+}
+
+.lc-modules-h-right .hi {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  color: var(--color-text);
+}
+
+.lc-mod-card.ui-card {
+  text-decoration: none;
+  color: inherit;
+  height: 100%;
+}
+
+html body.ps-body.lc-landing .lc-mod-name {
+  font-family: var(--font-serif);
+  font-weight: 400;
+}
+
+.lc-mod-no,
+.lc-mod-status {
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+html body .lc-landing .lc-mod-go.ui-btn-accent {
+  background: var(--color-brand);
+  border-color: var(--color-brand);
+  color: var(--color-on-brand);
+}
+
+.lc-mod-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+}
+
+.lc-manifest-body {
+  font-family: var(--font-ui);
+  color: var(--color-text-muted);
+  line-height: var(--leading-relaxed);
+}
+
+.lc-manifest-body em {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--color-text);
+}

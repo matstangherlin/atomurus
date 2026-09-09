@@ -81,6 +81,14 @@ function assertIsomerismVariants() {
       fail(`PT variant still contains redirect stub: ${relPath}`);
     }
   });
+  const generator = read('tools/generate-isomerism-pt-variants.js');
+  if (generator.includes('<html lang="en-US"')) {
+    fail('isomerism PT generator must match <html> tags that already have data-ps-chrome');
+  }
+  const source = read('viewer/isomerism/constitutional/function.html');
+  if (!/(<html\b[^>]*)\blang="en-US"/.test(source)) {
+    fail('isomerism EN source must keep lang="en-US" for PT variant generation');
+  }
 }
 
 function assertReadme() {
@@ -316,6 +324,368 @@ function assertStudyCloud() {
   }
 }
 
+function assertUiV2() {
+  const files = [
+    'assets/ui/tokens.css',
+    'assets/ui/base.css',
+    'assets/ui/typography.css',
+    'assets/ui/buttons.css',
+    'assets/ui/forms.css',
+    'assets/ui/cards.css',
+    'assets/ui/badges.css',
+    'assets/ui/states.css',
+    'assets/ui/navigation.css',
+    'assets/ui/dialogs.css',
+    'assets/ui/tables.css',
+    'assets/ui/utilities.css',
+    'assets/ui/compat.css',
+    'assets/ui/index.css',
+    'dev/ui.html',
+    'templates/chrome/public-sidebar.html',
+    'templates/chrome/viewer-local-nav.html',
+    'assets/global-nav.js',
+    'templates/chrome/search.html',
+    'templates/chrome/brand.html',
+    'tools/inject-ui-chrome.js',
+    'docs/ui-v2-chrome.md',
+    'docs/ui-v2-auth.md',
+    'docs/ui-v2-pricing.md',
+    'docs/ui-v2-home.md',
+    'docs/ui-v2-explore.md',
+    'docs/ui-v2-calculators.md',
+    'docs/ui-v2-config.md',
+    'docs/ui-v2-periodic-table.md',
+    'docs/ui-v2-viewer.md',
+    'docs/ui-v2-workspace.md',
+    'docs/ui-v2-hoist.md',
+    'docs/ui-v2-i18n.md',
+    'docs/ui-v2-report.md',
+    'docs/ui-v2-global-shell.md',
+    'docs/ui-v2-product-shell-final.md',
+    'tools/capture-ui-v2.mjs',
+    'assets/layouts/auth.css',
+    'assets/layouts/pricing.css',
+    'assets/layouts/docs.css',
+    'assets/layouts/home.css',
+    'assets/layouts/explore.css',
+    'assets/layouts/article.css',
+    'assets/layouts/calculators.css',
+    'assets/layouts/config.css',
+    'assets/layouts/periodic-table.css',
+    'assets/layouts/viewer.css',
+    'assets/layouts/workspace.css',
+    'assets/layouts/shell.css',
+    'assets/product-catalog.js',
+    'assets/pro-features.js',
+    'templates/chrome/account-control.html',
+    'tools/build-product-catalog.js'
+  ];
+  files.forEach((rel) => {
+    if (!fs.existsSync(path.join(ROOT, rel))) fail(`${rel} is missing`);
+  });
+  const tokens = read('assets/ui/tokens.css');
+  ['#F2EFE7', '#F8F5EC', '#14120E', '#1E6A50', '--radius-sm', '--radius-md', '--radius-lg', '--radius-pill'].forEach((needle) => {
+    if (!tokens.includes(needle)) fail(`assets/ui/tokens.css missing ${needle}`);
+  });
+  const buttons = read('assets/ui/buttons.css');
+  ['.ui-btn-primary', '.ui-btn-secondary', '.ui-btn-accent', '.ui-btn-danger'].forEach((cls) => {
+    if (!buttons.includes(cls)) fail(`assets/ui/buttons.css missing ${cls}`);
+  });
+  const forms = read('assets/ui/forms.css');
+  ['.ui-input', '.ui-select', '.ui-textarea', '.ui-field', '.ui-field-error'].forEach((cls) => {
+    if (!forms.includes(cls)) fail(`assets/ui/forms.css missing ${cls}`);
+  });
+  const states = read('assets/ui/states.css');
+  ['.ui-alert', '.ui-empty-state', '.ui-spinner'].forEach((cls) => {
+    if (!states.includes(cls)) fail(`assets/ui/states.css missing ${cls}`);
+  });
+  const showcase = read('dev/ui.html');
+  if (!showcase.includes('noindex')) fail('dev/ui.html must be noindex');
+  if (!showcase.includes('assets/ui/index.css')) fail('dev/ui.html must load UI V2');
+  if (showcase.includes('atomurus-lab-console.css') || showcase.includes('public-workspace.js')) {
+    fail('dev/ui.html must not load lab-console or public-workspace');
+  }
+  if (!read('index.html').includes('assets/ui/index.css')) {
+    fail('index.html must load UI V2 after the Home migration');
+  }
+  if (!read('index.html').includes('assets/layouts/home.css')) {
+    fail('index.html must load assets/layouts/home.css');
+  }
+  if (!read('app.html').includes('assets/ui/index.css')) {
+    fail('app.html must load UI V2 after the workspace alignment step');
+  }
+  const inject = read('tools/inject-public-shell.js');
+  if (!inject.includes("'dev'")) fail('inject-public-shell.js must skip the dev/ gallery');
+  if (!inject.includes("'templates'")) fail('inject-public-shell.js must skip templates/chrome');
+  const workspace = read('assets/public-workspace.js');
+  if (!workspace.includes('enhanceExistingShell')) {
+    fail('public-workspace.js must enhance pre-emitted #ps-shell instead of skipping runtime');
+  }
+  if (/hoistToolShell|hoistLandingShell|buildPublicSidebar|ps-boot/.test(workspace)) {
+    fail('public-workspace.js must not hoist or hide the body behind ps-boot');
+  }
+  if (!workspace.includes('lab-tool-gate.js')) {
+    fail('public-workspace.js must keep lab-tool-gate.js');
+  }
+  const shellCss = read('assets/public-shell.css');
+  if (!shellCss.includes("content: none") || /logo-tag::after \{[\s\S]*content: 'chemistry lab'/.test(shellCss)) {
+    fail('public-shell.css must not paint the brand only via logo-tag::after');
+  }
+  if (shellCss.includes('ps-boot')) {
+    fail('public-shell.css must not hide the body behind ps-boot');
+  }
+  const SKIP_HTML_DIRS = new Set([
+    'node_modules', '.git', 'netlify', 'tools', 'scripts', 'supabase',
+    'hanzi-logic', 'propostas', 'dev', 'docs', 'templates'
+  ]);
+  const HOIST_EXCEPTIONS = new Set([
+    'explore/viewer/methyl-isocyanate.html',
+    'explore/viewer/methyl-isocyanate.pt.html'
+  ]);
+  function walkHtml(dir, out = []) {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (entry.name.startsWith('.')) continue;
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        if (SKIP_HTML_DIRS.has(entry.name)) continue;
+        walkHtml(full, out);
+      } else if (entry.name.endsWith('.html')) out.push(full);
+    }
+    return out;
+  }
+  for (const file of walkHtml(ROOT)) {
+    const rel = path.relative(ROOT, file).replace(/\\/g, '/');
+    const html = fs.readFileSync(file, 'utf8');
+    if (!html.includes('public-workspace.js')) continue;
+    if (HOIST_EXCEPTIONS.has(rel)) {
+      if (html.includes('id="ps-shell"')) {
+        fail(`${rel} must keep compact article chrome, not #ps-shell`);
+      }
+      continue;
+    }
+    if (!html.includes('id="ps-shell"')) {
+      fail(`${rel} loads public-workspace.js but has no #ps-shell`);
+    }
+  }
+  for (const file of walkHtml(ROOT)) {
+    const rel = path.relative(ROOT, file).replace(/\\/g, '/');
+    const html = fs.readFileSync(file, 'utf8');
+    if (/html\.lang-pt-pending\s*\[data-i18n\]/.test(html) || /classList\.add\(['"]lang-pt-pending['"]\)/.test(html)) {
+      fail(`${rel} must not hide copy behind lang-pt-pending`);
+    }
+    if (/class="ph-kicker"[^>]*>§/.test(html)) {
+      fail(`${rel} ph-kicker fallback must not use Bloomberg § marks`);
+    }
+  }
+  if (/No accounts/.test(read('config.html')) || /No accounts/.test(read('config.pt.html'))) {
+    fail('config privacy row must not say No accounts');
+  }
+  const i18nDir = path.join(ROOT, 'assets', 'i18n');
+  for (const name of fs.readdirSync(i18nDir)) {
+    if (name.endsWith('.js')) fail('assets/i18n must publish JSON only; stale JS chunks lag the dictionary');
+    if (!name.endsWith('.json')) continue;
+    const chunk = read(`assets/i18n/${name}`);
+    if (/does not offer user accounts|we do not run a user database|completely open, no accounts required/.test(chunk)) {
+      fail(`assets/i18n/${name} must not deny that accounts exist`);
+    }
+  }
+  [
+    'index.html',
+    'pricing.html',
+    'about.html',
+    'calculators.html',
+    'config.html',
+    'periodic-table.html',
+    'viewer/atomic-models.html',
+    'contact.html',
+    'privacy.html',
+    'terms.html',
+    '404.html'
+  ].forEach((rel) => {
+    const html = read(rel);
+    if (!html.includes('id="ps-shell"')) fail(`${rel} must emit #ps-shell in source HTML`);
+    if (!html.includes('data-ps-chrome')) fail(`${rel} must mark emitted chrome with data-ps-chrome`);
+  });
+  ['periodic-table/hydrogenium.html'].forEach((rel) => {
+    if (read(rel).includes('assets/ui/index.css')) fail(`${rel} must not load UI V2 yet`);
+  });
+  [
+    'index.html',
+    'login.html',
+    'pricing.html',
+    'about.html',
+    'contact.html',
+    'privacy.html',
+    'terms.html',
+    '404.html',
+    'explore.html',
+    'calculators.html',
+    'config.html',
+    'periodic-table.html',
+    'viewer/atomic-models.html',
+    'viewer/molecules.html',
+    'viewer/allotropes.html',
+    'viewer/isomerism.html',
+    'app.html'
+  ].forEach((rel) => {
+    if (!read(rel).includes('assets/ui/index.css')) fail(`${rel} must load UI V2`);
+  });
+  const pricingHtml = read('pricing.html');
+  if (pricingHtml.includes('app-workspace.css')) fail('pricing.html must not load app-workspace.css');
+  if (!pricingHtml.includes('assets/layouts/pricing.css')) fail('pricing.html must load assets/layouts/pricing.css');
+  if (/<style>[\s\S]*\.price-grid/.test(pricingHtml)) {
+    fail('pricing.html must not keep .price-grid in a page style block');
+  }
+  for (const rel of ['terms.html', 'privacy.html']) {
+    if (/does not offer user accounts|there is no login|we do not run a user database/.test(read(rel))) {
+      fail(`${rel} must not claim the site has no accounts or login`);
+    }
+  }
+  if (!read('build-i18n.js').includes('(<html\\b[^>]*)\\blang=')) {
+    fail('build-i18n.js must match html tags that already have attributes before lang');
+  }
+  const loginHtml = read('login.html');
+  if (!loginHtml.includes('id="ps-shell"')) fail('login.html must emit #ps-shell in source HTML');
+  if (!loginHtml.includes('data-ps-chrome')) fail('login.html must mark emitted chrome with data-ps-chrome');
+  if (!loginHtml.includes('assets/ui/index.css')) fail('login.html must load UI V2');
+  if (!loginHtml.includes('assets/layouts/auth.css')) fail('login.html must load assets/layouts/auth.css');
+  if (/<style>[\s\S]*\.auth-shell/.test(loginHtml)) {
+    fail('login.html must not keep auth layout in an inline style block');
+  }
+  if (/auth\.access|secure HttpOnly cookie|managed authentication|secure account flow/.test(loginHtml)) {
+    fail('login.html must not keep developer-console copy in the primary UI');
+  }
+  if (!read('periodic-table.html').includes('data-i18n="common.brandTag">chemistry lab')) {
+    fail('periodic-table.html must put chemistry lab in the DOM');
+  }
+  const login = read('login.html');
+  if (!/lc-topnav-cta"[^>]*periodic-table/.test(login) || !/Open lab/.test(login)) {
+    fail('login.html must keep Open lab → periodic-table');
+  }
+  const app = read('app.html');
+  if (app.includes('id="ps-shell"') || app.includes('public-shell.css')) {
+    fail('app.html must stay on workspace chrome, not public-shell');
+  }
+  if (!app.includes('assets/layouts/workspace.css')) {
+    fail('app.html must load assets/layouts/workspace.css');
+  }
+  if (!app.includes('id="ws-search-q"') || !app.includes('id="ws-userchip"')) {
+    fail('app.html must keep workspace search and user chip ids');
+  }
+  if (!/<html\b[^>]*data-theme="light"/.test(app)) {
+    fail('app.html must default to light theme like public pages');
+  }
+  const workspaceLayout = read('assets/layouts/workspace.css').replace(/\/\*[\s\S]*?\*\//g, '');
+  if (/\.ws-chart\b|\.ws-spark|\.ws-lab-z\b/.test(workspaceLayout)) {
+    fail('workspace layout CSS must not restyle study charts or Pro Lab science');
+  }
+  const home = read('index.html');
+  if (!home.includes('assets/layouts/home.css') || !home.includes('assets/product-catalog.js')) {
+    fail('index.html must load home layout CSS and the product catalog');
+  }
+  if (/html\.lang-pt-pending\s*\[data-i18n\]/.test(home) || /classList\.add\(['"]lang-pt-pending['"]\)/.test(home)) {
+    fail('index.html must not use lang-pt-pending to hide copy');
+  }
+  if (/5 instruments|5 Calculators/.test(home)) {
+    fail('index.html must not keep HUD calculator counts');
+  }
+  const catalogJs = read('assets/product-catalog.js');
+  const catalogM = catalogJs.match(/ATOMURUS_CATALOG\s*=\s*(\{[\s\S]*?\});/);
+  if (!catalogM) fail('product-catalog.js must assign window.ATOMURUS_CATALOG');
+  const catalog = JSON.parse(catalogM[1]);
+  const calcMarkup = read('calculators.html').replace(/<script\b[\s\S]*?<\/script>/gi, '');
+  const calcTargets = new Set([...calcMarkup.matchAll(/\sdata-target="([^"$]+)"/g)].map((m) => m[1]));
+  if (catalog.calculators !== calcTargets.size) {
+    fail(`catalog calculators (${catalog.calculators}) must match calculators.html tabs (${calcTargets.size})`);
+  }
+  if (!home.includes(`data-catalog="calculators">${catalog.calculators}`)) {
+    fail('Home calculator fallback must match the generated catalog');
+  }
+  const explore = read('explore.html');
+  if (!explore.includes('assets/layouts/explore.css')) {
+    fail('explore.html must load assets/layouts/explore.css');
+  }
+  if ([...explore.matchAll(/<style>[\s\S]*?<\/style>/g)].some((m) => m[0].includes('.ex-card'))) {
+    fail('explore.html must not keep .ex-card in a page style block');
+  }
+  if (!explore.includes('id="ex-search-input"') || !explore.includes('id="ex-articles"')) {
+    fail('explore.html must keep #ex-search-input and #ex-articles');
+  }
+  const exploreScript = [...explore.matchAll(/<script>([\s\S]*?)<\/script>/g)]
+    .map((m) => m[1])
+    .find((s) => s.includes("getElementById('ex-search-input')"));
+  if (!exploreScript) fail('explore.html must keep the article search script');
+  try {
+    new Function(exploreScript);
+  } catch (err) {
+    fail(`explore.html article search script must parse: ${err.message}`);
+  }
+  const calc = read('calculators.html');
+  if (!calc.includes('assets/layouts/calculators.css')) {
+    fail('calculators.html must load assets/layouts/calculators.css');
+  }
+  if (!calc.includes('data-target="molar"') || !calc.includes('id="mm-result-body"')) {
+    fail('calculators.html must keep molar mass DOM');
+  }
+  const config = read('config.html');
+  if (!config.includes('assets/layouts/config.css')) {
+    fail('config.html must load assets/layouts/config.css');
+  }
+  if (!config.includes('id="lang-select"') || !config.includes('settings-toggle')) {
+    fail('config.html must keep #lang-select and .settings-toggle');
+  }
+  if ([...config.matchAll(/<style>[\s\S]*?<\/style>/g)].some((m) => m[0].includes('.settings-section-title'))) {
+    fail('config.html must not keep .settings-section-title in a page style block');
+  }
+  const tableLayout = read('assets/layouts/periodic-table.css').replace(/\/\*[\s\S]*?\*\//g, '');
+  if (/\.el\b/.test(tableLayout) || /\.ptable\b/.test(tableLayout)) {
+    fail('periodic-table layout CSS must not restyle .el cells or .ptable');
+  }
+  const table = read('periodic-table.html');
+  if (!table.includes('assets/layouts/periodic-table.css')) {
+    fail('periodic-table.html must load assets/layouts/periodic-table.css');
+  }
+  if (!table.includes('id="ptable"') || !table.includes('id="dl-action-btn"')) {
+    fail('periodic-table.html must keep table DOM');
+  }
+  const viewerLayout = read('assets/layouts/viewer.css').replace(/\/\*[\s\S]*?\*\//g, '');
+  if (/canvas|#viewer3d|#viewer2d|WebGL/i.test(viewerLayout)) {
+    fail('viewer layout CSS must not mention canvases or WebGL');
+  }
+  const atomic = read('viewer/atomic-models.html');
+  if (!atomic.includes('assets/layouts/viewer.css')) {
+    fail('viewer/atomic-models.html must load assets/layouts/viewer.css');
+  }
+  if (!atomic.includes('data-pro-lab-tool="atomic"') || !atomic.includes('id="viewer3d"')) {
+    fail('viewer/atomic-models.html must keep data-pro-lab-tool="atomic" and #viewer3d');
+  }
+  const molecules = read('viewer/molecules.html');
+  if (!molecules.includes('assets/layouts/viewer.css') || !molecules.includes('id="viewer3d"')) {
+    fail('viewer/molecules.html must load viewer layout CSS and keep #viewer3d');
+  }
+  if (read('explore/viewer/methyl-isocyanate.html').includes('assets/layouts/viewer.css')) {
+    fail('explore/viewer articles must not load viewer layout CSS');
+  }
+  const atom = read('explore/what-is-an-atom.html');
+  if (!atom.includes('assets/ui/index.css') || !atom.includes('assets/layouts/article.css')) {
+    fail('explore articles must load UI V2 and article layout CSS');
+  }
+  const afterCombos = ['desktop-light', 'desktop-dark', 'mobile-light', 'mobile-dark'];
+  const afterRoutes = ['home', 'login', 'pricing', 'about', 'periodic-table', 'calculators', 'explore', 'viewer', 'app', 'ui-gallery'];
+  for (const combo of afterCombos) {
+    for (const route of afterRoutes) {
+      const rel = `docs/ui-v2-after/${combo}/${route}.png`;
+      const full = path.join(ROOT, rel);
+      if (!fs.existsSync(full)) fail(`${rel} is missing`);
+      const buf = fs.readFileSync(full);
+      if (buf.length < 2000) fail(`${rel} is too small (${buf.length})`);
+      if (buf[0] !== 0x89 || buf[1] !== 0x50 || buf[2] !== 0x4E || buf[3] !== 0x47) {
+        fail(`${rel} is not a PNG`);
+      }
+    }
+  }
+}
+
 function main() {
   assertRootNoForbiddenArchives();
   assertDeployGuards();
@@ -327,6 +697,7 @@ function main() {
   assertPricingSurface();
   assertPerfGuards();
   assertStudyCloud();
+  assertUiV2();
   console.log('Site validation passed');
 }
 

@@ -24,9 +24,9 @@ test.beforeEach(async ({ page }) => {
 test('public home uses workspace chrome, not lab-console ticker', async ({ page }) => {
   await page.goto('/index.html');
   await expect(page.locator('.ps-shell')).toBeVisible();
-  await expect(page.locator('.ps-pub-sidebar')).toBeVisible();
-  await expect(page.locator('.ps-pub-sidebar a[href*="/app"]')).toBeVisible();
-  await expect(page.locator('.ps-pub-sidebar a[href*="/app"]')).toContainText(/Study/i);
+  await expect(page.locator('#ws-sidebar, .ps-pub-sidebar')).toBeVisible();
+  await expect(page.locator('#ws-sidebar a[href*="/app"]')).toBeVisible();
+  await expect(page.locator('#ws-sidebar a[href*="/app"]')).toContainText(/Workspace/i);
   await expect(page.locator('.lc-topnav-name')).toBeVisible();
   await expect.poll(() => fontFamily(page.locator('.lc-topnav-name'))).toMatch(/Instrument Serif/i);
   await expect(page.locator('.lc-tn-no').first()).toBeHidden();
@@ -40,6 +40,11 @@ test('public home uses workspace chrome, not lab-console ticker', async ({ page 
   await expect(page.locator('.lc-hero-title')).toBeVisible();
   await expect(page.locator('#preview-grid .lc-preview-cell').first()).toBeVisible();
   await expect(page.locator('.lc-mod-card')).toHaveCount(4);
+  await expect(page.locator('.lc-mod-card').nth(0)).toHaveAttribute('href', /explore/);
+  await expect(page.locator('.lc-mod-card').nth(3)).toHaveAttribute('href', /\/app/);
+  await expect(page.locator('.lc-hero-actions a').first()).toHaveAttribute('href', /periodic-table/);
+  await expect(page.locator('.lc-hero-stats')).not.toContainText('5 Calculators');
+  await expect(page.locator('.lc-modules')).not.toContainText('5 instruments');
   const openBg = await page.locator('.lc-mod-go').first().evaluate((el) => getComputedStyle(el).backgroundColor);
   expect(openBg).toMatch(/rgb\(\s*30,\s*106,\s*80\s*\)/);
   await expect(page.locator('.lc-footer-bottom > span:has(.lc-st-dot)')).toBeHidden();
@@ -62,6 +67,7 @@ test('public table, calculators, login and pricing share the new chrome', async 
   const brandInTopbar = await page.locator('.ps-shell > .topbar .logo-wrap').count();
   expect(brandInTopbar).toBe(1);
   await expect(page.locator('.ps-shell > .topbar .breadcrumb')).toBeHidden();
+  await expect.poll(() => fontFamily(page.locator('#ct-periodic h1.ph-title'))).toMatch(/Instrument Serif/i);
   const dlBg = await page.locator('#dl-action-btn').evaluate((el) => getComputedStyle(el).backgroundColor);
   expect(dlBg).toMatch(/rgb\(\s*30,\s*106,\s*80\s*\)/);
   const tabColor = await page.locator('.pt-tab.active').evaluate((el) => getComputedStyle(el).color);
@@ -79,11 +85,12 @@ test('public table, calculators, login and pricing share the new chrome', async 
   await page.goto('/calculators.html');
   await expect(page.locator('.ps-shell')).toBeVisible();
   await expect(page.locator('.ps-shell > .topbar .mobile-menu-btn')).toBeHidden();
-  await expect(page.locator('.ps-shell .nav-label')).toBeHidden();
-  await expect(page.locator('.sidebar-foot a[href*="login"]')).toBeVisible();
-  await expect(page.locator('.sidebar-foot a[href*="pricing"]')).toBeVisible();
-  await expect(page.locator('.ps-shell aside.sidebar a[href*="/app"]')).toBeVisible();
-  await expect(page.locator('.ps-shell aside.sidebar a[href*="/app"]')).toContainText(/Study/i);
+  await expect(page.locator('#ws-sidebar .ws-nav-group')).toBeVisible();
+  await expect(page.locator('#ws-nav-foot a[href*="login"]')).toBeVisible();
+  await expect(page.locator('#ws-nav-foot a[href*="pricing"]')).toBeVisible();
+  await expect(page.locator('#ws-sidebar a[href*="/app"]')).toBeVisible();
+  await expect(page.locator('#ws-sidebar a[href*="/app"]')).toContainText(/Workspace/i);
+  await expect(page.locator('#ws-sidebar .nav-expandable, #ws-sidebar [data-nav="molar"]')).toHaveCount(0);
   await expect(page.locator('.data-strip').first()).toBeHidden();
   await expect.poll(() => fontFamily(page.locator('.ph-title'))).toMatch(/Instrument Serif/i);
   const innerMax = await page.locator('.content-inner').evaluate((el) => getComputedStyle(el).maxWidth);
@@ -132,14 +139,27 @@ test('public table, calculators, login and pricing share the new chrome', async 
   const pillBg = await page.locator('.ex-pill.active').evaluate((el) => getComputedStyle(el).backgroundColor);
   expect(pillBg).not.toBe('rgb(20, 18, 14)');
   await expect(page.locator('.data-strip').first()).toBeHidden();
+  await expect(page.locator('#ex-search-input')).toBeVisible();
+  const search = page.locator('#ex-search-input');
+  await search.fill('bhopal');
+  await search.dispatchEvent('input');
+  await expect(page.locator('#ex-articles .ex-card:not(.ex-hide)')).toHaveCount(1);
+  await expect(page.locator('#ex-articles .ex-card:not(.ex-hide)')).toContainText(/Bhopal/i);
+  await expect(page.locator('#ex-count')).toContainText(/1/);
   await saveShot(page, 'desktop-public-explore');
 
   await page.goto('/viewer/atomic-models.html');
   await expect(page.locator('.vz-tab.active')).toBeVisible();
   await expect(page.locator('.vz-num').first()).toBeHidden();
   await expect(page.locator('.vz-tab.active')).toContainText(/Atomic Models/i);
+  await expect.poll(() => fontFamily(page.locator('h1.ph-title'))).toMatch(/Instrument Serif/i);
+  const vzTabColor = await page.locator('.vz-tab.active').evaluate((el) => getComputedStyle(el).color);
+  expect(vzTabColor).toMatch(/rgb\(\s*30,\s*106,\s*80\s*\)/);
+  const vzTabBg = await page.locator('.vz-tab.active').evaluate((el) => getComputedStyle(el).backgroundColor);
+  expect(vzTabBg).not.toBe('rgb(20, 18, 14)');
   await expect(page.locator('.data-strip').first()).toBeHidden();
   await expect(page.locator('.av-substrip').first()).toBeHidden();
+  await expect(page.locator('.ph-kicker').first()).not.toContainText('§');
   const vcBg = await page.locator('.viewer-controls').first().evaluate((el) => getComputedStyle(el).backgroundColor);
   expect(vcBg).not.toBe('rgba(20, 18, 14, 0.78)');
   await saveShot(page, 'desktop-public-viewer');
@@ -161,7 +181,7 @@ test('public table, calculators, login and pricing share the new chrome', async 
 
   await page.goto('/login.html');
   await expect(page.locator('.ps-shell')).toBeVisible();
-  await expect(page.locator('.ps-pub-sidebar')).toBeVisible();
+  await expect(page.locator('#ws-sidebar')).toBeVisible();
   await expect(page.locator('.lc-topnav-name')).toBeVisible();
   await expect.poll(() => fontFamily(page.locator('.lc-topnav-name'))).toMatch(/Instrument Serif/i);
   await expect(page.locator('.ps-shell > .lc-topnav .lc-topnav-cta')).toHaveAttribute('href', /periodic-table/);
@@ -169,6 +189,9 @@ test('public table, calculators, login and pricing share the new chrome', async 
   await expect(page.locator('#auth-email')).toBeVisible();
   const inputRadius = await page.locator('#auth-email').evaluate((el) => getComputedStyle(el).borderRadius);
   expect(parseFloat(inputRadius)).toBeGreaterThanOrEqual(10);
+  await expect.poll(async () => page.locator('#auth-login-submit').evaluate((el) => getComputedStyle(el).backgroundColor))
+    .toMatch(/rgb\(\s*20,\s*18,\s*14\s*\)/);
+  await expect(page.locator('.auth-shell')).not.toContainText(/auth\.access|HttpOnly|managed authentication|secure account flow/i);
   await saveShot(page, 'desktop-public-login');
 
   await page.goto('/pricing.html');
@@ -179,6 +202,8 @@ test('public table, calculators, login and pricing share the new chrome', async 
   await expect(page.locator('.lc-doc-kicker .pill')).toBeHidden();
   await expect(page.locator('.ps-shell > .lc-topnav .lc-topnav-cta')).toHaveAttribute('href', /login/);
   await expect(page.locator('.ps-shell > .lc-topnav .lc-topnav-cta')).toContainText(/Account/i);
+  await expect.poll(async () => page.locator('#pricing-pro-cta').evaluate((el) => getComputedStyle(el).backgroundColor))
+    .toMatch(/rgb\(\s*20,\s*18,\s*14\s*\)/);
   await saveShot(page, 'desktop-public-pricing');
 });
 
@@ -186,6 +211,8 @@ test('settings, compare, docs and articles keep the workspace pattern', async ({
   await page.goto('/config.html');
   await expect(page.locator('.ps-shell')).toBeVisible();
   await expect(page.locator('.data-strip').first()).toBeHidden();
+  await expect.poll(() => fontFamily(page.locator('.ph-title'))).toMatch(/Instrument Serif/i);
+  await expect.poll(() => fontFamily(page.locator('.settings-section-title').first())).toMatch(/Inter Tight/i);
   const toggleBg = await page.locator('.settings-toggle.active').first().evaluate((el) => getComputedStyle(el).backgroundColor);
   expect(toggleBg).toMatch(/rgb\(\s*30,\s*106,\s*80\s*\)/);
   const segBg = await page.locator('.seg-btn.active').first().evaluate((el) => getComputedStyle(el).backgroundColor);
@@ -238,6 +265,8 @@ test('settings, compare, docs and articles keep the workspace pattern', async ({
   await page.goto('/viewer/isomerism/constitutional/function.html');
   await expect(page.locator('.sub-tab.active')).toBeVisible();
   await expect(page.locator('.sub-num').first()).toBeHidden();
+  const subTabColor = await page.locator('.sub-tab.active').evaluate((el) => getComputedStyle(el).color);
+  expect(subTabColor).toMatch(/rgb\(\s*30,\s*106,\s*80\s*\)/);
   await saveShot(page, 'desktop-public-isomerism-function');
 });
 
@@ -249,6 +278,7 @@ test('molecules, allotropes and 404 drop leftover console chrome', async ({ page
   });
   expect(molPill.bg).toMatch(/rgb\(\s*30,\s*106,\s*80\s*\)/);
   expect(molPill.color).not.toMatch(/rgb\(\s*91,\s*33,\s*182\s*\)/);
+  await expect(page.locator('.ph-kicker').first()).not.toContainText('§');
   await expect.poll(() => fontFamily(page.locator('.mol-search'))).toMatch(/Inter Tight/i);
   await saveShot(page, 'desktop-public-molecules');
 
@@ -259,6 +289,7 @@ test('molecules, allotropes and 404 drop leftover console chrome', async ({ page
   });
   expect(alloPill.bg).toMatch(/rgb\(\s*30,\s*106,\s*80\s*\)/);
   expect(alloPill.color).not.toMatch(/rgb\(\s*91,\s*33,\s*182\s*\)/);
+  await expect(page.locator('.ph-kicker').first()).not.toContainText('§');
   await expect.poll(() => fontFamily(page.locator('.allo-search'))).toMatch(/Inter Tight/i);
   await saveShot(page, 'desktop-public-allotropes');
 
@@ -280,21 +311,41 @@ test('public home dark mode and mobile keep the workspace chrome', async ({ page
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.locator('.lc-mobile-hamb')).toBeVisible();
   await page.locator('.lc-mobile-hamb').click();
-  await expect(page.locator('#lc-mobile-menu.open, .lc-mobile-menu.open')).toBeVisible();
-  await expect(page.locator('.lc-mobile-menu-num')).toHaveCount(0);
+  await expect(page.locator('#ws-sidebar')).toBeVisible();
+  await expect(page.locator('#ws-sidebar')).toContainText(/Workspace/i);
+  await expect(page.locator('#ws-sidebar a[href*="/app"]')).toContainText(/Workspace/i);
   await saveShot(page, 'mobile-public-home-menu');
 
   await page.goto('/calculators.html');
   await expect(page.locator('.ps-shell > .topbar .mobile-menu-btn')).toBeVisible();
-  const closed = await page.locator('.ps-shell > aside.sidebar').evaluate((el) => {
+  const closed = await page.locator('#ws-sidebar').evaluate((el) => {
     const r = el.getBoundingClientRect();
     return { x: r.x, width: r.width, transform: getComputedStyle(el).transform };
   });
   expect(closed.x + closed.width).toBeLessThanOrEqual(1);
   await page.locator('.ps-shell > .topbar .mobile-menu-btn').click();
   await expect.poll(async () => {
-    const r = await page.locator('.ps-shell > aside.sidebar').evaluate((el) => el.getBoundingClientRect());
+    const r = await page.locator('#ws-sidebar').evaluate((el) => el.getBoundingClientRect());
     return r.x;
   }).toBeGreaterThanOrEqual(0);
   await saveShot(page, 'mobile-public-calculators');
+});
+
+test('signup and recover keep UI V2 forms and the 30-day trial copy', async ({ page }) => {
+  await page.goto('/signup');
+  await expect(page.locator('#auth-signup-form')).toBeVisible();
+  await expect(page.locator('#auth-panel-signup')).toContainText(/30 days/i);
+  await expect.poll(async () => page.locator('#auth-signup-submit').evaluate((el) => getComputedStyle(el).backgroundColor))
+    .toMatch(/rgb\(\s*20,\s*18,\s*14\s*\)/);
+  await saveShot(page, 'desktop-public-signup');
+
+  await page.goto('/forgot-password');
+  await expect(page.locator('#auth-reset-form')).toBeVisible();
+  await expect(page.locator('#auth-reset-email')).toBeVisible();
+  await saveShot(page, 'desktop-public-recover');
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/login.html');
+  await expect(page.locator('#auth-email')).toBeVisible();
+  await saveShot(page, 'mobile-public-login');
 });

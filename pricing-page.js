@@ -50,7 +50,7 @@
       ],
       proGroups: [
         {
-          title: 'PRO STUDY SYSTEM',
+          title: 'Study',
           items: [
             'Everything in Free',
             'No ads',
@@ -62,12 +62,7 @@
             'Spaced repetition',
             'Study Insights',
             'Focus Review',
-            'Study progress',
-            'Advanced analysis',
-            'Element, molecule and atomic compare',
-            'Saved Lab Sessions',
-            '3D molecule viewer, atomic models, allotropes and isomerism',
-            'Public element compare, stoichiometry and thermo'
+            'Study progress'
           ]
         },
         {
@@ -81,6 +76,21 @@
             'Molecular formula solver',
             'Solution preparation',
             'Saved solver sessions'
+          ]
+        },
+        {
+          title: 'Analyze',
+          items: [
+            'Advanced analysis',
+            'Element, molecule and atomic compare',
+            'Saved Lab Sessions'
+          ]
+        },
+        {
+          title: 'Visualize',
+          items: [
+            '3D molecule viewer, atomic models, allotropes and isomerism',
+            'Public element compare, stoichiometry and thermo'
           ]
         }
       ],
@@ -209,7 +219,7 @@
       ],
       proGroups: [
         {
-          title: 'PRO STUDY SYSTEM',
+          title: 'Estudo',
           items: [
             'Tudo do Free',
             'Sem anúncios',
@@ -221,12 +231,7 @@
             'Repetição espaçada',
             'Insights de Estudo',
             'Focus Review',
-            'Progresso de estudo',
-            'Análise avançada',
-            'Comparação de elementos, moléculas e átomos',
-            'Sessões salvas do Lab',
-            'Visualizador 3D, modelos atômicos, alótropos e isomeria',
-            'Comparação pública, estequiometria e termo públicos'
+            'Progresso de estudo'
           ]
         },
         {
@@ -240,6 +245,21 @@
             'Solver de fórmula molecular',
             'Preparação de soluções',
             'Sessões salvas do solver'
+          ]
+        },
+        {
+          title: 'Analisar',
+          items: [
+            'Análise avançada',
+            'Comparação de elementos, moléculas e átomos',
+            'Sessões salvas do Lab'
+          ]
+        },
+        {
+          title: 'Visualizar',
+          items: [
+            'Visualizador 3D, modelos atômicos, alótropos e isomeria',
+            'Comparação pública, estequiometria e termo públicos'
           ]
         }
       ],
@@ -333,6 +353,36 @@
   function t(key) {
     var dict = COPY[lang()] || COPY.en;
     return dict[key];
+  }
+
+  function uniqueList(items) {
+    var seen = {};
+    var out = [];
+    (items || []).forEach(function (item) {
+      if (!item || seen[item]) return;
+      seen[item] = true;
+      out.push(item);
+    });
+    return out;
+  }
+
+  function resolvedProGroups() {
+    var fallback = t('proGroups') || [];
+    var catalog = window.AtomurusProFeatures;
+    if (!catalog || typeof catalog.grouped !== 'function') return fallback;
+    var extras = {
+      study: ['Focus Review'],
+      solve: lang() === 'pt'
+        ? ['Balanceamento de reações', 'Cálculos de reagente limitante']
+        : ['Reaction balancing', 'Limiting-reagent calculations'],
+      visualize: ['3D molecule viewer, atomic models, allotropes and isomerism']
+    };
+    return catalog.grouped().map(function (group) {
+      var title = group.id === 'solve' ? t('proLabGroup') : group.title;
+      var items = group.features.map(function (feat) { return feat.title; });
+      if (extras[group.id]) items = items.concat(extras[group.id]);
+      return { title: title, items: uniqueList(items) };
+    });
   }
 
   function interpolate(template, vars) {
@@ -474,7 +524,7 @@
     setText('pricing-pro-tag', t('proTag'));
     setText('pricing-pro-name', t('proName'));
     setText('pricing-pro-sub', t('proSub'));
-    setGroupedList('pricing-pro-list', t('proGroups'));
+    setGroupedList('pricing-pro-list', resolvedProGroups());
     setText('pricing-coming-title', t('comingTitle'));
     setList('pricing-coming-list', t('comingItems'));
     if (period === 'annual') {

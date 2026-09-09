@@ -1,0 +1,59 @@
+/* Atomurus UI V2 — dialogs */
+
+.ui-dialog-host {
+  display: none;
+}
+
+.ui-dialog-host.is-open {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: end center;
+}
+
+.ui-dialog-backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--color-overlay);
+}
+
+.ui-dialog {
+  position: relative;
+  width: min(520px, 100%);
+  max-height: min(88vh, 720px);
+  overflow: auto;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: var(--space-5);
+  display: grid;
+  gap: var(--space-3);
+}
+
+.ui-dialog-title {
+  font-family: var(--font-serif);
+  font-size: var(--text-2xl);
+  font-weight: 400;
+  margin: 0;
+}
+
+.ui-dialog-body {
+  color: var(--color-text-muted);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+}
+
+.ui-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+body.ui-dialog-open { overflow: hidden; }
+
+@media (min-width: 768px) {
+  .ui-dialog-host.is-open { place-items: center; }
+  .ui-dialog { border-radius: var(--radius-lg); }
+}

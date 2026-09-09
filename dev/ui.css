@@ -1,0 +1,77 @@
+/* Layout for the internal UI V2 gallery only. Not a product stylesheet. */
+
+.ui-gallery {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4) var(--space-8);
+}
+
+.ui-gallery-hero {
+  display: grid;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.ui-gallery-grid {
+  display: grid;
+  gap: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .ui-gallery-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+  }
+}
+
+.ui-swatch-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.ui-swatch {
+  width: 72px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+}
+
+.ui-scale {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: end;
+}
+
+.ui-scale i {
+  display: block;
+  width: 24px;
+  background: var(--color-brand);
+  border-radius: var(--radius-sm);
+}
+
+.ui-type-row {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.ui-swatch-bg { background: var(--color-bg); }
+.ui-swatch-surface { background: var(--color-surface); }
+.ui-swatch-ink { background: var(--color-text); }
+.ui-swatch-brand { background: var(--color-brand); }
+
+.ui-scale i:nth-child(1) { height: var(--space-1); }
+.ui-scale i:nth-child(2) { height: var(--space-2); }
+.ui-scale i:nth-child(3) { height: var(--space-3); }
+.ui-scale i:nth-child(4) { height: var(--space-4); }
+.ui-scale i:nth-child(5) { height: var(--space-5); }
+.ui-scale i:nth-child(6) { height: var(--space-6); }
+.ui-scale i:nth-child(7) { height: var(--space-7); }
+.ui-scale i:nth-child(8) { height: var(--space-8); }
+
+.ui-form-demo { max-width: 28.75rem; }
+.ui-badge-row { margin-top: var(--space-4); }

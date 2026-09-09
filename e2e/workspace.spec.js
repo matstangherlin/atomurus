@@ -13,6 +13,10 @@ function saveShot(page, name) {
 test('Free sees premium nav locked and cannot use Study Cloud', async ({ page }) => {
   await installApi(page, { kind: 'free' });
   await gotoWorkspace(page, '/app');
+  await expect(page.locator('#ws-study-nav')).toContainText(/Overview|Visão geral/);
+  await expect(page.locator('#ws-study-nav')).toContainText(/Study|Estudo/);
+  await expect(page.locator('#ws-study-nav')).toContainText(/Lab/);
+  await page.locator('#ws-study-nav a[href="/app?section=library"]').first().click();
   await expect(page.locator('#ws-study-nav')).toContainText(/Library|Biblioteca/);
   await expect(page.locator('#ws-study-nav')).toContainText(/Study Sets/);
   await expect(page.locator('#ws-study-nav a[href="/app?section=review"]')).toContainText(/Review/);
@@ -21,7 +25,7 @@ test('Free sees premium nav locked and cannot use Study Cloud', async ({ page })
 
   await page.locator('#ws-study-nav a[href="/app?section=sets"]').click();
   await expect(page.locator('#ws-dialog-host')).toContainText(/Atomurus Pro/);
-  await expect(page).toHaveURL(/\/app$/);
+  await expect(page).toHaveURL(/section=library/);
   await page.locator('#ws-dialog-host button').first().click();
 
   await gotoWorkspace(page, '/app?section=library');
@@ -168,13 +172,43 @@ test('Payment issue offers Manage billing', async ({ page }) => {
   await expect(page.locator('#ws-billing-portal')).toBeVisible();
 });
 
+test('Account Free shows Upgrade to Pro', async ({ page }) => {
+  await installApi(page, { kind: 'free' });
+  await gotoWorkspace(page, '/app?section=account');
+  await expect(page.locator('#ws-plan-card')).toContainText(/Atomurus Free/);
+  await expect(page.locator('#ws-plan-card a[href="/pricing"]')).toContainText(/Upgrade to Pro|Assinar o Pro/i);
+});
+
+test('Guest account section does not expose profile fields', async ({ page }) => {
+  await installApi(page, { kind: 'guest', signedIn: false });
+  await gotoWorkspace(page, '/app?section=account');
+  await expect(page.locator('#ws-acc-email')).toHaveCount(0);
+  await expect(page.locator('#app-study')).toContainText(/chemistry workspace|workspace de química/i);
+});
+
+test('Overview lists recent lab sessions and viewer names', async ({ page }) => {
+  const store = createStore();
+  store.labSessions = [{
+    id: 'aaaaaaaa-bbbb-4ccc-8ddd-000000000001',
+    sessionType: 'reaction',
+    title: 'Combustion of CH4',
+    updatedAt: new Date().toISOString()
+  }];
+  await installApi(page, { kind: 'pro', store });
+  await gotoWorkspace(page, '/app');
+  await expect(page.locator('#app-study')).toContainText(/Recent Lab Sessions|Sessões recentes/);
+  await expect(page.locator('#app-study')).toContainText('Combustion of CH4');
+  await expect(page.locator('#app-study a[href="/viewer/atomic-models.html"]')).toContainText(/Atomic Models|Modelos atômicos/);
+  await expect(page.locator('#app-study a[href="/viewer/atomic-models.html"]')).not.toContainText(/Atomic Compare|Comparar átomos/);
+});
+
 test('PT/EN workspace rerender', async ({ page }) => {
   await installApi(page, { kind: 'pro', lang: 'en' });
   await gotoWorkspace(page, '/app');
   await expect(page.locator('#ws-study-nav')).toContainText(/Overview|Library/);
   await page.locator('[data-i18n-toggle]').first().click();
   await expect(page.locator('#ws-study-nav')).toContainText('Visão geral');
-  await expect(page.locator('#ws-study-nav')).toContainText('Biblioteca');
+  await expect(page.locator('#ws-study-nav')).toContainText(/Estudo|Lab|Atividade/);
   await saveShot(page, 'app-overview-pt');
   await page.locator('[data-i18n-toggle]').first().click();
   await expect(page.locator('#ws-study-nav')).toContainText('Overview');
@@ -214,7 +248,7 @@ test('mobile 390x844: bottom nav, drawer, no horizontal overflow', async ({ page
   expect(Math.max(...tops) - Math.min(...tops)).toBeLessThan(8);
   await expect(page.locator('#app-study')).toContainText(/1 card is due today|1 card vence hoje/);
   await expect(page.locator('#app-study')).not.toContainText(/1 cards are due|1 cards vencem/);
-  const destCards = page.locator('.ws-dest-card');
+  const destCards = page.locator('.ws-study-dests .ws-dest-card');
   await expect(destCards).toHaveCount(4);
   const destLayout = await destCards.evaluateAll((els) => els.map((el) => {
     const box = el.getBoundingClientRect();

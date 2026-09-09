@@ -1,0 +1,69 @@
+/* Atomurus UI V2 — Workspace chrome
+   Loaded after app-workspace.css. Tokens come from assets/ui/index.css.
+   Do not restyle study charts, review cards, or Pro Lab science.
+   /app stays a public guest workspace (no public-shell). */
+
+.ws-body {
+  font-family: var(--font-ui);
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+.ws-skip {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+}
+
+.ws-topbar {
+  background: var(--color-surface);
+  border-bottom-color: var(--color-border);
+}
+
+.ws-brand-name {
+  font-family: var(--font-serif);
+  color: var(--color-text);
+}
+
+.ws-brand-tag {
+  color: var(--color-text-muted);
+}
+
+.ws-search {
+  background: var(--color-bg);
+  border-color: var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.ws-search input {
+  font-family: var(--font-ui);
+  color: var(--color-text);
+}
+
+.ws-btn {
+  font-family: var(--font-ui);
+  min-height: var(--control-height);
+  border-radius: var(--radius-md);
+}
+
+.ws-btn-primary {
+  background: var(--color-brand);
+  border-color: var(--color-brand);
+  color: var(--color-on-brand);
+}
+
+.ws-btn-secondary {
+  background: color-mix(in oklab, var(--color-brand) 10%, transparent);
+}
+
+.ws-btn-danger {
+  color: var(--color-danger);
+  border-color: color-mix(in oklab, var(--color-danger) 40%, var(--color-border));
+}
+
+.ws-chip.is-on {
+  color: var(--color-brand);
+  border-color: color-mix(in oklab, var(--color-brand) 40%, var(--color-border));
+  background: color-mix(in oklab, var(--color-brand) 10%, transparent);
+}

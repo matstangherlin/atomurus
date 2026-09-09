@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en-US" data-theme="light">
+<html data-ps-chrome="1" lang="en-US" data-theme="light">
 <head>
-<style>html.lang-pt-pending [data-i18n],html.lang-pt-pending [data-i18n-html],html.lang-pt-pending [data-i18n-attr],html.lang-pt-pending [data-page-field]{visibility:hidden!important}html[data-theme="dark"] #icon-theme-light,html[data-theme="light"] #icon-theme-dark{display:none!important}html[data-theme="dark"] #icon-theme-dark,html[data-theme="light"] #icon-theme-light{display:block!important}</style>
-<script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var KEY='atomurus-lang';var p=new URLSearchParams(location.search).get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem(KEY);if(l!=='pt'&&l!=='en'){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}try{localStorage.setItem(KEY,l);}catch(e){}if(l==='pt'){document.documentElement.lang='pt-BR';document.documentElement.classList.add('lang-pt-pending');setTimeout(function(){document.documentElement.classList.remove('lang-pt-pending');},120);}else{document.documentElement.lang='en-US';}}catch(e){}})();</script>
+<style>html[data-theme="dark"] #icon-theme-light,html[data-theme="light"] #icon-theme-dark{display:none!important}html[data-theme="dark"] #icon-theme-dark,html[data-theme="light"] #icon-theme-light{display:block!important}</style>
+<script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var KEY='atomurus-lang';var p=new URLSearchParams(location.search).get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem(KEY);if(l!=='pt'&&l!=='en'){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}try{localStorage.setItem(KEY,l);}catch(e){}if(l==='pt'){document.documentElement.lang='pt-BR';}else{document.documentElement.lang='en-US';}}catch(e){}})();</script>
 <meta name="google-adsense-account" content="ca-pub-9495821870733084">
 <script src="ads-gate.js?v=202608041630"></script>
 <script src="cookie-consent.js?v=202608041630" defer></script>
@@ -95,7 +95,10 @@
 <link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
 <noscript><link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630"></noscript>
 <link rel="stylesheet" href="/assets/public-shell.css?v=202608282800">
+<script src="assets/global-nav.js?v=202609090500"></script>
 <script src="/assets/public-workspace.js?v=202608282500"></script>
+<link rel="stylesheet" href="/assets/ui/index.css?v=202609090500">
+<link rel="stylesheet" href="/assets/layouts/calculators.css?v=202609090500">
 
 <style>
   *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -199,12 +202,12 @@
   }
 </style>
 </head>
-<body>
+<body class="ps-body">
 
 <!-- ════════════ SIDEBAR ════════════ -->
-<aside class="sidebar">
-
-  <a class="logo-wrap" href="index.html" title="Atomurus home">
+<div class="ps-shell" id="ps-shell">
+<div class="topbar">
+    <a class="ps-brand logo-wrap" href="index.html" title="Atomurus home">
     <div class="logo-mark">
       <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
         <circle cx="8" cy="8" r="2.5" fill="currentColor"/>
@@ -215,110 +218,13 @@
     </div>
     <div>
       <div class="logo-text">Atomurus</div>
-      <div class="logo-tag">v1.11</div>
+      <div class="logo-tag" data-i18n="common.brandTag">chemistry lab</div>
     </div>
   </a>
-
-  <div class="sidebar-scroll">
-    <!-- Home link -->
-    <div class="nav-section" style="margin-bottom:6px;">
-      <a class="nav-item nav-home" href="index.html" style="opacity:.7;font-size:12px;">
-        <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
-          <path d="M2 8L8 2l6 6M3 7v7h10V7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-        </svg>
-        Home
-      </a>
-    </div>
-    <!-- Lab section -->
-    <div class="nav-section">
-      <div class="nav-label"><span class="nl-no">00</span><span data-i18n="calc.bcLab" style="text-transform:capitalize;">Laboratory</span></div>
-
-      <a class="nav-item" href="periodic-table.html">
-        <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
-          <rect x="1" y="1" width="6" height="6" rx="1.5" fill="currentColor" opacity=".9"/>
-          <rect x="9" y="1" width="6" height="6" rx="1.5" fill="currentColor" opacity=".5"/>
-          <rect x="1" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity=".5"/>
-          <rect x="9" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity=".3"/>
-        </svg>
-        <span data-i18n="common.nav.periodic">Periodic Table</span>
-      </a>
-
-      <div class="nav-expandable" data-expand="visualizador">
-        <div class="nav-row" onclick="toggleNavGroup('visualizador')" role="button" tabindex="0" aria-expanded="false">
-          <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
-            <circle cx="8" cy="8" r="1.5" fill="currentColor"/>
-            <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/>
-            <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/>
-            <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/>
-          </svg>
-          <span data-i18n="common.nav.visualizador">Visualizador</span>
-          <svg class="nav-chevron" viewBox="0 0 11 11" fill="none"><path d="M3.5 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-        <div class="nav-children">
-          <a class="nav-item" href="viewer/atomic-models.html">
-            <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="1.5" fill="currentColor"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/></svg>
-            <span data-i18n="common.nav.atomicModels">Modelos Atômicos</span>
-          </a>
-          <a class="nav-item" href="viewer/molecules.html">
-            <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="4" cy="4" r="2" fill="currentColor"/><circle cx="12" cy="6" r="2" fill="currentColor" opacity=".7"/><circle cx="8" cy="12" r="2" fill="currentColor" opacity=".5"/><line x1="4" y1="4" x2="12" y2="6" stroke="currentColor" stroke-width="1"/><line x1="12" y1="6" x2="8" y2="12" stroke="currentColor" stroke-width="1"/><line x1="4" y1="4" x2="8" y2="12" stroke="currentColor" stroke-width="1"/></svg>
-            <span data-i18n="common.nav.molecules">Moléculas</span>
-          </a>
-          <a class="nav-item" href="viewer/allotropes.html">
-            <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><polygon points="8,2 14,6 12,13 4,13 2,6" stroke="currentColor" stroke-width="1.2" fill="none"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/></svg>
-            <span data-i18n="common.nav.allotropes">Alótropos</span>
-          </a>
-          <a class="nav-item" href="viewer/isomerism/constitutional/function.html">
-            <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
-              <circle cx="4" cy="8" r="2" fill="currentColor" opacity=".85"/>
-              <circle cx="12" cy="8" r="2" fill="currentColor" opacity=".85"/>
-              <line x1="4" y1="8" x2="4" y2="3.5" stroke="currentColor" stroke-width="1.1"/>
-              <line x1="12" y1="8" x2="12" y2="3.5" stroke="currentColor" stroke-width="1.1"/>
-              <line x1="4" y1="8" x2="4" y2="12.5" stroke="currentColor" stroke-width="1.1"/>
-              <line x1="12" y1="8" x2="12" y2="12.5" stroke="currentColor" stroke-width="1.1"/>
-              <line x1="8" y1="1" x2="8" y2="15" stroke="currentColor" stroke-width="1" stroke-dasharray="2,1.5" opacity=".5"/>
-            </svg>
-            <span data-i18n="common.nav.isomerism">Isomerism</span>
-          </a>
-        </div>
-      </div>
-
-      <a class="nav-item active" href="calculators.html" aria-current="page">
-        <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
-          <rect x="2" y="1" width="12" height="14" rx="2" stroke="currentColor" stroke-width="1.3" fill="none"/>
-          <line x1="5" y1="5" x2="11" y2="5" stroke="currentColor" stroke-width="1.1"/>
-          <line x1="5" y1="8" x2="11" y2="8" stroke="currentColor" stroke-width="1"/>
-          <line x1="5" y1="11" x2="9" y2="11" stroke="currentColor" stroke-width="1"/>
-        </svg>
-        <span data-i18n="common.nav.calc">Calculators</span>
-      </a>
-      <a class="nav-item" href="explore.html">
-        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.3" stroke="currentColor" stroke-width="1.1" fill="none"/><rect x="9" y="1" width="6" height="6" rx="1.3" stroke="currentColor" stroke-width="1.1" fill="none"/><rect x="1" y="9" width="6" height="6" rx="1.3" stroke="currentColor" stroke-width="1.1" fill="none"/><circle cx="12" cy="12" r="2.6" stroke="currentColor" stroke-width="1.3" fill="none"/><line x1="14" y1="14" x2="15.5" y2="15.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-        <span data-i18n="common.nav.explore">Explore</span>
-      </a>
-    </div>
-  </div>
-
-  <div class="sidebar-foot">
-    <a class="nav-item" href="config.html">
-      <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
-        <circle cx="8" cy="8" r="2.2" stroke="currentColor" stroke-width="1.3"/>
-        <path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M2.93 2.93l1.06 1.06M12.01 12.01l1.06 1.06M2.93 13.07l1.06-1.06M12.01 3.99l1.06-1.06" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-      </svg>
-      <span data-i18n="common.nav.settings">Settings</span>
-    </a>
-  </div>
-</aside>
-
-<!-- ════════════ MAIN ════════════ -->
-<div class="mobile-overlay" id="mobile-overlay" onclick="toggleMobileSidebar()"></div>
-<main class="main">
-
-  <!-- topbar -->
-  <div class="topbar">
     <button class="mobile-menu-btn" onclick="toggleMobileSidebar()" aria-label="Open menu">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><line x1="2" y1="4.5" x2="14" y2="4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="2" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="2" y1="11.5" x2="14" y2="11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
     </button>
-    <div class="breadcrumb">
+    <div class="breadcrumb" hidden>
       <a href="index.html">workspace</a>
       <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="opacity:.35">
         <path d="M3.5 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
@@ -332,6 +238,20 @@
 
     <!-- Language toggle — direct child of .topbar (same as periodic-table.html);
          margin-left:auto pushes it and the following theme button to the right. -->
+    <form class="ps-search search-box" role="search" action="periodic-table.html" method="get">
+  <label class="lc-sr-only" for="ps-search-q">Search element</label>
+  <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+    <circle cx="5.5" cy="5.5" r="4" stroke="currentColor" stroke-width="1.4"/>
+    <line x1="8.7" y1="8.7" x2="11.5" y2="11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+  </svg>
+  <input id="ps-search-q" name="q" type="search" autocomplete="off" data-i18n-attr="placeholder:common.searchPlaceholder" placeholder="search element, symbol or Z…">
+  <button type="submit" data-i18n-attr="aria-label:common.searchAria" aria-label="Search element">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <circle cx="6" cy="6" r="4.2" stroke="currentColor" stroke-width="1.3"/>
+      <path d="M9.2 9.2 12 12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+    </svg>
+  </button>
+</form>
     <button class="theme-btn" data-i18n-toggle
             data-i18n-attr="aria-label:common.langToggle; title:common.langToggle"
             aria-label="Switch language" title="Switch language"
@@ -347,7 +267,60 @@
         <path d="M7.5 1v1M7.5 13v1M1 7.5H0M15 7.5h-1M2.93 2.93l.7.7M11.37 11.37l.7.7M2.93 12.07l.7-.7M11.37 3.63l.7-.7M7.5 5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
       </svg>
     </button>
+  <div class="ps-account" data-atomurus-account>
+  <span class="ps-plan-badge" data-atomurus-plan-badge hidden></span>
+  <a class="ps-userchip lc-topnav-cta" href="login.html" data-atomurus-account-chip aria-label="Account">
+    <svg class="ps-userchip-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span data-i18n="pricing.ctaAccount">Account</span>
+  </a>
+</div>
   </div>
+<div class="mobile-overlay" id="mobile-overlay" onclick="toggleMobileSidebar()"></div>
+<aside class="ws-sidebar sidebar ps-pub-sidebar" id="ws-sidebar" data-atomurus-sidebar>
+  <nav class="ws-nav" id="ws-nav-main" aria-label="Laboratory" data-atomurus-lab-nav>
+    <div class="ws-nav-block ws-nav-site">
+      <h2 class="ws-nav-group" data-i18n="common.nav.laboratory">Laboratory</h2>
+      <a class="ws-nav-item" href="/" data-nav="home">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M2.5 7.5 8 3l5.5 4.5M4 6.5V13h8V6.5M6.5 13V9h3v4"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.home">Home</span>
+      </a>
+      <a class="ws-nav-item" href="/periodic-table.html" data-nav="periodic">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.periodic">Periodic Table</span>
+      </a>
+      <a class="ws-nav-item" href="/viewer/atomic-models.html" data-nav="viewer">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="8" cy="8" r="2"/><ellipse cx="8" cy="8" rx="6" ry="2.5"/><ellipse cx="8" cy="8" rx="6" ry="2.5" transform="rotate(60 8 8)"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.visualizador">Viewer</span>
+      </a>
+      <a class="ws-nav-item" href="/calculators.html" data-nav="calculators">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="2" width="10" height="12" rx="1"/><path d="M5 5h6M5.5 8h1M9.5 8h1M5.5 11h1M9.5 11h1"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.calc">Calculators</span>
+      </a>
+      <a class="ws-nav-item" href="/explore.html" data-nav="explore">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.explore">Explore</span>
+      </a>
+      <a class="ws-nav-item" href="/app" data-nav="workspace">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 12l4-4 2 2 4-6"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.workspace">Workspace</span>
+      </a>
+    </div>
+  </nav>
+  <div class="ws-nav-foot sidebar-foot" id="ws-nav-foot" data-atomurus-nav-foot>
+    <a class="ws-nav-item" href="/login" data-nav="account" data-auth-nav-link="common.nav.login">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5"/></g></svg>
+      <span class="ws-nav-label" data-i18n="common.nav.login">Account</span>
+    </a>
+    <a class="ws-nav-item" href="/pricing" data-nav="plans">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 5h8v8H4zM6 3v2M10 3v2"/></g></svg>
+      <span class="ws-nav-label" data-i18n="common.nav.plans">Plans</span>
+    </a>
+  </div>
+</aside>
+<main class="main">
+
+  <!-- topbar -->
+  
 
   <!-- data strip -->
   <div class="data-strip">
@@ -366,9 +339,9 @@
       <p class="ph-desc" data-i18n="calc.desc">A compact chemical computation suite for formula mass, scientific expressions, gas laws, dilutions and acid-base diagnostics. Pick an instrument, load a preset, inspect the formula and copy a clean result.</p>
       <div data-pro-lab-tool="calculations"></div>
       <aside class="solver-discover" id="solver-discover">
-        <span class="solver-discover-badge">PRO</span>
+        <span class="solver-discover-badge ui-badge ui-badge-pro">PRO</span>
         <p data-i18n="calc.solverDiscover">Need to solve a full reaction? Balance equations, calculate limiting reagents and solve stoichiometry.</p>
-        <a class="solver-discover-cta" href="/app?section=pro-lab&tool=reactions" data-i18n="calc.solverDiscoverCta">Open Reaction Workbench</a>
+        <a class="solver-discover-cta ui-btn ui-btn-accent" href="/app?section=pro-lab&tool=reactions" data-i18n="calc.solverDiscoverCta">Open Reaction Workbench</a>
       </aside>
 
       <div class="calc-shell">
@@ -484,7 +457,7 @@
             <div class="calc-field">
               <label class="calc-field-l" for="mm-input"><span data-i18n="calc.formulaLabel">Formula</span> <span class="req">*</span></label>
               <div>
-                <input id="mm-input" class="calc-input" type="text" value="H2SO4"
+                <input id="mm-input" class="calc-input ui-input" type="text" value="H2SO4"
                        placeholder="e.g. C6H12O6, CuSO4·5H2O, Ca(OH)2"
                        data-i18n-attr="placeholder:calc.formulaPlaceholder"
                        spellcheck="false" autocomplete="off">
@@ -495,9 +468,9 @@
             <div class="calc-field">
               <label class="calc-field-l" for="mm-amount" data-i18n="calc.sampleAmount">Sample amount</label>
               <div class="calc-row-2">
-                <input id="mm-amount" class="calc-input" type="number" step="any" placeholder="optional · e.g. 10"
+                <input id="mm-amount" class="calc-input ui-input" type="number" step="any" placeholder="optional · e.g. 10"
                        data-i18n-attr="placeholder:calc.sampleOptional">
-                <select id="mm-amount-unit" class="calc-select">
+                <select id="mm-amount-unit" class="calc-select ui-select">
                   <option value="g" data-i18n="calc.unitGrams">grams (g)</option>
                   <option value="mol" selected data-i18n="calc.unitMoles">moles (mol)</option>
                   <option value="kg" data-i18n="calc.unitKilograms">kilograms (kg)</option>
@@ -514,11 +487,11 @@
             </div>
 
             <div class="calc-actions">
-              <button class="calc-btn-run" onclick="runMolar()">
+              <button class="calc-btn-run ui-btn ui-btn-accent" onclick="runMolar()">
                 <span data-i18n="calc.compute">Compute</span>
                 <span class="lc-kbd" style="background:rgba(255,255,255,.18);">↵</span>
               </button>
-              <button class="calc-btn-reset" onclick="resetMolar()" data-i18n="calc.reset">Reset</button>
+              <button class="calc-btn-reset ui-btn ui-btn-secondary" onclick="resetMolar()" data-i18n="calc.reset">Reset</button>
             </div>
 
             <details class="calc-how">
@@ -528,7 +501,7 @@
               </div>
             </details>
 
-            <div class="calc-result" id="mm-result">
+            <div class="calc-result ui-card ui-card-data" id="mm-result">
               <div class="calc-result-head">
                 <span class="calc-result-head-main"><span class="lc-st-dot"></span><span data-i18n="calc.output">output</span></span>
                 <span class="calc-result-meta"><span id="mm-result-meta" data-i18n="calc.awaiting">awaiting input…</span><button class="calc-copy-btn" type="button" data-copy-result="mm-result-body" data-i18n="calc.copy">Copy</button></span>
@@ -567,7 +540,7 @@
               <label class="calc-field-l" for="sci-input" data-i18n="calc.expressionLabel">Expression</label>
               <div>
                 <div class="sci-input-wrap">
-                  <input id="sci-input" class="calc-input" type="text" value="pH(1e-3)"
+                  <input id="sci-input" class="calc-input ui-input" type="text" value="pH(1e-3)"
                          placeholder="pH(1e-3), molarMass(&quot;H2SO4&quot;), dilution(1,25,0.1)"
                          data-i18n-attr="placeholder:calc.expressionPlaceholder"
                          spellcheck="false" autocomplete="off" aria-describedby="sci-syntax-help">
@@ -584,14 +557,14 @@
             </div>
 
             <div class="calc-actions">
-              <button class="calc-btn-run" onclick="runScientific()">
+              <button class="calc-btn-run ui-btn ui-btn-accent" onclick="runScientific()">
                 <span data-i18n="calc.compute">Compute</span>
                 <span class="lc-kbd" style="background:rgba(255,255,255,.18);">Enter</span>
               </button>
-              <button class="calc-btn-reset" onclick="resetScientific()" data-i18n="calc.clear">Clear</button>
+              <button class="calc-btn-reset ui-btn ui-btn-secondary" onclick="resetScientific()" data-i18n="calc.clear">Clear</button>
             </div>
 
-            <div class="calc-result sci-console" id="sci-result" aria-live="polite">
+            <div class="calc-result sci-console ui-card ui-card-data" id="sci-result" aria-live="polite">
               <div class="calc-result-head sci-console-head">
                 <span class="calc-result-head-main"><span class="lc-st-dot"></span><span data-i18n="calc.output">output</span></span>
                 <span class="calc-result-meta"><span id="sci-result-meta" data-i18n="calc.consoleReady">console ready</span><button class="calc-copy-btn" type="button" id="sci-copy-value" data-copy-value="" data-i18n="calc.copyValue">Copy value</button></span>
@@ -631,7 +604,7 @@
             <div id="scicalc-view">
               <div class="scc-device">
                 <div class="scc-deck">
-                  <span class="scc-brand">ATOMURUS</span>
+                  <span class="scc-brand">Atomurus</span>
                   <span class="scc-brand-sub">Scientific · Chem</span>
                   <span class="scc-status" id="scc-status">ready</span>
                 </div>
@@ -929,7 +902,7 @@
 
             <div class="calc-field">
               <label class="calc-field-l" data-i18n="calc.ucCategory">Category</label>
-              <select id="uc-cat" class="calc-select" onchange="updateUnitCategory()">
+              <select id="uc-cat" class="calc-select ui-select" onchange="updateUnitCategory()">
                 <option value="mass" data-i18n="calc.ucCatMass">Mass</option>
                 <option value="volume" data-i18n="calc.ucCatVolume">Volume</option>
                 <option value="pressure" data-i18n="calc.ucCatPressure">Pressure</option>
@@ -942,15 +915,15 @@
 
             <div class="calc-field">
               <label class="calc-field-l" data-i18n="calc.ucValue">Value</label>
-              <input id="uc-value" class="calc-input" type="number" step="any" value="1">
+              <input id="uc-value" class="calc-input ui-input" type="number" step="any" value="1">
             </div>
             <div class="calc-field">
               <label class="calc-field-l" data-i18n="calc.ucFrom">From</label>
-              <select id="uc-from" class="calc-select" onchange="runUnit()"></select>
+              <select id="uc-from" class="calc-select ui-select" onchange="runUnit()"></select>
             </div>
             <div class="calc-field">
               <label class="calc-field-l" data-i18n="calc.ucTo">To</label>
-              <select id="uc-to" class="calc-select" onchange="runUnit()"></select>
+              <select id="uc-to" class="calc-select ui-select" onchange="runUnit()"></select>
             </div>
 
             <div class="calc-chip-row" aria-label="Unit converter presets">
@@ -962,8 +935,8 @@
             </div>
 
             <div class="calc-actions">
-              <button class="calc-btn-run" onclick="runUnit()" data-i18n="calc.compute">Compute</button>
-              <button class="calc-btn-reset" onclick="resetUnit()" data-i18n="calc.reset">Reset</button>
+              <button class="calc-btn-run ui-btn ui-btn-accent" onclick="runUnit()" data-i18n="calc.compute">Compute</button>
+              <button class="calc-btn-reset ui-btn ui-btn-secondary" onclick="resetUnit()" data-i18n="calc.reset">Reset</button>
             </div>
 
             <details class="calc-how">
@@ -973,7 +946,7 @@
               </div>
             </details>
 
-            <div class="calc-result" id="uc-result">
+            <div class="calc-result ui-card ui-card-data" id="uc-result">
               <div class="calc-result-head">
                 <span class="calc-result-head-main"><span class="lc-st-dot"></span><span data-i18n="calc.output">output</span></span>
                 <span class="calc-result-meta"><span id="uc-result-meta" data-i18n="calc.awaiting">awaiting input…</span><button class="calc-copy-btn" type="button" data-copy-result="uc-result-body" data-i18n="calc.copy">Copy</button></span>
@@ -1003,7 +976,7 @@
 
             <div class="calc-field">
               <label class="calc-field-l" data-i18n="calc.solveFor">Solve for</label>
-              <select id="ig-solve" class="calc-select" onchange="updateIdealFields()">
+              <select id="ig-solve" class="calc-select ui-select" onchange="updateIdealFields()">
                 <option value="P" data-i18n="calc.optP">Pressure (P)</option>
                 <option value="V" selected data-i18n="calc.optV">Volume (V)</option>
                 <option value="n" data-i18n="calc.optN">Moles (n)</option>
@@ -1014,8 +987,8 @@
             <div class="calc-field" data-ig="P">
               <label class="calc-field-l" data-i18n="calc.optP">Pressure (P)</label>
               <div class="calc-row-2">
-                <input id="ig-P" class="calc-input" type="number" step="any" value="101325">
-                <select id="ig-P-u" class="calc-select">
+                <input id="ig-P" class="calc-input ui-input" type="number" step="any" value="101325">
+                <select id="ig-P-u" class="calc-select ui-select">
                   <option value="Pa" selected data-i18n="calc.unitPa">Pascal (Pa)</option>
                   <option value="kPa" data-i18n="calc.unitKPa">kilopascal (kPa)</option>
                   <option value="atm">atm</option>
@@ -1027,8 +1000,8 @@
             <div class="calc-field" data-ig="V">
               <label class="calc-field-l" data-i18n="calc.optV">Volume (V)</label>
               <div class="calc-row-2">
-                <input id="ig-V" class="calc-input" type="number" step="any" value="">
-                <select id="ig-V-u" class="calc-select">
+                <input id="ig-V" class="calc-input ui-input" type="number" step="any" value="">
+                <select id="ig-V-u" class="calc-select ui-select">
                   <option value="L" selected data-i18n="calc.unitL">liter (L)</option>
                   <option value="mL" data-i18n="calc.unitMl">milliliter (mL)</option>
                   <option value="m3" data-i18n="calc.unitM3">cubic meter (m³)</option>
@@ -1038,14 +1011,14 @@
 
             <div class="calc-field" data-ig="n">
               <label class="calc-field-l" data-i18n="calc.optN">Moles (n)</label>
-              <input id="ig-n" class="calc-input" type="number" step="any" value="1">
+              <input id="ig-n" class="calc-input ui-input" type="number" step="any" value="1">
             </div>
 
             <div class="calc-field" data-ig="T">
               <label class="calc-field-l" data-i18n="calc.optT">Temperature (T)</label>
               <div class="calc-row-2">
-                <input id="ig-T" class="calc-input" type="number" step="any" value="25">
-                <select id="ig-T-u" class="calc-select">
+                <input id="ig-T" class="calc-input ui-input" type="number" step="any" value="25">
+                <select id="ig-T-u" class="calc-select ui-select">
                   <option value="C" selected>°C</option>
                   <option value="K">K</option>
                   <option value="F">°F</option>
@@ -1061,8 +1034,8 @@
             </div>
 
             <div class="calc-actions">
-              <button class="calc-btn-run" onclick="runIdeal()" data-i18n="calc.compute">Compute</button>
-              <button class="calc-btn-reset" onclick="resetIdeal()" data-i18n="calc.reset">Reset</button>
+              <button class="calc-btn-run ui-btn ui-btn-accent" onclick="runIdeal()" data-i18n="calc.compute">Compute</button>
+              <button class="calc-btn-reset ui-btn ui-btn-secondary" onclick="resetIdeal()" data-i18n="calc.reset">Reset</button>
             </div>
 
             <details class="calc-how">
@@ -1072,7 +1045,7 @@
               </div>
             </details>
 
-            <div class="calc-result" id="ig-result">
+            <div class="calc-result ui-card ui-card-data" id="ig-result">
               <div class="calc-result-head">
                 <span class="calc-result-head-main"><span class="lc-st-dot"></span><span data-i18n="calc.output">output</span></span>
                 <span class="calc-result-meta"><span id="ig-result-meta" data-i18n="calc.awaiting">awaiting input…</span><button class="calc-copy-btn" type="button" data-copy-result="ig-result-body" data-i18n="calc.copy">Copy</button></span>
@@ -1103,7 +1076,7 @@
 
             <div class="calc-field">
               <label class="calc-field-l" data-i18n="calc.solveFor">Solve for</label>
-              <select id="dl-solve" class="calc-select" onchange="updateDilField()">
+              <select id="dl-solve" class="calc-select ui-select" onchange="updateDilField()">
                 <option value="C1" data-i18n="calc.dlOptC1">C₁ — initial concentration</option>
                 <option value="V1" data-i18n="calc.dlOptV1">V₁ — initial volume</option>
                 <option value="C2" data-i18n="calc.dlOptC2">C₂ — final concentration</option>
@@ -1113,19 +1086,19 @@
 
             <div class="calc-field" data-dl="C1">
               <label class="calc-field-l">C₁ <span class="calc-help" style="display:inline-block;margin:0;">mol/L</span></label>
-              <input id="dl-C1" class="calc-input" type="number" step="any" value="1.0">
+              <input id="dl-C1" class="calc-input ui-input" type="number" step="any" value="1.0">
             </div>
             <div class="calc-field" data-dl="V1">
               <label class="calc-field-l">V₁ <span class="calc-help" style="display:inline-block;margin:0;">mL</span></label>
-              <input id="dl-V1" class="calc-input" type="number" step="any" value="25">
+              <input id="dl-V1" class="calc-input ui-input" type="number" step="any" value="25">
             </div>
             <div class="calc-field" data-dl="C2">
               <label class="calc-field-l">C₂ <span class="calc-help" style="display:inline-block;margin:0;">mol/L</span></label>
-              <input id="dl-C2" class="calc-input" type="number" step="any" value="0.1">
+              <input id="dl-C2" class="calc-input ui-input" type="number" step="any" value="0.1">
             </div>
             <div class="calc-field" data-dl="V2">
               <label class="calc-field-l">V₂ <span class="calc-help" style="display:inline-block;margin:0;">mL</span></label>
-              <input id="dl-V2" class="calc-input" type="number" step="any" value="">
+              <input id="dl-V2" class="calc-input ui-input" type="number" step="any" value="">
             </div>
 
             <div class="calc-chip-row" aria-label="Dilution presets">
@@ -1136,8 +1109,8 @@
             </div>
 
             <div class="calc-actions">
-              <button class="calc-btn-run" onclick="runDilution()" data-i18n="calc.compute">Compute</button>
-              <button class="calc-btn-reset" onclick="resetDilution()" data-i18n="calc.reset">Reset</button>
+              <button class="calc-btn-run ui-btn ui-btn-accent" onclick="runDilution()" data-i18n="calc.compute">Compute</button>
+              <button class="calc-btn-reset ui-btn ui-btn-secondary" onclick="resetDilution()" data-i18n="calc.reset">Reset</button>
             </div>
 
             <details class="calc-how">
@@ -1147,7 +1120,7 @@
               </div>
             </details>
 
-            <div class="calc-result" id="dl-result">
+            <div class="calc-result ui-card ui-card-data" id="dl-result">
               <div class="calc-result-head">
                 <span class="calc-result-head-main"><span class="lc-st-dot"></span><span data-i18n="calc.output">output</span></span>
                 <span class="calc-result-meta"><span id="dl-result-meta" data-i18n="calc.awaiting">awaiting input…</span><button class="calc-copy-btn" type="button" data-copy-result="dl-result-body" data-i18n="calc.copy">Copy</button></span>
@@ -1178,7 +1151,7 @@
 
             <div class="calc-field">
               <label class="calc-field-l" data-i18n="calc.phInputMode">Input mode</label>
-              <select id="ph-mode" class="calc-select" onchange="updatePhFields()">
+              <select id="ph-mode" class="calc-select ui-select" onchange="updatePhFields()">
                 <option value="H" selected data-i18n="calc.phOptH">[H⁺] — hydrogen ion concentration</option>
                 <option value="OH" data-i18n="calc.phOptOH">[OH⁻] — hydroxide concentration</option>
                 <option value="pH" data-i18n="calc.phOptPH">pH directly</option>
@@ -1188,19 +1161,19 @@
 
             <div class="calc-field" data-ph="H">
               <label class="calc-field-l">[H⁺] <span class="calc-help" style="display:inline-block;margin:0;">mol/L</span></label>
-              <input id="ph-H" class="calc-input" type="number" step="any" value="1e-3">
+              <input id="ph-H" class="calc-input ui-input" type="number" step="any" value="1e-3">
             </div>
             <div class="calc-field" data-ph="OH" style="display:none;">
               <label class="calc-field-l">[OH⁻] <span class="calc-help" style="display:inline-block;margin:0;">mol/L</span></label>
-              <input id="ph-OH" class="calc-input" type="number" step="any" value="1e-4">
+              <input id="ph-OH" class="calc-input ui-input" type="number" step="any" value="1e-4">
             </div>
             <div class="calc-field" data-ph="pH" style="display:none;">
               <label class="calc-field-l">pH</label>
-              <input id="ph-pH" class="calc-input" type="number" step="any" value="7.4">
+              <input id="ph-pH" class="calc-input ui-input" type="number" step="any" value="7.4">
             </div>
             <div class="calc-field" data-ph="pOH" style="display:none;">
               <label class="calc-field-l">pOH</label>
-              <input id="ph-pOH" class="calc-input" type="number" step="any" value="6.6">
+              <input id="ph-pOH" class="calc-input ui-input" type="number" step="any" value="6.6">
             </div>
 
             <div class="calc-chip-row" aria-label="pH presets">
@@ -1211,8 +1184,8 @@
             </div>
 
             <div class="calc-actions">
-              <button class="calc-btn-run" onclick="runPH()" data-i18n="calc.compute">Compute</button>
-              <button class="calc-btn-reset" onclick="resetPH()" data-i18n="calc.reset">Reset</button>
+              <button class="calc-btn-run ui-btn ui-btn-accent" onclick="runPH()" data-i18n="calc.compute">Compute</button>
+              <button class="calc-btn-reset ui-btn ui-btn-secondary" onclick="resetPH()" data-i18n="calc.reset">Reset</button>
             </div>
 
             <details class="calc-how">
@@ -1222,7 +1195,7 @@
               </div>
             </details>
 
-            <div class="calc-result" id="ph-result">
+            <div class="calc-result ui-card ui-card-data" id="ph-result">
               <div class="calc-result-head">
                 <span class="calc-result-head-main"><span class="lc-st-dot"></span><span data-i18n="calc.output">output</span></span>
                 <span class="calc-result-meta"><span id="ph-result-meta" data-i18n="calc.awaiting">awaiting input…</span><button class="calc-copy-btn" type="button" data-copy-result="ph-result-body" data-i18n="calc.copy">Copy</button></span>
@@ -1246,7 +1219,7 @@
             <div class="pro-canonical-preview" data-pro-canonical="stoichiometry">
               <p class="calc-panel-desc" data-i18n="calc.stoichCanonicalBody">The public stoichiometry tab no longer runs a separate calculator. Reaction Workbench is the only scientific engine for balancing, stoichiometry, limiting reagent and yield.</p>
               <p class="calc-actions" style="margin-top:16px">
-                <a class="calc-btn-run" href="/app?section=pro-lab&tool=reactions" data-i18n="calc.solverDiscoverCta">Open Reaction Workbench</a>
+                <a class="calc-btn-run ui-btn ui-btn-accent" href="/app?section=pro-lab&tool=reactions" data-i18n="calc.solverDiscoverCta">Open Reaction Workbench</a>
               </p>
             </div>
 
@@ -1280,23 +1253,23 @@
             <div class="calc-row-2">
               <div class="calc-field">
                 <label class="calc-field-l" data-i18n="calc.thermoDeltaH">Enthalpy change ΔH <span class="calc-help" style="display:inline-block;margin:0;">kJ/mol</span></label>
-                <input id="tm-dh" class="calc-input" type="number" step="any" value="6.01">
+                <input id="tm-dh" class="calc-input ui-input" type="number" step="any" value="6.01">
               </div>
               <div class="calc-field">
                 <label class="calc-field-l" data-i18n="calc.thermoDeltaS">Entropy change ΔS <span class="calc-help" style="display:inline-block;margin:0;">J/mol·K</span></label>
-                <input id="tm-ds" class="calc-input" type="number" step="any" value="22.0">
+                <input id="tm-ds" class="calc-input ui-input" type="number" step="any" value="22.0">
               </div>
             </div>
             <div class="calc-field">
               <label class="calc-field-l" data-i18n="calc.thermoTemp">Temperature <span class="calc-help" style="display:inline-block;margin:0;">°C</span></label>
-              <input id="tm-t" class="calc-input" type="number" step="any" value="25">
+              <input id="tm-t" class="calc-input ui-input" type="number" step="any" value="25">
             </div>
 
             <div class="calc-subhead" data-i18n="calc.thermoHeatTitle">② Heat exchange — q = m·c·ΔT</div>
             <div class="calc-row-2">
               <div class="calc-field">
                 <label class="calc-field-l" data-i18n="calc.thermoSubstance">Substance</label>
-                <select id="tm-sub" class="calc-select" onchange="runThermo()">
+                <select id="tm-sub" class="calc-select ui-select" onchange="runThermo()">
                   <option value="water" data-i18n="calc.tmSubWater">Water (liquid) · 4.18 J/g·°C</option>
                   <option value="ice" data-i18n="calc.tmSubIce">Ice · 2.09 J/g·°C</option>
                   <option value="iron" data-i18n="calc.tmSubIron">Iron · 0.449 J/g·°C</option>
@@ -1306,12 +1279,12 @@
               </div>
               <div class="calc-field">
                 <label class="calc-field-l" data-i18n="calc.thermoMass">Mass <span class="calc-help" style="display:inline-block;margin:0;">g</span></label>
-                <input id="tm-mass" class="calc-input" type="number" step="any" value="100">
+                <input id="tm-mass" class="calc-input ui-input" type="number" step="any" value="100">
               </div>
             </div>
             <div class="calc-field">
               <label class="calc-field-l" data-i18n="calc.thermoDT">Temperature change ΔT <span class="calc-help" style="display:inline-block;margin:0;">°C</span></label>
-              <input id="tm-dt" class="calc-input" type="number" step="any" value="20">
+              <input id="tm-dt" class="calc-input ui-input" type="number" step="any" value="20">
             </div>
 
             <div class="calc-chip-row" aria-label="Thermodynamics presets">
@@ -1322,8 +1295,8 @@
             </div>
 
             <div class="calc-actions">
-              <button class="calc-btn-run" onclick="runThermo()" data-i18n="calc.compute">Compute</button>
-              <button class="calc-btn-reset" onclick="resetThermo()" data-i18n="calc.reset">Reset</button>
+              <button class="calc-btn-run ui-btn ui-btn-accent" onclick="runThermo()" data-i18n="calc.compute">Compute</button>
+              <button class="calc-btn-reset ui-btn ui-btn-secondary" onclick="resetThermo()" data-i18n="calc.reset">Reset</button>
             </div>
 
             <details class="calc-how">
@@ -1333,7 +1306,7 @@
               </div>
             </details>
 
-            <div class="calc-result" id="tm-result">
+            <div class="calc-result ui-card ui-card-data" id="tm-result">
               <div class="calc-result-head">
                 <span class="calc-result-head-main"><span class="lc-st-dot"></span><span data-i18n="calc.output">output</span></span>
                 <span class="calc-result-meta"><span id="tm-result-meta" data-i18n="calc.awaiting">awaiting input…</span><button class="calc-copy-btn" type="button" data-copy-result="tm-result-body" data-i18n="calc.copy">Copy</button></span>
@@ -1353,6 +1326,7 @@
     </div>
   </div>
 </main>
+</div>
 
 <!-- status bar -->
 <div class="lc-statusbar">

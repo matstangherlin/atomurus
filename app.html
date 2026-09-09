@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en-US" data-theme="dark" class="auth-pending">
+<html lang="en-US" data-theme="light" class="auth-pending">
 <head>
-<style>html.lang-pt-pending [data-i18n],html.lang-pt-pending [data-i18n-html],html.lang-pt-pending [data-i18n-attr],html.lang-pt-pending [data-page-field]{visibility:hidden!important}html[data-theme="dark"] #icon-theme-light,html[data-theme="light"] #icon-theme-dark{display:none!important}html[data-theme="dark"] #icon-theme-dark,html[data-theme="light"] #icon-theme-light{display:block!important}</style>
-<script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var KEY='atomurus-lang';var p=new URLSearchParams(location.search).get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem(KEY);if(l!=='pt'&&l!=='en'){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}try{localStorage.setItem(KEY,l);}catch(e){}if(l==='pt'){document.documentElement.lang='pt-BR';document.documentElement.classList.add('lang-pt-pending');setTimeout(function(){document.documentElement.classList.remove('lang-pt-pending');},120);}else{document.documentElement.lang='en-US';}}catch(e){}})();</script>
+<style>html[data-theme="dark"] #icon-theme-light,html[data-theme="light"] #icon-theme-dark{display:none!important}html[data-theme="dark"] #icon-theme-dark,html[data-theme="light"] #icon-theme-light{display:block!important}</style>
+<script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var KEY='atomurus-lang';var p=new URLSearchParams(location.search).get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem(KEY);if(l!=='pt'&&l!=='en'){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}try{localStorage.setItem(KEY,l);}catch(e){}if(l==='pt'){document.documentElement.lang='pt-BR';}else{document.documentElement.lang='en-US';}}catch(e){}})();</script>
 <meta charset="UTF-8">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1E6A50" media="(prefers-color-scheme: light)">
@@ -14,10 +14,10 @@
 <meta name="robots" content="noindex,nofollow">
 <link rel="icon" type="image/png" href="assets/atomurus-logo.png?v=202608041630">
 <link rel="apple-touch-icon" href="assets/atomurus-logo.png?v=202608041630">
-<title>Study workspace — Atomurus</title>
-<meta name="description" content="Explore the Atomurus study workspace and discover Pro study tools.">
-<meta property="og:title" content="Study workspace — Atomurus">
-<meta property="og:description" content="Explore the Atomurus study workspace and discover Pro study tools.">
+<title>Workspace — Atomurus</title>
+<meta name="description" content="Your Atomurus workspace — Study, Pro Lab and Activity in one laboratory.">
+<meta property="og:title" content="Workspace — Atomurus">
+<meta property="og:description" content="Your Atomurus workspace — Study, Pro Lab and Activity in one laboratory.">
 <link rel="canonical" href="https://atomurus.com/app">
 <link rel="preload" href="/assets/fonts/inter-tight-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/instrument-serif-400-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
@@ -32,6 +32,10 @@
 <link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630">
 <link rel="stylesheet" href="assets/workspace-foundation.css?v=202608282240">
 <link rel="stylesheet" href="assets/app-workspace.css?v=202608292345">
+<link rel="stylesheet" href="/assets/ui/index.css?v=202609090500">
+<link rel="stylesheet" href="/assets/layouts/workspace.css?v=202609090500">
+<script src="/assets/pro-features.js?v=202609091200"></script>
+<script src="/assets/global-nav.js?v=202609090500"></script>
 <script src="workspace-logic.js?v=202608283200" defer></script>
 <script src="workspace-ui.js?v=202608282240" defer></script>
 <script src="study-client.js?v=202608282000" defer></script>
@@ -45,7 +49,7 @@
     <button class="ws-icon-btn ws-menu-btn" type="button" id="ws-menu-btn" aria-controls="ws-sidebar" aria-expanded="false" data-i18n-attr="aria-label:common.ws.menu">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
     </button>
-    <a class="ws-brand" href="/app">
+    <a class="ws-brand" href="/">
       <div class="lc-topnav-mark" aria-hidden="true">
         <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
           <circle cx="8" cy="8" r="2.5" fill="currentColor"/>
@@ -67,7 +71,6 @@
       </button>
     </form>
     <div class="ws-topbar-actions">
-      <span class="ws-badge" id="ws-plan-badge" hidden></span>
       <button class="ws-icon-btn" type="button" data-i18n-toggle data-i18n-attr="title:common.langToggle; aria-label:common.langToggle" title="Switch language" aria-label="Switch language">
         <span data-i18n-toggle-label>PT</span>
       </button>
@@ -75,22 +78,56 @@
         <svg id="icon-theme-light" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M11.5 7.5A4.5 4.5 0 0 1 6.5 2.5 4.5 4.5 0 1 0 11.5 7.5z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/></svg>
         <svg id="icon-theme-dark" width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M7 1v1.4M7 11.6V13M1 7h1.4M11.6 7H13M2.5 2.5l1 1M10.5 10.5l1 1M2.5 11.5l1-1M10.5 3.5l1-1" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
       </button>
-      <a class="ws-userchip ws-auth-only" href="/app?section=account" id="ws-userchip">
-        <svg class="ws-userchip-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span class="ws-userchip-name" id="ws-user-name">—</span>
-      </a>
+      <div class="ws-account ps-account" data-atomurus-account>
+        <div class="ps-account-wrap">
+          <span class="ws-badge ps-plan-badge" id="ws-plan-badge" hidden data-atomurus-plan-badge></span>
+          <a class="ws-userchip ps-userchip" href="/login?next=%2Fapp%3Fsection%3Daccount" id="ws-userchip" data-atomurus-account-chip>
+            <svg class="ws-userchip-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="ws-userchip-name" id="ws-user-name">Account</span>
+          </a>
+          <div class="ps-account-menu" id="ws-account-menu" hidden></div>
+        </div>
+      </div>
     </div>
   </header>
 
   <div class="ws-drawer-backdrop" id="ws-drawer-backdrop" hidden></div>
 
-  <aside class="ws-sidebar" id="ws-sidebar">
-    <nav class="ws-nav" id="ws-nav-main" aria-label="Workspace"></nav>
-    <div class="ws-nav-foot" id="ws-nav-foot"></div>
+  <aside class="ws-sidebar sidebar" id="ws-sidebar" data-atomurus-sidebar>
+    <nav class="ws-nav" id="ws-nav-main" aria-label="Laboratory" data-atomurus-lab-nav>
+      <div class="ws-nav-block ws-nav-site">
+        <h2 class="ws-nav-group" data-i18n="common.nav.laboratory">Laboratory</h2>
+        <a class="ws-nav-item" href="/" data-nav="home">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M2.5 7.5 8 3l5.5 4.5M4 6.5V13h8V6.5M6.5 13V9h3v4"/></g></svg>
+          <span class="ws-nav-label" data-i18n="common.nav.home">Home</span>
+        </a>
+        <a class="ws-nav-item" href="/periodic-table.html" data-nav="periodic">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/></g></svg>
+          <span class="ws-nav-label" data-i18n="common.nav.periodic">Periodic Table</span>
+        </a>
+        <a class="ws-nav-item" href="/viewer/atomic-models.html" data-nav="viewer">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="8" cy="8" r="2"/><ellipse cx="8" cy="8" rx="6" ry="2.5"/><ellipse cx="8" cy="8" rx="6" ry="2.5" transform="rotate(60 8 8)"/></g></svg>
+          <span class="ws-nav-label" data-i18n="common.nav.visualizador">Viewer</span>
+        </a>
+        <a class="ws-nav-item" href="/calculators.html" data-nav="calculators">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="2" width="10" height="12" rx="1"/><path d="M5 5h6M5.5 8h1M9.5 8h1M5.5 11h1M9.5 11h1"/></g></svg>
+          <span class="ws-nav-label" data-i18n="common.nav.calc">Calculators</span>
+        </a>
+        <a class="ws-nav-item" href="/explore.html" data-nav="explore">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/></g></svg>
+          <span class="ws-nav-label" data-i18n="common.nav.explore">Explore</span>
+        </a>
+        <a class="ws-nav-item" href="/app" data-nav="workspace">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 12l4-4 2 2 4-6"/></g></svg>
+          <span class="ws-nav-label" data-i18n="common.nav.workspace">Workspace</span>
+        </a>
+      </div>
+    </nav>
+    <div class="ws-nav-foot" id="ws-nav-foot" data-atomurus-nav-foot></div>
   </aside>
 
   <main class="ws-main">
-    <nav class="ws-study-nav" id="ws-study-nav" aria-label="Study tools"></nav>
+    <nav class="ws-study-nav" id="ws-study-nav" aria-label="Workspace"></nav>
     <div class="ws-content">
       <div class="ws-bootstrap" id="app-loading" data-i18n="common.ws.loading">Loading the workspace…</div>
       <div class="ws-error" id="app-error" role="alert" data-i18n="common.ws.loadError">Could not load the workspace. Please try again in a moment.</div>

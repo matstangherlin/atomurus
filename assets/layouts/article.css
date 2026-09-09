@@ -1,0 +1,42 @@
+/* Atomurus UI V2 — Explore articles
+   Loaded after explore-article.css. Keeps editorial measure; aligns chrome. */
+
+html body.ps-body .art-kicker {
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-text-muted);
+}
+
+html body.ps-body .art-title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  color: var(--color-text);
+}
+
+.art-title em { color: var(--color-brand); }
+
+.art-dek {
+  max-width: 60ch;
+  color: var(--color-text-muted);
+  line-height: var(--leading-relaxed);
+}
+
+.art-body {
+  max-width: 760px;
+}
+
+.art-cat.ui-badge {
+  font-family: var(--font-ui);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-text-muted);
+}
+
+.art-meta {
+  font-family: var(--font-ui);
+  letter-spacing: 0;
+  color: var(--color-text-muted);
+}

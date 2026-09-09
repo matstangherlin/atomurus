@@ -9,6 +9,14 @@
   var lastFocus = null;
   var inertNodes = [];
 
+  function actionClass(kind) {
+    var k = kind || 'ws-btn-ghost';
+    if (k === 'ws-btn-primary') return 'ws-btn ws-btn-primary ui-btn ui-btn-accent';
+    if (k === 'ws-btn-danger') return 'ws-btn ws-btn-danger ui-btn ui-btn-danger';
+    if (k === 'ws-btn-secondary') return 'ws-btn ws-btn-secondary ui-btn ui-btn-secondary';
+    return 'ws-btn ' + k;
+  }
+
   function focusables(root) {
     if (!root) return [];
     return Array.prototype.slice.call(root.querySelectorAll(FOCUSABLE)).filter(function (el) {
@@ -167,7 +175,7 @@
     actions.className = 'ws-dialog-actions';
     (options.actions || []).forEach(function (action) {
       var btn = document.createElement(action.href ? 'a' : 'button');
-      btn.className = 'ws-btn ' + (action.kind || 'ws-btn-ghost');
+      btn.className = actionClass(action.kind);
       if (!action.href) btn.type = 'button';
       else btn.href = action.href;
       btn.textContent = action.label || '';

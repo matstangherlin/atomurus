@@ -1,0 +1,332 @@
+/* Atomurus global shell contract (Prompt 13).
+   Shared by public `#ps-shell` and workspace `#ws-shell`.
+   Do not wrap public pages in `.ui-root` — this file only sets chrome geometry. */
+
+.ps-shell,
+.ws-shell {
+  --atomurus-topbar: var(--ui-topbar, 64px);
+  --atomurus-sidebar: var(--ui-sidebar, 248px);
+}
+
+.ps-account {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 4px;
+  min-width: 108px;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+.ps-userchip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  min-height: 40px;
+  min-width: 108px;
+  padding: 0 12px 0 10px;
+  border: 1px solid var(--color-border, var(--lc-rule, #D8D2BF));
+  border-radius: 999px;
+  max-width: 220px;
+  color: inherit;
+  font-family: var(--font-ui, 'Inter Tight', system-ui, sans-serif);
+  font-size: 13px;
+  font-weight: 600;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+.ps-userchip:hover {
+  border-color: color-mix(in oklab, var(--color-brand, #1E6A50) 40%, var(--color-border, #D8D2BF));
+}
+
+.ps-userchip-icon {
+  flex: 0 0 16px;
+}
+
+.ps-userchip span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ps-plan-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  padding: 0 6px;
+  border-radius: 999px;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  border: 1px solid color-mix(in oklab, var(--color-brand, #1E6A50) 40%, var(--color-border, #D8D2BF));
+  color: var(--color-brand, #1E6A50);
+}
+
+.ps-plan-badge[hidden] {
+  display: none !important;
+}
+
+html.auth-pending [data-atomurus-account-chip],
+html.auth-pending #ws-userchip {
+  visibility: hidden;
+}
+
+.ps-nav-group {
+  margin: 0 0 6px;
+  padding: 0 12px;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-subtle, var(--lc-ink-3, #8E8978));
+  font-weight: 550;
+}
+
+.ps-pub-nav .nav-section + .nav-section {
+  margin-top: 14px;
+}
+
+.ps-account-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.ps-account-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  min-width: 196px;
+  padding: 6px;
+  border: 1px solid var(--color-border, var(--lc-rule, #D8D2BF));
+  border-radius: 12px;
+  background: var(--color-surface, var(--lc-paper, #F8F5EC));
+  box-shadow: 0 12px 32px color-mix(in oklab, var(--color-text, #14120E) 12%, transparent);
+  z-index: 80;
+}
+
+.ps-account-menu a,
+.ps-account-menu button {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 550;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.ps-account-menu a:hover,
+.ps-account-menu button:hover {
+  background: color-mix(in oklab, var(--color-brand, #1E6A50) 8%, transparent);
+}
+
+.ps-account-menu-sep {
+  height: 1px;
+  margin: 4px 8px;
+  background: var(--color-border, var(--lc-rule, #D8D2BF));
+}
+
+.ws-userchip {
+  min-width: 108px;
+}
+
+.ws-account {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Official global sidebar — same component on /app and public/tool pages.
+   #ws-sidebar is the geometry authority so leftover page `.sidebar { width: 220px }`
+   cannot create a second visual sidebar. */
+#ws-sidebar,
+aside[data-atomurus-sidebar] {
+  width: var(--atomurus-sidebar, var(--ui-sidebar, 248px));
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.ws-sidebar {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--color-border, var(--lc-rule, #D8D2BF));
+  background: color-mix(in oklab, var(--color-surface, var(--lc-paper, #F8F5EC)) 88%, var(--color-bg, var(--lc-bg, #F2EFE7)));
+  padding: var(--space-4, 16px) var(--space-3, 12px) 18px;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border, var(--lc-rule, #D8D2BF)) transparent;
+}
+
+.ws-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ws-nav-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ws-nav-block + .ws-nav-block {
+  margin-top: 14px;
+}
+
+.ws-nav-group,
+.ps-nav-group {
+  margin: 0 0 4px;
+  padding: 0 12px;
+  font-family: var(--font-mono, var(--lc-mono, ui-monospace, monospace));
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-subtle, var(--lc-ink-3, #8E8978));
+  font-weight: 550;
+}
+
+.ws-nav-foot {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: var(--space-4, 16px);
+  border-top: 1px solid var(--color-border, var(--lc-rule-soft, #E4DECC));
+}
+
+.ws-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--control-height, 44px);
+  padding: 0 12px;
+  border-radius: var(--radius-md, 10px);
+  text-decoration: none;
+  color: var(--color-text-muted, var(--lc-ink-2, #58544A));
+  font-family: var(--font-ui, var(--lc-sans, 'Inter Tight', system-ui, sans-serif));
+  font-size: 14px;
+  font-weight: 550;
+  border: 0;
+  border-left: 3px solid transparent;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: background var(--ui-duration, 180ms) ease, color var(--ui-duration, 180ms) ease, border-color var(--ui-duration, 180ms) ease;
+}
+
+.ws-nav-item svg {
+  flex: 0 0 18px;
+  opacity: .85;
+}
+
+.ws-nav-item:hover {
+  background: color-mix(in oklab, var(--color-brand, var(--lc-green, #1E6A50)) 8%, transparent);
+  color: var(--color-text, var(--lc-ink, #14120E));
+}
+
+.ws-nav-item.is-active,
+.ws-nav-item.active {
+  color: var(--color-brand, var(--lc-green, #1E6A50));
+  background: color-mix(in oklab, var(--color-brand, var(--lc-green, #1E6A50)) 10%, transparent);
+  border-left-color: var(--color-brand, var(--lc-green, #1E6A50));
+}
+
+.ws-nav-item.is-upgrade {
+  margin-top: 8px;
+  background: color-mix(in oklab, var(--color-brand, var(--lc-green, #1E6A50)) 12%, transparent);
+  color: var(--color-brand, var(--lc-green, #1E6A50));
+  font-weight: 650;
+}
+
+.ws-nav-label {
+  flex: 1;
+  min-width: 0;
+}
+
+.ws-nav-site {
+  padding-bottom: 8px;
+}
+
+html.auth-pending #ws-nav-foot,
+html.auth-pending [data-atomurus-nav-foot] {
+  visibility: hidden;
+}
+
+.ps-shell > aside.ws-sidebar,
+.ps-shell > aside.sidebar {
+  grid-area: sidebar;
+  width: var(--atomurus-sidebar);
+  height: auto;
+  min-height: 0;
+  overflow: auto;
+  position: relative;
+  transform: none;
+}
+
+@media (max-width: 860px) {
+  .ps-shell {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "topbar"
+      "main";
+  }
+
+  .ps-shell > aside.ws-sidebar,
+  .ps-shell > aside.sidebar,
+  .ws-sidebar,
+  #ws-sidebar,
+  aside[data-atomurus-sidebar] {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: min(84vw, 300px);
+    z-index: 40;
+    transform: translateX(-105%);
+    transition: transform var(--ui-duration, 180ms) ease;
+    box-shadow: var(--shadow-lg, 0 18px 48px rgba(20, 18, 14, .16));
+  }
+
+  .ps-shell.is-nav-open > aside.ws-sidebar,
+  .ps-shell.is-nav-open > aside.sidebar,
+  .ws-shell.is-nav-open .ws-sidebar,
+  aside.ws-sidebar.mobile-open,
+  aside.sidebar.mobile-open,
+  .ps-shell.is-nav-open > #ws-sidebar,
+  .ws-shell.is-nav-open #ws-sidebar {
+    transform: none;
+  }
+
+  .ws-drawer-backdrop,
+  .atomurus-nav-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: color-mix(in oklab, #14120E 40%, transparent);
+    z-index: 35;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--ui-duration, 180ms) ease;
+  }
+
+  .ps-shell.is-nav-open .ws-drawer-backdrop,
+  .ps-shell.is-nav-open .atomurus-nav-backdrop,
+  .ws-shell.is-nav-open .ws-drawer-backdrop,
+  .ws-drawer-backdrop.show,
+  #mobile-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}

@@ -6,10 +6,11 @@
   "scripts": {
     "build:critical-css": "node tools/build-critical-css.js",
     "build:home-preview": "node tools/build-home-preview-data.js",
+    "build:catalog": "node tools/build-product-catalog.js",
     "build:i18n-assets": "node tools/build-i18n-assets.js",
     "build:content": "node tools/build-element-content-chunks.js",
     "build:isomerism": "node tools/generate-isomerism-pt-variants.js",
-    "build": "node tools/build-critical-css.js && node tools/build-home-preview-data.js && node tools/build-i18n-assets.js && node tools/build-element-content-chunks.js && node tools/generate-isomerism-pt-variants.js && node tools/patch-perf-async-css.js && node bump-version.js && node build-i18n.js",
+    "build": "node tools/build-critical-css.js && node tools/build-home-preview-data.js && node tools/build-product-catalog.js && node tools/build-i18n-assets.js && node tools/build-element-content-chunks.js && node tools/generate-isomerism-pt-variants.js && node tools/patch-perf-async-css.js && node tools/inject-ui-chrome.js && node bump-version.js && node build-i18n.js",
     "test:plan": "node tools/test-plan-access.mjs && node tools/test-lab-tool-access.mjs",
     "test:auth": "node tools/test-auth-provider.mjs && node tools/test-auth-flows.mjs && node tools/test-auth-rate-limit.mjs && node tools/test-auth-sync.mjs",
     "test:study": "node tools/test-study-cloud.mjs",
@@ -20,6 +21,8 @@
     "test:pro-lab": "node tools/test-pro-lab.mjs",
     "test:solver": "node tools/test-solver.mjs",
     "test:lab-access": "node tools/test-lab-access.mjs",
+    "test:ui-v2": "node tools/test-ui-v2.mjs",
+    "capture:ui-v2": "node tools/capture-ui-v2.mjs",
     "test:e2e": "playwright test",
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
@@ -27,7 +30,7 @@
     "validate": "node tools/validate-site.js",
     "warm:cache": "node tools/warm-edge-cache.js",
     "smoke:prod": "node tools/smoke-prod.js",
-    "ci": "npm run build && npm run test:plan && npm run test:auth && npm run test:study && npm run test:review && npm run test:insights && npm run test:billing && npm run test:ux && npm run test:pro-lab && npm run test:solver && npm run test:lab-access && npm run validate"
+    "ci": "npm run build && npm run test:plan && npm run test:auth && npm run test:study && npm run test:review && npm run test:insights && npm run test:billing && npm run test:ux && npm run test:pro-lab && npm run test:solver && npm run test:lab-access && npm run test:ui-v2 && npm run validate"
   },
   "dependencies": {
     "stripe": "^22.3.0"
