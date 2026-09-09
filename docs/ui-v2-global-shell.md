@@ -1,6 +1,6 @@
 # Atomurus global shell
 
-**Scope:** Prompts 13 and 18. One product chrome before and after login.
+**Scope:** Prompts 13, 18, and the global sidebar unification. One product chrome before and after login. **`/app` is the official sidebar.**
 
 ## Contract
 
@@ -9,73 +9,79 @@ ATOMURUS SHELL
 ┌────────────────────────────────────────────────────┐
 │ Atomurus     Search           PT   Theme   Account │
 ├───────────────┬────────────────────────────────────┤
-│ Laboratory    │ Page / Workspace context            │
+│ LABORATORY    │ Page / Workspace context            │
+│ Home          │                                    │
+│ Periodic Table│ Local nav lives in the page        │
+│ Viewer        │                                    │
+│ Calculators   │                                    │
+│ Explore       │                                    │
 │ Workspace     │                                    │
+│ ------------- │                                    │
+│ Account / Plan│                                    │
 └───────────────┴────────────────────────────────────┘
 ```
 
-Geometry is the Design System scale already used by UI V2:
+Geometry is the Design System scale:
 
 | Token | Value |
 | --- | --- |
-| Topbar | 64px (`--ui-topbar` / `--ps-topbar` / `--ws-topbar`) |
-| Sidebar | 248px (`--ui-sidebar` / `--ws-sidebar`) |
+| Topbar | 64px (`--ui-topbar` / `--atomurus-topbar`) |
+| Sidebar | 248px (`--ui-sidebar` / `--atomurus-sidebar`) |
 
-Public pages keep `#ps-shell`. `/app` keeps `#ws-shell`. They share `assets/layouts/shell.css` for account chip, plan badge, and pending auth. Public pages are **not** wrapped in `.ui-root`.
+Public pages keep `#ps-shell`. `/app` keeps `#ws-shell`. Both mount the same `#ws-sidebar[data-atomurus-sidebar]`. Public pages are **not** wrapped in `.ui-root`.
 
-## Brand
+## Official sidebar
 
-Markup is **Atomurus** + `common.brandTag` (**chemistry lab**). `/app` brand goes to `/`. No CSS `::after` correcting a version tag.
+One markup template: `templates/chrome/public-sidebar.html`. Injected into landing and tool pages. Copied into `app.html`. Classes are `.ws-sidebar` / `.ws-nav-item` / `.ws-nav-foot`.
 
-## Guest vs signed-in
+Viewer children and calculator instruments are **not** in the global sidebar. Viewer uses in-page `.vz-tabs`. Calculators keep `.calc-menu` in the content.
 
-Guest topbar/sidebar verb is **Account** → login (with `next=` when the destination is known). Login page keeps **Open lab** → periodic table.
+Config (`/config`) is laboratory display settings. It stays reachable from the Account menu as **Lab settings**. It is not a global sidebar item.
 
-After auth, the same chip slot shows display name + plan badge from `planBadge()` / `planBadgeInfo()`:
+## Guest vs signed-in (sidebar foot)
 
-| Kind | Label |
+| Kind | Foot |
 | --- | --- |
-| guest | (hidden) |
-| free | FREE |
-| trial | PRO TRIAL |
-| pro | PRO |
-| admin | ADMIN |
+| guest | Account, Plans |
+| free | Account, Plan, Sign out, Upgrade to Pro |
+| trial | Account, Plan, Sign out |
+| pro / admin | Account, Plan, Sign out |
 
-`html.auth-pending` reserves the chip width so Account does not flash into a name.
+The topbar chip can show the display name. The sidebar Account item stays a navigation label (**Account** / **Conta**). Both read `ads-gate.js` / `AtomurusAuth` — no invented frontend session.
 
-Guest Account / sidebar login encode `next=` with the current path and query, except on the login page itself.
+`html.auth-pending` hides the chip and the sidebar foot so they cannot disagree while auth loads.
 
-On `/app`, `#ws-plan-badge` lives inside `[data-atomurus-account]` so `i18n.js` and `auth-app.js` paint the same pill. Public pages already keep the badge in that host.
+## Active state
 
-Signed-in chip opens a short menu: Account, Plan & Billing, Preferences, Sign out. The Account Center remains `/app?section=account`.
+| Route | Global current |
+| --- | --- |
+| `/` | Home |
+| Periodic Table and subpages | Periodic Table |
+| `viewer/*` | Viewer |
+| Calculators | Calculators |
+| Explore and articles (when the shell is present) | Explore |
+| `/app` including Account | Workspace |
 
-## Navigation
+Account can be marked in the foot. Do not highlight two global destinations.
 
-Public/tool sidebar family:
+## Mobile
 
-```text
-LABORATORY
-  Home · Periodic Table · Viewer · Calculators · Explore
-WORKSPACE
-  Workspace → /app
-```
-
-Inside `/app`, Workspace stays the active global item. Context nav is Overview / Study / Lab / Activity. Study, Lab, and Activity keep their own local nav. Old `?section=` URLs still work.
-
-Tool pages keep their local laboratory links (Viewer children, calculator list). The injector adds the Account chip to the topbar so login does not swap chrome.
+The drawer **is** `#ws-sidebar`. `atomurus-mobile-nav.js` only adds the landing hamburger. It does not clone a second route list. `assets/global-nav.js` toggles `.ps-shell.is-nav-open` / `.ws-shell.is-nav-open`.
 
 ## JavaScript
 
-`public-workspace.js` only enhances: active state, search fallback, Account chip fallback, drawer, lab gate. It does not hoist the document.
+`assets/global-nav.js` owns `LAB_NAV`, active marking, auth foot, and the drawer.
 
-Auth paint on public pages still comes from `ads-gate.js` → `i18n.js` `syncAuthNav`. Do not load `auth-client.js` on every public page.
+`public-workspace.js` only enhances: search fallback, Account chip fallback, lab gate. It does not rebuild the sidebar.
+
+Auth paint on public pages still comes from `ads-gate.js` → `i18n.js` `syncAuthNav` → `AtomurusNav.sync`. Do not load `auth-client.js` on every public page.
 
 ## Files
 
 ```text
-templates/chrome/account-control.html
 templates/chrome/public-sidebar.html
+templates/chrome/viewer-local-nav.html
+assets/global-nav.js
 assets/layouts/shell.css
-assets/pro-features.js
 tools/inject-ui-chrome.js
 ```

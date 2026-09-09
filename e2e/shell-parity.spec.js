@@ -114,10 +114,12 @@ test('Free chip stays FREE on Home and Workspace', async ({ page }) => {
   await expect(page.locator('#ws-plan-badge')).toContainText(/FREE/);
 });
 
-test('Molecules keeps a single sidebar current item', async ({ page }) => {
+test('Molecules keeps Viewer current in the global sidebar', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto('/viewer/molecules.html');
-  const current = page.locator('.ps-shell aside.sidebar a.nav-item[aria-current="page"]');
+  const current = page.locator('#ws-sidebar [data-atomurus-lab-nav] a[aria-current="page"]');
   await expect(current).toHaveCount(1);
-  await expect(current).toContainText(/Molecules/i);
+  await expect(current).toContainText(/Viewer/i);
+  await expect(page.locator('#ws-sidebar [data-nav="viewer"]')).toHaveClass(/is-active|active/);
+  await expect(page.locator('.vz-tabs a[aria-current="page"], .vz-tab.active').first()).toContainText(/Molecules/i);
 });

@@ -625,8 +625,11 @@ html body.ps-body.lc-doc .ps-shell {
 .ps-shell [hidden] {
   display: none !important;
 }
-@media (min-width: 761px) {
+@media (min-width: 861px) {
   .ps-shell > .topbar .mobile-menu-btn {
+    display: none !important;
+  }
+  .lc-mobile-hamb {
     display: none !important;
   }
 }
@@ -915,7 +918,7 @@ html body.ps-body .ps-shell .calc-shell {
   .lc-manifest { padding: 0 16px; margin-bottom: 36px; }
 }
 
-@media (max-width: 760px) {
+@media (max-width: 860px) {
   .ps-shell {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: var(--ps-topbar) minmax(0, 1fr);
@@ -923,20 +926,24 @@ html body.ps-body .ps-shell .calc-shell {
       "topbar"
       "main";
   }
-  .ps-shell > aside.ps-pub-sidebar {
-    display: none !important;
-  }
-  .ps-shell > aside.sidebar:not(.ps-pub-sidebar) {
+  .ps-shell > aside.ps-pub-sidebar,
+  .ps-shell > aside.ws-sidebar,
+  .ps-shell > aside.sidebar {
+    display: flex !important;
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
     bottom: 0 !important;
     z-index: 500;
     width: min(84vw, 300px) !important;
-    transform: translateX(-100%) !important;
+    transform: translateX(-105%) !important;
     grid-area: auto;
   }
-  .ps-shell > aside.sidebar.mobile-open {
+  .ps-shell.is-nav-open > aside.ps-pub-sidebar,
+  .ps-shell.is-nav-open > aside.ws-sidebar,
+  .ps-shell.is-nav-open > aside.sidebar,
+  .ps-shell > aside.sidebar.mobile-open,
+  .ps-shell > aside.ws-sidebar.mobile-open {
     transform: translateX(0) !important;
   }
   .ps-shell > .topbar .logo-wrap,
@@ -979,6 +986,7 @@ html body.ps-body .ps-shell .calc-shell {
   .logo-text,
   .lc-mobile-menu-name { font-size: 20px !important; }
   .lc-mobile-hamb {
+    display: inline-flex !important;
     width: 40px !important;
     height: 40px !important;
     border-radius: var(--ps-radius-md) !important;

@@ -16,6 +16,7 @@
 <link rel="stylesheet" href="../../../atomurus-lab-console.css?v=202608041630" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
 <noscript><link rel="stylesheet" href="../../../atomurus-lab-console.css?v=202608041630"></noscript>
 <link rel="stylesheet" href="/assets/public-shell.css?v=202608281830">
+<script src="../../assets/global-nav.js?v=202609090500"></script>
 <script src="/assets/public-workspace.js?v=202608282500"></script>
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1E6A50" media="(prefers-color-scheme: light)">
@@ -301,77 +302,45 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg-gradient);color:var(--
 </div>
   </div>
 <div class="mobile-overlay" id="mobile-overlay" onclick="toggleMobileSidebar()"></div>
-<aside class="sidebar" id="sidebar">
-  
-  <div class="sidebar-scroll">
-    <div class="nav-section" style="margin-bottom:6px;">
-      <a class="nav-item" href="../../../index.html" style="opacity:.7;font-size:12px;">
-        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M2 8L8 2l6 6M3 7v7h10V7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-        <span data-i18n="common.nav.home">Home</span>
+<aside class="ws-sidebar sidebar ps-pub-sidebar" id="ws-sidebar" data-atomurus-sidebar>
+  <nav class="ws-nav" id="ws-nav-main" aria-label="Laboratory" data-atomurus-lab-nav>
+    <div class="ws-nav-block ws-nav-site">
+      <h2 class="ws-nav-group" data-i18n="common.nav.laboratory">Laboratory</h2>
+      <a class="ws-nav-item" href="/" data-nav="home">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M2.5 7.5 8 3l5.5 4.5M4 6.5V13h8V6.5M6.5 13V9h3v4"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.home">Home</span>
       </a>
-          <a class="nav-item" href="/app">
-  <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M3 3h4v10H3zM8 5h5v8H8z" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M5 6v4M10.5 8v3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-  <span data-i18n="common.nav.workspace">Workspace</span>
-</a>
-    </div>
-    <div class="nav-section">
-      <div class="nav-label"><span class="nl-no">00</span><span data-i18n="common.nav.laboratory">Laboratory</span></div>
-      <a class="nav-item" href="../../../periodic-table.html">
-        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" fill="currentColor" opacity=".9"/><rect x="9" y="1" width="6" height="6" rx="1.5" fill="currentColor" opacity=".5"/><rect x="1" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity=".5"/><rect x="9" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity=".3"/></svg>
-        <span data-i18n="common.nav.periodic">Periodic Table</span>
+      <a class="ws-nav-item" href="/periodic-table.html" data-nav="periodic">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.periodic">Periodic Table</span>
       </a>
-      <div class="nav-expandable" data-expand="visualizador">
-        <div class="nav-row" onclick="toggleNavGroup('visualizador')" role="button" tabindex="0" aria-expanded="false">
-          <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="1.5" fill="currentColor"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/></svg>
-          <span data-i18n="common.nav.visualizador">Visualizador</span>
-          <svg class="nav-chevron" viewBox="0 0 11 11" fill="none"><path d="M3.5 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-        <div class="nav-children">
-          <a class="nav-item" href="../../atomic-models.html">
-            <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="1.5" fill="currentColor"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/></svg>
-            <span data-i18n="common.nav.atomicModels">Atomic Models</span>
-          </a>
-          <a class="nav-item" href="../../molecules.html">
-            <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="4" cy="4" r="2" fill="currentColor"/><circle cx="12" cy="6" r="2" fill="currentColor" opacity=".7"/><circle cx="8" cy="12" r="2" fill="currentColor" opacity=".5"/><line x1="4" y1="4" x2="12" y2="6" stroke="currentColor" stroke-width="1"/></svg>
-            <span data-i18n="common.nav.molecules">Molecules</span>
-          </a>
-          <a class="nav-item" href="../../allotropes.html">
-            <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><polygon points="8,2 14,6 12,13 4,13 2,6" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
-            <span data-i18n="common.nav.allotropes">Allotropes</span>
-          </a>
-          <a class="nav-item active" href="position.html" aria-current="page">
-            <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
-              <circle cx="4" cy="8" r="2" fill="currentColor" opacity=".85"/>
-              <circle cx="12" cy="8" r="2" fill="currentColor" opacity=".85"/>
-              <line x1="4" y1="8" x2="4" y2="3.5" stroke="currentColor" stroke-width="1.1"/>
-              <line x1="12" y1="8" x2="12" y2="3.5" stroke="currentColor" stroke-width="1.1"/>
-              <line x1="4" y1="8" x2="4" y2="12.5" stroke="currentColor" stroke-width="1.1"/>
-              <line x1="12" y1="8" x2="12" y2="12.5" stroke="currentColor" stroke-width="1.1"/>
-              <line x1="8" y1="1" x2="8" y2="15" stroke="currentColor" stroke-width="1" stroke-dasharray="2,1.5" opacity=".5"/>
-            </svg>
-            <span data-i18n="common.nav.isomerism">Isomerism</span>
-          </a>
-        </div>
-      </div>
-      <a class="nav-item" href="../../../calculators.html">
-        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="2" y="1" width="12" height="14" rx="2" stroke="currentColor" stroke-width="1.3" fill="none"/><line x1="5" y1="5" x2="11" y2="5" stroke="currentColor" stroke-width="1.1"/><line x1="5" y1="8" x2="11" y2="8" stroke="currentColor" stroke-width="1"/><line x1="5" y1="11" x2="9" y2="11" stroke="currentColor" stroke-width="1"/></svg>
-        <span data-i18n="common.nav.calc">Calculators</span>
+      <a class="ws-nav-item" href="/viewer/atomic-models.html" data-nav="viewer">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="8" cy="8" r="2"/><ellipse cx="8" cy="8" rx="6" ry="2.5"/><ellipse cx="8" cy="8" rx="6" ry="2.5" transform="rotate(60 8 8)"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.visualizador">Viewer</span>
+      </a>
+      <a class="ws-nav-item" href="/calculators.html" data-nav="calculators">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="2" width="10" height="12" rx="1"/><path d="M5 5h6M5.5 8h1M9.5 8h1M5.5 11h1M9.5 11h1"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.calc">Calculators</span>
+      </a>
+      <a class="ws-nav-item" href="/explore.html" data-nav="explore">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.explore">Explore</span>
+      </a>
+      <a class="ws-nav-item" href="/app" data-nav="workspace">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 12l4-4 2 2 4-6"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.workspace">Workspace</span>
       </a>
     </div>
-  </div>
-  <div class="sidebar-foot">
-    <a class="nav-item" href="../../login.html" data-auth-nav-link="common.nav.login">
-  <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="6" r="2.2" stroke="currentColor" stroke-width="1.3"/><path d="M3.5 13c.8-2.2 2.4-3.2 4.5-3.2s3.7 1 4.5 3.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-  <span data-i18n="common.nav.login">Account</span>
-</a>
-    <a class="nav-item" href="../../../config.html">
-      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.2" stroke="currentColor" stroke-width="1.3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M2.93 2.93l1.06 1.06M12.01 12.01l1.06 1.06M2.93 13.07l1.06-1.06M12.01 3.99l1.06-1.06" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-      <span data-i18n="common.nav.settings">Settings</span>
+  </nav>
+  <div class="ws-nav-foot sidebar-foot" id="ws-nav-foot" data-atomurus-nav-foot>
+    <a class="ws-nav-item" href="/login" data-nav="account" data-auth-nav-link="common.nav.login">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5"/></g></svg>
+      <span class="ws-nav-label" data-i18n="common.nav.login">Account</span>
     </a>
-      <a class="nav-item" href="../../pricing.html">
-  <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1.8l1.6 3.2 3.5.5-2.5 2.5.6 3.5L8 10.3 4.8 11.5l.6-3.5-2.5-2.5 3.5-.5L8 1.8z" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
-  <span data-i18n="common.nav.pricing">Pricing</span>
-</a>
+    <a class="ws-nav-item" href="/pricing" data-nav="plans">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 5h8v8H4zM6 3v2M10 3v2"/></g></svg>
+      <span class="ws-nav-label" data-i18n="common.nav.plans">Plans</span>
+    </a>
   </div>
 </aside>
 <main class="main">

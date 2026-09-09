@@ -342,6 +342,8 @@ function assertUiV2() {
     'assets/ui/index.css',
     'dev/ui.html',
     'templates/chrome/public-sidebar.html',
+    'templates/chrome/viewer-local-nav.html',
+    'assets/global-nav.js',
     'templates/chrome/search.html',
     'templates/chrome/brand.html',
     'tools/inject-ui-chrome.js',

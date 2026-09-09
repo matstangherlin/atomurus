@@ -42,7 +42,12 @@ const DICT = {
           settings:      'Settings',
           about:         'About',
           contact:       'Contact',
-          pricing:       'Pricing'
+          pricing:       'Pricing',
+          plans:         'Plans',
+          plan:          'Plan',
+          signOut:       'Sign out',
+          upgrade:       'Upgrade to Pro',
+          labSettings:   'Lab settings'
         },
         footer: {
           brandDesc:     'An instrumental chemistry laboratory for the studious, the curious and the patient.',
@@ -2127,7 +2132,12 @@ const DICT = {
           settings:      'Configurações',
           about:         'Sobre',
           contact:       'Contato',
-          pricing:       'Planos'
+          pricing:       'Planos',
+          plans:         'Planos',
+          plan:          'Plano',
+          signOut:       'Sair',
+          upgrade:       'Assinar o Pro',
+          labSettings:   'Ajustes do laboratório'
         },
         footer: {
           brandDesc:     'Um laboratório de química instrumental para os estudiosos, os curiosos e os pacientes.',

@@ -205,6 +205,7 @@
   }
 
   function ensureSidebarAuthLinks() {
+    if (document.querySelector('[data-atomurus-nav-foot], #ws-nav-foot')) return;
     const foot = document.querySelector('.sidebar-foot');
     if (!foot) return;
     const loginIcon = '<svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M6 3.5H4.8A1.8 1.8 0 0 0 3 5.3v5.4a1.8 1.8 0 0 0 1.8 1.8H6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M8 11.5 12 8 8 4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 8H6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>';
@@ -303,6 +304,10 @@
     }
 
     document.querySelectorAll('[data-auth-nav-link="common.nav.login"]').forEach(function (link) {
+      if (link.closest('[data-atomurus-nav-foot], #ws-nav-foot')) {
+        link.setAttribute('href', signedIn ? '/app?section=account' : guestLoginHref());
+        return;
+      }
       link.setAttribute('href', signedIn ? '/app?section=account' : guestLoginHref());
       const label = link.querySelector('[data-i18n], span') || link;
       setAuthLabel(label, signedIn ? display : (label.dataset.authGuestLabel || 'Account'), signedIn ? null : 'common.nav.login');
@@ -327,6 +332,11 @@
       syncPlanBadge(link.closest('[data-atomurus-account]') || link.parentElement || link, user, signedIn);
     });
     bindAccountMenu(signedIn, user, display);
+    if (window.AtomurusNav && typeof window.AtomurusNav.sync === 'function') {
+      if (!(document.body && document.body.classList.contains('ws-body'))) {
+        window.AtomurusNav.sync({ state: { ready: !pending, signedIn: signedIn, user: user } });
+      }
+    }
   }
 
   function accountMenuCopy() {
@@ -335,6 +345,7 @@
       account: pt ? 'Conta' : 'Account',
       plan: pt ? 'Plano e cobrança' : 'Plan & Billing',
       prefs: pt ? 'Preferências' : 'Preferences',
+      labSettings: pt ? 'Ajustes do laboratório' : 'Lab settings',
       signOut: pt ? 'Sair' : 'Sign out'
     };
   }
@@ -346,11 +357,16 @@
       '<a href="/app?section=account">' + copy.account + '</a>' +
       '<a href="/app?section=account&tab=plan">' + copy.plan + '</a>' +
       '<a href="/app?section=account&tab=preferences">' + copy.prefs + '</a>' +
+      '<a href="/config">' + copy.labSettings + '</a>' +
       '<div class="ps-account-menu-sep"></div>' +
       '<button type="button" data-atomurus-signout>' + copy.signOut + '</button>';
   }
 
   function publicSignOut() {
+    if (window.AtomurusNav && typeof window.AtomurusNav.signOut === 'function') {
+      window.AtomurusNav.signOut();
+      return;
+    }
     if (window.AtomurusAuth && typeof window.AtomurusAuth.logout === 'function') {
       window.AtomurusAuth.logout();
       return;

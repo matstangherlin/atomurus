@@ -8,9 +8,9 @@ Production pages still use Lab Console + `public-shell.css`. **Login** loads `as
 
 | Mode | Pages | Shell in HTML | Runtime |
 | --- | --- | --- | --- |
-| **Public** | Home, Login, Pricing, About, docs, 404 | `#ps-shell` > `.lc-topnav` + `#ps-pub-sidebar` + `main#ps-main` | `markActive`, mobile drawer (`atomurus-mobile-nav.js`), Account chip (`auth-sync`), CTA exception on login/404 |
-| **Tool** | Calculators, Periodic Table, Explore, Viewer, Config, element pages | `#ps-shell` > `.topbar` + `aside.sidebar` + `main.main` | Same, plus tool foot / Study fallback, `lab-tool-gate.js` |
-| **Workspace** | `/app` | Native `.ws-shell` / `#ws-*` | Unchanged. **No** `public-shell.css`, **no** `#ps-shell` |
+| **Public** | Home, Login, Pricing, About, docs, 404 | `#ps-shell` > topbar + `#ws-sidebar` + main | `global-nav.js` paints active/auth/drawer. Login CTA stays **Open lab**. |
+| **Tool** | Calculators, Periodic Table, Explore, Viewer, Config, element pages | `#ps-shell` > `.topbar` + `#ws-sidebar` + `main.main` | Same sidebar. Viewer local nav is `.vz-tabs`. |
+| **Workspace** | `/app` | Native `.ws-shell` / `#ws-sidebar` | Same sidebar markup. Context nav stays in main. |
 
 Topbar is 64px (`--ps-topbar` / `--ui-topbar` / `--ws-topbar`). Sidebar is 248px. Brand copy in the DOM is **chemistry lab** (`data-i18n="common.brandTag"`), not a CSS `::after` on `v1.11`.
 
@@ -20,11 +20,11 @@ Topbar is 64px (`--ps-topbar` / `--ui-topbar` / `--ws-topbar`). Sidebar is 248px
 templates/chrome/
     brand.html              logo + chemistry lab (tool / docs)
     search.html             .ps-search → periodic-table
-    public-sidebar.html     Home … Study + Login / Settings / Pricing
-    study-nav-item.html
-    login-nav-item.html
-    pricing-nav-item.html
-tools/inject-ui-chrome.js   idempotent wrap; {{prefix}} for nested paths
+    public-sidebar.html      official #ws-sidebar (Laboratory + Account foot)
+    viewer-local-nav.html   Viewer in-page tabs
+    account-control.html
+assets/global-nav.js        active, auth foot, mobile drawer
+tools/inject-ui-chrome.js   replaces landing and tool asides with the official sidebar
 ```
 
 `npm run build` runs the injector after isomerism variants and `patch-perf-async-css.js`. Committed HTML already contains the shell so local pages match production without a rebuild.

@@ -293,6 +293,7 @@ function injectLanding(html, file) {
     before +
     '<div class="ps-shell" id="ps-shell">\n' +
     navHtml + '\n' +
+    '<div class="ws-drawer-backdrop atomurus-nav-backdrop" id="ws-drawer-backdrop" hidden></div>\n' +
     sidebar + '\n' +
     '<main class="ps-main" id="ps-main">\n' +
     after +
@@ -321,17 +322,17 @@ function injectTool(html, file) {
   let asideHtml = aside.html;
   let topbarHtml = topbar.html;
   const moved = moveLogoIntoTopbar(asideHtml, topbarHtml);
-  asideHtml = moved.asideHtml;
+  asideHtml = fill(readTpl('public-sidebar.html'), prefix);
   topbarHtml = hideBreadcrumb(moved.topbarHtml);
   topbarHtml = ensureSearch(topbarHtml, prefix);
   topbarHtml = ensureAccountControl(topbarHtml, prefix, path.basename(file));
-  asideHtml = ensureStudy(asideHtml);
-  asideHtml = ensureFoot(asideHtml, prefix);
 
   const mainWithout = main.html.slice(0, topbar.start) + main.html.slice(topbar.end);
   const start = rangeStart;
   const end = rangeEnd;
-  const overlayHtml = overlayInRange ? overlay.html + '\n' : '';
+  const overlayHtml = overlayInRange
+    ? overlay.html + '\n'
+    : '<div class="ws-drawer-backdrop atomurus-nav-backdrop" id="ws-drawer-backdrop" hidden></div>\n';
   const wrapped =
     '<div class="ps-shell" id="ps-shell">\n' +
     topbarHtml + '\n' +
@@ -364,9 +365,65 @@ function ensureAccountControl(barHtml, prefix, basename) {
 }
 
 function patchPublicSidebar(html, prefix) {
-  const el = findElementWithClass(html, 'ps-pub-sidebar');
+  const el = findElementWithClass(html, 'ps-pub-sidebar') ||
+    findShellAside(html);
   if (!el) return html;
   return html.slice(0, el.start) + fill(readTpl('public-sidebar.html'), prefix) + html.slice(el.end);
+}
+
+function findShellAside(html) {
+  const shell = findElementWithClass(html, 'ps-shell');
+  if (!shell) return null;
+  const aside = findElementWithClass(shell.html, 'ws-sidebar') ||
+    findElementWithClass(shell.html, 'sidebar');
+  if (!aside || aside.tag !== 'aside') return null;
+  return {
+    start: shell.start + aside.start,
+    end: shell.start + aside.end,
+    html: aside.html,
+    tag: 'aside'
+  };
+}
+
+function ensureGlobalNavScript(html, prefix) {
+  if (/assets\/global-nav\.js/.test(html)) return html;
+  const tag = `<script src="${prefix}assets/global-nav.js?v=202609090500"><\/script>\n`;
+  const pw = html.search(/<script[^>]*src=["'][^"']*public-workspace\.js/);
+  if (pw !== -1) return html.slice(0, pw) + tag + html.slice(pw);
+  const i18n = html.search(/<script[^>]*src=["'][^"']*i18n\.js/);
+  if (i18n !== -1) return html.slice(0, i18n) + tag + html.slice(i18n);
+  return html.replace(/<\/head>/i, tag + '</head>');
+}
+
+function viewerLocalKey(rel) {
+  if (/isomerism/.test(rel)) return 'isomerism';
+  if (/allotropes/.test(rel)) return 'allotropes';
+  if (/molecules/.test(rel)) return 'molecules';
+  if (/atomic-models/.test(rel)) return 'atomic-models';
+  return '';
+}
+
+function ensureViewerLocalNav(html, file) {
+  const rel = path.relative(ROOT, file).replace(/\\/g, '/');
+  if (!rel.startsWith('viewer/')) return html;
+  if (/class=["'][^"']*\bvz-tabs\b/.test(html) || /data-atomurus-local-nav="viewer"/.test(html)) return html;
+  const key = viewerLocalKey(rel);
+  let nav = fill(readTpl('viewer-local-nav.html'), prefixFor(file));
+  if (key) {
+    nav = nav.replace(
+      new RegExp(`(<a class="vz-tab")([^>]*data-local-nav="${key}")`),
+      '<a class="vz-tab active" aria-current="page"$2'
+    );
+  }
+  const content = html.match(/<div class="content[^"]*"[^>]*>/);
+  if (content) {
+    const idx = html.indexOf(content[0]) + content[0].length;
+    return html.slice(0, idx) + '\n' + nav + html.slice(idx);
+  }
+  const inner = html.match(/<div class="content-inner">/);
+  if (!inner) return html;
+  const idx = html.indexOf(inner[0]) + inner[0].length;
+  return html.slice(0, idx) + '\n' + nav + html.slice(idx);
 }
 
 function relabelChromeCopy(html) {
@@ -384,6 +441,8 @@ function patchEmittedChrome(html, file) {
   const prefix = prefixFor(file);
   const basename = path.basename(file);
   next = patchPublicSidebar(next, prefix);
+  next = ensureViewerLocalNav(next, file);
+  next = ensureGlobalNavScript(next, prefix);
   next = relabelChromeCopy(next);
   const shell = findElementWithClass(next, 'ps-shell');
   const scope = shell ? shell.html : next;
@@ -406,17 +465,25 @@ function injectHtml(html, file) {
   if (!/public-workspace\.js|public-shell\.css/.test(html)) {
     return { html, status: 'skip-no-shell' };
   }
+  const prefix = prefixFor(file);
   const aside = findElementWithClass(html, 'sidebar');
   const main = findElementWithClass(html, 'main');
   if (aside && aside.tag === 'aside' && main && main.tag === 'main') {
-    const next = injectTool(html, file);
-    if (next) return { html: next, status: 'tool' };
+    let next = injectTool(html, file);
+    if (next) {
+      next = ensureViewerLocalNav(next, file);
+      next = ensureGlobalNavScript(next, prefix);
+      return { html: next, status: 'tool' };
+    }
     return { html, status: 'skip-tool-incomplete' };
   }
   const nav = findElementWithClass(html, 'lc-topnav');
   if (nav && nav.tag === 'nav') {
-    const next = injectLanding(html, file);
-    if (next) return { html: next, status: 'landing' };
+    let next = injectLanding(html, file);
+    if (next) {
+      next = ensureGlobalNavScript(next, prefix);
+      return { html: next, status: 'landing' };
+    }
     return { html, status: 'skip-landing-incomplete' };
   }
   return { html, status: 'skip-no-pattern' };
@@ -452,7 +519,9 @@ module.exports = {
   SKIP_DIRS,
   SKIP_FILES,
   ensureAccountControl,
-  patchEmittedChrome
+  patchEmittedChrome,
+  patchPublicSidebar,
+  ensureViewerLocalNav
 };
 
 if (require.main === module) {

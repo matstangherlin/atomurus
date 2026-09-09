@@ -17,6 +17,8 @@ const required = [
   'assets/ui/index.css',
   'dev/ui.html',
   'templates/chrome/public-sidebar.html',
+  'templates/chrome/viewer-local-nav.html',
+  'assets/global-nav.js',
   'templates/chrome/search.html',
   'templates/chrome/brand.html',
   'tools/inject-ui-chrome.js',
@@ -74,6 +76,14 @@ for (const rel of chromePages) {
   const html = read(rel);
   if (!html.includes('id="ps-shell"')) fail(`${rel} must contain #ps-shell in source`);
   if (!html.includes('data-ps-chrome')) fail(`${rel} must mark emitted chrome`);
+  if (!html.includes('data-atomurus-sidebar')) fail(`${rel} must emit the official sidebar`);
+  if (!html.includes('assets/global-nav.js')) fail(`${rel} must load global-nav.js`);
+}
+if (!read('app.html').includes('data-atomurus-sidebar')) {
+  fail('app.html must use the official sidebar markup');
+}
+if (!read('app.html').includes('assets/global-nav.js')) {
+  fail('app.html must load global-nav.js');
 }
 const stillLegacy = ['periodic-table/hydrogenium.html'];
 for (const rel of stillLegacy) {
@@ -121,6 +131,18 @@ if (!read('periodic-table.html').includes('data-atomurus-account')) {
 if (!read('calculators.html').includes('data-atomurus-account')) {
   fail('calculators.html must emit the Account chip');
 }
+if (!read('calculators.html').includes('data-atomurus-sidebar')) {
+  fail('calculators.html must emit the official sidebar');
+}
+{
+  const calc = read('calculators.html');
+  const start = calc.indexOf('data-atomurus-sidebar');
+  const end = calc.indexOf('</aside>', start);
+  const aside = start >= 0 && end > start ? calc.slice(start, end) : '';
+  if (aside.includes('nav-expandable') || aside.includes('data-target="molar"')) {
+    fail('calculators global sidebar must not include calculator instruments');
+  }
+}
 if (!read('app.html').includes('data-atomurus-account')) {
   fail('app.html must keep the Account chip slot');
 }
@@ -129,8 +151,8 @@ if (!read('assets/public-workspace.js').includes('ensureAccountControl')) {
 }
 const dictSource = read('tools/i18n-dict-source.js');
 if (!/login:\s+'Account'/.test(dictSource)) fail('common.nav.login must be Account');
-if (!read('atomurus-mobile-nav.js').includes("i18n: 'common.nav.workspace'")) {
-  fail('mobile drawer must label /app as Workspace');
+if (!read('atomurus-mobile-nav.js').includes('ws-sidebar')) {
+  fail('mobile drawer must reuse #ws-sidebar');
 }
 if (/label: 'Study'/.test(read('atomurus-mobile-nav.js'))) {
   fail('mobile drawer must not keep Study as the /app label');
@@ -140,6 +162,24 @@ if (!read('i18n.js').includes('guestLoginHref')) {
 }
 if (!read('templates/chrome/public-sidebar.html').includes('common.nav.workspace')) {
   fail('public sidebar must expose Workspace');
+}
+if (!read('templates/chrome/public-sidebar.html').includes('data-atomurus-sidebar')) {
+  fail('public sidebar must be the official Atomurus sidebar');
+}
+if (!read('templates/chrome/public-sidebar.html').includes('data-nav="viewer"')) {
+  fail('global sidebar Viewer must be a single item');
+}
+if (/nav-expandable|common.nav.settings/.test(read('templates/chrome/public-sidebar.html'))) {
+  fail('global sidebar must not expand Viewer or list Settings');
+}
+if (!read('assets/global-nav.js').includes('LAB_NAV')) {
+  fail('global-nav.js must own LAB_NAV');
+}
+if (!read('atomurus-mobile-nav.js').includes('ws-sidebar')) {
+  fail('mobile drawer must reuse #ws-sidebar');
+}
+if (/label: 'Study'/.test(read('atomurus-mobile-nav.js'))) {
+  fail('mobile drawer must not keep Study as the /app label');
 }
 if (/<style>[\s\S]*\.auth-shell/.test(login)) fail('login.html must not keep auth layout inline');
 if (/auth\.access|secure HttpOnly cookie|managed authentication|secure account flow/.test(login)) {

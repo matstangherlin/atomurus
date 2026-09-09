@@ -24,9 +24,9 @@ test.beforeEach(async ({ page }) => {
 test('public home uses workspace chrome, not lab-console ticker', async ({ page }) => {
   await page.goto('/index.html');
   await expect(page.locator('.ps-shell')).toBeVisible();
-  await expect(page.locator('.ps-pub-sidebar')).toBeVisible();
-  await expect(page.locator('.ps-pub-sidebar a[href*="/app"]')).toBeVisible();
-  await expect(page.locator('.ps-pub-sidebar a[href*="/app"]')).toContainText(/Workspace/i);
+  await expect(page.locator('#ws-sidebar, .ps-pub-sidebar')).toBeVisible();
+  await expect(page.locator('#ws-sidebar a[href*="/app"]')).toBeVisible();
+  await expect(page.locator('#ws-sidebar a[href*="/app"]')).toContainText(/Workspace/i);
   await expect(page.locator('.lc-topnav-name')).toBeVisible();
   await expect.poll(() => fontFamily(page.locator('.lc-topnav-name'))).toMatch(/Instrument Serif/i);
   await expect(page.locator('.lc-tn-no').first()).toBeHidden();
@@ -85,11 +85,12 @@ test('public table, calculators, login and pricing share the new chrome', async 
   await page.goto('/calculators.html');
   await expect(page.locator('.ps-shell')).toBeVisible();
   await expect(page.locator('.ps-shell > .topbar .mobile-menu-btn')).toBeHidden();
-  await expect(page.locator('.ps-shell .nav-label')).toBeHidden();
-  await expect(page.locator('.sidebar-foot a[href*="login"]')).toBeVisible();
-  await expect(page.locator('.sidebar-foot a[href*="pricing"]')).toBeVisible();
-  await expect(page.locator('.ps-shell aside.sidebar a[href*="/app"]')).toBeVisible();
-  await expect(page.locator('.ps-shell aside.sidebar a[href*="/app"]')).toContainText(/Workspace/i);
+  await expect(page.locator('#ws-sidebar .ws-nav-group')).toBeVisible();
+  await expect(page.locator('#ws-nav-foot a[href*="login"]')).toBeVisible();
+  await expect(page.locator('#ws-nav-foot a[href*="pricing"]')).toBeVisible();
+  await expect(page.locator('#ws-sidebar a[href*="/app"]')).toBeVisible();
+  await expect(page.locator('#ws-sidebar a[href*="/app"]')).toContainText(/Workspace/i);
+  await expect(page.locator('#ws-sidebar .nav-expandable, #ws-sidebar [data-nav="molar"]')).toHaveCount(0);
   await expect(page.locator('.data-strip').first()).toBeHidden();
   await expect.poll(() => fontFamily(page.locator('.ph-title'))).toMatch(/Instrument Serif/i);
   const innerMax = await page.locator('.content-inner').evaluate((el) => getComputedStyle(el).maxWidth);
@@ -180,7 +181,7 @@ test('public table, calculators, login and pricing share the new chrome', async 
 
   await page.goto('/login.html');
   await expect(page.locator('.ps-shell')).toBeVisible();
-  await expect(page.locator('.ps-pub-sidebar')).toBeVisible();
+  await expect(page.locator('#ws-sidebar')).toBeVisible();
   await expect(page.locator('.lc-topnav-name')).toBeVisible();
   await expect.poll(() => fontFamily(page.locator('.lc-topnav-name'))).toMatch(/Instrument Serif/i);
   await expect(page.locator('.ps-shell > .lc-topnav .lc-topnav-cta')).toHaveAttribute('href', /periodic-table/);
@@ -310,22 +311,21 @@ test('public home dark mode and mobile keep the workspace chrome', async ({ page
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.locator('.lc-mobile-hamb')).toBeVisible();
   await page.locator('.lc-mobile-hamb').click();
-  await expect(page.locator('#lc-mobile-menu.open, .lc-mobile-menu.open')).toBeVisible();
-  await expect(page.locator('.lc-mobile-menu-num')).toHaveCount(0);
-  await expect(page.locator('#lc-mobile-menu')).toContainText(/Workspace/i);
-  await expect(page.locator('#lc-mobile-menu a[href="/app"]')).toContainText(/Workspace/i);
+  await expect(page.locator('#ws-sidebar')).toBeVisible();
+  await expect(page.locator('#ws-sidebar')).toContainText(/Workspace/i);
+  await expect(page.locator('#ws-sidebar a[href="/app"]')).toContainText(/Workspace/i);
   await saveShot(page, 'mobile-public-home-menu');
 
   await page.goto('/calculators.html');
   await expect(page.locator('.ps-shell > .topbar .mobile-menu-btn')).toBeVisible();
-  const closed = await page.locator('.ps-shell > aside.sidebar').evaluate((el) => {
+  const closed = await page.locator('#ws-sidebar').evaluate((el) => {
     const r = el.getBoundingClientRect();
     return { x: r.x, width: r.width, transform: getComputedStyle(el).transform };
   });
   expect(closed.x + closed.width).toBeLessThanOrEqual(1);
   await page.locator('.ps-shell > .topbar .mobile-menu-btn').click();
   await expect.poll(async () => {
-    const r = await page.locator('.ps-shell > aside.sidebar').evaluate((el) => el.getBoundingClientRect());
+    const r = await page.locator('#ws-sidebar').evaluate((el) => el.getBoundingClientRect());
     return r.x;
   }).toBeGreaterThanOrEqual(0);
   await saveShot(page, 'mobile-public-calculators');

@@ -815,18 +815,24 @@
     var foot = $('ws-nav-foot');
     var bottom = $('ws-bottom');
     if (main) {
-      var labNav = '<div class="ws-nav-block ws-nav-site"><h2 class="ws-nav-group">' + escapeHtml(t('navGroupSite')) + '</h2>' +
-        LAB_NAV.map(function (pair) {
-          return '<a class="ws-nav-item" href="' + pair[0] + '">' + icon(pair[2]) +
-            '<span class="ws-nav-label">' + escapeHtml(t(pair[1])) + '</span></a>';
-        }).join('') + '</div>';
-      var workspaceNav = '<div class="ws-nav-block ws-nav-workspace"><h2 class="ws-nav-group">' + escapeHtml(t('navGroupWorkspace')) + '</h2>' +
-        WORKSPACE_NAV.map(function (pair) {
-          return '<a class="ws-nav-item is-active" href="' + pair[0] + '" aria-current="page">' + icon(pair[2]) +
-            '<span class="ws-nav-label">' + escapeHtml(t(pair[1])) + '</span></a>';
-        }).join('') + '</div>';
-      main.innerHTML = labNav + workspaceNav;
-      bindProNav(main);
+      if (main.querySelector('[data-nav]')) {
+        if (window.AtomurusNav && typeof window.AtomurusNav.markActive === 'function') {
+          window.AtomurusNav.markActive(main.closest('[data-atomurus-sidebar]') || main);
+        }
+      } else {
+        var labNav = '<div class="ws-nav-block ws-nav-site"><h2 class="ws-nav-group">' + escapeHtml(t('navGroupSite')) + '</h2>' +
+          LAB_NAV.map(function (pair) {
+            return '<a class="ws-nav-item" href="' + pair[0] + '">' + icon(pair[2]) +
+              '<span class="ws-nav-label">' + escapeHtml(t(pair[1])) + '</span></a>';
+          }).join('') + '</div>';
+        var workspaceNav = '<div class="ws-nav-block ws-nav-workspace"><h2 class="ws-nav-group">' + escapeHtml(t('navGroupWorkspace')) + '</h2>' +
+          WORKSPACE_NAV.map(function (pair) {
+            return '<a class="ws-nav-item is-active" href="' + pair[0] + '" aria-current="page">' + icon(pair[2]) +
+              '<span class="ws-nav-label">' + escapeHtml(t(pair[1])) + '</span></a>';
+          }).join('') + '</div>';
+        main.innerHTML = labNav + workspaceNav;
+        bindProNav(main);
+      }
     }
     if (studyNav) {
       var context = [
@@ -865,7 +871,15 @@
       bindProNav(studyNav);
     }
     if (foot) {
-      if (!user) {
+      if (window.AtomurusNav && typeof window.AtomurusNav.paintFoot === 'function') {
+        window.AtomurusNav.paintFoot({
+          user: user || null,
+          pending: false,
+          accountActive: current === 'account'
+        });
+        var asideLogout = foot.querySelector('[data-atomurus-signout]');
+        if (asideLogout) asideLogout.addEventListener('click', doLogout);
+      } else if (!user) {
         foot.innerHTML =
           '<a class="ws-nav-item" href="/login?next=%2Fapp%3Fsection%3Daccount">' + icon('account') + '<span class="ws-nav-label">' + escapeHtml(t('account')) + '</span></a>' +
           '<a class="ws-nav-item is-upgrade" href="/pricing">' + icon('plan') + '<span class="ws-nav-label">' + escapeHtml(t('viewPlans')) + '</span></a>';
