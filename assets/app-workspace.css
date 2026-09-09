@@ -286,6 +286,21 @@
   color: var(--lc-ink-3);
   margin: 0 0 12px;
 }
+.ws-viz-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+}
+.ws-viz-links a {
+  color: var(--lc-ink);
+  font-size: 14px;
+  font-weight: 550;
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in oklab, var(--lc-green) 45%, transparent);
+}
+.ws-viz-links a:hover {
+  color: var(--lc-green);
+}
 .ws-account-tabs {
   display: flex;
   gap: 6px;

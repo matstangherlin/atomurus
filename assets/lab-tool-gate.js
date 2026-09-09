@@ -131,7 +131,7 @@
     return '/signup?next=' + encodeURIComponent(nextPath());
   }
 
-  function copyFor(need, kind) {
+  function copyFor(need, kind, feature) {
     if (need === 'login') {
       return {
         kicker: t('Free account', 'Conta gratuita'),
@@ -162,6 +162,46 @@
         )
       };
     }
+    if (feature === 'moleculeViewer') {
+      return {
+        kicker: t('PRO', 'PRO'),
+        title: t('Molecules is included with Pro.', 'Moléculas está no Pro.'),
+        body: t(
+          'Explore molecular structures in 3D and save the work to your workspace. Interactive 3D viewers stay in Atomurus Pro. New accounts include a 30-day trial.',
+          'Explore estruturas moleculares em 3D e salve o trabalho no workspace. Visualizadores 3D ficam no Atomurus Pro. Contas novas incluem 30 dias de trial.'
+        )
+      };
+    }
+    if (feature === 'atomicModelViewer') {
+      return {
+        kicker: t('PRO', 'PRO'),
+        title: t('Atomic Models is included with Pro.', 'Modelos atômicos está no Pro.'),
+        body: t(
+          'Inspect atomic models in 3D. Interactive 3D viewers stay in Atomurus Pro. New accounts include a 30-day trial.',
+          'Veja modelos atômicos em 3D. Visualizadores 3D ficam no Atomurus Pro. Contas novas incluem 30 dias de trial.'
+        )
+      };
+    }
+    if (feature === 'allotropeViewer') {
+      return {
+        kicker: t('PRO', 'PRO'),
+        title: t('Allotropes is included with Pro.', 'Alótropos está no Pro.'),
+        body: t(
+          'Compare allotrope structures in 3D. Interactive 3D viewers stay in Atomurus Pro. New accounts include a 30-day trial.',
+          'Explore estruturas alotrópicas em 3D. Visualizadores 3D ficam no Atomurus Pro. Contas novas incluem 30 dias de trial.'
+        )
+      };
+    }
+    if (feature === 'isomerismViewer') {
+      return {
+        kicker: t('PRO', 'PRO'),
+        title: t('Isomerism is included with Pro.', 'Isomeria está no Pro.'),
+        body: t(
+          'Inspect isomerism in 3D. Interactive 3D viewers stay in Atomurus Pro. New accounts include a 30-day trial.',
+          'Veja isomeria em 3D. Visualizadores 3D ficam no Atomurus Pro. Contas novas incluem 30 dias de trial.'
+        )
+      };
+    }
     return {
       kicker: t('PRO', 'PRO'),
       title: t('This tool is part of Atomurus Pro.', 'Esta ferramenta faz parte do Atomurus Pro.'),
@@ -189,7 +229,7 @@
     });
   }
 
-  function overlay(host, need, id, kind) {
+  function overlay(host, need, id, kind, feature) {
     if (!host) return;
     var session = sessionOf();
     var existing = host.querySelector(':scope > .lab-tool-gate');
@@ -198,6 +238,7 @@
       existing &&
       existing.getAttribute('data-need') === need &&
       existing.getAttribute('data-kind') === String(kind || '') &&
+      existing.getAttribute('data-feature') === String(feature || '') &&
       existing.getAttribute('data-signed') === signedKey
     ) {
       if (id === 'lab-tool-gate') host.classList.add('lab-tool-gate-host');
@@ -205,12 +246,13 @@
       return;
     }
     if (existing) existing.remove();
-    var copy = copyFor(need, kind);
+    var copy = copyFor(need, kind, feature);
     var box = document.createElement('div');
     box.className = 'lab-tool-gate';
     box.id = id || 'lab-tool-gate';
     box.setAttribute('data-need', need);
     box.setAttribute('data-kind', kind || '');
+    box.setAttribute('data-feature', feature || '');
     box.setAttribute('data-signed', signedKey);
     box.setAttribute('role', 'dialog');
     box.setAttribute('aria-modal', 'true');
@@ -251,7 +293,7 @@
     } else {
       var upgrade = document.createElement('a');
       upgrade.className = 'lab-tool-gate-primary';
-      upgrade.href = '/pricing';
+      upgrade.href = '/pricing?next=' + encodeURIComponent(nextPath());
       upgrade.textContent = t('Upgrade to Pro', 'Assinar o Pro');
       actions.appendChild(upgrade);
     }
@@ -303,7 +345,7 @@
     var page = pagePolicy(location.pathname);
     var host = pageHost();
     if (page.need !== 'public' && !allowed(page.need, session, page.feature)) {
-      overlay(host, page.need, 'lab-tool-gate', page.kind);
+      overlay(host, page.need, 'lab-tool-gate', page.kind, page.feature);
     } else {
       clearOverlay(host);
     }
@@ -314,7 +356,7 @@
       var need = CALC_TAB_POLICY[tab];
       var feature = CALC_TAB_FEATURE[tab] || null;
       if (allowed(need, session, feature)) clearOverlay(tabHost);
-      else overlay(tabHost, need, 'lab-tool-gate-' + tab, 'calc');
+      else overlay(tabHost, need, 'lab-tool-gate-' + tab, 'calc', feature);
     });
   }
 

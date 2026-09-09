@@ -36,11 +36,12 @@
     if (!login) {
       login = document.createElement('a');
       login.className = 'nav-item';
-      login.href = p + 'login.html';
+      login.href = guestLoginHref();
       login.innerHTML = LOGIN_ICON + '<span data-i18n="common.nav.login">Account</span>';
       foot.insertBefore(login, foot.firstChild);
     }
     login.setAttribute('data-auth-nav-link', 'common.nav.login');
+    login.href = guestLoginHref();
     if (!foot.querySelector('a[href*="pricing"]')) {
       var pricing = document.createElement('a');
       pricing.className = 'nav-item';
@@ -168,27 +169,55 @@
     else topbar.appendChild(form);
   }
 
+  function guestLoginHref() {
+    var path = location.pathname || '/';
+    if (/\/(login|signup)(?:\.html)?$/i.test(path)) return '/login';
+    return '/login?next=' + encodeURIComponent((location.pathname || '/') + (location.search || ''));
+  }
+
   function markActive(aside) {
     var here = location.pathname.replace(/\/+$/, '').toLowerCase();
-    aside.querySelectorAll('a.nav-item[href]').forEach(function (a) {
+    var links = Array.prototype.slice.call(aside.querySelectorAll('a.nav-item[href]'));
+    var best = null;
+    var bestScore = 0;
+    function score(target) {
+      if (!target) return 0;
+      if (here === target) return 10000 + target.length;
+      if (target.indexOf('index.html') !== -1 && (here === '' || here === '/' || /\/index\.html$/.test(here))) return 9000;
+      if (target.indexOf('login') !== -1 && here.indexOf('login') !== -1) return 8000;
+      if (target.indexOf('config') !== -1 && here.indexOf('config') !== -1) return 8000;
+      if (target.indexOf('pricing') !== -1 && here.indexOf('pricing') !== -1) return 8000;
+      if (target.indexOf('/app') !== -1 && (here === '/app' || /\/app(?:\.html)?$/.test(here))) return 8000;
+      if (target.indexOf('calculators') !== -1 && here.indexOf('calculators') !== -1) return 7000 + target.length;
+      if (target.indexOf('explore') !== -1 && here.indexOf('/explore') !== -1 && here.indexOf('/viewer/') === -1) {
+        return 7000 + target.length;
+      }
+      if (target.indexOf('periodic-table') !== -1 && here.indexOf('periodic-table') !== -1) {
+        if (here.indexOf(target.replace(/\.html$/, '')) !== -1) return 7500 + target.length;
+        return 5000;
+      }
+      var viewerKeys = ['atomic-models', 'molecules', 'allotropes', 'isomerism'];
+      var i;
+      for (i = 0; i < viewerKeys.length; i++) {
+        if (target.indexOf(viewerKeys[i]) !== -1 && here.indexOf(viewerKeys[i]) !== -1) return 8000 + target.length;
+      }
+      if (target.indexOf('atomic-models') !== -1 && /\/viewer\//.test(here) && here.indexOf('/explore/') === -1) {
+        return 100;
+      }
+      return 0;
+    }
+    links.forEach(function (a) {
       var target;
       try { target = new URL(a.getAttribute('href'), location.href).pathname.replace(/\/+$/, '').toLowerCase(); }
       catch (e) { return; }
-      var on =
-        here === target ||
-        (target.indexOf('index.html') !== -1 && (here === '' || here === '/' || /\/index\.html$/.test(here))) ||
-        (target.indexOf('atomic-models') !== -1 && /\/viewer\//.test(here) && here.indexOf('/explore/') === -1) ||
-        (target.indexOf('periodic-table') !== -1 && here.indexOf('periodic-table') !== -1) ||
-        (target.indexOf('calculators') !== -1 && here.indexOf('calculators') !== -1) ||
-        (target.indexOf('explore') !== -1 && here.indexOf('/explore') !== -1) ||
-        (target.indexOf('atomic-models') !== -1 && here.indexOf('atomic-models') !== -1) ||
-        (target.indexOf('molecules') !== -1 && here.indexOf('molecules') !== -1) ||
-        (target.indexOf('allotropes') !== -1 && here.indexOf('allotropes') !== -1) ||
-        (target.indexOf('isomerism') !== -1 && here.indexOf('isomerism') !== -1) ||
-        (target.indexOf('login') !== -1 && here.indexOf('login') !== -1) ||
-        (target.indexOf('config') !== -1 && here.indexOf('config') !== -1) ||
-        (target.indexOf('pricing') !== -1 && here.indexOf('pricing') !== -1) ||
-        (target.indexOf('/app') !== -1 && (here === '/app' || /\/app(?:\.html)?$/.test(here)));
+      var s = score(target);
+      if (s > bestScore) {
+        bestScore = s;
+        best = a;
+      }
+    });
+    links.forEach(function (a) {
+      var on = a === best && bestScore > 0;
       a.classList.toggle('active', on);
       if (on) a.setAttribute('aria-current', 'page');
       else a.removeAttribute('aria-current');
@@ -216,7 +245,7 @@
     wrap.innerHTML =
       '<span class="ps-plan-badge" hidden data-atomurus-plan-badge></span>' +
       '<a class="ps-userchip lc-topnav-cta" href="' +
-      prefix() + 'login.html' +
+      guestLoginHref() +
       '" data-atomurus-account-chip aria-label="Account">' +
       '<svg class="ps-userchip-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
       '<span data-i18n="pricing.ctaAccount">Account</span></a>';

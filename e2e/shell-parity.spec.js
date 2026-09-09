@@ -102,3 +102,22 @@ test('Account Center tabs stay on /app?section=account', async ({ page }) => {
   await page.locator('.ws-account-tab[href*="tab=preferences"]').click();
   await expect(page.locator('#app-study')).toContainText(/Language|Idioma/i);
 });
+
+test('Free chip stays FREE on Home and Workspace', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await installApi(page, { kind: 'free' });
+  await page.goto('/index.html');
+  await expect(page.locator('[data-atomurus-account-chip]')).toContainText(/Free User/i, { timeout: 15_000 });
+  await expect(page.locator('[data-atomurus-plan-badge]').first()).toContainText(/FREE/);
+  await page.goto('/app');
+  await expect(page.locator('#ws-userchip')).toContainText(/Free User/i, { timeout: 15_000 });
+  await expect(page.locator('#ws-plan-badge')).toContainText(/FREE/);
+});
+
+test('Molecules keeps a single sidebar current item', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/viewer/molecules.html');
+  const current = page.locator('.ps-shell aside.sidebar a.nav-item[aria-current="page"]');
+  await expect(current).toHaveCount(1);
+  await expect(current).toContainText(/Molecules/i);
+});

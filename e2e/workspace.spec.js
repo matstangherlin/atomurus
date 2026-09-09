@@ -172,6 +172,36 @@ test('Payment issue offers Manage billing', async ({ page }) => {
   await expect(page.locator('#ws-billing-portal')).toBeVisible();
 });
 
+test('Account Free shows Upgrade to Pro', async ({ page }) => {
+  await installApi(page, { kind: 'free' });
+  await gotoWorkspace(page, '/app?section=account');
+  await expect(page.locator('#ws-plan-card')).toContainText(/Atomurus Free/);
+  await expect(page.locator('#ws-plan-card a[href="/pricing"]')).toContainText(/Upgrade to Pro|Assinar o Pro/i);
+});
+
+test('Guest account section does not expose profile fields', async ({ page }) => {
+  await installApi(page, { kind: 'guest', signedIn: false });
+  await gotoWorkspace(page, '/app?section=account');
+  await expect(page.locator('#ws-acc-email')).toHaveCount(0);
+  await expect(page.locator('#app-study')).toContainText(/chemistry workspace|workspace de química/i);
+});
+
+test('Overview lists recent lab sessions and viewer names', async ({ page }) => {
+  const store = createStore();
+  store.labSessions = [{
+    id: 'aaaaaaaa-bbbb-4ccc-8ddd-000000000001',
+    sessionType: 'reaction',
+    title: 'Combustion of CH4',
+    updatedAt: new Date().toISOString()
+  }];
+  await installApi(page, { kind: 'pro', store });
+  await gotoWorkspace(page, '/app');
+  await expect(page.locator('#app-study')).toContainText(/Recent Lab Sessions|Sessões recentes/);
+  await expect(page.locator('#app-study')).toContainText('Combustion of CH4');
+  await expect(page.locator('#app-study a[href="/viewer/atomic-models.html"]')).toContainText(/Atomic Models|Modelos atômicos/);
+  await expect(page.locator('#app-study a[href="/viewer/atomic-models.html"]')).not.toContainText(/Atomic Compare|Comparar átomos/);
+});
+
 test('PT/EN workspace rerender', async ({ page }) => {
   await installApi(page, { kind: 'pro', lang: 'en' });
   await gotoWorkspace(page, '/app');

@@ -186,6 +186,12 @@
       visualizeTitle: 'Visualize',
       labAllotropes: 'Allotropes',
       labIsomerism: 'Isomerism',
+      labViewerAtomic: 'Atomic Models',
+      labViewerAtomicLede: 'Inspect atomic models in 3D.',
+      labViewerMolecules: 'Molecules',
+      labViewerMoleculesLede: 'Explore molecular structures.',
+      labAllotropesLede: 'Compare allotrope structures.',
+      labIsomerismLede: 'Inspect isomerism in 3D.',
       solveAnalyzeTitle: 'Solve & Analyze',
       studyBlockTitle: 'Study',
       focusLandingBody: 'Review the cards that need the most attention.',
@@ -467,6 +473,12 @@
       visualizeTitle: 'Visualizar',
       labAllotropes: 'Alótropos',
       labIsomerism: 'Isomeria',
+      labViewerAtomic: 'Modelos atômicos',
+      labViewerAtomicLede: 'Veja modelos atômicos em 3D.',
+      labViewerMolecules: 'Moléculas',
+      labViewerMoleculesLede: 'Explore estruturas moleculares.',
+      labAllotropesLede: 'Explore estruturas alotrópicas.',
+      labIsomerismLede: 'Veja isomeria em 3D.',
       solveAnalyzeTitle: 'Resolver e analisar',
       studyBlockTitle: 'Estudo',
       focusLandingBody: 'Revise os cards que mais precisam de atenção.',
@@ -959,6 +971,21 @@
     if (section === 'history') parts.push(escapeHtml(t('history')));
     if (section === 'notes') parts.push(escapeHtml(t('notes')));
     if (section === 'progress') parts.push(escapeHtml(t('continueNav')));
+    if (section === 'pro-lab') {
+      parts.push(escapeHtml(t('proLab')));
+      var tool = logic().labToolFromQuery ? logic().labToolFromQuery(location.search) : 'home';
+      var toolLabel = {
+        reactions: 'labReactions',
+        formula: 'labFormula',
+        solutions: 'labSolutions',
+        calculations: 'labCalc',
+        elements: 'labElements',
+        molecules: 'labMolecules',
+        atomic: 'labAtomic',
+        sessions: 'labSessions'
+      }[tool];
+      if (toolLabel) parts.push(escapeHtml(t(toolLabel)));
+    }
     return '<nav class="ws-crumb" aria-label="Breadcrumb">' + parts.join(' / ') + '</nav>';
   }
 
@@ -1245,11 +1272,35 @@
       '<div class="ws-item-meta">' + escapeHtml(typeLabel(item.itemType)) + '</div></div></a>';
   }
 
+  function labToolForSession(type) {
+    if (type === 'element_compare') return 'elements';
+    if (type === 'molecule_compare') return 'molecules';
+    if (type === 'atomic_compare') return 'atomic';
+    if (type === 'reaction') return 'reactions';
+    if (type === 'formula_solver') return 'formula';
+    if (type === 'solution_builder') return 'solutions';
+    return 'calculations';
+  }
+
+  function listLabSessions() {
+    return fetch('/api/pro-lab/sessions', { credentials: 'include', headers: { Accept: 'application/json' } })
+      .then(function (res) { return res.json().catch(function () { return {}; }); })
+      .then(function (data) { return (data && data.ok && Array.isArray(data.sessions)) ? data.sessions : []; })
+      .catch(function () { return []; });
+  }
+
   async function renderOverview(node, api, user) {
     node.innerHTML = skeleton();
-    var pair = await Promise.all([api.overview(), api.reviewOverview().catch(function () { return null; })]);
+    var pair = await Promise.all([
+      api.overview(),
+      api.reviewOverview().catch(function () { return null; }),
+      api.insights({ range: '7d' }).catch(function () { return null; }),
+      listLabSessions()
+    ]);
     var overview = pair[0];
     var review = pair[1];
+    var insights = pair[2];
+    var sessions = pair[3] || [];
     var dueNow = review && review.dueNow != null ? review.dueNow : 0;
     var name = displayName(user);
     var hour = logic().greetingKey();
@@ -1274,14 +1325,13 @@
       '<a class="ws-dest-card" href="/app?section=review"><h2 class="ws-h2">' + escapeHtml(t('review')) + '</h2></a>' +
       '<a class="ws-dest-card" href="/app?section=insights"><h2 class="ws-h2">' + escapeHtml(t('insights')) + '</h2></a>' +
       '</div></section>';
-    var insightsPreview = review
-      ? '<section class="ws-overview-block"><h2 class="ws-h2">' + escapeHtml(t('insights')) + '</h2>' +
-        '<div class="ws-metrics">' +
-        [['dueToday', dueNow], ['metricCards', review.totalCards || 0]].map(function (row) {
-          return '<div class="ws-metric"><div class="ws-metric-value">' + escapeHtml(String(row[1])) + '</div><div class="ws-metric-label">' + escapeHtml(t(row[0])) + '</div></div>';
-        }).join('') + '</div>' +
-        '<p><a class="ws-btn ws-btn-secondary" href="/app?section=insights">' + escapeHtml(t('openInsights')) + '</a></p></section>'
-      : '';
+    var summary = insights && insights.summary;
+    var insightsPreview = '<section class="ws-overview-block"><h2 class="ws-h2">' + escapeHtml(t('insights')) + '</h2>' +
+      '<div class="ws-metrics">' +
+      [['metricReviews', (summary && summary.reviews) || 0], ['activeDays', (summary && summary.activeDays) || 0], ['cardsDue', dueNow]].map(function (row) {
+        return '<div class="ws-metric"><div class="ws-metric-value">' + escapeHtml(String(row[1])) + '</div><div class="ws-metric-label">' + escapeHtml(t(row[0])) + '</div></div>';
+      }).join('') + '</div>' +
+      '<p><a class="ws-btn ws-btn-secondary" href="/app?section=insights">' + escapeHtml(t('openInsights')) + '</a></p></section>';
     var solveBlock = '<section class="ws-overview-block"><h2 class="ws-h2">' + escapeHtml(t('solveAnalyzeTitle')) + '</h2>' +
       '<div class="ws-dest-grid">' +
       '<a class="ws-dest-card" data-dest="solver" href="/app?section=pro-lab&tool=reactions"><h2 class="ws-h2">' + escapeHtml(t('chemistrySolver')) + '</h2><p class="ws-lede">' + escapeHtml(t('chemistrySolverLede')) + '</p></a>' +
@@ -1289,16 +1339,26 @@
       '<a class="ws-dest-card" href="/app?section=pro-lab&tool=elements"><h3 class="ws-lab-card-title">' + escapeHtml(t('labElements')) + '</h3><p class="ws-lede">' + escapeHtml(t('labElementsLede')) + '</p></a>' +
       '</div><p><a class="ws-btn ws-btn-secondary" href="/app?section=pro-lab">' + escapeHtml(t('openLabSuite')) + '</a></p></section>';
     var visualizeBlock = '<section class="ws-overview-block"><h2 class="ws-h2">' + escapeHtml(t('visualizeTitle')) + '</h2>' +
-      '<div class="ws-dest-grid">' +
-      '<a class="ws-dest-card" href="/viewer/atomic-models.html"><h3 class="ws-lab-card-title">' + escapeHtml(t('labAtomic')) + '</h3></a>' +
-      '<a class="ws-dest-card" href="/viewer/molecules.html"><h3 class="ws-lab-card-title">' + escapeHtml(t('labMolecules')) + '</h3></a>' +
-      '<a class="ws-dest-card" href="/viewer/allotropes.html"><h3 class="ws-lab-card-title">' + escapeHtml(t('labAllotropes')) + '</h3></a>' +
-      '<a class="ws-dest-card" href="/viewer/isomerism.html"><h3 class="ws-lab-card-title">' + escapeHtml(t('labIsomerism')) + '</h3></a>' +
-      '</div></section>';
+      '<nav class="ws-viz-links">' +
+      '<a href="/viewer/atomic-models.html">' + escapeHtml(t('labViewerAtomic')) + '</a>' +
+      '<a href="/viewer/molecules.html">' + escapeHtml(t('labViewerMolecules')) + '</a>' +
+      '<a href="/viewer/allotropes.html">' + escapeHtml(t('labAllotropes')) + '</a>' +
+      '<a href="/viewer/isomerism.html">' + escapeHtml(t('labIsomerism')) + '</a>' +
+      '</nav></section>';
+    var recent = sessions.slice(0, 4);
+    var lang = langIsPt() ? 'pt' : 'en';
+    var recentBlock = recent.length
+      ? '<section class="ws-overview-block"><h2 class="ws-h2">' + escapeHtml(t('recentLabSessions')) + '</h2><div class="ws-grid">' + recent.map(function (row) {
+        var when = logic().relativeTime ? logic().relativeTime(row.updatedAt || row.updated_at, Date.now(), lang) : '';
+        var href = '/app?section=pro-lab&tool=' + encodeURIComponent(labToolForSession(row.sessionType)) + '&session=' + encodeURIComponent(row.id);
+        return '<a class="ws-study-item" href="' + escapeHtml(href) + '"><div><h3 class="ws-item-title">' + escapeHtml(row.title || t('labSessions')) + '</h3>' +
+          (when ? '<div class="ws-item-meta">' + escapeHtml(when) + '</div>' : '') + '</div></a>';
+      }).join('') + '</div></section>'
+      : '';
     node.innerHTML =
       crumbTrail('overview') +
       '<p class="ws-kicker">Atomurus</p><h1 class="ws-title">' + escapeHtml(greet) + '</h1><p class="ws-lede">' + escapeHtml(t('continueChemistry')) + '</p>' +
-      attention + continueBlock + studyBlock + insightsPreview + solveBlock + visualizeBlock;
+      attention + continueBlock + studyBlock + solveBlock + visualizeBlock + recentBlock + insightsPreview;
   }
 
   function libraryRow(item) {

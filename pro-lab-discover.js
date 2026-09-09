@@ -106,7 +106,7 @@
           title: c.lockedTitle,
           body: c.elTitle,
           actions: [
-            { label: c.upgrade, href: '/pricing', primary: true },
+            { label: c.upgrade, href: '/pricing?next=' + encodeURIComponent(nextFor(tool)), primary: true },
             { label: c.close }
           ]
         });

@@ -110,10 +110,10 @@
       '</div>' +
       '<p class="ws-kicker">' + esc(t('labVisualize') || 'Visualize') + '</p>' +
       '<div class="ws-lab-grid">' +
-      card('/viewer/atomic-models.html', t('labAtomic'), t('labAtomicLede'), locked, t, esc, 'atomic-models') +
-      card('/viewer/molecules.html', t('labMolecules'), t('labMoleculesLede'), locked, t, esc, 'viewer-molecules') +
-      card('/viewer/allotropes.html', t('labAllotropes') || 'Allotropes', t('labAtomicLede'), locked, t, esc, 'allotropes') +
-      card('/viewer/isomerism.html', t('labIsomerism') || 'Isomerism', t('labAtomicLede'), locked, t, esc, 'isomerism') +
+      card('/viewer/atomic-models.html', t('labViewerAtomic') || 'Atomic Models', t('labViewerAtomicLede') || t('labAtomicLede'), locked, t, esc, 'atomic-models') +
+      card('/viewer/molecules.html', t('labViewerMolecules') || 'Molecules', t('labViewerMoleculesLede') || t('labMoleculesLede'), locked, t, esc, 'viewer-molecules') +
+      card('/viewer/allotropes.html', t('labAllotropes') || 'Allotropes', t('labAllotropesLede') || t('labAtomicLede'), locked, t, esc, 'allotropes') +
+      card('/viewer/isomerism.html', t('labIsomerism') || 'Isomerism', t('labIsomerismLede') || t('labAtomicLede'), locked, t, esc, 'isomerism') +
       '</div></div>';
   }
 
@@ -140,6 +140,21 @@
     } else if (tool === 'solutions') {
       title = t('labSolutions');
       body = t('labSolutionsLede');
+    } else if (tool === 'calculations') {
+      title = t('labCalc');
+      body = t('labCalcLede');
+    } else if (tool === 'elements') {
+      title = t('labElements');
+      body = t('labElementsLede');
+    } else if (tool === 'molecules') {
+      title = t('labMolecules');
+      body = t('labMoleculesLede');
+    } else if (tool === 'atomic') {
+      title = t('labAtomic');
+      body = t('labAtomicLede');
+    } else if (tool === 'sessions') {
+      title = t('labSessions');
+      body = t('labSessionsLede');
     }
     node.innerHTML =
       '<p class="ws-kicker"><a href="' + esc(labHref('home')) + '">' + esc(t('proLab')) + '</a></p>' +
@@ -375,6 +390,10 @@
     }
 
     if (locked) {
+      if (tool && tool !== 'home') {
+        lockedTool(node, ctx, tool);
+        return;
+      }
       lockedHome(node, ctx);
       return;
     }

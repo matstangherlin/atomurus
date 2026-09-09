@@ -43,7 +43,11 @@ PT UI labels: Laboratório, Estudo, Lab, Atividade, Conta. Product names are not
 
 `ads-gate.js` sets `html.auth-pending` until `/api/ads-config` returns. `/app` keeps pending until `auth-app.js` `markReady()` so Account does not flash into the display name. `i18n.js` paints the same chip and badge on every public/tool page. `lab-tool-gate.js` does not treat pending as guest.
 
-Deep links keep `next=` (path + query). After login, `auth-client.safeNextPath` returns to section, tool, tab, element, molecule, or calculator.
+Deep links keep `next=` (path + query) from gates **and** from the Account chip. After login, `auth-client.safeNextPath` returns to section, tool, tab, element, molecule, or calculator. Signed-in Free upgrade CTAs keep `?next=` on `/pricing`.
+
+Pricing Pro groups are rendered from `assets/pro-features.js` (Study / PRO CHEMISTRY SOLVER / Analyze / Visualize). Overview Visualize uses Atomic Models / Molecules / Allotropes / Isomerism, not Compare titles. Recent lab sessions appear on Overview when `/api/pro-lab/sessions` returns rows.
+
+Landing mobile drawer matches the global destinations (Viewer + Workspace + Account), not a 12-item Viewer child list.
 
 ### Discoverability
 

@@ -312,6 +312,8 @@ test('public home dark mode and mobile keep the workspace chrome', async ({ page
   await page.locator('.lc-mobile-hamb').click();
   await expect(page.locator('#lc-mobile-menu.open, .lc-mobile-menu.open')).toBeVisible();
   await expect(page.locator('.lc-mobile-menu-num')).toHaveCount(0);
+  await expect(page.locator('#lc-mobile-menu')).toContainText(/Workspace/i);
+  await expect(page.locator('#lc-mobile-menu a[href="/app"]')).toContainText(/Workspace/i);
   await saveShot(page, 'mobile-public-home-menu');
 
   await page.goto('/calculators.html');

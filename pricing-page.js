@@ -355,6 +355,36 @@
     return dict[key];
   }
 
+  function uniqueList(items) {
+    var seen = {};
+    var out = [];
+    (items || []).forEach(function (item) {
+      if (!item || seen[item]) return;
+      seen[item] = true;
+      out.push(item);
+    });
+    return out;
+  }
+
+  function resolvedProGroups() {
+    var fallback = t('proGroups') || [];
+    var catalog = window.AtomurusProFeatures;
+    if (!catalog || typeof catalog.grouped !== 'function') return fallback;
+    var extras = {
+      study: ['Focus Review'],
+      solve: lang() === 'pt'
+        ? ['Balanceamento de reações', 'Cálculos de reagente limitante']
+        : ['Reaction balancing', 'Limiting-reagent calculations'],
+      visualize: ['3D molecule viewer, atomic models, allotropes and isomerism']
+    };
+    return catalog.grouped().map(function (group) {
+      var title = group.id === 'solve' ? t('proLabGroup') : group.title;
+      var items = group.features.map(function (feat) { return feat.title; });
+      if (extras[group.id]) items = items.concat(extras[group.id]);
+      return { title: title, items: uniqueList(items) };
+    });
+  }
+
   function interpolate(template, vars) {
     var text = String(template || '');
     Object.keys(vars || {}).forEach(function (key) {
@@ -494,7 +524,7 @@
     setText('pricing-pro-tag', t('proTag'));
     setText('pricing-pro-name', t('proName'));
     setText('pricing-pro-sub', t('proSub'));
-    setGroupedList('pricing-pro-list', t('proGroups'));
+    setGroupedList('pricing-pro-list', resolvedProGroups());
     setText('pricing-coming-title', t('comingTitle'));
     setList('pricing-coming-list', t('comingItems'));
     if (period === 'annual') {

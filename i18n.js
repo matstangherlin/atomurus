@@ -247,6 +247,12 @@
     );
   }
 
+  function guestLoginHref() {
+    var path = location.pathname || '/';
+    if (/\/(login|signup)(?:\.html)?$/i.test(path)) return '/login';
+    return '/login?next=' + encodeURIComponent((location.pathname || '/') + (location.search || ''));
+  }
+
   function setAuthLabel(node, text, i18nKey) {
     if (!node) return;
     if (node.dataset.authGuestLabel == null) node.dataset.authGuestLabel = node.textContent || '';
@@ -297,7 +303,7 @@
     }
 
     document.querySelectorAll('[data-auth-nav-link="common.nav.login"]').forEach(function (link) {
-      link.setAttribute('href', signedIn ? '/app?section=account' : '/login');
+      link.setAttribute('href', signedIn ? '/app?section=account' : guestLoginHref());
       const label = link.querySelector('[data-i18n], span') || link;
       setAuthLabel(label, signedIn ? display : (label.dataset.authGuestLabel || 'Account'), signedIn ? null : 'common.nav.login');
     });
@@ -309,7 +315,7 @@
       if (link.dataset.authGuestHref == null) link.dataset.authGuestHref = link.getAttribute('href') || '/login';
       var guestHref = String(link.dataset.authGuestHref || '').toLowerCase();
       if (!/login|signup|account/.test(guestHref)) return;
-      link.setAttribute('href', signedIn ? '/app?section=account' : link.dataset.authGuestHref);
+      link.setAttribute('href', signedIn ? '/app?section=account' : guestLoginHref());
       const label = link.querySelector('span[data-i18n], span:not(.ps-plan-badge)') || link.querySelector('span') || link;
       setAuthLabel(
         label,

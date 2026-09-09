@@ -18,6 +18,17 @@ test('signed-out workspace shows Pro navigation and explains locked features', a
   await expect(page.locator('#ws-dialog-host a[href="/pricing"]')).toBeVisible();
 });
 
+test('Account chip from a calculator keeps next= with the query string', async ({ page }) => {
+  await installApi(page, { kind: 'guest', signedIn: false });
+  await page.goto('/calculators.html?tab=stoich');
+  const chip = page.locator('[data-atomurus-account-chip]');
+  await expect(chip).toHaveAttribute('href', /next=/, { timeout: 15_000 });
+  const href = await chip.getAttribute('href');
+  const decoded = decodeURIComponent(href);
+  expect(decoded).toMatch(/calculators/);
+  expect(decoded).toMatch(/tab=stoich/);
+});
+
 test('login next keeps calculator query string', async ({ page }) => {
   await installApi(page, { kind: 'pro', signedIn: false });
   await page.goto('/login?next=' + encodeURIComponent('/calculators.html?tab=stoich'));

@@ -206,6 +206,7 @@ assert.match(appHtml, /assets\/layouts\/workspace\.css/);
 assert.match(appHtml, /data-i18n="common\.brandTag">chemistry lab/);
 
 const pricing = readFileSync(new URL('../pricing-page.js', import.meta.url), 'utf8');
+assert.match(pricing, /AtomurusProFeatures/);
 assert.match(pricing, /PRO CHEMISTRY SOLVER/);
 assert.match(pricing, /Reaction balancing/);
 assert.match(pricing, /Limiting-reagent/);

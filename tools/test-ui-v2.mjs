@@ -129,6 +129,15 @@ if (!read('assets/public-workspace.js').includes('ensureAccountControl')) {
 }
 const dictSource = read('tools/i18n-dict-source.js');
 if (!/login:\s+'Account'/.test(dictSource)) fail('common.nav.login must be Account');
+if (!read('atomurus-mobile-nav.js').includes("i18n: 'common.nav.workspace'")) {
+  fail('mobile drawer must label /app as Workspace');
+}
+if (/label: 'Study'/.test(read('atomurus-mobile-nav.js'))) {
+  fail('mobile drawer must not keep Study as the /app label');
+}
+if (!read('i18n.js').includes('guestLoginHref')) {
+  fail('i18n.js must encode next= on the Account chip');
+}
 if (!read('templates/chrome/public-sidebar.html').includes('common.nav.workspace')) {
   fail('public sidebar must expose Workspace');
 }

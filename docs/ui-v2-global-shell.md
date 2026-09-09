@@ -43,6 +43,8 @@ After auth, the same chip slot shows display name + plan badge from `planBadge()
 
 `html.auth-pending` reserves the chip width so Account does not flash into a name.
 
+Guest Account / sidebar login encode `next=` with the current path and query, except on the login page itself.
+
 On `/app`, `#ws-plan-badge` lives inside `[data-atomurus-account]` so `i18n.js` and `auth-app.js` paint the same pill. Public pages already keep the badge in that host.
 
 Signed-in chip opens a short menu: Account, Plan & Billing, Preferences, Sign out. The Account Center remains `/app?section=account`.

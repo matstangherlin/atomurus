@@ -2122,7 +2122,7 @@ const DICT = {
           explore:       'Explorar',
           login:         'Conta',
           app:           'App',
-          study:         'Estudar',
+          study:         'Estudo',
           workspace:     'Workspace',
           settings:      'Configurações',
           about:         'Sobre',
