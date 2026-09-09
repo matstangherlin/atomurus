@@ -355,6 +355,7 @@ function assertUiV2() {
     'docs/ui-v2-periodic-table.md',
     'docs/ui-v2-viewer.md',
     'docs/ui-v2-workspace.md',
+    'docs/ui-v2-hoist.md',
     'assets/layouts/auth.css',
     'assets/layouts/pricing.css',
     'assets/layouts/docs.css',
@@ -410,12 +411,51 @@ function assertUiV2() {
   if (!workspace.includes('enhanceExistingShell')) {
     fail('public-workspace.js must enhance pre-emitted #ps-shell instead of skipping runtime');
   }
-  if (!workspace.includes('hoistToolShell') || !workspace.includes('hoistLandingShell')) {
-    fail('public-workspace.js must keep hoist as fallback');
+  if (/hoistToolShell|hoistLandingShell|buildPublicSidebar|ps-boot/.test(workspace)) {
+    fail('public-workspace.js must not hoist or hide the body behind ps-boot');
+  }
+  if (!workspace.includes('lab-tool-gate.js')) {
+    fail('public-workspace.js must keep lab-tool-gate.js');
   }
   const shellCss = read('assets/public-shell.css');
   if (!shellCss.includes("content: none") || /logo-tag::after \{[\s\S]*content: 'chemistry lab'/.test(shellCss)) {
     fail('public-shell.css must not paint the brand only via logo-tag::after');
+  }
+  if (shellCss.includes('ps-boot')) {
+    fail('public-shell.css must not hide the body behind ps-boot');
+  }
+  const SKIP_HTML_DIRS = new Set([
+    'node_modules', '.git', 'netlify', 'tools', 'scripts', 'supabase',
+    'hanzi-logic', 'propostas', 'dev', 'docs', 'templates'
+  ]);
+  const HOIST_EXCEPTIONS = new Set([
+    'explore/viewer/methyl-isocyanate.html',
+    'explore/viewer/methyl-isocyanate.pt.html'
+  ]);
+  function walkHtml(dir, out = []) {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (entry.name.startsWith('.')) continue;
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        if (SKIP_HTML_DIRS.has(entry.name)) continue;
+        walkHtml(full, out);
+      } else if (entry.name.endsWith('.html')) out.push(full);
+    }
+    return out;
+  }
+  for (const file of walkHtml(ROOT)) {
+    const rel = path.relative(ROOT, file).replace(/\\/g, '/');
+    const html = fs.readFileSync(file, 'utf8');
+    if (!html.includes('public-workspace.js')) continue;
+    if (HOIST_EXCEPTIONS.has(rel)) {
+      if (html.includes('id="ps-shell"')) {
+        fail(`${rel} must keep compact article chrome, not #ps-shell`);
+      }
+      continue;
+    }
+    if (!html.includes('id="ps-shell"')) {
+      fail(`${rel} loads public-workspace.js but has no #ps-shell`);
+    }
   }
   [
     'index.html',

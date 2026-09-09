@@ -44,8 +44,6 @@ html {
   display: none !important;
 }
 
-html.ps-boot body { visibility: hidden !important; }
-
 /* Status bar used to eat 22px at the bottom of tool shells */
 
 /* ── Brand mark ── */

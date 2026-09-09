@@ -2,7 +2,7 @@
 
 **Scope:** Prompt 03. One product chrome for public, tool, and workspace **modes**. Layout is HTML. JavaScript does not rebuild the document when `#ps-shell` is already in the source.
 
-Production pages still use Lab Console + `public-shell.css`. **Login** loads `assets/ui/index.css` (Prompt 04). Home and `/app` do **not**. This step stops the hoist from being the only way the shell exists.
+Production pages still use Lab Console + `public-shell.css`. **Login** loads `assets/ui/index.css` (Prompt 04). Prompt 13 removed the hoist: layout is HTML only.
 
 ## Modes
 
@@ -44,7 +44,7 @@ Auth user chip is runtime. Do not fake it in HTML.
 
 | Function | After Prompt 03 |
 | --- | --- |
-| Create `.ps-shell` / move DOM | Build-time. **Hoist kept as fallback** if `#ps-shell` is missing |
+| Create `.ps-shell` / move DOM | Build-time. **No hoist** (Prompt 13) |
 | Public sidebar HTML | `templates/chrome/public-sidebar.html` |
 | Move logo into topbar | Build-time |
 | Brand `::after` | Real `.logo-tag` text; CSS `::after` is `none` |
@@ -57,7 +57,7 @@ Auth user chip is runtime. Do not fake it in HTML.
 | `loadLabGate` | **Runtime** (validate-site contract) |
 | `polishCopy` | Runtime until Prompt 14 |
 
-When `#ps-shell` is already in the document, `enhanceExistingShell()` runs and **does not** return before `markActive` / search / CTA / Study. Pages with `data-ps-chrome="1"` skip the `ps-boot` visibility hide (that hide exists so unmigrated pages do not flash the old aside+main tree).
+When `#ps-shell` is already in the document, `enhanceExistingShell()` runs `markActive` / search / CTA / Study. There is no `ps-boot` hide and no document rebuild if the shell is missing (two compact `explore/viewer/methyl-isocyanate` pages keep their own chrome).
 
 ## What this step does not do
 

@@ -111,6 +111,15 @@ test('Home through workspace chrome load UI V2; element pages stay legacy', asyn
   expect(elementUi).toBe(false);
 });
 
+test('public chrome paints without ps-boot', async ({ page }) => {
+  for (const url of ['/index.html', '/login.html', '/periodic-table.html', '/viewer/atomic-models.html']) {
+    await page.goto(url);
+    await expect(page.locator('.ps-shell'), url).toBeVisible();
+    await expect(page.locator('html.ps-boot')).toHaveCount(0);
+    await expect(page.locator('body')).toBeVisible();
+  }
+});
+
 test('key pages emit shared chrome in source HTML', async ({ request }) => {
   const pages = [
     '/index.html',
@@ -185,4 +194,9 @@ test('key pages emit shared chrome in source HTML', async ({ request }) => {
   expect(login).toContain('assets/ui/index.css');
   expect(login).toContain('assets/layouts/auth.css');
   expect(login).not.toMatch(/auth\.access|secure HttpOnly cookie|managed authentication|secure account flow/);
+  const workspaceJs = await (await request.get('/assets/public-workspace.js')).text();
+  expect(workspaceJs).toContain('enhanceExistingShell');
+  expect(workspaceJs).not.toMatch(/hoistToolShell|hoistLandingShell|buildPublicSidebar|ps-boot/);
+  const shellCss = await (await request.get('/assets/public-shell.css')).text();
+  expect(shellCss).not.toContain('ps-boot');
 });

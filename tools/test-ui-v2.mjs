@@ -37,6 +37,7 @@ const required = [
   'docs/ui-v2-periodic-table.md',
   'docs/ui-v2-viewer.md',
   'docs/ui-v2-workspace.md',
+  'docs/ui-v2-hoist.md',
   'assets/layouts/config.css',
   'assets/layouts/periodic-table.css',
   'assets/layouts/viewer.css',
@@ -152,6 +153,52 @@ if (!read('workspace-ui.js').includes('ui-btn-accent')) {
 }
 if (!read('assets/public-workspace.js').includes('enhanceExistingShell')) {
   fail('public-workspace.js must keep runtime enhanceExistingShell');
+}
+const publicWorkspace = read('assets/public-workspace.js');
+if (/hoistToolShell|hoistLandingShell|buildPublicSidebar|ps-boot/.test(publicWorkspace)) {
+  fail('public-workspace.js must not hoist or hide the body behind ps-boot');
+}
+if (!publicWorkspace.includes('lab-tool-gate.js')) {
+  fail('public-workspace.js must still inject lab-tool-gate.js');
+}
+if (read('assets/public-shell.css').includes('ps-boot')) {
+  fail('public-shell.css must not hide the body behind ps-boot');
+}
+
+const SKIP_HTML_DIRS = new Set([
+  'node_modules', '.git', 'netlify', 'tools', 'scripts', 'supabase',
+  'hanzi-logic', 'propostas', 'dev', 'docs', 'templates'
+]);
+const HOIST_EXCEPTIONS = new Set([
+  'explore/viewer/methyl-isocyanate.html',
+  'explore/viewer/methyl-isocyanate.pt.html'
+]);
+
+function walkHtml(dir, out = []) {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (entry.name.startsWith('.')) continue;
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      if (SKIP_HTML_DIRS.has(entry.name)) continue;
+      walkHtml(full, out);
+    } else if (entry.name.endsWith('.html')) out.push(full);
+  }
+  return out;
+}
+
+for (const file of walkHtml(root)) {
+  const rel = path.relative(root, file).replace(/\\/g, '/');
+  const html = fs.readFileSync(file, 'utf8');
+  if (!html.includes('public-workspace.js')) continue;
+  if (HOIST_EXCEPTIONS.has(rel)) {
+    if (html.includes('id="ps-shell"')) {
+      fail(`${rel} must keep compact article chrome, not #ps-shell`);
+    }
+    continue;
+  }
+  if (!html.includes('id="ps-shell"')) {
+    fail(`${rel} loads public-workspace.js but has no #ps-shell`);
+  }
 }
 
 const home = read('index.html');

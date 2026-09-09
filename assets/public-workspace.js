@@ -1,23 +1,10 @@
 /* Public pages: runtime chrome (active nav, search/CTA fallback, lab gate).
-   Layout is emitted at build time by tools/inject-ui-chrome.js.
-   Hoist remains as fallback for HTML that still lacks #ps-shell.
-   Skips /app. Idempotent. Do not restyle the study workspace. */
+   Layout is already in the HTML (#ps-shell from tools/inject-ui-chrome.js).
+   This script does not rebuild the document. Skips /app. Idempotent. */
 (function () {
   'use strict';
 
   if (/\/app(?:\.html)?\/?$/.test(location.pathname)) return;
-
-  if (!document.documentElement.hasAttribute('data-ps-chrome')) {
-    document.documentElement.classList.add('ps-boot');
-  }
-  var released = false;
-  function release() {
-    if (released) return;
-    released = true;
-    document.documentElement.classList.remove('ps-boot');
-    document.documentElement.classList.add('ps-ready');
-  }
-  setTimeout(release, 2500);
 
   function prefix() {
     var parts = location.pathname.replace(/\/+$/, '').split('/').filter(Boolean);
@@ -205,49 +192,6 @@
     });
   }
 
-  function buildPublicSidebar() {
-    var p = prefix();
-    var aside = document.createElement('aside');
-    aside.className = 'sidebar ps-pub-sidebar';
-    aside.id = 'ps-pub-sidebar';
-    aside.innerHTML =
-      '<nav class="sidebar-scroll ps-pub-nav" aria-label="Laboratory">' +
-        '<div class="nav-section">' +
-          '<a class="nav-item" href="' + p + 'index.html">' +
-            '<svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M2 8L8 2l6 6M3 7v7h10V7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>' +
-            '<span data-i18n="common.nav.home">Home</span></a>' +
-          '<a class="nav-item" href="' + p + 'periodic-table.html">' +
-            '<svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" fill="currentColor" opacity=".9"/><rect x="9" y="1" width="6" height="6" rx="1.5" fill="currentColor" opacity=".5"/><rect x="1" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity=".5"/><rect x="9" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity=".3"/></svg>' +
-            '<span data-i18n="common.nav.periodic">Periodic Table</span></a>' +
-          '<a class="nav-item" href="' + p + 'viewer/atomic-models.html">' +
-            '<svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="1.5" fill="currentColor"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/></svg>' +
-            '<span data-i18n="common.nav.visualizador">Viewer</span></a>' +
-          '<a class="nav-item" href="' + p + 'calculators.html">' +
-            '<svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="2" y="1" width="12" height="14" rx="2" stroke="currentColor" stroke-width="1.3" fill="none"/><line x1="5" y1="5" x2="11" y2="5" stroke="currentColor" stroke-width="1.1"/><line x1="5" y1="8" x2="11" y2="8" stroke="currentColor" stroke-width="1"/><line x1="5" y1="11" x2="9" y2="11" stroke="currentColor" stroke-width="1"/></svg>' +
-            '<span data-i18n="common.nav.calc">Calculators</span></a>' +
-          '<a class="nav-item" href="' + p + 'explore.html">' +
-            '<svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.3" stroke="currentColor" stroke-width="1.1" fill="none"/><rect x="9" y="1" width="6" height="6" rx="1.3" stroke="currentColor" stroke-width="1.1" fill="none"/><rect x="1" y="9" width="6" height="6" rx="1.3" stroke="currentColor" stroke-width="1.1" fill="none"/><circle cx="12" cy="12" r="2.6" stroke="currentColor" stroke-width="1.3" fill="none"/><line x1="14" y1="14" x2="15.5" y2="15.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>' +
-            '<span data-i18n="common.nav.explore">Explore</span></a>' +
-          '<a class="nav-item" href="/app">' +
-            '<svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M3 3h4v10H3zM8 5h5v8H8z" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M5 6v4M10.5 8v3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>' +
-            '<span data-i18n="common.nav.study">Study</span></a>' +
-        '</div>' +
-      '</nav>' +
-      '<div class="sidebar-foot">' +
-        '<a class="nav-item" href="' + p + 'login.html" data-auth-nav-link="common.nav.login">' +
-          '<svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="6" r="2.2" stroke="currentColor" stroke-width="1.3"/><path d="M3.5 13c.8-2.2 2.4-3.2 4.5-3.2s3.7 1 4.5 3.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>' +
-          '<span data-i18n="common.nav.login">Login</span></a>' +
-        '<a class="nav-item" href="' + p + 'config.html">' +
-          '<svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.2" stroke="currentColor" stroke-width="1.3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M2.93 2.93l1.06 1.06M12.01 12.01l1.06 1.06M2.93 13.07l1.06-1.06M12.01 3.99l1.06-1.06" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>' +
-          '<span data-i18n="common.nav.settings">Settings</span></a>' +
-        '<a class="nav-item" href="' + p + 'pricing.html">' +
-          '<svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1.8l1.6 3.2 3.5.5-2.5 2.5.6 3.5L8 10.3 4.8 11.5l.6-3.5-2.5-2.5 3.5-.5L8 1.8z" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>' +
-          '<span data-i18n="common.nav.pricing">Pricing</span></a>' +
-      '</div>';
-    markActive(aside);
-    return aside;
-  }
-
   function retagBrand(root) {
     (root || document).querySelectorAll('.logo-tag').forEach(function (el) {
       var t = (el.textContent || '').trim();
@@ -288,71 +232,6 @@
     return true;
   }
 
-  function hoistToolShell() {
-    if (document.querySelector('.ps-shell')) return true;
-    var aside = document.querySelector('body > aside.sidebar');
-    var main = document.querySelector('body > main.main');
-    if (!aside || !main) return false;
-    var topbar = main.querySelector(':scope > .topbar');
-    if (!topbar) return false;
-
-    var shell = document.createElement('div');
-    shell.className = 'ps-shell';
-    shell.id = 'ps-shell';
-
-    var logo = aside.querySelector(':scope > .logo-wrap');
-    if (logo) {
-      logo.classList.add('ps-brand');
-      topbar.insertBefore(logo, topbar.firstChild);
-    }
-    var bc = topbar.querySelector('.breadcrumb');
-    if (bc) bc.hidden = true;
-
-    ensureSearch(topbar, prefix());
-    ensureToolFoot(aside);
-    ensureStudyNav(aside);
-
-    var overlay = document.querySelector('body > .mobile-overlay');
-    shell.appendChild(topbar);
-    if (overlay) shell.appendChild(overlay);
-    shell.appendChild(aside);
-    shell.appendChild(main);
-    document.body.insertBefore(shell, document.body.firstChild);
-    document.body.classList.add('ps-body');
-    retagBrand(shell);
-    applyI18n(shell);
-    return true;
-  }
-
-  function hoistLandingShell() {
-    if (document.querySelector('.ps-shell')) return true;
-    var topnav = document.querySelector('body > nav.lc-topnav');
-    if (!topnav) return false;
-    var shell = document.createElement('div');
-    shell.className = 'ps-shell';
-    shell.id = 'ps-shell';
-    var main = document.createElement('main');
-    main.className = 'ps-main';
-    main.id = 'ps-main';
-    var aside = buildPublicSidebar();
-    var kids = Array.from(document.body.children);
-    shell.appendChild(topnav);
-    shell.appendChild(aside);
-    kids.forEach(function (el) {
-      if (el === topnav || el === shell) return;
-      if (el.tagName === 'SCRIPT') return;
-      main.appendChild(el);
-    });
-    shell.appendChild(main);
-    document.body.insertBefore(shell, document.body.firstChild);
-    document.body.classList.add('ps-body');
-    ensureSearch(topnav, prefix());
-    normalizeLandingCta(topnav);
-    ensureMobileStudyLink();
-    applyI18n(shell);
-    return true;
-  }
-
   function loadLabGate() {
     if (document.querySelector('script[data-lab-tool-gate]')) return;
     var s = document.createElement('script');
@@ -364,13 +243,8 @@
 
   function run() {
     try {
-      if (document.body && document.body.classList.contains('ws-body')) {
-        release();
-        return;
-      }
-      if (!enhanceExistingShell()) {
-        hoistToolShell() || hoistLandingShell();
-      }
+      if (document.body && document.body.classList.contains('ws-body')) return;
+      enhanceExistingShell();
       loadLabGate();
       polishCopy();
       setTimeout(function () {
@@ -380,7 +254,6 @@
         } catch (err) {}
       }, 0);
     } catch (e) {}
-    release();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);

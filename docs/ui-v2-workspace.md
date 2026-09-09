@@ -28,7 +28,7 @@ Keep:
 
 - Protecting `/app` again
 - Wrapping `/app` in `.ui-compat` or `.ui-root`
-- Hoist / public-shell deletion (Prompt 13)
+- Mass-deleting remaining public-shell `!important` / `.lc-*` (Prompt 13 remainder)
 - Restyling 118 element pages
 - Mass-rewriting study HTML in `auth-app.js`
 
