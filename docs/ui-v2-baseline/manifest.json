@@ -1,0 +1,294 @@
+{
+  "capturedAt": "2026-09-09T03:13:23.791Z",
+  "commit": "",
+  "shots": [
+    {
+      "combo": "desktop-light",
+      "route": "home",
+      "path": "/index.html",
+      "ms": 441,
+      "bytes": 135421,
+      "ok": true
+    },
+    {
+      "combo": "desktop-light",
+      "route": "login",
+      "path": "/login.html",
+      "ms": 410,
+      "bytes": 99220,
+      "ok": true
+    },
+    {
+      "combo": "desktop-light",
+      "route": "pricing",
+      "path": "/pricing.html",
+      "ms": 482,
+      "bytes": 109635,
+      "ok": true
+    },
+    {
+      "combo": "desktop-light",
+      "route": "about",
+      "path": "/about.html",
+      "ms": 386,
+      "bytes": 121689,
+      "ok": true
+    },
+    {
+      "combo": "desktop-light",
+      "route": "periodic-table",
+      "path": "/periodic-table.html",
+      "ms": 464,
+      "bytes": 113227,
+      "ok": true
+    },
+    {
+      "combo": "desktop-light",
+      "route": "calculators",
+      "path": "/calculators.html",
+      "ms": 438,
+      "bytes": 126811,
+      "ok": true
+    },
+    {
+      "combo": "desktop-light",
+      "route": "explore",
+      "path": "/explore.html",
+      "ms": 390,
+      "bytes": 92193,
+      "ok": true
+    },
+    {
+      "combo": "desktop-light",
+      "route": "viewer",
+      "path": "/viewer/atomic-models.html",
+      "ms": 424,
+      "bytes": 89892,
+      "ok": true
+    },
+    {
+      "combo": "desktop-light",
+      "route": "app",
+      "path": "/app",
+      "ms": 410,
+      "bytes": 76312,
+      "ok": true
+    },
+    {
+      "combo": "desktop-dark",
+      "route": "home",
+      "path": "/index.html",
+      "ms": 397,
+      "bytes": 133827,
+      "ok": true
+    },
+    {
+      "combo": "desktop-dark",
+      "route": "login",
+      "path": "/login.html",
+      "ms": 463,
+      "bytes": 98139,
+      "ok": true
+    },
+    {
+      "combo": "desktop-dark",
+      "route": "pricing",
+      "path": "/pricing.html",
+      "ms": 401,
+      "bytes": 109329,
+      "ok": true
+    },
+    {
+      "combo": "desktop-dark",
+      "route": "about",
+      "path": "/about.html",
+      "ms": 384,
+      "bytes": 122184,
+      "ok": true
+    },
+    {
+      "combo": "desktop-dark",
+      "route": "periodic-table",
+      "path": "/periodic-table.html",
+      "ms": 434,
+      "bytes": 111800,
+      "ok": true
+    },
+    {
+      "combo": "desktop-dark",
+      "route": "calculators",
+      "path": "/calculators.html",
+      "ms": 436,
+      "bytes": 126476,
+      "ok": true
+    },
+    {
+      "combo": "desktop-dark",
+      "route": "explore",
+      "path": "/explore.html",
+      "ms": 377,
+      "bytes": 92396,
+      "ok": true
+    },
+    {
+      "combo": "desktop-dark",
+      "route": "viewer",
+      "path": "/viewer/atomic-models.html",
+      "ms": 406,
+      "bytes": 90742,
+      "ok": true
+    },
+    {
+      "combo": "desktop-dark",
+      "route": "app",
+      "path": "/app",
+      "ms": 356,
+      "bytes": 77759,
+      "ok": true
+    },
+    {
+      "combo": "mobile-light",
+      "route": "home",
+      "path": "/index.html",
+      "ms": 376,
+      "bytes": 48792,
+      "ok": true
+    },
+    {
+      "combo": "mobile-light",
+      "route": "login",
+      "path": "/login.html",
+      "ms": 366,
+      "bytes": 50906,
+      "ok": true
+    },
+    {
+      "combo": "mobile-light",
+      "route": "pricing",
+      "path": "/pricing.html",
+      "ms": 368,
+      "bytes": 57988,
+      "ok": true
+    },
+    {
+      "combo": "mobile-light",
+      "route": "about",
+      "path": "/about.html",
+      "ms": 352,
+      "bytes": 71960,
+      "ok": true
+    },
+    {
+      "combo": "mobile-light",
+      "route": "periodic-table",
+      "path": "/periodic-table.html",
+      "ms": 460,
+      "bytes": 87067,
+      "ok": true
+    },
+    {
+      "combo": "mobile-light",
+      "route": "calculators",
+      "path": "/calculators.html",
+      "ms": 411,
+      "bytes": 89656,
+      "ok": true
+    },
+    {
+      "combo": "mobile-light",
+      "route": "explore",
+      "path": "/explore.html",
+      "ms": 360,
+      "bytes": 54597,
+      "ok": true
+    },
+    {
+      "combo": "mobile-light",
+      "route": "viewer",
+      "path": "/viewer/atomic-models.html",
+      "ms": 388,
+      "bytes": 66507,
+      "ok": true
+    },
+    {
+      "combo": "mobile-light",
+      "route": "app",
+      "path": "/app",
+      "ms": 344,
+      "bytes": 52129,
+      "ok": true
+    },
+    {
+      "combo": "mobile-dark",
+      "route": "home",
+      "path": "/index.html",
+      "ms": 376,
+      "bytes": 47147,
+      "ok": true
+    },
+    {
+      "combo": "mobile-dark",
+      "route": "login",
+      "path": "/login.html",
+      "ms": 368,
+      "bytes": 49917,
+      "ok": true
+    },
+    {
+      "combo": "mobile-dark",
+      "route": "pricing",
+      "path": "/pricing.html",
+      "ms": 365,
+      "bytes": 57286,
+      "ok": true
+    },
+    {
+      "combo": "mobile-dark",
+      "route": "about",
+      "path": "/about.html",
+      "ms": 353,
+      "bytes": 69996,
+      "ok": true
+    },
+    {
+      "combo": "mobile-dark",
+      "route": "periodic-table",
+      "path": "/periodic-table.html",
+      "ms": 427,
+      "bytes": 81320,
+      "ok": true
+    },
+    {
+      "combo": "mobile-dark",
+      "route": "calculators",
+      "path": "/calculators.html",
+      "ms": 396,
+      "bytes": 89623,
+      "ok": true
+    },
+    {
+      "combo": "mobile-dark",
+      "route": "explore",
+      "path": "/explore.html",
+      "ms": 357,
+      "bytes": 53268,
+      "ok": true
+    },
+    {
+      "combo": "mobile-dark",
+      "route": "viewer",
+      "path": "/viewer/atomic-models.html",
+      "ms": 390,
+      "bytes": 65479,
+      "ok": true
+    },
+    {
+      "combo": "mobile-dark",
+      "route": "app",
+      "path": "/app",
+      "ms": 409,
+      "bytes": 52751,
+      "ok": true
+    }
+  ]
+}
