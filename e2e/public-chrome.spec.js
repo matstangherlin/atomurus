@@ -151,6 +151,11 @@ test('public table, calculators, login and pricing share the new chrome', async 
   await expect(page.locator('.vz-tab.active')).toBeVisible();
   await expect(page.locator('.vz-num').first()).toBeHidden();
   await expect(page.locator('.vz-tab.active')).toContainText(/Atomic Models/i);
+  await expect.poll(() => fontFamily(page.locator('h1.ph-title'))).toMatch(/Instrument Serif/i);
+  const vzTabColor = await page.locator('.vz-tab.active').evaluate((el) => getComputedStyle(el).color);
+  expect(vzTabColor).toMatch(/rgb\(\s*30,\s*106,\s*80\s*\)/);
+  const vzTabBg = await page.locator('.vz-tab.active').evaluate((el) => getComputedStyle(el).backgroundColor);
+  expect(vzTabBg).not.toBe('rgb(20, 18, 14)');
   await expect(page.locator('.data-strip').first()).toBeHidden();
   await expect(page.locator('.av-substrip').first()).toBeHidden();
   const vcBg = await page.locator('.viewer-controls').first().evaluate((el) => getComputedStyle(el).backgroundColor);
@@ -258,6 +263,8 @@ test('settings, compare, docs and articles keep the workspace pattern', async ({
   await page.goto('/viewer/isomerism/constitutional/function.html');
   await expect(page.locator('.sub-tab.active')).toBeVisible();
   await expect(page.locator('.sub-num').first()).toBeHidden();
+  const subTabColor = await page.locator('.sub-tab.active').evaluate((el) => getComputedStyle(el).color);
+  expect(subTabColor).toMatch(/rgb\(\s*30,\s*106,\s*80\s*\)/);
   await saveShot(page, 'desktop-public-isomerism-function');
 });
 

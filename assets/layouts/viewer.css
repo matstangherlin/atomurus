@@ -1,0 +1,109 @@
+/* Atomurus UI V2 — Viewer chrome
+   Loaded after public-shell.css. Tokens come from assets/ui/index.css.
+   Do not restyle canvases, WebGL, or lab-tool gates.
+   !important is only to beat lab-console / public-shell until Prompt 13. */
+
+html body.ps-body .content {
+  font-family: var(--font-ui);
+  color: var(--color-text);
+}
+
+html body.ps-body .ps-shell .ph-kicker {
+  font-family: var(--font-ui) !important;
+  font-size: var(--text-sm) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  color: var(--color-text-muted) !important;
+  margin-bottom: var(--space-3) !important;
+}
+
+html body.ps-body .ps-shell .ph-title {
+  font-family: var(--font-serif) !important;
+  font-size: clamp(34px, 5vw, 48px) !important;
+  line-height: var(--leading-tight) !important;
+  letter-spacing: -0.02em !important;
+  font-weight: 400 !important;
+  color: var(--color-text) !important;
+  margin: 0 0 var(--space-3) !important;
+}
+
+html body.ps-body .ps-shell .ph-desc {
+  font-size: var(--text-lg) !important;
+  color: var(--color-text-muted) !important;
+  max-width: 62ch !important;
+  line-height: var(--leading-relaxed) !important;
+  margin: 0 0 var(--space-4) !important;
+}
+
+html body.ps-body .ps-shell .vz-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) !important;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 0 var(--space-5);
+  padding: var(--space-1) !important;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: color-mix(in oklab, var(--color-surface) 70%, var(--color-bg));
+}
+html body.ps-body .ps-shell .vz-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 36px !important;
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-family: var(--font-ui) !important;
+  font-size: var(--text-sm) !important;
+  font-weight: 550 !important;
+  letter-spacing: 0 !important;
+  text-decoration: none;
+}
+html body.ps-body .ps-shell .vz-tab.active {
+  color: var(--color-brand) !important;
+  background: color-mix(in oklab, var(--color-brand) 10%, transparent) !important;
+}
+
+html body.ps-body .ps-shell .sub-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+html body.ps-body .ps-shell .sub-tab {
+  min-height: 36px;
+  border-radius: var(--radius-md) !important;
+  font-family: var(--font-ui) !important;
+}
+html body.ps-body .ps-shell .sub-tab.active {
+  background: color-mix(in oklab, var(--color-brand) 10%, transparent) !important;
+  color: var(--color-brand) !important;
+}
+
+html body.ps-body .ps-shell .viewer-controls,
+html body.ps-body .ps-shell .viewer-zoom {
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: none !important;
+}
+html body.ps-body .ps-shell .viewer-controls .vc-btn.active {
+  background: var(--color-brand) !important;
+  color: var(--color-on-brand) !important;
+}
+
+html body.ps-body .ps-shell .viewer .pill.active,
+html body.ps-body .ps-shell .viewer .pill.purple.active {
+  background: var(--color-brand) !important;
+  border-color: var(--color-brand) !important;
+  color: var(--color-on-brand) !important;
+}
+
+html body.ps-body .ps-shell .mol-search,
+html body.ps-body .ps-shell .allo-search {
+  font-family: var(--font-ui) !important;
+  letter-spacing: 0 !important;
+}

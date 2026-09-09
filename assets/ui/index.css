@@ -1,6 +1,7 @@
 /* Atomurus UI V2 — bundle
    Load after fonts.css. Login, pricing/docs, Home, Explore, Calculators,
-   Settings, and Periodic Table chrome load this bundle; /app does not yet. */
+   Settings, Periodic Table chrome, and Viewer chrome load this bundle;
+   /app does not yet. */
 
 @import url("tokens.css");
 @import url("base.css");

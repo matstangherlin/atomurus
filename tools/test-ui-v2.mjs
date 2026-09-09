@@ -35,8 +35,10 @@ const required = [
   'docs/ui-v2-calculators.md',
   'docs/ui-v2-config.md',
   'docs/ui-v2-periodic-table.md',
+  'docs/ui-v2-viewer.md',
   'assets/layouts/config.css',
   'assets/layouts/periodic-table.css',
+  'assets/layouts/viewer.css',
   'assets/product-catalog.js',
   'tools/build-product-catalog.js'
 ];
@@ -51,6 +53,7 @@ const chromePages = [
   'calculators.html',
   'config.html',
   'periodic-table.html',
+  'viewer/atomic-models.html',
   'contact.html',
   'privacy.html',
   'terms.html',
@@ -78,7 +81,11 @@ const migrated = [
   'explore.html',
   'calculators.html',
   'config.html',
-  'periodic-table.html'
+  'periodic-table.html',
+  'viewer/atomic-models.html',
+  'viewer/molecules.html',
+  'viewer/allotropes.html',
+  'viewer/isomerism.html'
 ];
 for (const rel of migrated) {
   const html = read(rel);
@@ -259,6 +266,65 @@ for (const rel of [
 ]) {
   if (!read(rel).includes('assets/layouts/periodic-table.css')) {
     fail(`${rel} must load table layout CSS`);
+  }
+}
+
+const viewerLayout = read('assets/layouts/viewer.css').replace(/\/\*[\s\S]*?\*\//g, '');
+if (/canvas|#viewer3d|#viewer2d|WebGL/i.test(viewerLayout)) {
+  fail('viewer layout CSS must not mention canvases or WebGL');
+}
+const atomic = read('viewer/atomic-models.html');
+if (!atomic.includes('assets/ui/index.css')) fail('viewer/atomic-models.html must load UI V2');
+if (!atomic.includes('assets/layouts/viewer.css')) fail('viewer/atomic-models.html must load viewer layout CSS');
+if (!atomic.includes('data-pro-lab-tool="atomic"') || !atomic.includes('id="viewer3d"')) {
+  fail('viewer/atomic-models.html must keep data-pro-lab-tool="atomic" and #viewer3d');
+}
+const molecules = read('viewer/molecules.html');
+if (!molecules.includes('assets/layouts/viewer.css')) fail('viewer/molecules.html must load viewer layout CSS');
+if (!molecules.includes('id="viewer3d"') || !molecules.includes('id="viewer2d-full"')) {
+  fail('viewer/molecules.html must keep #viewer3d and #viewer2d-full');
+}
+if (!molecules.includes('data-pro-lab-tool="molecules"')) {
+  fail('viewer/molecules.html must keep data-pro-lab-tool="molecules"');
+}
+const allotropes = read('viewer/allotropes.html');
+if (!allotropes.includes('assets/layouts/viewer.css')) fail('viewer/allotropes.html must load viewer layout CSS');
+if (!allotropes.includes('id="viewer3d"')) {
+  fail('viewer/allotropes.html must keep #viewer3d');
+}
+const isomerism = read('viewer/isomerism.html');
+if (!isomerism.includes('assets/layouts/viewer.css')) fail('viewer/isomerism.html must load viewer layout CSS');
+if (!isomerism.includes('class="vz-tab') || !isomerism.includes('class="ph-title"')) {
+  fail('viewer/isomerism.html must keep .vz-tab and .ph-title');
+}
+if (read('explore/viewer/methyl-isocyanate.html').includes('assets/layouts/viewer.css')) {
+  fail('explore/viewer articles must not load viewer layout CSS');
+}
+for (const rel of [
+  'viewer/atomic-models.pt.html',
+  'viewer/molecules.pt.html',
+  'viewer/allotropes.pt.html',
+  'viewer/isomerism.pt.html',
+  'viewer/atomic-models/dalton.html',
+  'viewer/atomic-models/dalton.pt.html',
+  'viewer/atomic-models/thomson.html',
+  'viewer/atomic-models/thomson.pt.html',
+  'viewer/atomic-models/rutherford.html',
+  'viewer/atomic-models/rutherford.pt.html',
+  'viewer/atomic-models/bohr.html',
+  'viewer/atomic-models/bohr.pt.html',
+  'viewer/atomic-models/quantum.html',
+  'viewer/atomic-models/quantum.pt.html',
+  'viewer/isomerism/constitutional/function.html',
+  'viewer/isomerism/constitutional/chain.html',
+  'viewer/isomerism/constitutional/position.html',
+  'viewer/isomerism/constitutional/metamerism.html',
+  'viewer/isomerism/constitutional/tautomerism.html',
+  'viewer/isomerism/spatial/geometric.html',
+  'viewer/isomerism/spatial/optical.html'
+]) {
+  if (!read(rel).includes('assets/layouts/viewer.css')) {
+    fail(`${rel} must load viewer layout CSS`);
   }
 }
 

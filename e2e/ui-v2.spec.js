@@ -90,6 +90,12 @@ test('Home, calculators, settings and table chrome load UI V2; element pages sta
   );
   expect(tableUi).toBe(true);
 
+  await page.goto('/viewer/atomic-models.html');
+  const viewerUi = await page.evaluate(() =>
+    [...document.styleSheets].some((sheet) => (sheet.href || '').includes('/assets/ui/'))
+  );
+  expect(viewerUi).toBe(true);
+
   await page.goto('/periodic-table/hydrogenium.html');
   const elementUi = await page.evaluate(() =>
     [...document.styleSheets].some((sheet) => (sheet.href || '').includes('/assets/ui/'))
@@ -105,7 +111,8 @@ test('key pages emit shared chrome in source HTML', async ({ request }) => {
     '/about.html',
     '/calculators.html',
     '/config.html',
-    '/periodic-table.html'
+    '/periodic-table.html',
+    '/viewer/atomic-models.html'
   ];
   for (const url of pages) {
     const text = await (await request.get(url)).text();
@@ -115,7 +122,7 @@ test('key pages emit shared chrome in source HTML', async ({ request }) => {
     const text = await (await request.get(url)).text();
     expect(text, url).not.toContain('assets/ui/index.css');
   }
-  for (const url of ['/index.html', '/login.html', '/pricing.html', '/about.html', '/contact.html', '/privacy.html', '/terms.html', '/404.html', '/explore.html', '/calculators.html', '/config.html', '/periodic-table.html']) {
+  for (const url of ['/index.html', '/login.html', '/pricing.html', '/about.html', '/contact.html', '/privacy.html', '/terms.html', '/404.html', '/explore.html', '/calculators.html', '/config.html', '/periodic-table.html', '/viewer/atomic-models.html', '/viewer/molecules.html', '/viewer/allotropes.html', '/viewer/isomerism.html']) {
     const text = await (await request.get(url)).text();
     expect(text, url).toContain('assets/ui/index.css');
   }
@@ -149,6 +156,13 @@ test('key pages emit shared chrome in source HTML', async ({ request }) => {
   expect(table).toMatch(/data-i18n="common\.brandTag">chemistry lab/);
   expect(table).toContain('assets/layouts/periodic-table.css');
   expect(table).toContain('id="ptable"');
+  const atomic = await (await request.get('/viewer/atomic-models.html')).text();
+  expect(atomic).toContain('assets/layouts/viewer.css');
+  expect(atomic).toContain('data-pro-lab-tool="atomic"');
+  expect(atomic).toContain('id="viewer3d"');
+  const molecules = await (await request.get('/viewer/molecules.html')).text();
+  expect(molecules).toContain('assets/layouts/viewer.css');
+  expect(molecules).toContain('id="viewer3d"');
   const login = await (await request.get('/login.html')).text();
   expect(login).toMatch(/lc-topnav-cta"[^>]*periodic-table/);
   expect(login).toContain('Open lab');

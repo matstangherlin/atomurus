@@ -353,6 +353,7 @@ function assertUiV2() {
     'docs/ui-v2-calculators.md',
     'docs/ui-v2-config.md',
     'docs/ui-v2-periodic-table.md',
+    'docs/ui-v2-viewer.md',
     'assets/layouts/auth.css',
     'assets/layouts/pricing.css',
     'assets/layouts/docs.css',
@@ -362,6 +363,7 @@ function assertUiV2() {
     'assets/layouts/calculators.css',
     'assets/layouts/config.css',
     'assets/layouts/periodic-table.css',
+    'assets/layouts/viewer.css',
     'assets/product-catalog.js',
     'tools/build-product-catalog.js'
   ];
@@ -420,6 +422,7 @@ function assertUiV2() {
     'calculators.html',
     'config.html',
     'periodic-table.html',
+    'viewer/atomic-models.html',
     'contact.html',
     'privacy.html',
     'terms.html',
@@ -444,7 +447,11 @@ function assertUiV2() {
     'explore.html',
     'calculators.html',
     'config.html',
-    'periodic-table.html'
+    'periodic-table.html',
+    'viewer/atomic-models.html',
+    'viewer/molecules.html',
+    'viewer/allotropes.html',
+    'viewer/isomerism.html'
   ].forEach((rel) => {
     if (!read(rel).includes('assets/ui/index.css')) fail(`${rel} must load UI V2`);
   });
@@ -555,6 +562,24 @@ function assertUiV2() {
   }
   if (!table.includes('id="ptable"') || !table.includes('id="dl-action-btn"')) {
     fail('periodic-table.html must keep table DOM');
+  }
+  const viewerLayout = read('assets/layouts/viewer.css').replace(/\/\*[\s\S]*?\*\//g, '');
+  if (/canvas|#viewer3d|#viewer2d|WebGL/i.test(viewerLayout)) {
+    fail('viewer layout CSS must not mention canvases or WebGL');
+  }
+  const atomic = read('viewer/atomic-models.html');
+  if (!atomic.includes('assets/layouts/viewer.css')) {
+    fail('viewer/atomic-models.html must load assets/layouts/viewer.css');
+  }
+  if (!atomic.includes('data-pro-lab-tool="atomic"') || !atomic.includes('id="viewer3d"')) {
+    fail('viewer/atomic-models.html must keep data-pro-lab-tool="atomic" and #viewer3d');
+  }
+  const molecules = read('viewer/molecules.html');
+  if (!molecules.includes('assets/layouts/viewer.css') || !molecules.includes('id="viewer3d"')) {
+    fail('viewer/molecules.html must load viewer layout CSS and keep #viewer3d');
+  }
+  if (read('explore/viewer/methyl-isocyanate.html').includes('assets/layouts/viewer.css')) {
+    fail('explore/viewer articles must not load viewer layout CSS');
   }
   const atom = read('explore/what-is-an-atom.html');
   if (!atom.includes('assets/ui/index.css') || !atom.includes('assets/layouts/article.css')) {
