@@ -348,9 +348,13 @@ function assertUiV2() {
     'docs/ui-v2-chrome.md',
     'docs/ui-v2-auth.md',
     'docs/ui-v2-pricing.md',
+    'docs/ui-v2-home.md',
     'assets/layouts/auth.css',
     'assets/layouts/pricing.css',
-    'assets/layouts/docs.css'
+    'assets/layouts/docs.css',
+    'assets/layouts/home.css',
+    'assets/product-catalog.js',
+    'tools/build-product-catalog.js'
   ];
   files.forEach((rel) => {
     if (!fs.existsSync(path.join(ROOT, rel))) fail(`${rel} is missing`);
@@ -377,8 +381,11 @@ function assertUiV2() {
   if (showcase.includes('atomurus-lab-console.css') || showcase.includes('public-workspace.js')) {
     fail('dev/ui.html must not load lab-console or public-workspace');
   }
-  if (read('index.html').includes('assets/ui/index.css')) {
-    fail('index.html must not load UI V2 until the Home migration');
+  if (!read('index.html').includes('assets/ui/index.css')) {
+    fail('index.html must load UI V2 after the Home migration');
+  }
+  if (!read('index.html').includes('assets/layouts/home.css')) {
+    fail('index.html must load assets/layouts/home.css');
   }
   if (read('app.html').includes('assets/ui/index.css')) {
     fail('app.html must not load UI V2 until the workspace alignment step');
@@ -412,10 +419,11 @@ function assertUiV2() {
     if (!html.includes('id="ps-shell"')) fail(`${rel} must emit #ps-shell in source HTML`);
     if (!html.includes('data-ps-chrome')) fail(`${rel} must mark emitted chrome with data-ps-chrome`);
   });
-  ['index.html', 'calculators.html', 'periodic-table.html'].forEach((rel) => {
+  ['calculators.html', 'periodic-table.html'].forEach((rel) => {
     if (read(rel).includes('assets/ui/index.css')) fail(`${rel} must not load UI V2 yet`);
   });
   [
+    'index.html',
     'login.html',
     'pricing.html',
     'about.html',
@@ -464,6 +472,28 @@ function assertUiV2() {
   }
   if (!app.includes('id="ws-search-q"') || !app.includes('id="ws-userchip"')) {
     fail('app.html must keep workspace search and user chip ids');
+  }
+  const home = read('index.html');
+  if (!home.includes('assets/layouts/home.css') || !home.includes('assets/product-catalog.js')) {
+    fail('index.html must load home layout CSS and the product catalog');
+  }
+  if (/html\.lang-pt-pending\s*\[data-i18n\]/.test(home) || /classList\.add\(['"]lang-pt-pending['"]\)/.test(home)) {
+    fail('index.html must not use lang-pt-pending to hide copy');
+  }
+  if (/5 instruments|5 Calculators/.test(home)) {
+    fail('index.html must not keep HUD calculator counts');
+  }
+  const catalogJs = read('assets/product-catalog.js');
+  const catalogM = catalogJs.match(/ATOMURUS_CATALOG\s*=\s*(\{[\s\S]*?\});/);
+  if (!catalogM) fail('product-catalog.js must assign window.ATOMURUS_CATALOG');
+  const catalog = JSON.parse(catalogM[1]);
+  const calcMarkup = read('calculators.html').replace(/<script\b[\s\S]*?<\/script>/gi, '');
+  const calcTargets = new Set([...calcMarkup.matchAll(/\sdata-target="([^"$]+)"/g)].map((m) => m[1]));
+  if (catalog.calculators !== calcTargets.size) {
+    fail(`catalog calculators (${catalog.calculators}) must match calculators.html tabs (${calcTargets.size})`);
+  }
+  if (!home.includes(`data-catalog="calculators">${catalog.calculators}`)) {
+    fail('Home calculator fallback must match the generated catalog');
   }
 }
 

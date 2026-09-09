@@ -23,9 +23,13 @@ const required = [
   'docs/ui-v2-chrome.md',
   'docs/ui-v2-auth.md',
   'docs/ui-v2-pricing.md',
+  'docs/ui-v2-home.md',
   'assets/layouts/auth.css',
   'assets/layouts/pricing.css',
-  'assets/layouts/docs.css'
+  'assets/layouts/docs.css',
+  'assets/layouts/home.css',
+  'assets/product-catalog.js',
+  'tools/build-product-catalog.js'
 ];
 for (const rel of required) {
   if (!fs.existsSync(path.join(root, rel))) fail(`missing ${rel}`);
@@ -47,12 +51,13 @@ for (const rel of chromePages) {
   if (!html.includes('id="ps-shell"')) fail(`${rel} must contain #ps-shell in source`);
   if (!html.includes('data-ps-chrome')) fail(`${rel} must mark emitted chrome`);
 }
-const stillLegacy = ['index.html', 'calculators.html', 'periodic-table.html'];
+const stillLegacy = ['calculators.html', 'periodic-table.html'];
 for (const rel of stillLegacy) {
   const html = read(rel);
   if (html.includes('assets/ui/index.css')) fail(`${rel} must not load UI V2 yet`);
 }
 const migrated = [
+  'index.html',
   'login.html',
   'pricing.html',
   'about.html',
@@ -110,6 +115,48 @@ if (read('app.html').includes('id="ps-shell"') || read('app.html').includes('pub
 }
 if (!read('assets/public-workspace.js').includes('enhanceExistingShell')) {
   fail('public-workspace.js must keep runtime enhanceExistingShell');
+}
+
+const home = read('index.html');
+if (!home.includes('assets/ui/index.css')) fail('index.html must load UI V2');
+if (!home.includes('assets/layouts/home.css')) fail('index.html must load home layout CSS');
+if (!home.includes('assets/product-catalog.js')) fail('index.html must load the product catalog');
+if (/html\.lang-pt-pending\s*\[data-i18n\]/.test(home)) {
+  fail('index.html must not hide [data-i18n] behind lang-pt-pending');
+}
+if (/classList\.add\(['"]lang-pt-pending['"]\)/.test(home)) {
+  fail('index.html must not add lang-pt-pending');
+}
+if (/5 instruments|5 Calculators/.test(home)) {
+  fail('index.html must not keep HUD calculator counts');
+}
+if ((home.match(/class="lc-mod-card/g) || []).length !== 4) {
+  fail('index.html must keep four pillar cards');
+}
+if (!/class="lc-mod-card[^"]*" href="explore\.html"/.test(home)) {
+  fail('first Home pillar must be Explore');
+}
+if (!/class="lc-mod-card[^"]*" href="\/app"/.test(home)) {
+  fail('Home Study pillar must open /app');
+}
+if (!home.includes('id="preview-grid"') || !home.includes('id="quick-search"') || !home.includes('id="theme-toggle"')) {
+  fail('index.html must keep preview grid, #quick-search and #theme-toggle');
+}
+
+const catalogJs = read('assets/product-catalog.js');
+const catalogM = catalogJs.match(/ATOMURUS_CATALOG\s*=\s*(\{[\s\S]*?\});/);
+if (!catalogM) fail('product-catalog.js must assign window.ATOMURUS_CATALOG');
+const catalog = JSON.parse(catalogM[1]);
+const calcMarkup = read('calculators.html').replace(/<script\b[\s\S]*?<\/script>/gi, '');
+const calcTargets = new Set([...calcMarkup.matchAll(/\sdata-target="([^"$]+)"/g)].map((m) => m[1]));
+if (catalog.calculators !== calcTargets.size) {
+  fail(`catalog calculators (${catalog.calculators}) must match calculators.html tabs (${calcTargets.size})`);
+}
+if (!home.includes(`data-catalog="calculators">${catalog.calculators}`)) {
+  fail('Home calculator fallback must match the generated catalog');
+}
+if (!home.includes(`data-catalog="elements">${catalog.elements}`)) {
+  fail('Home elements fallback must match the generated catalog');
 }
 
 const tokens = read('assets/ui/tokens.css');

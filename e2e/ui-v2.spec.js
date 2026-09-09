@@ -58,7 +58,7 @@ test('UI V2 gallery: buttons, focus-visible, disabled, forms, dialog, mobile', a
   expect(overflow).toBeLessThanOrEqual(1);
 });
 
-test('UI V2 gallery dark theme and production pages stay on legacy CSS', async ({ page }) => {
+test('Home loads UI V2; calculators and table stay on legacy CSS', async ({ page }) => {
   await page.goto('/dev/ui');
   await page.locator('[data-ui-theme="dark"]').click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
@@ -67,10 +67,16 @@ test('UI V2 gallery dark theme and production pages stay on legacy CSS', async (
 
   await page.goto('/index.html');
   await expect(page.locator('.ps-shell')).toBeVisible();
-  const loadedUi = await page.evaluate(() =>
+  const homeUi = await page.evaluate(() =>
     [...document.styleSheets].some((sheet) => (sheet.href || '').includes('/assets/ui/'))
   );
-  expect(loadedUi).toBe(false);
+  expect(homeUi).toBe(true);
+
+  await page.goto('/calculators.html');
+  const calcUi = await page.evaluate(() =>
+    [...document.styleSheets].some((sheet) => (sheet.href || '').includes('/assets/ui/'))
+  );
+  expect(calcUi).toBe(false);
 });
 
 test('key pages emit shared chrome in source HTML', async ({ request }) => {
@@ -86,14 +92,19 @@ test('key pages emit shared chrome in source HTML', async ({ request }) => {
     const text = await (await request.get(url)).text();
     expect(text, url).toContain('id="ps-shell"');
   }
-  for (const url of ['/index.html', '/calculators.html', '/periodic-table.html']) {
+  for (const url of ['/calculators.html', '/periodic-table.html']) {
     const text = await (await request.get(url)).text();
     expect(text, url).not.toContain('assets/ui/index.css');
   }
-  for (const url of ['/login.html', '/pricing.html', '/about.html', '/contact.html', '/privacy.html', '/terms.html', '/404.html']) {
+  for (const url of ['/index.html', '/login.html', '/pricing.html', '/about.html', '/contact.html', '/privacy.html', '/terms.html', '/404.html']) {
     const text = await (await request.get(url)).text();
     expect(text, url).toContain('assets/ui/index.css');
   }
+  const home = await (await request.get('/index.html')).text();
+  expect(home).toContain('assets/layouts/home.css');
+  expect(home).toContain('assets/product-catalog.js');
+  expect(home).not.toMatch(/5 instruments|5 Calculators/);
+  expect(home).not.toMatch(/html\.lang-pt-pending\s*\[data-i18n\]/);
   const pricing = await (await request.get('/pricing.html')).text();
   expect(pricing).not.toContain('app-workspace.css');
   expect(pricing).toContain('assets/layouts/pricing.css');

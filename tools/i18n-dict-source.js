@@ -318,7 +318,7 @@ const DICT = {
           workspaceVal: 'ATOMURUS / LAB',
           elements:     'elements',
           modules:      'modules',
-          modulesVal:   '4 live',
+          modulesVal:   'four pillars',
           lastSync:     'last sync',
           loading:      '— ms ago',
           timeSuffix:   'local',
@@ -339,55 +339,58 @@ const DICT = {
           statElements: 'Elements',
           statModels:   '3D models',
           statCalc:     'Calculators',
+          statArticles: 'Articles',
           statCuriosity:'Curiosity',
-          previewHead:  'periodic.tbl · live',
+          previewHead:  'Periodic table',
           previewFootL: 'grp 1–18 · prd 1–7',
           previewFootR: '118 elements · IUPAC 2024'
         },
         modules: {
-          kicker:    'lab tools',
-          title:     'Four tools. One chemistry lab.',
+          kicker:    'Four pillars',
+          title:     'Explore, visualize, solve and study.',
           live:      'live',
           queued:    'queued',
-          // Used for "<n> live · <m> queued" — split so numbers stay raw
-          headRightHtml: '<span class="hi">4</span> live · <span class="hi">40+</span> models',
-          status: '● live',
+          articlesLabel: 'articles',
+          modelsLabel:   '3D models',
+          headRightHtml: '<span class="hi">8</span> articles · <span class="hi">47</span> 3D models',
+          status: 'Open',
           card1: {
-            no:    'Reference',
-            name:  'Periodic Table',
-            desc:  'The 118 confirmed elements with full property cards, heatmap, trend charts and isotope data. Filter by family, search by name or atomic number, export as PNG/PDF. Side-by-side compare is Pro.',
-            cta:   'Open table',
-            m1:    '118 elements',
-            m2:    '10 families',
-            m3:    '5 views'
-          },
-          card2: {
-            no:    'Visualization',
-            name:  '3D Viewers',
-            desc:  'Atomic models, molecules, allotropes and isomerism in interactive 3D — included in Atomurus Pro, with a 30-day trial on every new account.',
-            cta:   'Preview models',
-            badge: 'PRO',
-            m1:    '5 atomic models',
-            m2:    '24 molecules',
-            m3:    'isomerism + allotropes'
-          },
-          card3: {
-            no:    'Compute',
-            name:  'Calculators',
-            desc:  'Molar mass and dilution stay open. Scientific, unit, gas and pH calculators unlock with a free account.',
-            cta:   'Use calculators',
-            m1:    '5 instruments',
-            m2:    'Live formula parser',
-            m3:    'SI units'
-          },
-          card4: {
-            no:    'Knowledge',
+            no:    'Explore',
             name:  'Explore',
             desc:  'Articles and deep dives for chemistry concepts and history, including the periodic table, isomerism and Bhopal/methyl isocyanate.',
             cta:   'Read articles',
             m1:    'articles',
             m2:    'concepts',
             m3:    'history'
+          },
+          card2: {
+            no:    'Visualize',
+            name:  'Visualize',
+            desc:  'Atomic models, molecules, allotropes and isomerism in interactive 3D — included in Atomurus Pro, with a 30-day trial on every new account.',
+            cta:   'Preview models',
+            badge: 'PRO',
+            m1:    'atomic models',
+            m2:    'molecules',
+            m3:    'isomerism + allotropes'
+          },
+          card3: {
+            no:    'Solve',
+            name:  'Solve',
+            desc:  'Molar mass and dilution stay open. Scientific, unit, gas and pH calculators unlock with a free account. Reaction solver is Pro.',
+            cta:   'Use calculators',
+            m1:    'calculators',
+            m2:    'Live formula parser',
+            m3:    'SI units'
+          },
+          card4: {
+            no:    'Study',
+            name:  'Study',
+            desc:  'Open the lab workspace as a guest. Study Sets, flashcards and Smart Review stay in the same room — sign in when you want to keep them.',
+            cta:   'Open workspace',
+            badge: 'Guest',
+            m1:    'guest workspace',
+            m2:    'study sets',
+            m3:    'no account to look around'
           }
         },
         manifest: {
@@ -398,7 +401,7 @@ const DICT = {
         status: {
           ready:        'ready',
           workspace:    'workspace home',
-          modulesReg:   '4 modules registered'
+          modulesReg:   'Explore · Visualize · Solve · Study'
         }
       },
       contact: {
@@ -2397,7 +2400,7 @@ const DICT = {
           workspaceVal: 'ATOMURUS / LAB',
           elements:     'elementos',
           modules:      'módulos',
-          modulesVal:   '4 ativos',
+          modulesVal:   'quatro pilares',
           lastSync:     'última sync',
           loading:      '— ms atrás',
           timeSuffix:   'local',
@@ -2416,54 +2419,58 @@ const DICT = {
           statElements: 'Elementos',
           statModels:   'Modelos 3D',
           statCalc:     'Calculadoras',
+          statArticles: 'Artigos',
           statCuriosity:'Curiosidade',
-          previewHead:  'periodic.tbl · ao vivo',
+          previewHead:  'Tabela periódica',
           previewFootL: 'grp 1–18 · prd 1–7',
           previewFootR: '118 elementos · IUPAC 2024'
         },
         modules: {
-          kicker:    'ferramentas',
-          title:     'Quatro ferramentas. Um laboratório.',
+          kicker:    'Quatro pilares',
+          title:     'Explorar, visualizar, resolver e estudar.',
           live:      'ativos',
           queued:    'na fila',
-          headRightHtml: '<span class="hi">4</span> ativos · <span class="hi">40+</span> modelos',
-          status: '● ativo',
+          articlesLabel: 'artigos',
+          modelsLabel:   'modelos 3D',
+          headRightHtml: '<span class="hi">8</span> artigos · <span class="hi">47</span> modelos 3D',
+          status: 'Aberto',
           card1: {
-            no:    'Referência',
-            name:  'Tabela Periódica',
-            desc:  'Os 118 elementos confirmados com cartões de propriedades, mapa de calor, gráficos de tendências e dados de isótopos. Filtre por família, busque por nome ou número atômico, exporte como PNG/PDF. A comparação lado a lado é Pro.',
-            cta:   'Abrir tabela',
-            m1:    '118 elementos',
-            m2:    '10 famílias',
-            m3:    '5 visões'
-          },
-          card2: {
-            no:    'Visualização',
-            name:  'Visualizadores 3D',
-            desc:  'Modelos atômicos, moléculas, alótropos e isomeria em 3D interativo — incluídos no Atomurus Pro, com 30 dias de trial em toda conta nova.',
-            cta:   'Ver prévia',
-            badge: 'PRO',
-            m1:    '5 modelos atômicos',
-            m2:    '24 moléculas',
-            m3:    'isomeria + alótropos'
-          },
-          card3: {
-            no:    'Computar',
-            name:  'Calculadoras',
-            desc:  'Massa molar e diluição continuam abertas. Calculadoras científica, de unidades, gás e pH liberam com uma conta gratuita.',
-            cta:   'Usar calculadoras',
-            m1:    '5 instrumentos',
-            m2:    'Parser de fórmulas ao vivo',
-            m3:    'Unidades SI'
-          },
-          card4: {
-            no:    'Conhecimento',
+            no:    'Explorar',
             name:  'Explorar',
             desc:  'Artigos e leituras guiadas para conceitos e história da química, incluindo tabela periódica, isomeria e Bhopal/isocianato de metila.',
             cta:   'Ler artigos',
             m1:    'artigos',
             m2:    'conceitos',
             m3:    'história'
+          },
+          card2: {
+            no:    'Visualizar',
+            name:  'Visualizar',
+            desc:  'Modelos atômicos, moléculas, alótropos e isomeria em 3D interativo — incluídos no Atomurus Pro, com 30 dias de trial em toda conta nova.',
+            cta:   'Ver prévia',
+            badge: 'PRO',
+            m1:    'modelos atômicos',
+            m2:    'moléculas',
+            m3:    'isomeria + alótropos'
+          },
+          card3: {
+            no:    'Resolver',
+            name:  'Resolver',
+            desc:  'Massa molar e diluição continuam abertas. Calculadoras científica, de unidades, gás e pH liberam com uma conta gratuita. O solver de reações é Pro.',
+            cta:   'Usar calculadoras',
+            m1:    'calculadoras',
+            m2:    'Parser de fórmulas ao vivo',
+            m3:    'Unidades SI'
+          },
+          card4: {
+            no:    'Estudar',
+            name:  'Estudar',
+            desc:  'Abra o workspace do laboratório como convidado. Study Sets, flashcards e Smart Review ficam no mesmo lugar — entre na conta quando quiser guardar.',
+            cta:   'Abrir workspace',
+            badge: 'Convidado',
+            m1:    'workspace convidado',
+            m2:    'study sets',
+            m3:    'sem conta para olhar'
           }
         },
         manifest: {
@@ -2474,7 +2481,7 @@ const DICT = {
         status: {
           ready:        'pronto',
           workspace:    'workspace inicial',
-          modulesReg:   '4 módulos registrados'
+          modulesReg:   'Explorar · Visualizar · Resolver · Estudar'
         }
       },
       contact: {
