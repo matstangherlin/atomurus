@@ -357,6 +357,8 @@ function assertUiV2() {
     'docs/ui-v2-workspace.md',
     'docs/ui-v2-hoist.md',
     'docs/ui-v2-i18n.md',
+    'docs/ui-v2-report.md',
+    'tools/capture-ui-v2.mjs',
     'assets/layouts/auth.css',
     'assets/layouts/pricing.css',
     'assets/layouts/docs.css',
@@ -660,6 +662,20 @@ function assertUiV2() {
   const atom = read('explore/what-is-an-atom.html');
   if (!atom.includes('assets/ui/index.css') || !atom.includes('assets/layouts/article.css')) {
     fail('explore articles must load UI V2 and article layout CSS');
+  }
+  const afterCombos = ['desktop-light', 'desktop-dark', 'mobile-light', 'mobile-dark'];
+  const afterRoutes = ['home', 'login', 'pricing', 'about', 'periodic-table', 'calculators', 'explore', 'viewer', 'app', 'ui-gallery'];
+  for (const combo of afterCombos) {
+    for (const route of afterRoutes) {
+      const rel = `docs/ui-v2-after/${combo}/${route}.png`;
+      const full = path.join(ROOT, rel);
+      if (!fs.existsSync(full)) fail(`${rel} is missing`);
+      const buf = fs.readFileSync(full);
+      if (buf.length < 2000) fail(`${rel} is too small (${buf.length})`);
+      if (buf[0] !== 0x89 || buf[1] !== 0x50 || buf[2] !== 0x4E || buf[3] !== 0x47) {
+        fail(`${rel} is not a PNG`);
+      }
+    }
   }
 }
 

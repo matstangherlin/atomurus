@@ -22,4 +22,6 @@ Each folder contains: `home`, `login`, `pricing`, `about`, `periodic-table`, `ca
 
 See `manifest.json` for per-shot timing and byte sizes.
 
+After Prompts 02–14 the same matrix lives in [`docs/ui-v2-after/`](../ui-v2-after/). Qualitative comparison: [`docs/ui-v2-report.md`](../ui-v2-report.md).
+
 Playwright also writes opportunistic full-page shots to `test-results/e2e-screenshots/` (gitignored) when `e2e/public-chrome.spec.js` and `e2e/workspace.spec.js` run.

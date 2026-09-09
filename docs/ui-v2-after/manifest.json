@@ -1,0 +1,327 @@
+{
+  "capturedAt": "2026-09-09T09:35:11.412Z",
+  "commit": "d7e2d9f4a55f24015390e9350b3f0ecb026156ce",
+  "method": "viewport screenshot, Chromium, cookie consent rejected, third-party requests aborted",
+  "shots": [
+    {
+      "combo": "desktop-light",
+      "route": "home",
+      "path": "/index.html",
+      "ms": 560,
+      "bytes": 133021,
+      "ok": true
+    },
+    {
+      "combo": "desktop-light",
+      "route": "login",
+      "path": "/login.html",
+      "ms": 480,
+      "bytes": 91152,
+      "ok": true
+    },
+    {
+      "combo": "desktop-light",
+      "route": "pricing",
+      "path": "/pricing.html",
+      "ms": 502,
+      "bytes": 110648,
+      "ok": true
+    },
+    {
+      "combo": "desktop-light",
+      "route": "about",
+      "path": "/about.html",
+      "ms": 486,
+      "bytes": 122058,
+      "ok": true
+    },
+    {
+      "combo": "desktop-light",
+      "route": "periodic-table",
+      "path": "/periodic-table.html",
+      "ms": 532,
+      "bytes": 108084,
+      "ok": true
+    },
+    {
+      "combo": "desktop-light",
+      "route": "calculators",
+      "path": "/calculators.html",
+      "ms": 512,
+      "bytes": 91909,
+      "ok": true
+    },
+    {
+      "combo": "desktop-light",
+      "route": "explore",
+      "path": "/explore.html",
+      "ms": 484,
+      "bytes": 91489,
+      "ok": true
+    },
+    {
+      "combo": "desktop-light",
+      "route": "viewer",
+      "path": "/viewer/atomic-models.html",
+      "ms": 535,
+      "bytes": 88722,
+      "ok": true
+    },
+    {
+      "combo": "desktop-light",
+      "route": "app",
+      "path": "/app",
+      "ms": 462,
+      "bytes": 76286,
+      "ok": true
+    },
+    {
+      "combo": "desktop-light",
+      "route": "ui-gallery",
+      "path": "/dev/ui",
+      "ms": 448,
+      "bytes": 55354,
+      "ok": true
+    },
+    {
+      "combo": "desktop-dark",
+      "route": "home",
+      "path": "/index.html",
+      "ms": 517,
+      "bytes": 132473,
+      "ok": true
+    },
+    {
+      "combo": "desktop-dark",
+      "route": "login",
+      "path": "/login.html",
+      "ms": 464,
+      "bytes": 89062,
+      "ok": true
+    },
+    {
+      "combo": "desktop-dark",
+      "route": "pricing",
+      "path": "/pricing.html",
+      "ms": 484,
+      "bytes": 110033,
+      "ok": true
+    },
+    {
+      "combo": "desktop-dark",
+      "route": "about",
+      "path": "/about.html",
+      "ms": 485,
+      "bytes": 122108,
+      "ok": true
+    },
+    {
+      "combo": "desktop-dark",
+      "route": "periodic-table",
+      "path": "/periodic-table.html",
+      "ms": 514,
+      "bytes": 106949,
+      "ok": true
+    },
+    {
+      "combo": "desktop-dark",
+      "route": "calculators",
+      "path": "/calculators.html",
+      "ms": 497,
+      "bytes": 92558,
+      "ok": true
+    },
+    {
+      "combo": "desktop-dark",
+      "route": "explore",
+      "path": "/explore.html",
+      "ms": 467,
+      "bytes": 91818,
+      "ok": true
+    },
+    {
+      "combo": "desktop-dark",
+      "route": "viewer",
+      "path": "/viewer/atomic-models.html",
+      "ms": 522,
+      "bytes": 89564,
+      "ok": true
+    },
+    {
+      "combo": "desktop-dark",
+      "route": "app",
+      "path": "/app",
+      "ms": 458,
+      "bytes": 77697,
+      "ok": true
+    },
+    {
+      "combo": "desktop-dark",
+      "route": "ui-gallery",
+      "path": "/dev/ui",
+      "ms": 449,
+      "bytes": 56312,
+      "ok": true
+    },
+    {
+      "combo": "mobile-light",
+      "route": "home",
+      "path": "/index.html",
+      "ms": 10503,
+      "bytes": 49848,
+      "ok": true
+    },
+    {
+      "combo": "mobile-light",
+      "route": "login",
+      "path": "/login.html",
+      "ms": 466,
+      "bytes": 38171,
+      "ok": true
+    },
+    {
+      "combo": "mobile-light",
+      "route": "pricing",
+      "path": "/pricing.html",
+      "ms": 484,
+      "bytes": 59284,
+      "ok": true
+    },
+    {
+      "combo": "mobile-light",
+      "route": "about",
+      "path": "/about.html",
+      "ms": 468,
+      "bytes": 71036,
+      "ok": true
+    },
+    {
+      "combo": "mobile-light",
+      "route": "periodic-table",
+      "path": "/periodic-table.html",
+      "ms": 541,
+      "bytes": 72880,
+      "ok": true
+    },
+    {
+      "combo": "mobile-light",
+      "route": "calculators",
+      "path": "/calculators.html",
+      "ms": 491,
+      "bytes": 61315,
+      "ok": true
+    },
+    {
+      "combo": "mobile-light",
+      "route": "explore",
+      "path": "/explore.html",
+      "ms": 465,
+      "bytes": 59664,
+      "ok": true
+    },
+    {
+      "combo": "mobile-light",
+      "route": "viewer",
+      "path": "/viewer/atomic-models.html",
+      "ms": 520,
+      "bytes": 56247,
+      "ok": true
+    },
+    {
+      "combo": "mobile-light",
+      "route": "app",
+      "path": "/app",
+      "ms": 447,
+      "bytes": 52092,
+      "ok": true
+    },
+    {
+      "combo": "mobile-light",
+      "route": "ui-gallery",
+      "path": "/dev/ui",
+      "ms": 432,
+      "bytes": 47441,
+      "ok": true
+    },
+    {
+      "combo": "mobile-dark",
+      "route": "home",
+      "path": "/index.html",
+      "ms": 10494,
+      "bytes": 48298,
+      "ok": true
+    },
+    {
+      "combo": "mobile-dark",
+      "route": "login",
+      "path": "/login.html",
+      "ms": 467,
+      "bytes": 36695,
+      "ok": true
+    },
+    {
+      "combo": "mobile-dark",
+      "route": "pricing",
+      "path": "/pricing.html",
+      "ms": 468,
+      "bytes": 58199,
+      "ok": true
+    },
+    {
+      "combo": "mobile-dark",
+      "route": "about",
+      "path": "/about.html",
+      "ms": 468,
+      "bytes": 68900,
+      "ok": true
+    },
+    {
+      "combo": "mobile-dark",
+      "route": "periodic-table",
+      "path": "/periodic-table.html",
+      "ms": 540,
+      "bytes": 68577,
+      "ok": true
+    },
+    {
+      "combo": "mobile-dark",
+      "route": "calculators",
+      "path": "/calculators.html",
+      "ms": 508,
+      "bytes": 59035,
+      "ok": true
+    },
+    {
+      "combo": "mobile-dark",
+      "route": "explore",
+      "path": "/explore.html",
+      "ms": 449,
+      "bytes": 58150,
+      "ok": true
+    },
+    {
+      "combo": "mobile-dark",
+      "route": "viewer",
+      "path": "/viewer/atomic-models.html",
+      "ms": 485,
+      "bytes": 55489,
+      "ok": true
+    },
+    {
+      "combo": "mobile-dark",
+      "route": "app",
+      "path": "/app",
+      "ms": 448,
+      "bytes": 53779,
+      "ok": true
+    },
+    {
+      "combo": "mobile-dark",
+      "route": "ui-gallery",
+      "path": "/dev/ui",
+      "ms": 448,
+      "bytes": 48629,
+      "ok": true
+    }
+  ]
+}

@@ -14,7 +14,7 @@
 ## What this step does not do
 
 - Mass-deleting remaining public-shell `!important` or `.lc-*` HTML (Prompt 13 remainder)
-- Visual regression screenshots / final report (Prompt 15)
+- Visual regression screenshots / final report — now [`docs/ui-v2-report.md`](ui-v2-report.md)
 - Changing URLs, canonicals, or hreflang
 - Rewriting legal processors / first-party cookies (human legal review)
 
@@ -23,3 +23,4 @@
 - `test:ui-v2` / `validate` — no `lang-pt-pending` hide; no `.ph-kicker` `§`; config must not say “No accounts”; i18n directory is JSON-only
 - `e2e/ui-v2.spec.js` — PT pages paint without `html.lang-pt-pending`; Viewer kickers and Settings privacy copy
 - `e2e/public-chrome.spec.js` — Viewer `.ph-kicker` still has no `§`
+- Visual after-shots and qualitative notes: [`docs/ui-v2-report.md`](ui-v2-report.md)

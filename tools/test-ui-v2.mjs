@@ -39,6 +39,8 @@ const required = [
   'docs/ui-v2-workspace.md',
   'docs/ui-v2-hoist.md',
   'docs/ui-v2-i18n.md',
+  'docs/ui-v2-report.md',
+  'tools/capture-ui-v2.mjs',
   'assets/layouts/config.css',
   'assets/layouts/periodic-table.css',
   'assets/layouts/viewer.css',
@@ -447,5 +449,20 @@ if (important.length > 4) {
 const showcase = read('dev/ui.html');
 if (/\sstyle="/.test(showcase)) fail('dev/ui.html must not use inline style attributes');
 if (!showcase.includes('class="ui-root"')) fail('showcase must use .ui-root');
+
+const afterCombos = ['desktop-light', 'desktop-dark', 'mobile-light', 'mobile-dark'];
+const afterRoutes = ['home', 'login', 'pricing', 'about', 'periodic-table', 'calculators', 'explore', 'viewer', 'app', 'ui-gallery'];
+for (const combo of afterCombos) {
+  for (const route of afterRoutes) {
+    const rel = `docs/ui-v2-after/${combo}/${route}.png`;
+    const full = path.join(root, rel);
+    if (!fs.existsSync(full)) fail(`missing ${rel}`);
+    const buf = fs.readFileSync(full);
+    if (buf.length < 2000) fail(`${rel} is too small (${buf.length})`);
+    if (buf[0] !== 0x89 || buf[1] !== 0x50 || buf[2] !== 0x4E || buf[3] !== 0x47) {
+      fail(`${rel} is not a PNG`);
+    }
+  }
+}
 
 console.log('ui-v2 contracts passed');

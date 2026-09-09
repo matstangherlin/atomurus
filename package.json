@@ -22,6 +22,7 @@
     "test:solver": "node tools/test-solver.mjs",
     "test:lab-access": "node tools/test-lab-access.mjs",
     "test:ui-v2": "node tools/test-ui-v2.mjs",
+    "capture:ui-v2": "node tools/capture-ui-v2.mjs",
     "test:e2e": "playwright test",
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
