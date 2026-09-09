@@ -43,7 +43,9 @@ Signup still mentions the **30-day Pro trial** as secondary (`common.auth.signup
 
 `public-shell.css` still paints leftover `.lc-form button[type=submit]` green with `!important`. Migrated auth buttons add `.ui-btn-primary`; the shell skips those (`:not(.ui-btn-primary)`). Prompt 13 removes the war.
 
-`auth.css` uses `!important` only for `html.auth-checking .auth-panel` (hide panels while session boot runs).
+`auth.css` uses `!important` only to:
+- hide panels while `html.auth-checking` is on
+- reset `.ui-label` letter-spacing against public-shell (until Prompt 13)
 
 ## Tests
 
