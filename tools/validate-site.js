@@ -81,6 +81,14 @@ function assertIsomerismVariants() {
       fail(`PT variant still contains redirect stub: ${relPath}`);
     }
   });
+  const generator = read('tools/generate-isomerism-pt-variants.js');
+  if (generator.includes('<html lang="en-US"')) {
+    fail('isomerism PT generator must match <html> tags that already have data-ps-chrome');
+  }
+  const source = read('viewer/isomerism/constitutional/function.html');
+  if (!/(<html\b[^>]*)\blang="en-US"/.test(source)) {
+    fail('isomerism EN source must keep lang="en-US" for PT variant generation');
+  }
 }
 
 function assertReadme() {

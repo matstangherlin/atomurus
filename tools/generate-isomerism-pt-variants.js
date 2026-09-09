@@ -68,7 +68,12 @@ function buildVariant(page) {
   const targetPath = path.join(ROOT, page.target);
   let html = fs.readFileSync(sourcePath, 'utf8');
 
-  html = replaceOne(html, /<html lang="en-US"/, '<html lang="pt-BR"', 'html lang');
+  html = replaceOne(
+    html,
+    /(<html\b[^>]*)\blang="en-US"/,
+    '$1lang="pt-BR"',
+    'html lang'
+  );
   html = replaceOne(html, /<title[^>]*>[\s\S]*?<\/title>/, `<title>${page.title}</title>`, 'title');
   html = replaceOne(
     html,
