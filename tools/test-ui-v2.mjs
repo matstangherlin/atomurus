@@ -66,7 +66,11 @@ const chromePages = [
   'calculators.html',
   'config.html',
   'periodic-table.html',
+  'periodic-table/compare.html',
   'viewer/atomic-models.html',
+  'viewer/molecules.html',
+  'viewer/isomerism.html',
+  'explore.html',
   'contact.html',
   'privacy.html',
   'terms.html',
@@ -278,6 +282,12 @@ for (const file of walkHtml(root)) {
   }
   if (!html.includes('id="ps-shell"')) {
     fail(`${rel} loads public-workspace.js but has no #ps-shell`);
+  }
+  if (!html.includes('data-atomurus-sidebar')) {
+    fail(`${rel} must emit the official #ws-sidebar`);
+  }
+  if (/<aside class="sidebar" id="sidebar">/.test(html)) {
+    fail(`${rel} still has the Bloomberg sidebar`);
   }
 }
 

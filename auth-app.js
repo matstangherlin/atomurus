@@ -757,7 +757,8 @@
     ['/periodic-table.html', 'periodicNav', 'periodic'],
     ['/viewer/atomic-models.html', 'viewerNav', 'viewer'],
     ['/calculators.html', 'calculatorsNav', 'calculators'],
-    ['/explore.html', 'exploreNav', 'explore']
+    ['/explore.html', 'exploreNav', 'explore'],
+    ['/app', 'workspaceNav', 'progress']
   ];
 
   var WORKSPACE_NAV = [
@@ -820,17 +821,15 @@
           window.AtomurusNav.markActive(main.closest('[data-atomurus-sidebar]') || main);
         }
       } else {
-        var labNav = '<div class="ws-nav-block ws-nav-site"><h2 class="ws-nav-group">' + escapeHtml(t('navGroupSite')) + '</h2>' +
-          LAB_NAV.map(function (pair) {
-            return '<a class="ws-nav-item" href="' + pair[0] + '">' + icon(pair[2]) +
+        var navKeys = ['home', 'periodic', 'viewer', 'calculators', 'explore', 'workspace'];
+        main.innerHTML = '<div class="ws-nav-block ws-nav-site"><h2 class="ws-nav-group">' + escapeHtml(t('navGroupSite')) + '</h2>' +
+          LAB_NAV.map(function (pair, index) {
+            return '<a class="ws-nav-item" href="' + pair[0] + '" data-nav="' + navKeys[index] + '">' + icon(pair[2]) +
               '<span class="ws-nav-label">' + escapeHtml(t(pair[1])) + '</span></a>';
           }).join('') + '</div>';
-        var workspaceNav = '<div class="ws-nav-block ws-nav-workspace"><h2 class="ws-nav-group">' + escapeHtml(t('navGroupWorkspace')) + '</h2>' +
-          WORKSPACE_NAV.map(function (pair) {
-            return '<a class="ws-nav-item is-active" href="' + pair[0] + '" aria-current="page">' + icon(pair[2]) +
-              '<span class="ws-nav-label">' + escapeHtml(t(pair[1])) + '</span></a>';
-          }).join('') + '</div>';
-        main.innerHTML = labNav + workspaceNav;
+        if (window.AtomurusNav && typeof window.AtomurusNav.markActive === 'function') {
+          window.AtomurusNav.markActive(main.closest('[data-atomurus-sidebar]') || main);
+        }
         bindProNav(main);
       }
     }

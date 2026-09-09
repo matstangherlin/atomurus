@@ -166,7 +166,7 @@
     var html =
       item('account', '/app?section=account', 'common.nav.login', 'Account', accountActive ? 'is-active' : '', ICONS.account, ' data-auth-nav-link="common.nav.login"') +
       item('plan', '/pricing', 'common.nav.plan', 'Plan', '', ICONS.plan, '') +
-      '<button type="button" class="ws-nav-item" data-nav="signout" data-atomurus-signout>' +
+      '<button type="button" class="ws-nav-item" data-nav="signout" data-atomurus-signout id="app-logout-aside">' +
         ICONS.logout +
         '<span class="ws-nav-label" data-i18n="common.nav.signOut">Sign out</span></button>';
     if (kind === 'free') {

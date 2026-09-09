@@ -554,7 +554,10 @@ html body.ps-body.lc-doc .ps-shell {
   background: var(--lc-paper) !important;
   border-bottom: 1px solid var(--lc-rule) !important;
 }
-.ps-shell > aside.sidebar {
+.ps-shell > aside.sidebar,
+.ps-shell > aside.ws-sidebar,
+.ps-shell > #ws-sidebar,
+.ps-shell > aside[data-atomurus-sidebar] {
   grid-area: sidebar;
   height: auto !important;
   min-height: 0;
@@ -928,7 +931,9 @@ html body.ps-body .ps-shell .calc-shell {
   }
   .ps-shell > aside.ps-pub-sidebar,
   .ps-shell > aside.ws-sidebar,
-  .ps-shell > aside.sidebar {
+  .ps-shell > aside.sidebar,
+  .ps-shell > #ws-sidebar,
+  aside[data-atomurus-sidebar] {
     display: flex !important;
     position: fixed !important;
     top: 0 !important;
@@ -942,8 +947,10 @@ html body.ps-body .ps-shell .calc-shell {
   .ps-shell.is-nav-open > aside.ps-pub-sidebar,
   .ps-shell.is-nav-open > aside.ws-sidebar,
   .ps-shell.is-nav-open > aside.sidebar,
+  .ps-shell.is-nav-open > #ws-sidebar,
   .ps-shell > aside.sidebar.mobile-open,
-  .ps-shell > aside.ws-sidebar.mobile-open {
+  .ps-shell > aside.ws-sidebar.mobile-open,
+  .ps-shell > #ws-sidebar.mobile-open {
     transform: translateX(0) !important;
   }
   .ps-shell > .topbar .logo-wrap,

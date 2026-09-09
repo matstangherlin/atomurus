@@ -180,7 +180,7 @@
   flex-direction: column;
   border-right: 1px solid var(--lc-rule, #D8D2BF);
   background: color-mix(in oklab, var(--lc-paper, #F8F5EC) 88%, var(--lc-bg, #F2EFE7));
-  padding: 16px 12px 18px;
+  padding: var(--space-4, 16px) var(--space-3, 12px) 18px;
   min-height: 0;
   overflow-y: auto;
   scrollbar-width: thin;
@@ -216,7 +216,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  min-height: 44px;
+  min-height: var(--control-height, 44px);
   padding: 0 12px;
   border-radius: var(--ws-radius-md);
   text-decoration: none;

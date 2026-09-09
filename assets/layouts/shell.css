@@ -147,7 +147,16 @@ html.auth-pending #ws-userchip {
   gap: 8px;
 }
 
-/* Official global sidebar — same component on /app and public/tool pages. */
+/* Official global sidebar — same component on /app and public/tool pages.
+   #ws-sidebar is the geometry authority so leftover page `.sidebar { width: 220px }`
+   cannot create a second visual sidebar. */
+#ws-sidebar,
+aside[data-atomurus-sidebar] {
+  width: var(--atomurus-sidebar, var(--ui-sidebar, 248px));
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
 .ws-sidebar {
   display: flex;
   flex-direction: column;
@@ -278,7 +287,9 @@ html.auth-pending [data-atomurus-nav-foot] {
 
   .ps-shell > aside.ws-sidebar,
   .ps-shell > aside.sidebar,
-  .ws-sidebar {
+  .ws-sidebar,
+  #ws-sidebar,
+  aside[data-atomurus-sidebar] {
     position: fixed;
     inset: 0 auto 0 0;
     width: min(84vw, 300px);
@@ -292,7 +303,9 @@ html.auth-pending [data-atomurus-nav-foot] {
   .ps-shell.is-nav-open > aside.sidebar,
   .ws-shell.is-nav-open .ws-sidebar,
   aside.ws-sidebar.mobile-open,
-  aside.sidebar.mobile-open {
+  aside.sidebar.mobile-open,
+  .ps-shell.is-nav-open > #ws-sidebar,
+  .ws-shell.is-nav-open #ws-sidebar {
     transform: none;
   }
 

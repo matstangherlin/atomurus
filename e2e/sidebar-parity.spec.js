@@ -15,7 +15,9 @@ const ROUTES = [
   { name: 'calculators', path: '/calculators.html' },
   { name: 'periodic-table', path: '/periodic-table.html' },
   { name: 'viewer', path: '/viewer/atomic-models.html' },
-  { name: 'explore', path: '/explore.html' }
+  { name: 'explore', path: '/explore.html' },
+  { name: 'home', path: '/' },
+  { name: 'compare', path: '/periodic-table/compare.html' }
 ];
 
 const GLOBAL_NAV = ['home', 'periodic', 'viewer', 'calculators', 'explore', 'workspace'];
@@ -94,8 +96,10 @@ test.describe('global sidebar is the /app component', () => {
       { path: '/app', nav: 'workspace' },
       { path: '/calculators.html', nav: 'calculators' },
       { path: '/periodic-table.html', nav: 'periodic' },
+      { path: '/periodic-table/compare.html', nav: 'periodic' },
       { path: '/viewer/atomic-models.html', nav: 'viewer' },
-      { path: '/explore.html', nav: 'explore' }
+      { path: '/explore.html', nav: 'explore' },
+      { path: '/', nav: 'home' }
     ];
     for (const row of cases) {
       await page.goto(row.path);

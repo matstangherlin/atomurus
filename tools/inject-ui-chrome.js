@@ -364,9 +364,35 @@ function ensureAccountControl(barHtml, prefix, basename) {
   return barHtml.slice(0, close) + snippet + '\n  ' + barHtml.slice(close);
 }
 
+function isGlobalSidebarOpen(openTag) {
+  if (!/^<aside\b/i.test(openTag)) return false;
+  if (/\blc-doc-aside\b|\bprice-coming\b/.test(openTag)) return false;
+  if (/\bdata-atomurus-sidebar\b/.test(openTag)) return true;
+  if (/\bid=["'](?:ws-sidebar|sidebar)["']/i.test(openTag)) return true;
+  const classes = classList(openTag);
+  return classes.includes('ws-sidebar') ||
+    classes.includes('ps-pub-sidebar') ||
+    classes.includes('sidebar');
+}
+
+function findAnyGlobalSidebar(html) {
+  const official = findElementWithClass(html, 'ps-pub-sidebar') ||
+    findElementWithClass(html, 'ws-sidebar');
+  if (official && official.tag === 'aside') return official;
+  const nested = findShellAside(html);
+  if (nested) return nested;
+  const re = /<aside\b[^>]*>/gi;
+  let m;
+  while ((m = re.exec(html))) {
+    if (!isGlobalSidebarOpen(m[0])) continue;
+    const found = findBalancedFrom(html, m.index);
+    if (found && found.tag === 'aside') return found;
+  }
+  return null;
+}
+
 function patchPublicSidebar(html, prefix) {
-  const el = findElementWithClass(html, 'ps-pub-sidebar') ||
-    findShellAside(html);
+  const el = findAnyGlobalSidebar(html);
   if (!el) return html;
   return html.slice(0, el.start) + fill(readTpl('public-sidebar.html'), prefix) + html.slice(el.end);
 }
@@ -521,6 +547,7 @@ module.exports = {
   ensureAccountControl,
   patchEmittedChrome,
   patchPublicSidebar,
+  findAnyGlobalSidebar,
   ensureViewerLocalNav
 };
 

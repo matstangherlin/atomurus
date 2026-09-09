@@ -5,9 +5,9 @@ test('signed-out workspace shows Pro navigation and explains locked features', a
   await installApi(page, { kind: 'guest', signedIn: false });
   await page.goto('/app');
   await expect(page.locator('#ws-study-nav')).toContainText(/Study|Estudo/, { timeout: 15_000 });
-  await expect(page.locator('#ws-nav-main a[href="/"]')).toContainText(/Home|Início/);
-  await expect(page.locator('#ws-nav-main a[href="/periodic-table.html"]')).toBeVisible();
-  await expect(page.locator('#ws-nav-main a[href="/viewer/atomic-models.html"]')).toBeVisible();
+  await expect(page.locator('#ws-nav-main a[data-nav="home"]')).toContainText(/Home|Início/);
+  await expect(page.locator('#ws-nav-main a[data-nav="periodic"]')).toBeVisible();
+  await expect(page.locator('#ws-nav-main a[data-nav="viewer"]')).toBeVisible();
   await expect(page.locator('#ws-userchip')).toContainText(/Account|Conta/);
   await expect(page).toHaveURL(/\/app/);
   await page.locator('#ws-study-nav a[href="/app?section=library"]').first().click();
