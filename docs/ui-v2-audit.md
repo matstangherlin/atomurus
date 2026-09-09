@@ -41,7 +41,7 @@ Highest-risk findings (do not “fix” in Prompt 01):
 - Login is a fourth micro-language: ~261-line inline `<style>`, `auth.access`, “secure HttpOnly cookie”, “managed authentication”, CTA **Open lab** (not Account). E2E **requires** that login CTA stay `/periodic-table`.
 - Periodic Table still declares **DM Sans / DM Serif Display** and cream `#F0EDE6` in `periodic-table.css`; public-shell then `!important`-overrides brand to Instrument Serif.
 
-**This PR does not start Prompt 02.** Tokens, chrome partials, and page migrations come after this baseline.
+**This document is the Prompt 01 baseline.** Prompt 02 lives in [`docs/ui-v2-design-system.md`](ui-v2-design-system.md) and `assets/ui/` — production pages are still on Lab Console + public-shell.
 
 ---
 

@@ -13,7 +13,8 @@ const PRETTY = {
   '/signup': '/login.html',
   '/forgot-password': '/login.html',
   '/reset-password': '/login.html',
-  '/contact': '/contact.html'
+  '/contact': '/contact.html',
+  '/dev/ui': '/dev/ui.html'
 };
 
 const TYPES = {

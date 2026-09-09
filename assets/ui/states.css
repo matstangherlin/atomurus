@@ -1,0 +1,73 @@
+/* Atomurus UI V2 — states: empty, loading, alert, locked */
+
+.ui-alert {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  line-height: var(--leading-snug);
+}
+
+.ui-alert-success {
+  background: var(--color-brand-soft);
+  border-color: color-mix(in oklab, var(--color-success) 35%, var(--color-border));
+  color: var(--color-success);
+}
+
+.ui-alert-warning {
+  border-color: color-mix(in oklab, var(--color-warning) 40%, var(--color-border));
+  color: var(--color-warning);
+}
+
+.ui-alert-danger,
+.ui-alert-error {
+  background: color-mix(in oklab, var(--color-danger) 10%, var(--color-surface));
+  border-color: color-mix(in oklab, var(--color-danger) 35%, var(--color-border));
+  color: var(--color-danger);
+}
+
+.ui-alert-info {
+  color: var(--color-text-muted);
+}
+
+.ui-empty-state {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+  padding: var(--space-6) var(--space-4);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.ui-empty-state .ui-h3 { font-family: var(--font-serif); font-weight: 400; }
+
+.ui-spinner {
+  display: inline-block;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-brand);
+  border-radius: var(--radius-pill);
+  animation: ui-spin 0.7s linear infinite;
+}
+
+.ui-locked {
+  opacity: 0.72;
+}
+
+.ui-offline {
+  color: var(--color-text-muted);
+}
+
+@keyframes ui-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-spinner { animation: none; border-top-color: var(--color-brand); }
+}

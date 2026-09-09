@@ -316,6 +316,59 @@ function assertStudyCloud() {
   }
 }
 
+function assertUiV2() {
+  const files = [
+    'assets/ui/tokens.css',
+    'assets/ui/base.css',
+    'assets/ui/typography.css',
+    'assets/ui/buttons.css',
+    'assets/ui/forms.css',
+    'assets/ui/cards.css',
+    'assets/ui/badges.css',
+    'assets/ui/states.css',
+    'assets/ui/navigation.css',
+    'assets/ui/dialogs.css',
+    'assets/ui/tables.css',
+    'assets/ui/utilities.css',
+    'assets/ui/compat.css',
+    'assets/ui/index.css',
+    'dev/ui.html'
+  ];
+  files.forEach((rel) => {
+    if (!fs.existsSync(path.join(ROOT, rel))) fail(`${rel} is missing`);
+  });
+  const tokens = read('assets/ui/tokens.css');
+  ['#F2EFE7', '#F8F5EC', '#14120E', '#1E6A50', '--radius-sm', '--radius-md', '--radius-lg', '--radius-pill'].forEach((needle) => {
+    if (!tokens.includes(needle)) fail(`assets/ui/tokens.css missing ${needle}`);
+  });
+  const buttons = read('assets/ui/buttons.css');
+  ['.ui-btn-primary', '.ui-btn-secondary', '.ui-btn-accent', '.ui-btn-danger'].forEach((cls) => {
+    if (!buttons.includes(cls)) fail(`assets/ui/buttons.css missing ${cls}`);
+  });
+  const forms = read('assets/ui/forms.css');
+  ['.ui-input', '.ui-select', '.ui-textarea', '.ui-field', '.ui-field-error'].forEach((cls) => {
+    if (!forms.includes(cls)) fail(`assets/ui/forms.css missing ${cls}`);
+  });
+  const states = read('assets/ui/states.css');
+  ['.ui-alert', '.ui-empty-state', '.ui-spinner'].forEach((cls) => {
+    if (!states.includes(cls)) fail(`assets/ui/states.css missing ${cls}`);
+  });
+  const showcase = read('dev/ui.html');
+  if (!showcase.includes('noindex')) fail('dev/ui.html must be noindex');
+  if (!showcase.includes('assets/ui/index.css')) fail('dev/ui.html must load UI V2');
+  if (showcase.includes('atomurus-lab-console.css') || showcase.includes('public-workspace.js')) {
+    fail('dev/ui.html must not load lab-console or public-workspace');
+  }
+  if (read('index.html').includes('assets/ui/index.css')) {
+    fail('index.html must not load UI V2 until the Home migration');
+  }
+  if (read('app.html').includes('assets/ui/index.css')) {
+    fail('app.html must not load UI V2 until the workspace alignment step');
+  }
+  const inject = read('tools/inject-public-shell.js');
+  if (!inject.includes("'dev'")) fail('inject-public-shell.js must skip the dev/ gallery');
+}
+
 function main() {
   assertRootNoForbiddenArchives();
   assertDeployGuards();
@@ -327,6 +380,7 @@ function main() {
   assertPricingSurface();
   assertPerfGuards();
   assertStudyCloud();
+  assertUiV2();
   console.log('Site validation passed');
 }
 

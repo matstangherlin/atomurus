@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /**
  * Inject assets/public-shell.css after lab-console on public HTML pages.
- * Skips /app and propostas/. Idempotent.
+ * Skips /app, propostas/, and dev/. Idempotent.
  */
 const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
-const SKIP_DIRS = new Set(['node_modules', '.git', 'netlify', 'tools', 'scripts', 'supabase', 'hanzi-logic', 'propostas']);
+const SKIP_DIRS = new Set(['node_modules', '.git', 'netlify', 'tools', 'scripts', 'supabase', 'hanzi-logic', 'propostas', 'dev', 'docs']);
 const SKIP_FILES = new Set(['app.html']);
 
 function walkDir(dir, out) {

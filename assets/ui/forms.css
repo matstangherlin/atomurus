@@ -1,0 +1,146 @@
+/* Atomurus UI V2 — forms */
+
+.ui-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.ui-field > .ui-label {
+  margin-bottom: 0;
+}
+
+.ui-field-hint {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  line-height: var(--leading-snug);
+}
+
+.ui-field-error {
+  font-size: var(--text-sm);
+  color: var(--color-danger);
+}
+
+.ui-input,
+.ui-select,
+.ui-textarea {
+  width: 100%;
+  min-height: var(--control-height);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-ui);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+}
+
+.ui-textarea {
+  min-height: 96px;
+  padding: var(--space-3);
+  resize: vertical;
+}
+
+.ui-select {
+  appearance: none;
+  padding-right: 32px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--color-text-subtle) 50%),
+    linear-gradient(135deg, var(--color-text-subtle) 50%, transparent 50%);
+  background-position: calc(100% - 16px) calc(50% - 3px), calc(100% - 10px) calc(50% - 3px);
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+}
+
+.ui-input::placeholder,
+.ui-textarea::placeholder {
+  color: var(--color-text-subtle);
+}
+
+.ui-input:hover,
+.ui-select:hover,
+.ui-textarea:hover {
+  border-color: var(--color-border-strong);
+}
+
+.ui-input:focus-visible,
+.ui-select:focus-visible,
+.ui-textarea:focus-visible {
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 3px var(--color-ring);
+  outline: none;
+}
+
+.ui-input:disabled,
+.ui-select:disabled,
+.ui-textarea:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  background: var(--color-surface-raised);
+}
+
+.ui-input[readonly],
+.ui-textarea[readonly] {
+  background: var(--color-surface);
+}
+
+.ui-field.is-error .ui-input,
+.ui-field.is-error .ui-select,
+.ui-field.is-error .ui-textarea,
+.ui-input[aria-invalid="true"],
+.ui-select[aria-invalid="true"],
+.ui-textarea[aria-invalid="true"] {
+  border-color: color-mix(in oklab, var(--color-danger) 55%, var(--color-border));
+}
+
+.ui-field.is-success .ui-input {
+  border-color: color-mix(in oklab, var(--color-success) 45%, var(--color-border));
+}
+
+.ui-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ui-input-wrap .ui-input {
+  padding-right: 72px;
+}
+
+.ui-input-prefix,
+.ui-input-suffix,
+.ui-password-toggle {
+  position: absolute;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.ui-input-prefix { left: var(--space-3); }
+.ui-input-suffix,
+.ui-password-toggle {
+  right: var(--space-2);
+  min-height: 36px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-sm);
+  color: var(--color-brand);
+}
+
+.ui-check {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+}
+
+.ui-check input {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--color-brand);
+}

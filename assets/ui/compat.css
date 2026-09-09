@@ -1,0 +1,76 @@
+/* UI-V2 COMPAT: remove after migration
+   Opt in with class="ui-compat" on html/body, or add official .ui-*
+   classes next to the legacy name. Do not load this as a global restyle. */
+
+.ui-compat .lc-btn-primary,
+.ui-compat .auth-primary-btn,
+.ui-compat .ws-btn-primary,
+.lc-btn-primary.ui-btn,
+.auth-primary-btn.ui-btn,
+.ws-btn-primary.ui-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--control-height);
+  padding: 0 var(--control-pad-x);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-text);
+  background: var(--color-text);
+  color: var(--color-on-ink);
+  font-family: var(--font-ui);
+  font-size: var(--text-base);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.ui-compat .calc-btn-run,
+.calc-btn-run.ui-btn-accent {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--control-height);
+  padding: 0 var(--control-pad-x);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-brand);
+  background: var(--color-brand);
+  color: var(--color-on-brand);
+  font-family: var(--font-ui);
+  font-weight: 600;
+}
+
+.ui-compat .lc-form input,
+.ui-compat .ws-input,
+.ui-compat .calc-input,
+.lc-form input.ui-input,
+.ws-input.ui-input,
+.calc-input.ui-input {
+  min-height: var(--control-height);
+  border-radius: var(--radius-md);
+  font-family: var(--font-ui);
+}
+
+.ui-compat .ws-card,
+.ui-compat .lc-mod-card,
+.ui-compat .price-card,
+.ui-compat .ex-card,
+.ws-card.ui-card,
+.lc-mod-card.ui-card,
+.price-card.ui-card,
+.ex-card.ui-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.ui-compat .ws-badge,
+.ui-compat .price-popular,
+.ws-badge.ui-badge {
+  border-radius: var(--radius-pill);
+}
+
+.ui-compat .ws-dialog,
+.ws-dialog.ui-dialog {
+  border-radius: var(--radius-lg);
+}
