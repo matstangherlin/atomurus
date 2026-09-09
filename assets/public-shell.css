@@ -87,24 +87,19 @@ html.ps-boot body { visibility: hidden !important; }
   margin-top: 3px;
 }
 
-/* Sidebar version chip is hardcoded "v1.11" + CSS "build " prefix */
+/* Brand tag is real DOM text (data-i18n="common.brandTag"). Do not paint it via ::after. */
 .logo-tag {
-  font-size: 0 !important;
-  line-height: 0 !important;
-  margin-top: 4px !important;
-}
-.logo-tag::before { content: none !important; }
-.logo-tag::after {
-  content: 'chemistry lab';
   font-family: var(--lc-mono, ui-monospace, monospace);
-  font-size: 10px;
-  line-height: 1.2;
+  font-size: 10px !important;
+  line-height: 1.2 !important;
   letter-spacing: .12em;
   text-transform: uppercase;
   color: var(--lc-ink-3);
   font-weight: 400;
+  margin-top: 4px !important;
 }
-html[lang^="pt"] .logo-tag::after { content: 'laboratório'; }
+.logo-tag::before,
+.logo-tag::after { content: none !important; }
 
 /* ── Public topnav = workspace topbar ── */
 .lc-topnav {
@@ -513,8 +508,8 @@ html[lang^="pt"] .logo-tag::after { content: 'laboratório'; }
   text-transform: none;
 }
 
-/* Real /app grid after public-workspace.js hoists chrome into .ps-shell.
-   Fallback below still pins the old aside+main tree if JS does not run. */
+/* Real /app-like grid. Build-time #ps-shell (inject-ui-chrome.js) or public-workspace.js hoist.
+   Fallback below still pins the old aside+main tree if neither has run. */
 html body.ps-body {
   display: block !important;
   height: 100dvh !important;

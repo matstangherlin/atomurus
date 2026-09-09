@@ -12,7 +12,7 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 const { ensurePublicShell } = require('./inject-public-shell');
 
-const SKIP = new Set(['node_modules', '.git', 'netlify', 'tools', 'scripts', 'supabase', 'hanzi-logic', 'propostas']);
+const SKIP = new Set(['node_modules', '.git', 'netlify', 'tools', 'scripts', 'supabase', 'hanzi-logic', 'propostas', 'dev', 'docs', 'templates']);
 
 const LINK_RE =
   /<link\s+rel=["']stylesheet["']\s+href=["']([^"']*atomurus-lab-console\.css[^"']*)["']\s*>/gi;

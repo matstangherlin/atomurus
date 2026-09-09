@@ -332,7 +332,12 @@ function assertUiV2() {
     'assets/ui/utilities.css',
     'assets/ui/compat.css',
     'assets/ui/index.css',
-    'dev/ui.html'
+    'dev/ui.html',
+    'templates/chrome/public-sidebar.html',
+    'templates/chrome/search.html',
+    'templates/chrome/brand.html',
+    'tools/inject-ui-chrome.js',
+    'docs/ui-v2-chrome.md'
   ];
   files.forEach((rel) => {
     if (!fs.existsSync(path.join(ROOT, rel))) fail(`${rel} is missing`);
@@ -367,6 +372,44 @@ function assertUiV2() {
   }
   const inject = read('tools/inject-public-shell.js');
   if (!inject.includes("'dev'")) fail('inject-public-shell.js must skip the dev/ gallery');
+  if (!inject.includes("'templates'")) fail('inject-public-shell.js must skip templates/chrome');
+  const workspace = read('assets/public-workspace.js');
+  if (!workspace.includes('enhanceExistingShell')) {
+    fail('public-workspace.js must enhance pre-emitted #ps-shell instead of skipping runtime');
+  }
+  if (!workspace.includes('hoistToolShell') || !workspace.includes('hoistLandingShell')) {
+    fail('public-workspace.js must keep hoist as fallback');
+  }
+  const shellCss = read('assets/public-shell.css');
+  if (!shellCss.includes("content: none") || /logo-tag::after \{[\s\S]*content: 'chemistry lab'/.test(shellCss)) {
+    fail('public-shell.css must not paint the brand only via logo-tag::after');
+  }
+  [
+    'index.html',
+    'login.html',
+    'pricing.html',
+    'about.html',
+    'calculators.html',
+    'periodic-table.html'
+  ].forEach((rel) => {
+    const html = read(rel);
+    if (!html.includes('id="ps-shell"')) fail(`${rel} must emit #ps-shell in source HTML`);
+    if (html.includes('assets/ui/index.css')) fail(`${rel} must not load UI V2 yet`);
+  });
+  if (!read('periodic-table.html').includes('data-i18n="common.brandTag">chemistry lab')) {
+    fail('periodic-table.html must put chemistry lab in the DOM');
+  }
+  const login = read('login.html');
+  if (!/lc-topnav-cta"[^>]*periodic-table/.test(login) || !/Open lab/.test(login)) {
+    fail('login.html must keep Open lab → periodic-table');
+  }
+  const app = read('app.html');
+  if (app.includes('id="ps-shell"') || app.includes('public-shell.css')) {
+    fail('app.html must stay on workspace chrome, not public-shell');
+  }
+  if (!app.includes('id="ws-search-q"') || !app.includes('id="ws-userchip"')) {
+    fail('app.html must keep workspace search and user chip ids');
+  }
 }
 
 function main() {

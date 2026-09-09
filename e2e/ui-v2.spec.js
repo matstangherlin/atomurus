@@ -72,3 +72,29 @@ test('UI V2 gallery dark theme and production pages stay on legacy CSS', async (
   );
   expect(loadedUi).toBe(false);
 });
+
+test('key pages emit shared chrome in source HTML', async ({ request }) => {
+  const pages = [
+    '/index.html',
+    '/login.html',
+    '/pricing.html',
+    '/about.html',
+    '/calculators.html',
+    '/periodic-table.html'
+  ];
+  for (const url of pages) {
+    const text = await (await request.get(url)).text();
+    expect(text, url).toContain('id="ps-shell"');
+    expect(text, url).not.toContain('assets/ui/index.css');
+  }
+  const table = await (await request.get('/periodic-table.html')).text();
+  expect(table).toMatch(/data-i18n="common\.brandTag">chemistry lab/);
+  const login = await (await request.get('/login.html')).text();
+  expect(login).toMatch(/lc-topnav-cta"[^>]*periodic-table/);
+  expect(login).toContain('Open lab');
+  const app = await (await request.get('/app.html')).text();
+  expect(app).not.toContain('id="ps-shell"');
+  expect(app).not.toContain('public-shell.css');
+  expect(app).toContain('id="ws-search-q"');
+  expect(app).toContain('id="ws-userchip"');
+});

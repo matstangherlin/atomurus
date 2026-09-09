@@ -1,4 +1,6 @@
-/* Public pages: hoist the /app workspace grid (topbar / sidebar / main).
+/* Public pages: runtime chrome (active nav, search/CTA fallback, lab gate).
+   Layout is emitted at build time by tools/inject-ui-chrome.js.
+   Hoist remains as fallback for HTML that still lacks #ps-shell.
    Skips /app. Idempotent. Do not restyle the study workspace. */
 (function () {
   'use strict';
@@ -244,6 +246,46 @@
     return aside;
   }
 
+  function retagBrand(root) {
+    (root || document).querySelectorAll('.logo-tag').forEach(function (el) {
+      var t = (el.textContent || '').trim();
+      if (el.getAttribute('data-i18n') === 'common.brandTag' && !/^v/i.test(t)) return;
+      el.setAttribute('data-i18n', 'common.brandTag');
+      el.textContent = 'chemistry lab';
+    });
+  }
+
+  function enhanceExistingShell() {
+    var shell = document.querySelector('.ps-shell');
+    if (!shell) return false;
+    document.body.classList.add('ps-body');
+    var pub = document.querySelector('#ps-pub-sidebar, aside.ps-pub-sidebar');
+    var topnav = document.querySelector('.ps-shell > .lc-topnav');
+    var topbar = document.querySelector('.ps-shell > .topbar');
+    var toolAside = document.querySelector('.ps-shell > aside.sidebar:not(.ps-pub-sidebar)');
+    if (topnav) {
+      ensureSearch(topnav, prefix());
+      normalizeLandingCta(topnav);
+      if (pub) markActive(pub);
+      ensureMobileStudyLink();
+    } else if (topbar && toolAside) {
+      retagBrand(shell);
+      var logo = toolAside.querySelector(':scope > .logo-wrap');
+      if (logo && !topbar.querySelector('.logo-wrap')) {
+        logo.classList.add('ps-brand');
+        topbar.insertBefore(logo, topbar.firstChild);
+      }
+      var bc = topbar.querySelector('.breadcrumb');
+      if (bc) bc.hidden = true;
+      ensureSearch(topbar, prefix());
+      ensureToolFoot(toolAside);
+      ensureStudyNav(toolAside);
+      markActive(toolAside);
+    }
+    applyI18n(shell);
+    return true;
+  }
+
   function hoistToolShell() {
     if (document.querySelector('.ps-shell')) return true;
     var aside = document.querySelector('body > aside.sidebar');
@@ -275,6 +317,7 @@
     shell.appendChild(main);
     document.body.insertBefore(shell, document.body.firstChild);
     document.body.classList.add('ps-body');
+    retagBrand(shell);
     applyI18n(shell);
     return true;
   }
@@ -323,7 +366,9 @@
         release();
         return;
       }
-      hoistToolShell() || hoistLandingShell();
+      if (!enhanceExistingShell()) {
+        hoistToolShell() || hoistLandingShell();
+      }
       loadLabGate();
       polishCopy();
       setTimeout(function () {

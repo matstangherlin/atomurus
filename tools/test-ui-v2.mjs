@@ -15,10 +15,36 @@ function fail(msg) {
 const required = [
   'assets/ui/tokens.css',
   'assets/ui/index.css',
-  'dev/ui.html'
+  'dev/ui.html',
+  'templates/chrome/public-sidebar.html',
+  'templates/chrome/search.html',
+  'templates/chrome/brand.html',
+  'tools/inject-ui-chrome.js',
+  'docs/ui-v2-chrome.md'
 ];
 for (const rel of required) {
   if (!fs.existsSync(path.join(root, rel))) fail(`missing ${rel}`);
+}
+
+const chromePages = [
+  'index.html',
+  'login.html',
+  'pricing.html',
+  'about.html',
+  'calculators.html',
+  'periodic-table.html'
+];
+for (const rel of chromePages) {
+  const html = read(rel);
+  if (!html.includes('id="ps-shell"')) fail(`${rel} must contain #ps-shell in source`);
+  if (html.includes('assets/ui/index.css')) fail(`${rel} must not load UI V2 yet`);
+}
+if (!read('login.html').includes('Open lab')) fail('login CTA must stay Open lab');
+if (read('app.html').includes('id="ps-shell"') || read('app.html').includes('public-shell.css')) {
+  fail('app.html must not use public chrome');
+}
+if (!read('assets/public-workspace.js').includes('enhanceExistingShell')) {
+  fail('public-workspace.js must keep runtime enhanceExistingShell');
 }
 
 const tokens = read('assets/ui/tokens.css');

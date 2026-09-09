@@ -135,13 +135,45 @@
 </style>
 </head>
 
-<body>
+<body class="ps-body">
 
-<aside class="sidebar">
-  <a class="logo-wrap" href="../index.html" style="text-decoration:none;color:inherit;">
+<div class="ps-shell" id="ps-shell">
+<div class="topbar">
+    <a class="ps-brand logo-wrap" href="../index.html" style="text-decoration:none;color:inherit;">
     <div class="logo-mark"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.5" fill="currentColor"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/></svg></div>
-    <div><div class="logo-text">Atomurus</div><div class="logo-tag">v1.11</div></div>
+    <div><div class="logo-text">Atomurus</div><div class="logo-tag" data-i18n="common.brandTag">chemistry lab</div></div>
   </a>
+    <div class="breadcrumb" hidden>
+      <a href="../index.html" style="color:inherit;text-decoration:none" data-i18n="el.bcWorkspace">Workspace</a>
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="opacity:.35"><path d="M3.5 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      <a href="../periodic-table.html" style="color:inherit;text-decoration:none" data-i18n="el.backToTable">Periodic Table</a>
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="opacity:.35"><path d="M3.5 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      <span>K</span>
+    </div>
+    <div style="flex:1"></div>
+    <form class="ps-search search-box" role="search" action="../periodic-table.html" method="get">
+  <label class="lc-sr-only" for="ps-search-q">Search element</label>
+  <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+    <circle cx="5.5" cy="5.5" r="4" stroke="currentColor" stroke-width="1.4"/>
+    <line x1="8.7" y1="8.7" x2="11.5" y2="11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+  </svg>
+  <input id="ps-search-q" name="q" type="search" autocomplete="off" data-i18n-attr="placeholder:common.searchPlaceholder" placeholder="search element, symbol or Z…">
+  <button type="submit" data-i18n-attr="aria-label:common.searchAria" aria-label="Search element">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <circle cx="6" cy="6" r="4.2" stroke="currentColor" stroke-width="1.3"/>
+      <path d="M9.2 9.2 12 12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+    </svg>
+  </button>
+</form>
+    <button class="theme-btn" data-i18n-toggle aria-label="Switch language" title="Switch language" style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;width:auto;min-width:32px;padding:0 8px;">
+      <span data-i18n-toggle-label>PT</span>
+    </button>
+    <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle theme" style="margin-left:4px;">
+      <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 1v1M7.5 13v1M1 7.5H0M15 7.5h-1M2.93 2.93l.7.7M11.37 11.37l.7.7M2.93 12.07l.7-.7M11.37 3.63l.7-.7M7.5 5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+<aside class="sidebar">
+  
   <div class="sidebar-scroll">
     <div class="nav-section" style="margin-bottom:6px;">
       <a class="nav-item" href="../index.html" style="opacity:.7;font-size:12px;"><svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M2 8L8 2l6 6M3 7v7h10V7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><span data-i18n="common.nav.home">Home</span></a>
@@ -162,30 +194,26 @@
         </div>
       </div>
       <a class="nav-item" href="../calculators.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="2" y="1" width="12" height="14" rx="2" stroke="currentColor" stroke-width="1.3" fill="none"/></svg><span data-i18n="common.nav.calc">Calculators</span></a><a class="nav-item" href="../explore.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.3" stroke="currentColor" stroke-width="1.1" fill="none"/><rect x="9" y="1" width="6" height="6" rx="1.3" stroke="currentColor" stroke-width="1.1" fill="none"/><rect x="1" y="9" width="6" height="6" rx="1.3" stroke="currentColor" stroke-width="1.1" fill="none"/><circle cx="12" cy="12" r="2.6" stroke="currentColor" stroke-width="1.3" fill="none"/><line x1="14" y1="14" x2="15.5" y2="15.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg><span data-i18n="common.nav.explore">Explore</span></a>
+      <a class="nav-item" href="/app">
+  <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M3 3h4v10H3zM8 5h5v8H8z" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M5 6v4M10.5 8v3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+  <span data-i18n="common.nav.study">Study</span>
+</a>
     </div>
   </div>
   <div class="sidebar-foot">
+    <a class="nav-item" href="../login.html" data-auth-nav-link="common.nav.login">
+  <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="6" r="2.2" stroke="currentColor" stroke-width="1.3"/><path d="M3.5 13c.8-2.2 2.4-3.2 4.5-3.2s3.7 1 4.5 3.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+  <span data-i18n="common.nav.login">Login</span>
+</a>
     <a class="nav-item" href="../config.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.2" stroke="currentColor" stroke-width="1.3"/></svg><span data-i18n="common.nav.settings">Settings</span></a>
+      <a class="nav-item" href="../pricing.html">
+  <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1.8l1.6 3.2 3.5.5-2.5 2.5.6 3.5L8 10.3 4.8 11.5l.6-3.5-2.5-2.5 3.5-.5L8 1.8z" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
+  <span data-i18n="common.nav.pricing">Pricing</span>
+</a>
   </div>
 </aside>
-
 <main class="main">
-  <div class="topbar">
-    <div class="breadcrumb">
-      <a href="../index.html" style="color:inherit;text-decoration:none" data-i18n="el.bcWorkspace">Workspace</a>
-      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="opacity:.35"><path d="M3.5 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-      <a href="../periodic-table.html" style="color:inherit;text-decoration:none" data-i18n="el.backToTable">Periodic Table</a>
-      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="opacity:.35"><path d="M3.5 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-      <span>K</span>
-    </div>
-    <div style="flex:1"></div>
-    <button class="theme-btn" data-i18n-toggle aria-label="Switch language" title="Switch language" style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;width:auto;min-width:32px;padding:0 8px;">
-      <span data-i18n-toggle-label>PT</span>
-    </button>
-    <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle theme" style="margin-left:4px;">
-      <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 1v1M7.5 13v1M1 7.5H0M15 7.5h-1M2.93 2.93l.7.7M11.37 11.37l.7.7M2.93 12.07l.7-.7M11.37 3.63l.7-.7M7.5 5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-    </button>
-  </div>
+  
 
   <div class="data-strip">
     <span class="ds-k">scope</span><span class="ds-v">ELEMENT.K</span>
@@ -262,6 +290,7 @@
 
   </div>
 </main>
+</div>
 
 <div class="lc-statusbar">
   <span><span class="lc-st-dot"></span> <span data-i18n="el.statusReady">ready</span></span>

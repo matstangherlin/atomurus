@@ -115,12 +115,12 @@
   })();
 </script>
 </head>
-<body>
+<body class="ps-body">
 
 <!-- ════════════ SIDEBAR ════════════ -->
-<aside class="sidebar">
-
-  <a class="logo-wrap" href="index.html" title="Atomurus home" style="text-decoration:none;color:inherit;">
+<div class="ps-shell" id="ps-shell">
+<div class="topbar">
+    <a class="ps-brand logo-wrap" href="index.html" title="Atomurus home" style="text-decoration:none;color:inherit;">
     <div class="logo-mark">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
         <circle cx="8" cy="8" r="2.5" fill="currentColor"/>
@@ -131,9 +131,60 @@
     </div>
     <div>
       <div class="logo-text">Atomurus</div>
-      <div class="logo-tag">v1.11</div>
+      <div class="logo-tag" data-i18n="common.brandTag">chemistry lab</div>
     </div>
   </a>
+    <!-- Mobile hamburger -->
+    <button class="mobile-menu-btn" onclick="toggleMobileSidebar()"
+            data-i18n-attr="aria-label:ptable.mobileMenuLabel"
+            aria-label="Open menu">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <line x1="2" y1="4.5" x2="14" y2="4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        <line x1="2" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        <line x1="2" y1="11.5" x2="14" y2="11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <div class="breadcrumb" hidden>
+      <span data-i18n="ptable.bcWorkspace">Workspace</span>
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="opacity:.35">
+        <path d="M3.5 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+      <span id="bc-current" data-i18n="ptable.bcCurrent">Periodic Table</span>
+    </div>
+
+    <div class="search-box">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+        <circle cx="5.5" cy="5.5" r="4" stroke="var(--text-3)" stroke-width="1.4"/>
+        <line x1="8.7" y1="8.7" x2="11.5" y2="11.5" stroke="var(--text-3)" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+      <input id="search-input" type="text" placeholder="Search element (name or Z)…"
+             data-i18n-attr="placeholder:ptable.searchPlaceholder"
+             oninput="handleSearchInput(this.value)" onfocus="updateSearchSuggestions(this.value)" onkeydown="handleSearchKey(event)" autocomplete="off">
+      <div class="search-suggestions" id="search-suggestions" role="listbox" aria-label="Search suggestions"></div>
+    </div>
+
+    <!-- Language toggle -->
+    <button class="theme-btn" data-i18n-toggle
+            data-i18n-attr="aria-label:common.langToggle; title:common.langToggle"
+            aria-label="Switch language" title="Switch language"
+            style="margin-left:8px;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;width:auto;min-width:32px;padding:0 8px;">
+      <span data-i18n-toggle-label>PT</span>
+    </button>
+
+    <!-- Theme toggle — top right -->
+    <button class="theme-btn" id="theme-btn-topbar" onclick="toggleTheme()"
+            data-i18n-attr="title:common.themeToggle; aria-label:common.themeToggle"
+            title="Toggle theme" aria-label="Toggle theme" style="margin-left:4px;">
+      <svg id="theme-icon" width="15" height="15" viewBox="0 0 15 15" fill="none">
+        <path d="M7.5 1v1M7.5 13v1M1 7.5H0M15 7.5h-1M2.93 2.93l.7.7M11.37 11.37l.7.7M2.93 12.07l.7-.7M11.37 3.63l.7-.7M7.5 5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+    </button>
+
+  </div>
+<div class="mobile-overlay" id="mobile-overlay" onclick="toggleMobileSidebar()"></div>
+<aside class="sidebar">
+
+  
 
   <!-- ── Scrollable middle: only this part of the sidebar scrolls ── -->
   <div class="sidebar-scroll">
@@ -220,6 +271,10 @@
       </svg>
       <span data-i18n="common.nav.explore">Explore</span>
     </a>
+      <a class="nav-item" href="/app">
+  <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M3 3h4v10H3zM8 5h5v8H8z" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M5 6v4M10.5 8v3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+  <span data-i18n="common.nav.study">Study</span>
+</a>
   </div>
 
 
@@ -227,6 +282,10 @@
 
   <!-- Pinned settings (pinned to the footer) -->
   <div class="sidebar-foot">
+    <a class="nav-item" href="login.html" data-auth-nav-link="common.nav.login">
+  <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="6" r="2.2" stroke="currentColor" stroke-width="1.3"/><path d="M3.5 13c.8-2.2 2.4-3.2 4.5-3.2s3.7 1 4.5 3.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+  <span data-i18n="common.nav.login">Login</span>
+</a>
     <a class="nav-item" href="config.html">
       <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
         <circle cx="8" cy="8" r="2.2" stroke="currentColor" stroke-width="1.3"/>
@@ -234,14 +293,13 @@
       </svg>
       <span data-i18n="common.nav.settings">Settings</span>
     </a>
+      <a class="nav-item" href="pricing.html">
+  <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1.8l1.6 3.2 3.5.5-2.5 2.5.6 3.5L8 10.3 4.8 11.5l.6-3.5-2.5-2.5 3.5-.5L8 1.8z" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
+  <span data-i18n="common.nav.pricing">Pricing</span>
+</a>
   </div>
 
 </aside>
-
-<!-- Mobile sidebar overlay -->
-<div class="mobile-overlay" id="mobile-overlay" onclick="toggleMobileSidebar()"></div>
-
-<!-- ════════════ MAIN ════════════ -->
 <main class="main">
 
   <!-- Mobile scroll hint for periodic table -->
@@ -251,54 +309,7 @@
   </div>
 
   <!-- Topbar -->
-  <div class="topbar">
-    <!-- Mobile hamburger -->
-    <button class="mobile-menu-btn" onclick="toggleMobileSidebar()"
-            data-i18n-attr="aria-label:ptable.mobileMenuLabel"
-            aria-label="Open menu">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-        <line x1="2" y1="4.5" x2="14" y2="4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-        <line x1="2" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-        <line x1="2" y1="11.5" x2="14" y2="11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-      </svg>
-    </button>
-    <div class="breadcrumb">
-      <span data-i18n="ptable.bcWorkspace">Workspace</span>
-      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="opacity:.35">
-        <path d="M3.5 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-      </svg>
-      <span id="bc-current" data-i18n="ptable.bcCurrent">Periodic Table</span>
-    </div>
-
-    <div class="search-box">
-      <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-        <circle cx="5.5" cy="5.5" r="4" stroke="var(--text-3)" stroke-width="1.4"/>
-        <line x1="8.7" y1="8.7" x2="11.5" y2="11.5" stroke="var(--text-3)" stroke-width="1.4" stroke-linecap="round"/>
-      </svg>
-      <input id="search-input" type="text" placeholder="Search element (name or Z)…"
-             data-i18n-attr="placeholder:ptable.searchPlaceholder"
-             oninput="handleSearchInput(this.value)" onfocus="updateSearchSuggestions(this.value)" onkeydown="handleSearchKey(event)" autocomplete="off">
-      <div class="search-suggestions" id="search-suggestions" role="listbox" aria-label="Search suggestions"></div>
-    </div>
-
-    <!-- Language toggle -->
-    <button class="theme-btn" data-i18n-toggle
-            data-i18n-attr="aria-label:common.langToggle; title:common.langToggle"
-            aria-label="Switch language" title="Switch language"
-            style="margin-left:8px;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;width:auto;min-width:32px;padding:0 8px;">
-      <span data-i18n-toggle-label>PT</span>
-    </button>
-
-    <!-- Theme toggle — top right -->
-    <button class="theme-btn" id="theme-btn-topbar" onclick="toggleTheme()"
-            data-i18n-attr="title:common.themeToggle; aria-label:common.themeToggle"
-            title="Toggle theme" aria-label="Toggle theme" style="margin-left:4px;">
-      <svg id="theme-icon" width="15" height="15" viewBox="0 0 15 15" fill="none">
-        <path d="M7.5 1v1M7.5 13v1M1 7.5H0M15 7.5h-1M2.93 2.93l.7.7M11.37 11.37l.7.7M2.93 12.07l.7-.7M11.37 3.63l.7-.7M7.5 5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-      </svg>
-    </button>
-
-  </div><!-- end topbar -->
+  <!-- end topbar -->
 
   <!-- data strip -->
   <div class="data-strip" id="data-strip">
@@ -616,6 +627,7 @@
   </div>
 
 </main>
+</div>
 
 <!-- ════════════ ELEMENT MODAL ════════════ -->
 <div class="overlay" id="overlay" onclick="overlayClick(event)">

@@ -9,7 +9,7 @@
     "build:i18n-assets": "node tools/build-i18n-assets.js",
     "build:content": "node tools/build-element-content-chunks.js",
     "build:isomerism": "node tools/generate-isomerism-pt-variants.js",
-    "build": "node tools/build-critical-css.js && node tools/build-home-preview-data.js && node tools/build-i18n-assets.js && node tools/build-element-content-chunks.js && node tools/generate-isomerism-pt-variants.js && node tools/patch-perf-async-css.js && node bump-version.js && node build-i18n.js",
+    "build": "node tools/build-critical-css.js && node tools/build-home-preview-data.js && node tools/build-i18n-assets.js && node tools/build-element-content-chunks.js && node tools/generate-isomerism-pt-variants.js && node tools/patch-perf-async-css.js && node tools/inject-ui-chrome.js && node bump-version.js && node build-i18n.js",
     "test:plan": "node tools/test-plan-access.mjs && node tools/test-lab-tool-access.mjs",
     "test:auth": "node tools/test-auth-provider.mjs && node tools/test-auth-flows.mjs && node tools/test-auth-rate-limit.mjs && node tools/test-auth-sync.mjs",
     "test:study": "node tools/test-study-cloud.mjs",
