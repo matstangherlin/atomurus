@@ -1,0 +1,70 @@
+/* Account Center — settings page using the global shell. */
+.ac-body .ps-main {
+  min-width: 0;
+}
+
+.ac-page {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 28px 24px 64px;
+}
+
+.ac-root .ws-title {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+}
+
+.ac-quality {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 18px;
+}
+
+.ws-account-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 18px 0 22px;
+}
+
+.ws-account-tab {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid var(--color-border, #D8D2BF);
+}
+
+.ws-account-tab.is-active {
+  background: color-mix(in oklab, var(--color-brand, #1E6A50) 12%, transparent);
+  border-color: var(--color-brand, #1E6A50);
+  color: var(--color-brand, #1E6A50);
+}
+
+.ws-account-dests {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.ws-account-dests a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--color-border, #D8D2BF);
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+}
+
+@media (max-width: 760px) {
+  .ac-page { padding: 18px 16px 48px; }
+  .ws-account-tabs { flex-direction: column; }
+}

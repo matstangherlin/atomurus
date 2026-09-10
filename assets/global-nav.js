@@ -78,6 +78,7 @@
     if (here.indexOf('/calculators') !== -1) return 'calculators';
     if (here.indexOf('/explore') !== -1) return 'explore';
     if (here === '/app' || /\/app(?:\.html)?$/.test(here)) return 'workspace';
+    if (here === '/account' || /\/account(?:\.html)?$/.test(here)) return '';
     if (here.indexOf('/pricing') !== -1) return '';
     if (here.indexOf('/config') !== -1) return '';
     if (here.indexOf('/login') !== -1 || here.indexOf('/signup') !== -1) return '';
@@ -134,6 +135,21 @@
     return 'free';
   }
 
+  function isAccountPath() {
+    var here = pathname().toLowerCase();
+    return here === '/account' || here === '/account.html';
+  }
+
+  function accountHref(tab) {
+    var next = String(tab || '').trim().toLowerCase();
+    if (next && next !== 'overview') return '/account?tab=' + encodeURIComponent(next);
+    return '/account';
+  }
+
+  function planHref(user) {
+    return user ? accountHref('plan') : '/pricing';
+  }
+
   function item(nav, href, i18nKey, fallback, extraClass, icon, attrs) {
     return '<a class="ws-nav-item' + (extraClass ? ' ' + extraClass : '') + '" href="' + href + '" data-nav="' + nav + '"' + (attrs || '') + '>' +
       (icon || ICONS.account) +
@@ -154,7 +170,7 @@
       signedIn = Boolean(user);
     }
     var kind = planKind(user);
-    var accountActive = Boolean(opts.accountActive);
+    var accountActive = Boolean(opts.accountActive) || isAccountPath();
     if (!accountActive) {
       try {
         accountActive = new URLSearchParams(location.search).get('section') === 'account' && matchNav() === 'workspace';
@@ -164,15 +180,15 @@
     if (pending || !signedIn) {
       foot.innerHTML =
         item('signup', guestSignupHref(), 'common.auth.createAccount', 'Create account', 'is-upgrade', ICONS.account, '') +
-        item('account', guestLoginHref(), 'common.auth.signIn', 'Sign in', '', ICONS.account, ' data-auth-nav-link="common.nav.login"') +
+        item('signin', guestLoginHref(), 'common.auth.signIn', 'Sign in', '', ICONS.account, '') +
         item('plans', '/pricing', 'common.nav.plans', 'Plans', '', ICONS.plan, '');
       applyI18n(foot);
       return;
     }
 
     var html =
-      item('account', '/app?section=account', 'common.nav.login', 'Account', accountActive ? 'is-active' : '', ICONS.account, ' data-auth-nav-link="common.nav.login"') +
-      item('plan', '/pricing', 'common.nav.plan', 'Plan', '', ICONS.plan, '') +
+      item('account', accountHref(), 'common.nav.login', 'Account', accountActive ? 'is-active' : '', ICONS.account, ' data-auth-nav-link="common.nav.login"') +
+      item('plan', planHref(user), 'common.nav.plan', 'Plan', '', ICONS.plan, '') +
       '<button type="button" class="ws-nav-item" data-nav="signout" data-atomurus-signout id="app-logout-aside">' +
         ICONS.logout +
         '<span class="ws-nav-label" data-i18n="common.nav.signOut">Sign out</span></button>';
@@ -183,7 +199,8 @@
     var accountLink = foot.querySelector('[data-nav="account"]');
     if (accountLink && accountActive) accountLink.setAttribute('aria-current', 'page');
     var sign = foot.querySelector('[data-atomurus-signout]');
-    if (sign && !(document.body && document.body.classList.contains('ws-body'))) {
+    if (sign && sign.dataset.bound !== '1') {
+      sign.dataset.bound = '1';
       sign.addEventListener('click', function (event) {
         event.preventDefault();
         signOut();
@@ -320,6 +337,8 @@
     signOut: signOut,
     guestLoginHref: guestLoginHref,
     guestSignupHref: guestSignupHref,
+    accountHref: accountHref,
+    planHref: planHref,
     authState: authState,
     planKind: planKind
   };
@@ -330,22 +349,18 @@
     document.addEventListener('DOMContentLoaded', function () {
       bindDrawer();
       markActive();
-      if (!(document.body && document.body.classList.contains('ws-body'))) {
-        paintFoot();
-      }
+      paintFoot();
     });
   } else {
     bindDrawer();
     markActive();
-    if (!(document.body && document.body.classList.contains('ws-body'))) paintFoot();
+    paintFoot();
   }
 
   document.addEventListener('atomurus-ads-ready', function () {
-    if (document.body && document.body.classList.contains('ws-body')) return;
     sync();
   });
   document.addEventListener('atomurus-auth-change', function () {
-    if (document.body && document.body.classList.contains('ws-body')) return;
     sync();
   });
 })(typeof window !== 'undefined' ? window : this);

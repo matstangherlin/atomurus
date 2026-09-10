@@ -8,6 +8,7 @@ const PORT = Number(process.env.E2E_PORT || 4174);
 
 const PRETTY = {
   '/app': '/app.html',
+  '/account': '/account.html',
   '/login': '/login.html',
   '/pricing': '/pricing.html',
   '/signup': '/login.html',

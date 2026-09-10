@@ -17,7 +17,7 @@
     "test:review": "node tools/test-review.mjs",
     "test:insights": "node tools/test-insights.mjs",
     "test:billing": "node tools/test-billing-geo.mjs && node tools/test-billing-lifecycle.mjs",
-    "test:ux": "node tools/test-workspace-ux.mjs && node tools/test-study-hub.mjs && node tools/test-viz-prototype.mjs",
+    "test:ux": "node tools/test-workspace-ux.mjs && node tools/test-study-hub.mjs && node tools/test-viz-prototype.mjs && node tools/test-virtual-lab.mjs && node tools/test-account-nav.mjs",
     "test:pro-lab": "node tools/test-pro-lab.mjs",
     "test:solver": "node tools/test-solver.mjs",
     "test:lab-access": "node tools/test-lab-access.mjs && node tools/test-viewer-perf.mjs",

@@ -92,9 +92,10 @@ test('Pro chip is the same on Home, Periodic Table and Workspace', async ({ page
   await saveShot(page, 'shell-pro-app');
 });
 
-test('Account Center tabs stay on /app?section=account', async ({ page }) => {
+test('Account Center tabs live on /account', async ({ page }) => {
   await installApi(page, { kind: 'pro' });
   await page.goto('/app?section=account');
+  await expect(page).toHaveURL(/\/account/);
   await expect(page.locator('#ws-plan-card')).toContainText(/Atomurus Pro/);
   await page.locator('.ws-account-tab[href*="tab=profile"]').click();
   await expect(page.locator('#app-study')).toContainText(/Display name|Nome/i);

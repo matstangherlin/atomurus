@@ -129,7 +129,7 @@ export function stripeCustomerIdFromUser(user) {
 }
 
 export function portalReturnUrl(request) {
-  return `${stripeBaseUrl(request)}/app?section=account`;
+  return `${stripeBaseUrl(request)}/account?tab=plan`;
 }
 
 export async function createPortalSession({

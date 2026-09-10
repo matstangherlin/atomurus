@@ -13,9 +13,9 @@ function saveShot(page, name) {
 test('Free uses Study Cloud and still sees Review as Pro', async ({ page }) => {
   await installApi(page, { kind: 'free' });
   await gotoWorkspace(page, '/app');
-  await expect(page.locator('#ws-study-nav')).toContainText(/Overview|Visão geral/);
-  await expect(page.locator('#ws-study-nav')).toContainText(/Study|Estudo/);
   await expect(page.locator('#ws-study-nav')).toContainText(/Lab/);
+  await expect(page.locator('#ws-study-nav')).toContainText(/Study|Estudo/);
+  await expect(page.locator('#ws-study-nav')).toContainText(/Creations|Criações/);
   await page.locator('#ws-study-nav a[href="/app?section=library"]').first().click();
   await expect(page.locator('#ws-study-nav')).toContainText(/Library|Biblioteca/);
   await expect(page.locator('#ws-study-nav')).toContainText(/Study Sets/);
@@ -56,7 +56,8 @@ test('Trial unlocks study features and shows PRO TRIAL without billing portal', 
   await expect(page.locator('#app-study')).toContainText(/Study Sets/);
   await gotoWorkspace(page, '/app?section=review');
   await expect(page.locator('#app-study')).toContainText(/Smart Review|Review/);
-  await gotoWorkspace(page, '/app?section=account');
+  await gotoWorkspace(page, '/account');
+  await expect(page).toHaveURL(/\/account/);
   await expect(page.locator('#ws-plan-card')).toContainText(/Trial|dias|days/i);
   await expect(page.locator('#ws-billing-portal')).toHaveCount(0);
   await expect(page.locator('#ws-plan-card')).toContainText(/View plans|Ver planos/);
@@ -140,7 +141,8 @@ test('Review network failure stays on the card and can retry', async ({ page }) 
 
 test('Account Pro shows Manage subscription and opens portal URL', async ({ page }) => {
   await installApi(page, { kind: 'pro' });
-  await gotoWorkspace(page, '/app?section=account');
+  await gotoWorkspace(page, '/account');
+  await expect(page).toHaveURL(/\/account/);
   await expect(page.locator('#ws-plan-card')).toContainText(/Atomurus Pro/);
   await expect(page.locator('#ws-plan-card')).toContainText(/Active|Ativo/);
   const portal = page.locator('#ws-billing-portal');
@@ -160,7 +162,8 @@ test('Account Pro shows Manage subscription and opens portal URL', async ({ page
 
 test('Account cancel-scheduled stays Pro until period end', async ({ page }) => {
   await installApi(page, { kind: 'cancel' });
-  await gotoWorkspace(page, '/app?section=account');
+  await gotoWorkspace(page, '/account');
+  await expect(page).toHaveURL(/\/account/);
   await expect(page.locator('#ws-plan-card')).toContainText(/Atomurus Pro/);
   await expect(page.locator('#ws-plan-card')).toContainText(/will not renew|não renov/i);
   await expect(page.locator('#ws-billing-portal')).toBeVisible();
@@ -168,23 +171,26 @@ test('Account cancel-scheduled stays Pro until period end', async ({ page }) => 
 
 test('Payment issue offers Manage billing', async ({ page }) => {
   await installApi(page, { kind: 'pastdue' });
-  await gotoWorkspace(page, '/app?section=account');
+  await gotoWorkspace(page, '/account');
+  await expect(page).toHaveURL(/\/account/);
   await expect(page.locator('#ws-plan-card')).toContainText(/Payment issue|problema de pagamento/i);
   await expect(page.locator('#ws-billing-portal')).toBeVisible();
 });
 
 test('Account Free shows Upgrade to Pro', async ({ page }) => {
   await installApi(page, { kind: 'free' });
-  await gotoWorkspace(page, '/app?section=account');
+  await gotoWorkspace(page, '/account');
+  await expect(page).toHaveURL(/\/account/);
   await expect(page.locator('#ws-plan-card')).toContainText(/Atomurus Free/);
   await expect(page.locator('#ws-plan-card a[href="/pricing"]')).toContainText(/Upgrade to Pro|Assinar o Pro/i);
 });
 
 test('Guest account section does not expose profile fields', async ({ page }) => {
   await installApi(page, { kind: 'guest', signedIn: false });
-  await gotoWorkspace(page, '/app?section=account');
+  await gotoWorkspace(page, '/account');
+  await expect(page).toHaveURL(/\/account/);
   await expect(page.locator('#ws-acc-email')).toHaveCount(0);
-  await expect(page.locator('#app-study')).toContainText(/chemistry workspace|workspace de química/i);
+  await expect(page.locator('#app-study')).toContainText(/Create an Atomurus account|Crie uma conta Atomurus/i);
 });
 
 test('Overview lists recent lab sessions and viewer names', async ({ page }) => {
@@ -206,13 +212,13 @@ test('Overview lists recent lab sessions and viewer names', async ({ page }) => 
 test('PT/EN workspace rerender', async ({ page }) => {
   await installApi(page, { kind: 'pro', lang: 'en' });
   await gotoWorkspace(page, '/app');
-  await expect(page.locator('#ws-study-nav')).toContainText(/Overview|Library/);
+  await expect(page.locator('#ws-study-nav')).toContainText(/Lab|Study|Estudo/);
   await page.locator('[data-i18n-toggle]').first().click();
-  await expect(page.locator('#ws-study-nav')).toContainText('Visão geral');
+  await expect(page.locator('#ws-study-nav')).toContainText(/Estudo|Criações|Caderno/);
   await expect(page.locator('#ws-study-nav')).toContainText(/Estudo|Lab|Atividade/);
   await saveShot(page, 'app-overview-pt');
   await page.locator('[data-i18n-toggle]').first().click();
-  await expect(page.locator('#ws-study-nav')).toContainText('Overview');
+  await expect(page.locator('#ws-study-nav')).toContainText('Lab');
   await saveShot(page, 'app-overview-en');
 });
 
@@ -262,6 +268,11 @@ test('mobile 390x844: bottom nav, drawer, no horizontal overflow', async ({ page
   await saveShot(page, 'mobile-overview');
   await page.locator('#ws-menu-btn').click();
   await expect(page.locator('#ws-sidebar')).toBeVisible();
+  const account = page.locator('#ws-nav-foot a[data-nav="account"]');
+  await expect(account).toBeVisible();
+  const accountBox = await account.boundingBox();
+  expect(accountBox).toBeTruthy();
+  expect(accountBox.y + accountBox.height).toBeLessThan(844);
   await saveShot(page, 'mobile-drawer');
   await page.keyboard.press('Escape');
   await gotoWorkspace(page, '/app?section=library');
@@ -304,7 +315,7 @@ test('Guest Study Hub is a presentation, not locked Pro cards', async ({ page })
   await gotoWorkspace(page, '/app');
   await expect(page.locator('#app-study')).toContainText(/Study with Atomurus|Estude com o Atomurus/);
   await expect(page.locator('#app-study')).toContainText(/Save chemistry resources, build sets and continue learning|Salve materiais de química/);
-  await expect(page.locator('#app-study a[href*="signup"]')).toContainText(/Create free account|Criar conta gratuita/);
+  await expect(page.locator('#app-study a[href*="signup"]').first()).toContainText(/Create free account|Criar conta gratuita/);
   await expect(page.locator('#app-study')).toContainText(/Visualize|Visualizar/);
   await expect(page.locator('#app-study')).toContainText(/With a free account|Com uma conta gratuita/);
   await expect(page.locator('#app-study')).toContainText(/Practice Chemistry|Praticar química/);
@@ -320,7 +331,7 @@ test('Guest Study Hub is a presentation, not locked Pro cards', async ({ page })
 
   await gotoWorkspace(page, '/app?section=library');
   await expect(page.locator('#app-study')).toContainText(/Library|Biblioteca/);
-  await expect(page.locator('#app-study a[href*="signup"]')).toContainText(/Create free account|Criar conta gratuita/);
+  await expect(page.locator('#app-study a[href*="signup"]').first()).toContainText(/Create free account|Criar conta gratuita/);
 });
 
 test('Study Hub empty account shows architecture without invented progress', async ({ page }) => {
@@ -415,4 +426,56 @@ test('Study Hub Pro with due cards and insights stays a learning home', async ({
   await expect(page.locator('[data-hub="weak"]')).toContainText(/From review history|histórico de revisão/);
   await expect(page.locator('#app-study')).not.toContainText(/Unlock your potential|Become a chemistry master/i);
   await saveShot(page, 'desktop-study-hub-pro');
+});
+
+test('Guest workspace footer opens signup, not login', async ({ page }) => {
+  await installApi(page, { kind: 'guest', signedIn: false });
+  await gotoWorkspace(page, '/app');
+  const signup = page.locator('#ws-nav-foot a[data-nav="signup"]');
+  await expect(signup).toBeVisible();
+  const footBox = await signup.boundingBox();
+  expect(footBox).toBeTruthy();
+  expect(footBox.y).toBeGreaterThan(64);
+  expect(footBox.y + footBox.height).toBeLessThan(800);
+  await expect(signup).toHaveAttribute('href', /\/signup/);
+  await expect(page.locator('#ws-nav-foot a[data-nav="signin"]')).toHaveAttribute('href', /\/login/);
+  await expect(page.locator('#ws-nav-foot a[data-nav="plans"]')).toHaveAttribute('href', /\/pricing/);
+  await signup.click();
+  await expect(page).toHaveURL(/\/signup/);
+  await expect(page.locator('#auth-signup-form')).toBeVisible();
+  await expect(page).toHaveTitle(/Create account|Criar conta/);
+});
+
+test('Signed-in Account and Plan leave Workspace', async ({ page }) => {
+  await installApi(page, { kind: 'free' });
+  await gotoWorkspace(page, '/app');
+  await expect(page.locator('#ws-nav-foot a[data-nav="account"]')).toHaveAttribute('href', /\/account/);
+  await expect(page.locator('#ws-userchip')).toHaveAttribute('href', /\/account/);
+  await expect(page.locator('#ws-nav-foot a.is-upgrade')).toBeVisible();
+  await expect(page.locator('#ws-study-nav a[href*="section=account"]')).toHaveCount(0);
+  await page.locator('#ws-nav-foot a[data-nav="account"]').click();
+  await expect(page).toHaveURL(/\/account/);
+  await expect(page.locator('#app-study')).toContainText(/Account|Conta/);
+});
+
+test('Pro footer has Plan billing and no Upgrade', async ({ page }) => {
+  await installApi(page, { kind: 'pro' });
+  await gotoWorkspace(page, '/app');
+  await expect(page.locator('#ws-nav-foot a[data-nav="upgrade"]')).toHaveCount(0);
+  await expect(page.locator('#ws-nav-foot a.is-upgrade')).toHaveCount(0);
+  await expect(page.locator('#ws-nav-foot a[data-nav="plan"]')).toHaveAttribute('href', /\/account\?tab=plan/);
+});
+
+test('Workspace home is the Virtual Lab and Open Bench runs', async ({ page }) => {
+  await installApi(page, { kind: 'free' });
+  await gotoWorkspace(page, '/app');
+  await expect(page.locator('[data-hub="lab"]')).toContainText(/Virtual Laboratory|Laboratório virtual/);
+  await expect(page.locator('#ws-lab-q')).toBeVisible();
+  await page.locator('#ws-study-nav a[href="/app?section=lab"]').first().click();
+  await expect(page.locator('.lab-beaker')).toBeVisible();
+  await page.locator('.lab-chip[data-add="water"]').click();
+  await expect(page.locator('.lab-notes')).toContainText(/Water|água|H₂O|Added virtual/i);
+  await page.locator('#lab-q').fill('cocaine');
+  await page.locator('[data-lab-search]').evaluate((form) => form.requestSubmit());
+  await expect(page.locator('.lab-msg')).toContainText(/isn't available|não está disponível/i);
 });

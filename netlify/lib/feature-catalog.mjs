@@ -50,6 +50,9 @@ export const FEATURES = Object.freeze({
   exportPdf: { access: 'pro', category: 'study' },
   automatedPractice: { access: 'pro', category: 'study' },
 
+  virtualLab: { access: 'account', category: 'lab' },
+  virtualLabAdvanced: { access: 'pro', category: 'lab' },
+
   adsFree: { access: 'pro', category: 'platform' },
 
   proLab: { access: 'pro', category: 'solve' },

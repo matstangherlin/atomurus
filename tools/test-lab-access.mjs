@@ -41,14 +41,16 @@ const PUBLIC_FEATURES = [
 const ACCOUNT_FEATURES = [
   'studyCloud',
   'studySets',
-  'flashcards'
+  'flashcards',
+  'virtualLab'
 ];
 const PRO_FEATURES = [
   'publicStoichiometry',
   'publicThermodynamics',
   'smartReview',
   'automatedPractice',
-  'reactionWorkbench'
+  'reactionWorkbench',
+  'virtualLabAdvanced'
 ];
 
 function assertFlags(access, keys, expected) {
