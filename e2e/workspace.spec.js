@@ -434,6 +434,7 @@ test('Guest workspace footer opens signup, not login', async ({ page }) => {
   await signup.click();
   await expect(page).toHaveURL(/\/signup/);
   await expect(page.locator('#auth-signup-form')).toBeVisible();
+  await expect(page).toHaveTitle(/Create account|Criar conta/);
 });
 
 test('Signed-in Account and Plan leave Workspace', async ({ page }) => {

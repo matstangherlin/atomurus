@@ -88,6 +88,7 @@ test('signup with confirmation required returns to login with a success message'
   await installApi(page, { kind: 'pro', signedIn: false });
   await page.goto('/signup');
   await expect(page.locator('#auth-signup-form')).toBeVisible();
+  await expect(page).toHaveTitle(/Create account|Criar conta/);
   await page.locator('#auth-signup-name').fill('Pro User');
   await page.locator('#auth-signup-username').fill('prouser1');
   await page.locator('#auth-signup-email').fill('newpro@atomurus.test');

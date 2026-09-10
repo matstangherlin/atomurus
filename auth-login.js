@@ -185,6 +185,20 @@
     return path + preservedAuthQuery();
   }
 
+  function applyAuthTitle(mode) {
+    var keys = {
+      login: ['common.auth.loginTitle', 'Login'],
+      signup: ['common.auth.signupTitle', 'Create account'],
+      recover: ['common.auth.recoverTitle', 'Forgot your password?'],
+      reset: ['common.auth.resetTitle', 'Set new password']
+    };
+    var pair = keys[mode] || keys.login;
+    var label = t(pair[0], pair[1]);
+    document.title = label + ' — Atomurus';
+    var og = document.querySelector('meta[property="og:title"]');
+    if (og) og.setAttribute('content', document.title);
+  }
+
   function setMode(mode, options) {
     options = options || {};
     document.querySelectorAll('[data-auth-panel]').forEach(function (panel) {
@@ -198,6 +212,7 @@
       if (active) tab.setAttribute('aria-current', 'page');
       else tab.removeAttribute('aria-current');
     });
+    applyAuthTitle(mode);
     if (!options.skipHistory && history && history.replaceState) {
       history.replaceState(null, document.title, authScreenPath(mode));
     }
@@ -513,6 +528,11 @@
     bindAuthForms();
     bindPasswordToggles();
     bindPasswordHints();
+    if (window.I18N && typeof window.I18N.onChange === 'function') {
+      window.I18N.onChange(function () {
+        applyAuthTitle(currentMode());
+      });
+    }
   }
 
   function revealAuthPanels() {

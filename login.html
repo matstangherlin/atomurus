@@ -2,7 +2,7 @@
 <html data-ps-chrome="1" lang="en-US" data-theme="light" class="auth-checking">
 <head>
 <style>html[data-theme="dark"] #icon-theme-light,html[data-theme="light"] #icon-theme-dark{display:none!important}html[data-theme="dark"] #icon-theme-dark,html[data-theme="light"] #icon-theme-light{display:block!important}</style>
-<script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var KEY='atomurus-lang';var p=new URLSearchParams(location.search).get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem(KEY);if(l!=='pt'&&l!=='en'){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}try{localStorage.setItem(KEY,l);}catch(e){}if(l==='pt'){document.documentElement.lang='pt-BR';}else{document.documentElement.lang='en-US';}}catch(e){}})();</script>
+<script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var KEY='atomurus-lang';var p=new URLSearchParams(location.search).get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem(KEY);if(l!=='pt'&&l!=='en'){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}try{localStorage.setItem(KEY,l);}catch(e){}if(l==='pt'){document.documentElement.lang='pt-BR';}else{document.documentElement.lang='en-US';}var path=(location.pathname||'').replace(/\/+$/,'');var pt=l==='pt';var title=pt?'Entrar':'Login';if(path==='/signup')title=pt?'Criar conta':'Create account';else if(path==='/forgot-password')title=pt?'Esqueceu a senha?':'Forgot your password?';else if(path==='/reset-password'||path==='/login/reset')title=pt?'Definir nova senha':'Set new password';document.title=title+' — Atomurus';}catch(e){}})();</script>
 <meta charset="UTF-8">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1E6A50" media="(prefers-color-scheme: light)">
@@ -379,7 +379,7 @@ setTimeout(function(){
   if(boot) boot.hidden=true;
 },8000);
 </script>
-<script src="auth-login.js?v=202609090200"></script>
+<script src="auth-login.js?v=202609102330"></script>
 <script type="text/javascript">
     (window.atomurusRunAutoTag||function(){})({ zoneId: '6p1sooifu8' });
 </script>
