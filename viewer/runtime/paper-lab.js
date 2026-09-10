@@ -8,6 +8,28 @@
   var GREEN = 0x1E6A50;
   var INK = 0x14120E;
   var H_WARM = 0xE7E2D4;
+  var BOND = 0x5A554C;
+  var CPK = {};
+  CPK[0xdddddd] = H_WARM;
+  CPK[0xe8e8e8] = H_WARM;
+  CPK[0xee3333] = 0xC94A3A;
+  CPK[0x666666] = BOND;
+  CPK[0x555555] = BOND;
+  CPK[0x444444] = BOND;
+  CPK[0x333333] = BOND;
+  CPK[0x222222] = BOND;
+  CPK[0x3399ff] = 0x4A7A9A;
+  CPK[0x44dd44] = 0x5A9A62;
+  CPK[0xaaaaff] = 0x8A8AB0;
+  CPK[0xffcc33] = 0xC4A04A;
+  CPK[0xddaa00] = 0xC4A04A;
+  CPK[0xeecc22] = 0xC4A04A;
+  CPK[0xff8833] = 0xC46A3A;
+  CPK[0xffdd44] = 0xC46A3A;
+  CPK[0xcc3311] = 0xC46A3A;
+  CPK[0xcc6633] = 0xA05A3A;
+  CPK[0xb3ff3a] = 0x8AAA4A;
+  CPK[0xa62929] = 0x8A3A3A;
 
   function isDark() {
     return document.documentElement.getAttribute('data-theme') === 'dark';
@@ -32,7 +54,7 @@
   }
 
   function atomColor(color) {
-    if (color === 0xdddddd || color === 0xe8e8e8) return H_WARM;
+    if (CPK[color] != null) return CPK[color];
     return color;
   }
 
@@ -61,11 +83,14 @@
   function ground(THREE, opts) {
     opts = opts || {};
     var scale = opts.scale || 1;
+    var radius = opts.radius != null ? opts.radius : 4.4 * scale;
     var y = opts.y != null ? opts.y : -2.85;
+    var shadowR = opts.shadowRadius != null ? opts.shadowRadius : radius * 0.32;
+    var shadowY = opts.shadowY != null ? opts.shadowY : y + 0.04;
     var g = new THREE.Group();
     g.name = 'paper-ground';
     var disk = new THREE.Mesh(
-      new THREE.CircleGeometry(4.4 * scale, 64),
+      new THREE.CircleGeometry(radius, 64),
       new THREE.MeshStandardMaterial({
         color: isDark() ? 0x171512 : 0xE6E1D3,
         roughness: 0.95,
@@ -77,7 +102,7 @@
     disk.rotation.x = -Math.PI / 2;
     disk.position.y = y;
     var shadow = new THREE.Mesh(
-      new THREE.CircleGeometry(1.35 * scale, 48),
+      new THREE.CircleGeometry(shadowR, 48),
       new THREE.MeshBasicMaterial({
         color: 0x14120E,
         transparent: true,
@@ -85,11 +110,47 @@
       })
     );
     shadow.rotation.x = -Math.PI / 2;
-    shadow.position.y = y + 0.04;
-    shadow.scale.set(1.45, 0.55, 1);
+    shadow.position.y = shadowY;
+    shadow.scale.set(1.4, 0.55, 1);
     g.add(disk);
     g.add(shadow);
     return g;
+  }
+
+  function moleculeExtent(mol) {
+    var maxd = 1.05;
+    if (!mol || !mol.atoms) return maxd;
+    for (var i = 0; i < mol.atoms.length; i++) {
+      var a = mol.atoms[i];
+      var p = a.pos || [a.x || 0, a.y || 0, a.z || 0];
+      var d = Math.sqrt((p[0] || 0) * (p[0] || 0) + (p[1] || 0) * (p[1] || 0) + (p[2] || 0) * (p[2] || 0)) + (a.r || 0.35);
+      if (d > maxd) maxd = d;
+    }
+    return maxd;
+  }
+
+  function moleculeGroundOpts(mol) {
+    var k = Math.max(1, moleculeExtent(mol) / 1.17);
+    return {
+      radius: 3.6 * k,
+      shadowRadius: 1.15 * k,
+      y: -1.15 * k,
+      shadowY: -1.12 * k
+    };
+  }
+
+  function camZForMol(mol) {
+    return Math.max(5.2, Math.min(16, moleculeExtent(mol) * (5.4 / 1.17)));
+  }
+
+  function vdwRadius(a, el) {
+    if (a && a.vdw) return a.vdw;
+    if (el === 'H') return 0.52;
+    if (el === 'O') return 0.70;
+    if (el === 'C') return 0.77;
+    if (el === 'N') return 0.75;
+    if (a && a.r) return a.r * 1.85;
+    return 0.70;
   }
 
   function mat(THREE, color, extra) {
@@ -145,8 +206,12 @@
     GREEN: GREEN,
     INK: INK,
     H_WARM: H_WARM,
+    BOND: BOND,
     PROTON: 0xC45C4A,
     NEUTRON: GREEN,
+    FOV: 42,
+    ORBIT_X: 0.35,
+    ORBIT_Y: 0.6,
     isDark: isDark,
     clearColor: clearColor,
     fillCss: fillCss,
@@ -156,6 +221,9 @@
     electronColor: electronColor,
     lightScene: lightScene,
     ground: ground,
+    moleculeGroundOpts: moleculeGroundOpts,
+    camZForMol: camZForMol,
+    vdwRadius: vdwRadius,
     mat: mat,
     orbitMat: orbitMat,
     bindTouchOrbit: bindTouchOrbit

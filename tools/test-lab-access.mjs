@@ -190,6 +190,8 @@ assert.match(molecules, /isAccessibleForFree": true/);
 assert.doesNotMatch(molecules, /interactive 3D rendering is part of Atomurus Pro/);
 assert.match(molecules, /data-mol-rep="space"/);
 assert.match(molecules, /--canvas-bg-1:#F2EFE7/);
+assert.match(molecules, /#C94A3A/);
+assert.doesNotMatch(molecules, /class="vc-btn active" id="vc-labels"/);
 
 const about = read('about.html');
 assert.doesNotMatch(about, /Interactive 3D is part of Atomurus Pro/);
@@ -203,6 +205,10 @@ assert.match(molRuntime, /return fetchMolecule\(initialMol\)/);
 assert.match(molRuntime, /atomurusInitMoleculeViewer/);
 assert.match(molRuntime, /setMolRep/);
 assert.match(molRuntime, /atomurusPaperLab/);
+assert.match(molRuntime, /PerspectiveCamera\(paper\(\) \? 42 : 50/);
+assert.match(molRuntime, /labelsVisible = !paper\(\)/);
+assert.match(molRuntime, /paper\(\)\.BOND/);
+assert.match(molRuntime, /vdwRadius/);
 
 const moleculesPt = read('viewer/molecules.pt.html');
 assert.match(moleculesPt, /atomurusBootLabViewer/);
@@ -231,6 +237,10 @@ assert.match(atomicRuntime, /atomurusPaperLab/);
 const paperLab = read('viewer/runtime/paper-lab.js');
 assert.match(paperLab, /atomurusPaperLab/);
 assert.match(paperLab, /F2EFE7/);
+assert.match(paperLab, /C94A3A/);
+assert.match(paperLab, /5A554C/);
+assert.match(paperLab, /moleculeGroundOpts/);
+assert.match(paperLab, /camZForMol/);
 
 const allotropes = read('viewer/allotropes.html');
 assert.match(allotropes, /atomurusBootLabViewer/);
@@ -281,6 +291,8 @@ assert.match(iso3d, /sizeClonedIsoSvg/);
 assert.match(iso3d, /pinIsoOverlay/);
 assert.match(iso3d, /atomurusPaperLab/);
 assert.match(iso3d, /paper-lab\.js/);
+assert.match(iso3d, /moleculeGroundOpts/);
+assert.match(iso3d, /paperLab\(\)\.BOND/);
 
 const labCss = read('atomurus-lab-console.css');
 assert.match(labCss, /\.iso-3d-stage \{\n  position: relative;/);
