@@ -44,6 +44,12 @@ assert.match(auth, /Study with Atomurus/);
 assert.match(auth, /Save chemistry resources, build sets and continue learning/);
 assert.match(auth, /Create free account/);
 assert.match(auth, /renderGuestStudyHub/);
+assert.match(auth, /renderGuestEmpty/);
+assert.match(auth, /visualizeTitle/);
+assert.match(auth, /guestUnlockTitle/);
+assert.match(auth, /guestLibraryLede/);
+assert.match(auth, /I18N.onChange/);
+assert.doesNotMatch(auth, /onChange\(function \(\) \{\s*if \(!currentUser\) return;/);
 assert.doesNotMatch(auth, /Unlock your potential/);
 assert.doesNotMatch(auth, /Become a chemistry master/);
 
@@ -51,5 +57,7 @@ const css = readFileSync(new URL('../assets/app-workspace.css', import.meta.url)
 assert.match(css, /ws-hub-continue/);
 assert.match(css, /ws-hub-review/);
 assert.match(css, /ws-hub-practice/);
+assert.match(css, /ws-viz-links/);
+assert.match(css, /data-study-hub="guest"/);
 
 console.log('study hub tests passed');

@@ -264,6 +264,13 @@ assert.match(paperLab, /bindPageScrollWheel/);
 assert.match(paperLab, /createRenderer/);
 assert.match(paperLab, /cancelAnimationFrame/);
 assert.match(paperLab, /function kick/);
+assert.match(paperLab, /function disposeObject3D/);
+assert.match(paperLab, /InstancedMesh/);
+assert.match(paperLab, /addInstancedSpheres/);
+assert.match(paperLab, /addInstancedBonds/);
+assert.match(paperLab, /function introSpin/);
+assert.match(paperLab, /canvasCssArea/);
+assert.match(paperLab, /cores <= 2/);
 
 const allotropes = read('viewer/allotropes.html');
 assert.match(allotropes, /atomurusBootLabViewer/);
@@ -276,6 +283,9 @@ assert.match(alloRuntime, /atomurusInitAllotropeViewer/);
 assert.match(alloRuntime, /WebGLRenderer/);
 assert.match(alloRuntime, /atomurusPaperLab/);
 assert.match(alloRuntime, /bindLiveLoop/);
+assert.match(alloRuntime, /addInstancedSpheres/);
+assert.match(alloRuntime, /replaceChild/);
+assert.match(alloRuntime, /introSpin/);
 
 function listHtml(dir, acc = []) {
   for (const ent of readdirSync(dir, { withFileTypes: true })) {
@@ -318,6 +328,8 @@ assert.match(iso3d, /paper-lab\.js/);
 assert.match(iso3d, /moleculeGroundOpts/);
 assert.match(iso3d, /paperLab\(\)\.BOND/);
 assert.match(iso3d, /bindLiveLoop/);
+assert.match(iso3d, /disposeObject3D/);
+assert.match(iso3d, /introSpin/);
 
 const labCss = read('atomurus-lab-console.css');
 assert.match(labCss, /\.iso-3d-stage \{\n  position: relative;/);
@@ -351,7 +363,8 @@ assert.doesNotMatch(molFn, /requireFeature/);
 assert.match(molFn, /isSafeMoleculeKey/);
 
 const pkg = JSON.parse(read('package.json'));
-assert.equal(pkg.scripts['test:lab-access'], 'node tools/test-lab-access.mjs');
+assert.equal(pkg.scripts['test:lab-access'], 'node tools/test-lab-access.mjs && node tools/test-viewer-perf.mjs');
+assert.equal(pkg.scripts['test:viewer-perf'], 'node tools/test-viewer-perf.mjs');
 assert.match(pkg.scripts.ci, /test:lab-access/);
 
 const originalEnv = { ...process.env };

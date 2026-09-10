@@ -45,7 +45,14 @@
   var currentGroup = new THREE.Group();
   scene.add(currentGroup);
 
-  var isDragging = false, lastX = 0, lastY = 0, rotX = 0.18, rotY = 0.35, autoRotate = true;
+  var isDragging = false, lastX = 0, lastY = 0, rotX = 0.18, rotY = 0.35, autoRotate = !(lab && lab.prefersReducedMotion && lab.prefersReducedMotion());
+  var intro = lab && lab.introSpin ? lab.introSpin({ ms: 3200 }) : null;
+  function spinning() {
+    if (!intro) return autoRotate;
+    var on = intro.spinning(autoRotate);
+    if (!intro.isHeld() && autoRotate && !on) { autoRotate = false; updateRotateBtn(); }
+    return on;
+  }
   var rotVelX = 0, rotVelY = 0;
   var ROT_DAMPING = 0.92, ROT_SENS = 0.0085;
   var labelsVisible = true;
@@ -60,6 +67,7 @@
   var ATOM_SCALE = 1.4, BOND_R = 0.10, BOND_GAP = -0.04;
 
   function makeSphere(r, color) {
+    if (lab && lab.sphereMesh) return lab.sphereMesh(THREE, r, color, lab.sphereSegments ? lab.sphereSegments(8) : 16);
     return new THREE.Mesh(new THREE.SphereGeometry(r, 24, 24),
       new THREE.MeshStandardMaterial({ color: color, roughness: 0.35, metalness: 0.15 }));
   }
@@ -82,13 +90,19 @@
     perp.normalize();
     function addCyl(s, e, color, r) {
       var mid = new THREE.Vector3().addVectors(s, e).multiplyScalar(0.5);
-      var cyl = new THREE.Mesh(
-        new THREE.CylinderGeometry(r, r, s.distanceTo(e), 12),
-        new THREE.MeshStandardMaterial({ color: color, roughness: 0.4, metalness: 0.1 })
-      );
-      cyl.position.copy(mid);
-      var d = new THREE.Vector3().subVectors(e, s).normalize();
-      cyl.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d);
+      var cyl;
+      if (lab && lab.bondMesh) {
+        cyl = lab.bondMesh(THREE, s, e, r, color, 10);
+        if (!cyl) return;
+      } else {
+        cyl = new THREE.Mesh(
+          new THREE.CylinderGeometry(r, r, s.distanceTo(e), 12),
+          new THREE.MeshStandardMaterial({ color: color, roughness: 0.4, metalness: 0.1 })
+        );
+        cyl.position.copy(mid);
+        var d = new THREE.Vector3().subVectors(e, s).normalize();
+        cyl.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d);
+      }
       group.add(cyl);
     }
     function addPair(s, e, r) {
@@ -150,20 +164,28 @@
     trackedAtoms.forEach(function (a) {
       if (!a.label) return;
       var sp = makeLabelSprite(a.label, a.radius);
-      sp.position.set(0, 0, 0); a.mesh.add(sp); a.labelSprite = sp;
+      var localY = (lab && lab.sphereMesh) ? (1 + 0.05) : 0;
+      sp.position.set(0, localY, 0); a.mesh.add(sp); a.labelSprite = sp;
     });
   }
 
+  var liveLoop = null;
   function rebuild() {
-    scene.remove(currentGroup);
-    currentGroup = buildMolecule(window.MOL_DATA);
-    scene.add(currentGroup);
+    if (lab && lab.replaceChild) {
+      currentGroup = lab.replaceChild(scene, currentGroup, buildMolecule(window.MOL_DATA));
+    } else {
+      scene.remove(currentGroup);
+      currentGroup = buildMolecule(window.MOL_DATA);
+      scene.add(currentGroup);
+    }
     refreshLabels();
+    if (liveLoop && liveLoop.wake) liveLoop.wake();
   }
   rebuild();
 
   // ── Interaction ──
   canvas.addEventListener('mousedown', function (e) {
+    if (intro) intro.userToggle();
     isDragging = true; autoRotate = false; updateRotateBtn();
     rotVelX = 0; rotVelY = 0; lastX = e.clientX; lastY = e.clientY; canvas.style.cursor = 'grabbing';
   });
@@ -177,6 +199,7 @@
   });
   canvas.addEventListener('touchstart', function (e) {
     if (!e.touches.length) return;
+    if (intro) intro.userToggle();
     isDragging = true; autoRotate = false; updateRotateBtn();
     lastX = e.touches[0].clientX; lastY = e.touches[0].clientY;
   }, { passive: true });
@@ -206,20 +229,28 @@
 
   // ── Controls ──
   var rotateBtn = document.getElementById('mvwr-rotate');
-  if (rotateBtn) rotateBtn.addEventListener('click', function () { autoRotate = !autoRotate; updateRotateBtn(); });
+  if (rotateBtn) rotateBtn.addEventListener('click', function () {
+    if (intro) intro.userToggle();
+    autoRotate = !autoRotate; updateRotateBtn();
+  });
   var labelsBtn = document.getElementById('mvwr-labels');
   if (labelsBtn) labelsBtn.addEventListener('click', function () {
     labelsVisible = !labelsVisible; labelsBtn.setAttribute('aria-pressed', labelsVisible ? 'true' : 'false'); refreshLabels();
   });
   var resetBtn = document.getElementById('mvwr-reset');
   if (resetBtn) resetBtn.addEventListener('click', function () {
-    rotX = 0.18; rotY = 0.35; camera.position.set(0, 0, DEFAULT_CAM_Z); autoRotate = true; updateRotateBtn();
+    rotX = 0.18; rotY = 0.35; camera.position.set(0, 0, DEFAULT_CAM_Z);
+    if (intro) intro.restart();
+    if (!intro || !intro.isHeld()) autoRotate = !(lab && lab.prefersReducedMotion && lab.prefersReducedMotion());
+    else autoRotate = true;
+    updateRotateBtn();
   });
   updateRotateBtn();
 
   // ── Resize ──
   function resize() {
     var w = canvas.clientWidth || 800, h = canvas.clientHeight || 460;
+    if (lab) lab.capDpr(renderer, canvas);
     renderer.setSize(w, h, false);
     camera.aspect = w / h; camera.updateProjectionMatrix();
   }
@@ -228,7 +259,7 @@
 
   // ── Render loop ──
   function tickFrame() {
-    if (autoRotate) { rotY += 0.005; }
+    if (spinning()) { rotY += 0.005; }
     else if (!isDragging) {
       rotY += rotVelY; rotX += rotVelX;
       rotVelX *= ROT_DAMPING; rotVelY *= ROT_DAMPING;
@@ -241,27 +272,37 @@
     renderer.render(scene, camera);
   }
   function isBusy() {
-    return isDragging || autoRotate || Math.abs(rotVelX) > 1e-4 || Math.abs(rotVelY) > 1e-4;
+    return isDragging || spinning() || Math.abs(rotVelX) > 1e-4 || Math.abs(rotVelY) > 1e-4;
   }
   if (lab && lab.bindLiveLoop) {
-    lab.bindLiveLoop(canvas, tickFrame, { busy: isBusy });
+    liveLoop = lab.bindLiveLoop(canvas, tickFrame, {
+      renderer: renderer,
+      busy: isBusy,
+      priority: function () {
+        return isDragging || Math.abs(rotVelX) > 1e-4 || Math.abs(rotVelY) > 1e-4;
+      }
+    });
   } else {
     var _hidden = document.hidden;
     var _onscreen = true;
     var _raf = 0;
     var _last = 0;
     function shouldRun() { return !_hidden && _onscreen; }
+    function isPriority() {
+      return isDragging || Math.abs(rotVelX) > 1e-4 || Math.abs(rotVelY) > 1e-4;
+    }
     function loop(now) {
       _raf = 0;
       if (!shouldRun()) return;
       if (isBusy()) {
-        if (now - _last >= 33) { _last = now; tickFrame(); }
+        if (isPriority() || now - _last >= 33) { _last = now; tickFrame(); }
         _raf = requestAnimationFrame(loop);
         return;
       }
       tickFrame();
     }
     function kick() {
+      if (isPriority()) _last = 0;
       if (!_raf && shouldRun()) _raf = requestAnimationFrame(loop);
     }
     document.addEventListener('visibilitychange', function () {
@@ -276,6 +317,9 @@
       io.observe(canvas);
     }
     canvas.addEventListener('pointerdown', kick);
+    canvas.addEventListener('pointermove', function (e) {
+      if (e.buttons || e.pointerType === 'touch' || e.pointerType === 'pen') kick();
+    });
     document.addEventListener('click', kick, true);
     kick();
   }

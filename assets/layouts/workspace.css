@@ -67,3 +67,26 @@
   border-color: color-mix(in oklab, var(--color-brand) 40%, var(--color-border));
   background: color-mix(in oklab, var(--color-brand) 10%, transparent);
 }
+
+.ps-userchip.is-guest-cta,
+.ws-userchip.is-guest-cta {
+  background: var(--color-brand, #1E6A50);
+  border-color: var(--color-brand, #1E6A50);
+  color: var(--color-on-brand, #F8F5EC);
+}
+
+.ps-userchip.is-guest-cta:hover,
+.ws-userchip.is-guest-cta:hover {
+  filter: brightness(1.06);
+}
+
+@media (max-width: 860px) {
+  .ws-userchip.is-guest-cta {
+    width: auto;
+    min-width: 0;
+    padding: 0 12px 0 10px;
+  }
+  .ws-userchip.is-guest-cta .ws-userchip-name {
+    display: inline;
+  }
+}

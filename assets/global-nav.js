@@ -56,6 +56,12 @@
     return '/login?next=' + encodeURIComponent((location.pathname || '/') + (location.search || ''));
   }
 
+  function guestSignupHref() {
+    var path = location.pathname || '/';
+    if (/\/(login|signup)(?:\.html)?$/i.test(path)) return '/signup';
+    return '/signup?next=' + encodeURIComponent((location.pathname || '/') + (location.search || ''));
+  }
+
   function pathname() {
     return (location.pathname || '/').replace(/\/+$/, '') || '/';
   }
@@ -157,7 +163,8 @@
 
     if (pending || !signedIn) {
       foot.innerHTML =
-        item('account', guestLoginHref(), 'common.nav.login', 'Account', '', ICONS.account, ' data-auth-nav-link="common.nav.login"') +
+        item('signup', guestSignupHref(), 'common.auth.createAccount', 'Create account', 'is-upgrade', ICONS.account, '') +
+        item('account', guestLoginHref(), 'common.auth.signIn', 'Sign in', '', ICONS.account, ' data-auth-nav-link="common.nav.login"') +
         item('plans', '/pricing', 'common.nav.plans', 'Plans', '', ICONS.plan, '');
       applyI18n(foot);
       return;
@@ -312,6 +319,7 @@
     setDrawer: setDrawer,
     signOut: signOut,
     guestLoginHref: guestLoginHref,
+    guestSignupHref: guestSignupHref,
     authState: authState,
     planKind: planKind
   };

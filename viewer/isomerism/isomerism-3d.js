@@ -458,8 +458,9 @@
 
   function makeSphere(r, color) {
     var lab = window.atomurusPaperLab;
+    if (lab && lab.sphereMesh) return lab.sphereMesh(THREE, r, color, lab.sphereSegments ? lab.sphereSegments(8) : 16);
     return new THREE.Mesh(new THREE.SphereGeometry(r, 24, 24),
-      lab ? lab.mat(THREE, color) : new THREE.MeshStandardMaterial({ color: color, roughness: 0.35, metalness: 0.15 }));
+      new THREE.MeshStandardMaterial({ color: color, roughness: 0.35, metalness: 0.15 }));
   }
   function makeBond(p1, p2, r1, r2, color1, color2, order) {
     order = order || 1;
@@ -481,13 +482,17 @@
     function addCyl(s, e, color, r) {
       var mid = new THREE.Vector3().addVectors(s, e).multiplyScalar(0.5);
       var labCyl = window.atomurusPaperLab;
-      var cyl = new THREE.Mesh(new THREE.CylinderGeometry(r, r, s.distanceTo(e), 12),
-        labCyl
-          ? labCyl.mat(THREE, color, { roughness: 0.55, metalness: 0.05 })
-          : new THREE.MeshStandardMaterial({ color: color, roughness: 0.48, metalness: 0.05 }));
-      cyl.position.copy(mid);
-      var d = new THREE.Vector3().subVectors(e, s).normalize();
-      cyl.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d);
+      var cyl;
+      if (labCyl && labCyl.bondMesh) {
+        cyl = labCyl.bondMesh(THREE, s, e, r, color, 10);
+        if (!cyl) return;
+      } else {
+        cyl = new THREE.Mesh(new THREE.CylinderGeometry(r, r, s.distanceTo(e), 12),
+          new THREE.MeshStandardMaterial({ color: color, roughness: 0.48, metalness: 0.05 }));
+        cyl.position.copy(mid);
+        var d = new THREE.Vector3().subVectors(e, s).normalize();
+        cyl.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d);
+      }
       group.add(cyl);
     }
     function addPair(s, e, r) {
@@ -539,7 +544,11 @@
   }
 
   function buildMolecule(key, group, mirror, hlArr) {
-    while (group.children.length) group.remove(group.children[0]);
+    while (group.children.length) {
+      var child = group.children[0];
+      if (paperLab() && paperLab().disposeObject3D) paperLab().disposeObject3D(child);
+      group.remove(child);
+    }
     group.userData.hlRings = [];
     var mol = MOL[key];
     if (!mol) return;
@@ -754,6 +763,7 @@
       var w = canvas.clientWidth || (canvas.parentElement && canvas.parentElement.clientWidth) || 300;
       var h = canvas.clientHeight || (canvas.parentElement && canvas.parentElement.clientHeight) || 200;
       if (w < 2 || h < 2) return;
+      if (lab) lab.capDpr(renderer, canvas);
       renderer.setSize(w, h, false);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
@@ -764,8 +774,12 @@
     var scene = new THREE.Scene();
     var paperGround = null;
     function createGround() {
-      if (paperGround) scene.remove(paperGround);
       var gLab = window.atomurusPaperLab;
+      if (gLab && gLab.setGround) {
+        paperGround = gLab.setGround(scene, THREE, paperGround, gLab.moleculeGroundOpts(MOL[currentKey()]));
+        return;
+      }
+      if (paperGround) scene.remove(paperGround);
       paperGround = gLab ? gLab.ground(THREE, gLab.moleculeGroundOpts(MOL[currentKey()])) : null;
       if (paperGround) scene.add(paperGround);
     }
@@ -792,10 +806,18 @@
     group.position.y = lab ? 0 : 0.25;
     scene.add(group);
 
-    var isDragging = false, lastX = 0, lastY = 0, rotX = lab ? 0.35 : 0.25, rotY = lab ? 0.6 : 0.5, autoRotate = true;
+    var isDragging = false, lastX = 0, lastY = 0, rotX = lab ? 0.35 : 0.25, rotY = lab ? 0.6 : 0.5, autoRotate = !(lab && lab.prefersReducedMotion && lab.prefersReducedMotion());
+    var intro = lab && lab.introSpin ? lab.introSpin({ ms: 3200 }) : null;
+    function spinning() {
+      if (!intro) return autoRotate;
+      var on = intro.spinning(autoRotate);
+      if (!intro.isHeld() && autoRotate && !on) autoRotate = false;
+      return on;
+    }
     var rotVelX = 0, rotVelY = 0, zoom = 1;
 
     function currentKey() { return current === 'b' ? molB : molA; }
+    var liveLoop = null;
     function paint() {
       buildMolecule(currentKey(), group, mirrorable && mirrored, diffOn ? (MOL[currentKey()].hl || null) : null);
       var tabs = panel.querySelectorAll('[data-3d]');
@@ -825,6 +847,7 @@
       panel.setAttribute('data-iso-hl', diffOn ? String((group.userData.hlRings || []).length) : '0');
       createGround();
       if (mode === '2d') render2D();
+      if (liveLoop && liveLoop.wake) liveLoop.wake();
     }
     function render2D() {
       if (!stage2d) return;
@@ -890,7 +913,7 @@
 
     function tickFrame() {
       if (mode === '2d') return;
-      if (autoRotate && !isDragging) {
+      if (spinning() && !isDragging) {
         rotY += 0.004;
       }
       rotX += rotVelX; rotY += rotVelY;
@@ -910,10 +933,14 @@
       renderer.render(scene, camera);
     }
     if (lab && lab.bindLiveLoop) {
-      lab.bindLiveLoop(canvas, tickFrame, {
+      liveLoop = lab.bindLiveLoop(canvas, tickFrame, {
+        renderer: renderer,
         busy: function () {
-          return isDragging || autoRotate || Math.abs(rotVelX) > 1e-4 || Math.abs(rotVelY) > 1e-4 ||
+          return isDragging || spinning() || Math.abs(rotVelX) > 1e-4 || Math.abs(rotVelY) > 1e-4 ||
             (group.userData.hlRings && group.userData.hlRings.length);
+        },
+        priority: function () {
+          return isDragging || Math.abs(rotVelX) > 1e-4 || Math.abs(rotVelY) > 1e-4;
         },
         active: function () { return mode !== '2d'; }
       });
@@ -928,6 +955,7 @@
     function rect() { return canvas.getBoundingClientRect(); }
     function pointer(e) { return { x: e.clientX - rect().left, y: e.clientY - rect().top }; }
     canvas.addEventListener('pointerdown', function (e) {
+      if (intro) intro.userToggle();
       isDragging = true; autoRotate = false;
       lastX = e.clientX; lastY = e.clientY;
       canvas.setPointerCapture(e.pointerId);
@@ -951,6 +979,7 @@
       }, { passive: false });
     }
     canvas.addEventListener('dblclick', function () {
+      if (intro) intro.userToggle();
       autoRotate = !autoRotate;
     });
     canvas.addEventListener('pointerenter', function () { canvas.style.cursor = 'grab'; });
@@ -982,12 +1011,16 @@
         if (!btn || !btn.getAttribute || !btn.getAttribute('data-3d-act')) return;
         var act = btn.getAttribute('data-3d-act');
         if (act === 'auto') {
+          if (intro) intro.userToggle();
           autoRotate = !autoRotate;
           btn.classList.toggle('active', autoRotate);
         } else if (act === 'reset') {
-          rotX = lab ? 0.35 : 0.25; rotY = lab ? 0.6 : 0.5; zoom = 1; autoRotate = true;
+          rotX = lab ? 0.35 : 0.25; rotY = lab ? 0.6 : 0.5; zoom = 1;
+          if (intro) intro.restart();
+          if (!intro || !intro.isHeld()) autoRotate = !(lab && lab.prefersReducedMotion && lab.prefersReducedMotion());
+          else autoRotate = true;
           var ab = ctrls.querySelector('[data-3d-act="auto"]');
-          if (ab) ab.classList.add('active');
+          if (ab) ab.classList.toggle('active', autoRotate);
         } else if (act === 'zin') {
           zoom = Math.max(0.4, Math.min(2.6, zoom * 1.15));
         } else if (act === 'zout') {
@@ -1025,7 +1058,7 @@
     return Boolean(document.querySelector('script[data-atomurus-runtime="isomerism-3d.js"]'));
   }
 
-  var PAPER_LAB_SRC = '/viewer/runtime/paper-lab.js?v=202609101700';
+  var PAPER_LAB_SRC = '/viewer/runtime/paper-lab.js?v=202609102200';
   function loadPaperLab() {
     if (window.atomurusPaperLab) return Promise.resolve();
     if (window.__atomurusPaperLabPending) return window.__atomurusPaperLabPending;

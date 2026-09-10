@@ -254,6 +254,16 @@
     return '/login?next=' + encodeURIComponent((location.pathname || '/') + (location.search || ''));
   }
 
+  function guestSignupHref() {
+    var path = location.pathname || '/';
+    if (/\/(login|signup)(?:\.html)?$/i.test(path)) return '/signup';
+    return '/signup?next=' + encodeURIComponent((location.pathname || '/') + (location.search || ''));
+  }
+
+  function guestCreateAccountLabel() {
+    return translate('common.auth.createAccount') || 'Create account';
+  }
+
   function setAuthLabel(node, text, i18nKey) {
     if (!node) return;
     if (node.dataset.authGuestLabel == null) node.dataset.authGuestLabel = node.textContent || '';
@@ -317,18 +327,20 @@
     if (!chips.length) chips = document.querySelectorAll('.lc-topnav-cta[href]');
     chips.forEach(function (link) {
       if (isPricingActionLink(link)) return;
-      if (link.dataset.authGuestHref == null) link.dataset.authGuestHref = link.getAttribute('href') || '/login';
+      if (link.dataset.authGuestHref == null) link.dataset.authGuestHref = link.getAttribute('href') || '/signup';
       var guestHref = String(link.dataset.authGuestHref || '').toLowerCase();
       if (!/login|signup|account/.test(guestHref)) return;
-      link.setAttribute('href', signedIn ? '/app?section=account' : guestLoginHref());
+      var guestLabel = guestCreateAccountLabel();
+      link.setAttribute('href', signedIn ? '/app?section=account' : guestSignupHref());
+      link.classList.toggle('is-guest-cta', !signedIn);
       const label = link.querySelector('span[data-i18n], span:not(.ps-plan-badge)') || link.querySelector('span') || link;
       setAuthLabel(
         label,
-        signedIn ? display : (label.dataset.authGuestLabel || 'Account'),
-        signedIn ? null : (label.dataset.authGuestI18n || 'pricing.ctaAccount')
+        signedIn ? display : guestLabel,
+        signedIn ? null : 'common.auth.createAccount'
       );
-      link.setAttribute('aria-label', signedIn ? ('Open account for ' + display) : (label.dataset.authGuestLabel || 'Account'));
-      link.setAttribute('title', signedIn ? ('Signed in as ' + display) : (label.dataset.authGuestLabel || 'Account'));
+      link.setAttribute('aria-label', signedIn ? ('Open account for ' + display) : guestLabel);
+      link.setAttribute('title', signedIn ? ('Signed in as ' + display) : guestLabel);
       syncPlanBadge(link.closest('[data-atomurus-account]') || link.parentElement || link, user, signedIn);
     });
     bindAccountMenu(signedIn, user, display);
@@ -481,6 +493,8 @@
       return function () { listeners.delete(cb); };
     },
     otherLabel: function () { return nextLang().toUpperCase(); },
+    guestLoginHref: guestLoginHref,
+    guestSignupHref: guestSignupHref,
     ready: Promise.resolve()
   };
 
@@ -490,6 +504,7 @@
     try { localStorage.setItem(STORAGE_KEY, I18N.lang); } catch (_) {}
     apply();
     document.documentElement.classList.remove('lang-pt-pending');
+    syncAuthNav();
     document.addEventListener('atomurus-ads-ready', function () {
       syncAuthNav();
     });

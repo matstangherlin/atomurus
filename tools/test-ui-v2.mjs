@@ -166,6 +166,27 @@ if (/label: 'Study'/.test(read('atomurus-mobile-nav.js'))) {
 if (!read('i18n.js').includes('guestLoginHref')) {
   fail('i18n.js must encode next= on the Account chip');
 }
+if (!read('i18n.js').includes('guestSignupHref')) {
+  fail('i18n.js must send guests to signup from the account chip');
+}
+if (!read('i18n.js').includes('common.auth.createAccount')) {
+  fail('i18n.js must label the guest chip Create account');
+}
+if (!read('templates/chrome/account-control.html').includes('common.auth.createAccount')) {
+  fail('account-control template must say Create account');
+}
+if (!read('assets/guest-nudge.js').includes('atomurus-guest-nudge')) {
+  fail('guest-nudge.js must exist');
+}
+if (!read('app.html').includes('guest-nudge.js')) {
+  fail('app.html must load guest-nudge.js');
+}
+if (!read('assets/layouts/shell.css').includes('is-guest-cta')) {
+  fail('shell.css must style the guest Create account chip');
+}
+if (!read('assets/public-shell.css').includes('is-guest-cta')) {
+  fail('public-shell.css must override transparent Account chip for guests');
+}
 if (!read('templates/chrome/public-sidebar.html').includes('common.nav.workspace')) {
   fail('public sidebar must expose Workspace');
 }

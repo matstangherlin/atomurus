@@ -8,11 +8,17 @@ test('signed-out workspace shows Pro navigation and explains locked features', a
   await expect(page.locator('#ws-nav-main a[data-nav="home"]')).toContainText(/Home|Início/);
   await expect(page.locator('#ws-nav-main a[data-nav="periodic"]')).toBeVisible();
   await expect(page.locator('#ws-nav-main a[data-nav="viewer"]')).toBeVisible();
-  await expect(page.locator('#ws-userchip')).toContainText(/Account|Conta/);
+  await expect(page.locator('#ws-userchip')).toContainText(/Create account|Criar conta/, { timeout: 15_000 });
   await expect(page).toHaveURL(/\/app/);
   await page.locator('#ws-study-nav a[href="/app?section=library"]').first().click();
   await expect(page).toHaveURL(/section=library/);
+  await expect(page.locator('#app-study')).toContainText(/Library|Biblioteca/);
+  await expect(page.locator('#app-study a[href*="signup"]')).toBeVisible();
   await page.locator('#ws-study-nav a[href="/app?section=sets"]').click();
+  await expect(page.locator('#app-study')).toContainText(/Study Sets/);
+  await expect(page.locator('#app-study a[href*="signup"]')).toContainText(/Create free account|Criar conta gratuita/);
+  await expect(page.locator('#ws-dialog-host')).toHaveCount(0);
+  await page.locator('#ws-study-nav a[href="/app?section=review"]').click();
   await expect(page.locator('#ws-dialog-host')).toContainText(/available only|disponível somente/i);
   await expect(page.locator('#ws-dialog-host a[href^="/login"]')).toBeVisible();
   await expect(page.locator('#ws-dialog-host a[href="/pricing"]')).toBeVisible();
@@ -118,6 +124,6 @@ test('logout from the workspace stays on /app as a guest', async ({ page }) => {
   await expect(page.locator('#app-logout-aside')).toBeVisible({ timeout: 15_000 });
   await page.locator('#app-logout-aside').click();
   await expect(page).toHaveURL(/\/app/);
-  await expect(page.locator('#ws-userchip')).toContainText(/Account|Conta/, { timeout: 15_000 });
+  await expect(page.locator('#ws-userchip')).toContainText(/Create account|Criar conta/, { timeout: 15_000 });
   await expect(page.locator('#app-logout-aside')).toHaveCount(0);
 });

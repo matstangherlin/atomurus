@@ -50,9 +50,10 @@ test.describe('shell parity guest desktop', () => {
   test.use({ viewport: { width: 1280, height: 800 } });
 
   for (const route of ROUTES) {
-    test(`${route.name} keeps 64×248 chrome and Account`, async ({ page }) => {
+    test(`${route.name} keeps 64×248 chrome and Create account`, async ({ page }) => {
       await installApi(page, { kind: 'guest', signedIn: false });
       await page.goto(route.path);
+      await expect(page.locator('[data-atomurus-account-chip], #ws-userchip')).toContainText(/Create account|Criar conta/i, { timeout: 15_000 });
       const chrome = await chromeMetrics(page);
       expect(chrome.top).toBeTruthy();
       expect(chrome.top.h).toBeGreaterThanOrEqual(60);
@@ -65,7 +66,7 @@ test.describe('shell parity guest desktop', () => {
       expect(chrome.lang).toBeTruthy();
       expect(chrome.theme).toBeTruthy();
       expect(chrome.account).toBeTruthy();
-      expect(chrome.accountText).toMatch(/Account|Conta/i);
+      expect(chrome.accountText).toMatch(/Create account|Criar conta/i);
       await saveShot(page, `shell-guest-${route.name}`);
     });
   }

@@ -286,5 +286,11 @@ assert.doesNotMatch(dictSrc, /export flags/);
 
 const publicWorkspace = readFileSync(new URL('../assets/public-workspace.js', import.meta.url), 'utf8');
 assert.match(publicWorkspace, /lab-tool-gate\.js/);
+assert.match(publicWorkspace, /guest-nudge\.js/);
+assert.match(publicWorkspace, /guestSignupHref/);
+
+const guestNudge = readFileSync(new URL('../assets/guest-nudge.js', import.meta.url), 'utf8');
+assert.match(guestNudge, /atomurus-guest-nudge/);
+assert.match(guestNudge, /common.auth.createAccount/);
 
 console.log('workspace ux tests passed');

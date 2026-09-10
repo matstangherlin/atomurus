@@ -33,16 +33,17 @@
 <link rel="stylesheet" href="assets/workspace-foundation.css?v=202608282240">
 <link rel="stylesheet" href="assets/app-workspace.css?v=202609100900">
 <link rel="stylesheet" href="/assets/ui/index.css?v=202609090500">
-<link rel="stylesheet" href="/assets/layouts/workspace.css?v=202609090500">
+<link rel="stylesheet" href="/assets/layouts/workspace.css?v=202609102200">
 <script src="/assets/pro-features.js?v=202609091200"></script>
-<script src="/assets/global-nav.js?v=202609090500"></script>
+<script src="/assets/global-nav.js?v=202609102200"></script>
 <script src="workspace-logic.js?v=202609100900" defer></script>
 <script src="workspace-ui.js?v=202608282240" defer></script>
 <script src="study-client.js?v=202608282000" defer></script>
 <script src="assets/study-curriculum.js?v=202609100900" defer></script>
 <script src="assets/study-practice.js?v=202609100900" defer></script>
 <script src="pro-lab.js?v=202608283300" defer></script>
-<script src="auth-app.js?v=202609100900" defer></script>
+<script src="/assets/guest-nudge.js?v=202609102200" defer></script>
+<script src="auth-app.js?v=202609102200" defer></script>
 </head>
 <body class="ws-body">
 <a class="ws-skip" href="#app-study" id="ws-skip">Skip to content</a>
@@ -83,9 +84,9 @@
       <div class="ws-account ps-account" data-atomurus-account>
         <div class="ps-account-wrap">
           <span class="ws-badge ps-plan-badge" id="ws-plan-badge" hidden data-atomurus-plan-badge></span>
-          <a class="ws-userchip ps-userchip" href="/login?next=%2Fapp%3Fsection%3Daccount" id="ws-userchip" data-atomurus-account-chip>
+          <a class="ws-userchip ps-userchip is-guest-cta" href="/signup?next=%2Fapp" id="ws-userchip" data-atomurus-account-chip>
             <svg class="ws-userchip-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <span class="ws-userchip-name" id="ws-user-name">Account</span>
+            <span class="ws-userchip-name" id="ws-user-name" data-i18n="common.auth.createAccount">Create account</span>
           </a>
           <div class="ps-account-menu" id="ws-account-menu" hidden></div>
         </div>
@@ -95,7 +96,7 @@
 
   <div class="ws-drawer-backdrop" id="ws-drawer-backdrop" hidden></div>
 
-  <aside class="ws-sidebar sidebar" id="ws-sidebar" data-atomurus-sidebar>
+  <aside class="ws-sidebar sidebar ps-pub-sidebar" id="ws-sidebar" data-atomurus-sidebar>
     <nav class="ws-nav" id="ws-nav-main" aria-label="Laboratory" data-atomurus-lab-nav>
       <div class="ws-nav-block ws-nav-site">
         <h2 class="ws-nav-group" data-i18n="common.nav.laboratory">Laboratory</h2>

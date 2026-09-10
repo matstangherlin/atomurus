@@ -19,10 +19,14 @@
       const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
       renderer.setClearColor(isDark ? 0x0E0D0C : 0xF2EFE7, 1);
     }
-    if (paperGround) scene.remove(paperGround);
-    if (paper()) {
-      paperGround = paper().ground(THREE, { scale: 1.6, y: -3.2 });
-      scene.add(paperGround);
+    if (paper() && paper().setGround) {
+      paperGround = paper().setGround(scene, THREE, paperGround, { scale: 1.6, y: -3.2 });
+    } else {
+      if (paperGround) scene.remove(paperGround);
+      if (paper()) {
+        paperGround = paper().ground(THREE, { scale: 1.6, y: -3.2 });
+        scene.add(paperGround);
+      }
     }
   }
   if (paper()) paper().lightScene(scene, THREE);
@@ -38,11 +42,19 @@
   scene.add(currentGroup);
 
   let isDragging=false,lastX=0,lastY=0,rotX=0,rotY=0,autoRotate=!((paper() && paper().prefersReducedMotion && paper().prefersReducedMotion()));
+  const intro = paper() && paper().introSpin ? paper().introSpin({ ms: 3200 }) : null;
+  function spinning(){
+    if (!intro) return autoRotate;
+    const on = intro.spinning(autoRotate);
+    if (!intro.isHeld() && autoRotate && !on) { autoRotate = false; updateRotateBtn(); }
+    return on;
+  }
   let rotVelX = 0, rotVelY = 0;
   const ROT_DAMPING = 0.92, ROT_SENS = 0.0085;
   const DEFAULT_CAM_Z = 10;
 
   canvas.addEventListener('mousedown', e => {
+    if (intro) intro.userToggle();
     isDragging=true; autoRotate=false; updateRotateBtn();
     rotVelX = 0; rotVelY = 0;
     lastX=e.clientX; lastY=e.clientY; canvas.style.cursor='grabbing';
@@ -69,37 +81,77 @@
   }
   if (paper()) {
     paper().bindTouchOrbit(canvas, {
-      onDown: function () { isDragging=true; autoRotate=false; updateRotateBtn(); rotVelX=0; rotVelY=0; },
+      onDown: function () { if (intro) intro.userToggle(); isDragging=true; autoRotate=false; updateRotateBtn(); rotVelX=0; rotVelY=0; },
       onDrag: function (dx, dy) {
         rotY += dx; rotX += dy;
         rotVelY = dx * 0.6 + rotVelY * 0.4;
         rotVelX = dy * 0.6 + rotVelX * 0.4;
-      }
+      },
+      onUp: function () { isDragging=false; }
     });
   }
   function updateRotateBtn(){ const b=document.getElementById('vc-rotate'); if (b) b.classList.toggle('active', autoRotate); }
 
   function makeSphere(r,color,seg=16){
-    const mat = paper()
-      ? paper().mat(THREE, color)
-      : new THREE.MeshStandardMaterial({color,roughness:0.4,metalness:0.15});
+    if (paper() && paper().sphereMesh) return paper().sphereMesh(THREE, r, color, seg);
+    const mat = new THREE.MeshStandardMaterial({color,roughness:0.4,metalness:0.15});
     return new THREE.Mesh(new THREE.SphereGeometry(r,seg,seg), mat);
   }
   function makeGlow(r,color){
-    return new THREE.Mesh(new THREE.SphereGeometry(r,24,24),
+    if (paper() && paper().glowMesh) return paper().glowMesh(THREE, r, color);
+    return new THREE.Mesh(new THREE.SphereGeometry(r,12,12),
       new THREE.MeshBasicMaterial({color,transparent:true,opacity:0.08}));
   }
   function makeBond(p1,p2,color=0x888,r=0.06){
+    if (paper() && paper().bondMesh) {
+      const mesh = paper().bondMesh(THREE, p1, p2, r, color, 10);
+      return mesh || new THREE.Group();
+    }
     const dir=new THREE.Vector3().subVectors(p2,p1);
     const len=dir.length();
     const mid=new THREE.Vector3().addVectors(p1,p2).multiplyScalar(0.5);
     const cyl=new THREE.Mesh(new THREE.CylinderGeometry(r,r,len,12),
-      paper()
-        ? paper().mat(THREE, color, { roughness: 0.5, metalness: 0.05 })
-        : new THREE.MeshStandardMaterial({color, roughness:0.5, metalness:0.05}));
+      new THREE.MeshStandardMaterial({color, roughness:0.5, metalness:0.05}));
     cyl.position.copy(mid);
     cyl.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir.normalize());
     return cyl;
+  }
+  function addAtoms(g, positions, color, r, segs){
+    if (paper() && paper().addInstancedSpheres && positions.length > 4) {
+      paper().addInstancedSpheres(g, THREE, positions, color, r, segs);
+      return;
+    }
+    positions.forEach(p => { const a = makeSphere(r, color, segs); a.position.copy(p); g.add(a); });
+  }
+  function addGlows(g, positions, color, r){
+    if (paper() && paper().addInstancedSpheres && positions.length > 4) {
+      paper().addInstancedSpheres(g, THREE, positions, color, r, 12, { basic: true, opacity: 0.08 });
+      return;
+    }
+    positions.forEach(p => { const glow = makeGlow(r, color); glow.position.copy(p); g.add(glow); });
+  }
+  function addBondsNear(g, positions, maxDist, color, r){
+    const pairs = (paper() && paper().nearbyPairs)
+      ? paper().nearbyPairs(positions, maxDist)
+      : (function(){
+          const out = [];
+          for (let i = 0; i < positions.length; i++)
+            for (let j = i + 1; j < positions.length; j++)
+              if (positions[i].distanceTo(positions[j]) < maxDist) out.push([positions[i], positions[j]]);
+          return out;
+        })();
+    if (paper() && paper().addInstancedBonds && pairs.length > 4) {
+      paper().addInstancedBonds(g, THREE, pairs, color, r);
+      return;
+    }
+    pairs.forEach(pair => g.add(makeBond(pair[0], pair[1], color, r)));
+  }
+  function addBondList(g, pairs, color, r){
+    if (paper() && paper().addInstancedBonds && pairs.length > 4) {
+      paper().addInstancedBonds(g, THREE, pairs, color, r);
+      return;
+    }
+    pairs.forEach(pair => g.add(makeBond(pair[0], pair[1], color, r)));
   }
 
   const alloMeta = {
@@ -151,11 +203,8 @@
         const cz = (Math.min(...zs) + Math.max(...zs)) / 2;
         pos.forEach(p => { p.x -= cx; p.z -= cz; });
         const shade = li === 1 ? 0x555555 : 0x333333;
-        pos.forEach(p => { const a = makeSphere(0.16, shade, 10); a.position.copy(p); g.add(a); });
-        for (let i = 0; i < pos.length; i++)
-          for (let j = i + 1; j < pos.length; j++)
-            if (pos[i].distanceTo(pos[j]) < b * 1.1)
-              g.add(makeBond(pos[i], pos[j], 0x666666, 0.055));
+        addAtoms(g, pos, shade, 0.16, 10);
+        addBondsNear(g, pos, b * 1.1, 0x666666, 0.055);
       });
     }
     else if (key === 'diamond'){
@@ -171,16 +220,10 @@
             });
       const uniq = [];
       sites.forEach(s => { if (!uniq.some(u => u.distanceTo(s) < 0.05)) uniq.push(s); });
-      uniq.forEach(s => {
-        const atom = makeSphere(0.22, 0x99ddff, 14);
-        atom.position.copy(s); atom.add(makeGlow(0.34, 0x88ccff));
-        g.add(atom);
-      });
+      addAtoms(g, uniq, 0x99ddff, 0.22, 14);
+      addGlows(g, uniq, 0x88ccff, 0.34);
       const bondLen = a0 * Math.sqrt(3) / 4, tol = bondLen * 1.08;
-      for (let i = 0; i < uniq.length; i++)
-        for (let j = i + 1; j < uniq.length; j++)
-          if (uniq[i].distanceTo(uniq[j]) < tol)
-            g.add(makeBond(uniq[i], uniq[j], 0xaaddff, 0.07));
+      addBondsNear(g, uniq, tol, 0xaaddff, 0.07);
     }
     else if (key === 'fullerene'){
       const phi = (1 + Math.sqrt(5)) / 2;
@@ -202,12 +245,9 @@
       const sampleLen = Math.sqrt(uniqVerts[0][0]**2 + uniqVerts[0][1]**2 + uniqVerts[0][2]**2);
       const scale = targetR / sampleLen;
       const pts = uniqVerts.map(v => new THREE.Vector3(v[0]*scale, v[1]*scale, v[2]*scale));
-      pts.forEach(p => { const a = makeSphere(0.18, 0x333333, 14); a.position.copy(p); g.add(a); });
+      addAtoms(g, pts, 0x333333, 0.18, 14);
       const bondDist = 2 * scale * 1.08;
-      for (let i = 0; i < pts.length; i++)
-        for (let j = i + 1; j < pts.length; j++)
-          if (pts[i].distanceTo(pts[j]) < bondDist)
-            g.add(makeBond(pts[i], pts[j], 0x666666, 0.055));
+      addBondsNear(g, pts, bondDist, 0x666666, 0.055);
     }
     else if (key === 'graphene'){
       const rows = 4, cols = 5;
@@ -217,14 +257,10 @@
           const x = col * 1.4 + (row % 2) * 0.7 - 3.5;
           const z = row * 1.21 - 2.4;
           pos.push(new THREE.Vector3(x, 0, z));
-          const atom = makeSphere(0.18, 0x222222, 12);
-          atom.position.set(x, 0, z); g.add(atom);
         }
       }
-      for (let i = 0; i < pos.length; i++)
-        for (let j = i + 1; j < pos.length; j++)
-          if (pos[i].distanceTo(pos[j]) < 1.5)
-            g.add(makeBond(pos[i], pos[j], 0x444444, 0.055));
+      addAtoms(g, pos, 0x222222, 0.18, 12);
+      addBondsNear(g, pos, 1.5, 0x444444, 0.055);
     }
     else if (key === 'nanotube'){
       const R = 1.5, segs = 10, rings = 8;
@@ -235,47 +271,49 @@
           const a = (s / segs) * Math.PI * 2 + (ring % 2) * (Math.PI / segs);
           const x = Math.cos(a) * R, z = Math.sin(a) * R;
           pos.push(new THREE.Vector3(x, y, z));
-          const atom = makeSphere(0.16, 0x333333, 12);
-          atom.position.set(x, y, z); g.add(atom);
         }
       }
-      for (let i = 0; i < pos.length; i++)
-        for (let j = i + 1; j < pos.length; j++)
-          if (pos[i].distanceTo(pos[j]) < 1.0)
-            g.add(makeBond(pos[i], pos[j], 0x555555, 0.05));
+      addAtoms(g, pos, 0x333333, 0.16, 12);
+      addBondsNear(g, pos, 1.0, 0x555555, 0.05);
     }
     else if (key === 'o2'){
       const a1 = makeSphere(0.5, 0xee3333), a2 = makeSphere(0.5, 0xee3333);
       a1.position.set(-0.7, 0, 0); a2.position.set(0.7, 0, 0);
-      a1.add(makeGlow(0.75, 0xff2200)); a2.add(makeGlow(0.75, 0xff2200));
-      g.add(a1); g.add(a2);
+      const g1 = makeGlow(0.75, 0xff2200); g1.position.copy(a1.position);
+      const g2 = makeGlow(0.75, 0xff2200); g2.position.copy(a2.position);
+      g.add(a1); g.add(a2); g.add(g1); g.add(g2);
       g.add(makeBond(a1.position, a2.position, 0xcc2222, 0.1));
       g.add(makeBond(new THREE.Vector3(-0.7,0.12,0), new THREE.Vector3(0.7,0.12,0), 0xcc2222, 0.1));
     }
     else if (key === 'ozone'){
       [[-1.1,-0.3,0],[0,0.5,0],[1.1,-0.3,0]].forEach(([x,y,z]) => {
         const a = makeSphere(0.45, 0x5599ff);
-        a.position.set(x,y,z); a.add(makeGlow(0.65, 0x4488ff)); g.add(a);
+        a.position.set(x,y,z); g.add(a);
+        const glow = makeGlow(0.65, 0x4488ff); glow.position.set(x,y,z); g.add(glow);
       });
       g.add(makeBond(new THREE.Vector3(-1.1,-0.3,0), new THREE.Vector3(0,0.5,0), 0x4477cc, 0.09));
       g.add(makeBond(new THREE.Vector3(0,0.5,0), new THREE.Vector3(1.1,-0.3,0), 0x4477cc, 0.09));
     }
     else if (key === 's_rhombic' || key === 's_mono'){
       const N = 8, r = 2.0; const sPos = [];
+      const col = key === 's_rhombic' ? 0xddaa00 : 0xeecc22;
       for (let i = 0; i < N; i++) {
         const a = (i / N) * Math.PI * 2;
         const y = (i % 2 === 0) ? 0.4 : -0.4;
-        const col = key === 's_rhombic' ? 0xddaa00 : 0xeecc22;
-        const atom = makeSphere(0.38, col, 16);
-        const pos = new THREE.Vector3(Math.cos(a)*r, y, Math.sin(a)*r);
-        atom.position.copy(pos); sPos.push(pos); g.add(atom);
+        sPos.push(new THREE.Vector3(Math.cos(a)*r, y, Math.sin(a)*r));
       }
-      for (let i = 0; i < N; i++) g.add(makeBond(sPos[i], sPos[(i+1)%N], 0xaa8800, 0.1));
+      addAtoms(g, sPos, col, 0.38, 16);
+      const ring = [];
+      for (let i = 0; i < N; i++) ring.push([sPos[i], sPos[(i+1)%N]]);
+      addBondList(g, ring, 0xaa8800, 0.1);
     }
     else if (key === 'p_white'){
       const h = Math.sqrt(2/3) * 2.0;
       const pSites = [[0,h*0.75,0],[-1.15,-h*0.25,1.0],[1.15,-h*0.25,1.0],[0,-h*0.25,-1.5]];
-      pSites.forEach(([x,y,z]) => { const a = makeSphere(0.4, 0xffdd44, 16); a.position.set(x,y,z); a.add(makeGlow(0.6, 0xffcc00)); g.add(a); });
+      pSites.forEach(([x,y,z]) => {
+        const a = makeSphere(0.4, 0xffdd44, 16); a.position.set(x,y,z); g.add(a);
+        const glow = makeGlow(0.6, 0xffcc00); glow.position.set(x,y,z); g.add(glow);
+      });
       [[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]].forEach(([i,j]) => {
         g.add(makeBond(new THREE.Vector3(...pSites[i]), new THREE.Vector3(...pSites[j]), 0xddaa00, 0.09));
       });
@@ -287,9 +325,11 @@
         const y = (i % 2 === 0) ? 0.5 : -0.5;
         const z = Math.sin(i * 0.8) * 0.4;
         chain.push(new THREE.Vector3(x,y,z));
-        const a = makeSphere(0.32, 0xcc3311, 16); a.position.set(x,y,z); g.add(a);
       }
-      for (let i = 0; i < chain.length - 1; i++) g.add(makeBond(chain[i], chain[i+1], 0xaa2200, 0.09));
+      addAtoms(g, chain, 0xcc3311, 0.32, 16);
+      const links = [];
+      for (let i = 0; i < chain.length - 1; i++) links.push([chain[i], chain[i+1]]);
+      addBondList(g, links, 0xaa2200, 0.09);
     }
     else if (key === 'p_black'){
       const a = 1.1, pucker = 0.45, cols = 4, rows = 5;
@@ -309,11 +349,9 @@
         const cz = (Math.min(...zs)+Math.max(...zs))/2;
         positions.forEach(p => { p.x -= cx; p.z -= cz; });
         const shade = li === 0 ? 0x4a1d6b : 0x6b2d8a;
-        positions.forEach(p => { const atom = makeSphere(0.26, shade, 12); atom.position.copy(p); atom.add(makeGlow(0.38, 0x7c3aed)); g.add(atom); });
-        for (let i = 0; i < positions.length; i++)
-          for (let j = i + 1; j < positions.length; j++)
-            if (positions[i].distanceTo(positions[j]) < a * 1.15)
-              g.add(makeBond(positions[i], positions[j], 0x5b21b6, 0.06));
+        addAtoms(g, positions, shade, 0.26, 12);
+        addGlows(g, positions, 0x7c3aed, 0.38);
+        addBondsNear(g, positions, a * 1.15, 0x5b21b6, 0.06);
       });
     }
     return g;
@@ -321,14 +359,24 @@
 
   let currentAllotrope = 'graphite';
   let currentElement   = 'carbon';
+  let liveLoop = null;
 
   function rebuildScene(){
-    scene.remove(currentGroup);
-    currentGroup = buildAllotrope(currentAllotrope);
-    scene.add(currentGroup);
+    if (paper() && paper().replaceChild) {
+      currentGroup = paper().replaceChild(scene, currentGroup, buildAllotrope(currentAllotrope));
+    } else {
+      scene.remove(currentGroup);
+      currentGroup = buildAllotrope(currentAllotrope);
+      scene.add(currentGroup);
+    }
     rotX = 0; rotY = 0;
     camera.position.set(0, 0.35, DEFAULT_CAM_Z);
-    autoRotate = true; updateRotateBtn();
+    if (intro) intro.restart();
+    if (!intro || !intro.isHeld()) {
+      autoRotate = !((paper() && paper().prefersReducedMotion && paper().prefersReducedMotion()));
+    }
+    updateRotateBtn();
+    if (liveLoop && liveLoop.wake) liveLoop.wake();
   }
 
   function _i18nTr(k, fb){
@@ -400,11 +448,20 @@
     }
   };
 
-  window.toggleAutoRotate = function(){ autoRotate = !autoRotate; updateRotateBtn(); };
+  window.toggleAutoRotate = function(){
+    if (intro) intro.userToggle();
+    autoRotate = !autoRotate; updateRotateBtn();
+  };
   window.resetView = function(){
     rotX = 0; rotY = 0;
     camera.position.set(0, 0.35, DEFAULT_CAM_Z);
-    autoRotate = true; updateRotateBtn();
+    if (intro && intro.isHeld()) {
+      autoRotate = true; updateRotateBtn();
+    } else {
+      if (intro) intro.restart();
+      autoRotate = !((paper() && paper().prefersReducedMotion && paper().prefersReducedMotion()));
+      updateRotateBtn();
+    }
   };
   window.zoomBy = function(direction){
     camera.position.z = Math.max(3, Math.min(20, camera.position.z + direction * 1.1));
@@ -429,6 +486,7 @@
 
   function resize(){
     const w = canvas.clientWidth, h = canvas.clientHeight;
+    if (paper()) paper().capDpr(renderer, canvas);
     renderer.setSize(w, h, false);
     camera.aspect = w/h;
     camera.updateProjectionMatrix();
@@ -445,7 +503,7 @@
       rotY += rotVelY; rotX += rotVelX;
       rotVelX *= ROT_DAMPING; rotVelY *= ROT_DAMPING;
     }
-    if (autoRotate && !isDragging && Math.abs(rotVelX) < 1e-4 && Math.abs(rotVelY) < 1e-4) {
+    if (spinning() && !isDragging && Math.abs(rotVelX) < 1e-4 && Math.abs(rotVelY) < 1e-4) {
       rotY += 0.004;
     }
     currentGroup.rotation.y = rotY;
@@ -453,9 +511,13 @@
     renderer.render(scene, camera);
   }
   if (paper() && paper().bindLiveLoop) {
-    paper().bindLiveLoop(canvas, tickFrame, {
+    liveLoop = paper().bindLiveLoop(canvas, tickFrame, {
+      renderer: renderer,
       busy: function () {
-        return isDragging || autoRotate || Math.abs(rotVelX) > 1e-4 || Math.abs(rotVelY) > 1e-4;
+        return isDragging || spinning() || Math.abs(rotVelX) > 1e-4 || Math.abs(rotVelY) > 1e-4;
+      },
+      priority: function () {
+        return isDragging || Math.abs(rotVelX) > 1e-4 || Math.abs(rotVelY) > 1e-4;
       }
     });
   } else {
