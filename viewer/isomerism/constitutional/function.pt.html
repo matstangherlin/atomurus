@@ -20,7 +20,7 @@
 <script src="../../../assets/global-nav.js?v=202609090500"></script>
 <script src="/assets/public-workspace.js?v=202608282500"></script>
 <link rel="stylesheet" href="/assets/ui/index.css?v=202609090500">
-<link rel="stylesheet" href="/assets/layouts/viewer.css?v=202609090500">
+<link rel="stylesheet" href="/assets/layouts/viewer.css?v=202609101700">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1E6A50" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0E0D0C" media="(prefers-color-scheme: dark)">
@@ -172,7 +172,7 @@
 
   <div class="content">
     <div class="content-inner">
-      <div class="ph-kicker" data-i18n="isomerism.kicker">visualização</div>
+      <div class="ph-kicker" data-i18n="isomerism.kicker">visualization</div>
 
       <h1 class="ph-title" data-i18n="isomerism.funcao.title">Title</h1>
 
@@ -244,34 +244,15 @@
       </section>
 
 <section class="iso-overview" id="iso-overview">
-        <h2 class="iso-overview-title" data-i18n="isomerism.overview.defTitle">What is an isomer?</h2>
+        <h2 class="iso-overview-title" data-i18n="isomerism.overview.defTitle">O que é um isômero?</h2>
         <p class="iso-overview-def" data-i18n-html="isomerism.overview.defText"></p>
         <div class="iso-tree">
           <div class="iso-tree-title" data-i18n="isomerism.overview.treeTitle">Map</div>
           <div class="iso-tree-row"><span class="iso-tree-label" data-i18n="isomerism.overview.treeConst">Constitutional</span><span class="iso-tree-items">C1–C5</span></div>
           <div class="iso-tree-row"><span class="iso-tree-label" data-i18n="isomerism.overview.treeEsp">Spatial</span><span class="iso-tree-items">E1–E2</span></div>
         </div>
-        <div class="iso-summary-table-wrap">
-          <div class="iso-summary-title" data-i18n="isomerism.overview.tableTitle">Quick reference</div>
-          <table class="iso-summary-table">
-            <thead><tr>
-              <th data-i18n="isomerism.overview.tableHeadType">Type</th>
-              <th data-i18n="isomerism.overview.tableHeadChanges">Changes</th>
-              <th data-i18n="isomerism.overview.tableHeadExample">Example</th>
-              <th data-i18n="isomerism.overview.tableHeadLab">Lab</th>
-            </tr></thead>
-            <tbody>
-              <tr><td data-i18n="isomerism.overview.rowFuncao">Function</td><td data-i18n="isomerism.overview.rowFuncaoCh"></td><td data-i18n="isomerism.overview.rowFuncaoEx"></td><td data-i18n="isomerism.overview.rowFuncaoLab"></td></tr>
-              <tr><td data-i18n="isomerism.overview.rowCadeia">Chain</td><td data-i18n="isomerism.overview.rowCadeiaCh"></td><td data-i18n="isomerism.overview.rowCadeiaEx"></td><td data-i18n="isomerism.overview.rowCadeiaLab"></td></tr>
-              <tr><td data-i18n="isomerism.overview.rowPosicao">Position</td><td data-i18n="isomerism.overview.rowPosicaoCh"></td><td data-i18n="isomerism.overview.rowPosicaoEx"></td><td data-i18n="isomerism.overview.rowPosicaoLab"></td></tr>
-              <tr><td data-i18n="isomerism.overview.rowMetameria">Metamerism</td><td data-i18n="isomerism.overview.rowMetameriaCh"></td><td data-i18n="isomerism.overview.rowMetameriaEx"></td><td data-i18n="isomerism.overview.rowMetameriaLab"></td></tr>
-              <tr><td data-i18n="isomerism.overview.rowTautomeria">Tautomerism</td><td data-i18n="isomerism.overview.rowTautomeriaCh"></td><td data-i18n="isomerism.overview.rowTautomeriaEx"></td><td data-i18n="isomerism.overview.rowTautomeriaLab"></td></tr>
-              <tr><td data-i18n="isomerism.overview.rowGeometrica">Geometric</td><td data-i18n="isomerism.overview.rowGeometricaCh"></td><td data-i18n="isomerism.overview.rowGeometricaEx"></td><td data-i18n="isomerism.overview.rowGeometricaLab"></td></tr>
-              <tr><td data-i18n="isomerism.overview.rowOptica">Optical</td><td data-i18n="isomerism.overview.rowOpticaCh"></td><td data-i18n="isomerism.overview.rowOpticaEx"></td><td data-i18n="isomerism.overview.rowOpticaLab"></td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="iso-callout iso-callout-amber" data-i18n-html="isomerism.overview.tautomerWarning"></div>
+        <p class="lab-readmore"><a href="/explore/what-is-isomerism.html" data-i18n="isomerism.overview.readArticle">Ler o artigo de isomeria →</a></p>
+
       </section>
 
       <div class="iso-section-header">
@@ -282,7 +263,7 @@
           </div>
         </div>
 
-        <p class="iso-desc" data-i18n-html="isomerism.funcao.desc">Compostos com a mesma fórmula molecular mas pertencentes a <b style="color:var(--text-1)">famílias orgânicas diferentes</b>. O número e tipo de átomos é idêntico — o que muda é como eles se organizam em grupos funcionais.</p>
+        <p class="iso-desc" data-i18n-html="isomerism.funcao.desc">Same molecular formula, <b>different organic families</b>.</p>
 
         <div class="mol-pair">
           <div class="mol-card">
@@ -327,12 +308,7 @@
           </div>
         </div>
 
-        <div class="iso-callout iso-callout-green" data-i18n-html="isomerism.funcao.callout">
-          <b>Diferença-chave:</b> Ambos têm C₂H₆O, mas o etanol tem o oxigênio no fim da cadeia formando o grupo —OH (álcool), enquanto o éter tem o oxigênio entre dois carbonos (—C—O—C—). Isso explica as propriedades físico-químicas totalmente distintas: o etanol faz pontes de hidrogênio e tem ponto de ebulição muito mais alto.
-        </div>
-        <div class="iso-gold-rule iso-callout iso-callout-amber" data-i18n-html="isomerism.funcao.goldRule"></div>
-        <div class="iso-in-practice iso-callout iso-callout-blue" data-i18n-html="isomerism.funcao.inPractice"></div>
-        <div class="iso-3d-panel" id="iso-3d" data-mol-a="ethanol" data-mol-b="dimethylether">
+                                <div class="iso-3d-panel" id="iso-3d" data-mol-a="ethanol" data-mol-b="dimethylether">
           <div class="iso-3d-head">
             <span class="iso-3d-title" data-i18n="isomerism.iso3dTitle">3D · drag to rotate</span>
             <div class="iso-3d-tabs">
@@ -345,7 +321,7 @@
             <span class="iso-3d-hint" data-i18n="isomerism.iso3dHint">drag · scroll · double-click to auto-rotate</span>
           </div>
         </div>
-        <p class="iso-mol3d-link"><a href="../../molecules.html" data-i18n="isomerism.funcao.mol3d">View ethanol in 3D →</a></p>
+        
 
     </div>
   </div>

@@ -12,8 +12,9 @@
 // for Portuguese search queries (and broke WhatsApp/Facebook link previews
 // which don't execute JS).
 //
-// Strategy: keep i18n.js client-side for body content (cheap, works), but
-// bake the SEO-critical head tags into per-language HTML files at build.
+// Strategy: bake SEO-critical head tags and plain data-i18n text
+// fallbacks into per-language HTML files at build. i18n.js still
+// overwrites body copy client-side when the user switches language.
 // ───────────────────────────────────────────────────────────────────
 
 'use strict';
@@ -154,6 +155,21 @@ function escText(s) {
     .replace(/>/g, '&gt;');
 }
 
+// Bake data-i18n text nodes so .pt.html fallbacks stay in the target
+// language after rebuild. Runtime i18n.js still overwrites these.
+// Only elements whose children are plain text (no nested tags).
+function bakeDataI18nText(html, lang, dict) {
+  return html.replace(
+    /(<([a-zA-Z][a-zA-Z0-9:-]*)\b[^>]*\bdata-i18n="([^"]+)"[^>]*>)([^<]*)(<\/\2>)/g,
+    function (full, open, _tag, key, _inner, close) {
+      const val = resolveKey(dict, lang, key);
+      if (typeof val !== 'string') return full;
+      if (/[<>]/.test(val)) return full;
+      return open + escText(val) + close;
+    }
+  );
+}
+
 function buildVariant(srcAbs, dstAbs, lang, dict) {
   const src = fs.readFileSync(srcAbs, 'utf8');
 
@@ -226,6 +242,8 @@ function buildVariant(srcAbs, dstAbs, lang, dict) {
     /<meta\s+property="og:locale:alternate"\s+content="[^"]*">/,
     `<meta property="og:locale:alternate" content="${OG_LOCALE[altLang]}">`
   );
+
+  out = bakeDataI18nText(out, lang, dict);
 
   // og:url and canonical — point variant at its language-specific URL so
   // each variant is self-canonical. EN keeps clean URLs (x-default).

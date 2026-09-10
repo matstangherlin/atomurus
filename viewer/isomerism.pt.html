@@ -76,7 +76,7 @@
 <script src="../assets/global-nav.js?v=202609090500"></script>
 <script src="/assets/public-workspace.js?v=202608282500"></script>
 <link rel="stylesheet" href="/assets/ui/index.css?v=202609090500">
-<link rel="stylesheet" href="/assets/layouts/viewer.css?v=202609090500">
+<link rel="stylesheet" href="/assets/layouts/viewer.css?v=202609101700">
 <script src="../lazy-ads.js?v=202608041630" defer></script>
 <script>
 (function(){
@@ -208,7 +208,8 @@
     <div class="content-inner">
       <div class="ph-kicker" data-i18n="isomerism.kicker">visualização</div>
       <h1 class="ph-title" data-i18n="isomerism.title">Isomeria</h1>
-      <p class="ph-desc" data-i18n="isomerism.desc">Moléculas com a mesma fórmula molecular mas estruturas diferentes — compare os 4 grandes tipos: função, cadeia, geométrica e óptica lado a lado.</p>
+      <p class="ph-desc" data-i18n="isomerism.desc">Mesma fórmula, estruturas diferentes. Compare os tipos em 2D e 3D.</p>
+      <p class="lab-readmore"><a href="/explore/what-is-isomerism.html" data-i18n="isomerism.overview.readArticle">Ler o artigo de isomeria →</a></p>
 
       <!-- ── Viewer top tabs ── -->
       <nav class="vz-tabs" aria-label="Visualizador">
@@ -280,7 +281,7 @@
           </div>
         </div>
 
-        <p class="iso-desc">Compostos com a mesma fórmula molecular mas pertencentes a <b style="color:var(--text-1)">famílias orgânicas diferentes</b>. O número e tipo de átomos é idêntico — o que muda é como eles se organizam em grupos funcionais.</p>
+        <p class="iso-desc">Mesma fórmula molecular, <b>famílias orgânicas diferentes</b>.</p>
 
         <div class="mol-pair">
           <div class="mol-card">
@@ -323,10 +324,7 @@
           </div>
         </div>
 
-        <div class="iso-callout iso-callout-green">
-          <b>Diferença-chave:</b> Ambos têm C₂H₆O, mas o etanol tem o oxigênio no fim da cadeia formando o grupo —OH (álcool), enquanto o éter tem o oxigênio entre dois carbonos (—C—O—C—). Isso explica as propriedades físico-químicas totalmente distintas: o etanol faz pontes de hidrogênio e tem ponto de ebulição muito mais alto.
-        </div>
-      </div>
+              </div>
 
       <!-- ══ PAINEL 2: CADEIA ══ -->
       <div class="iso-panel" id="panel-cadeia" role="tabpanel" aria-labelledby="tab-cadeia">
@@ -338,7 +336,7 @@
           </div>
         </div>
 
-        <p class="iso-desc">Ocorre quando compostos têm a mesma fórmula molecular mas diferem no <b style="color:var(--text-1)">modo como os carbonos se encadeiam</b> — cadeia normal (linear) versus ramificada (com desvio).</p>
+        <p class="iso-desc">Mesma fórmula, <b>esqueleto carbônico diferente</b> — linear ou ramificado.</p>
 
         <div class="mol-pair">
           <div class="mol-card">
@@ -387,10 +385,7 @@
           </div>
         </div>
 
-        <div class="iso-callout iso-callout-amber">
-          <b>Diferença-chave:</b> Os 4 carbonos de C₄H₁₀ podem se organizar em linha reta (n-butano) ou com um carbono "desviando" da cadeia principal (isobutano). A ramificação reduz as interações de Van der Waals entre moléculas, abaixando o ponto de ebulição. Por isso o isobutano ferve antes (−12 °C vs −1 °C).
-        </div>
-      </div>
+              </div>
 
       <!-- ══ PAINEL 3: GEOMÉTRICA ══ -->
       <div class="iso-panel" id="panel-geometrica" role="tabpanel" aria-labelledby="tab-geometrica">
@@ -461,10 +456,7 @@
           </div>
         </div>
 
-        <div class="iso-callout iso-callout-blue">
-          <b>Por que não se interconvertem?</b> A dupla ligação C=C tem um componente π (pi) que impede a rotação livre em torno do eixo C—C. Para que cis vire trans, seria preciso quebrar essa ligação — o que requer cerca de 250 kJ/mol. Em condições normais, os dois isômeros são compostos separados e estáveis.
-        </div>
-      </div>
+              </div>
 
       <!-- ══ PAINEL 4: ÓPTICA ══ -->
       <div class="iso-panel" id="panel-optica" role="tabpanel" aria-labelledby="tab-optica">
@@ -545,10 +537,7 @@
           </div>
         </div>
 
-        <div class="iso-callout iso-callout-purple">
-          <b>Por que importa?</b> Enantiômeros têm propriedades físicas idênticas (mesmo ponto de fusão, ebulição, densidade) mas interagem de forma diferente com matéria viva. Em bioquímica, os receptores e enzimas são quirais — por isso um enantiômero de um medicamento pode ser terapêutico enquanto o outro é inativo ou tóxico. O exemplo clássico é a talidomida: o enantiômero R era sedativo, o S causava malformações.
-        </div>
-
+        
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:12.5px;color:var(--text-2);line-height:1.6">
           <span style="font-family:'DM Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);display:block;margin-bottom:8px" data-i18n="isomerism.bondLegendTitle">Legenda dos vínculos</span>
           <div style="display:flex;gap:20px;flex-wrap:wrap">
@@ -560,6 +549,11 @@
       </div>
       <!-- ── END PANELS ── -->
 
+
+      <aside class="lab-readmore-card">
+        <p data-i18n="isomerism.overview.readArticleLead">A classificação completa e os exemplos de vestibular estão no artigo.</p>
+        <a class="ui-btn ui-btn-accent" href="/explore/what-is-isomerism.html" data-i18n="isomerism.overview.readArticle">Ler o artigo de isomeria →</a>
+      </aside>
     </div>
   </div>
 </main>

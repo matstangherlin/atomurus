@@ -20,7 +20,7 @@
 <script src="../../../assets/global-nav.js?v=202609090500"></script>
 <script src="/assets/public-workspace.js?v=202608282500"></script>
 <link rel="stylesheet" href="/assets/ui/index.css?v=202609090500">
-<link rel="stylesheet" href="/assets/layouts/viewer.css?v=202609090500">
+<link rel="stylesheet" href="/assets/layouts/viewer.css?v=202609101700">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1E6A50" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0E0D0C" media="(prefers-color-scheme: dark)">
@@ -172,7 +172,7 @@
 
   <div class="content">
     <div class="content-inner">
-      <div class="ph-kicker" data-i18n="isomerism.kicker">visualização</div>
+      <div class="ph-kicker" data-i18n="isomerism.kicker">visualization</div>
 
       <h1 class="ph-title" data-i18n-html="isomerism.geometrica.title">Title</h1>
 
@@ -250,6 +250,8 @@
 
         <p class="iso-desc" data-i18n-html="isomerism.geometrica.desc">Surge em compostos com <b style="color:var(--text-1)">dupla ligação C=C</b> (ou anel) quando há dois substituintes diferentes em cada carbono da dupla. A rotação é impedida — os grupos ficam "presos" no plano.</p>
 
+        <p class="lab-readmore"><a href="/explore/what-is-isomerism.html" data-i18n="isomerism.overview.readArticle">Ler o artigo de isomeria →</a></p>
+
         <div class="mol-pair">
           <div class="mol-card">
             <div class="mol-card-tag" data-i18n="isomerism.geometrica.aTag">cis · mesmo lado</div>
@@ -307,12 +309,7 @@
           </div>
         </div>
 
-        <div class="iso-callout iso-callout-blue" data-i18n-html="isomerism.geometrica.callout">
-          <b>Por que não se interconvertem?</b> A dupla ligação C=C tem um componente π (pi) que impede a rotação livre em torno do eixo C—C. Para que cis vire trans, seria preciso quebrar essa ligação — o que requer cerca de 250 kJ/mol. Em condições normais, os dois isômeros são compostos separados e estáveis.
-        </div>
-        <div class="iso-gold-rule iso-callout iso-callout-amber" data-i18n-html="isomerism.geometrica.goldRule"></div>
-        <div class="iso-in-practice iso-callout iso-callout-blue" data-i18n-html="isomerism.geometrica.inPractice"></div>
-        <div class="iso-3d-panel" id="iso-3d" data-mol-a="cis2butene" data-mol-b="trans2butene">
+                                <div class="iso-3d-panel" id="iso-3d" data-mol-a="cis2butene" data-mol-b="trans2butene">
           <div class="iso-3d-head">
             <span class="iso-3d-title" data-i18n="isomerism.iso3dTitle">3D · drag to rotate</span>
             <div class="iso-3d-tabs">
@@ -325,9 +322,7 @@
             <span class="iso-3d-hint" data-i18n="isomerism.iso3dHint">drag · scroll · double-click to auto-rotate</span>
           </div>
         </div>
-        <div class="iso-crosslink iso-callout iso-callout-purple" data-i18n-html="isomerism.geometrica.linkPosition"></div>
-        <div class="iso-extra-note iso-callout iso-callout-amber" data-i18n-html="isomerism.geometrica.diastereomerNote"></div>
-
+                
     </div>
   </div>
 </main>

@@ -644,10 +644,10 @@ body.no-anim .el:hover { transform: none !important; box-shadow: none !important
 /* ─── ELEMENT MODAL ─── */
 .overlay {
   position: fixed; inset: 0;
-  background: rgba(0,0,0,.38);
-  backdrop-filter: blur(6px) saturate(.85);
-  -webkit-backdrop-filter: blur(6px);
-  z-index: 200;
+  background: rgba(20, 18, 14, .38);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  z-index: 2400;
   display: flex; align-items: center; justify-content: center;
   padding: 16px;
   opacity: 0; pointer-events: none;
@@ -658,10 +658,11 @@ body.no-anim .el:hover { transform: none !important; box-shadow: none !important
 
 .modal {
   background: var(--surface);
-  backdrop-filter: blur(24px) saturate(1.2);
-  -webkit-backdrop-filter: blur(24px) saturate(1.2);
-  border-radius: 20px;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-radius: 16px;
   width: 640px; max-width: 95vw;
+  max-height: 90vh;
   box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255,255,255,0.1) inset;
   border: 1px solid var(--border);
   overflow: hidden;
@@ -3895,49 +3896,55 @@ body[data-pt-tab="isotopos"] .pt-tab.active:not([data-tab="isotopos"]) svg { opa
   .mobile-overlay { display: none; }
   .sidebar { display: flex; }
 
-  /* Transform overlay/modal into a side inspector */
+  /* Element inspector stays a fixed paper modal on desktop.
+     A static side-panel lived outside #ps-shell and never appeared on click. */
   .overlay {
-    position: static;
-    display: none;
-    width: 340px;
-    height: 100dvh;
-    padding: 0;
-    background: var(--surface);
-    border-left: 1px solid var(--border);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    flex-shrink: 0;
-    z-index: 100;
+    position: fixed;
+    inset: 0;
+    display: flex;
+    width: auto;
+    height: auto;
+    padding: 24px;
+    background: rgba(20, 18, 14, .38);
+    border-left: none;
+    z-index: 2400;
+  }
+  .overlay:not(.open) {
+    display: flex;
+    opacity: 0;
+    pointer-events: none;
   }
   .overlay.open {
     display: flex;
-    animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 1;
+    pointer-events: all;
+    animation: none;
   }
   .modal {
-    width: 100%;
-    height: 100%;
-    max-width: none;
-    max-height: none;
-    border-radius: 0;
-    box-shadow: none;
-    border: none;
-    background: transparent;
-    flex-direction: column;
+    width: min(640px, 95vw);
+    height: auto;
+    max-width: 95vw;
+    max-height: 90vh;
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    flex-direction: row;
   }
   .modal-l {
-    width: 100%;
-    min-width: unset;
-    flex-direction: row;
-    align-items: center;
-    gap: 12px;
-    padding: 18px 20px;
-    border-right: none;
-    border-bottom: 1px solid var(--border);
+    width: 200px;
+    min-width: 180px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 26px 18px;
+    border-right: 1px solid var(--border);
+    border-bottom: none;
     flex-shrink: 0;
   }
-  .modal-r { padding: 20px; overflow-y: auto; flex: 1; }
-  .modal-sym { font-size: 48px; letter-spacing: -1px; }
-  .modal-nm { font-size: 15px; }
+  .modal-r { padding: 20px; overflow-y: auto; flex: 1; max-height: 90vh; }
+  .modal-sym { font-size: 56px; letter-spacing: -1px; }
+  .modal-nm { font-size: 16px; }
   
   .m-meta-grid { grid-template-columns: 1fr 1fr; gap: 8px 14px; }
   .m-props-grid .m-prop { padding: 6px 0; }

@@ -277,7 +277,7 @@ canvas#viewer3d{width:100%;height:460px;display:block;cursor:grab;background:var
 <script src="../assets/global-nav.js?v=202609090500"></script>
 <script src="/assets/public-workspace.js?v=202608282500"></script>
 <link rel="stylesheet" href="/assets/ui/index.css?v=202609090500">
-<link rel="stylesheet" href="/assets/layouts/viewer.css?v=202609090500">
+<link rel="stylesheet" href="/assets/layouts/viewer.css?v=202609101700">
 <script src="../lazy-ads.js?v=202608041630" defer></script>
 </head>
 <body class="ps-body">
@@ -293,7 +293,7 @@ canvas#viewer3d{width:100%;height:460px;display:block;cursor:grab;background:var
         <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/>
       </svg>
     </div>
-    <div><div class="logo-text">Atomurus</div><div class="logo-tag" data-i18n="common.brandTag">chemistry lab</div></div>
+    <div><div class="logo-text">Atomurus</div><div class="logo-tag" data-i18n="common.brandTag">laboratório de química</div></div>
   </a>
     <button class="mobile-menu-btn" onclick="toggleMobileSidebar()">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><line x1="2" y1="4.5" x2="14" y2="4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="2" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="2" y1="11.5" x2="14" y2="11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
@@ -301,7 +301,7 @@ canvas#viewer3d{width:100%;height:460px;display:block;cursor:grab;background:var
     <div class="breadcrumb" hidden>
       Workspace
       <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="opacity:.35"><path d="M3.5 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-      <span data-i18n="allotropes.breadcrumb">Allotropes</span>
+      <span data-i18n="allotropes.breadcrumb">Alótropos</span>
     </div>
     <form class="ps-search search-box" role="search" action="../periodic-table.html" method="get">
   <label class="lc-sr-only" for="ps-search-q">Search element</label>
@@ -333,7 +333,7 @@ canvas#viewer3d{width:100%;height:460px;display:block;cursor:grab;background:var
   <span class="ps-plan-badge" data-atomurus-plan-badge hidden></span>
   <a class="ps-userchip lc-topnav-cta" href="../login.html" data-atomurus-account-chip aria-label="Account">
     <svg class="ps-userchip-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span data-i18n="pricing.ctaAccount">Account</span>
+    <span data-i18n="pricing.ctaAccount">Conta</span>
   </a>
 </div>
   </div>
@@ -341,26 +341,26 @@ canvas#viewer3d{width:100%;height:460px;display:block;cursor:grab;background:var
 <aside class="ws-sidebar sidebar ps-pub-sidebar" id="ws-sidebar" data-atomurus-sidebar>
   <nav class="ws-nav" id="ws-nav-main" aria-label="Laboratory" data-atomurus-lab-nav>
     <div class="ws-nav-block ws-nav-site">
-      <h2 class="ws-nav-group" data-i18n="common.nav.laboratory">Laboratory</h2>
+      <h2 class="ws-nav-group" data-i18n="common.nav.laboratory">Laboratório</h2>
       <a class="ws-nav-item" href="/" data-nav="home">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M2.5 7.5 8 3l5.5 4.5M4 6.5V13h8V6.5M6.5 13V9h3v4"/></g></svg>
-        <span class="ws-nav-label" data-i18n="common.nav.home">Home</span>
+        <span class="ws-nav-label" data-i18n="common.nav.home">Início</span>
       </a>
       <a class="ws-nav-item" href="/periodic-table.html" data-nav="periodic">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/></g></svg>
-        <span class="ws-nav-label" data-i18n="common.nav.periodic">Periodic Table</span>
+        <span class="ws-nav-label" data-i18n="common.nav.periodic">Tabela Periódica</span>
       </a>
       <a class="ws-nav-item" href="/viewer/atomic-models.html" data-nav="viewer">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="8" cy="8" r="2"/><ellipse cx="8" cy="8" rx="6" ry="2.5"/><ellipse cx="8" cy="8" rx="6" ry="2.5" transform="rotate(60 8 8)"/></g></svg>
-        <span class="ws-nav-label" data-i18n="common.nav.visualizador">Viewer</span>
+        <span class="ws-nav-label" data-i18n="common.nav.visualizador">Visualizador</span>
       </a>
       <a class="ws-nav-item" href="/calculators.html" data-nav="calculators">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="2" width="10" height="12" rx="1"/><path d="M5 5h6M5.5 8h1M9.5 8h1M5.5 11h1M9.5 11h1"/></g></svg>
-        <span class="ws-nav-label" data-i18n="common.nav.calc">Calculators</span>
+        <span class="ws-nav-label" data-i18n="common.nav.calc">Calculadoras</span>
       </a>
       <a class="ws-nav-item" href="/explore.html" data-nav="explore">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/></g></svg>
-        <span class="ws-nav-label" data-i18n="common.nav.explore">Explore</span>
+        <span class="ws-nav-label" data-i18n="common.nav.explore">Explorar</span>
       </a>
       <a class="ws-nav-item" href="/app" data-nav="workspace">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 12l4-4 2 2 4-6"/></g></svg>
@@ -371,11 +371,11 @@ canvas#viewer3d{width:100%;height:460px;display:block;cursor:grab;background:var
   <div class="ws-nav-foot sidebar-foot" id="ws-nav-foot" data-atomurus-nav-foot>
     <a class="ws-nav-item" href="/login" data-nav="account" data-auth-nav-link="common.nav.login">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5"/></g></svg>
-      <span class="ws-nav-label" data-i18n="common.nav.login">Account</span>
+      <span class="ws-nav-label" data-i18n="common.nav.login">Conta</span>
     </a>
     <a class="ws-nav-item" href="/pricing" data-nav="plans">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 5h8v8H4zM6 3v2M10 3v2"/></g></svg>
-      <span class="ws-nav-label" data-i18n="common.nav.plans">Plans</span>
+      <span class="ws-nav-label" data-i18n="common.nav.plans">Planos</span>
     </a>
   </div>
 </aside>
@@ -388,62 +388,62 @@ canvas#viewer3d{width:100%;height:460px;display:block;cursor:grab;background:var
     <span class="ds-sep"></span>
     <span class="ds-k">engine</span><span class="ds-v">three.js · WebGL</span>
     <span class="ds-spacer"></span>
-    <span class="ds-k">module</span><span class="ds-v ds-hi" data-i18n="allotropes.dsModule">allotropic structures</span>
+    <span class="ds-k">module</span><span class="ds-v ds-hi" data-i18n="allotropes.dsModule">estruturas alotrópicas</span>
   </div>
 
 
   <div class="content">
     <div class="content-inner">
       <div class="ph-kicker" data-i18n="allotropes.kicker">visualização</div>
-      <h1 class="ph-title" data-i18n="allotropes.title">Allotropes</h1>
-      <p class="ph-desc" data-i18n="allotropes.desc">Different structural forms of the same chemical element — carbon yields graphite (hexagonal layers), diamond (tetrahedral), fullerene C₆₀ (truncated icosahedron) and graphene (2D). Same atom, radically different properties.</p>
+      <h1 class="ph-title" data-i18n="allotropes.title">Alótropos</h1>
+      <p class="ph-desc" data-i18n="allotropes.desc">Formas estruturais diferentes de um mesmo elemento químico — o carbono forma grafite (camadas hexagonais), diamante (tetraédrico), fulereno C₆₀ (icosaedro truncado) e grafeno (2D). Mesmo átomo, propriedades radicalmente distintas.</p>
 
       <nav class="vz-tabs" aria-label="Visualizador">
         <a class="vz-tab" href="atomic-models.html">
           <span class="vz-num">01</span>
           <svg class="vz-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="1.5" fill="currentColor"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/></svg>
-          <span data-i18n="atomicModels.tabAtomic">Atomic Models</span>
+          <span data-i18n="atomicModels.tabAtomic">Modelos Atômicos</span>
         </a>
         <a class="vz-tab" href="molecules.html">
           <span class="vz-num">02</span>
           <svg class="vz-icon" viewBox="0 0 16 16" fill="none"><circle cx="4" cy="4" r="2" fill="currentColor"/><circle cx="12" cy="6" r="2" fill="currentColor" opacity=".7"/><circle cx="8" cy="12" r="2" fill="currentColor" opacity=".5"/><line x1="4" y1="4" x2="12" y2="6" stroke="currentColor" stroke-width="1"/><line x1="12" y1="6" x2="8" y2="12" stroke="currentColor" stroke-width="1"/><line x1="4" y1="4" x2="8" y2="12" stroke="currentColor" stroke-width="1"/></svg>
-          <span data-i18n="atomicModels.tabMolecules">Molecules</span>
+          <span data-i18n="atomicModels.tabMolecules">Moléculas</span>
         </a>
         <a class="vz-tab active" href="allotropes.html" aria-current="page">
           <span class="vz-num">03</span>
           <svg class="vz-icon" viewBox="0 0 16 16" fill="none"><polygon points="8,2 14,6 12,13 4,13 2,6" stroke="currentColor" stroke-width="1.2" fill="none"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/></svg>
-          <span data-i18n="atomicModels.tabAllotropes">Allotropes</span>
+          <span data-i18n="atomicModels.tabAllotropes">Alótropos</span>
         </a>
         <a class="vz-tab" href="isomerism.html">
           <span class="vz-num">04</span>
           <svg class="vz-icon" viewBox="0 0 16 16" fill="none"><circle cx="4" cy="8" r="2" fill="currentColor" opacity=".85"/><circle cx="12" cy="8" r="2" fill="currentColor" opacity=".85"/><line x1="4" y1="8" x2="4" y2="3.5" stroke="currentColor" stroke-width="1.1"/><line x1="12" y1="8" x2="12" y2="3.5" stroke="currentColor" stroke-width="1.1"/><line x1="4" y1="8" x2="4" y2="12.5" stroke="currentColor" stroke-width="1.1"/><line x1="12" y1="8" x2="12" y2="12.5" stroke="currentColor" stroke-width="1.1"/><line x1="8" y1="1" x2="8" y2="15" stroke="currentColor" stroke-width="1" stroke-dasharray="2,1.5" opacity=".5"/></svg>
-          <span data-i18n="common.nav.isomerism">Isomerism</span>
+          <span data-i18n="common.nav.isomerism">Isomeria</span>
         </a>
       </nav>
 
       <div class="av-substrip">
-        <span class="av-k" data-i18n="allotropes.avPage">page</span><span class="av-v" data-i18n="allotropes.avPageVal">allotropes</span>
+        <span class="av-k" data-i18n="allotropes.avPage">página</span><span class="av-v" data-i18n="allotropes.avPageVal">alótropos</span>
         <span class="av-sep"></span>
-        <span class="av-k" data-i18n="allotropes.avElemento">element</span><span class="av-v" id="av-elem">carbon</span>
+        <span class="av-k" data-i18n="allotropes.avElemento">elemento</span><span class="av-v" id="av-elem">carbon</span>
         <span class="av-sep"></span>
-        <span class="av-k" data-i18n="allotropes.avForma">form</span><span class="av-v" id="av-allo">graphite</span>
+        <span class="av-k" data-i18n="allotropes.avForma">forma</span><span class="av-v" id="av-allo">graphite</span>
         <span class="av-sep"></span>
-        <span class="av-k" data-i18n="allotropes.avShortcuts">shortcuts</span><span class="av-v">space · r · f</span>
+        <span class="av-k" data-i18n="allotropes.avShortcuts">atalhos</span><span class="av-v">space · r · f</span>
       </div>
 
       <div class="viewer">
         <div class="panel">
           <input type="search" class="allo-search" data-i18n-attr="placeholder:allotropes.searchPh" placeholder="Search element or allotrope…" aria-label="Search allotropes">
-          <div class="panel-label" data-i18n="allotropes.panelElement">Element</div>
+          <div class="panel-label" data-i18n="allotropes.panelElement">Elemento</div>
           <div class="pill-row">
-            <button class="pill purple active allo-elem-btn" data-elem="carbon"     onclick="setAlloElement('carbon')"     data-i18n="allotropes.elem.carbon.label">Carbon</button>
-            <button class="pill purple allo-elem-btn"        data-elem="oxygen"     onclick="setAlloElement('oxygen')"     data-i18n="allotropes.elem.oxygen.label">Oxygen</button>
-            <button class="pill purple allo-elem-btn"        data-elem="sulfur"     onclick="setAlloElement('sulfur')"     data-i18n="allotropes.elem.sulfur.label">Sulfur</button>
-            <button class="pill purple allo-elem-btn"        data-elem="phosphorus" onclick="setAlloElement('phosphorus')" data-i18n="allotropes.elem.phosphorus.label">Phosphorus</button>
+            <button class="pill purple active allo-elem-btn" data-elem="carbon"     onclick="setAlloElement('carbon')"     data-i18n="allotropes.elem.carbon.label">Carbono</button>
+            <button class="pill purple allo-elem-btn"        data-elem="oxygen"     onclick="setAlloElement('oxygen')"     data-i18n="allotropes.elem.oxygen.label">Oxigênio</button>
+            <button class="pill purple allo-elem-btn"        data-elem="sulfur"     onclick="setAlloElement('sulfur')"     data-i18n="allotropes.elem.sulfur.label">Enxofre</button>
+            <button class="pill purple allo-elem-btn"        data-elem="phosphorus" onclick="setAlloElement('phosphorus')" data-i18n="allotropes.elem.phosphorus.label">Fósforo</button>
           </div>
-          <div class="panel-label" data-i18n="allotropes.panelAllotrope">Allotrope</div>
+          <div class="panel-label" data-i18n="allotropes.panelAllotrope">Alótropo</div>
           <div class="pill-row" id="allo-variants"></div>
-          <div class="allo-search-none" style="display:none" data-i18n="allotropes.searchNone">No allotrope matches your search.</div>
+          <div class="allo-search-none" style="display:none" data-i18n="allotropes.searchNone">Nenhum alótropo corresponde à busca.</div>
         </div>
 
         <div class="canvas-wrap" id="canvas-wrap">
@@ -467,11 +467,11 @@ canvas#viewer3d{width:100%;height:460px;display:block;cursor:grab;background:var
 
         <div class="info-bar">
           <div>
-            <div id="model-name" class="info-name" data-i18n="allotropes.allo.graphite.name">Graphite — Carbon</div>
-            <div id="model-desc" class="info-desc" data-i18n="allotropes.allo.graphite.desc">AB-stacked hexagonal layers (graphene) · sp² · Electrical conductor</div>
+            <div id="model-name" class="info-name" data-i18n="allotropes.allo.graphite.name">Grafite — Carbono</div>
+            <div id="model-desc" class="info-desc" data-i18n="allotropes.allo.graphite.desc">Camadas hexagonais (grafeno) AB-stacked · sp² · Condutor elétrico</div>
             <div id="model-stats" class="info-stats"></div>
           </div>
-          <div class="info-hint" data-i18n="allotropes.infoHint">drag · scroll · or use controls</div>
+          <div class="info-hint" data-i18n="allotropes.infoHint">arraste · scroll · ou use os controles</div>
         </div>
       </div>
     </div>

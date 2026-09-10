@@ -862,7 +862,7 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
     max-width: 62ch !important;
   }
   .av-substrip {
-    display: flex;
+    display: none;
     align-items: center;
     gap: 10px;
     padding: 9px 0;
@@ -1134,7 +1134,7 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
 <script src="../assets/global-nav.js?v=202609090500"></script>
 <script src="/assets/public-workspace.js?v=202608282500"></script>
 <link rel="stylesheet" href="/assets/ui/index.css?v=202609090500">
-<link rel="stylesheet" href="/assets/layouts/viewer.css?v=202609090500">
+<link rel="stylesheet" href="/assets/layouts/viewer.css?v=202609101700">
 </head>
 <body class="ps-body">
 
@@ -1152,7 +1152,7 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
     </div>
     <div>
       <div class="logo-text">Atomurus</div>
-      <div class="logo-tag" data-i18n="common.brandTag">chemistry lab</div>
+      <div class="logo-tag" data-i18n="common.brandTag">laboratório de química</div>
     </div>
   </a>
     <button class="mobile-menu-btn" onclick="toggleMobileSidebar()" aria-label="Open menu" data-i18n-attr="aria-label:atomicModels.aria.mobileMenu">
@@ -1167,7 +1167,7 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
       <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="opacity:.35">
         <path d="M3.5 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
       </svg>
-      <span data-i18n="atomicModels.breadcrumb">Atomic Models</span>
+      <span data-i18n="atomicModels.breadcrumb">Modelos Atômicos</span>
     </div>
     <form class="ps-search search-box" role="search" action="../periodic-table.html" method="get">
   <label class="lc-sr-only" for="ps-search-q">Search element</label>
@@ -1199,7 +1199,7 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
   <span class="ps-plan-badge" data-atomurus-plan-badge hidden></span>
   <a class="ps-userchip lc-topnav-cta" href="../login.html" data-atomurus-account-chip aria-label="Account">
     <svg class="ps-userchip-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span data-i18n="pricing.ctaAccount">Account</span>
+    <span data-i18n="pricing.ctaAccount">Conta</span>
   </a>
 </div>
   </div>
@@ -1207,26 +1207,26 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
 <aside class="ws-sidebar sidebar ps-pub-sidebar" id="ws-sidebar" data-atomurus-sidebar>
   <nav class="ws-nav" id="ws-nav-main" aria-label="Laboratory" data-atomurus-lab-nav>
     <div class="ws-nav-block ws-nav-site">
-      <h2 class="ws-nav-group" data-i18n="common.nav.laboratory">Laboratory</h2>
+      <h2 class="ws-nav-group" data-i18n="common.nav.laboratory">Laboratório</h2>
       <a class="ws-nav-item" href="/" data-nav="home">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M2.5 7.5 8 3l5.5 4.5M4 6.5V13h8V6.5M6.5 13V9h3v4"/></g></svg>
-        <span class="ws-nav-label" data-i18n="common.nav.home">Home</span>
+        <span class="ws-nav-label" data-i18n="common.nav.home">Início</span>
       </a>
       <a class="ws-nav-item" href="/periodic-table.html" data-nav="periodic">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/></g></svg>
-        <span class="ws-nav-label" data-i18n="common.nav.periodic">Periodic Table</span>
+        <span class="ws-nav-label" data-i18n="common.nav.periodic">Tabela Periódica</span>
       </a>
       <a class="ws-nav-item" href="/viewer/atomic-models.html" data-nav="viewer">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="8" cy="8" r="2"/><ellipse cx="8" cy="8" rx="6" ry="2.5"/><ellipse cx="8" cy="8" rx="6" ry="2.5" transform="rotate(60 8 8)"/></g></svg>
-        <span class="ws-nav-label" data-i18n="common.nav.visualizador">Viewer</span>
+        <span class="ws-nav-label" data-i18n="common.nav.visualizador">Visualizador</span>
       </a>
       <a class="ws-nav-item" href="/calculators.html" data-nav="calculators">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="2" width="10" height="12" rx="1"/><path d="M5 5h6M5.5 8h1M9.5 8h1M5.5 11h1M9.5 11h1"/></g></svg>
-        <span class="ws-nav-label" data-i18n="common.nav.calc">Calculators</span>
+        <span class="ws-nav-label" data-i18n="common.nav.calc">Calculadoras</span>
       </a>
       <a class="ws-nav-item" href="/explore.html" data-nav="explore">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/></g></svg>
-        <span class="ws-nav-label" data-i18n="common.nav.explore">Explore</span>
+        <span class="ws-nav-label" data-i18n="common.nav.explore">Explorar</span>
       </a>
       <a class="ws-nav-item" href="/app" data-nav="workspace">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 12l4-4 2 2 4-6"/></g></svg>
@@ -1237,11 +1237,11 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
   <div class="ws-nav-foot sidebar-foot" id="ws-nav-foot" data-atomurus-nav-foot>
     <a class="ws-nav-item" href="/login" data-nav="account" data-auth-nav-link="common.nav.login">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5"/></g></svg>
-      <span class="ws-nav-label" data-i18n="common.nav.login">Account</span>
+      <span class="ws-nav-label" data-i18n="common.nav.login">Conta</span>
     </a>
     <a class="ws-nav-item" href="/pricing" data-nav="plans">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 5h8v8H4zM6 3v2M10 3v2"/></g></svg>
-      <span class="ws-nav-label" data-i18n="common.nav.plans">Plans</span>
+      <span class="ws-nav-label" data-i18n="common.nav.plans">Planos</span>
     </a>
   </div>
 </aside>
@@ -1251,11 +1251,11 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
   <div class="data-strip">
     <span class="ds-k">scope</span><span class="ds-v">VIEWER.ATOMIC</span>
     <span class="ds-sep"></span>
-    <span class="ds-k">section</span><span class="ds-v" data-i18n="atomicModels.dsSection">visualizer</span>
+    <span class="ds-k">section</span><span class="ds-v" data-i18n="atomicModels.dsSection">visualizador</span>
     <span class="ds-sep"></span>
     <span class="ds-k">engine</span><span class="ds-v">three.js · WebGL</span>
     <span class="ds-spacer"></span>
-    <span class="ds-k">module</span><span class="ds-v ds-hi" data-i18n="atomicModels.dsModule">5 historical models</span>
+    <span class="ds-k">module</span><span class="ds-v ds-hi" data-i18n="atomicModels.dsModule">5 modelos históricos</span>
   </div>
 
 
@@ -1264,8 +1264,9 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
 
       <!-- ─── Page header ─── -->
       <div class="ph-kicker" data-i18n="atomicModels.kicker">visualização</div>
-      <h1 class="ph-title" data-i18n="atomicModels.title">Atomic Models</h1>
-      <p class="ph-desc" data-i18n="atomicModels.desc">The 5 historical models of the atom — from Dalton (1803) to Quantum (Schrödinger, 1926) — in animated 3D and 2D. Drag to rotate, adjust the ionic state, or switch model to compare.</p>
+      <h1 class="ph-title" data-i18n="atomicModels.title">Modelos Atômicos</h1>
+      <p class="ph-desc" data-i18n="atomicModels.desc">Cinco modelos históricos do átomo em 3D. Troque Dalton, Thomson, Rutherford, Bohr ou Quântico.</p>
+      <p class="lab-readmore"><a href="/explore/what-is-an-atom.html" data-i18n="atomicModels.readArticle">Ler o artigo: O que é um átomo →</a></p>
       <div data-pro-lab-tool="atomic"></div>
 
       <!-- Visualizador tab bar (responsive) -->
@@ -1273,69 +1274,69 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
         <a class="vz-tab active" href="atomic-models.html" aria-current="page">
           <span class="vz-num">01</span>
           <svg class="vz-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="1.5" fill="currentColor"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/></svg>
-          <span data-i18n="atomicModels.tabAtomic">Atomic Models</span>
+          <span data-i18n="atomicModels.tabAtomic">Modelos Atômicos</span>
         </a>
         <a class="vz-tab" href="molecules.html">
           <span class="vz-num">02</span>
           <svg class="vz-icon" viewBox="0 0 16 16" fill="none"><circle cx="4" cy="4" r="2" fill="currentColor"/><circle cx="12" cy="6" r="2" fill="currentColor" opacity=".7"/><circle cx="8" cy="12" r="2" fill="currentColor" opacity=".5"/><line x1="4" y1="4" x2="12" y2="6" stroke="currentColor" stroke-width="1"/><line x1="12" y1="6" x2="8" y2="12" stroke="currentColor" stroke-width="1"/><line x1="4" y1="4" x2="8" y2="12" stroke="currentColor" stroke-width="1"/></svg>
-          <span data-i18n="atomicModels.tabMolecules">Molecules</span>
+          <span data-i18n="atomicModels.tabMolecules">Moléculas</span>
         </a>
         <a class="vz-tab" href="allotropes.html">
           <span class="vz-num">03</span>
           <svg class="vz-icon" viewBox="0 0 16 16" fill="none"><polygon points="8,2 14,6 12,13 4,13 2,6" stroke="currentColor" stroke-width="1.2" fill="none"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/></svg>
-          <span data-i18n="atomicModels.tabAllotropes">Allotropes</span>
+          <span data-i18n="atomicModels.tabAllotropes">Alótropos</span>
         </a>
         <a class="vz-tab" href="isomerism.html">
           <span class="vz-num">04</span>
           <svg class="vz-icon" viewBox="0 0 16 16" fill="none"><circle cx="4" cy="8" r="2" fill="currentColor" opacity=".85"/><circle cx="12" cy="8" r="2" fill="currentColor" opacity=".85"/><line x1="4" y1="8" x2="4" y2="3.5" stroke="currentColor" stroke-width="1.1"/><line x1="12" y1="8" x2="12" y2="3.5" stroke="currentColor" stroke-width="1.1"/><line x1="4" y1="8" x2="4" y2="12.5" stroke="currentColor" stroke-width="1.1"/><line x1="12" y1="8" x2="12" y2="12.5" stroke="currentColor" stroke-width="1.1"/><line x1="8" y1="1" x2="8" y2="15" stroke="currentColor" stroke-width="1" stroke-dasharray="2,1.5" opacity=".5"/></svg>
-          <span data-i18n="common.nav.isomerism">Isomerism</span>
+          <span data-i18n="common.nav.isomerism">Isomeria</span>
         </a>
       </nav>
 
       <!-- sub data-strip -->
       <div class="av-substrip">
-        <span class="av-k" data-i18n="atomicModels.avTab">tab</span><span class="av-v" id="av-tab" data-i18n="atomicModels.avTabVal">atomic-models</span>
+        <span class="av-k" data-i18n="atomicModels.avTab">aba</span><span class="av-v" id="av-tab" data-i18n="atomicModels.avTabVal">atomic-models</span>
         <span class="av-sep"></span>
-        <span class="av-k" data-i18n="atomicModels.avModel">model</span><span class="av-v" id="av-model">bohr</span>
+        <span class="av-k" data-i18n="atomicModels.avModel">modelo</span><span class="av-v" id="av-model">bohr</span>
         <span class="av-sep"></span>
-        <span class="av-k" data-i18n="atomicModels.avContexto">context</span><span class="av-v" id="av-element" data-i18n="atomicModels.avContextVal">reference: carbon-12 (Z = 6)</span>
+        <span class="av-k" data-i18n="atomicModels.avContexto">contexto</span><span class="av-v" id="av-element" data-i18n="atomicModels.avContextVal">referência: carbono-12 (Z = 6)</span>
         <span class="av-sep"></span>
-        <span class="av-k" data-i18n="atomicModels.avShortcuts">shortcuts</span><span class="av-v">space · r · l · f · d · c · 2 · p</span>
+        <span class="av-k" data-i18n="atomicModels.avShortcuts">atalhos</span><span class="av-v">space · r · l · f · d · c · 2 · p</span>
       </div>
 
       <!-- ═══════ VIEWER ═══════ -->
       <div class="viewer">
         <div id="panel-atomic" class="panel">
-          <div class="panel-label" data-i18n="atomicModels.panelSelectModel">Select historical model</div>
+          <div class="panel-label" data-i18n="atomicModels.panelSelectModel">Selecione o modelo histórico</div>
           <div class="pill-row">
             <button class="pill"        data-model="dalton"     onclick="setAtomModel('dalton')">Dalton</button>
             <button class="pill"        data-model="thomson"    onclick="setAtomModel('thomson')">Thomson</button>
             <button class="pill"        data-model="rutherford" onclick="setAtomModel('rutherford')">Rutherford</button>
             <button class="pill active" data-model="bohr"       onclick="setAtomModel('bohr')">Bohr</button>
-            <button class="pill"        data-model="quantum"    onclick="setAtomModel('quantum')">Quântico</button>
+            <button class="pill"        data-model="quantum"    onclick="setAtomModel('quantum')" data-i18n="atomicModels.pillQuantum">Quântico</button>
           </div>
           <!-- Ion state selector (only shown for models that have electrons) -->
           <div class="ion-panel" id="ion-panel">
             <div class="ion-row">
-              <span class="ion-label" data-i18n="atomicModels.ion.stateLabel">Ionic state:</span>
+              <span class="ion-label" data-i18n="atomicModels.ion.stateLabel">Estado iônico:</span>
               <button class="ion-btn charge-step" id="charge-down" onclick="changeCharge(-1)" data-tip="Add electron (anion)" aria-label="Add electron" data-i18n-attr="data-tip:atomicModels.ion.addTip; aria-label:atomicModels.ion.addAria">−</button>
               <span class="charge-val" id="charge-val">0</span>
               <button class="ion-btn charge-step" id="charge-up" onclick="changeCharge(1)" data-tip="Remove electron (cation)" aria-label="Remove electron" data-i18n-attr="data-tip:atomicModels.ion.removeTip; aria-label:atomicModels.ion.removeAria">+</button>
-              <span class="ion-badge neutral" id="ion-badge" data-i18n="atomicModels.ion.badgeNeutral">NEUTRAL</span>
+              <span class="ion-badge neutral" id="ion-badge" data-i18n="atomicModels.ion.badgeNeutral">NEUTRO</span>
               <button class="ion-btn charge-reset" id="charge-reset" onclick="resetCharge()" data-tip="Reset (C)" aria-label="Reset charge" data-i18n-attr="data-tip:atomicModels.ion.resetTip; aria-label:atomicModels.ion.resetAria">↺</button>
             </div>
             <div class="ion-explain" id="ion-explain">
               <span class="ion-ecount" id="ion-ecount">6 e⁻</span>
               <span class="ion-sep">·</span>
-              <span class="ion-action" id="ion-action">prótons = elétrons</span>
+              <span class="ion-action" id="ion-action">protons = electrons</span>
               <span class="ion-sep">·</span>
-              <span class="ion-examples" id="ion-examples">ex: gases nobres (He, Ne, Ar)</span>
+              <span class="ion-examples" id="ion-examples">e.g. noble gases (He, Ne, Ar)</span>
             </div>
           </div>
         </div>
 
         <div id="panel-molecule" class="panel" style="display:none">
-          <div class="panel-label" data-i18n="atomicModels.panelByElement">By Element</div>
+          <div class="panel-label" data-i18n="atomicModels.panelByElement">Por Elemento</div>
           <div class="pill-row">
             <button class="pill sm mol-elem-btn" data-elem="H"  onclick="setMoleculeByElement('H')">H → H₂O</button>
             <button class="pill sm mol-elem-btn" data-elem="C"  onclick="setMoleculeByElement('C')">C → CH₄</button>
@@ -1347,7 +1348,7 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
             <button class="pill sm mol-elem-btn" data-elem="P"  onclick="setMoleculeByElement('P')">P → H₃PO₄</button>
             <button class="pill sm mol-elem-btn" data-elem="Fe" onclick="setMoleculeByElement('Fe')">Fe → Fe₂O₃</button>
           </div>
-          <div class="panel-label" data-i18n="atomicModels.panelByFormula">Or by Chemical Formula</div>
+          <div class="panel-label" data-i18n="atomicModels.panelByFormula">Ou por Fórmula Química</div>
           <div class="pill-row">
             <button class="pill mol-btn active" data-mol="water"   onclick="setMolecule('water')">H₂O — Água</button>
             <button class="pill mol-btn"        data-mol="ethanol" onclick="setMolecule('ethanol')">C₂H₅OH — Etanol</button>
@@ -1363,14 +1364,14 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
         </div>
 
         <div id="panel-allotrope" class="panel" style="display:none">
-          <div class="panel-label" data-i18n="atomicModels.panelSelectElem">Select the element</div>
+          <div class="panel-label" data-i18n="atomicModels.panelSelectElem">Selecione o elemento</div>
           <div class="pill-row">
             <button class="pill purple active allo-elem-btn" data-elem="carbon"     onclick="setAlloElement('carbon')">Carbono</button>
             <button class="pill purple allo-elem-btn"        data-elem="oxygen"     onclick="setAlloElement('oxygen')">Oxigênio</button>
             <button class="pill purple allo-elem-btn"        data-elem="sulfur"     onclick="setAlloElement('sulfur')">Enxofre</button>
             <button class="pill purple allo-elem-btn"        data-elem="phosphorus" onclick="setAlloElement('phosphorus')">Fósforo</button>
           </div>
-          <div class="panel-label" data-i18n="atomicModels.panelAllotrope">Allotrope</div>
+          <div class="panel-label" data-i18n="atomicModels.panelAllotrope">Alótropo</div>
           <div class="pill-row" id="allo-variants"></div>
         </div>
 
@@ -1419,22 +1420,22 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
             </button>
           </div>
 
-          <div class="viewer-status" id="viewer-status" data-i18n="atomicModels.viewerStatus">Static</div>
+          <div class="viewer-status" id="viewer-status" data-i18n="atomicModels.viewerStatus">Estático</div>
 
           <!-- Centered model name overlay (3D mode only). Mirrors the 2D watermark. -->
           <div id="atom-name-3d" class="atom-name-3d">BOHR · 1913</div>
 
           <!-- Floating Explore button — links to active model's page. Excluded from PNG export. -->
-          <a id="atom-explore-btn" class="atom-explore-btn" href="atomic-models/bohr" data-i18n="atomModel.ui.exploreBtn">Explore →</a>
+          <a id="atom-explore-btn" class="atom-explore-btn" href="atomic-models/bohr" data-i18n="atomModel.ui.exploreBtn">Explorar →</a>
         </div>
 
         <div class="info-bar">
           <div>
-            <div id="model-name" class="info-name" data-i18n="atomicModels.modelNameBohr">Bohr Model (1913)</div>
-            <div id="model-desc" class="info-desc" data-i18n="atomicModels.modelDescBohr">Electrons orbiting in discrete energy levels · 1913</div>
+            <div id="model-name" class="info-name" data-i18n="atomicModels.modelNameBohr">Modelo de Bohr (1913)</div>
+            <div id="model-desc" class="info-desc" data-i18n="atomicModels.modelDescBohr">Elétrons orbitando em níveis discretos de energia · 1913</div>
             <div class="info-meta" id="info-meta"></div>
           </div>
-          <div class="info-hint" data-i18n="atomicModels.infoHint">drag · scroll · or use controls</div>
+          <div class="info-hint" data-i18n="atomicModels.infoHint">arraste · scroll · ou use os controles</div>
         </div>
       </div>
 
@@ -1450,28 +1451,28 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
           <div class="md-col limit"><b id="md-limit-label">Limitations</b><span id="md-limit"></span></div>
         </div>
         <div class="md-shells" id="md-shells">
-          <span class="md-shell"><span class="legend-dot" style="background:#22d3ee"></span> <span data-i18n="atomicModels.detail.shell1s">1s — 2 electrons (dense spherical core)</span></span>
-          <span class="md-shell"><span class="legend-dot" style="background:#3b82f6"></span> <span data-i18n="atomicModels.detail.shell2s">2s — 2 electrons (sphere with radial node)</span></span>
-          <span class="md-shell"><span class="legend-dot" style="background:#a78bfa"></span> <span data-i18n="atomicModels.detail.shell2p">2p — 2 unpaired electrons (perpendicular lobes, Hund's rule)</span></span>
+          <span class="md-shell"><span class="legend-dot" style="background:#22d3ee"></span> <span data-i18n="atomicModels.detail.shell1s">1s — 2 elétrons (núcleo esférico denso)</span></span>
+          <span class="md-shell"><span class="legend-dot" style="background:#3b82f6"></span> <span data-i18n="atomicModels.detail.shell2s">2s — 2 elétrons (esfera com nó radial)</span></span>
+          <span class="md-shell"><span class="legend-dot" style="background:#a78bfa"></span> <span data-i18n="atomicModels.detail.shell2p">2p — 2 elétrons desemparelhados (lóbulos perpendiculares, regra de Hund)</span></span>
         </div>
-        <div class="model-detail-ref" data-i18n-html="atomicModels.detail.refNote"><b>Reference atom: carbon-12 (¹²C).</b> All five models render the same atom — Z = 6: 6 protons + 6 neutrons in the nucleus and 6 electrons. Sizes are illustrative, not to scale: in a real atom the nucleus is ~25,000× smaller than the electron cloud — if the nucleus were 1 cm wide, the atom would span ~250 m.</div>
+        <div class="model-detail-ref" data-i18n-html="atomicModels.detail.refNote"><b>Carbon-12 (Z = 6).</b> Same atom in every model. Sizes are illustrative.</div>
       </div>
 
       <!-- ─── Atomic Model legend (always visible in atomic tab) ─── -->
       <div id="atom-legend" class="legend-card">
-        <div class="legend-title" data-i18n="atomicModels.atomLegendTitle">Atomic Model Color Legend</div>
+        <div class="legend-title" data-i18n="atomicModels.atomLegendTitle">Legenda de Cores — Modelo Atômico</div>
         <div class="legend-grid">
-          <div class="legend-item"><span class="legend-dot" style="background:#e53935"></span> <span data-i18n="atomicModels.atomLegendProton">Proton (+) — positive charge in the nucleus</span></div>
-          <div class="legend-item"><span class="legend-dot" style="background:#43a047"></span> <span data-i18n="atomicModels.atomLegendNeutron">Neutron — neutral, also in the nucleus</span></div>
-          <div class="legend-item"><span class="legend-dot" style="background:#1e88e5"></span> <span data-i18n="atomicModels.atomLegendElectron">Electron (−) — negative charge, in orbit</span></div>
-          <div class="legend-item"><span class="legend-dot" style="background:#c8d8e8;box-shadow:0 0 0 1px rgba(0,0,0,.2)"></span> <span data-i18n="atomicModels.atomLegendOrbit">Orbit / Shell — quantized energy level</span></div>
-          <div class="legend-item"><span class="legend-dot" style="background:radial-gradient(circle,rgba(30,136,229,.6),rgba(30,136,229,0))"></span> <span data-i18n="atomicModels.atomLegendCloud">Probability cloud — quantum model (no defined orbit)</span></div>
+          <div class="legend-item"><span class="legend-dot" style="background:#e53935"></span> <span data-i18n="atomicModels.atomLegendProton">Próton (+) — carga positiva no núcleo</span></div>
+          <div class="legend-item"><span class="legend-dot" style="background:#43a047"></span> <span data-i18n="atomicModels.atomLegendNeutron">Nêutron — neutro, também no núcleo</span></div>
+          <div class="legend-item"><span class="legend-dot" style="background:#1e88e5"></span> <span data-i18n="atomicModels.atomLegendElectron">Elétron (−) — carga negativa, em órbita</span></div>
+          <div class="legend-item"><span class="legend-dot" style="background:#c8d8e8;box-shadow:0 0 0 1px rgba(0,0,0,.2)"></span> <span data-i18n="atomicModels.atomLegendOrbit">Órbita / Camada — nível discreto de energia</span></div>
+          <div class="legend-item"><span class="legend-dot" style="background:radial-gradient(circle,rgba(30,136,229,.6),rgba(30,136,229,0))"></span> <span data-i18n="atomicModels.atomLegendCloud">Nuvem de probabilidade — modelo quântico (sem órbita definida)</span></div>
         </div>
       </div>
 
       <!-- ─── Molecule legend ─── -->
       <div id="mol-legend" class="legend-card" style="display:none">
-        <div class="legend-title" data-i18n="atomicModels.legendTitle">CPK Legend (International Standard)</div>
+        <div class="legend-title" data-i18n="atomicModels.legendTitle">Legenda CPK (Padrão Internacional)</div>
         <div class="legend-grid">
           <div class="legend-item"><span class="legend-dot" style="background:#E7E2D4"></span> H — Hidrogênio</div>
           <div class="legend-item"><span class="legend-dot" style="background:#666"></span> C — Carbono</div>
@@ -1485,132 +1486,10 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
         </div>
       </div>
 
-      <!-- ═══════ TIMELINE ═══════ -->
-      <h2 class="section-title"><span class="num">01</span> <span data-i18n="atomicModels.sec01">Models Timeline</span></h2>
-      <p class="section-sub" data-i18n="atomicModels.sec01Sub">Each model emerged as a response to a limitation of the previous one. They weren't wrong theories replaced by correct ones — they were incomplete models refined by more accurate models. That is the essence of the scientific method.</p>
-      <div class="timeline">
-        <div class="tl-item">
-          <div class="tl-year">1803</div>
-          <div class="tl-name">Dalton</div>
-          <div class="tl-author" data-i18n="atomicModels.tl.dalton">Solid sphere · Quantitative atomic theory</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-year">1897</div>
-          <div class="tl-name">Thomson</div>
-          <div class="tl-author" data-i18n="atomicModels.tl.thomson">Plum pudding · Discovery of the electron</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-year">1911</div>
-          <div class="tl-name">Rutherford</div>
-          <div class="tl-author" data-i18n="atomicModels.tl.rutherford">Dense nucleus · Geiger-Marsden</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-year">1913</div>
-          <div class="tl-name">Bohr</div>
-          <div class="tl-author" data-i18n="atomicModels.tl.bohr">Quantized orbits · H spectra</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-year">1924</div>
-          <div class="tl-name">De Broglie</div>
-          <div class="tl-author" data-i18n="atomicModels.tl.debroglie">Wave-particle duality</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-year">1926</div>
-          <div class="tl-name">Schrödinger</div>
-          <div class="tl-author" data-i18n="atomicModels.tl.schrodinger">Wave equation · Orbitals</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-year">1927</div>
-          <div class="tl-name">Heisenberg</div>
-          <div class="tl-author" data-i18n="atomicModels.tl.heisenberg">Uncertainty Principle</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-year" data-i18n="atomicModels.tl.century">20th–21st c.</div>
-          <div class="tl-name">QED</div>
-          <div class="tl-author" data-i18n="atomicModels.tl.qed">Feynman · Quantum electrodynamics</div>
-        </div>
-      </div>
-
-      <!-- ═══════ COMPARATIVO ═══════ -->
-      <h2 class="section-title"><span class="num">03</span> <span data-i18n="atomicModels.sec03">Comparison of Models</span></h2>
-      <table class="compare-table">
-        <thead>
-          <tr><th data-i18n="atomicModels.cmp.colModel">Model</th><th data-i18n="atomicModels.cmp.colYear">Year</th><th data-i18n="atomicModels.cmp.colElectron">Electron is…</th><th data-i18n="atomicModels.cmp.colNucleus">Nucleus</th><th data-i18n="atomicModels.cmp.colValid">Valid for</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><strong>Dalton</strong></td><td>1803</td><td data-i18n="atomicModels.cmp.dalton_e">Doesn't exist</td><td data-i18n="atomicModels.cmp.dalton_n">Doesn't exist</td><td data-i18n="atomicModels.cmp.dalton_v">simple stoichiometry</td></tr>
-          <tr><td><strong>Thomson</strong></td><td>1897</td><td data-i18n="atomicModels.cmp.thomson_e">Static particle embedded</td><td data-i18n="atomicModels.cmp.thomson_n">Doesn't exist (diffuse)</td><td data-i18n="atomicModels.cmp.thomson_v">Qualitative historical</td></tr>
-          <tr><td><strong>Rutherford</strong></td><td>1911</td><td data-i18n="atomicModels.cmp.rutherford_e">Particle in circular orbit</td><td data-i18n="atomicModels.cmp.rutherford_n">Central and dense</td><td data-i18n="atomicModels.cmp.rutherford_v">Alpha scattering</td></tr>
-          <tr><td><strong>Bohr</strong></td><td>1913</td><td data-i18n="atomicModels.cmp.bohr_e">Particle in quantized orbit</td><td data-i18n="atomicModels.cmp.bohr_n">Central and dense</td><td data-i18n="atomicModels.cmp.bohr_v">H spectra</td></tr>
-          <tr><td><strong>De Broglie</strong></td><td>1924</td><td data-i18n="atomicModels.cmp.debroglie_e">Standing wave</td><td data-i18n="atomicModels.cmp.debroglie_n">Exists</td><td data-i18n="atomicModels.cmp.debroglie_v">Quantum foundation</td></tr>
-          <tr><td><strong>Schrödinger</strong></td><td>1926</td><td data-i18n="atomicModels.cmp.schrodinger_e">Probability distribution</td><td data-i18n="atomicModels.cmp.schrodinger_n">Exists</td><td data-i18n="atomicModels.cmp.schrodinger_v">Quantum chemistry</td></tr>
-          <tr><td><strong>QED</strong></td><td data-i18n="atomicModels.tl.century">20th–21st c.</td><td data-i18n="atomicModels.cmp.qed_e">Quantum field with spin</td><td data-i18n="atomicModels.cmp.qed_n">Exists (quarks, gluons)</td><td data-i18n="atomicModels.cmp.qed_v">Precision spectroscopy</td></tr>
-        </tbody>
-      </table>
-
-      <div class="callout purple">
-        <strong>✦ Decisão pedagógica:</strong> apresentamos os modelos em ordem cronológica e sempre com o <em>problema</em> que motivou cada avanço. O usuário passa de Dalton ao modelo moderno como uma jornada — entendendo que a ciência refina modelos incompletos com modelos mais precisos.
-      </div>
-
-      <!-- ═══════ ORBITAIS ═══════ -->
-      <h2 class="section-title"><span class="num">04</span> <span data-i18n="atomicModels.sec04">The Atomic Orbitals</span></h2>
-      <p class="section-sub">A solução da equação de Schrödinger define <strong>4 tipos de orbital</strong> — regiões de maior probabilidade de encontrar o elétron. Cada um tem uma forma geométrica característica que determina diretamente a geometria das moléculas.</p>
-      <div class="orbital-grid">
-        <div class="orb">
-          <div class="orb-symbol">s</div>
-          <div class="orb-name" data-i18n="atomicModels.orb.sName">Orbital s — Spherical</div>
-          <div class="orb-desc" data-i18n="atomicModels.orb.sDesc">1 orientation · max 2 electrons · hydrogen ground state occupies 1s</div>
-        </div>
-        <div class="orb">
-          <div class="orb-symbol">p</div>
-          <div class="orb-name" data-i18n="atomicModels.orb.pName">Orbital p — Dumbbell</div>
-          <div class="orb-desc" data-i18n="atomicModels.orb.pDesc">3 orientations (px, py, pz) · max 6 electrons · 90° angles</div>
-        </div>
-        <div class="orb">
-          <div class="orb-symbol">d</div>
-          <div class="orb-name" data-i18n="atomicModels.orb.dName">Orbital d — 4 lobes</div>
-          <div class="orb-desc" data-i18n="atomicModels.orb.dDesc">5 orientations · max 10 electrons · typical of transition metals</div>
-        </div>
-        <div class="orb">
-          <div class="orb-symbol">f</div>
-          <div class="orb-name" data-i18n="atomicModels.orb.fName">Orbital f — Complex</div>
-          <div class="orb-desc" data-i18n="atomicModels.orb.fDesc">7 orientations · max 14 electrons · lanthanides and actinides</div>
-        </div>
-      </div>
-
-      <!-- ═══════ NÚMEROS QuantumS ═══════ -->
-      <h2 class="section-title"><span class="num">05</span> <span data-i18n="atomicModels.sec05">The 4 Quantum Numbers</span></h2>
-      <p class="section-sub">Cada elétron em um átomo é descrito unicamente por 4 números. Pelo <strong>Princípio de Exclusão de Pauli</strong>, dois elétrons no mesmo átomo nunca podem ter os 4 números iguais — daí o limite de 2 elétrons por orbital.</p>
-      <div class="qn-grid">
-        <div class="qn">
-          <div class="qn-symbol">n</div>
-          <div class="qn-name" data-i18n="atomicModels.qn.nName">Principal Quantum Number</div>
-          <div class="qn-desc" data-i18n-html="atomicModels.qn.nDesc">Defines the energy <strong>level</strong>.</div>
-        </div>
-        <div class="qn">
-          <div class="qn-symbol">ℓ</div>
-          <div class="qn-name" data-i18n="atomicModels.qn.lName">Azimuthal Number (Secondary)</div>
-          <div class="qn-desc" data-i18n-html="atomicModels.qn.lDesc">Defines the <strong>subshell / orbital type</strong>.</div>
-        </div>
-        <div class="qn">
-          <div class="qn-symbol">mₗ</div>
-          <div class="qn-name" data-i18n="atomicModels.qn.mName">Magnetic Number</div>
-          <div class="qn-desc" data-i18n-html="atomicModels.qn.mDesc">Defines the spatial <strong>orientation</strong> of the orbital.</div>
-        </div>
-        <div class="qn">
-          <div class="qn-symbol">mₛ</div>
-          <div class="qn-name" data-i18n="atomicModels.qn.sName">Spin Number</div>
-          <div class="qn-desc" data-i18n-html="atomicModels.qn.sDesc">Defines the electron <strong>spin</strong>.</div>
-        </div>
-      </div>
-
-      <div class="callout">
-        <strong>🔑 Aplicação direta:</strong> a configuração eletrônica de qualquer átomo (até Z=118) é construída preenchendo orbitais em ordem crescente de energia, respeitando Pauli (máx. 2e⁻ por orbital) e Hund (preencher orbitais degenerados com 1e⁻ antes de emparelhar). Isso determina toda a química do elemento — sua valência, sua família e suas ligações.
-      </div>
-
-      <p class="ph-desc" style="margin-top:32px;font-size:12.5px;color:var(--text-3);">
-        Content curado a partir do white paper Atomurus v1.11 — Visualizador com 3 sub-páginas dedicadas: Modelos Atômicos, Moléculas e Alótropos.
-      </p>
+      <aside class="lab-readmore-card">
+        <p data-i18n="atomicModels.readArticleLead">A linha do tempo, os orbitais e os números quânticos estão no artigo.</p>
+        <a class="ui-btn ui-btn-accent" href="/explore/what-is-an-atom.html" data-i18n="atomicModels.readArticle">Ler o artigo: O que é um átomo →</a>
+      </aside>
 
     </div>
   </div>

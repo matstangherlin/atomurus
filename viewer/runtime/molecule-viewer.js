@@ -43,7 +43,7 @@ return (function(){
   let isDragging=false, lastX=0, lastY=0, rotX=0, rotY=0, autoRotate=!((paper() && paper().prefersReducedMotion && paper().prefersReducedMotion()));
   let rotVelX = 0, rotVelY = 0;
   const ROT_DAMPING = 0.92, ROT_SENS = 0.0085;
-  let labelsVisible = !paper();
+  let labelsVisible = true;
   const DEFAULT_CAM_Z = paper() ? 6.2 : 10;
 
   canvas.addEventListener('mousedown', e => {
@@ -330,25 +330,37 @@ return (function(){
   // ── Label sprites ──
   function makeLabelSprite(text, atomRadius){
     const c = document.createElement('canvas');
-    c.width = 128; c.height = 64;
+    c.width = 160; c.height = 80;
     const ctx = c.getContext('2d');
-    // Labels live INSIDE the atom — text color contrasts against the sphere itself,
-    // not the page background. Use light text on coloured atoms, dark on H/light atoms.
-    ctx.font = 'bold 56px "DM Sans", sans-serif';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.lineJoin = 'round';
-    ctx.strokeStyle = 'rgba(0,0,0,.55)';
-    ctx.lineWidth = 5;
-    ctx.strokeText(text, 64, 32);
-    ctx.fillStyle = '#ffffff';
-    ctx.fillText(text, 64, 32);
+    ctx.clearRect(0, 0, 160, 80);
+    ctx.fillStyle = '#F8F5EC';
+    ctx.strokeStyle = '#14120E';
+    ctx.lineWidth = 3;
+    roundRect(ctx, 8, 14, 144, 52, 12);
+    ctx.fill();
+    ctx.stroke();
+    ctx.font = '700 42px "Inter Tight", "DM Sans", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#14120E';
+    ctx.fillText(text, 80, 42);
     const tex = new THREE.CanvasTexture(c); tex.needsUpdate = true;
     const sp = new THREE.Sprite(new THREE.SpriteMaterial({map:tex, transparent:true, depthTest:false, depthWrite:false}));
     const r = atomRadius || 0.5;
-    const w = Math.max(0.45, r * 1.7);
+    const w = Math.max(0.55, r * 1.85);
     sp.scale.set(w, w * 0.5, 1);
     sp.renderOrder = 999;
     return sp;
+  }
+  function roundRect(ctx, x, y, w, h, r){
+    const rad = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + rad, y);
+    ctx.arcTo(x + w, y, x + w, y + h, rad);
+    ctx.arcTo(x + w, y + h, x, y + h, rad);
+    ctx.arcTo(x, y + h, x, y, rad);
+    ctx.arcTo(x, y, x + w, y, rad);
+    ctx.closePath();
   }
   function refreshLabels(){
     trackedAtoms.forEach(a=>{
@@ -358,8 +370,7 @@ return (function(){
     trackedAtoms.forEach(a=>{
       if (!a.label) return;
       const sp = makeLabelSprite(a.label, a.radius);
-      // Center the label inside the atom (depthTest:false keeps it visible through the sphere)
-      sp.position.set(0, 0, 0);
+      sp.position.set(0, a.radius + 0.28, 0);
       a.mesh.add(sp); a.labelSprite = sp;
     });
   }

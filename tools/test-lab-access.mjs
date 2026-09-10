@@ -207,7 +207,7 @@ assert.match(molRuntime, /atomurusInitMoleculeViewer/);
 assert.match(molRuntime, /setMolRep/);
 assert.match(molRuntime, /atomurusPaperLab/);
 assert.match(molRuntime, /PerspectiveCamera\(paper\(\) \? 42 : 50/);
-assert.match(molRuntime, /labelsVisible = !paper\(\)/);
+assert.match(molRuntime, /labelsVisible = true/);
 assert.match(molRuntime, /paper\(\)\.BOND/);
 assert.match(molRuntime, /vdwRadius/);
 assert.match(molRuntime, /bindLiveLoop/);
@@ -230,12 +230,24 @@ assert.match(atomic, /canvas-wrap\.is-2d/);
 assert.doesNotMatch(atomic, /\.canvas-wrap\.is-2d canvas#viewer3d\{visibility:hidden/);
 assert.doesNotMatch(atomic, /cdnjs\.cloudflare\.com\/ajax\/libs\/three\.js/);
 assert.doesNotMatch(atomic, /WebGLRenderer/);
+assert.match(atomic, /what-is-an-atom\.html/);
+assert.match(atomic, /lab-readmore/);
+assert.match(atomic, /data-i18n="atomicModels.pillQuantum">Quantum/);
+assert.doesNotMatch(atomic, /data-i18n="atomicModels\.sec01"/);
+
+const atomicPt = read('viewer/atomic-models.pt.html');
+assert.match(atomicPt, /what-is-an-atom\.html/);
+assert.match(atomicPt, /lab-readmore/);
+assert.match(atomicPt, /data-i18n="atomicModels.pillQuantum">Quântico/);
+assert.match(read('build-i18n.js'), /function bakeDataI18nText/);
 
 const atomicRuntime = read('viewer/runtime/atomic-viewer.js');
 assert.match(atomicRuntime, /atomurusInitAtomicViewer/);
 assert.match(atomicRuntime, /WebGLRenderer/);
 assert.match(atomicRuntime, /viewer3d\.style\.visibility = 'visible'/);
 assert.match(atomicRuntime, /atomurusPaperLab/);
+assert.match(atomicRuntime, /ATOM_CAM_Z/);
+assert.match(atomicRuntime, /PerspectiveCamera\(paper\(\) && paper\(\)\.FOV \? paper\(\)\.FOV : 42/);
 assert.match(atomicRuntime, /bindLiveLoop/);
 
 const paperLab = read('viewer/runtime/paper-lab.js');
@@ -243,7 +255,9 @@ assert.match(paperLab, /atomurusPaperLab/);
 assert.match(paperLab, /F2EFE7/);
 assert.match(paperLab, /C94A3A/);
 assert.match(paperLab, /5A554C/);
-assert.match(paperLab, /moleculeGroundOpts/);
+assert.match(paperLab, /ATOM_CAM_Z: 6\.6/);
+assert.match(paperLab, /FOV: 42/);
+assert.match(paperLab, /atomGroundOpts/);
 assert.match(paperLab, /camZForMol/);
 assert.match(paperLab, /bindLiveLoop/);
 assert.match(paperLab, /bindPageScrollWheel/);
@@ -570,6 +584,25 @@ assert.doesNotMatch(isomerismHub, /canonical" href="https:\/\/atomurus.com\/view
 assert.match(isomerismHub, /isAccessibleForFree": true/);
 assert.match(isomerismHub, /share-button\.js/);
 assert.match(isomerismHub, /page-share-init\.js/);
+assert.match(isomerismHub, /what-is-isomerism/);
+assert.match(isomerismHub, /lab-readmore/);
+assert.doesNotMatch(isomerismHub, /class="iso-callout/);
+assert.doesNotMatch(isomerismHub, /iso-quiz/);
+
+const isomerismHubPt = read('viewer/isomerism.pt.html');
+assert.match(isomerismHubPt, /what-is-isomerism/);
+assert.doesNotMatch(isomerismHubPt, /class="iso-callout/);
+
+const ptCss = read('periodic-table.css').replace(/\/\*[\s\S]*?\*\//g, '');
+assert.match(ptCss, /z-index:\s*2400/);
+assert.doesNotMatch(ptCss, /\.overlay\s*\{[^}]*position:\s*static/);
+
+const atomArticle = read('explore/what-is-an-atom.html');
+assert.match(atomArticle, /lab-tool-cta/);
+assert.match(atomArticle, /viewer\/atomic-models/);
+assert.match(read('explore/what-is-an-atom.pt.html'), /lab-tool-cta/);
+assert.match(read('explore/what-is-isomerism.html'), /lab-tool-cta/);
+assert.match(read('explore/what-is-isomerism.pt.html'), /lab-tool-cta/);
 
 const sitemap = read('sitemap.xml');
 assert.match(sitemap, /<loc>https:\/\/atomurus.com\/viewer\/isomerism<\/loc>/);

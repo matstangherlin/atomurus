@@ -20,7 +20,7 @@
 <script src="../../../assets/global-nav.js?v=202609090500"></script>
 <script src="/assets/public-workspace.js?v=202608282500"></script>
 <link rel="stylesheet" href="/assets/ui/index.css?v=202609090500">
-<link rel="stylesheet" href="/assets/layouts/viewer.css?v=202609090500">
+<link rel="stylesheet" href="/assets/layouts/viewer.css?v=202609101700">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1E6A50" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0E0D0C" media="(prefers-color-scheme: dark)">
@@ -172,7 +172,7 @@
 
   <div class="content">
     <div class="content-inner">
-      <div class="ph-kicker" data-i18n="isomerism.kicker">visualização</div>
+      <div class="ph-kicker" data-i18n="isomerism.kicker">visualization</div>
 
       <h1 class="ph-title" data-i18n="isomerism.tautomeria.title">Title</h1>
 
@@ -251,6 +251,8 @@
           </div>
         </div>
         <p class="iso-desc" data-i18n-html="isomerism.tautomeria.desc">Caso especial em que dois isômeros se <b style="color:var(--text-1)">interconvertem espontaneamente</b> em equilíbrio dinâmico. A forma mais comum é a tautomeria ceto-enólica: um H migra entre C e O, alternando cetona ⇌ enol.</p>
+
+        <p class="lab-readmore"><a href="/explore/what-is-isomerism.html" data-i18n="isomerism.overview.readArticle">Ler o artigo de isomeria →</a></p>
         <div class="mol-pair">
           <div class="mol-card">
             <div class="mol-card-tag" data-i18n="isomerism.tautomeria.aTag">Forma Ceto · predominante</div>
@@ -316,14 +318,7 @@
           <span class="taut-equilibrium-label" data-i18n="isomerism.tautomeria.shiftLabel">migração 1,3-H</span>
         </div>
 
-        <div class="iso-callout iso-callout-green" data-i18n-html="isomerism.tautomeria.callout">
-          <b>Equilíbrio dinâmico:</b> Ao contrário dos outros isômeros que são compostos separados, os tautômeros coexistem e se interconvertem rapidamente em solução. Na acetona, a forma ceto domina esmagadoramente, mas o equilíbrio é crucial em açúcares (glicose aberta ⇌ cíclica) e em bases nitrogenadas do DNA.
-        </div>
-        <div class="iso-gold-rule iso-callout iso-callout-amber" data-i18n-html="isomerism.tautomeria.goldRule"></div>
-        <div class="iso-k-equilibrium iso-callout iso-callout-purple" data-i18n-html="isomerism.tautomeria.kEquilibrium"></div>
-        <div class="iso-in-practice iso-callout iso-callout-blue" data-i18n-html="isomerism.tautomeria.inPractice"></div>
-        <div class="iso-warning iso-callout iso-callout-amber" data-i18n-html="isomerism.tautomeria.notStatic"></div>
-        <div class="iso-3d-panel" id="iso-3d" data-mol-a="acetone" data-mol-b="enol">
+                                                <div class="iso-3d-panel" id="iso-3d" data-mol-a="acetone" data-mol-b="enol">
           <div class="iso-3d-head">
             <span class="iso-3d-title" data-i18n="isomerism.iso3dTitle">3D · drag to rotate</span>
             <div class="iso-3d-tabs">
@@ -338,57 +333,7 @@
         </div>
 
         <!-- Biological example: glucose anomeric tautomerism (open chain ⇌ α/β pyranose) -->
-        <div class="iso-extra-box">
-          <div class="iso-extra-box-title" data-i18n="isomerism.tautomeria.glucoseTitle">Glucose</div>
-          <div class="iso-extra-box-svg" aria-hidden="true">
-            <svg viewBox="0 0 540 180" xmlns="http://www.w3.org/2000/svg">
-              <!-- α-D-glucopyranose (left, cyclic) -->
-              <g transform="translate(20,30)">
-                <polygon points="60,20 110,20 130,55 110,90 60,90 40,55" fill="none" stroke="var(--text-2)" stroke-width="1.6"/>
-                <text x="35" y="58" font-family="DM Mono,monospace" font-size="11" fill="var(--accent)" text-anchor="end">O</text>
-                <text x="60" y="105" font-family="DM Mono,monospace" font-size="10" fill="var(--text-3)" text-anchor="middle">OH</text>
-                <text x="110" y="105" font-family="DM Mono,monospace" font-size="10" fill="var(--text-3)" text-anchor="middle">OH</text>
-                <text x="138" y="56" font-family="DM Mono,monospace" font-size="10" fill="var(--text-3)" text-anchor="start">CH₂OH</text>
-                <text x="60" y="14" font-family="DM Mono,monospace" font-size="10" fill="var(--text-3)" text-anchor="middle">OH</text>
-                <text x="110" y="14" font-family="DM Mono,monospace" font-size="10" fill="var(--text-3)" text-anchor="middle">OH</text>
-                <text x="85" y="130" font-family="DM Mono,monospace" font-size="10" fill="var(--accent)" text-anchor="middle" font-weight="600">α-D-glicopiranose · ~36%</text>
-              </g>
-              <!-- Equilibrium arrows -->
-              <g transform="translate(200,55)" font-family="DM Mono,monospace" font-size="14" fill="var(--text-3)">
-                <text x="0" y="0">⇌</text>
-                <text x="0" y="20">⇌</text>
-              </g>
-              <!-- Open-chain (center) -->
-              <g transform="translate(230,55)" font-family="DM Mono,monospace" font-size="10" fill="var(--text-2)">
-                <text x="0" y="0">CHO</text>
-                <text x="0" y="14">—CHOH</text>
-                <text x="0" y="28">—CHOH</text>
-                <text x="0" y="42">—CHOH</text>
-                <text x="0" y="56">—CHOH</text>
-                <text x="0" y="70">—CH₂OH</text>
-                <text x="35" y="86" fill="var(--accent-2)" font-weight="600">aberta · &lt;0,01%</text>
-              </g>
-              <!-- Equilibrium arrows -->
-              <g transform="translate(345,55)" font-family="DM Mono,monospace" font-size="14" fill="var(--text-3)">
-                <text x="0" y="0">⇌</text>
-                <text x="0" y="20">⇌</text>
-              </g>
-              <!-- β-D-glucopyranose (right, cyclic) -->
-              <g transform="translate(380,30)">
-                <polygon points="60,20 110,20 130,55 110,90 60,90 40,55" fill="none" stroke="var(--text-2)" stroke-width="1.6"/>
-                <text x="35" y="58" font-family="DM Mono,monospace" font-size="11" fill="var(--accent)" text-anchor="end">O</text>
-                <text x="60" y="105" font-family="DM Mono,monospace" font-size="10" fill="var(--text-3)" text-anchor="middle">OH</text>
-                <text x="110" y="105" font-family="DM Mono,monospace" font-size="10" fill="var(--text-3)" text-anchor="middle">OH</text>
-                <text x="138" y="56" font-family="DM Mono,monospace" font-size="10" fill="var(--text-3)" text-anchor="start">CH₂OH</text>
-                <text x="60" y="14" font-family="DM Mono,monospace" font-size="10" fill="var(--text-3)" text-anchor="middle">OH</text>
-                <text x="110" y="14" font-family="DM Mono,monospace" font-size="10" fill="var(--text-3)" text-anchor="middle">OH</text>
-                <text x="85" y="130" font-family="DM Mono,monospace" font-size="10" fill="#1D4ED8" text-anchor="middle" font-weight="600">β-D-glicopiranose · ~64%</text>
-              </g>
-            </svg>
-          </div>
-          <p data-i18n-html="isomerism.tautomeria.glucoseText"></p>
-        </div>
-
+        
     </div>
   </div>
 </main>

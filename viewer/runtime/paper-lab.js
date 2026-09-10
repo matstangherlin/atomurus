@@ -306,8 +306,14 @@
     PROTON: 0xC45C4A,
     NEUTRON: GREEN,
     FOV: 42,
+    ATOM_CAM_Z: 6.6,
+    ATOM_ORBIT_X: 0.28,
+    ATOM_ORBIT_Y: 0.55,
     ORBIT_X: 0.35,
     ORBIT_Y: 0.6,
+    atomGroundOpts: function () {
+      return { radius: 3.6, shadowRadius: 1.15, y: -1.35, shadowY: -1.32 };
+    },
     isDark: isDark,
     clearColor: clearColor,
     fillCss: fillCss,
