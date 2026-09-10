@@ -757,7 +757,7 @@
       sets: '<path d="M3 5h10M3 8h10M3 11h10M5 3v10"/>',
       review: '<path d="M8 2.5a5.5 5.5 0 1 1-4.6 2.5M8 5v3.5L10 10"/>',
       insights: '<path d="M3 12V8M6.5 12V5M10 12V7M13 12V3"/>',
-      practice: '<path d="M4 13V6l4-3 4 3v7M6 13h6M6.5 8.5h3"/>',
+      practice: '<path d="M6 2.5h4M7 2.5v3.2L4.2 13h7.6L9 5.7V2.5M6.2 9h3.6"/>',
       'pro-lab': '<path d="M5 2h6l1 3H4zM5 5v7h6V5M6.5 8v2.5M9.5 8v2.5"/>',
       history: '<path d="M8 3v5l3 2M3.5 8a4.5 4.5 0 1 0 1-2.8"/>',
       notes: '<path d="M4 3h6l3 3v7H4zM10 3v3h3"/>',
@@ -1427,10 +1427,17 @@
 
   function learningPathCards(limit) {
     var curriculum = window.AtomurusStudyCurriculum;
-    var paths = (curriculum && curriculum.PATHS) || [];
-    var n = Number(limit);
-    var rows = n > 0 ? paths.slice(0, n) : paths;
+    var rows = curriculum && typeof curriculum.live === 'function' ? curriculum.live(limit) : [];
     return rows.map(hubPathCard).join('');
+  }
+
+  function plannedPathsLine() {
+    var curriculum = window.AtomurusStudyCurriculum;
+    var rows = curriculum && typeof curriculum.planned === 'function' ? curriculum.planned() : [];
+    if (!rows.length || !curriculum || typeof curriculum.label !== 'function') return '';
+    return '<p class="ws-hub-planned">' + rows.map(function (entry) {
+      return escapeHtml(curriculum.label(entry, catalogLang()));
+    }).join(' · ') + ' · ' + escapeHtml(t('pathPlanned')) + '</p>';
   }
 
   function practiceLiveCards(limit) {
@@ -1492,7 +1499,7 @@
 
     var pathsBlock = '<section class="ws-overview-block ws-hub-paths" data-hub="paths"><h2 class="ws-h2">' + escapeHtml(t('learningPaths')) + '</h2>' +
       '<p class="ws-lede">' + escapeHtml(t('learningPathsLede')) + '</p>' +
-      '<div class="ws-grid">' + learningPathCards() + '</div></section>';
+      '<div class="ws-grid">' + learningPathCards() + '</div>' + plannedPathsLine() + '</section>';
 
     var setPreview = sets.slice(0, 4);
     var setsBlock = setPreview.length
