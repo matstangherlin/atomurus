@@ -122,5 +122,6 @@
 @media (max-width: 720px) {
   .viz-split { grid-template-columns: 1fr; }
   .viz-stage canvas,
-  .viz-stage-wide canvas { height: 240px; }
+  .viz-stage-wide canvas,
+  .viz-stage-tall canvas { height: 240px; }
 }
