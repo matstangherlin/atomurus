@@ -351,36 +351,50 @@
     var w = canvas.width;
     var h = canvas.height;
     var dark = isDark();
-    ctx.fillStyle = dark ? '#0E0D0C' : '#F2EFE7';
-    ctx.fillRect(0, 0, w, h);
+    var paper = dark ? [14, 13, 12] : [242, 239, 231];
+    var plus = dark ? [122, 186, 158] : [30, 106, 80];
+    var minus = dark ? [232, 226, 212] : [20, 18, 14];
+    var img = ctx.createImageData(w, h);
+    var data = img.data;
     var cx = w / 2;
     var cy = h / 2;
-    var scale = Math.min(w, h) * 0.18;
+    var half = Math.min(h, w) * 0.42;
+    var scale = 5.4 / Math.max(1, half);
+    var norm = Math.E * Math.E / 4;
+    var px;
+    var pz;
+    var x;
+    var z;
+    var r;
+    var t;
     var i;
-    var dots = 0;
-    for (i = 0; i < 14000 && dots < 4200; i += 1) {
-      var x = (Math.random() * 2 - 1) * 3.4;
-      var y = (Math.random() * 2 - 1) * 3.4;
-      var z = (Math.random() * 2 - 1) * 3.4;
-      var r = Math.sqrt(x * x + y * y + z * z);
-      if (r < 0.18 || r > 3.2) continue;
-      var dens = (z * z) * Math.exp(-r * 1.15);
-      if (Math.random() > dens * 3.4) continue;
-      ctx.globalAlpha = Math.min(0.7, 0.18 + dens * 1.4);
-      ctx.fillStyle = z >= 0 ? '#1E6A50' : (dark ? '#E8E2D4' : '#14120E');
-      var s = Math.max(1.6, 2.1 * box.dpr);
-      ctx.fillRect(cx + x * scale, cy - z * scale, s, s);
-      dots += 1;
+    var ch;
+    for (pz = 0; pz < h; pz += 1) {
+      z = (cy - pz) * scale;
+      for (px = 0; px < w; px += 1) {
+        x = (px - cx) * scale;
+        r = Math.sqrt(x * x + z * z);
+        t = Math.min(1, z * z * Math.exp(-r) * norm);
+        t = t * t;
+        i = (pz * w + px) * 4;
+        ch = z >= 0 ? plus : minus;
+        data[i] = paper[0] + (ch[0] - paper[0]) * t;
+        data[i + 1] = paper[1] + (ch[1] - paper[1]) * t;
+        data[i + 2] = paper[2] + (ch[2] - paper[2]) * t;
+        data[i + 3] = 255;
+      }
     }
-    ctx.globalAlpha = 1;
-    ctx.strokeStyle = dark ? 'rgba(242,239,231,.18)' : 'rgba(20,18,14,.12)';
+    ctx.putImageData(img, 0, 0);
+    ctx.strokeStyle = dark ? 'rgba(242,239,231,.22)' : 'rgba(20,18,14,.16)';
+    ctx.lineWidth = Math.max(1, box.dpr);
     ctx.beginPath();
-    ctx.moveTo(cx, 24 * box.dpr);
-    ctx.lineTo(cx, h - 24 * box.dpr);
+    ctx.moveTo(24 * box.dpr, cy);
+    ctx.lineTo(w - 24 * box.dpr, cy);
     ctx.stroke();
     ctx.font = (10 * box.dpr) + 'px "JetBrains Mono", ui-monospace, monospace';
     ctx.fillStyle = dark ? '#B8B3A4' : '#58544A';
     ctx.fillText('2p_z  ·  |ψ|²', 16 * box.dpr, h - 16 * box.dpr);
+    ctx.fillText('nodal plane', 16 * box.dpr, cy - 8 * box.dpr);
   }
 
   function fitView(view) {

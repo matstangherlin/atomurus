@@ -14,6 +14,7 @@ assert.doesNotMatch(html, /atomurusInitMoleculeViewer/);
 assert.match(js, /F2EFE7/);
 assert.match(js, /space-fill|spacefill|repStyle|data-rep/);
 assert.match(js, /2p_z/);
+assert.match(js, /putImageData/);
 assert.match(css, /#F2EFE7|#F8F5EC/);
 assert.match(robots, /Disallow: \/dev\//);
 
