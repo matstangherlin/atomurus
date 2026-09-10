@@ -778,9 +778,14 @@
     drawAtom2d(document.getElementById('atom-2d'), atomKey, 0);
   }
 
+  function atomLift(key) {
+    return (key === 'dalton' || key === 'thomson') ? 0.15 : 0.9;
+  }
+
   function loadAtom() {
     if (!atomView) return;
     setGroup(atomView, buildAtom(atomKey));
+    atomView.group.position.y = atomLift(atomKey);
     setAtomCaption();
     drawAtom2d(document.getElementById('atom-2d'), atomKey, 0);
   }
@@ -801,6 +806,7 @@
     setGroup(molPaperView, buildMolecule(WATER, 'ball', true));
     setGroup(molRepView, buildMolecule(WATER, 'ball', true));
     setGroup(atomView, buildAtom(atomKey));
+    atomView.group.position.y = atomLift(atomKey);
     bindOrbit(molNowView.renderer.domElement, molNowView);
     bindOrbit(molPaperView.renderer.domElement, molPaperView);
     bindOrbit(molRepView.renderer.domElement, molRepView);
