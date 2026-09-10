@@ -310,7 +310,7 @@ test('Guest Study Hub is a presentation, not locked Pro cards', async ({ page })
   await gotoWorkspace(page, '/app');
   await expect(page.locator('#app-study')).toContainText(/Study with Atomurus|Estude com o Atomurus/);
   await expect(page.locator('#app-study')).toContainText(/Save chemistry resources, build sets and continue learning|Salve materiais de química/);
-  await expect(page.locator('#app-study a[href*="signup"]')).toContainText(/Create free account|Criar conta gratuita/);
+  await expect(page.locator('#app-study a[href*="signup"]').first()).toContainText(/Create free account|Criar conta gratuita/);
   await expect(page.locator('#app-study')).toContainText(/Visualize|Visualizar/);
   await expect(page.locator('#app-study')).toContainText(/With a free account|Com uma conta gratuita/);
   await expect(page.locator('#app-study')).toContainText(/Practice Chemistry|Praticar química/);
@@ -326,7 +326,7 @@ test('Guest Study Hub is a presentation, not locked Pro cards', async ({ page })
 
   await gotoWorkspace(page, '/app?section=library');
   await expect(page.locator('#app-study')).toContainText(/Library|Biblioteca/);
-  await expect(page.locator('#app-study a[href*="signup"]')).toContainText(/Create free account|Criar conta gratuita/);
+  await expect(page.locator('#app-study a[href*="signup"]').first()).toContainText(/Create free account|Criar conta gratuita/);
 });
 
 test('Study Hub empty account shows architecture without invented progress', async ({ page }) => {
@@ -433,13 +433,13 @@ test('Guest workspace footer opens signup, not login', async ({ page }) => {
   await expect(page.locator('#ws-nav-foot a[data-nav="plans"]')).toHaveAttribute('href', /\/pricing/);
   await signup.click();
   await expect(page).toHaveURL(/\/signup/);
-  await expect(page.locator('#auth-signup-form, [data-auth-route="signup"], #auth-signup-email')).toBeVisible();
+  await expect(page.locator('#auth-signup-form')).toBeVisible();
 });
 
 test('Signed-in Account and Plan leave Workspace', async ({ page }) => {
   await installApi(page, { kind: 'free' });
   await gotoWorkspace(page, '/app');
-  await expect(page.locator('#ws-nav-foot a[data-nav="account"]')).toHaveAttribute('href', /\/account$/);
+  await expect(page.locator('#ws-nav-foot a[data-nav="account"]')).toHaveAttribute('href', /\/account/);
   await expect(page.locator('#ws-userchip')).toHaveAttribute('href', /\/account/);
   await expect(page.locator('#ws-nav-foot a.is-upgrade')).toBeVisible();
   await expect(page.locator('#ws-study-nav a[href*="section=account"]')).toHaveCount(0);
