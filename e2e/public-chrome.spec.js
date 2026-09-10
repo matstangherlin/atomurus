@@ -334,6 +334,8 @@ test('public home dark mode and mobile keep the workspace chrome', async ({ page
 test('signup and recover keep UI V2 forms and the 30-day trial copy', async ({ page }) => {
   await page.goto('/signup');
   await expect(page.locator('#auth-signup-form')).toBeVisible();
+  await expect(page.locator('#auth-signup-name')).toHaveValue('');
+  await expect(page.locator('#auth-signup-email')).toHaveValue('');
   await expect(page.locator('#auth-panel-signup')).toContainText(/30 days/i);
   await expect.poll(async () => page.locator('#auth-signup-submit').evaluate((el) => getComputedStyle(el).backgroundColor))
     .toMatch(/rgb\(\s*20,\s*18,\s*14\s*\)/);

@@ -124,7 +124,8 @@ if (!login.includes('id="ps-shell"')) fail('login.html must contain #ps-shell in
 if (!login.includes('data-ps-chrome')) fail('login.html must mark emitted chrome');
 if (!login.includes('assets/ui/index.css')) fail('login.html must load UI V2');
 if (!login.includes('assets/layouts/auth.css')) fail('login.html must load auth layout CSS');
-if (!read('login.html').includes('Open lab')) fail('login CTA must stay Open lab');
+if (!login.includes('Open lab')) fail('login CTA must stay Open lab');
+if (/Matheus|matheusstan/i.test(login)) fail('login.html must not suggest a personal name');
 if (read('login.html').includes('data-atomurus-account')) {
   fail('login.html must not replace Open lab with the Account chip');
 }

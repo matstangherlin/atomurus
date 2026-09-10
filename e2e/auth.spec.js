@@ -89,6 +89,9 @@ test('signup with confirmation required returns to login with a success message'
   await page.goto('/signup');
   await expect(page.locator('#auth-signup-form')).toBeVisible();
   await expect(page).toHaveTitle(/Create account|Criar conta/);
+  await expect(page.locator('#auth-signup-name')).toHaveValue('');
+  await expect(page.locator('#auth-signup-email')).toHaveValue('');
+  await expect(page.locator('#auth-signup-name')).not.toHaveAttribute('placeholder', /Matheus|Stangherlin|matheusstan/i);
   await page.locator('#auth-signup-name').fill('Pro User');
   await page.locator('#auth-signup-username').fill('prouser1');
   await page.locator('#auth-signup-email').fill('newpro@atomurus.test');

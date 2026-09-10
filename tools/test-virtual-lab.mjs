@@ -26,12 +26,25 @@ const allowed = lab.searchCatalog('water');
 assert.equal(allowed.status, 'ok');
 assert.ok(allowed.items.some((row) => row.type === 'substance' && row.row.id === 'water'));
 
+function findVol(session, id) {
+  const row = session.containers.find((item) => item.id === id);
+  return row ? Number(row.volumeMl) || 0 : 0;
+}
+
 const session = lab.emptySession({ title: 'Open Bench', mode: 'bench' });
+assert.equal(session.containers.length, 3);
 assert.equal(lab.addToContainer(session, 'beaker-a', 'cocaine', 10).ok, false);
 assert.equal(lab.addToContainer(session, 'beaker-a', 'tnt', 1).ok, false);
 const added = lab.addToContainer(session, 'beaker-a', 'water', 10);
 assert.equal(added.ok, true);
 assert.equal(lab.addToContainer(session, 'beaker-a', 'not-a-substance', 5).ok, false);
+const poured = lab.pour(session, 'beaker-a', 'flask-b', 5);
+assert.equal(poured.ok, true);
+assert.equal(findVol(session, 'flask-b') > 0, true);
+const extra = lab.addVessel(session, 'beaker');
+assert.equal(extra.ok, true);
+assert.ok(session.containers.length >= 4);
+assert.equal(lab.setTemperature(session, 'beaker-a', 40).ok, true);
 const ph = lab.measure(session, 'beaker-a', 'ph');
 assert.equal(ph.ok, true);
 assert.equal(typeof ph.row.value, 'number');

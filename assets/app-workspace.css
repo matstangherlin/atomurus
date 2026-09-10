@@ -1597,23 +1597,90 @@ html.auth-error .ws-auth-only { visibility: hidden; }
   cursor: pointer;
 }
 .lab-chip span { font-size: 11px; color: var(--lc-ink-3, #8E8978); }
-.lab-bench { display: flex; flex-direction: column; align-items: center; }
-.lab-beaker {
-  width: min(180px, 100%);
-  height: 220px;
-  border: 2px solid var(--lc-ink-2, #58544A);
-  border-top: 0;
-  border-radius: 0 0 18px 18px;
+.lab-bench { display: flex; flex-direction: column; align-items: stretch; }
+.lab-glass-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: 220px;
+}
+.lab-glass {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 112px;
+  padding: 8px 6px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.lab-glass.is-active {
+  border-color: color-mix(in oklab, var(--lc-green, #1E6A50) 45%, var(--lc-rule, #D8D2BF));
+  background: color-mix(in oklab, var(--lc-green, #1E6A50) 7%, transparent);
+}
+.lab-glass-body {
   position: relative;
   overflow: hidden;
-  background: color-mix(in oklab, #fff 40%, transparent);
+  background: color-mix(in oklab, #fff 42%, transparent);
+  border: 2px solid var(--lc-ink-2, #58544A);
+  border-top: 0;
+}
+.lab-beaker .lab-glass-body {
+  width: 92px;
+  height: 148px;
+  border-radius: 0 0 16px 18px;
+}
+.lab-flask .lab-glass-body {
+  width: 100px;
+  height: 156px;
+  border-radius: 12px 12px 48% 48%;
+}
+.lab-cylinder .lab-glass-body {
+  width: 42px;
+  height: 168px;
+  border-radius: 0 0 8px 8px;
 }
 .lab-liquid {
   position: absolute;
   left: 0; right: 0; bottom: 0;
-  transition: height 180ms ease, background 180ms ease;
+  transition: height 200ms ease, background 200ms ease;
+  pointer-events: none;
+}
+.lab-sediment {
+  position: absolute;
+  left: 8%; right: 8%; bottom: 0;
+  background: color-mix(in oklab, var(--lc-ink-2, #58544A) 35%, transparent);
+  border-radius: 2px 2px 6px 6px;
+  pointer-events: none;
+}
+.lab-glass-name { font-size: 12px; font-weight: 650; }
+.lab-glass-meta { font-size: 11px; color: var(--lc-ink-3, #8E8978); }
+.lab-amount, .lab-bench-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 12px;
+}
+.lab-amount .is-on,
+.lab-bench-actions .is-on {
+  color: var(--lc-green, #1E6A50);
+  border-color: color-mix(in oklab, var(--lc-green, #1E6A50) 40%, var(--lc-rule, #D8D2BF));
+  background: color-mix(in oklab, var(--lc-green, #1E6A50) 10%, transparent);
 }
 .lab-beaker-label { margin-top: 10px; font-size: 13px; color: var(--lc-ink-2, #58544A); }
+@keyframes lab-stir {
+  0% { transform: translateX(0); }
+  40% { transform: translateX(3px); }
+  100% { transform: translateX(0); }
+}
+.lab-liquid.is-stirring { animation: lab-stir 420ms ease-out; }
 .lab-kv { display: flex; justify-content: space-between; gap: 12px; margin: 6px 0; }
 .lab-measures { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 .lab-notes { margin: 0; padding-left: 18px; color: var(--lc-ink-2, #58544A); }
@@ -1645,6 +1712,7 @@ html.auth-error .ws-auth-only { visibility: hidden; }
 }
 html[data-reduced-motion="1"] .lab-liquid {
   transition: none;
+  animation: none;
 }
 .ws-lab-continue {
   display: flex;
