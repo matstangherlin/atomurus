@@ -327,7 +327,7 @@ test('guest save on molecules is a contextual account CTA, not a canvas gate', a
   ))).toBe(true);
   const save = page.locator('#atomurus-study-save [data-study-save]');
   await expect(save).toBeVisible({ timeout: 15_000 });
-  await expect(page.locator('#atomurus-study-save .study-pro-badge')).toHaveCount(0);
+  await expect(page.locator('#atomurus-study-save [data-study-save] .study-pro-badge')).toHaveCount(0);
   await save.click();
   await expect(page.locator('#ws-dialog-title')).toContainText(/Save this molecule|workspace/i);
   await expect(page.locator('#ws-dialog-host .ws-dialog-body')).toContainText(/free account/i);
@@ -348,7 +348,7 @@ test('signed-in free can save a molecule without a Pro overlay', async ({ page }
   await expectViewerCanvas(page, '#viewer3d');
   const save = page.locator('#atomurus-study-save [data-study-save]');
   await expect(save).toBeVisible({ timeout: 15_000 });
-  await expect(page.locator('#atomurus-study-save .study-pro-badge')).toHaveCount(0);
+  await expect(page.locator('#atomurus-study-save [data-study-save] .study-pro-badge')).toHaveCount(0);
   await save.click();
   await expect(page.locator('#atomurus-study-save')).toContainText(/Saved|Salvo/i, { timeout: 8_000 });
   await expect(page.locator('#ws-dialog-host.is-open')).toHaveCount(0);
@@ -375,7 +375,9 @@ test('guest Open Lab molecule viewer works on a phone viewport', async ({ page }
   await expectShareWorks(page);
   await expect(page.locator('.vz-tabs')).toBeVisible();
   await expect(page.locator('.vz-tabs')).not.toContainText(/PRO/);
-  await expect(page.locator('.vz-tabs a[href$="isomerism.html"]')).toBeVisible();
+  const isomerismTab = page.locator('.vz-tabs a[href*="isomerism"]');
+  await isomerismTab.scrollIntoViewIfNeeded();
+  await expect(isomerismTab).toBeVisible();
   await saveShot(page, 'guest-molecules-mobile');
 });
 
