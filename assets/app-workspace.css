@@ -271,6 +271,14 @@
   overflow: visible;
   border-bottom: 1px solid var(--lc-rule-soft);
 }
+.ws-study-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ws-study-group .ws-nav-group {
+  padding-left: 2px;
+}
 .ws-context-nav,
 .ws-local-nav {
   display: flex;

@@ -10,8 +10,15 @@ test('signed-out workspace shows Pro navigation and explains locked features', a
   await expect(page.locator('#ws-nav-main a[data-nav="viewer"]')).toBeVisible();
   await expect(page.locator('#ws-userchip')).toContainText(/Account|Conta/);
   await expect(page).toHaveURL(/\/app/);
-  await page.locator('#ws-study-nav a[href="/app?section=library"]').first().click();
-  await expect(page).toHaveURL(/section=library/);
+  const workspaceNav = page.locator('#ws-workspace-nav');
+  await expect(workspaceNav).toBeVisible();
+  await expect(workspaceNav).toContainText(/Library|Biblioteca/);
+  await expect(workspaceNav).toContainText(/Study Sets/);
+  await expect(workspaceNav).toContainText(/Smart Review/);
+  await expect(workspaceNav).toContainText(/Pro Lab/);
+  await expect(workspaceNav).toContainText(/Notes|Notas/);
+  await expect(page.locator('#ws-study-nav a[href="/app?section=sets"]')).toBeVisible();
+  await expect(page.locator('#ws-study-nav a[href="/app?section=sets"]')).toContainText(/PRO/);
   await page.locator('#ws-study-nav a[href="/app?section=sets"]').click();
   await expect(page.locator('#ws-dialog-host')).toContainText(/available only|disponível somente/i);
   await expect(page.locator('#ws-dialog-host a[href^="/login"]')).toBeVisible();

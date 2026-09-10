@@ -257,6 +257,18 @@ aside[data-atomurus-sidebar] {
   min-width: 0;
 }
 
+.ws-nav-meta {
+  font-family: var(--font-mono, var(--lc-mono, ui-monospace, monospace));
+  font-size: 9px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--color-brand, var(--lc-green, #1E6A50));
+}
+
+.ws-nav-item.is-locked {
+  cursor: pointer;
+}
+
 .ws-nav-site {
   padding-bottom: 8px;
 }

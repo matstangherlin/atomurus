@@ -16,11 +16,11 @@ test('Free uses Study Cloud and still sees Review as Pro', async ({ page }) => {
   await expect(page.locator('#ws-study-nav')).toContainText(/Overview|Visão geral/);
   await expect(page.locator('#ws-study-nav')).toContainText(/Study|Estudo/);
   await expect(page.locator('#ws-study-nav')).toContainText(/Lab/);
-  await page.locator('#ws-study-nav a[href="/app?section=library"]').first().click();
   await expect(page.locator('#ws-study-nav')).toContainText(/Library|Biblioteca/);
   await expect(page.locator('#ws-study-nav')).toContainText(/Study Sets/);
   await expect(page.locator('#ws-study-nav a[href="/app?section=review"]')).toContainText(/Review/);
   await expect(page.locator('#ws-study-nav a[href="/app?section=review"]')).toContainText(/PRO/);
+  await expect(page.locator('#ws-workspace-nav a[href="/app?section=review"]')).toContainText(/PRO/);
   await saveShot(page, 'desktop-free-overview');
 
   await page.locator('#ws-study-nav a[href="/app?section=sets"]').click();
