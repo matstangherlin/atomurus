@@ -63,7 +63,7 @@
   var PAPER_DARK = 0x0E0D0C;
   var INK = 0x14120E;
   var GREEN = 0x1E6A50;
-  var shared = { rotX: 0.35, rotY: 0.6, z: 6.2 };
+  var shared = { rotX: 0.35, rotY: 0.6, z: 5.4 };
   var repStyle = 'ball';
   var views = [];
 
@@ -100,7 +100,7 @@
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera(42, 1, 0.1, 80);
-    camera.position.set(0, 0.35, 6.2);
+    camera.position.set(0, 0.35, 5.4);
     if (paper) {
       scene.add(new THREE.HemisphereLight(isDark() ? 0x3A4A44 : 0xF8F5EC, isDark() ? 0x1A1814 : 0x9A9480, 0.72));
       var key = new THREE.DirectionalLight(0xFFF6E8, 0.78);
@@ -355,19 +355,22 @@
     ctx.fillRect(0, 0, w, h);
     var cx = w / 2;
     var cy = h / 2;
-    var scale = Math.min(w, h) * 0.16;
+    var scale = Math.min(w, h) * 0.18;
     var i;
-    ctx.globalAlpha = 0.22;
-    for (i = 0; i < 2400; i += 1) {
-      var x = (Math.random() * 2 - 1) * 3.2;
-      var y = (Math.random() * 2 - 1) * 3.2;
-      var z = (Math.random() * 2 - 1) * 3.2;
+    var dots = 0;
+    for (i = 0; i < 14000 && dots < 4200; i += 1) {
+      var x = (Math.random() * 2 - 1) * 3.4;
+      var y = (Math.random() * 2 - 1) * 3.4;
+      var z = (Math.random() * 2 - 1) * 3.4;
       var r = Math.sqrt(x * x + y * y + z * z);
-      if (r < 0.12 || r > 3.1) continue;
-      var dens = (z * z) * Math.exp(-r * 1.35);
-      if (Math.random() > dens * 1.8) continue;
-      ctx.fillStyle = z >= 0 ? '#1E6A50' : (dark ? '#D8D2BF' : '#14120E');
-      ctx.fillRect(cx + x * scale, cy - z * scale, 1.4 * box.dpr, 1.4 * box.dpr);
+      if (r < 0.18 || r > 3.2) continue;
+      var dens = (z * z) * Math.exp(-r * 1.15);
+      if (Math.random() > dens * 3.4) continue;
+      ctx.globalAlpha = Math.min(0.7, 0.18 + dens * 1.4);
+      ctx.fillStyle = z >= 0 ? '#1E6A50' : (dark ? '#E8E2D4' : '#14120E');
+      var s = Math.max(1.6, 2.1 * box.dpr);
+      ctx.fillRect(cx + x * scale, cy - z * scale, s, s);
+      dots += 1;
     }
     ctx.globalAlpha = 1;
     ctx.strokeStyle = dark ? 'rgba(242,239,231,.18)' : 'rgba(20,18,14,.12)';
