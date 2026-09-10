@@ -458,7 +458,7 @@
 
   function makeSphere(r, color) {
     var lab = window.atomurusPaperLab;
-    return new THREE.Mesh(new THREE.SphereGeometry(r, 32, 32),
+    return new THREE.Mesh(new THREE.SphereGeometry(r, 24, 24),
       lab ? lab.mat(THREE, color) : new THREE.MeshStandardMaterial({ color: color, roughness: 0.35, metalness: 0.15 }));
   }
   function makeBond(p1, p2, r1, r2, color1, color2, order) {
@@ -742,10 +742,12 @@
     var mirrorable = panel.getAttribute('data-mirror') === 'true';
     var current = 'a', mirrored = false;
 
-    var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false });
     var lab = window.atomurusPaperLab;
+    var renderer = (lab && lab.createRenderer)
+      ? lab.createRenderer(THREE, canvas)
+      : new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false });
     if (lab) lab.capDpr(renderer);
-    else renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    else renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
     var camera = new THREE.PerspectiveCamera(lab ? 42 : 50, 2, 0.1, 100);
     camera.position.set(0, 0.35, lab ? 6.4 : 9);
     function resize() {
@@ -886,8 +888,8 @@
     updateTabsLabels();
     if (window.I18N && window.I18N.onChange) window.I18N.onChange(updateTabsLabels);
 
-    function render() {
-      requestAnimationFrame(render);
+    function tickFrame() {
+      if (mode === '2d') return;
       if (autoRotate && !isDragging) {
         rotY += 0.004;
       }
@@ -896,16 +898,31 @@
       group.rotation.x = rotX;
       group.rotation.y = rotY;
       group.scale.setScalar(zoom);
-      var tt = Date.now() * 0.004;
       var rings = group.userData.hlRings || [];
-      for (var ri = 0; ri < rings.length; ri++) {
-        var rs = 1 + 0.3 * Math.sin(tt + ri * 1.1);
-        rings[ri].scale.setScalar(rs);
-        rings[ri].material.opacity = 0.4 + 0.45 * (0.5 + 0.5 * Math.sin(tt * 1.5 + ri));
+      if (rings.length) {
+        var tt = Date.now() * 0.004;
+        for (var ri = 0; ri < rings.length; ri++) {
+          var rs = 1 + 0.3 * Math.sin(tt + ri * 1.1);
+          rings[ri].scale.setScalar(rs);
+          rings[ri].material.opacity = 0.4 + 0.45 * (0.5 + 0.5 * Math.sin(tt * 1.5 + ri));
+        }
       }
       renderer.render(scene, camera);
     }
-    render();
+    if (lab && lab.bindLiveLoop) {
+      lab.bindLiveLoop(canvas, tickFrame, {
+        busy: function () {
+          return isDragging || autoRotate || Math.abs(rotVelX) > 1e-4 || Math.abs(rotVelY) > 1e-4 ||
+            (group.userData.hlRings && group.userData.hlRings.length);
+        },
+        active: function () { return mode !== '2d'; }
+      });
+    } else {
+      (function render() {
+        requestAnimationFrame(render);
+        tickFrame();
+      })();
+    }
 
     // Interaction
     function rect() { return canvas.getBoundingClientRect(); }
@@ -923,10 +940,16 @@
       rotVelX += dy * 0.006;
     });
     window.addEventListener('pointerup', function () { isDragging = false; });
-    canvas.addEventListener('wheel', function (e) {
-      e.preventDefault();
-      zoom = Math.max(0.4, Math.min(2.6, zoom * (e.deltaY > 0 ? 0.92 : 1.08)));
-    }, { passive: false });
+    if (lab && lab.bindPageScrollWheel) {
+      lab.bindPageScrollWheel(canvas, function (e) {
+        zoom = Math.max(0.4, Math.min(2.6, zoom * (e.deltaY > 0 ? 0.92 : 1.08)));
+      });
+    } else {
+      canvas.addEventListener('wheel', function (e) {
+        e.preventDefault();
+        zoom = Math.max(0.4, Math.min(2.6, zoom * (e.deltaY > 0 ? 0.92 : 1.08)));
+      }, { passive: false });
+    }
     canvas.addEventListener('dblclick', function () {
       autoRotate = !autoRotate;
     });
@@ -1002,7 +1025,7 @@
     return Boolean(document.querySelector('script[data-atomurus-runtime="isomerism-3d.js"]'));
   }
 
-  var PAPER_LAB_SRC = '/viewer/runtime/paper-lab.js?v=202609101200';
+  var PAPER_LAB_SRC = '/viewer/runtime/paper-lab.js?v=202609101530';
   function loadPaperLab() {
     if (window.atomurusPaperLab) return Promise.resolve();
     if (window.__atomurusPaperLabPending) return window.__atomurusPaperLabPending;

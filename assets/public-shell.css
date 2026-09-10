@@ -109,6 +109,20 @@ html {
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
+
+/* Blur over WebGL/scroll layers freezes low-end GPUs. Solid paper is enough. */
+html body .sidebar,
+html body .topbar,
+html body .ps-topbar,
+html body .mobile-overlay,
+html body .viewer-controls,
+html body .viewer-zoom,
+html body .viewer-mode-toggle,
+html body .canvas-wrap,
+html body .iso-3d-stage {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
 [data-theme="dark"] .lc-topnav { background: var(--lc-paper); }
 
 .lc-topnav-links {

@@ -3,10 +3,12 @@
   global.atomurusInitAllotropeViewer = function atomurusInitAllotropeViewer() {
 (function(){
   const canvas = document.getElementById('viewer3d');
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:false });
   const paper = () => window.atomurusPaperLab;
+  const renderer = (paper() && paper().createRenderer)
+    ? paper().createRenderer(THREE, canvas)
+    : new THREE.WebGLRenderer({ canvas, antialias:true, alpha:false });
   if (paper()) paper().capDpr(renderer);
-  else renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  else renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
   const camera = new THREE.PerspectiveCamera(50, 2, 0.1, 100);
   camera.position.set(0, 0.35, 10);
   const scene = new THREE.Scene();
@@ -35,7 +37,7 @@
   let currentGroup = new THREE.Group();
   scene.add(currentGroup);
 
-  let isDragging=false,lastX=0,lastY=0,rotX=0,rotY=0,autoRotate=true;
+  let isDragging=false,lastX=0,lastY=0,rotX=0,rotY=0,autoRotate=!((paper() && paper().prefersReducedMotion && paper().prefersReducedMotion()));
   let rotVelX = 0, rotVelY = 0;
   const ROT_DAMPING = 0.92, ROT_SENS = 0.0085;
   const DEFAULT_CAM_Z = 10;
@@ -55,10 +57,16 @@
     rotVelX = dy * 0.6 + rotVelX * 0.4;
     lastX=e.clientX; lastY=e.clientY;
   });
-  canvas.addEventListener('wheel', e => {
-    camera.position.z = Math.max(3, Math.min(20, camera.position.z + e.deltaY*0.01));
-    e.preventDefault();
-  }, { passive:false });
+  if (paper() && paper().bindPageScrollWheel) {
+    paper().bindPageScrollWheel(canvas, function (e) {
+      camera.position.z = Math.max(3, Math.min(20, camera.position.z + e.deltaY*0.01));
+    });
+  } else {
+    canvas.addEventListener('wheel', e => {
+      camera.position.z = Math.max(3, Math.min(20, camera.position.z + e.deltaY*0.01));
+      e.preventDefault();
+    }, { passive:false });
+  }
   if (paper()) {
     paper().bindTouchOrbit(canvas, {
       onDown: function () { isDragging=true; autoRotate=false; updateRotateBtn(); rotVelX=0; rotVelY=0; },
@@ -431,8 +439,7 @@
   let _docHidden = false;
   document.addEventListener('visibilitychange', () => { _docHidden = document.hidden; });
 
-  function animate(){
-    requestAnimationFrame(animate);
+  function tickFrame(){
     if (_docHidden) return;
     if (!isDragging && (Math.abs(rotVelX) > 1e-4 || Math.abs(rotVelY) > 1e-4)) {
       rotY += rotVelY; rotX += rotVelX;
@@ -445,9 +452,20 @@
     currentGroup.rotation.x = rotX;
     renderer.render(scene, camera);
   }
+  if (paper() && paper().bindLiveLoop) {
+    paper().bindLiveLoop(canvas, tickFrame, {
+      busy: function () {
+        return isDragging || autoRotate || Math.abs(rotVelX) > 1e-4 || Math.abs(rotVelY) > 1e-4;
+      }
+    });
+  } else {
+    (function animate(){
+      requestAnimationFrame(animate);
+      tickFrame();
+    })();
+  }
 
   setAlloElement('carbon');
-  animate();
 
   // Allotrope / element quick search.
   (function initAlloSearch(){

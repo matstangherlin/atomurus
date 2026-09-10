@@ -3,10 +3,12 @@
   global.atomurusInitAtomicViewer = function atomurusInitAtomicViewer() {
 (function(){
   const canvas = document.getElementById('viewer3d');
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:false });
   const paper = () => window.atomurusPaperLab;
+  const renderer = (paper() && paper().createRenderer)
+    ? paper().createRenderer(THREE, canvas)
+    : new THREE.WebGLRenderer({ canvas, antialias:true, alpha:false });
   if (paper()) paper().capDpr(renderer);
-  else renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  else renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
 
   const camera = new THREE.PerspectiveCamera(50, 2, 0.1, 100);
   camera.position.set(0, 0.35, 10);
@@ -42,7 +44,7 @@
   scene.add(currentGroup);
 
   // Mouse / touch orbit + state
-  let isDragging=false,lastX=0,lastY=0,rotX=0,rotY=0,autoRotate=true;
+  let isDragging=false,lastX=0,lastY=0,rotX=0,rotY=0,autoRotate=!((paper() && paper().prefersReducedMotion && paper().prefersReducedMotion()));
   let staticMode=false, labelsVisible=false;
   const DEFAULT_CAM_Z=10;
 
@@ -68,11 +70,18 @@
     rotVelX = dy * 0.6 + rotVelX * 0.4;
     lastX=e.clientX; lastY=e.clientY;
   });
-  canvas.addEventListener('wheel', e => {
-    if (staticMode) return;
-    camera.position.z = Math.max(3, Math.min(20, camera.position.z + e.deltaY*0.01));
-    e.preventDefault();
-  }, { passive:false });
+  if (paper() && paper().bindPageScrollWheel) {
+    paper().bindPageScrollWheel(canvas, function (e) {
+      if (staticMode) return;
+      camera.position.z = Math.max(3, Math.min(20, camera.position.z + e.deltaY*0.01));
+    });
+  } else {
+    canvas.addEventListener('wheel', e => {
+      if (staticMode) return;
+      camera.position.z = Math.max(3, Math.min(20, camera.position.z + e.deltaY*0.01));
+      e.preventDefault();
+    }, { passive:false });
+  }
   let lastTouchX=0,lastTouchY=0;
   canvas.addEventListener('touchstart', e => {
     if (staticMode) return;
@@ -102,7 +111,7 @@
   const ORBIT_COLOR    = (paper() && paper().GREEN) || 0x1E6A50;
 
   // Helpers
-  function makeSphere(r,color,segments=32){
+  function makeSphere(r,color,segments=24){
     const mat = paper()
       ? paper().mat(THREE, color)
       : new THREE.MeshStandardMaterial({color,roughness:0.35,metalness:0.15});
@@ -114,7 +123,7 @@
   }
   function makeOrbit(radius,color=ORBIT_COLOR,opacity=0.85,tilt=0){
     const torus = new THREE.Mesh(
-      new THREE.TorusGeometry(radius, 0.018, 10, 120),
+      new THREE.TorusGeometry(radius, 0.018, 8, 80),
       paper() ? paper().orbitMat(THREE, { opacity: opacity * 0.7 })
         : new THREE.MeshStandardMaterial({ color, metalness:0.06, roughness:0.55, transparent:true, opacity })
     );
@@ -447,7 +456,7 @@
       const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
       const COL = _qShellColors3D(isDark);
       const occ = _qOccupancy(el);
-      const PTS_PER_E = 380;
+      const PTS_PER_E = 220;
 
       const rand1s = _radialSampler(_qPdf1s, 3.0);
       const rand2s = _radialSampler(_qPdf2s, 5.6);
@@ -1994,6 +2003,7 @@
     });
     view2dCanvas.addEventListener('wheel', e => {
       if (viewMode !== '2d') return;
+      if (!(e.ctrlKey || e.metaKey)) return;
       e.preventDefault();
       const step = e.deltaY > 0 ? -0.12 : 0.12;
       zoom2d = Math.max(0.3, Math.min(4.0, zoom2d + step));
@@ -2190,11 +2200,13 @@
 
   // Render loop — 3D + 2D animation, rotation inertia
   let t = 0;
-  function animate(){
-    requestAnimationFrame(animate);
-    if (_docHidden) return; // pause when tab hidden
+  function tickFrame(){
+    if (_docHidden) return;
+    if (viewMode === '2d') {
+      if (currentTab === 'atomic') drive2D();
+      return;
+    }
 
-    // Inertia: apply leftover velocity, decay it. Stops once below epsilon.
     if (!isDragging && (Math.abs(rotVelX) > 1e-4 || Math.abs(rotVelY) > 1e-4)) {
       rotY += rotVelY;
       rotX += rotVelX;
@@ -2204,7 +2216,6 @@
 
     if (staticMode) {
       if (!_staticRendered) { renderer.render(scene, camera); _staticRendered = true; }
-      // 2D still animates so it feels alive
       if (currentTab === 'atomic') drive2D();
       return;
     }
@@ -2235,8 +2246,22 @@
     currentGroup.children.forEach(c => { if (c.userData.isCloud) c.rotation.y += 0.0025; });
     renderer.render(scene, camera);
 
-    // 2D animation pass (mini panel always; full canvas only when in 2D view)
     if (currentTab === 'atomic') drive2D();
+  }
+
+  if (paper() && paper().bindLiveLoop) {
+    paper().bindLiveLoop(canvas, tickFrame, {
+      busy: function () {
+        return isDragging || Math.abs(rotVelX) > 1e-4 || Math.abs(rotVelY) > 1e-4 ||
+          (!staticMode && viewMode === '3d') || anim2dEnabled;
+      },
+      active: function () { return viewMode === '3d' || anim2dEnabled; }
+    });
+  } else {
+    (function animate(){
+      requestAnimationFrame(animate);
+      tickFrame();
+    })();
   }
 
   // 2D animation toggle — defaults to OFF (static like original)
@@ -2271,8 +2296,6 @@
     if (p2dCtx && p2dVisible) draw2DAtom(currentAtomModel, t);
     if (viewMode === '2d' && view2dCtx) draw2DAtomFull(currentAtomModel, t);
   }
-
-  animate();
 })();
   };
 })(typeof window !== 'undefined' ? window : this);

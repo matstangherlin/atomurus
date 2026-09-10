@@ -13,13 +13,7 @@
  *    and <noscript> entries. Keep exactly ONE lab-console stylesheet link.
  *  - Convert it to async: preload + media="print" onload="this.media='all'".
  *    → CSS fetches in parallel with HTML/JS, does NOT block first paint.
- *  - FOUC guard: add inline <style> + <script> that hide <body> until the
- *    design CSS is ready, then reveal. No flash, no slow blocking load.
- *    Fallbacks: 4 s timeout (if CSS never loads, page still appears) and a
- *    <noscript> blocking link (no-JS still gets full design).
- *
- * The guard rule lives both inline (order-independent) and in
- * assets/critical-lab.css via tools/build-critical-css.js.
+ *  - Do not hide <body> while CSS loads — that froze the whole site.
  */
 const fs = require('fs');
 const path = require('path');
@@ -52,7 +46,6 @@ const CRITICAL = /([ \t]*)<link[^>]*rel="stylesheet"[^>]*href="([^"]*critical-la
 function guardBlock(indent, href) {
   const i = indent || '';
   return (
-    i + "<style>html.lc-loading body{visibility:hidden}</style>\n" +
     i + "<script>document.documentElement.classList.add('lc-loading');setTimeout(function(){document.documentElement.classList.remove('lc-loading')},4000);</script>\n" +
     i + '<link rel="preload" href="' + href + '" as="style">\n' +
     i + '<link rel="stylesheet" href="' + href + '" media="print" onload="this.media=\'all\';document.documentElement.classList.remove(\'lc-loading\')">\n' +
