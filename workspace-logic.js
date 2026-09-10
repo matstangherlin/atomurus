@@ -6,10 +6,13 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
 
-  var SECTIONS = ['overview', 'library', 'sets', 'practice', 'review', 'insights', 'pro-lab', 'history', 'notes', 'progress', 'account'];
-  var ACCOUNT_TABS = ['overview', 'profile', 'security', 'plan', 'preferences'];
+  var SECTIONS = ['overview', 'lab', 'creations', 'notebook', 'library', 'sets', 'practice', 'review', 'insights', 'pro-lab', 'history', 'notes', 'progress', 'account'];
+  var ACCOUNT_TABS = ['overview', 'profile', 'security', 'plan', 'preferences', 'chemistry'];
   var AREA_BY_SECTION = {
-    overview: 'overview',
+    overview: 'lab',
+    lab: 'lab',
+    creations: 'lab',
+    notebook: 'lab',
     library: 'study',
     sets: 'study',
     practice: 'study',
@@ -55,10 +58,24 @@
 
   function defaultSectionForArea(area) {
     if (area === 'study') return 'library';
-    if (area === 'lab') return 'pro-lab';
+    if (area === 'lab') return 'overview';
     if (area === 'activity') return 'progress';
     if (area === 'account') return 'account';
     return 'overview';
+  }
+
+  function accountHref(tab) {
+    var next = String(tab || '').trim().toLowerCase();
+    if (ACCOUNT_TABS.indexOf(next) === -1 || next === 'overview') return '/account';
+    return '/account?tab=' + encodeURIComponent(next);
+  }
+
+  function accountRedirectFromWorkspace(search) {
+    var params;
+    try { params = new URLSearchParams(search || ''); } catch (_err) { return '/account'; }
+    if (String(params.get('section') || '').toLowerCase() !== 'account') return '';
+    var tab = accountTabFromQuery(search);
+    return accountHref(tab);
   }
 
   function accountTabFromQuery(search) {
@@ -451,6 +468,8 @@
     hasFeature: hasFeature,
     libraryTypeLabel: libraryTypeLabel,
     labToolFromQuery: labToolFromQuery,
-    labHref: labHref
+    labHref: labHref,
+    accountHref: accountHref,
+    accountRedirectFromWorkspace: accountRedirectFromWorkspace
   };
 });

@@ -314,11 +314,8 @@
     }
 
     document.querySelectorAll('[data-auth-nav-link="common.nav.login"]').forEach(function (link) {
-      if (link.closest('[data-atomurus-nav-foot], #ws-nav-foot')) {
-        link.setAttribute('href', signedIn ? '/app?section=account' : guestLoginHref());
-        return;
-      }
-      link.setAttribute('href', signedIn ? '/app?section=account' : guestLoginHref());
+      link.setAttribute('href', signedIn ? '/account' : guestLoginHref());
+      if (link.closest('[data-atomurus-nav-foot], #ws-nav-foot')) return;
       const label = link.querySelector('[data-i18n], span') || link;
       setAuthLabel(label, signedIn ? display : (label.dataset.authGuestLabel || 'Account'), signedIn ? null : 'common.nav.login');
     });
@@ -331,7 +328,7 @@
       var guestHref = String(link.dataset.authGuestHref || '').toLowerCase();
       if (!/login|signup|account/.test(guestHref)) return;
       var guestLabel = guestCreateAccountLabel();
-      link.setAttribute('href', signedIn ? '/app?section=account' : guestSignupHref());
+      link.setAttribute('href', signedIn ? '/account' : guestSignupHref());
       link.classList.toggle('is-guest-cta', !signedIn);
       const label = link.querySelector('span[data-i18n], span:not(.ps-plan-badge)') || link.querySelector('span') || link;
       setAuthLabel(
@@ -345,9 +342,7 @@
     });
     bindAccountMenu(signedIn, user, display);
     if (window.AtomurusNav && typeof window.AtomurusNav.sync === 'function') {
-      if (!(document.body && document.body.classList.contains('ws-body'))) {
-        window.AtomurusNav.sync({ state: { ready: !pending, signedIn: signedIn, user: user } });
-      }
+      window.AtomurusNav.sync({ state: { ready: !pending, signedIn: signedIn, user: user } });
     }
   }
 
@@ -366,10 +361,10 @@
     if (!menu) return;
     var copy = accountMenuCopy();
     menu.innerHTML =
-      '<a href="/app?section=account">' + copy.account + '</a>' +
-      '<a href="/app?section=account&tab=plan">' + copy.plan + '</a>' +
-      '<a href="/app?section=account&tab=preferences">' + copy.prefs + '</a>' +
-      '<a href="/config">' + copy.labSettings + '</a>' +
+      '<a href="/account">' + copy.account + '</a>' +
+      '<a href="/account?tab=plan">' + copy.plan + '</a>' +
+      '<a href="/account?tab=preferences">' + copy.prefs + '</a>' +
+      '<a href="/account?tab=chemistry">' + copy.labSettings + '</a>' +
       '<div class="ps-account-menu-sep"></div>' +
       '<button type="button" data-atomurus-signout>' + copy.signOut + '</button>';
   }

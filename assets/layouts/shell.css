@@ -185,6 +185,8 @@ aside[data-atomurus-sidebar] {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .ws-nav-block {
@@ -211,6 +213,7 @@ aside[data-atomurus-sidebar] {
 
 .ws-nav-foot {
   margin-top: auto;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -271,11 +274,6 @@ aside[data-atomurus-sidebar] {
 
 .ws-nav-site {
   padding-bottom: 8px;
-}
-
-html.auth-pending #ws-nav-foot,
-html.auth-pending [data-atomurus-nav-foot] {
-  visibility: hidden;
 }
 
 .ps-shell > aside.ws-sidebar,

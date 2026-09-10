@@ -49,7 +49,7 @@
     if (chip && chip.classList.contains('is-guest-cta')) return false;
     var href = chip ? (chip.getAttribute('href') || '') : '';
     if (/signup|login/.test(href)) return false;
-    if (chip && /section=account/.test(href)) return true;
+    if (chip && (/\/account(?:\.html)?(?:\?|$)/.test(href) || /section=account/.test(href))) return true;
     return false;
   }
 

@@ -129,7 +129,7 @@ assert.deepEqual(
 assert.equal(stripeCustomerIdFromUser({ app_metadata: {} }), null);
 assert.equal(stripeCustomerIdFromUser({ app_metadata: { stripe_customer_id: 'cus_abc' } }), 'cus_abc');
 const portalRequest = new Request('https://atomurus.com/api/billing/portal');
-assert.match(portalReturnUrl(portalRequest), /\/app\?section=account$/);
+assert.match(portalReturnUrl(portalRequest), /\/account\?tab=plan$/);
 
 await assert.rejects(
   () => createPortalSession({

@@ -287,6 +287,11 @@
   status = 200
 
 [[redirects]]
+  from   = "/account"
+  to     = "/account.html"
+  status = 200
+
+[[redirects]]
   from   = "/app"
   to     = "/app.html"
   status = 200
@@ -919,6 +924,12 @@
 
 [[headers]]
   for = "/login/reset"
+  [headers.values]
+    Cache-Control = "no-store, max-age=0"
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/account"
   [headers.values]
     Cache-Control = "no-store, max-age=0"
     X-Robots-Tag = "noindex, nofollow"

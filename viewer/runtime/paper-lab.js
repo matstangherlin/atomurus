@@ -75,6 +75,13 @@
     return 'auto';
   }
 
+  function setQualityTier(tier) {
+    var allowed = { auto: 1, high: 1, balanced: 1, performance: 1 };
+    var next = allowed[tier] ? tier : 'auto';
+    try { localStorage.setItem('atomurus-3d-quality', next); } catch (e) {}
+    return qualityTier();
+  }
+
   function canvasCssArea(canvas) {
     var w = (canvas && (canvas.clientWidth || canvas.width)) || (typeof window !== 'undefined' ? window.innerWidth : 1280) || 1280;
     var h = (canvas && (canvas.clientHeight || canvas.height)) || Math.round(w * 0.56);
@@ -693,6 +700,7 @@
     nearbyPairs: nearbyPairs,
     introSpin: introSpin,
     qualityTier: qualityTier,
+    setQualityTier: setQualityTier,
     isMobile: isMobile,
     bindTouchOrbit: bindTouchOrbit
   };

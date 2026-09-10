@@ -32,6 +32,8 @@ function features(on) {
     adminConsole: false,
     automatedPractice: isPro,
     proLab: isPro,
+    virtualLab: true,
+    virtualLabAdvanced: isPro,
     advancedCalculations: isPro,
     advancedElementCompare: isPro,
     advancedMoleculeCompare: isPro,
@@ -82,6 +84,8 @@ function guestFeatures() {
     adminConsole: false,
     automatedPractice: false,
     proLab: false,
+    virtualLab: false,
+    virtualLabAdvanced: false,
     advancedCalculations: false,
     advancedElementCompare: false,
     advancedMoleculeCompare: false,
@@ -263,7 +267,8 @@ async function preparePage(page, extras = {}) {
 
 async function waitForWorkspace(page) {
   await expect(page.locator('#ws-nav-main a').first()).toBeVisible({ timeout: 20_000 });
-  await expect(page.locator('#app-loading')).toBeHidden();
+  const loading = page.locator('#app-loading');
+  if (await loading.count()) await expect(loading).toBeHidden();
 }
 
 async function gotoWorkspace(page, path = '/app') {

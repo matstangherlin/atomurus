@@ -23,6 +23,8 @@
     studyTags: { access: 'account', category: 'study' },
     studySets: { access: 'account', category: 'study' },
     flashcards: { access: 'account', category: 'study' },
+    virtualLab: { access: 'account', category: 'lab' },
+    virtualLabAdvanced: { access: 'pro', category: 'lab' },
     premiumLessons: { access: 'pro', category: 'study' },
     smartReview: { access: 'pro', category: 'study' },
     spacedRepetition: { access: 'pro', category: 'study' },

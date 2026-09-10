@@ -632,7 +632,7 @@
     }
     var user = activeState().user;
     if (user && user.canManageBilling) {
-      location.assign('/app?section=account');
+      location.assign('/account?tab=plan');
       return;
     }
     if (button) {

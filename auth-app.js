@@ -201,6 +201,18 @@
       studyGuestLede: 'Save chemistry resources, build sets and continue learning.',
       createFreeAccount: 'Create free account',
       createAccount: 'Create account',
+      navCreations: 'Creations',
+      navNotebook: 'Notebook',
+      virtualLab: 'Virtual Lab',
+      openBench: 'Open Bench',
+      openBenchLede: 'Start from an empty laboratory bench.',
+      guidedCreations: 'Guided Creations',
+      labHeroTitle: 'Virtual Laboratory',
+      labHeroCopy: 'Mix, test and explore chemistry in a controlled virtual environment.',
+      enterLab: 'Enter Laboratory',
+      startOpenBench: 'New Lab Session',
+      labSearchPlaceholder: 'Search creations, experiments or your work…',
+      createToStart: 'Create account to start your workspace.',
       guestUnlockTitle: 'With a free account',
       guestUnlockBody: 'Keep a library, study sets and notes. New accounts include 30 days of Pro.',
       guestOpenLabLede: 'Open Lab stays free — inspect atoms, molecules, allotropes and isomerism in 3D.',
@@ -519,6 +531,18 @@
       studyGuestLede: 'Salve materiais de química, monte sets e continue aprendendo.',
       createFreeAccount: 'Criar conta gratuita',
       createAccount: 'Criar conta',
+      navCreations: 'Criações',
+      navNotebook: 'Caderno',
+      virtualLab: 'Lab virtual',
+      openBench: 'Bancada aberta',
+      openBenchLede: 'Comece com uma bancada vazia.',
+      guidedCreations: 'Criações guiadas',
+      labHeroTitle: 'Laboratório virtual',
+      labHeroCopy: 'Misture, teste e explore química em um ambiente virtual controlado.',
+      enterLab: 'Entrar no laboratório',
+      startOpenBench: 'Nova sessão do Lab',
+      labSearchPlaceholder: 'Buscar criações, experimentos ou seu trabalho…',
+      createToStart: 'Crie uma conta para começar o seu workspace.',
       guestUnlockTitle: 'Com uma conta gratuita',
       guestUnlockBody: 'Guarde biblioteca, study sets e notas. Contas novas incluem 30 dias de Pro.',
       guestOpenLabLede: 'O Open Lab continua livre — veja átomos, moléculas, alótropos e isomeria em 3D.',
@@ -790,6 +814,10 @@
     paths.viewer = '<circle cx="8" cy="8" r="2"/><ellipse cx="8" cy="8" rx="6" ry="2.5"/><ellipse cx="8" cy="8" rx="6" ry="2.5" transform="rotate(60 8 8)"/>';
     paths.calculators = '<rect x="3" y="2" width="10" height="12" rx="1"/><path d="M5 5h6M5.5 8h1M9.5 8h1M5.5 11h1M9.5 11h1"/>';
     paths.explore = '<path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/>';
+    paths.lab = paths['pro-lab'];
+    paths.creations = paths.sets;
+    paths.notebook = paths.notes;
+    paths.activity = paths.progress;
     return '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none">' + (paths[name] || paths.overview) + '</g></svg>';
   }
 
@@ -902,31 +930,37 @@
       }
     }
     if (studyNav) {
+      var labHome = current === 'overview' || current === 'lab' || current === 'pro-lab';
       var context = [
-        ['overview', 'overview', 'overview', area === 'overview'],
+        ['overview', 'navGroupLab', 'overview', labHome],
+        ['creations', 'navCreations', 'creations', current === 'creations'],
+        ['notebook', 'navNotebook', 'notebook', current === 'notebook'],
         ['library', 'study', 'library', area === 'study'],
-        ['pro-lab', 'navGroupLab', 'pro-lab', area === 'lab'],
         ['progress', 'navGroupActivity', 'progress', area === 'activity']
       ];
       var contextHtml = '<div class="ws-context-nav" role="navigation" aria-label="' + escapeHtml(t('navGroupWorkspace')) + '">' +
         context.map(function (pair) {
-          return navItemHtml('/app?section=' + pair[0], pair[1], pair[2], pair[3], false, pair[0]);
+          var href = pair[0] === 'overview' ? '/app' : '/app?section=' + pair[0];
+          return navItemHtml(href, pair[1], pair[2], pair[3], false, pair[0]);
         }).join('') + '</div>';
       var localHtml = '';
+      var labMode = '';
+      try { labMode = new URLSearchParams(location.search).get('mode') || ''; } catch (_err) {}
       if (area === 'study') {
         localHtml = '<div class="ws-local-nav" role="navigation" aria-label="' + escapeHtml(t('navGroupStudy')) + '">' +
           [['library', 'library', 'studyCloud'], ['sets', 'sets', 'studySets'], ['practice', 'practiceNav'], ['review', 'reviewShort', 'smartReview', 'review'], ['insights', 'insightsNav', 'studyInsights', 'insights']].map(function (pair) {
-            var key = pair[3] || pair[0];
             var locked = pair[2] && !featureOn(user, pair[2]);
             if (!user && (pair[0] === 'library' || pair[0] === 'sets' || pair[0] === 'practice')) locked = false;
             return navItemHtml('/app?section=' + pair[0], pair[1], pair[0], current === pair[0], locked, pair[0]);
           }).join('') + '</div>';
       } else if (area === 'lab') {
         localHtml = '<div class="ws-local-nav" role="navigation" aria-label="' + escapeHtml(t('navGroupLab')) + '">' +
-          navItemHtml('/app?section=pro-lab', 'labNavHome', 'pro-lab', currentTool === 'home', false, 'pro-lab') +
-          navItemHtml('/app?section=pro-lab&tool=reactions', 'labNavSolve', 'pro-lab', /reactions|formula|solutions|calculations/.test(currentTool), false, 'pro-lab') +
-          navItemHtml('/app?section=pro-lab&tool=elements', 'labNavCompare', 'pro-lab', /elements|molecules|atomic/.test(currentTool), false, 'pro-lab') +
-          navItemHtml('/app?section=pro-lab&tool=sessions', 'labNavSessions', 'history', currentTool === 'sessions', false, 'pro-lab') +
+          navItemHtml('/app?section=lab', 'virtualLab', 'lab', current === 'lab' && labMode !== 'bench', false, 'lab') +
+          navItemHtml('/app?section=lab&mode=bench', 'openBench', 'lab', current === 'lab' && labMode === 'bench', false, 'lab') +
+          navItemHtml('/app?section=creations', 'guidedCreations', 'creations', current === 'creations', false, 'creations') +
+          navItemHtml('/app?section=pro-lab', 'proLab', 'pro-lab', current === 'pro-lab' && currentTool === 'home', false, 'pro-lab') +
+          navItemHtml('/app?section=pro-lab&tool=reactions', 'labNavSolve', 'pro-lab', current === 'pro-lab' && /reactions|formula|solutions|calculations/.test(currentTool), false, 'pro-lab') +
+          navItemHtml('/app?section=pro-lab&tool=elements', 'labNavCompare', 'pro-lab', current === 'pro-lab' && /elements|molecules|atomic/.test(currentTool), false, 'pro-lab') +
           '</div>';
       } else if (area === 'activity') {
         localHtml = '<div class="ws-local-nav" role="navigation" aria-label="' + escapeHtml(t('navGroupActivity')) + '">' +
@@ -944,21 +978,22 @@
         window.AtomurusNav.paintFoot({
           user: user || null,
           pending: false,
-          accountActive: current === 'account'
+          accountActive: false
         });
-        var asideLogout = foot.querySelector('[data-atomurus-signout]');
-        if (asideLogout) asideLogout.addEventListener('click', doLogout);
       } else if (!user) {
         foot.innerHTML =
           '<a class="ws-nav-item is-upgrade" href="/signup?next=%2Fapp">' + icon('account') + '<span class="ws-nav-label">' + escapeHtml(t('createAccount')) + '</span></a>' +
           '<a class="ws-nav-item" href="/login?next=%2Fapp">' + icon('account') + '<span class="ws-nav-label">' + escapeHtml(t('login')) + '</span></a>' +
           '<a class="ws-nav-item" href="/pricing">' + icon('plan') + '<span class="ws-nav-label">' + escapeHtml(t('viewPlans') || t('plan')) + '</span></a>';
       } else {
-        var upgrade = proUser(user) ? '' :
-          '<a class="ws-nav-item is-upgrade" href="/pricing">' + icon('plan') + '<span class="ws-nav-label">' + escapeHtml(t('upgrade')) + '</span></a>';
+        var accountHref = (logic().accountHref && logic().accountHref()) || '/account';
+        var planHref = (logic().accountHref && logic().accountHref('plan')) || '/account?tab=plan';
+        var upgrade = (window.AtomurusNav && window.AtomurusNav.planKind ? window.AtomurusNav.planKind(user) : (proUser(user) ? 'pro' : 'free')) === 'free'
+          ? '<a class="ws-nav-item is-upgrade" href="/pricing">' + icon('plan') + '<span class="ws-nav-label">' + escapeHtml(t('upgrade')) + '</span></a>'
+          : '';
         foot.innerHTML =
-          '<a class="ws-nav-item' + (current === 'account' ? ' is-active' : '') + '" href="/app?section=account">' + icon('account') + '<span class="ws-nav-label">' + escapeHtml(t('account')) + '</span></a>' +
-          '<a class="ws-nav-item" href="/pricing">' + icon('plan') + '<span class="ws-nav-label">' + escapeHtml(t('plan')) + '</span></a>' +
+          '<a class="ws-nav-item" href="' + accountHref + '">' + icon('account') + '<span class="ws-nav-label">' + escapeHtml(t('account')) + '</span></a>' +
+          '<a class="ws-nav-item" href="' + planHref + '">' + icon('plan') + '<span class="ws-nav-label">' + escapeHtml(t('plan')) + '</span></a>' +
           '<button type="button" class="ws-nav-item" id="app-logout-aside">' + icon('logout') + '<span class="ws-nav-label">' + escapeHtml(t('logout')) + '</span></button>' +
           upgrade;
         var aside = $('app-logout-aside');
@@ -966,17 +1001,17 @@
       }
     }
     if (bottom) {
+      var labHomeBottom = current === 'overview' || current === 'lab' || current === 'pro-lab';
       var primary = [
-        ['overview', 'overview', 'overview', area === 'overview'],
+        ['overview', 'navGroupLab', 'lab', labHomeBottom],
+        ['creations', 'navCreations', 'creations', current === 'creations'],
+        ['notebook', 'navNotebook', 'notebook', current === 'notebook'],
         ['library', 'study', 'study', area === 'study'],
-        ['pro-lab', 'labShort', 'lab', area === 'lab'],
-        ['progress', 'navGroupActivity', 'activity', area === 'activity'],
-        ['account', 'account', 'account', current === 'account']
+        ['progress', 'navGroupActivity', 'activity', area === 'activity']
       ];
       bottom.innerHTML = primary.map(function (pair) {
-        var guestAccount = pair[0] === 'account' && !user;
-        var href = guestAccount ? '/signup?next=%2Fapp%3Fsection%3Daccount' : '/app?section=' + pair[0];
-        return '<a class="' + (pair[3] ? 'is-active' : '') + '" href="' + href + '">' + icon(pair[0]) + '<span>' + escapeHtml(t(pair[1])) + '</span></a>';
+        var href = pair[0] === 'overview' ? '/app' : '/app?section=' + pair[0];
+        return '<a class="' + (pair[3] ? 'is-active' : '') + '" href="' + href + '">' + icon(pair[2]) + '<span>' + escapeHtml(t(pair[1])) + '</span></a>';
       }).join('');
       bindProNav(bottom);
     }
@@ -1000,7 +1035,9 @@
     var userChip = $('ws-userchip');
     if (userChip) {
       userChip.hidden = false;
-      userChip.href = user ? '/app?section=account' : '/signup?next=' + encodeURIComponent((location.pathname || '/app') + (location.search || ''));
+      userChip.href = user
+        ? ((logic().accountHref && logic().accountHref()) || '/account')
+        : '/signup?next=' + encodeURIComponent((location.pathname || '/app') + (location.search || ''));
       userChip.classList.toggle('is-guest-cta', !user);
       userChip.setAttribute('aria-label', user ? displayName(user) : (chip && chip.textContent) || 'Create account');
     }
@@ -1063,6 +1100,9 @@
     if (section === 'practice') parts.push(escapeHtml(t('practiceNav')));
     if (section === 'review') parts.push(escapeHtml(t('review')));
     if (section === 'insights') parts.push(escapeHtml(t('insights')));
+    if (section === 'lab') parts.push(escapeHtml(t('virtualLab')));
+    if (section === 'creations') parts.push(escapeHtml(t('guidedCreations')));
+    if (section === 'notebook') parts.push(escapeHtml(t('navNotebook')));
     if (section === 'history') parts.push(escapeHtml(t('history')));
     if (section === 'notes') parts.push(escapeHtml(t('notes')));
     if (section === 'progress') parts.push(escapeHtml(t('continueNav')));
@@ -1477,6 +1517,50 @@
     return rows.map(hubPracticeCard).join('');
   }
 
+  function labLabel(row, lang) {
+    if (!row) return '';
+    if (row.title) return (lang === 'pt' ? row.title.pt : row.title.en) || row.title.en;
+    return row.name || row.id || '';
+  }
+
+  function labHeroHtml(user) {
+    var lab = window.AtomurusLab;
+    var lang = catalogLang();
+    var creations = (lab && lab.CREATIONS) || [];
+    var sessions = (lab && typeof lab.listSessions === 'function' ? lab.listSessions() : []).slice(0, 3);
+    var continueHtml = sessions.length
+      ? '<div class="ws-lab-continue">' + sessions.map(function (row) {
+          return '<a href="/app?section=lab&session=' + encodeURIComponent(row.id) + '">' + escapeHtml(row.title || t('virtualLab')) + '</a>';
+        }).join('') + '</div>'
+      : '';
+    var cards = creations.map(function (row) {
+      return '<a class="ws-lab-card" href="/app?section=lab&mode=guided&creation=' + encodeURIComponent(row.id) + '">' +
+        '<span class="ws-lab-badge">' + escapeHtml(row.category || '') + '</span>' +
+        '<h3 class="ws-lab-card-title">' + escapeHtml(labLabel(row, lang)) + '</h3>' +
+        '<p class="ws-lab-card-copy">' + escapeHtml(lang === 'pt' ? row.lede.pt : row.lede.en) + '</p></a>';
+    }).join('');
+    var cta = user
+      ? '<p><a class="ws-btn ws-btn-primary" href="/app?section=lab">' + escapeHtml(t('enterLab')) + '</a> ' +
+        '<a class="ws-btn ws-btn-secondary" href="/app?section=lab&mode=bench">' + escapeHtml(t('startOpenBench')) + '</a></p>'
+      : '<p><a class="ws-btn ws-btn-primary" href="' + guestSignupNext() + '">' + escapeHtml(t('createFreeAccount')) + '</a> ' +
+        '<a class="ws-btn ws-btn-secondary" href="/app?section=lab">' + escapeHtml(t('enterLab')) + '</a></p>' +
+        '<p class="ws-lede">' + escapeHtml(t('createToStart')) + '</p>';
+    return '<section class="ws-lab-hero" data-hub="lab">' +
+      '<div><p class="ws-kicker">Atomurus Lab</p><h2>' + escapeHtml(t('labHeroTitle')) + '</h2>' +
+      '<p class="ws-lede">' + escapeHtml(t('labHeroCopy')) + '</p>' + cta + continueHtml + '</div></section>' +
+      '<form class="lab-search" data-ws-lab-search action="/app" method="get">' +
+      '<input type="hidden" name="section" value="creations">' +
+      '<label class="lc-sr-only" for="ws-lab-q">' + escapeHtml(t('labSearchPlaceholder')) + '</label>' +
+      '<input id="ws-lab-q" name="q" type="search" placeholder="' + escapeHtml(t('labSearchPlaceholder')) + '" autocomplete="off">' +
+      '<button type="submit" class="ws-btn ws-btn-secondary">' + escapeHtml(t('search')) + '</button></form>' +
+      '<section class="ws-overview-block" data-hub="creations"><h2 class="ws-h2">' + escapeHtml(t('guidedCreations')) + '</h2>' +
+      '<div class="ws-grid ws-public-grid">' + cards + '</div>' +
+      '<p><a class="ws-btn ws-btn-secondary" href="/app?section=creations">' + escapeHtml(t('viewAll')) + '</a></p></section>' +
+      '<section class="ws-overview-block" data-hub="bench"><h2 class="ws-h2">' + escapeHtml(t('openBench')) + '</h2>' +
+      '<p class="ws-lede">' + escapeHtml(t('openBenchLede')) + '</p>' +
+      '<p><a class="ws-btn ws-btn-secondary" href="/app?section=lab&mode=bench">' + escapeHtml(t('startOpenBench')) + '</a></p></section>';
+  }
+
   async function renderOverview(node, api, user) {
     node.innerHTML = skeleton();
     var canReview = featureOn(user, 'smartReview');
@@ -1616,7 +1700,7 @@
       crumbTrail('overview') +
       '<div class="ws-study-hub" data-study-hub="account">' +
       '<p class="ws-kicker">Atomurus</p><h1 class="ws-title">' + escapeHtml(greet) + '</h1><p class="ws-lede">' + escapeHtml(t('continueChemistry')) + '</p>' +
-      continueBlock + reviewBlock + practiceBlock + pathsBlock + setsBlock + savedBlock + notesBlock + weakBlock + insightsBlock + visualizeBlock + recentBlock + hubLinks +
+      labHeroHtml(user) + continueBlock + reviewBlock + practiceBlock + pathsBlock + setsBlock + savedBlock + notesBlock + weakBlock + insightsBlock + visualizeBlock + recentBlock + hubLinks +
       '</div>';
 
     node.querySelectorAll('.ws-hub-notes .ws-item-note').forEach(function (noteNode, index) {
@@ -1664,12 +1748,6 @@
       '<a href="/viewer/allotropes.html">' + escapeHtml(t('labAllotropes')) + '</a>' +
       '<a href="/viewer/isomerism.html">' + escapeHtml(t('labIsomerism')) + '</a>' +
       '</nav></section>';
-    var toolsBlock = '<section class="ws-overview-block ws-hub-openlab" data-hub="openlab"><h2 class="ws-h2">' + escapeHtml(t('openLabSuite')) + '</h2>' +
-      '<div class="ws-grid ws-public-grid">' +
-      '<a class="ws-lab-card" href="/periodic-table.html"><span class="ws-lab-badge">' + escapeHtml(t('publicTool')) + '</span><h3 class="ws-lab-card-title">' + escapeHtml(t('openTable')) + '</h3><p class="ws-lab-card-copy">' + escapeHtml(t('tableCardCopy')) + '</p></a>' +
-      '<a class="ws-lab-card" href="/calculators.html"><span class="ws-lab-badge">' + escapeHtml(t('publicTool')) + '</span><h3 class="ws-lab-card-title">' + escapeHtml(t('publicCalc')) + '</h3><p class="ws-lab-card-copy">' + escapeHtml(t('calcCardCopy')) + '</p></a>' +
-      '<a class="ws-lab-card" href="/explore.html"><span class="ws-lab-badge">' + escapeHtml(t('publicTool')) + '</span><h3 class="ws-lab-card-title">' + escapeHtml(t('openExplore')) + '</h3><p class="ws-lab-card-copy">' + escapeHtml(t('exploreCardCopy')) + '</p></a>' +
-      '</div></section>';
     var unlockBlock = '<section class="ws-overview-block ws-hub-unlock" data-hub="unlock"><h2 class="ws-h2">' + escapeHtml(t('guestUnlockTitle')) + '</h2>' +
       '<p class="ws-lede">' + escapeHtml(t('guestUnlockBody')) + '</p>' +
       '<nav class="ws-hub-links">' +
@@ -1681,11 +1759,15 @@
     node.innerHTML = crumbTrail(section) +
       '<div class="ws-study-hub" data-study-hub="guest">' +
       '<p class="ws-kicker">Atomurus</p>' +
-      '<h1 class="ws-title">' + escapeHtml(t('studyWithAtomurus')) + '</h1>' +
+      '<h1 class="ws-title">' + escapeHtml(t('labHeroTitle')) + '</h1>' +
+      '<p class="ws-lede">' + escapeHtml(t('labHeroCopy')) + '</p>' +
+      labHeroHtml(null) +
+      '<section class="ws-overview-block" data-hub="study-intro"><h2 class="ws-h2">' + escapeHtml(t('studyWithAtomurus')) + '</h2>' +
       '<p class="ws-lede">' + escapeHtml(t('studyGuestLede')) + '</p>' +
       '<p><a class="ws-btn ws-btn-primary" href="/signup?next=%2Fapp">' + escapeHtml(t('createFreeAccount')) + '</a>' +
-      ' <a class="ws-btn ws-btn-secondary" href="/login?next=%2Fapp">' + escapeHtml(t('login')) + '</a></p>' +
-      visualizeBlock + toolsBlock + unlockBlock +
+      ' <a class="ws-btn ws-btn-secondary" href="/login?next=%2Fapp">' + escapeHtml(t('login')) + '</a></p></section>' +
+      visualizeBlock +
+      unlockBlock +
       '<section class="ws-overview-block ws-hub-practice" data-hub="practice"><h2 class="ws-h2">' + escapeHtml(t('practiceChemistry')) + '</h2>' +
       '<p class="ws-lede">' + escapeHtml(t('practiceLede')) + '</p>' +
       '<div class="ws-grid">' + practiceLiveCards(4) + '</div></section>' +
@@ -2937,6 +3019,28 @@
     return clone;
   }
 
+  function mountVirtualLab(node, user, section) {
+    var mountLab = function () {
+      return window.AtomurusLab.mount(node, { user: user, section: section || 'lab' });
+    };
+    if (window.AtomurusLab && typeof window.AtomurusLab.mount === 'function') {
+      return Promise.resolve(mountLab());
+    }
+    return new Promise(function (resolve) {
+      var tries = 0;
+      var timer = window.setInterval(function () {
+        tries += 1;
+        if (window.AtomurusLab && typeof window.AtomurusLab.mount === 'function') {
+          window.clearInterval(timer);
+          resolve(Promise.resolve(mountLab()));
+        } else if (tries > 50) {
+          window.clearInterval(timer);
+          resolve();
+        }
+      }, 40);
+    });
+  }
+
   function mountProLab(node, user) {
     var mountLab = function () {
       return window.AtomurusProLab.mount(node, {
@@ -2973,9 +3077,14 @@
     if (!node) return;
     var section = studySection();
     if (section === 'account') {
-      if (user) renderAccount(user);
-      else renderFreeOverview(null);
+      var dest = logic().accountRedirectFromWorkspace
+        ? logic().accountRedirectFromWorkspace(location.search)
+        : '/account';
+      location.replace(dest || '/account');
       return;
+    }
+    if (section === 'lab' || section === 'creations' || section === 'notebook') {
+      return mountVirtualLab(node, user, section);
     }
     if (section === 'pro-lab') {
       return mountProLab(node, user);
