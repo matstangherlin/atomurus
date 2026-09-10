@@ -1366,6 +1366,7 @@ const DICT = {
           geometry:   'geometry'
         },
         labelQuantum: 'Quantum · 1926',
+        pillQuantum: 'Quantum',
         // model detail card (appears on every model switch)
         detail: {
           okLabel:    'What it explained',
@@ -3466,6 +3467,7 @@ const DICT = {
           geometry:   'geometria'
         },
         labelQuantum: 'Quântico · 1926',
+        pillQuantum: 'Quântico',
         // card de detalhes do modelo (aparece a cada troca)
         detail: {
           okLabel:    'O que explicou',

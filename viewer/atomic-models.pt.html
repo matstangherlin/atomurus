@@ -862,7 +862,7 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
     max-width: 62ch !important;
   }
   .av-substrip {
-    display: flex;
+    display: none;
     align-items: center;
     gap: 10px;
     padding: 9px 0;
@@ -1167,7 +1167,7 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
       <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="opacity:.35">
         <path d="M3.5 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
       </svg>
-      <span data-i18n="atomicModels.breadcrumb">Atomic Models</span>
+      <span data-i18n="atomicModels.breadcrumb">Modelos Atômicos</span>
     </div>
     <form class="ps-search search-box" role="search" action="../periodic-table.html" method="get">
   <label class="lc-sr-only" for="ps-search-q">Search element</label>
@@ -1264,9 +1264,9 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
 
       <!-- ─── Page header ─── -->
       <div class="ph-kicker" data-i18n="atomicModels.kicker">visualização</div>
-      <h1 class="ph-title" data-i18n="atomicModels.title">Atomic Models</h1>
-      <p class="ph-desc" data-i18n="atomicModels.desc">Five historical models of the atom in 3D. Switch Dalton, Thomson, Rutherford, Bohr or Quantum.</p>
-      <p class="lab-readmore"><a href="/explore/what-is-an-atom.html" data-i18n="atomicModels.readArticle">Read the article: What is an atom →</a></p>
+      <h1 class="ph-title" data-i18n="atomicModels.title">Modelos Atômicos</h1>
+      <p class="ph-desc" data-i18n="atomicModels.desc">Cinco modelos históricos do átomo em 3D. Troque Dalton, Thomson, Rutherford, Bohr ou Quântico.</p>
+      <p class="lab-readmore"><a href="/explore/what-is-an-atom.html" data-i18n="atomicModels.readArticle">Ler o artigo: O que é um átomo →</a></p>
       <div data-pro-lab-tool="atomic"></div>
 
       <!-- Visualizador tab bar (responsive) -->
@@ -1274,22 +1274,22 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
         <a class="vz-tab active" href="atomic-models.html" aria-current="page">
           <span class="vz-num">01</span>
           <svg class="vz-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="1.5" fill="currentColor"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/></svg>
-          <span data-i18n="atomicModels.tabAtomic">Atomic Models</span>
+          <span data-i18n="atomicModels.tabAtomic">Modelos Atômicos</span>
         </a>
         <a class="vz-tab" href="molecules.html">
           <span class="vz-num">02</span>
           <svg class="vz-icon" viewBox="0 0 16 16" fill="none"><circle cx="4" cy="4" r="2" fill="currentColor"/><circle cx="12" cy="6" r="2" fill="currentColor" opacity=".7"/><circle cx="8" cy="12" r="2" fill="currentColor" opacity=".5"/><line x1="4" y1="4" x2="12" y2="6" stroke="currentColor" stroke-width="1"/><line x1="12" y1="6" x2="8" y2="12" stroke="currentColor" stroke-width="1"/><line x1="4" y1="4" x2="8" y2="12" stroke="currentColor" stroke-width="1"/></svg>
-          <span data-i18n="atomicModels.tabMolecules">Molecules</span>
+          <span data-i18n="atomicModels.tabMolecules">Moléculas</span>
         </a>
         <a class="vz-tab" href="allotropes.html">
           <span class="vz-num">03</span>
           <svg class="vz-icon" viewBox="0 0 16 16" fill="none"><polygon points="8,2 14,6 12,13 4,13 2,6" stroke="currentColor" stroke-width="1.2" fill="none"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/></svg>
-          <span data-i18n="atomicModels.tabAllotropes">Allotropes</span>
+          <span data-i18n="atomicModels.tabAllotropes">Alótropos</span>
         </a>
         <a class="vz-tab" href="isomerism.html">
           <span class="vz-num">04</span>
           <svg class="vz-icon" viewBox="0 0 16 16" fill="none"><circle cx="4" cy="8" r="2" fill="currentColor" opacity=".85"/><circle cx="12" cy="8" r="2" fill="currentColor" opacity=".85"/><line x1="4" y1="8" x2="4" y2="3.5" stroke="currentColor" stroke-width="1.1"/><line x1="12" y1="8" x2="12" y2="3.5" stroke="currentColor" stroke-width="1.1"/><line x1="4" y1="8" x2="4" y2="12.5" stroke="currentColor" stroke-width="1.1"/><line x1="12" y1="8" x2="12" y2="12.5" stroke="currentColor" stroke-width="1.1"/><line x1="8" y1="1" x2="8" y2="15" stroke="currentColor" stroke-width="1" stroke-dasharray="2,1.5" opacity=".5"/></svg>
-          <span data-i18n="common.nav.isomerism">Isomerism</span>
+          <span data-i18n="common.nav.isomerism">Isomeria</span>
         </a>
       </nav>
 
@@ -1307,13 +1307,13 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
       <!-- ═══════ VIEWER ═══════ -->
       <div class="viewer">
         <div id="panel-atomic" class="panel">
-          <div class="panel-label" data-i18n="atomicModels.panelSelectModel">Select historical model</div>
+          <div class="panel-label" data-i18n="atomicModels.panelSelectModel">Selecione o modelo histórico</div>
           <div class="pill-row">
             <button class="pill"        data-model="dalton"     onclick="setAtomModel('dalton')">Dalton</button>
             <button class="pill"        data-model="thomson"    onclick="setAtomModel('thomson')">Thomson</button>
             <button class="pill"        data-model="rutherford" onclick="setAtomModel('rutherford')">Rutherford</button>
             <button class="pill active" data-model="bohr"       onclick="setAtomModel('bohr')">Bohr</button>
-            <button class="pill"        data-model="quantum"    onclick="setAtomModel('quantum')">Quântico</button>
+            <button class="pill"        data-model="quantum"    onclick="setAtomModel('quantum')" data-i18n="atomicModels.pillQuantum">Quântico</button>
           </div>
           <!-- Ion state selector (only shown for models that have electrons) -->
           <div class="ion-panel" id="ion-panel">
@@ -1487,8 +1487,8 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
       </div>
 
       <aside class="lab-readmore-card">
-        <p data-i18n="atomicModels.readArticleLead">Timeline, orbitals and quantum numbers live in the article.</p>
-        <a class="ui-btn ui-btn-accent" href="/explore/what-is-an-atom.html" data-i18n="atomicModels.readArticle">Read: What is an atom →</a>
+        <p data-i18n="atomicModels.readArticleLead">A linha do tempo, os orbitais e os números quânticos estão no artigo.</p>
+        <a class="ui-btn ui-btn-accent" href="/explore/what-is-an-atom.html" data-i18n="atomicModels.readArticle">Ler: O que é um átomo →</a>
       </aside>
 
     </div>

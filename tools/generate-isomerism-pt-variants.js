@@ -100,6 +100,8 @@ function buildVariant(page) {
     /<meta property="og:locale" content="[^"]*">/g,
     '<meta property="og:locale" content="pt_BR">'
   );
+  html = html.replace(/What is an isomer\?/g, 'O que é um isômero?');
+  html = html.replace(/Read the isomerism article →/g, 'Ler o artigo de isomeria →');
 
   fs.writeFileSync(targetPath, html, 'utf8');
 }

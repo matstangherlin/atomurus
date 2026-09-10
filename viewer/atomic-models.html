@@ -862,7 +862,7 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
     max-width: 62ch !important;
   }
   .av-substrip {
-    display: flex;
+    display: none;
     align-items: center;
     gap: 10px;
     padding: 9px 0;
@@ -1313,7 +1313,7 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
             <button class="pill"        data-model="thomson"    onclick="setAtomModel('thomson')">Thomson</button>
             <button class="pill"        data-model="rutherford" onclick="setAtomModel('rutherford')">Rutherford</button>
             <button class="pill active" data-model="bohr"       onclick="setAtomModel('bohr')">Bohr</button>
-            <button class="pill"        data-model="quantum"    onclick="setAtomModel('quantum')">Quântico</button>
+            <button class="pill"        data-model="quantum"    onclick="setAtomModel('quantum')" data-i18n="atomicModels.pillQuantum">Quantum</button>
           </div>
           <!-- Ion state selector (only shown for models that have electrons) -->
           <div class="ion-panel" id="ion-panel">
@@ -1328,9 +1328,9 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
             <div class="ion-explain" id="ion-explain">
               <span class="ion-ecount" id="ion-ecount">6 e⁻</span>
               <span class="ion-sep">·</span>
-              <span class="ion-action" id="ion-action">prótons = elétrons</span>
+              <span class="ion-action" id="ion-action">protons = electrons</span>
               <span class="ion-sep">·</span>
-              <span class="ion-examples" id="ion-examples">ex: gases nobres (He, Ne, Ar)</span>
+              <span class="ion-examples" id="ion-examples">e.g. noble gases (He, Ne, Ar)</span>
             </div>
           </div>
         </div>

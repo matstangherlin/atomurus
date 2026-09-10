@@ -232,11 +232,13 @@ assert.doesNotMatch(atomic, /cdnjs\.cloudflare\.com\/ajax\/libs\/three\.js/);
 assert.doesNotMatch(atomic, /WebGLRenderer/);
 assert.match(atomic, /what-is-an-atom\.html/);
 assert.match(atomic, /lab-readmore/);
+assert.match(atomic, /data-i18n="atomicModels.pillQuantum">Quantum/);
 assert.doesNotMatch(atomic, /data-i18n="atomicModels\.sec01"/);
 
 const atomicPt = read('viewer/atomic-models.pt.html');
 assert.match(atomicPt, /what-is-an-atom\.html/);
 assert.match(atomicPt, /lab-readmore/);
+assert.match(atomicPt, /data-i18n="atomicModels.pillQuantum">Quântico/);
 
 const atomicRuntime = read('viewer/runtime/atomic-viewer.js');
 assert.match(atomicRuntime, /atomurusInitAtomicViewer/);
