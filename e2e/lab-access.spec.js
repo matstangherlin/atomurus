@@ -82,6 +82,10 @@ test('guest atomic models, allotropes and element compare stay open', async ({ p
   await expect.poll(() => page.evaluate(() => Boolean(
     window.THREE && document.querySelector('script[data-atomurus-dep="viewer-runtime"]')
   ))).toBe(true);
+  await page.locator('[data-model="dalton"]').click();
+  await expect(page.locator('[data-model="dalton"]')).toHaveClass(/active/);
+  await page.locator('[data-model="quantum"]').click();
+  await expect(page.locator('[data-model="quantum"]')).toHaveClass(/active/);
   await saveShot(page, 'guest-atomic-models-open');
 
   await page.goto('/viewer/allotropes.html');
@@ -322,6 +326,9 @@ test('guest can share all four Open Lab viewers without a gate', async ({ page }
 test('guest save on molecules is a contextual account CTA, not a canvas gate', async ({ page }) => {
   await page.goto('/viewer/molecules.html');
   await expectViewerCanvas(page, '#viewer3d');
+  await page.locator('[data-mol-rep="space"]').click();
+  await expect(page.locator('[data-mol-rep="space"]')).toHaveClass(/active/);
+  await page.locator('[data-mol-rep="ball"]').click();
   await expect.poll(() => page.evaluate(() => Boolean(
     window.AtomurusStudySave && window.AtomurusWorkspaceUI && document.querySelector('#atomurus-study-save [data-study-save]')
   ))).toBe(true);

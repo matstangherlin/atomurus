@@ -244,7 +244,7 @@
     'setViewerMode', 'setMolecule', 'setMoleculeByElement', 'setAtomModel',
     'toggleAutoRotate', 'toggleStatic', 'resetView', 'zoomBy', 'toggleLabels',
     'toggleFullscreen', 'toggle2DAnim', 'toggleMirror', 'changeCharge',
-    'resetCharge', 'downloadViewer', 'setAlloElement', 'setAllotrope'
+    'resetCharge', 'downloadViewer', 'setAlloElement', 'setAllotrope', 'setMolRep'
   ];
   VIEWER_CONTROL_STUBS.forEach(function (name) {
     if (typeof global[name] !== 'function') {
@@ -256,29 +256,51 @@
   // canvas is near the viewport, load one allowlisted runtime — never a
   // free-form path. Public access does not mean eager-loading every model.
   var VIEWER_RUNTIME_SRC = {
-    'atomic-viewer.js': '/viewer/runtime/atomic-viewer.js?v=202608290200',
-    'molecule-viewer.js': '/viewer/runtime/molecule-viewer.js?v=202608290200',
-    'allotrope-viewer.js': '/viewer/runtime/allotrope-viewer.js?v=202608290200',
-    'isomerism-3d.js': '/viewer/isomerism/isomerism-3d.js?v=202608290330'
+    'atomic-viewer.js': '/viewer/runtime/atomic-viewer.js?v=202609101200',
+    'molecule-viewer.js': '/viewer/runtime/molecule-viewer.js?v=202609101245',
+    'allotrope-viewer.js': '/viewer/runtime/allotrope-viewer.js?v=202609101200',
+    'isomerism-3d.js': '/viewer/isomerism/isomerism-3d.js?v=202609101245'
   };
+  var PAPER_LAB_SRC = '/viewer/runtime/paper-lab.js?v=202609101245';
   var runtimePending = Object.create(null);
+  var paperLabPending = null;
+
+  function loadPaperLab() {
+    if (global.atomurusPaperLab) return Promise.resolve();
+    if (paperLabPending) return paperLabPending;
+    paperLabPending = new Promise(function (resolve, reject) {
+      var s = document.createElement('script');
+      s.src = PAPER_LAB_SRC;
+      s.async = true;
+      s.dataset.atomurusDep = 'paper-lab';
+      s.onload = function () { resolve(); };
+      s.onerror = function () {
+        paperLabPending = null;
+        reject(new Error('Failed to load paper lab'));
+      };
+      document.head.appendChild(s);
+    });
+    return paperLabPending;
+  }
 
   function loadViewerRuntime(name) {
     var src = VIEWER_RUNTIME_SRC[name];
     if (!src) return Promise.reject(new Error('Unknown viewer runtime'));
     if (runtimePending[name]) return runtimePending[name];
-    runtimePending[name] = new Promise(function (resolve, reject) {
-      var s = document.createElement('script');
-      s.src = src;
-      s.async = true;
-      s.dataset.atomurusDep = 'viewer-runtime';
-      s.dataset.atomurusRuntime = name;
-      s.onload = function () { resolve(name); };
-      s.onerror = function () {
-        runtimePending[name] = null;
-        reject(new Error('Failed to load viewer runtime'));
-      };
-      document.head.appendChild(s);
+    runtimePending[name] = loadPaperLab().catch(function () { return null; }).then(function () {
+      return new Promise(function (resolve, reject) {
+        var s = document.createElement('script');
+        s.src = src;
+        s.async = true;
+        s.dataset.atomurusDep = 'viewer-runtime';
+        s.dataset.atomurusRuntime = name;
+        s.onload = function () { resolve(name); };
+        s.onerror = function () {
+          runtimePending[name] = null;
+          reject(new Error('Failed to load viewer runtime'));
+        };
+        document.head.appendChild(s);
+      });
     });
     return runtimePending[name];
   }

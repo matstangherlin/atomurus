@@ -4,21 +4,36 @@
 return (function(){
   const canvas = document.getElementById('viewer3d');
   const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:false });
-  renderer.setPixelRatio(window.devicePixelRatio);
+  const paper = () => window.atomurusPaperLab;
+  if (paper()) paper().capDpr(renderer);
+  else renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  let paperGround = null;
+  var paperMolForGround = null;
   function updateBg(){
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    renderer.setClearColor(isDark ? 0x000000 : 0xffffff, 1);
+    if (paper()) paper().applyClear(renderer);
+    else {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      renderer.setClearColor(isDark ? 0x0E0D0C : 0xF2EFE7, 1);
+    }
+    if (paperGround) scene.remove(paperGround);
+    if (paper() && typeof THREE !== 'undefined') {
+      paperGround = paper().ground(THREE, paper().moleculeGroundOpts(paperMolForGround));
+      scene.add(paperGround);
+    }
+  }
+
+  const camera = new THREE.PerspectiveCamera(paper() ? 42 : 50, 2, 0.1, 100);
+  camera.position.set(0, 0.35, paper() ? 6.2 : 10);
+  const scene = new THREE.Scene();
+  if (paper()) paper().lightScene(scene, THREE);
+  else {
+    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+    const dL1 = new THREE.DirectionalLight(0xffffff, 1.0); dL1.position.set(5,10,7); scene.add(dL1);
+    const dL2 = new THREE.DirectionalLight(0x88bbff, 0.5); dL2.position.set(-5,-3,-5); scene.add(dL2);
+    const dL3 = new THREE.DirectionalLight(0xffeecc, 0.3); dL3.position.set(0,5,-8); scene.add(dL3);
   }
   updateBg();
   window.addEventListener('atomurus:themechange', updateBg);
-
-  const camera = new THREE.PerspectiveCamera(50, 2, 0.1, 100);
-  camera.position.set(0,0,10);
-  const scene = new THREE.Scene();
-  scene.add(new THREE.AmbientLight(0xffffff, 0.7));
-  const dL1 = new THREE.DirectionalLight(0xffffff, 1.0); dL1.position.set(5,10,7); scene.add(dL1);
-  const dL2 = new THREE.DirectionalLight(0x88bbff, 0.5); dL2.position.set(-5,-3,-5); scene.add(dL2);
-  const dL3 = new THREE.DirectionalLight(0xffeecc, 0.3); dL3.position.set(0,5,-8); scene.add(dL3);
 
   let currentGroup = new THREE.Group();
   scene.add(currentGroup);
@@ -26,8 +41,8 @@ return (function(){
   let isDragging=false, lastX=0, lastY=0, rotX=0, rotY=0, autoRotate=true;
   let rotVelX = 0, rotVelY = 0;
   const ROT_DAMPING = 0.92, ROT_SENS = 0.0085;
-  let labelsVisible = true;
-  const DEFAULT_CAM_Z = 10;
+  let labelsVisible = !paper();
+  const DEFAULT_CAM_Z = paper() ? 6.2 : 10;
 
   canvas.addEventListener('mousedown', e => {
     isDragging=true; autoRotate=false; updateRotateBtn();
@@ -45,9 +60,19 @@ return (function(){
     lastX=e.clientX; lastY=e.clientY;
   });
   canvas.addEventListener('wheel', e => {
-    camera.position.z = Math.max(3, Math.min(20, camera.position.z + e.deltaY*0.01));
+    camera.position.z = Math.max(2.8, Math.min(20, camera.position.z + e.deltaY*0.01));
     e.preventDefault();
   }, { passive:false });
+  if (paper()) {
+    paper().bindTouchOrbit(canvas, {
+      onDown: function () { isDragging=true; autoRotate=false; updateRotateBtn(); rotVelX=0; rotVelY=0; },
+      onDrag: function (dx, dy) {
+        rotY += dx; rotX += dy;
+        rotVelY = dx * 0.6 + rotVelY * 0.4;
+        rotVelX = dy * 0.6 + rotVelX * 0.4;
+      }
+    });
+  }
 
   function updateRotateBtn(){
     const b=document.getElementById('vc-rotate');
@@ -55,14 +80,33 @@ return (function(){
   }
 
   // ── Helpers ──
-  const ATOM_SCALE = 1.4;
+  const ATOM_SCALE = paper() ? 1 : 1.4;
   const BOND_R     = 0.10;
   // Bond cylinder pokes slightly INTO the atom so there's no visible gap at the joint.
   const BOND_GAP   = -0.04;
 
+  function bondRadius() {
+    if (!paper()) return BOND_R;
+    return molRep === 'stick' ? 0.07 : 0.075;
+  }
+  function paperOrbit() {
+    return paper() ? { rotX: 0.35, rotY: 0.6 } : { rotX: 0.18, rotY: 0.35 };
+  }
+  function paperCamZ() {
+    if (paper() && paper().camZForMol) return paper().camZForMol(molData[currentMolecule]);
+    return DEFAULT_CAM_Z;
+  }
+  function applyDefaultOrbit() {
+    const o = paperOrbit();
+    rotX = o.rotX; rotY = o.rotY;
+    camera.position.set(0, 0.35, paperCamZ());
+  }
+
   function makeSphere(r,color,seg=32){
-    return new THREE.Mesh(new THREE.SphereGeometry(r,seg,seg),
-      new THREE.MeshStandardMaterial({color,roughness:0.35,metalness:0.15}));
+    const mat = paper()
+      ? paper().mat(THREE, color)
+      : new THREE.MeshStandardMaterial({color,roughness:0.35,metalness:0.15});
+    return new THREE.Mesh(new THREE.SphereGeometry(r,seg,seg), mat);
   }
   function makeBond(p1,p2,r1,r2,color1,color2,order=1){
     const group = new THREE.Group();
@@ -92,7 +136,9 @@ return (function(){
       const mid = new THREE.Vector3().addVectors(s,e).multiplyScalar(0.5);
       const cyl = new THREE.Mesh(
         new THREE.CylinderGeometry(r, r, s.distanceTo(e), 12),
-        new THREE.MeshStandardMaterial({color, roughness:0.4, metalness:0.1})
+        paper()
+          ? paper().mat(THREE, color, { roughness: 0.55, metalness: 0.05 })
+          : new THREE.MeshStandardMaterial({color, roughness:0.48, metalness:0.05})
       );
       cyl.position.copy(mid);
       const d = new THREE.Vector3().subVectors(e,s).normalize();
@@ -105,17 +151,24 @@ return (function(){
       addCyl(mid, e,   color2, r);
     }
 
+    const br = bondRadius();
+    if (paper()) {
+      color1 = paper().BOND;
+      color2 = paper().BOND;
+    }
     if (order === 2) {
-      const off = perp.clone().multiplyScalar(BOND_R * 1.4);
-      const thinR = BOND_R * 0.62;
+      const off = perp.clone().multiplyScalar(br * 1.4);
+      const thinR = br * 0.62;
       addPair(start.clone().add(off), end.clone().add(off), thinR);
       addPair(start.clone().sub(off), end.clone().sub(off), thinR);
     } else if (order === 3) {
-      const off = perp.clone().multiplyScalar(BOND_R * 1.8);
-      const thinR = BOND_R * 0.55;
+      const off = perp.clone().multiplyScalar(br * 1.8);
+      const thinR = br * 0.55;
       addPair(start, end, thinR);
       addPair(start.clone().add(off), end.clone().add(off), thinR);
       addPair(start.clone().sub(off), end.clone().sub(off), thinR);
+    } else if (paper()) {
+      addCyl(start, end, paper().BOND, br);
     } else {
       addPair(start, end, BOND_R);
     }
@@ -123,9 +176,9 @@ return (function(){
   }
 
   const COLOR_TO_ELEMENT = {
-    0xdddddd:'H', 0xe8e8e8:'H',
-    0xee3333:'O',
-    0x666666:'C', 0x555555:'C', 0x444444:'C', 0x333333:'C', 0x222222:'C',
+    0xdddddd:'H', 0xe8e8e8:'H', 0xe7e2d4:'H',
+    0xee3333:'O', 0xc94a3a:'O',
+    0x666666:'C', 0x555555:'C', 0x444444:'C', 0x333333:'C', 0x222222:'C', 0x5a554c:'C',
     0x3399ff:'N',
     0x44dd44:'Cl',
     0xaaaaff:'Na',
@@ -203,12 +256,23 @@ return (function(){
   let currentMolecule = 'water';
   let mirrorMode = false;
 
+  let molRep = 'ball';
+
+  function atomRadius(a){
+    const el = COLOR_TO_ELEMENT[a.color] || '';
+    if (molRep === 'space') {
+      return paper() ? paper().vdwRadius(a, el) : a.r * ATOM_SCALE * 1.85;
+    }
+    if (molRep === 'stick') return paper() ? 0.09 : 0.12;
+    return a.r * ATOM_SCALE;
+  }
+
   function buildMolecule(key){
     const g=new THREE.Group(); trackedAtoms=[];
     const mol=molData[key];
     const sx = mirrorMode ? -1 : 1;
     const meshes=mol.atoms.map(a=>{
-      const radius=a.r*ATOM_SCALE;
+      const radius=atomRadius(a);
       const m=makeSphere(radius,a.color);
       const pos = [a.pos[0]*sx, a.pos[1], a.pos[2]];
       m.position.fromArray(pos);
@@ -216,12 +280,14 @@ return (function(){
       trackedAtoms.push({mesh:m, label, radius, color:a.color, pos});
       g.add(m); return m;
     });
-    mol.bonds.forEach(b=>{
-      const i = b[0], j = b[1], order = b[2] || 1;
-      const a1 = mol.atoms[i], a2 = mol.atoms[j];
-      const r1 = a1.r * ATOM_SCALE, r2 = a2.r * ATOM_SCALE;
-      g.add(makeBond(meshes[i].position, meshes[j].position, r1, r2, a1.color, a2.color, order));
-    });
+    if (molRep !== 'space') {
+      mol.bonds.forEach(b=>{
+        const i = b[0], j = b[1], order = b[2] || 1;
+        const a1 = mol.atoms[i], a2 = mol.atoms[j];
+        const r1 = atomRadius(a1), r2 = atomRadius(a2);
+        g.add(makeBond(meshes[i].position, meshes[j].position, r1, r2, a1.color, a2.color, order));
+      });
+    }
     bondCount = mol.bonds.length;
     return g;
   }
@@ -230,12 +296,28 @@ return (function(){
     scene.remove(currentGroup);
     currentGroup = buildMolecule(currentMolecule);
     scene.add(currentGroup);
-    // Default camera tilt — gives an isometric-ish 3D perspective instead of a flat front view.
-    rotX = 0.18; rotY = 0.35;
-    camera.position.set(0,0,DEFAULT_CAM_Z);
+    paperMolForGround = molData[currentMolecule];
+    updateBg();
+    applyDefaultOrbit();
     autoRotate = true; updateRotateBtn();
     refreshLabels();
   }
+
+  window.setMolRep = function(style){
+    if (style !== 'ball' && style !== 'space' && style !== 'stick') return;
+    molRep = style;
+    document.querySelectorAll('[data-mol-rep]').forEach(function (b) {
+      const on = b.getAttribute('data-mol-rep') === style;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    if (!molData[currentMolecule]) return;
+    scene.remove(currentGroup);
+    currentGroup = buildMolecule(currentMolecule);
+    scene.add(currentGroup);
+    refreshLabels();
+    if (viewMode === '2d') draw2DMolecule(0);
+  };
 
   // ── Label sprites ──
   function makeLabelSprite(text, atomRadius){
@@ -308,7 +390,7 @@ return (function(){
 
     ctx2d.save();
     ctx2d.clearRect(0, 0, W, H);
-    ctx2d.fillStyle = isDark ? '#111111' : '#ffffff';
+    ctx2d.fillStyle = paper() ? paper().fillCss() : (isDark ? '#0E0D0C' : '#F2EFE7');
     ctx2d.fillRect(0, 0, W, H);
 
     const mol = molData[currentMolecule];
@@ -324,17 +406,18 @@ return (function(){
     function elemColor(lbl) {
       if (!lbl) return 0xaaaaaa;
       const l = lbl.toUpperCase();
-      if (l === 'O' || l === 'OH') return 0xee3333;
-      if (l === 'N' || l === 'NH' || l === 'NH2') return 0x3399ff;
-      if (l === 'S') return 0xffcc33;
-      if (l === 'P') return 0xff8833;
-      if (l === 'CL') return 0x44dd44;
-      if (l === 'BR') return 0xa62929;
-      if (l === 'F') return 0xb3ff3a;
-      if (l === 'NA') return 0xaaaaff;
-      if (l === 'FE') return 0xcc6633;
-      if (l.match(/^H\d?$/)) return 0xdddddd;
-      return 0x666666;
+      let raw = 0x666666;
+      if (l === 'O' || l === 'OH') raw = 0xee3333;
+      else if (l === 'N' || l === 'NH' || l === 'NH2') raw = 0x3399ff;
+      else if (l === 'S') raw = 0xffcc33;
+      else if (l === 'P') raw = 0xff8833;
+      else if (l === 'CL') raw = 0x44dd44;
+      else if (l === 'BR') raw = 0xa62929;
+      else if (l === 'F') raw = 0xb3ff3a;
+      else if (l === 'NA') raw = 0xaaaaff;
+      else if (l === 'FE') raw = 0xcc6633;
+      else if (l.match(/^H\d?$/)) raw = 0xdddddd;
+      return paper() ? paper().atomColor(raw) : raw;
     }
     function elemRadius(lbl) {
       if (!lbl) return 0.40;
@@ -405,7 +488,8 @@ return (function(){
 
       atomsToDraw = mol.atoms.map(a => {
         const label = COLOR_TO_ELEMENT[a.color] || '';
-        return { p: project(a.pos), r: a.r * z * 1.5, color: a.color, label };
+        const col = paper() ? paper().atomColor(a.color) : a.color;
+        return { p: project(a.pos), r: a.r * z * 1.5, color: col, label };
       });
       bondsToDraw = mol.bonds.map(([i, j]) => ({
         p1: atomsToDraw[i].p, p2: atomsToDraw[j].p,
@@ -422,13 +506,16 @@ return (function(){
       const nx = -dy / len, ny = dx / len;
       const thickness = Math.max(4, len * 0.09);
 
-      // Two-tone gradient: each half matches its atom color
-      const grad = ctx2d.createLinearGradient(b.p1.x, b.p1.y, b.p2.x, b.p2.y);
-      grad.addColorStop(0, hexCSS(b.c1));
-      grad.addColorStop(0.48, hexCSS(b.c1));
-      grad.addColorStop(0.52, hexCSS(b.c2));
-      grad.addColorStop(1, hexCSS(b.c2));
-      ctx2d.strokeStyle = grad;
+      if (paper()) {
+        ctx2d.strokeStyle = hexCSS(paper().BOND);
+      } else {
+        const grad = ctx2d.createLinearGradient(b.p1.x, b.p1.y, b.p2.x, b.p2.y);
+        grad.addColorStop(0, hexCSS(b.c1));
+        grad.addColorStop(0.48, hexCSS(b.c1));
+        grad.addColorStop(0.52, hexCSS(b.c2));
+        grad.addColorStop(1, hexCSS(b.c2));
+        ctx2d.strokeStyle = grad;
+      }
 
       if (b.order === 2) {
         const sep = thickness * 1.6;
@@ -672,8 +759,8 @@ return (function(){
       zoom2d = 1.0; pan2d = { x:0, y:0 };
       draw2DMolecule(anim2dEnabled ? t : _t2dFrozen);
     } else {
-      rotX = 0.18; rotY = 0.35;
-      camera.position.set(0,0,DEFAULT_CAM_Z);
+      applyDefaultOrbit();
+      autoRotate = true; updateRotateBtn();
       autoRotate = true; updateRotateBtn();
     }
   };
@@ -683,7 +770,7 @@ return (function(){
       zoom2d = Math.max(0.3, Math.min(4.0, zoom2d + step));
       draw2DMolecule(anim2dEnabled ? t : _t2dFrozen);
     } else {
-      camera.position.z = Math.max(3, Math.min(20, camera.position.z + direction * 1.1));
+      camera.position.z = Math.max(2.8, Math.min(20, camera.position.z + direction * 1.1));
     }
   };
   window.toggleLabels = function(){
@@ -821,6 +908,8 @@ return (function(){
   })();
 
   const bootReq = ++molRequest;
+  const labelsBtn = document.getElementById('vc-labels');
+  if (labelsBtn) labelsBtn.classList.toggle('active', labelsVisible);
   return fetchMolecule(initialMol).then(function () {
     if (bootReq === molRequest) applyMolecule(initialMol, true);
     animate();

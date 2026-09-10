@@ -19,17 +19,17 @@
     var s = document.createElement('style');
     s.id = 'iso-3d-mode-css';
     s.textContent =
-      '.iso-3d-stage{overflow:hidden;position:relative;width:100%;height:300px;background:#F6F3EC}' +
+      '.iso-3d-stage{overflow:hidden;position:relative;width:100%;height:300px;background:#F2EFE7}' +
       '.iso-3d-stage canvas{display:block;width:100%;height:100%;visibility:visible}' +
       '.iso-3d-stage2d{position:absolute!important;top:0!important;right:0!important;bottom:0!important;left:0!important;' +
       'width:100%!important;height:100%!important;max-height:none!important;z-index:2;display:flex!important;' +
       'align-items:center;justify-content:center;padding:12px;box-sizing:border-box;margin:0!important;' +
-      'background:#F6F3EC;visibility:hidden;pointer-events:none}' +
+      'background:#F2EFE7;visibility:hidden;pointer-events:none}' +
       '.iso-3d-stage2d svg{width:auto!important;height:auto!important;max-width:100%!important;max-height:100%!important;display:block}' +
       '.iso-3d-panel.is-2d .iso-3d-stage2d{visibility:visible!important;pointer-events:auto!important}' +
       '.iso-3d-panel.is-2d .iso-3d-stage canvas{pointer-events:none}' +
       '.iso-3d-panel.is-2d .iso-3d-hint{visibility:hidden}' +
-      '[data-theme="dark"] .iso-3d-stage,[data-theme="dark"] .iso-3d-stage2d{background:#151412}' +
+      '[data-theme="dark"] .iso-3d-stage,[data-theme="dark"] .iso-3d-stage2d{background:#0E0D0C}' +
       '@media (max-width:640px){.iso-3d-stage{height:240px}}';
     document.head.appendChild(s);
   }
@@ -452,10 +452,14 @@
   }
 
   var ATOM_SCALE = 1.4, BOND_R = 0.10, BOND_GAP = -0.04;
+  function paperLab() { return window.atomurusPaperLab; }
+  function atomScale() { return paperLab() ? 1 : ATOM_SCALE; }
+  function bondRadius() { return paperLab() ? 0.075 : BOND_R; }
 
   function makeSphere(r, color) {
+    var lab = window.atomurusPaperLab;
     return new THREE.Mesh(new THREE.SphereGeometry(r, 32, 32),
-      new THREE.MeshStandardMaterial({ color: color, roughness: 0.35, metalness: 0.15 }));
+      lab ? lab.mat(THREE, color) : new THREE.MeshStandardMaterial({ color: color, roughness: 0.35, metalness: 0.15 }));
   }
   function makeBond(p1, p2, r1, r2, color1, color2, order) {
     order = order || 1;
@@ -476,8 +480,11 @@
     perp.normalize();
     function addCyl(s, e, color, r) {
       var mid = new THREE.Vector3().addVectors(s, e).multiplyScalar(0.5);
+      var labCyl = window.atomurusPaperLab;
       var cyl = new THREE.Mesh(new THREE.CylinderGeometry(r, r, s.distanceTo(e), 12),
-        new THREE.MeshStandardMaterial({ color: color, roughness: 0.4, metalness: 0.1 }));
+        labCyl
+          ? labCyl.mat(THREE, color, { roughness: 0.55, metalness: 0.05 })
+          : new THREE.MeshStandardMaterial({ color: color, roughness: 0.48, metalness: 0.05 }));
       cyl.position.copy(mid);
       var d = new THREE.Vector3().subVectors(e, s).normalize();
       cyl.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d);
@@ -487,15 +494,22 @@
       var mid = new THREE.Vector3().addVectors(s, e).multiplyScalar(0.5);
       addCyl(s, mid, color1, r); addCyl(mid, e, color2, r);
     }
+    var br = bondRadius();
+    if (paperLab()) {
+      color1 = paperLab().BOND;
+      color2 = paperLab().BOND;
+    }
     if (order === 2) {
-      var off2 = perp.clone().multiplyScalar(BOND_R * 1.4), thin2 = BOND_R * 0.62;
+      var off2 = perp.clone().multiplyScalar(br * 1.4), thin2 = br * 0.62;
       addPair(start.clone().add(off2), end.clone().add(off2), thin2);
       addPair(start.clone().sub(off2), end.clone().sub(off2), thin2);
     } else if (order === 3) {
-      var off3 = perp.clone().multiplyScalar(BOND_R * 1.8), thin3 = BOND_R * 0.55;
+      var off3 = perp.clone().multiplyScalar(br * 1.8), thin3 = br * 0.55;
       addPair(start, end, thin3);
       addPair(start.clone().add(off3), end.clone().add(off3), thin3);
       addPair(start.clone().sub(off3), end.clone().sub(off3), thin3);
+    } else if (paperLab()) {
+      addCyl(start, end, paperLab().BOND, br);
     } else {
       addPair(start, end, BOND_R);
     }
@@ -533,10 +547,12 @@
     var hl = {};
     if (hlArr) for (var h = 0; h < hlArr.length; h++) hl[hlArr[h]] = true;
     mol.atoms.forEach(function (a, i) {
-      var m = makeSphere(a.r * ATOM_SCALE, a.color);
+      var scale = atomScale();
+      var m = makeSphere(a.r * scale, a.color);
       if (hl[i]) {
-        m.material = new THREE.MeshStandardMaterial({ color: a.color, emissive: 0xffa020, emissiveIntensity: 0.65, roughness: 0.3, metalness: 0.1 });
-        var ring = makeHlRing(a.r * ATOM_SCALE);
+        var hlCol = paperLab() ? paperLab().atomColor(a.color) : a.color;
+        m.material = new THREE.MeshStandardMaterial({ color: hlCol, emissive: 0xffa020, emissiveIntensity: 0.45, roughness: 0.4, metalness: 0.06 });
+        var ring = makeHlRing(a.r * scale);
         ring.position.set(a.pos[0] * sx, a.pos[1], a.pos[2]);
         group.add(ring);
         group.userData.hlRings.push(ring);
@@ -544,19 +560,20 @@
       m.position.set(a.pos[0] * sx, a.pos[1], a.pos[2]);
       group.add(m);
       var label = COLOR_TO_ELEMENT[a.color] || '';
-      if (label && a.r > 0.24) {
-        var sp = makeLabelSprite(label, a.r * ATOM_SCALE);
-        sp.position.set(a.pos[0] * sx, a.pos[1] + a.r * ATOM_SCALE * 0.85, a.pos[2]);
+      if (label && a.r > 0.24 && !paperLab()) {
+        var sp = makeLabelSprite(label, a.r * scale);
+        sp.position.set(a.pos[0] * sx, a.pos[1] + a.r * scale * 0.85, a.pos[2]);
         group.add(sp);
       }
     });
     mol.bonds.forEach(function (b) {
       var a1 = mol.atoms[b[0]], a2 = mol.atoms[b[1]];
       var order = b[2] || 1;
+      var scale = atomScale();
       group.add(makeBond(
         new THREE.Vector3(a1.pos[0] * sx, a1.pos[1], a1.pos[2]),
         new THREE.Vector3(a2.pos[0] * sx, a2.pos[1], a2.pos[2]),
-        a1.r * ATOM_SCALE, a2.r * ATOM_SCALE,
+        a1.r * scale, a2.r * scale,
         a1.color, a2.color, order
       ));
     });
@@ -623,7 +640,17 @@
     ELEMENTS.forEach(function (e) {
       var it = document.createElement('span');
       it.className = 'iso-3d-legend-item';
-      it.innerHTML = '<i style="background:#' + ('00000' + e.color.toString(16)).slice(-6) + '"></i>' + e.symbol;
+      var col = e.color;
+      if (paperLab()) {
+        if (e.symbol === 'O') col = paperLab().atomColor(0xee3333);
+        else if (e.symbol === 'H') col = paperLab().atomColor(0xdddddd);
+        else if (e.symbol === 'C') col = paperLab().atomColor(0x666666);
+        else if (e.symbol === 'N') col = paperLab().atomColor(0x3399ff);
+        else if (e.symbol === 'Cl') col = paperLab().atomColor(0x44dd44);
+        else if (e.symbol === 'F') col = paperLab().atomColor(0xb3ff3a);
+        else if (e.symbol === 'Br') col = paperLab().atomColor(0xa62929);
+      }
+      it.innerHTML = '<i style="background:#' + ('00000' + col.toString(16)).slice(-6) + '"></i>' + e.symbol;
       it.title = e.symbol;
       legend.appendChild(it);
     });
@@ -716,9 +743,11 @@
     var current = 'a', mirrored = false;
 
     var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    var camera = new THREE.PerspectiveCamera(50, 2, 0.1, 100);
-    camera.position.set(0, 0, 9);
+    var lab = window.atomurusPaperLab;
+    if (lab) lab.capDpr(renderer);
+    else renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    var camera = new THREE.PerspectiveCamera(lab ? 42 : 50, 2, 0.1, 100);
+    camera.position.set(0, 0.35, lab ? 6.4 : 9);
     function resize() {
       var w = canvas.clientWidth || (canvas.parentElement && canvas.parentElement.clientWidth) || 300;
       var h = canvas.clientHeight || (canvas.parentElement && canvas.parentElement.clientHeight) || 200;
@@ -729,23 +758,39 @@
     }
     resize();
     window.addEventListener('resize', resize);
+
+    var scene = new THREE.Scene();
+    var paperGround = null;
+    function createGround() {
+      if (paperGround) scene.remove(paperGround);
+      var gLab = window.atomurusPaperLab;
+      paperGround = gLab ? gLab.ground(THREE, gLab.moleculeGroundOpts(MOL[currentKey()])) : null;
+      if (paperGround) scene.add(paperGround);
+    }
     function updateBg() {
-      var dark = document.documentElement.getAttribute('data-theme') === 'dark';
-      renderer.setClearColor(dark ? 0x151412 : 0xf6f3ec, 1);
+      var bgLab = window.atomurusPaperLab;
+      if (bgLab) bgLab.applyClear(renderer);
+      else {
+        var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+        renderer.setClearColor(dark ? 0x0E0D0C : 0xF2EFE7, 1);
+      }
+      createGround();
+    }
+    if (lab) lab.lightScene(scene, THREE);
+    else {
+      scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+      var dL1 = new THREE.DirectionalLight(0xffffff, 1.0); dL1.position.set(5, 10, 7); scene.add(dL1);
+      var dL2 = new THREE.DirectionalLight(0x88bbff, 0.5); dL2.position.set(-5, -3, -5); scene.add(dL2);
+      var dL3 = new THREE.DirectionalLight(0xffeecc, 0.3); dL3.position.set(0, 5, -8); scene.add(dL3);
     }
     updateBg();
     window.addEventListener('atomurus:themechange', updateBg);
     new MutationObserver(updateBg).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-
-    var scene = new THREE.Scene();
-    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
-    var dL1 = new THREE.DirectionalLight(0xffffff, 1.0); dL1.position.set(5, 10, 7); scene.add(dL1);
-    var dL2 = new THREE.DirectionalLight(0x88bbff, 0.5); dL2.position.set(-5, -3, -5); scene.add(dL2);
-    var dL3 = new THREE.DirectionalLight(0xffeecc, 0.3); dL3.position.set(0, 5, -8); scene.add(dL3);
     var group = new THREE.Group();
+    group.position.y = lab ? 0 : 0.25;
     scene.add(group);
 
-    var isDragging = false, lastX = 0, lastY = 0, rotX = 0.25, rotY = 0.5, autoRotate = true;
+    var isDragging = false, lastX = 0, lastY = 0, rotX = lab ? 0.35 : 0.25, rotY = lab ? 0.6 : 0.5, autoRotate = true;
     var rotVelX = 0, rotVelY = 0, zoom = 1;
 
     function currentKey() { return current === 'b' ? molB : molA; }
@@ -776,6 +821,7 @@
       }
       panel.setAttribute('data-iso-diff', diffOn ? 'on' : 'off');
       panel.setAttribute('data-iso-hl', diffOn ? String((group.userData.hlRings || []).length) : '0');
+      createGround();
       if (mode === '2d') render2D();
     }
     function render2D() {
@@ -916,7 +962,7 @@
           autoRotate = !autoRotate;
           btn.classList.toggle('active', autoRotate);
         } else if (act === 'reset') {
-          rotX = 0.25; rotY = 0.5; zoom = 1; autoRotate = true;
+          rotX = lab ? 0.35 : 0.25; rotY = lab ? 0.6 : 0.5; zoom = 1; autoRotate = true;
           var ab = ctrls.querySelector('[data-3d-act="auto"]');
           if (ab) ab.classList.add('active');
         } else if (act === 'zin') {
@@ -956,6 +1002,28 @@
     return Boolean(document.querySelector('script[data-atomurus-runtime="isomerism-3d.js"]'));
   }
 
+  var PAPER_LAB_SRC = '/viewer/runtime/paper-lab.js?v=202609101200';
+  function loadPaperLab() {
+    if (window.atomurusPaperLab) return Promise.resolve();
+    if (window.__atomurusPaperLabPending) return window.__atomurusPaperLabPending;
+    window.__atomurusPaperLabPending = new Promise(function (resolve) {
+      var existing = document.querySelector('script[data-atomurus-dep="paper-lab"]');
+      if (existing) {
+        existing.addEventListener('load', function () { resolve(); });
+        existing.addEventListener('error', function () { resolve(); });
+        return;
+      }
+      var s = document.createElement('script');
+      s.src = PAPER_LAB_SRC;
+      s.async = true;
+      s.dataset.atomurusDep = 'paper-lab';
+      s.onload = function () { resolve(); };
+      s.onerror = function () { resolve(); };
+      document.head.appendChild(s);
+    });
+    return window.__atomurusPaperLabPending;
+  }
+
   function ensureAndInit() {
     // Explore stays public. Viewer pages loaded through the allowlisted
     // runtime already passed atomurusBootLabViewer — do not re-gate here,
@@ -973,7 +1041,7 @@
     function run() {
       for (var i = 0; i < panels.length; i++) init(panels[i]);
     }
-    if (typeof THREE !== 'undefined') { run(); return; }
+    if (typeof THREE !== 'undefined') { loadPaperLab().then(run); return; }
     var load = window.atomurusLoadThree || function () {
       return new Promise(function (res, rej) {
         var s = document.createElement('script');
@@ -983,7 +1051,7 @@
         document.head.appendChild(s);
       });
     };
-    load().then(run).catch(function () { window.__iso3dStarted = false; });
+    load().then(function () { return loadPaperLab(); }).then(run).catch(function () { window.__iso3dStarted = false; });
   }
 
   // Collapses the overview's quick-reference table behind its title (toggle).

@@ -4,26 +4,39 @@
 (function(){
   const canvas = document.getElementById('viewer3d');
   const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:false });
-  renderer.setPixelRatio(window.devicePixelRatio);
-  // Background color controlled by CSS and updated on theme change
+  const paper = () => window.atomurusPaperLab;
+  if (paper()) paper().capDpr(renderer);
+  else renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+
+  const camera = new THREE.PerspectiveCamera(50, 2, 0.1, 100);
+  camera.position.set(0, 0.35, 10);
+
+  const scene = new THREE.Scene();
+  let paperGround = null;
   function updateRendererBg(){
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    renderer.setClearColor(isDark ? 0x000000 : 0xffffff, 1);
+    if (paper()) paper().applyClear(renderer);
+    else {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      renderer.setClearColor(isDark ? 0x0E0D0C : 0xF2EFE7, 1);
+    }
+    if (paperGround) scene.remove(paperGround);
+    if (paper()) {
+      paperGround = paper().ground(THREE, { scale: 1.55, y: -3.35 });
+      scene.add(paperGround);
+    }
+  }
+  if (paper()) paper().lightScene(scene, THREE);
+  else {
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    dirLight.position.set(5,10,7); scene.add(dirLight);
+    const dirLight2 = new THREE.DirectionalLight(0x88bbff, 0.5);
+    dirLight2.position.set(-5,-3,-5); scene.add(dirLight2);
+    const dirLight3 = new THREE.DirectionalLight(0xffeecc, 0.3);
+    dirLight3.position.set(0,5,-8); scene.add(dirLight3);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
   }
   updateRendererBg();
   window.addEventListener('atomurus:themechange', updateRendererBg);
-
-  const camera = new THREE.PerspectiveCamera(50, 2, 0.1, 100);
-  camera.position.set(0,0,10);
-
-  const scene = new THREE.Scene();
-  // Enhanced PBR lighting for metallic particles and orbits
-  const dirLight = new THREE.DirectionalLight(0xffffff, 1.0);
-  dirLight.position.set(5,10,7); scene.add(dirLight);
-  const dirLight2 = new THREE.DirectionalLight(0x88bbff, 0.5);
-  dirLight2.position.set(-5,-3,-5); scene.add(dirLight2);
-  const dirLight3 = new THREE.DirectionalLight(0xffeecc, 0.3);
-  dirLight3.position.set(0,5,-8); scene.add(dirLight3);
 
   let currentGroup = new THREE.Group();
   scene.add(currentGroup);
@@ -32,8 +45,6 @@
   let isDragging=false,lastX=0,lastY=0,rotX=0,rotY=0,autoRotate=true;
   let staticMode=false, labelsVisible=false;
   const DEFAULT_CAM_Z=10;
-  const ambient = new THREE.AmbientLight(0xffffff, 0.7);
-  scene.add(ambient);
 
   // Rotation with inertia: track velocity, decay each frame when not dragging
   let rotVelX = 0, rotVelY = 0;
@@ -85,25 +96,27 @@
   }
 
   // ── Particle color palette (spec from design doc) ──
-  const PROTON_COLOR   = 0xe53935;  // red
-  const NEUTRON_COLOR  = 0x43a047;  // green
-  const ELECTRON_COLOR = 0x1e88e5;  // blue
-  const ORBIT_COLOR    = 0xc8d8e8;  // silver-blue metallic
+  const PROTON_COLOR   = (paper() && paper().PROTON) || 0xC45C4A;
+  const NEUTRON_COLOR  = (paper() && paper().NEUTRON) || 0x1E6A50;
+  function ELECTRON_COLOR(){ return paper() ? paper().electronColor() : 0x14120E; }
+  const ORBIT_COLOR    = (paper() && paper().GREEN) || 0x1E6A50;
 
   // Helpers
   function makeSphere(r,color,segments=32){
-    return new THREE.Mesh(new THREE.SphereGeometry(r,segments,segments),
-      new THREE.MeshStandardMaterial({color,roughness:0.35,metalness:0.15}));
+    const mat = paper()
+      ? paper().mat(THREE, color)
+      : new THREE.MeshStandardMaterial({color,roughness:0.35,metalness:0.15});
+    return new THREE.Mesh(new THREE.SphereGeometry(r,segments,segments), mat);
   }
   function makeGlow(r,color){
     return new THREE.Mesh(new THREE.SphereGeometry(r,24,24),
       new THREE.MeshBasicMaterial({color,transparent:true,opacity:0.08}));
   }
   function makeOrbit(radius,color=ORBIT_COLOR,opacity=0.85,tilt=0){
-    // Metallic tube torus matching reference renders (silver/chrome orbits)
     const torus = new THREE.Mesh(
-      new THREE.TorusGeometry(radius, 0.035, 12, 140),
-      new THREE.MeshStandardMaterial({ color, metalness:0.9, roughness:0.15, transparent:true, opacity })
+      new THREE.TorusGeometry(radius, 0.018, 10, 120),
+      paper() ? paper().orbitMat(THREE, { opacity: opacity * 0.7 })
+        : new THREE.MeshStandardMaterial({ color, metalness:0.06, roughness:0.55, transparent:true, opacity })
     );
     torus.rotation.x = tilt;
     return torus;
@@ -114,7 +127,9 @@
     const g = new THREE.Group();
     const sphere = new THREE.Mesh(
       new THREE.SphereGeometry(r, segments, segments),
-      new THREE.MeshStandardMaterial({color, roughness:0.3, metalness:0.2})
+      paper()
+        ? paper().mat(THREE, color, { roughness: 0.42, metalness: 0.06 })
+        : new THREE.MeshStandardMaterial({color, roughness:0.42, metalness:0.06})
     );
     g.add(sphere);
     // Canvas label sprite
@@ -124,7 +139,10 @@
     ctx2d.font = 'bold 38px sans-serif';
     ctx2d.textAlign = 'center';
     ctx2d.textBaseline = 'middle';
-    ctx2d.fillStyle = 'rgba(255,255,255,0.95)';
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    ctx2d.fillStyle = (paper() && label === '−')
+      ? (isDark ? '#14120E' : '#F2EFE7')
+      : 'rgba(255,255,255,0.95)';
     ctx2d.fillText(label, 32, 34);
     const tex = new THREE.CanvasTexture(c);
     const sp = new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false}));
@@ -175,13 +193,13 @@
   // Subshell tints (keyed so cached 2D points survive theme switches).
   function _qShellColors3D(isDark){
     return isDark
-      ? { s1: [0.13, 0.83, 0.93], s2: [0.23, 0.51, 0.96], p: [0.65, 0.55, 0.98] }
-      : { s1: [0.02, 0.55, 0.68], s2: [0.13, 0.36, 0.90], p: [0.47, 0.22, 0.90] };
+      ? { s1: [0.48, 0.73, 0.62], s2: [0.91, 0.89, 0.83], p: [0.91, 0.89, 0.83] }
+      : { s1: [0.12, 0.42, 0.31], s2: [0.35, 0.33, 0.29], p: [0.08, 0.07, 0.05] };
   }
   function _qShellColors2D(isDark){
     return isDark
-      ? { s1: '34,211,238', s2: '59,130,246', p: '167,139,250' }
-      : { s1: '5,140,173',  s2: '33,92,230',  p: '120,56,230'  };
+      ? { s1: '122,186,158', s2: '232,226,212', p: '232,226,212' }
+      : { s1: '30,106,80',  s2: '90,85,76',    p: '20,18,14' };
   }
 
   // ── Stable subshell-aware point caches for the 2D Quantum cloud
@@ -257,7 +275,9 @@
       } else {
         p = new THREE.Group();
         p.add(new THREE.Mesh(new THREE.SphereGeometry(partR,16,16),
-          new THREE.MeshStandardMaterial({color:NEUTRON_COLOR,roughness:0.4,metalness:0.1})));
+          paper()
+            ? paper().mat(THREE, NEUTRON_COLOR, { roughness: 0.4, metalness: 0.1 })
+            : new THREE.MeshStandardMaterial({color:NEUTRON_COLOR,roughness:0.4,metalness:0.1})));
       }
       const phi   = Math.acos(1 - 2 * (i + 0.5) / total);
       const theta = Math.PI * (1 + Math.sqrt(5)) * (i + 0.5);
@@ -314,7 +334,9 @@
       const g = new THREE.Group(); electrons = []; trackedAtoms = []; bondCount = 0;
       const ball = new THREE.Mesh(
         new THREE.SphereGeometry(2.0, 40, 40),
-        new THREE.MeshStandardMaterial({color:0x886644, roughness:0.5, metalness:0.1})
+        paper()
+          ? paper().mat(THREE, 0x8A6A4A, { roughness: 0.62, metalness: 0.04 })
+          : new THREE.MeshStandardMaterial({color:0x8A6A4A, roughness:0.62, metalness:0.04})
       );
       ball.add(makeGlow(2.5, 0xaa8855));
       g.add(ball);
@@ -337,7 +359,7 @@
       ];
       for (let i = 0; i < el; i++) {
         const p = points[i % points.length];
-        const eg = makeLabeledParticle(0.22, ELECTRON_COLOR, '−', 20);
+        const eg = makeLabeledParticle(0.22, ELECTRON_COLOR(), '−', 20);
         eg.position.set(p[0], p[1], p[2]);
         eg.userData = { orbitR: 0, phase: 0, speed: 0 };
         g.add(eg);
@@ -363,13 +385,14 @@
         if (count <= 0) return;
         // Orbit ring on a plane tilted in three Euler axes (matches prototype)
         const ring = new THREE.Mesh(
-          new THREE.TorusGeometry(orb.r, 0.035, 12, 140),
-          new THREE.MeshStandardMaterial({ color: ORBIT_COLOR, metalness:0.9, roughness:0.15, transparent:true, opacity:0.78 })
+          new THREE.TorusGeometry(orb.r, 0.018, 10, 120),
+          paper() ? paper().orbitMat(THREE, { opacity: 0.55 })
+            : new THREE.MeshStandardMaterial({ color: ORBIT_COLOR, metalness:0.06, roughness:0.55, transparent:true, opacity:0.55 })
         );
         ring.rotation.set(orb.eX, orb.eY, orb.eZ);
         g.add(ring);
         for (let i = 0; i < count; i++) {
-          const eg = makeLabeledParticle(0.20, ELECTRON_COLOR, '−', 20);
+          const eg = makeLabeledParticle(0.20, ELECTRON_COLOR(), '−', 20);
           eg.userData = {
             orbitR: orb.r,
             phase: (i / count) * Math.PI * 2,
@@ -399,7 +422,7 @@
       orbDef.forEach((od, si) => {
         g.add(makeOrbit(od.r, ORBIT_COLOR, 0.9, od.tilt));
         for (let i = 0; i < od.count; i++) {
-          const eg = makeLabeledParticle(0.22, ELECTRON_COLOR, '−', 24);
+          const eg = makeLabeledParticle(0.22, ELECTRON_COLOR(), '−', 24);
           eg.userData = {
             orbitR: od.r,
             phase: (i / od.count) * Math.PI * 2,
@@ -782,9 +805,10 @@
   function rebuildScene(buildFn){
     scene.remove(currentGroup);
     currentGroup = buildFn();
+    currentGroup.position.y = 0.45;
     scene.add(currentGroup);
     rotX=0; rotY=0;
-    camera.position.set(0,0,DEFAULT_CAM_Z);
+    camera.position.set(0, 0.35, DEFAULT_CAM_Z);
     if (!staticMode){ autoRotate=true; }
     if (typeof updateRotateBtn==='function') updateRotateBtn();
   }
@@ -1089,7 +1113,7 @@
     if (staticMode){
       autoRotate = false;
       rotX = 0; rotY = 0;
-      camera.position.set(0,0,DEFAULT_CAM_Z);
+      camera.position.set(0, 0.35, DEFAULT_CAM_Z);
       canvas.style.cursor = 'default';
       setStatusBadge('Estático', true);
     } else {
@@ -1107,7 +1131,7 @@
       draw2DAtomFull(currentAtomModel);
     } else {
       rotX = 0; rotY = 0;
-      camera.position.set(0,0,DEFAULT_CAM_Z);
+      camera.position.set(0, 0.35, DEFAULT_CAM_Z);
       if (!staticMode){ autoRotate = true; updateRotateBtn(); }
     }
   };
@@ -1355,6 +1379,8 @@
   // ── Theme change — redraw labels (colors swap)
   window.addEventListener('atomurus:themechange', ()=>{
     refreshLabels();
+    updateRendererBg();
+    if (typeof setAtomModel === 'function') setAtomModel(currentAtomModel, true);
   });
 
   // Track current tab for info-meta
@@ -1503,15 +1529,18 @@
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     p2dCtx.clearRect(0, 0, W, H);
     // Background
-    p2dCtx.fillStyle = isDark ? '#0e0e0e' : '#ffffff';
+    p2dCtx.fillStyle = paper() ? paper().fillCss() : (isDark ? '#0E0D0C' : '#F2EFE7');
     p2dCtx.fillRect(0, 0, W, H);
 
     const tt = (typeof time === 'number') ? time : 0;
     const cx = W / 2, cy = H / 2;
     const colors = {
-      proton: '#e53935', neutron: '#43a047', electron: '#1e88e5',
-      orbit: isDark ? 'rgba(200,220,240,0.55)' : 'rgba(80,120,180,0.45)',
-      nucleus: isDark ? 'rgba(229,57,53,0.2)' : 'rgba(229,57,53,0.1)',
+      proton: paper() ? '#C45C4A' : '#e53935',
+      neutron: paper() ? '#1E6A50' : '#43a047',
+      electron: paper() ? (isDark ? '#E8E2D4' : '#14120E') : '#1e88e5',
+      orbit: paper() ? (isDark ? 'rgba(42,107,85,0.7)' : 'rgba(30,106,80,0.55)') : (isDark ? 'rgba(200,220,240,0.55)' : 'rgba(80,120,180,0.45)'),
+      nucleus: isDark ? 'rgba(196,92,74,0.2)' : 'rgba(196,92,74,0.1)',
+      mark: paper() ? (isDark ? '#14120E' : '#F2EFE7') : '#fff',
       text: isDark ? '#c0c0c0' : '#333333'
     };
 
@@ -1531,7 +1560,7 @@
       p2dCtx.arc(x, y, 7, 0, Math.PI * 2);
       p2dCtx.fillStyle = colors.electron;
       p2dCtx.fill();
-      p2dCtx.fillStyle = '#fff';
+      p2dCtx.fillStyle = colors.mark;
       p2dCtx.font = 'bold 9px monospace';
       p2dCtx.textAlign = 'center';
       p2dCtx.textBaseline = 'middle';
@@ -1717,7 +1746,7 @@
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
 
     view2dCtx.clearRect(0, 0, W, H);
-    view2dCtx.fillStyle = isDark ? '#0e0e0e' : '#ffffff';
+    view2dCtx.fillStyle = paper() ? paper().fillCss() : (isDark ? '#0E0D0C' : '#F2EFE7');
     view2dCtx.fillRect(0, 0, W, H);
 
     const tt = (typeof time === 'number') ? time : 0;
@@ -1726,8 +1755,11 @@
     const z  = zoom2d;
 
     const colors = {
-      proton: '#e53935', neutron: '#43a047', electron: '#1e88e5',
-      orbit: isDark ? 'rgba(200,220,240,0.55)' : 'rgba(80,120,180,0.45)',
+      proton: paper() ? '#C45C4A' : '#e53935',
+      neutron: paper() ? '#1E6A50' : '#43a047',
+      electron: paper() ? (isDark ? '#E8E2D4' : '#14120E') : '#1e88e5',
+      orbit: paper() ? (isDark ? 'rgba(42,107,85,0.7)' : 'rgba(30,106,80,0.55)') : (isDark ? 'rgba(200,220,240,0.55)' : 'rgba(80,120,180,0.45)'),
+      mark: paper() ? (isDark ? '#14120E' : '#F2EFE7') : '#fff',
       text: isDark ? '#c0c0c0' : '#333333'
     };
 
@@ -1746,7 +1778,7 @@
       view2dCtx.arc(x, y, er, 0, Math.PI * 2);
       view2dCtx.fillStyle = colors.electron;
       view2dCtx.fill();
-      view2dCtx.fillStyle = '#fff';
+      view2dCtx.fillStyle = colors.mark;
       view2dCtx.font = 'bold ' + Math.max(8, 11 * z) + 'px "DM Mono", monospace';
       view2dCtx.textAlign = 'center';
       view2dCtx.textBaseline = 'middle';
