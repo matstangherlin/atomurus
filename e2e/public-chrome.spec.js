@@ -60,8 +60,9 @@ test('public sidebar lists workspace options and warns that Pro is required', as
   await expect(nav).toContainText(/Smart Review/);
   await expect(nav).toContainText(/Pro Lab/);
   await expect(nav).toContainText(/Notes|Notas/);
-  await expect(nav.locator('a[href="/app?section=pro-lab"]')).toContainText(/PRO/);
-  await nav.locator('a[href="/app?section=pro-lab"]').click();
+  const proLab = nav.locator('a[data-ws-section="pro-lab"]');
+  await expect(proLab).toContainText(/PRO/);
+  await proLab.click();
   const notice = page.locator('#atm-pro-notice, #ws-dialog-host');
   await expect(notice).toContainText(/available only|disponível somente/i);
   await expect(page).toHaveURL(/\/($|index)/);
@@ -102,7 +103,8 @@ test('public table, calculators, login and pricing share the new chrome', async 
   await page.goto('/calculators.html');
   await expect(page.locator('.ps-shell')).toBeVisible();
   await expect(page.locator('.ps-shell > .topbar .mobile-menu-btn')).toBeHidden();
-  await expect(page.locator('#ws-sidebar .ws-nav-group')).toBeVisible();
+  await expect(page.locator('#ws-sidebar .ws-nav-group').first()).toBeVisible();
+  await expect(page.locator('#ws-sidebar').getByRole('heading', { name: 'Laboratory' })).toBeVisible();
   await expect(page.locator('#ws-nav-foot a[href*="login"]')).toBeVisible();
   await expect(page.locator('#ws-nav-foot a[href*="pricing"]')).toBeVisible();
   await expect(page.locator('#ws-sidebar a[data-nav="workspace"]')).toBeVisible();
