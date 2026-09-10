@@ -3,10 +3,12 @@
   global.atomurusInitMoleculeViewer = function atomurusInitMoleculeViewer() {
 return (function(){
   const canvas = document.getElementById('viewer3d');
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:false });
   const paper = () => window.atomurusPaperLab;
+  const renderer = (paper() && paper().createRenderer)
+    ? paper().createRenderer(THREE, canvas)
+    : new THREE.WebGLRenderer({ canvas, antialias:true, alpha:false });
   if (paper()) paper().capDpr(renderer);
-  else renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  else renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
   let paperGround = null;
   var paperMolForGround = null;
   function updateBg(){
@@ -38,7 +40,7 @@ return (function(){
   let currentGroup = new THREE.Group();
   scene.add(currentGroup);
 
-  let isDragging=false, lastX=0, lastY=0, rotX=0, rotY=0, autoRotate=true;
+  let isDragging=false, lastX=0, lastY=0, rotX=0, rotY=0, autoRotate=!((paper() && paper().prefersReducedMotion && paper().prefersReducedMotion()));
   let rotVelX = 0, rotVelY = 0;
   const ROT_DAMPING = 0.92, ROT_SENS = 0.0085;
   let labelsVisible = !paper();
@@ -59,10 +61,16 @@ return (function(){
     rotVelX = dy * 0.6 + rotVelX * 0.4;
     lastX=e.clientX; lastY=e.clientY;
   });
-  canvas.addEventListener('wheel', e => {
-    camera.position.z = Math.max(2.8, Math.min(20, camera.position.z + e.deltaY*0.01));
-    e.preventDefault();
-  }, { passive:false });
+  if (paper() && paper().bindPageScrollWheel) {
+    paper().bindPageScrollWheel(canvas, function (e) {
+      camera.position.z = Math.max(2.8, Math.min(20, camera.position.z + e.deltaY*0.01));
+    });
+  } else {
+    canvas.addEventListener('wheel', e => {
+      camera.position.z = Math.max(2.8, Math.min(20, camera.position.z + e.deltaY*0.01));
+      e.preventDefault();
+    }, { passive:false });
+  }
   if (paper()) {
     paper().bindTouchOrbit(canvas, {
       onDown: function () { isDragging=true; autoRotate=false; updateRotateBtn(); rotVelX=0; rotVelY=0; },
@@ -102,7 +110,7 @@ return (function(){
     camera.position.set(0, 0.35, paperCamZ());
   }
 
-  function makeSphere(r,color,seg=32){
+  function makeSphere(r,color,seg=24){
     const mat = paper()
       ? paper().mat(THREE, color)
       : new THREE.MeshStandardMaterial({color,roughness:0.35,metalness:0.15});
@@ -135,7 +143,7 @@ return (function(){
     function addCyl(s, e, color, r) {
       const mid = new THREE.Vector3().addVectors(s,e).multiplyScalar(0.5);
       const cyl = new THREE.Mesh(
-        new THREE.CylinderGeometry(r, r, s.distanceTo(e), 12),
+        new THREE.CylinderGeometry(r, r, s.distanceTo(e), 10),
         paper()
           ? paper().mat(THREE, color, { roughness: 0.55, metalness: 0.05 })
           : new THREE.MeshStandardMaterial({color, roughness:0.48, metalness:0.05})
@@ -640,6 +648,7 @@ return (function(){
   });
   viewer2d.addEventListener('wheel', e => {
     if (viewMode !== '2d') return;
+    if (!(e.ctrlKey || e.metaKey)) return;
     e.preventDefault();
     const step = e.deltaY > 0 ? -0.12 : 0.12;
     zoom2d = Math.max(0.3, Math.min(4.0, zoom2d + step));
@@ -761,7 +770,6 @@ return (function(){
     } else {
       applyDefaultOrbit();
       autoRotate = true; updateRotateBtn();
-      autoRotate = true; updateRotateBtn();
     }
   };
   window.zoomBy = function(direction){
@@ -868,9 +876,16 @@ return (function(){
   document.addEventListener('visibilitychange', () => { _docHidden = document.hidden; });
 
   let _last2dFrame = 0;
-  function animate(){
-    requestAnimationFrame(animate);
+  function tickFrame(){
     if (_docHidden) return;
+    if (viewMode === '2d') {
+      if (anim2dEnabled) {
+        t += 0.016;
+        const now = performance.now();
+        if (now - _last2dFrame >= 33) { _last2dFrame = now; draw2DMolecule(t); }
+      }
+      return;
+    }
     if (!isDragging && (Math.abs(rotVelX) > 1e-4 || Math.abs(rotVelY) > 1e-4)) {
       rotY += rotVelY; rotX += rotVelX;
       rotVelX *= ROT_DAMPING; rotVelY *= ROT_DAMPING;
@@ -882,12 +897,21 @@ return (function(){
     currentGroup.rotation.y = rotY;
     currentGroup.rotation.x = rotX;
     renderer.render(scene, camera);
+  }
 
-    // 2D animation drive
-    if (anim2dEnabled && viewMode === '2d') {
-      const now = performance.now();
-      if (now - _last2dFrame >= 33) { _last2dFrame = now; draw2DMolecule(t); }
-    }
+  if (paper() && paper().bindLiveLoop) {
+    paper().bindLiveLoop(canvas, tickFrame, {
+      busy: function () {
+        return isDragging || Math.abs(rotVelX) > 1e-4 || Math.abs(rotVelY) > 1e-4 ||
+          (viewMode === '3d' && autoRotate) || (viewMode === '2d' && anim2dEnabled);
+      },
+      active: function () { return viewMode === '3d' || anim2dEnabled; }
+    });
+  } else {
+    (function animate(){
+      requestAnimationFrame(animate);
+      tickFrame();
+    })();
   }
 
   // Initial state (supports deep-link: ?mol=ethanol, ?mol=chfclbr, etc.)
@@ -912,7 +936,6 @@ return (function(){
   if (labelsBtn) labelsBtn.classList.toggle('active', labelsVisible);
   return fetchMolecule(initialMol).then(function () {
     if (bootReq === molRequest) applyMolecule(initialMol, true);
-    animate();
   });
 })();
   };

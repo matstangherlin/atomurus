@@ -43,9 +43,91 @@
     return isDark() ? '#0E0D0C' : '#F2EFE7';
   }
 
+  function maxDpr() {
+    return Math.min(window.devicePixelRatio || 1, 1.5);
+  }
+
   function capDpr(renderer) {
     if (!renderer) return;
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setPixelRatio(maxDpr());
+  }
+
+  function createRenderer(THREE, canvas) {
+    var dpr = maxDpr();
+    var renderer = new THREE.WebGLRenderer({
+      canvas: canvas,
+      antialias: dpr < 1.25,
+      alpha: false,
+      powerPreference: 'high-performance',
+      stencil: false
+    });
+    renderer.setPixelRatio(dpr);
+    return renderer;
+  }
+
+  function prefersReducedMotion() {
+    return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }
+
+  function bindLiveLoop(canvas, tick, opts) {
+    opts = opts || {};
+    var hidden = document.hidden;
+    var onscreen = true;
+    var raf = 0;
+    var last = 0;
+    var idleMs = opts.idleMs != null ? opts.idleMs : 33;
+    var paintOnce = true;
+    function shouldRun() {
+      if (hidden || !onscreen) return false;
+      if (opts.active && !opts.active()) return false;
+      return true;
+    }
+    function loop(now) {
+      raf = requestAnimationFrame(loop);
+      if (!shouldRun()) {
+        paintOnce = true;
+        return;
+      }
+      var busy = opts.busy && opts.busy();
+      if (busy) {
+        if (now - last < idleMs) return;
+        paintOnce = true;
+      } else if (!paintOnce) {
+        return;
+      } else {
+        paintOnce = false;
+      }
+      last = now;
+      tick(now);
+    }
+    raf = requestAnimationFrame(loop);
+    document.addEventListener('visibilitychange', function () {
+      hidden = document.hidden;
+      if (!hidden) paintOnce = true;
+    });
+    if (canvas && typeof IntersectionObserver === 'function') {
+      var io = new IntersectionObserver(function (entries) {
+        var e = entries[0];
+        onscreen = !!(e && e.isIntersecting);
+        if (onscreen) paintOnce = true;
+      }, { rootMargin: '64px', threshold: 0.01 });
+      io.observe(canvas);
+    }
+    return {
+      stop: function () {
+        if (raf) cancelAnimationFrame(raf);
+        raf = 0;
+      }
+    };
+  }
+
+  function bindPageScrollWheel(canvas, onZoom) {
+    if (!canvas || typeof onZoom !== 'function') return;
+    canvas.addEventListener('wheel', function (e) {
+      if (!(e.ctrlKey || e.metaKey)) return;
+      onZoom(e);
+      e.preventDefault();
+    }, { passive: false });
   }
 
   function applyClear(renderer) {
@@ -90,7 +172,7 @@
     var g = new THREE.Group();
     g.name = 'paper-ground';
     var disk = new THREE.Mesh(
-      new THREE.CircleGeometry(radius, 64),
+      new THREE.CircleGeometry(radius, 48),
       new THREE.MeshStandardMaterial({
         color: isDark() ? 0x171512 : 0xE6E1D3,
         roughness: 0.95,
@@ -102,7 +184,7 @@
     disk.rotation.x = -Math.PI / 2;
     disk.position.y = y;
     var shadow = new THREE.Mesh(
-      new THREE.CircleGeometry(shadowR, 48),
+      new THREE.CircleGeometry(shadowR, 32),
       new THREE.MeshBasicMaterial({
         color: 0x14120E,
         transparent: true,
@@ -216,6 +298,11 @@
     clearColor: clearColor,
     fillCss: fillCss,
     capDpr: capDpr,
+    maxDpr: maxDpr,
+    createRenderer: createRenderer,
+    prefersReducedMotion: prefersReducedMotion,
+    bindLiveLoop: bindLiveLoop,
+    bindPageScrollWheel: bindPageScrollWheel,
     applyClear: applyClear,
     atomColor: atomColor,
     electronColor: electronColor,

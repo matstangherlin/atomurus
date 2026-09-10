@@ -12,7 +12,7 @@
   if (!canvas || !window.MOL_DATA) return;
 
   var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
 
   function updateBg() {
     var dark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -179,6 +179,7 @@
   }, { passive: false });
   canvas.addEventListener('touchend', function () { isDragging = false; });
   canvas.addEventListener('wheel', function (e) {
+    if (!(e.ctrlKey || e.metaKey)) return;
     camera.position.z = Math.max(4, Math.min(18, camera.position.z + e.deltaY * 0.01));
     e.preventDefault();
   }, { passive: false });
@@ -211,8 +212,22 @@
   resize();
 
   // ── Render loop ──
-  function animate() {
+  var _docHidden = false;
+  var _onscreen = true;
+  document.addEventListener('visibilitychange', function () { _docHidden = document.hidden; });
+  if (typeof IntersectionObserver === 'function') {
+    var io = new IntersectionObserver(function (entries) {
+      _onscreen = !!(entries[0] && entries[0].isIntersecting);
+    }, { rootMargin: '64px', threshold: 0.01 });
+    io.observe(canvas);
+  }
+  var _last = 0;
+  function animate(now) {
     requestAnimationFrame(animate);
+    if (_docHidden || !_onscreen) return;
+    var busy = isDragging || autoRotate || Math.abs(rotVelX) > 1e-4 || Math.abs(rotVelY) > 1e-4;
+    if (!busy && now - _last < 33) return;
+    _last = now;
     if (autoRotate) { rotY += 0.005; }
     else if (!isDragging) {
       rotY += rotVelY; rotX += rotVelX;
@@ -225,5 +240,5 @@
     currentGroup.rotation.x = rotX;
     renderer.render(scene, camera);
   }
-  animate();
+  requestAnimationFrame(animate);
 })();
