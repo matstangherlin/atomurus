@@ -5,20 +5,22 @@
 .price-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-4);
-  margin: var(--space-5) 0 var(--space-2);
+  gap: var(--space-5);
+  margin: var(--space-5) 0 var(--space-4);
 }
 
 .price-card {
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
   background: var(--color-surface);
+  min-height: 100%;
 }
 
 .price-card.pro {
   border-color: color-mix(in oklab, var(--color-brand) 45%, transparent);
   box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-brand) 18%, transparent);
+  background: color-mix(in oklab, var(--color-surface) 88%, var(--color-brand));
 }
 
 .price-popular {
@@ -200,9 +202,9 @@
 
 .price-ladder {
   margin: var(--space-2) 0 var(--space-6);
-  padding: var(--space-4);
+  padding: var(--space-5);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   background: var(--color-surface);
 }
 
@@ -216,7 +218,14 @@
 .price-ladder-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-3);
+  gap: var(--space-4);
+}
+
+.price-ladder-item {
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
 }
 
 .price-ladder-item .tag {

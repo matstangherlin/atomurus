@@ -519,6 +519,7 @@ if (/\.ws-chart\b|\.ws-spark|\.ws-lab-z\b/.test(workspaceLayout)) {
 const atom = read('explore/what-is-an-atom.html');
 if (!atom.includes('assets/ui/index.css')) fail('explore articles must load UI V2');
 if (!atom.includes('assets/layouts/article.css')) fail('explore articles must load article layout CSS');
+if (!atom.includes('lab-tool-cta')) fail('explore articles must link back to the lab tool');
 if (!atom.includes('id="art-body"') || !atom.includes('class="art-title"')) {
   fail('articles must keep .art-title and #art-body');
 }

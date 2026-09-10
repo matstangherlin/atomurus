@@ -20,7 +20,7 @@
 <script src="../../../assets/global-nav.js?v=202609090500"></script>
 <script src="/assets/public-workspace.js?v=202608282500"></script>
 <link rel="stylesheet" href="/assets/ui/index.css?v=202609090500">
-<link rel="stylesheet" href="/assets/layouts/viewer.css?v=202609090500">
+<link rel="stylesheet" href="/assets/layouts/viewer.css?v=202609101700">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1E6A50" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0E0D0C" media="(prefers-color-scheme: dark)">
@@ -172,7 +172,7 @@
 
   <div class="content">
     <div class="content-inner">
-      <div class="ph-kicker" data-i18n="isomerism.kicker">visualização</div>
+      <div class="ph-kicker" data-i18n="isomerism.kicker">visualization</div>
 
       <h1 class="ph-title" data-i18n-html="isomerism.optica.title">Title</h1>
 
@@ -250,6 +250,8 @@
 
         <p class="iso-desc" data-i18n-html="isomerism.optica.desc">Surge quando um carbono é ligado a <b style="color:var(--text-1)">4 grupos diferentes</b> (carbono assimétrico ou quiral, C*). A molécula e sua imagem no espelho são não-sobreponíveis — como a mão esquerda e a direita — e são chamadas <b style="color:var(--text-1)">enantiômeros</b>.</p>
 
+        <p class="lab-readmore"><a href="/explore/what-is-isomerism.html" data-i18n="isomerism.overview.readArticle">Read the isomerism article →</a></p>
+
         <div class="mol-pair" id="optica-pair">
           <!-- R enantiômero (default) -->
           <div class="mol-card" id="card-r">
@@ -305,10 +307,7 @@
           </div>
         </div>
 
-        <div class="iso-callout iso-callout-purple" data-i18n-html="isomerism.optica.callout">
-          <b>Por que importa?</b> Enantiômeros têm propriedades físicas idênticas (mesmo ponto de fusão, ebulição, densidade) mas interagem de forma diferente com matéria viva. Em bioquímica, os receptores e enzimas são quirais — por isso um enantiômero de um medicamento pode ser terapêutico enquanto o outro é inativo ou tóxico. O exemplo clássico é a talidomida: o enantiômero R era sedativo, o S causava malformações.
-        </div>
-
+        
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:12.5px;color:var(--text-2);line-height:1.6">
           <span style="font-family:'DM Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);display:block;margin-bottom:8px" data-i18n="isomerism.bondLegendTitle">Legenda dos vínculos</span>
           <div style="display:flex;gap:20px;flex-wrap:wrap">
@@ -317,9 +316,7 @@
             <span data-i18n-html="isomerism.optica.bondPlane"><b style="color:var(--text-1)">———</b> Linha contínua — ligação <b style="color:var(--text-1)">no plano do papel</b></span>
           </div>
         </div>
-        <div class="iso-gold-rule iso-callout iso-callout-amber" data-i18n-html="isomerism.optica.goldRule"></div>
-        <div class="iso-in-practice iso-callout iso-callout-blue" data-i18n-html="isomerism.optica.inPractice"></div>
-        <div class="iso-3d-panel" id="iso-3d" data-mol-a="chfclbr" data-mol-b="chfclbr" data-mirror="true">
+                        <div class="iso-3d-panel" id="iso-3d" data-mol-a="chfclbr" data-mol-b="chfclbr" data-mirror="true">
           <div class="iso-3d-head">
             <span class="iso-3d-title" data-i18n="isomerism.iso3dTitle">3D · drag to rotate</span>
             <div class="iso-3d-tabs">
@@ -332,20 +329,7 @@
             <span class="iso-3d-hint" data-i18n="isomerism.iso3dHint">drag · scroll · double-click to auto-rotate</span>
           </div>
         </div>
-        <div class="iso-extra-box">
-          <div class="iso-extra-box-title" data-i18n="isomerism.optica.cipTitle">CIP</div>
-          <p data-i18n-html="isomerism.optica.cipSteps"></p>
-        </div>
-        <div class="iso-extra-box">
-          <div class="iso-extra-box-title" data-i18n="isomerism.optica.mesoTitle">Meso</div>
-          <p data-i18n="isomerism.optica.mesoText"></p>
-        </div>
-        <div class="iso-extra-box">
-          <div class="iso-extra-box-title" data-i18n="isomerism.optica.racemicTitle">Racemic</div>
-          <p data-i18n="isomerism.optica.racemicText"></p>
-        </div>
-        <div class="iso-extra-note iso-callout iso-callout-purple" data-i18n-html="isomerism.optica.diastereomerText"></div>
-
+                                
     </div>
   </div>
 </main>

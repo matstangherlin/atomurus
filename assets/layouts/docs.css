@@ -6,12 +6,16 @@
 }
 
 .lc-doc-hero {
-  padding: var(--space-7) var(--space-6) var(--space-5);
+  padding: var(--space-7) var(--space-6) var(--space-6);
 }
 
 .lc-doc-title {
   font-family: var(--font-serif);
   font-weight: 400;
+  font-size: clamp(34px, 5vw, 52px);
+  line-height: var(--leading-tight);
+  letter-spacing: -0.02em;
+  max-width: 18ch;
 }
 
 .lc-doc-kicker {
@@ -30,8 +34,35 @@
 }
 
 .lc-doc-body.ui-root {
-  background: transparent;
+  background: var(--color-bg);
   min-height: 0;
+}
+
+html body.ps-body.lc-doc .lc-doc-body {
+  max-width: 1120px;
+  width: 100%;
+}
+
+html body.ps-body.lc-doc .lc-doc-prose {
+  max-width: none;
+  font-size: var(--text-base);
+  color: var(--color-text);
+  line-height: var(--leading-relaxed);
+}
+
+html body.ps-body.lc-doc .lc-doc-prose h2 {
+  font-family: var(--font-serif);
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+html body.ps-body.lc-doc .lc-doc-prose h2 .h-no {
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .lc-doc-cards {

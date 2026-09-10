@@ -117,3 +117,37 @@ html body.ps-body .ps-shell .allo-search {
   font-family: var(--font-ui) !important;
   letter-spacing: 0 !important;
 }
+
+html body.ps-body .info-name {
+  font-family: var(--font-serif) !important;
+  font-size: clamp(22px, 3vw, 32px) !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.02em !important;
+}
+
+html body.ps-body .lab-readmore,
+html body.ps-body .lab-readmore-card {
+  margin: var(--space-4) 0 var(--space-5);
+}
+html body.ps-body .lab-readmore a,
+html body.ps-body .lab-readmore-card a {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  color: var(--color-brand);
+  text-decoration: none;
+}
+html body.ps-body .lab-readmore-card {
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+  justify-content: space-between;
+}
+html body.ps-body .lab-readmore-card p {
+  margin: 0;
+  color: var(--color-text-muted);
+}

@@ -76,7 +76,7 @@
 <script src="../assets/global-nav.js?v=202609090500"></script>
 <script src="/assets/public-workspace.js?v=202608282500"></script>
 <link rel="stylesheet" href="/assets/ui/index.css?v=202609090500">
-<link rel="stylesheet" href="/assets/layouts/viewer.css?v=202609090500">
+<link rel="stylesheet" href="/assets/layouts/viewer.css?v=202609101700">
 <script src="../lazy-ads.js?v=202608041630" defer></script>
 <script>
 (function(){
@@ -208,7 +208,8 @@
     <div class="content-inner">
       <div class="ph-kicker" data-i18n="isomerism.kicker">visualization</div>
       <h1 class="ph-title" data-i18n="isomerism.title">Isomeria</h1>
-      <p class="ph-desc" data-i18n="isomerism.desc">Moléculas com a mesma fórmula molecular mas estruturas diferentes — compare os 4 grandes tipos: função, cadeia, geométrica e óptica lado a lado.</p>
+      <p class="ph-desc" data-i18n="isomerism.desc">Same formula, different structures. Compare the types in 2D and 3D.</p>
+      <p class="lab-readmore"><a href="/explore/what-is-isomerism.html" data-i18n="isomerism.overview.readArticle">Read the isomerism article →</a></p>
 
       <!-- ── Viewer top tabs ── -->
       <nav class="vz-tabs" aria-label="Visualizador">
@@ -311,27 +312,8 @@
           <div class="iso-tree-row"><span class="iso-tree-label" data-i18n="isomerism.overview.treeConst">Constitutional</span><span class="iso-tree-items">C1–C5</span></div>
           <div class="iso-tree-row"><span class="iso-tree-label" data-i18n="isomerism.overview.treeEsp">Spatial</span><span class="iso-tree-items">E1–E2</span></div>
         </div>
-        <div class="iso-summary-table-wrap">
-          <div class="iso-summary-title" data-i18n="isomerism.overview.tableTitle">Quick reference</div>
-          <table class="iso-summary-table">
-            <thead><tr>
-              <th data-i18n="isomerism.overview.tableHeadType">Type</th>
-              <th data-i18n="isomerism.overview.tableHeadChanges">Changes</th>
-              <th data-i18n="isomerism.overview.tableHeadExample">Example</th>
-              <th data-i18n="isomerism.overview.tableHeadLab">Lab</th>
-            </tr></thead>
-            <tbody>
-              <tr><td data-i18n="isomerism.overview.rowFuncao">Function</td><td data-i18n="isomerism.overview.rowFuncaoCh"></td><td data-i18n="isomerism.overview.rowFuncaoEx"></td><td data-i18n="isomerism.overview.rowFuncaoLab"></td></tr>
-              <tr><td data-i18n="isomerism.overview.rowCadeia">Chain</td><td data-i18n="isomerism.overview.rowCadeiaCh"></td><td data-i18n="isomerism.overview.rowCadeiaEx"></td><td data-i18n="isomerism.overview.rowCadeiaLab"></td></tr>
-              <tr><td data-i18n="isomerism.overview.rowPosicao">Position</td><td data-i18n="isomerism.overview.rowPosicaoCh"></td><td data-i18n="isomerism.overview.rowPosicaoEx"></td><td data-i18n="isomerism.overview.rowPosicaoLab"></td></tr>
-              <tr><td data-i18n="isomerism.overview.rowMetameria">Metamerism</td><td data-i18n="isomerism.overview.rowMetameriaCh"></td><td data-i18n="isomerism.overview.rowMetameriaEx"></td><td data-i18n="isomerism.overview.rowMetameriaLab"></td></tr>
-              <tr><td data-i18n="isomerism.overview.rowTautomeria">Tautomerism</td><td data-i18n="isomerism.overview.rowTautomeriaCh"></td><td data-i18n="isomerism.overview.rowTautomeriaEx"></td><td data-i18n="isomerism.overview.rowTautomeriaLab"></td></tr>
-              <tr><td data-i18n="isomerism.overview.rowGeometrica">Geometric</td><td data-i18n="isomerism.overview.rowGeometricaCh"></td><td data-i18n="isomerism.overview.rowGeometricaEx"></td><td data-i18n="isomerism.overview.rowGeometricaLab"></td></tr>
-              <tr><td data-i18n="isomerism.overview.rowOptica">Optical</td><td data-i18n="isomerism.overview.rowOpticaCh"></td><td data-i18n="isomerism.overview.rowOpticaEx"></td><td data-i18n="isomerism.overview.rowOpticaLab"></td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="iso-callout iso-callout-amber" data-i18n-html="isomerism.overview.tautomerWarning"></div>
+        <p class="lab-readmore"><a href="/explore/what-is-isomerism.html" data-i18n="isomerism.overview.readArticle">Read the isomerism article →</a></p>
+
       </section>
       <!-- /ISO_OVERVIEW -->
 
@@ -345,7 +327,7 @@
           </div>
         </div>
 
-        <p class="iso-desc" data-i18n-html="isomerism.funcao.desc">Compostos com a mesma fórmula molecular mas pertencentes a <b style="color:var(--text-1)">famílias orgânicas diferentes</b>. O número e tipo de átomos é idêntico — o que muda é como eles se organizam em grupos funcionais.</p>
+        <p class="iso-desc" data-i18n-html="isomerism.funcao.desc">Same molecular formula, <b>different organic families</b>.</p>
 
         <div class="mol-pair">
           <div class="mol-card">
@@ -390,12 +372,7 @@
           </div>
         </div>
 
-        <div class="iso-callout iso-callout-green" data-i18n-html="isomerism.funcao.callout">
-          <b>Diferença-chave:</b> Ambos têm C₂H₆O, mas o etanol tem o oxigênio no fim da cadeia formando o grupo —OH (álcool), enquanto o éter tem o oxigênio entre dois carbonos (—C—O—C—). Isso explica as propriedades físico-químicas totalmente distintas: o etanol faz pontes de hidrogênio e tem ponto de ebulição muito mais alto.
-        </div>
-        <div class="iso-gold-rule iso-callout iso-callout-amber" data-i18n-html="isomerism.funcao.goldRule"></div>
-        <div class="iso-in-practice iso-callout iso-callout-blue" data-i18n-html="isomerism.funcao.inPractice"></div>
-        <p class="iso-mol3d-link"><a href="../../molecules.html" data-i18n="isomerism.funcao.mol3d">View ethanol in 3D →</a></p>
+                                
       </div>
 
       <!-- ══ PAINEL C2: CADEIA ══ -->
@@ -408,7 +385,7 @@
           </div>
         </div>
 
-        <p class="iso-desc" data-i18n-html="isomerism.cadeia.desc">Ocorre quando compostos têm a mesma fórmula molecular mas diferem no <b style="color:var(--text-1)">modo como os carbonos se encadeiam</b> — cadeia normal (linear) versus ramificada (com desvio).</p>
+        <p class="iso-desc" data-i18n-html="isomerism.cadeia.desc">Same formula, <b>different carbon skeleton</b> — straight or branched.</p>
 
         <div class="mol-pair">
           <div class="mol-card">
@@ -459,12 +436,7 @@
           </div>
         </div>
 
-        <div class="iso-callout iso-callout-amber" data-i18n-html="isomerism.cadeia.callout">
-          <b>Diferença-chave:</b> Os 4 carbonos de C₄H₁₀ podem se organizar em linha reta (n-butano) ou com um carbono "desviando" da cadeia principal (isobutano). A ramificação reduz as interações de Van der Waals entre moléculas, abaixando o ponto de ebulição. Por isso o isobutano ferve antes (−12 °C vs −1 °C).
-        </div>
-        <div class="iso-gold-rule iso-callout iso-callout-amber" data-i18n-html="isomerism.cadeia.goldRule"></div>
-        <div class="iso-in-practice iso-callout iso-callout-blue" data-i18n-html="isomerism.cadeia.inPractice"></div>
-      </div>
+                              </div>
 
       <!-- ══ PAINEL C3: POSIÇÃO ══ -->
       <div class="iso-panel" id="panel-posicao" role="tabpanel" aria-labelledby="tab-posicao">
@@ -528,13 +500,7 @@
             <div class="mol-card-fact" data-i18n-html="isomerism.posicao.bFact"><b>Dupla ligação:</b> entre C2 e C3 · centro da cadeia · P.e.: 3,7 °C (cis) / 0,9 °C (trans)</div>
           </div>
         </div>
-        <div class="iso-callout iso-callout-blue" data-i18n-html="isomerism.posicao.callout">
-          <b>Diferença-chave:</b> Ambos têm C₄H₈ com uma insaturação, mas o grupo funcional (C=C) está em posições diferentes. No 1-buteno ele fica na extremidade; no 2-buteno, no meio. A posição afeta reatividade e propriedades físicas — o 2-buteno ainda pode existir nas formas cis e trans.
-        </div>
-        <div class="iso-gold-rule iso-callout iso-callout-amber" data-i18n-html="isomerism.posicao.goldRule"></div>
-        <div class="iso-in-practice iso-callout iso-callout-blue" data-i18n-html="isomerism.posicao.inPractice"></div>
-        <div class="iso-crosslink iso-callout iso-callout-purple" data-i18n-html="isomerism.posicao.linkGeometric"></div>
-      </div>
+                                      </div>
 
       <!-- ══ PAINEL C4: METAMERIA ══ -->
       <div class="iso-panel" id="panel-metameria" role="tabpanel" aria-labelledby="tab-metameria">
@@ -598,12 +564,7 @@
             <div class="mol-card-fact" data-i18n-html="isomerism.metameria.bFact"><b>Cadeias:</b> etil (2C) + etil (2C) ligados ao O · P.e.: 34,6 °C</div>
           </div>
         </div>
-        <div class="iso-callout iso-callout-amber" data-i18n-html="isomerism.metameria.callout">
-          <b>Diferença-chave:</b> Os dois são éteres (—O—) com fórmula C₄H₁₀O, mas as cadeias em cada lado do oxigênio são diferentes: 1C+3C vs 2C+2C. Esse rearranjo das cadeias em torno do heteroátomo define a metameria.
-        </div>
-        <div class="iso-gold-rule iso-callout iso-callout-amber" data-i18n-html="isomerism.metameria.goldRule"></div>
-        <div class="iso-in-practice iso-callout iso-callout-blue" data-i18n-html="isomerism.metameria.inPractice"></div>
-        <p class="iso-footnote" data-i18n="isomerism.metameria.footnote"></p>
+                                <p class="iso-footnote" data-i18n="isomerism.metameria.footnote"></p>
       </div>
 
       <!-- ══ PAINEL C5: TAUTOMERIA ══ -->
@@ -670,17 +631,7 @@
             <div class="mol-card-fact" data-i18n-html="isomerism.tautomeria.bFact"><b>Forma enol:</b> dupla C=C + grupo —OH · minoria (&lt;0,01%) · H migrou do C para o O</div>
           </div>
         </div>
-        <div class="iso-callout iso-callout-green" data-i18n-html="isomerism.tautomeria.callout">
-          <b>Equilíbrio dinâmico:</b> Ao contrário dos outros isômeros que são compostos separados, os tautômeros coexistem e se interconvertem rapidamente em solução. Na acetona, a forma ceto domina esmagadoramente, mas o equilíbrio é crucial em açúcares (glicose aberta ⇌ cíclica) e em bases nitrogenadas do DNA.
-        </div>
-        <div class="iso-gold-rule iso-callout iso-callout-amber" data-i18n-html="isomerism.tautomeria.goldRule"></div>
-        <div class="iso-in-practice iso-callout iso-callout-blue" data-i18n-html="isomerism.tautomeria.inPractice"></div>
-        <div class="iso-warning iso-callout iso-callout-amber" data-i18n-html="isomerism.tautomeria.notStatic"></div>
-        <div class="iso-extra-box">
-          <div class="iso-extra-box-title" data-i18n="isomerism.tautomeria.glucoseTitle">Glucose</div>
-          <p data-i18n="isomerism.tautomeria.glucoseText"></p>
-        </div>
-      </div>
+                                              </div>
 
       </div><!-- /group-const -->
 
@@ -766,14 +717,7 @@
           </div>
         </div>
 
-        <div class="iso-callout iso-callout-blue" data-i18n-html="isomerism.geometrica.callout">
-          <b>Por que não se interconvertem?</b> A dupla ligação C=C tem um componente π (pi) que impede a rotação livre em torno do eixo C—C. Para que cis vire trans, seria preciso quebrar essa ligação — o que requer cerca de 250 kJ/mol. Em condições normais, os dois isômeros são compostos separados e estáveis.
-        </div>
-        <div class="iso-gold-rule iso-callout iso-callout-amber" data-i18n-html="isomerism.geometrica.goldRule"></div>
-        <div class="iso-in-practice iso-callout iso-callout-blue" data-i18n-html="isomerism.geometrica.inPractice"></div>
-        <div class="iso-crosslink iso-callout iso-callout-purple" data-i18n-html="isomerism.geometrica.linkPosition"></div>
-        <div class="iso-extra-note iso-callout iso-callout-amber" data-i18n-html="isomerism.geometrica.diastereomerNote"></div>
-      </div>
+                                              </div>
 
       <!-- ══ PAINEL 4: ÓPTICA ══ -->
       <div class="iso-panel" id="panel-optica" role="tabpanel" aria-labelledby="tab-optica">
@@ -854,10 +798,7 @@
           </div>
         </div>
 
-        <div class="iso-callout iso-callout-purple" data-i18n-html="isomerism.optica.callout">
-          <b>Por que importa?</b> Enantiômeros têm propriedades físicas idênticas (mesmo ponto de fusão, ebulição, densidade) mas interagem de forma diferente com matéria viva. Em bioquímica, os receptores e enzimas são quirais — por isso um enantiômero de um medicamento pode ser terapêutico enquanto o outro é inativo ou tóxico. O exemplo clássico é a talidomida: o enantiômero R era sedativo, o S causava malformações.
-        </div>
-
+        
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:12.5px;color:var(--text-2);line-height:1.6">
           <span style="font-family:'DM Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);display:block;margin-bottom:8px" data-i18n="isomerism.bondLegendTitle">Legenda dos vínculos</span>
           <div style="display:flex;gap:20px;flex-wrap:wrap">
@@ -866,58 +807,17 @@
             <span data-i18n-html="isomerism.optica.bondPlane"><b style="color:var(--text-1)">———</b> Linha contínua — ligação <b style="color:var(--text-1)">no plano do papel</b></span>
           </div>
         </div>
-        <div class="iso-gold-rule iso-callout iso-callout-amber" data-i18n-html="isomerism.optica.goldRule"></div>
-        <div class="iso-in-practice iso-callout iso-callout-blue" data-i18n-html="isomerism.optica.inPractice"></div>
-        <div class="iso-extra-box">
-          <div class="iso-extra-box-title" data-i18n="isomerism.optica.cipTitle">CIP</div>
-          <p data-i18n-html="isomerism.optica.cipSteps"></p>
-        </div>
-        <div class="iso-extra-box">
-          <div class="iso-extra-box-title" data-i18n="isomerism.optica.mesoTitle">Meso</div>
-          <p data-i18n="isomerism.optica.mesoText"></p>
-        </div>
-        <div class="iso-extra-box">
-          <div class="iso-extra-box-title" data-i18n="isomerism.optica.racemicTitle">Racemic</div>
-          <p data-i18n="isomerism.optica.racemicText"></p>
-        </div>
-        <div class="iso-extra-note iso-callout iso-callout-purple" data-i18n-html="isomerism.optica.diastereomerText"></div>
-      </div>
+                                                      </div>
       
-      <!-- ISO_QUIZ -->
-      <section class="iso-quiz" id="iso-quiz">
-        <h2 class="iso-quiz-title" data-i18n="isomerism.quiz.title">Quick check</h2>
-        <div class="iso-quiz-item" data-quiz="1" data-answer="a">
-          <p data-i18n="isomerism.quiz.q1">Q1</p>
-          <div class="iso-quiz-options">
-            <button type="button" data-opt="a" data-i18n="isomerism.quiz.q1a">A</button>
-            <button type="button" data-opt="b" data-i18n="isomerism.quiz.q1b">B</button>
-            <button type="button" data-opt="c" data-i18n="isomerism.quiz.q1c">C</button>
-          </div>
-          <p class="iso-quiz-feedback" hidden></p>
-        </div>
-        <div class="iso-quiz-item" data-quiz="2" data-answer="a">
-          <p data-i18n="isomerism.quiz.q2">Q2</p>
-          <div class="iso-quiz-options">
-            <button type="button" data-opt="a" data-i18n="isomerism.quiz.q2a">A</button>
-            <button type="button" data-opt="b" data-i18n="isomerism.quiz.q2b">B</button>
-            <button type="button" data-opt="c" data-i18n="isomerism.quiz.q2c">C</button>
-          </div>
-          <p class="iso-quiz-feedback" hidden></p>
-        </div>
-        <div class="iso-quiz-item" data-quiz="3" data-answer="a">
-          <p data-i18n="isomerism.quiz.q3">Q3</p>
-          <div class="iso-quiz-options">
-            <button type="button" data-opt="a" data-i18n="isomerism.quiz.q3a">A</button>
-            <button type="button" data-opt="b" data-i18n="isomerism.quiz.q3b">B</button>
-            <button type="button" data-opt="c" data-i18n="isomerism.quiz.q3c">C</button>
-          </div>
-          <p class="iso-quiz-feedback" hidden></p>
-        </div>
-      </section>
-      <!-- /ISO_QUIZ -->
+      
 
       <!-- ── END PANELS ── -->
 
+
+      <aside class="lab-readmore-card">
+        <p data-i18n="isomerism.overview.readArticleLead">The full classification and worked examples live in the article.</p>
+        <a class="ui-btn ui-btn-accent" href="/explore/what-is-isomerism.html" data-i18n="isomerism.overview.readArticle">Read the isomerism article →</a>
+      </aside>
     </div>
   </div>
 </main>

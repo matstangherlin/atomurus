@@ -1134,7 +1134,7 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
 <script src="../assets/global-nav.js?v=202609090500"></script>
 <script src="/assets/public-workspace.js?v=202608282500"></script>
 <link rel="stylesheet" href="/assets/ui/index.css?v=202609090500">
-<link rel="stylesheet" href="/assets/layouts/viewer.css?v=202609090500">
+<link rel="stylesheet" href="/assets/layouts/viewer.css?v=202609101700">
 </head>
 <body class="ps-body">
 
@@ -1265,7 +1265,8 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
       <!-- ─── Page header ─── -->
       <div class="ph-kicker" data-i18n="atomicModels.kicker">visualization</div>
       <h1 class="ph-title" data-i18n="atomicModels.title">Atomic Models</h1>
-      <p class="ph-desc" data-i18n="atomicModels.desc">The 5 historical models of the atom — from Dalton (1803) to Quantum (Schrödinger, 1926) — in animated 3D and 2D. Drag to rotate, adjust the ionic state, or switch model to compare.</p>
+      <p class="ph-desc" data-i18n="atomicModels.desc">Five historical models of the atom in 3D. Switch Dalton, Thomson, Rutherford, Bohr or Quantum.</p>
+      <p class="lab-readmore"><a href="/explore/what-is-an-atom.html" data-i18n="atomicModels.readArticle">Read the article: What is an atom →</a></p>
       <div data-pro-lab-tool="atomic"></div>
 
       <!-- Visualizador tab bar (responsive) -->
@@ -1454,7 +1455,7 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
           <span class="md-shell"><span class="legend-dot" style="background:#3b82f6"></span> <span data-i18n="atomicModels.detail.shell2s">2s — 2 electrons (sphere with radial node)</span></span>
           <span class="md-shell"><span class="legend-dot" style="background:#a78bfa"></span> <span data-i18n="atomicModels.detail.shell2p">2p — 2 unpaired electrons (perpendicular lobes, Hund's rule)</span></span>
         </div>
-        <div class="model-detail-ref" data-i18n-html="atomicModels.detail.refNote"><b>Reference atom: carbon-12 (¹²C).</b> All five models render the same atom — Z = 6: 6 protons + 6 neutrons in the nucleus and 6 electrons. Sizes are illustrative, not to scale: in a real atom the nucleus is ~25,000× smaller than the electron cloud — if the nucleus were 1 cm wide, the atom would span ~250 m.</div>
+        <div class="model-detail-ref" data-i18n-html="atomicModels.detail.refNote"><b>Carbon-12 (Z = 6).</b> Same atom in every model. Sizes are illustrative.</div>
       </div>
 
       <!-- ─── Atomic Model legend (always visible in atomic tab) ─── -->
@@ -1485,132 +1486,10 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
         </div>
       </div>
 
-      <!-- ═══════ TIMELINE ═══════ -->
-      <h2 class="section-title"><span class="num">01</span> <span data-i18n="atomicModels.sec01">Models Timeline</span></h2>
-      <p class="section-sub" data-i18n="atomicModels.sec01Sub">Each model emerged as a response to a limitation of the previous one. They weren't wrong theories replaced by correct ones — they were incomplete models refined by more accurate models. That is the essence of the scientific method.</p>
-      <div class="timeline">
-        <div class="tl-item">
-          <div class="tl-year">1803</div>
-          <div class="tl-name">Dalton</div>
-          <div class="tl-author" data-i18n="atomicModels.tl.dalton">Solid sphere · Quantitative atomic theory</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-year">1897</div>
-          <div class="tl-name">Thomson</div>
-          <div class="tl-author" data-i18n="atomicModels.tl.thomson">Plum pudding · Discovery of the electron</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-year">1911</div>
-          <div class="tl-name">Rutherford</div>
-          <div class="tl-author" data-i18n="atomicModels.tl.rutherford">Dense nucleus · Geiger-Marsden</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-year">1913</div>
-          <div class="tl-name">Bohr</div>
-          <div class="tl-author" data-i18n="atomicModels.tl.bohr">Quantized orbits · H spectra</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-year">1924</div>
-          <div class="tl-name">De Broglie</div>
-          <div class="tl-author" data-i18n="atomicModels.tl.debroglie">Wave-particle duality</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-year">1926</div>
-          <div class="tl-name">Schrödinger</div>
-          <div class="tl-author" data-i18n="atomicModels.tl.schrodinger">Wave equation · Orbitals</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-year">1927</div>
-          <div class="tl-name">Heisenberg</div>
-          <div class="tl-author" data-i18n="atomicModels.tl.heisenberg">Uncertainty Principle</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-year" data-i18n="atomicModels.tl.century">20th–21st c.</div>
-          <div class="tl-name">QED</div>
-          <div class="tl-author" data-i18n="atomicModels.tl.qed">Feynman · Quantum electrodynamics</div>
-        </div>
-      </div>
-
-      <!-- ═══════ COMPARATIVO ═══════ -->
-      <h2 class="section-title"><span class="num">03</span> <span data-i18n="atomicModels.sec03">Comparison of Models</span></h2>
-      <table class="compare-table">
-        <thead>
-          <tr><th data-i18n="atomicModels.cmp.colModel">Model</th><th data-i18n="atomicModels.cmp.colYear">Year</th><th data-i18n="atomicModels.cmp.colElectron">Electron is…</th><th data-i18n="atomicModels.cmp.colNucleus">Nucleus</th><th data-i18n="atomicModels.cmp.colValid">Valid for</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><strong>Dalton</strong></td><td>1803</td><td data-i18n="atomicModels.cmp.dalton_e">Doesn't exist</td><td data-i18n="atomicModels.cmp.dalton_n">Doesn't exist</td><td data-i18n="atomicModels.cmp.dalton_v">simple stoichiometry</td></tr>
-          <tr><td><strong>Thomson</strong></td><td>1897</td><td data-i18n="atomicModels.cmp.thomson_e">Static particle embedded</td><td data-i18n="atomicModels.cmp.thomson_n">Doesn't exist (diffuse)</td><td data-i18n="atomicModels.cmp.thomson_v">Qualitative historical</td></tr>
-          <tr><td><strong>Rutherford</strong></td><td>1911</td><td data-i18n="atomicModels.cmp.rutherford_e">Particle in circular orbit</td><td data-i18n="atomicModels.cmp.rutherford_n">Central and dense</td><td data-i18n="atomicModels.cmp.rutherford_v">Alpha scattering</td></tr>
-          <tr><td><strong>Bohr</strong></td><td>1913</td><td data-i18n="atomicModels.cmp.bohr_e">Particle in quantized orbit</td><td data-i18n="atomicModels.cmp.bohr_n">Central and dense</td><td data-i18n="atomicModels.cmp.bohr_v">H spectra</td></tr>
-          <tr><td><strong>De Broglie</strong></td><td>1924</td><td data-i18n="atomicModels.cmp.debroglie_e">Standing wave</td><td data-i18n="atomicModels.cmp.debroglie_n">Exists</td><td data-i18n="atomicModels.cmp.debroglie_v">Quantum foundation</td></tr>
-          <tr><td><strong>Schrödinger</strong></td><td>1926</td><td data-i18n="atomicModels.cmp.schrodinger_e">Probability distribution</td><td data-i18n="atomicModels.cmp.schrodinger_n">Exists</td><td data-i18n="atomicModels.cmp.schrodinger_v">Quantum chemistry</td></tr>
-          <tr><td><strong>QED</strong></td><td data-i18n="atomicModels.tl.century">20th–21st c.</td><td data-i18n="atomicModels.cmp.qed_e">Quantum field with spin</td><td data-i18n="atomicModels.cmp.qed_n">Exists (quarks, gluons)</td><td data-i18n="atomicModels.cmp.qed_v">Precision spectroscopy</td></tr>
-        </tbody>
-      </table>
-
-      <div class="callout purple">
-        <strong>✦ Decisão pedagógica:</strong> apresentamos os modelos em ordem cronológica e sempre com o <em>problema</em> que motivou cada avanço. O usuário passa de Dalton ao modelo moderno como uma jornada — entendendo que a ciência refina modelos incompletos com modelos mais precisos.
-      </div>
-
-      <!-- ═══════ ORBITAIS ═══════ -->
-      <h2 class="section-title"><span class="num">04</span> <span data-i18n="atomicModels.sec04">The Atomic Orbitals</span></h2>
-      <p class="section-sub">A solução da equação de Schrödinger define <strong>4 tipos de orbital</strong> — regiões de maior probabilidade de encontrar o elétron. Cada um tem uma forma geométrica característica que determina diretamente a geometria das moléculas.</p>
-      <div class="orbital-grid">
-        <div class="orb">
-          <div class="orb-symbol">s</div>
-          <div class="orb-name" data-i18n="atomicModels.orb.sName">Orbital s — Spherical</div>
-          <div class="orb-desc" data-i18n="atomicModels.orb.sDesc">1 orientation · max 2 electrons · hydrogen ground state occupies 1s</div>
-        </div>
-        <div class="orb">
-          <div class="orb-symbol">p</div>
-          <div class="orb-name" data-i18n="atomicModels.orb.pName">Orbital p — Dumbbell</div>
-          <div class="orb-desc" data-i18n="atomicModels.orb.pDesc">3 orientations (px, py, pz) · max 6 electrons · 90° angles</div>
-        </div>
-        <div class="orb">
-          <div class="orb-symbol">d</div>
-          <div class="orb-name" data-i18n="atomicModels.orb.dName">Orbital d — 4 lobes</div>
-          <div class="orb-desc" data-i18n="atomicModels.orb.dDesc">5 orientations · max 10 electrons · typical of transition metals</div>
-        </div>
-        <div class="orb">
-          <div class="orb-symbol">f</div>
-          <div class="orb-name" data-i18n="atomicModels.orb.fName">Orbital f — Complex</div>
-          <div class="orb-desc" data-i18n="atomicModels.orb.fDesc">7 orientations · max 14 electrons · lanthanides and actinides</div>
-        </div>
-      </div>
-
-      <!-- ═══════ NÚMEROS QuantumS ═══════ -->
-      <h2 class="section-title"><span class="num">05</span> <span data-i18n="atomicModels.sec05">The 4 Quantum Numbers</span></h2>
-      <p class="section-sub">Cada elétron em um átomo é descrito unicamente por 4 números. Pelo <strong>Princípio de Exclusão de Pauli</strong>, dois elétrons no mesmo átomo nunca podem ter os 4 números iguais — daí o limite de 2 elétrons por orbital.</p>
-      <div class="qn-grid">
-        <div class="qn">
-          <div class="qn-symbol">n</div>
-          <div class="qn-name" data-i18n="atomicModels.qn.nName">Principal Quantum Number</div>
-          <div class="qn-desc" data-i18n-html="atomicModels.qn.nDesc">Defines the energy <strong>level</strong>.</div>
-        </div>
-        <div class="qn">
-          <div class="qn-symbol">ℓ</div>
-          <div class="qn-name" data-i18n="atomicModels.qn.lName">Azimuthal Number (Secondary)</div>
-          <div class="qn-desc" data-i18n-html="atomicModels.qn.lDesc">Defines the <strong>subshell / orbital type</strong>.</div>
-        </div>
-        <div class="qn">
-          <div class="qn-symbol">mₗ</div>
-          <div class="qn-name" data-i18n="atomicModels.qn.mName">Magnetic Number</div>
-          <div class="qn-desc" data-i18n-html="atomicModels.qn.mDesc">Defines the spatial <strong>orientation</strong> of the orbital.</div>
-        </div>
-        <div class="qn">
-          <div class="qn-symbol">mₛ</div>
-          <div class="qn-name" data-i18n="atomicModels.qn.sName">Spin Number</div>
-          <div class="qn-desc" data-i18n-html="atomicModels.qn.sDesc">Defines the electron <strong>spin</strong>.</div>
-        </div>
-      </div>
-
-      <div class="callout">
-        <strong>🔑 Aplicação direta:</strong> a configuração eletrônica de qualquer átomo (até Z=118) é construída preenchendo orbitais em ordem crescente de energia, respeitando Pauli (máx. 2e⁻ por orbital) e Hund (preencher orbitais degenerados com 1e⁻ antes de emparelhar). Isso determina toda a química do elemento — sua valência, sua família e suas ligações.
-      </div>
-
-      <p class="ph-desc" style="margin-top:32px;font-size:12.5px;color:var(--text-3);">
-        Content curado a partir do white paper Atomurus v1.11 — Visualizador com 3 sub-páginas dedicadas: Modelos Atômicos, Moléculas e Alótropos.
-      </p>
+      <aside class="lab-readmore-card">
+        <p data-i18n="atomicModels.readArticleLead">Timeline, orbitals and quantum numbers live in the article.</p>
+        <a class="ui-btn ui-btn-accent" href="/explore/what-is-an-atom.html" data-i18n="atomicModels.readArticle">Read: What is an atom →</a>
+      </aside>
 
     </div>
   </div>

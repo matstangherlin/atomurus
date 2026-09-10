@@ -10,8 +10,8 @@
   if (paper()) paper().capDpr(renderer);
   else renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
 
-  const camera = new THREE.PerspectiveCamera(50, 2, 0.1, 100);
-  camera.position.set(0, 0.35, 10);
+  const camera = new THREE.PerspectiveCamera(paper() && paper().FOV ? paper().FOV : 42, 2, 0.1, 100);
+  camera.position.set(0, 0.2, (paper() && paper().ATOM_CAM_Z) || 6.6);
 
   const scene = new THREE.Scene();
   let paperGround = null;
@@ -23,7 +23,7 @@
     }
     if (paperGround) scene.remove(paperGround);
     if (paper()) {
-      paperGround = paper().ground(THREE, { scale: 1.55, y: -3.35 });
+      paperGround = paper().ground(THREE, paper().atomGroundOpts ? paper().atomGroundOpts() : { scale: 1.15, y: -1.35 });
       scene.add(paperGround);
     }
   }
@@ -44,9 +44,9 @@
   scene.add(currentGroup);
 
   // Mouse / touch orbit + state
-  let isDragging=false,lastX=0,lastY=0,rotX=0,rotY=0,autoRotate=!((paper() && paper().prefersReducedMotion && paper().prefersReducedMotion()));
+  let isDragging=false,lastX=0,lastY=0,rotX=(paper() && paper().ATOM_ORBIT_X) || 0.28,rotY=(paper() && paper().ATOM_ORBIT_Y) || 0.55,autoRotate=!((paper() && paper().prefersReducedMotion && paper().prefersReducedMotion()));
   let staticMode=false, labelsVisible=false;
-  const DEFAULT_CAM_Z=10;
+  const DEFAULT_CAM_Z=(paper() && paper().ATOM_CAM_Z) || 6.6;
 
   // Rotation with inertia: track velocity, decay each frame when not dragging
   let rotVelX = 0, rotVelY = 0;
@@ -131,27 +131,33 @@
     return torus;
   }
 
-  // Make a labeled particle sphere (proton +, electron −)
+  function makeBareParticle(r, color, segments=24){
+    const g = new THREE.Group();
+    g.add(new THREE.Mesh(
+      new THREE.SphereGeometry(r, segments, segments),
+      paper()
+        ? paper().mat(THREE, color, { roughness: 0.48, metalness: 0.04 })
+        : new THREE.MeshStandardMaterial({color, roughness:0.42, metalness:0.06})
+    ));
+    return g;
+  }
+
+  // Make a labeled particle sphere (proton +, electron −). Paper lab uses bare spheres.
   function makeLabeledParticle(r, color, label, segments=24){
+    if (paper()) return makeBareParticle(r, color, segments);
     const g = new THREE.Group();
     const sphere = new THREE.Mesh(
       new THREE.SphereGeometry(r, segments, segments),
-      paper()
-        ? paper().mat(THREE, color, { roughness: 0.42, metalness: 0.06 })
-        : new THREE.MeshStandardMaterial({color, roughness:0.42, metalness:0.06})
+      new THREE.MeshStandardMaterial({color, roughness:0.42, metalness:0.06})
     );
     g.add(sphere);
-    // Canvas label sprite
     const c = document.createElement('canvas');
     c.width = 64; c.height = 64;
     const ctx2d = c.getContext('2d');
     ctx2d.font = 'bold 38px sans-serif';
     ctx2d.textAlign = 'center';
     ctx2d.textBaseline = 'middle';
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    ctx2d.fillStyle = (paper() && label === '−')
-      ? (isDark ? '#14120E' : '#F2EFE7')
-      : 'rgba(255,255,255,0.95)';
+    ctx2d.fillStyle = 'rgba(255,255,255,0.95)';
     ctx2d.fillText(label, 32, 34);
     const tex = new THREE.CanvasTexture(c);
     const sp = new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false}));
@@ -272,9 +278,10 @@
     const total = z + n;
     if (total === 0) return g;
     const order = buildNucleonOrder(z, n);
-    const partR = 0.22 * scale;
-    // Larger cluster radius so individual particles are visibly distinct
-    const clusterR = Math.max(0.30, Math.pow(total, 1/3) * 0.34) * scale;
+    const partR = paper() ? 0.16 * scale : 0.22 * scale;
+    const clusterR = paper()
+      ? 0.52 * scale
+      : Math.max(0.30, Math.pow(total, 1/3) * 0.34) * scale;
     for (let i = 0; i < total; i++) {
       const isProton = order[i] === 'p';
       const color = isProton ? PROTON_COLOR : NEUTRON_COLOR;
@@ -297,8 +304,7 @@
       );
       g.add(p);
     }
-    // Subtle warm glow around nucleus (slightly larger than cluster)
-    g.add(makeGlow(clusterR + 0.45, 0xff4422));
+    if (!paper()) g.add(makeGlow(clusterR + 0.45, 0xff4422));
     return g;
   }
   function makeBond(p1,p2,color=0x888,r=0.06){
@@ -339,51 +345,49 @@
   // distinct proton/neutron spheres, with electrons on solid tube orbits.
   const atomicModels = {
     dalton: () => {
-      // 1803 — solid indivisible "billiard ball". No subparticles.
       const g = new THREE.Group(); electrons = []; trackedAtoms = []; bondCount = 0;
       const ball = new THREE.Mesh(
-        new THREE.SphereGeometry(2.0, 40, 40),
+        new THREE.SphereGeometry(paper() ? 1.18 : 2.0, 40, 40),
         paper()
-          ? paper().mat(THREE, 0x8A6A4A, { roughness: 0.62, metalness: 0.04 })
+          ? paper().mat(THREE, paper().isDark() ? 0x6B5A42 : 0x8A6A4A, { roughness: 0.62, metalness: 0.04 })
           : new THREE.MeshStandardMaterial({color:0x8A6A4A, roughness:0.62, metalness:0.04})
       );
-      ball.add(makeGlow(2.5, 0xaa8855));
+      if (!paper()) ball.add(makeGlow(2.5, 0xaa8855));
       g.add(ball);
       return g;
     },
     thomson: (el = 6) => {
-      // 1897 — "plum pudding"
       const g = new THREE.Group(); electrons = []; trackedAtoms = []; bondCount = 0;
       const pudding = new THREE.Mesh(
-        new THREE.SphereGeometry(2.5, 32, 32),
-        new THREE.MeshStandardMaterial({ color: 0xff9966, transparent: true, opacity: 0.22, roughness:0.8 })
+        new THREE.SphereGeometry(paper() ? 1.55 : 2.5, 32, 32),
+        paper()
+          ? paper().mat(THREE, 0xD4A07A, { transparent: true, opacity: paper().isDark() ? 0.22 : 0.32, roughness: 0.86, metalness: 0, side: THREE.DoubleSide })
+          : new THREE.MeshStandardMaterial({ color: 0xff9966, transparent: true, opacity: 0.22, roughness:0.8 })
       );
       g.add(pudding);
-      g.add(makeGlow(2.7, 0xff5533));
-      
-      // el electrons scattered through the pudding
-      const points = [
-        [0.8,0.5,0.3],[-0.9,0.2,0.7],[0.2,-1.1,0.4],[-0.4,0.9,-0.6],[1.0,-0.3,-0.8],[-0.7,-0.8,0.5],
-        [0.5,-0.5,0.9],[-0.3,-0.6,-0.8],[0.9,0.7,-0.2],[-0.8,0.8,0.1]
-      ];
+      if (!paper()) g.add(makeGlow(2.7, 0xff5533));
+      const points = paper()
+        ? [[0.72,0.42,0.28],[-0.82,0.18,0.62],[0.18,-0.98,0.36],[-0.36,0.82,-0.52],[0.9,-0.28,-0.72],[-0.64,-0.72,0.44],[0.5,-0.5,0.9],[-0.3,-0.6,-0.8],[0.9,0.7,-0.2],[-0.8,0.8,0.1]]
+        : [[0.8,0.5,0.3],[-0.9,0.2,0.7],[0.2,-1.1,0.4],[-0.4,0.9,-0.6],[1.0,-0.3,-0.8],[-0.7,-0.8,0.5],[0.5,-0.5,0.9],[-0.3,-0.6,-0.8],[0.9,0.7,-0.2],[-0.8,0.8,0.1]];
       for (let i = 0; i < el; i++) {
         const p = points[i % points.length];
-        const eg = makeLabeledParticle(0.22, ELECTRON_COLOR(), '−', 20);
+        const eg = makeLabeledParticle(paper() ? 0.12 : 0.22, ELECTRON_COLOR(), '−', 20);
         eg.position.set(p[0], p[1], p[2]);
         eg.userData = { orbitR: 0, phase: 0, speed: 0 };
         g.add(eg);
       }
+      if (paper()) g.position.y = 0.22;
       return g;
     },
     rutherford: (el = 6) => {
-      // 1911 — three tilted orbits at distinct orientations (planetary look).
       const g = new THREE.Group(); electrons = []; trackedAtoms = []; bondCount = 0;
       g.add(makeNucleus(6, 6));
 
+      const orbitR = paper() ? 2.05 : 2.6;
       const orbits = [
-        { r: 2.6, eX: Math.PI / 6,    eY: 0,            eZ: Math.PI / 4 },
-        { r: 2.6, eX: -Math.PI / 5,   eY: Math.PI / 3,  eZ: 0 },
-        { r: 2.6, eX: Math.PI / 2.5,  eY: Math.PI / 1.5, eZ: 0.5 }
+        { r: orbitR, eX: Math.PI / 6,    eY: 0,            eZ: Math.PI / 4 },
+        { r: orbitR, eX: -Math.PI / 5,   eY: Math.PI / 3,  eZ: 0 },
+        { r: orbitR, eX: Math.PI / 2.5,  eY: Math.PI / 1.5, eZ: 0.5 }
       ];
 
       const baseCount = Math.floor(el / 3);
@@ -392,16 +396,15 @@
       orbits.forEach((orb, idx) => {
         const count = baseCount + (idx < remainder ? 1 : 0);
         if (count <= 0) return;
-        // Orbit ring on a plane tilted in three Euler axes (matches prototype)
         const ring = new THREE.Mesh(
-          new THREE.TorusGeometry(orb.r, 0.018, 10, 120),
+          new THREE.TorusGeometry(orb.r, 0.018, 8, 80),
           paper() ? paper().orbitMat(THREE, { opacity: 0.55 })
             : new THREE.MeshStandardMaterial({ color: ORBIT_COLOR, metalness:0.06, roughness:0.55, transparent:true, opacity:0.55 })
         );
         ring.rotation.set(orb.eX, orb.eY, orb.eZ);
         g.add(ring);
         for (let i = 0; i < count; i++) {
-          const eg = makeLabeledParticle(0.20, ELECTRON_COLOR(), '−', 20);
+          const eg = makeLabeledParticle(paper() ? 0.11 : 0.20, ELECTRON_COLOR(), '−', 20);
           eg.userData = {
             orbitR: orb.r,
             phase: (i / count) * Math.PI * 2,
@@ -415,7 +418,6 @@
       return g;
     },
     bohr: (el = 6) => {
-      // 1913 — quantized shells K(2) L(8) M(18). Concentric, slightly tilted for depth.
       const g = new THREE.Group(); electrons = []; trackedAtoms = []; bondCount = 0;
       g.add(makeNucleus(6, 6));
 
@@ -424,14 +426,14 @@
       const mCount = Math.max(0, el - 10);
 
       const orbDef = [];
-      if (kCount > 0) orbDef.push({ r: 1.8, count: kCount, tilt: 0,            speed: 1.05 });
-      if (lCount > 0) orbDef.push({ r: 3.0, count: lCount, tilt: Math.PI*0.06, speed: 0.7  });
-      if (mCount > 0) orbDef.push({ r: 4.2, count: mCount, tilt:-Math.PI*0.06, speed: 0.5  });
+      if (kCount > 0) orbDef.push({ r: paper() ? 1.35 : 1.8, count: kCount, tilt: paper() ? 0.12 : 0,            speed: 1.05 });
+      if (lCount > 0) orbDef.push({ r: paper() ? 2.25 : 3.0, count: lCount, tilt: paper() ? -0.18 : Math.PI*0.06, speed: 0.7  });
+      if (mCount > 0) orbDef.push({ r: paper() ? 3.15 : 4.2, count: mCount, tilt: paper() ? 0.08 : -Math.PI*0.06, speed: 0.5  });
 
-      orbDef.forEach((od, si) => {
-        g.add(makeOrbit(od.r, ORBIT_COLOR, 0.9, od.tilt));
+      orbDef.forEach((od) => {
+        g.add(makeOrbit(od.r, ORBIT_COLOR, 0.55, od.tilt));
         for (let i = 0; i < od.count; i++) {
-          const eg = makeLabeledParticle(0.22, ELECTRON_COLOR(), '−', 24);
+          const eg = makeLabeledParticle(paper() ? 0.11 : 0.22, ELECTRON_COLOR(), '−', 24);
           eg.userData = {
             orbitR: od.r,
             phase: (i / od.count) * Math.PI * 2,
@@ -497,22 +499,31 @@
         for (let i = 0; i < count; i++) {
           const p = sampleFn();
           positions[i*3] = p[0]; positions[i*3 + 1] = p[1]; positions[i*3 + 2] = p[2];
-          const t = 0.75 + Math.random() * 0.25; // slight tint variation for depth
+          const t = 0.75 + Math.random() * 0.25;
           colors[i*3] = color[0] * t; colors[i*3 + 1] = color[1] * t; colors[i*3 + 2] = color[2] * t;
         }
         const geo = new THREE.BufferGeometry();
         geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
         geo.setAttribute('color',    new THREE.BufferAttribute(colors,    3));
         const cloud = new THREE.Points(geo, new THREE.PointsMaterial({
-          size: size, vertexColors: true, transparent: true, opacity: 0.85, sizeAttenuation: true
+          size: paper() ? 0.055 : size,
+          vertexColors: true,
+          transparent: true,
+          opacity: paper() ? 0.78 : 0.85,
+          sizeAttenuation: true,
+          depthWrite: false
         }));
         cloud.userData.isCloud = true;
         g.add(cloud);
       }
 
-      addCloud(occ.s1 * PTS_PER_E, COL.s1, sphSample(rand1s), 0.07);
-      addCloud(occ.s2 * PTS_PER_E, COL.s2, sphSample(rand2s), 0.08);
-      occ.p.forEach((n, axis) => addCloud(n * PTS_PER_E, COL.p, pSample(rand2p, axis), 0.085));
+      const paperInk = paper()
+        ? (isDark ? [0.91, 0.89, 0.83] : [0.08, 0.07, 0.05])
+        : null;
+      const paperGreen = paper() ? [0.12, 0.42, 0.31] : null;
+      addCloud(occ.s1 * PTS_PER_E, paperGreen || COL.s1, sphSample(rand1s), 0.07);
+      addCloud(occ.s2 * PTS_PER_E, paperInk || COL.s2, sphSample(rand2s), 0.08);
+      occ.p.forEach((n, axis) => addCloud(n * PTS_PER_E, paperInk || COL.p, pSample(rand2p, axis), 0.085));
       return g;
     }
   };
@@ -814,10 +825,11 @@
   function rebuildScene(buildFn){
     scene.remove(currentGroup);
     currentGroup = buildFn();
-    currentGroup.position.y = 0.45;
+    currentGroup.position.y = paper() ? 0.12 : 0.45;
     scene.add(currentGroup);
-    rotX=0; rotY=0;
-    camera.position.set(0, 0.35, DEFAULT_CAM_Z);
+    rotX = (paper() && paper().ATOM_ORBIT_X) || 0.28;
+    rotY = (paper() && paper().ATOM_ORBIT_Y) || 0.55;
+    camera.position.set(0, paper() ? 0.2 : 0.35, DEFAULT_CAM_Z);
     if (!staticMode){ autoRotate=true; }
     if (typeof updateRotateBtn==='function') updateRotateBtn();
   }
@@ -1121,8 +1133,10 @@
     setVcBtn('vc-static', staticMode);
     if (staticMode){
       autoRotate = false;
-      rotX = 0; rotY = 0;
-      camera.position.set(0, 0.35, DEFAULT_CAM_Z);
+      rotX = (paper() && paper().ATOM_ORBIT_X) || 0.28;
+      rotY = (paper() && paper().ATOM_ORBIT_Y) || 0.55;
+      camera.position.set(0, paper() ? 0.2 : 0.35, DEFAULT_CAM_Z);
+      canvas.style.cursor = 'default';
       canvas.style.cursor = 'default';
       setStatusBadge('Estático', true);
     } else {
@@ -1139,8 +1153,9 @@
       pan2d = { x: 0, y: 0 };
       draw2DAtomFull(currentAtomModel);
     } else {
-      rotX = 0; rotY = 0;
-      camera.position.set(0, 0.35, DEFAULT_CAM_Z);
+      rotX = (paper() && paper().ATOM_ORBIT_X) || 0.28;
+      rotY = (paper() && paper().ATOM_ORBIT_Y) || 0.55;
+      camera.position.set(0, paper() ? 0.2 : 0.35, DEFAULT_CAM_Z);
       if (!staticMode){ autoRotate = true; updateRotateBtn(); }
     }
   };

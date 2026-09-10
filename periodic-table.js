@@ -706,6 +706,7 @@ function openModal(el) {
     if (ds) ds.textContent = 'Z=' + el.z + ' · ' + el.sym;
   } catch(e){}
   const overlay = document.getElementById('overlay');
+  if (!overlay) return;
   document.getElementById('m-z').textContent    = el.z;
   document.getElementById('m-sym').textContent  = el.sym;
   document.getElementById('m-nm').textContent   = elName(el);

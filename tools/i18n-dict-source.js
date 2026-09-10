@@ -772,7 +772,7 @@ const DICT = {
         breadcrumb:         'Isomerism',
         kicker:             'visualization',
         title:              'Isomerism',
-        desc:               'Molecules with the same molecular formula but different structures — compare function, chain, geometric and optical isomerism side by side.',
+        desc:               'Same formula, different structures. Compare the types in 2D and 3D.',
         dsScope:            'VIEWER.ISOMERISM',
         dsSection:          'isomerism',
         dsTypes:            'function · chain · geometric · optical',
@@ -890,12 +890,14 @@ const DICT = {
           rowOpticaCh: 'Chiral center (4 different groups)',
           rowOpticaEx: 'R- vs S-CHFClBr',
           rowOpticaLab: 'Polarimeter',
-          tautomerWarning: '<b>Note on tautomerism:</b> tautomers are <b>not</b> two separate bottles in the lab — they interconvert in solution. Constitutional and spatial isomers are usually isolable compounds.'
+          tautomerWarning: '<b>Note on tautomerism:</b> tautomers are <b>not</b> two separate bottles in the lab — they interconvert in solution. Constitutional and spatial isomers are usually isolable compounds.',
+          readArticle: 'Read the isomerism article →',
+          readArticleLead: 'The full classification and worked examples live in the article.'
         },
         funcao: {
           title: 'Functional Isomerism',
           sub:   'Same molecular formula · different functional groups',
-          desc:  'Compounds with the same molecular formula but belonging to <b>different organic families</b>. The number and type of atoms is identical — what changes is how they organize into functional groups.',
+          desc:  'Same molecular formula, <b>different organic families</b>.',
           metaTitle: "Functional Isomerism: Ethanol vs Dimethyl Ether | Atomurus",
           metaDesc: "Functional isomerism: same molecular formula but different functional groups. Classic example: ethanol (alcohol) vs dimethyl ether, both C₂H₆O.",
           avType: "function",
@@ -920,7 +922,7 @@ const DICT = {
         cadeia: {
           title: 'Chain Isomerism',
           sub:   'Same molecular formula · different carbon skeleton',
-          desc:  'Occurs when compounds share a molecular formula but differ in <b>how carbon atoms are chained</b> — straight (normal) vs branched.',
+          desc:  'Same formula, <b>different carbon skeleton</b> — straight or branched.',
           metaTitle: "Chain Isomerism: n-Butane vs Isobutane | Atomurus",
           metaDesc: "Chain isomerism: same formula C₄H₁₀ with linear vs branched carbon skeleton. Compare n-butane and isobutane (2-methylpropane).",
           avType: "chain",
@@ -942,7 +944,7 @@ const DICT = {
         posicao: {
           title: 'Position Isomerism',
           sub: "Same molecular formula · same functional group · different position",
-          desc:  'Same carbon skeleton and functional group — the difference is <b>where</b> the substituent or multiple bond sits on the chain.',
+          desc:  'Same skeleton and group — the difference is <b>where</b> the substituent or double bond sits.',
           metaTitle: "Position Isomerism: 1-Butene vs 2-Butene | Atomurus",
           metaDesc: "Position isomerism: same formula and functional group, different position of the C=C double bond. 1-butene vs 2-butene (cis/trans).",
           avType: "position",
@@ -963,7 +965,7 @@ const DICT = {
         metameria: {
           title: 'Metamerism',
           sub: "Same functional group · different side chains on the heteroatom",
-          desc:  'A special case with a <b>heteroatom</b> (O, N, S…): the chains attached to the heteroatom differ in size — same molecular formula.',
+          desc:  'Same group; the <b>chains on the heteroatom</b> (O, N, S…) differ in size.',
           metaTitle: "Metamerism: Methyl Propyl Ether vs Diethyl Ether | Atomurus",
           metaDesc: "Metamerism in ethers: same formula C₄H₁₀O with different alkyl groups on oxygen (1C+3C vs 2C+2C).",
           avType: "metamerism",
@@ -984,7 +986,7 @@ const DICT = {
         tautomeria: {
           title: 'Tautomerism',
           sub: "Dynamic equilibrium · rapid interconversion between forms",
-          desc:  'Two forms in rapid equilibrium — typically <b>keto ⇌ enol</b>. The most common example in organic chemistry.',
+          desc:  'Two forms in rapid equilibrium — typically <b>keto ⇌ enol</b>.',
           metaTitle: "Tautomerism: Keto–Enol Equilibrium (Acetone) | Atomurus",
           metaDesc: "Tautomerism: dynamic keto ⇌ enol equilibrium. Acetone (keto form) vs prop-1-en-2-ol (enol form), both C₃H₆O.",
           avType: "tautomerism",
@@ -1009,7 +1011,7 @@ const DICT = {
         geometrica: {
           title:    'Geometric Isomerism <span style="font-size:15px;font-family:\'DM Mono\',monospace;opacity:.55">(cis/trans)</span>',
           sub:      'Same connectivity · different spatial arrangement',
-          desc:     'Appears in compounds with a <b>C=C double bond</b> when each carbon bears two different substituents. Rotation is blocked — groups are locked in the plane.',
+          desc:     'A <b>C=C double bond</b> with two different groups on each carbon. Rotation is blocked.',
           metaTitle: "Geometric Isomerism: cis-2-Butene vs trans-2-Butene | Atomurus",
           metaDesc: "Geometric (cis/trans) isomerism in alkenes: same connectivity, different spatial arrangement around C=C.",
           avType: "geometric (cis/trans)",
@@ -1031,7 +1033,7 @@ const DICT = {
         optica: {
           title:    'Optical Isomerism <span style="font-size:15px;font-family:\'DM Mono\',monospace;opacity:.55">(R/S)</span>',
           sub:      'Non-superimposable mirror images · chiral carbon',
-          desc:     'Arises when a carbon is bonded to <b>four different groups</b> (chiral center). The molecule and its mirror image are non-superimposable — <b>enantiomers</b>.',
+          desc:     'A carbon bonded to <b>four different groups</b> (chiral center). Mirror images are <b>enantiomers</b>.',
           metaTitle: "Optical Isomerism: R/S Enantiomers (CHFClBr) | Atomurus",
           metaDesc: "Optical isomerism (R/S): chiral carbon with four different groups. Compare R and S enantiomers of bromochlorofluoromethane.",
           avType: "optical (R/S)",
@@ -1172,7 +1174,9 @@ const DICT = {
         breadcrumb:       'Atomic Models',
         kicker:           'visualization',
         title:            'Atomic Models',
-        desc:             'The 5 historical models of the atom — from Dalton (1803) to Quantum (Schrödinger, 1926) — in animated 3D and 2D. Drag to rotate, adjust the ionic state, or switch model to compare.',
+        desc:             'Five historical models of the atom in 3D. Switch Dalton, Thomson, Rutherford, Bohr or Quantum.',
+        readArticle:      'Read the article: What is an atom →',
+        readArticleLead: 'Timeline, orbitals and quantum numbers live in the article.',
         tabAtomic:        'Atomic Models',
         tabMolecules:     'Molecules',
         tabAllotropes:    'Allotropes',
@@ -1369,7 +1373,7 @@ const DICT = {
           shell1s:    '1s — 2 electrons (dense spherical core)',
           shell2s:    '2s — 2 electrons (sphere with radial node)',
           shell2p:    '2p — 2 unpaired electrons (perpendicular lobes, Hund’s rule)',
-          refNote:    '<b>Reference atom: carbon-12 (¹²C).</b> All five models render the same atom — Z = 6: 6 protons + 6 neutrons in the nucleus and 6 electrons. Sizes are illustrative, not to scale: in a real atom the nucleus is ~25,000× smaller than the electron cloud — if the nucleus were 1 cm wide, the atom would span ~250 m.',
+          refNote:    '<b>Carbon-12 (Z = 6).</b> Same atom in every model. Sizes are illustrative.',
           dalton: {
             who:  'John Dalton',
             idea: 'Matter is made of tiny, indivisible and indestructible spheres. All atoms of one element are identical in mass, and compounds form by combining atoms in whole-number ratios.',
@@ -2876,7 +2880,7 @@ const DICT = {
         breadcrumb:         'Isomeria',
         kicker:             'visualização',
         title:              'Isomeria',
-        desc:               'Moléculas com a mesma fórmula molecular mas estruturas diferentes — compare os tipos de função, cadeia, geométrica e óptica lado a lado.',
+        desc:               'Mesma fórmula, estruturas diferentes. Compare os tipos em 2D e 3D.',
         dsScope:            'VIEWER.ISOMERIA',
         dsSection:          'isomeria',
         dsTypes:            'função · cadeia · geométrica · óptica',
@@ -2994,12 +2998,14 @@ const DICT = {
           rowOpticaCh: 'Centro quiral (4 grupos diferentes)',
           rowOpticaEx: 'R- vs S-CHFClBr',
           rowOpticaLab: 'Polarímetro',
-          tautomerWarning: '<b>Nota sobre tautomeria:</b> tautomeros <b>não</b> são dois frascos separados no laboratório — interconvertem-se em solução. Isômeros constitucionais e espaciais costumam ser compostos isoláveis.'
+          tautomerWarning: '<b>Nota sobre tautomeria:</b> tautomeros <b>não</b> são dois frascos separados no laboratório — interconvertem-se em solução. Isômeros constitucionais e espaciais costumam ser compostos isoláveis.',
+          readArticle: 'Ler o artigo de isomeria →',
+          readArticleLead: 'A classificação completa e os exemplos de vestibular estão no artigo.'
         },
         funcao: {
           title: 'Isomeria de Função',
           sub:   'Mesma fórmula molecular · grupos funcionais diferentes',
-          desc:  'Compostos com a mesma fórmula molecular mas pertencentes a <b>famílias orgânicas diferentes</b>. O número e tipo de átomos é idêntico — o que muda é como eles se organizam em grupos funcionais.',
+          desc:  'Mesma fórmula molecular, <b>famílias orgânicas diferentes</b>.',
           metaTitle: "Isomeria de Função: Etanol vs Éter Dimetílico | Atomurus",
           metaDesc: "Isomeria de função: mesma fórmula molecular mas grupos funcionais diferentes. Exemplo clássico: etanol (álcool) vs éter dimetílico, ambos C₂H₆O.",
           avType: "função",
@@ -3024,7 +3030,7 @@ const DICT = {
         cadeia: {
           title: 'Isomeria de Cadeia',
           sub:   'Mesma fórmula molecular · arranjo da cadeia carbônica diferente',
-          desc:  'Ocorre quando compostos têm a mesma fórmula molecular mas diferem no <b>modo como os carbonos se encadeiam</b> — cadeia normal (linear) versus ramificada.',
+          desc:  'Mesma fórmula, <b>esqueleto carbônico diferente</b> — linear ou ramificado.',
           metaTitle: "Isomeria de Cadeia: n-Butano vs Isobutano | Atomurus",
           metaDesc: "Isomeria de cadeia: mesma fórmula C₄H₁₀ com esqueleto linear vs ramificado. Compare n-butano e isobutano (2-metilpropano).",
           avType: "cadeia",
@@ -3046,7 +3052,7 @@ const DICT = {
         posicao: {
           title: 'Isomeria de Posição',
           sub: "Mesma fórmula molecular · mesmo grupo funcional · posição diferente",
-          desc:  'Mesma cadeia carbônica e mesmo grupo funcional — a diferença está em <b>onde</b> o substituinte ou a insaturação se localiza na cadeia.',
+          desc:  'Mesmo esqueleto e grupo — a diferença é <b>onde</b> o substituinte ou a dupla se localiza.',
           metaTitle: "Isomeria de Posição: 1-Buteno vs 2-Buteno | Atomurus",
           metaDesc: "Isomeria de posição: mesma fórmula e grupo funcional, posição diferente da dupla C=C. 1-buteno vs 2-buteno (cis/trans).",
           avType: "posição",
@@ -3067,7 +3073,7 @@ const DICT = {
         metameria: {
           title: 'Metameria',
           sub: "Mesmo grupo funcional · cadeias laterais diferentes no heteroátomo",
-          desc:  'Caso especial com <b>heteroátomo</b> (O, N, S…): as cadeias ligadas ao heteroátomo diferem em tamanho — mesma fórmula molecular.',
+          desc:  'Mesmo grupo; as <b>cadeias no heteroátomo</b> (O, N, S…) diferem em tamanho.',
           metaTitle: "Metameria: Éter Metil-Propílico vs Éter Etílico | Atomurus",
           metaDesc: "Metameria em éteres: mesma fórmula C₄H₁₀O com cadeias diferentes no oxigênio (1C+3C vs 2C+2C).",
           avType: "metameria",
@@ -3088,7 +3094,7 @@ const DICT = {
         tautomeria: {
           title: 'Tautomeria',
           sub: "Equilíbrio dinâmico · interconversão rápida entre formas",
-          desc:  'Duas formas em equilíbrio rápido — tipicamente <b>cetona ⇌ enol</b>. Exemplo clássico em química orgânica.',
+          desc:  'Duas formas em equilíbrio rápido — tipicamente <b>cetona ⇌ enol</b>.',
           metaTitle: "Tautomeria: Equilíbrio Ceto-Enólico (Acetona) | Atomurus",
           metaDesc: "Tautomeria: equilíbrio dinâmico ceto ⇌ enol. Acetona (forma ceto) vs prop-1-en-2-ol (forma enol), ambos C₃H₆O.",
           avType: "tautomeria",
@@ -3113,7 +3119,7 @@ const DICT = {
         geometrica: {
           title:    'Isomeria Geométrica <span style="font-size:15px;font-family:\'DM Mono\',monospace;opacity:.55">(cis/trans)</span>',
           sub:      'Mesma conectividade · disposição espacial dos grupos diferente',
-          desc:     'Surge em compostos com <b>dupla ligação C=C</b> quando há dois substituintes diferentes em cada carbono. A rotação é impedida — os grupos ficam "presos" no plano.',
+          desc:     'Uma <b>dupla C=C</b> com dois grupos diferentes em cada carbono. A rotação é bloqueada.',
           metaTitle: "Isomeria Geométrica: cis-2-Buteno vs trans-2-Buteno | Atomurus",
           metaDesc: "Isomeria geométrica (cis/trans) em alcenos: mesma conectividade, disposição espacial diferente na dupla C=C.",
           avType: "geométrica (cis/trans)",
@@ -3135,7 +3141,7 @@ const DICT = {
         optica: {
           title:    'Isomeria Óptica <span style="font-size:15px;font-family:\'DM Mono\',monospace;opacity:.55">(R/S)</span>',
           sub:      'Imagens especulares não-sobreponíveis · carbono assimétrico',
-          desc:     'Surge quando um carbono é ligado a <b>quatro grupos diferentes</b> (C*). A molécula e sua imagem no espelho são não-sobreponíveis — <b>enantiômeros</b>.',
+          desc:     'Um carbono ligado a <b>quatro grupos diferentes</b> (C*). As imagens no espelho são <b>enantiômeros</b>.',
           metaTitle: "Isomeria Óptica: Enantiômeros R/S (CHFClBr) | Atomurus",
           metaDesc: "Isomeria óptica (R/S): carbono quiral com quatro grupos diferentes. Compare enantiômeros R e S do bromoclorofluorometano.",
           avType: "óptica (R/S)",
@@ -3276,7 +3282,9 @@ const DICT = {
         breadcrumb:       'Modelos Atômicos',
         kicker:           'visualização',
         title:            'Modelos Atômicos',
-        desc:             'Os 5 modelos históricos do átomo — de Dalton (1803) ao Quântico (Schrödinger, 1926) — em 3D e 2D animados. Arraste para rotacionar, ajuste o estado iônico ou troque de modelo para comparar.',
+        desc:             'Cinco modelos históricos do átomo em 3D. Troque Dalton, Thomson, Rutherford, Bohr ou Quântico.',
+        readArticle:      'Ler o artigo: O que é um átomo →',
+        readArticleLead: 'A linha do tempo, os orbitais e os números quânticos estão no artigo.',
         tabAtomic:        'Modelos Atômicos',
         tabMolecules:     'Moléculas',
         tabAllotropes:    'Alótropos',
@@ -3465,7 +3473,7 @@ const DICT = {
           shell1s:    '1s — 2 elétrons (núcleo esférico denso)',
           shell2s:    '2s — 2 elétrons (esfera com nó radial)',
           shell2p:    '2p — 2 elétrons desemparelhados (lóbulos perpendiculares, regra de Hund)',
-          refNote:    '<b>Átomo de referência: carbono-12 (¹²C).</b> Os cinco modelos representam o mesmo átomo — Z = 6: 6 prótons + 6 nêutrons no núcleo e 6 elétrons. Os tamanhos são ilustrativos, fora de escala: num átomo real o núcleo é ~25.000× menor que a nuvem eletrônica — se o núcleo tivesse 1 cm, o átomo mediria ~250 m.',
+          refNote:    '<b>Carbono-12 (Z = 6).</b> O mesmo átomo em todos os modelos. Tamanhos ilustrativos.',
           dalton: {
             who:  'John Dalton',
             idea: 'A matéria é feita de esferas minúsculas, indivisíveis e indestrutíveis. Todos os átomos de um elemento são idênticos em massa, e os compostos se formam pela combinação de átomos em proporções de números inteiros.',
