@@ -817,6 +817,7 @@
     var rotVelX = 0, rotVelY = 0, zoom = 1;
 
     function currentKey() { return current === 'b' ? molB : molA; }
+    var liveLoop = null;
     function paint() {
       buildMolecule(currentKey(), group, mirrorable && mirrored, diffOn ? (MOL[currentKey()].hl || null) : null);
       var tabs = panel.querySelectorAll('[data-3d]');
@@ -846,6 +847,7 @@
       panel.setAttribute('data-iso-hl', diffOn ? String((group.userData.hlRings || []).length) : '0');
       createGround();
       if (mode === '2d') render2D();
+      if (liveLoop && liveLoop.wake) liveLoop.wake();
     }
     function render2D() {
       if (!stage2d) return;
@@ -931,7 +933,7 @@
       renderer.render(scene, camera);
     }
     if (lab && lab.bindLiveLoop) {
-      lab.bindLiveLoop(canvas, tickFrame, {
+      liveLoop = lab.bindLiveLoop(canvas, tickFrame, {
         renderer: renderer,
         busy: function () {
           return isDragging || spinning() || Math.abs(rotVelX) > 1e-4 || Math.abs(rotVelY) > 1e-4 ||

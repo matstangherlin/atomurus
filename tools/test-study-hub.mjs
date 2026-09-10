@@ -48,6 +48,8 @@ assert.match(auth, /renderGuestEmpty/);
 assert.match(auth, /visualizeTitle/);
 assert.match(auth, /guestUnlockTitle/);
 assert.match(auth, /guestLibraryLede/);
+assert.match(auth, /I18N.onChange/);
+assert.doesNotMatch(auth, /onChange\(function \(\) \{\s*if \(!currentUser\) return;/);
 assert.doesNotMatch(auth, /Unlock your potential/);
 assert.doesNotMatch(auth, /Become a chemistry master/);
 
@@ -56,5 +58,6 @@ assert.match(css, /ws-hub-continue/);
 assert.match(css, /ws-hub-review/);
 assert.match(css, /ws-hub-practice/);
 assert.match(css, /ws-viz-links/);
+assert.match(css, /data-study-hub="guest"/);
 
 console.log('study hub tests passed');

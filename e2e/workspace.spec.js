@@ -313,6 +313,11 @@ test('Guest Study Hub is a presentation, not locked Pro cards', async ({ page })
   await expect(page.locator('#app-study')).not.toContainText(/Start Smart Review|Começar Smart Review/);
   await saveShot(page, 'desktop-study-hub-guest');
 
+  await page.locator('[data-i18n-toggle]').first().click();
+  await expect(page.locator('#ws-userchip')).toContainText(/Criar conta/);
+  await expect(page.locator('#app-study')).toContainText(/Estude com o Atomurus/);
+  await page.locator('[data-i18n-toggle]').first().click();
+
   await gotoWorkspace(page, '/app?section=library');
   await expect(page.locator('#app-study')).toContainText(/Library|Biblioteca/);
   await expect(page.locator('#app-study a[href*="signup"]')).toContainText(/Create free account|Criar conta gratuita/);

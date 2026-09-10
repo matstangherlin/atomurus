@@ -169,6 +169,7 @@
     });
   }
 
+  var liveLoop = null;
   function rebuild() {
     if (lab && lab.replaceChild) {
       currentGroup = lab.replaceChild(scene, currentGroup, buildMolecule(window.MOL_DATA));
@@ -178,6 +179,7 @@
       scene.add(currentGroup);
     }
     refreshLabels();
+    if (liveLoop && liveLoop.wake) liveLoop.wake();
   }
   rebuild();
 
@@ -273,7 +275,7 @@
     return isDragging || spinning() || Math.abs(rotVelX) > 1e-4 || Math.abs(rotVelY) > 1e-4;
   }
   if (lab && lab.bindLiveLoop) {
-    lab.bindLiveLoop(canvas, tickFrame, {
+    liveLoop = lab.bindLiveLoop(canvas, tickFrame, {
       renderer: renderer,
       busy: isBusy,
       priority: function () {

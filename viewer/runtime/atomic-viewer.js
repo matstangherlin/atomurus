@@ -851,6 +851,7 @@
   // ═══ State + API ═══
   let currentAtomModel='bohr', currentMolecule='water', currentAllotrope='graphite';
 
+  let liveLoop = null;
   function rebuildScene(buildFn){
     const next = buildFn();
     next.position.y = paper() ? 0.12 : 0.45;
@@ -871,6 +872,7 @@
       }
     }
     if (typeof updateRotateBtn==='function') updateRotateBtn();
+    if (liveLoop && liveLoop.wake) liveLoop.wake();
   }
 
   // Helper: read from I18N if available, fall back to provided default.
@@ -2309,7 +2311,7 @@
   }
 
   if (paper() && paper().bindLiveLoop) {
-    paper().bindLiveLoop(canvas, tickFrame, {
+    liveLoop = paper().bindLiveLoop(canvas, tickFrame, {
       renderer: renderer,
       busy: function () {
         return isDragging || Math.abs(rotVelX) > 1e-4 || Math.abs(rotVelY) > 1e-4 ||

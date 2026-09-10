@@ -362,6 +362,11 @@
 .ws-hub-visualize { order: 10; }
 .ws-hub-sessions { order: 11; }
 .ws-hub-links { order: 12; }
+.ws-study-hub[data-study-hub="guest"] .ws-hub-visualize { order: 1; }
+.ws-study-hub[data-study-hub="guest"] .ws-hub-openlab { order: 2; }
+.ws-study-hub[data-study-hub="guest"] .ws-hub-unlock { order: 3; }
+.ws-study-hub[data-study-hub="guest"] .ws-hub-practice { order: 4; }
+.ws-study-hub[data-study-hub="guest"] .ws-hub-paths { order: 5; }
 .ws-hub-caughtup {
   margin: 0 0 18px;
   padding: 0;

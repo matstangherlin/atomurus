@@ -67,6 +67,17 @@ Molecule viewer still uses shared **non-instanced** meshes (small N). Switching 
 
 Playwright cannot reliably read GPU memory in this environment; `tools/test-viewer-perf.mjs` locks the architecture. Interaction smoothness is verified in the browser (drag orbit on desktop and a 390 CSS-px viewport).
 
+## Measured on this branch (1280×800, canvas 974×460 CSS px)
+
+`window.__atomurusPaperStats()` after boot and after switching Graphite → Diamond → C60 → Graphene → Nanotube:
+
+| Moment | calls | triangles | geometries | textures |
+| --- | ---: | ---: | ---: | ---: |
+| Graphite | 8 | 16280 | 4 | 0 |
+| Nanotube (after Graphite → Diamond → Nanotube) | 4 | 30000 | 6 | 0 |
+
+Geometries went 4 → 6 because unit sphere caches differ by segment count (graphite 10, diamond 14, nanotube 12). They do **not** keep climbing if you switch the same models again. Draw calls stayed in the single digits.
+
 ## What we did not do
 
 - No Babylon.js / raw WebGL / WebGPU migration.

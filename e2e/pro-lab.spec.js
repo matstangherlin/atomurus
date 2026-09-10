@@ -182,5 +182,5 @@ test('Public calculator discovery stays free and offers Pro Lab', async ({ page 
   await page.locator('.pro-lab-discover-cta').click();
   await expect(page.locator('#pro-lab-discover-dialog')).toBeVisible();
   await expect(page.locator('#pro-lab-discover-dialog')).toContainText(/Unlock Pro Lab|Liberar o Pro Lab/);
-  await expect(page.getByRole('link', { name: /Create account|Criar conta/i })).toBeVisible();
+  await expect(page.locator('#pro-lab-discover-dialog').getByRole('link', { name: /Create account|Criar conta/i })).toBeVisible();
 });

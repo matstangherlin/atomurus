@@ -3183,7 +3183,6 @@
     if (window.I18N && typeof window.I18N.onChange === 'function' && !boot.i18nBound) {
       boot.i18nBound = true;
       window.I18N.onChange(function () {
-        if (!currentUser) return;
         if (reviewSession && reviewSession.active) {
           renderNav(currentUser);
           return;

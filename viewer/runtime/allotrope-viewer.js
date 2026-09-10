@@ -359,6 +359,7 @@
 
   let currentAllotrope = 'graphite';
   let currentElement   = 'carbon';
+  let liveLoop = null;
 
   function rebuildScene(){
     if (paper() && paper().replaceChild) {
@@ -375,6 +376,7 @@
       autoRotate = !((paper() && paper().prefersReducedMotion && paper().prefersReducedMotion()));
     }
     updateRotateBtn();
+    if (liveLoop && liveLoop.wake) liveLoop.wake();
   }
 
   function _i18nTr(k, fb){
@@ -509,7 +511,7 @@
     renderer.render(scene, camera);
   }
   if (paper() && paper().bindLiveLoop) {
-    paper().bindLiveLoop(canvas, tickFrame, {
+    liveLoop = paper().bindLiveLoop(canvas, tickFrame, {
       renderer: renderer,
       busy: function () {
         return isDragging || spinning() || Math.abs(rotVelX) > 1e-4 || Math.abs(rotVelY) > 1e-4;

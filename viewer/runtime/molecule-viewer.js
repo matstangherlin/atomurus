@@ -319,6 +319,7 @@ return (function(){
     return g;
   }
 
+  let liveLoop = null;
   function rebuildScene(){
     if (paper() && paper().replaceChild) {
       currentGroup = paper().replaceChild(scene, currentGroup, buildMolecule(currentMolecule));
@@ -336,6 +337,7 @@ return (function(){
     }
     updateRotateBtn();
     refreshLabels();
+    if (liveLoop && liveLoop.wake) liveLoop.wake();
   }
 
   window.setMolRep = function(style){
@@ -951,7 +953,7 @@ return (function(){
   }
 
   if (paper() && paper().bindLiveLoop) {
-    paper().bindLiveLoop(canvas, tickFrame, {
+    liveLoop = paper().bindLiveLoop(canvas, tickFrame, {
       renderer: renderer,
       busy: function () {
         return isDragging || Math.abs(rotVelX) > 1e-4 || Math.abs(rotVelY) > 1e-4 ||
