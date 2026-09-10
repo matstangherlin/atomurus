@@ -28,6 +28,8 @@ assert.equal(
 assert.equal(logic.focusLimitFromQuery('?limit=30'), 30);
 assert.equal(logic.hasFeature({ isPro: true, features: { studyInsights: true } }, 'studyInsights'), true);
 assert.equal(logic.workspaceArea('library'), 'study');
+assert.equal(logic.workspaceArea('practice'), 'study');
+assert.equal(logic.normalizeSection('practice'), 'practice');
 assert.equal(logic.workspaceArea('pro-lab'), 'lab');
 assert.equal(logic.workspaceArea('history'), 'activity');
 assert.equal(logic.workspaceArea('account'), 'account');
@@ -74,6 +76,22 @@ assert.equal(logic.progressPercent(-4), 0);
 
 assert.equal(logic.safeHref('javascript:alert(1)', '/app'), '/app');
 assert.equal(logic.humanizeKey('what-is-an-atom'), 'What Is An Atom');
+assert.equal(
+  logic.continueTitle({ contentKey: 'ferrum' }, [{ itemKey: 'ferrum', title: 'Iron' }]),
+  'Iron'
+);
+assert.equal(logic.continueTitle({ contentKey: 'chemical-bonding' }, []), 'Chemical Bonding');
+assert.equal(
+  logic.continueHref({ lastPosition: '/explore/what-is-an-atom.html' }, []),
+  '/explore/what-is-an-atom.html'
+);
+assert.equal(
+  logic.continueHref({ contentKey: 'ferrum' }, [{ itemKey: 'ferrum', href: '/periodic-table/ferrum' }]),
+  '/periodic-table/ferrum'
+);
+assert.equal(logic.setsDueCount([{ dueCount: 6 }, { dueCount: 2 }]), 8);
+assert.equal(logic.dueTomorrowCount([{ kind: 'today', due: 3 }, { kind: 'tomorrow', due: 4 }]), 4);
+assert.equal(logic.recentNotes([{ note: '' }, { note: '  radius  ', title: 'Iron' }], 1)[0].title, 'Iron');
 assert.equal(logic.reviewStartHref('aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee'), '/app?section=review&start=1&set=aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee');
 assert.equal(logic.reviewStartHref('nope'), '/app?section=review&start=1');
 assert.equal(logic.overviewSetCount({ sets: [{}, {}] }), 2);

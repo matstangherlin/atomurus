@@ -199,8 +199,8 @@ test('Overview lists recent lab sessions and viewer names', async ({ page }) => 
   await gotoWorkspace(page, '/app');
   await expect(page.locator('#app-study')).toContainText(/Recent Lab Sessions|Sessões recentes/);
   await expect(page.locator('#app-study')).toContainText('Combustion of CH4');
-  await expect(page.locator('#app-study a[href="/viewer/atomic-models.html"]')).toContainText(/Atomic Models|Modelos atômicos/);
-  await expect(page.locator('#app-study a[href="/viewer/atomic-models.html"]')).not.toContainText(/Atomic Compare|Comparar átomos/);
+  await expect(page.locator('#app-study .ws-viz-links a[href="/viewer/atomic-models.html"]')).toContainText(/Atomic Models|Modelos atômicos/);
+  await expect(page.locator('#app-study .ws-viz-links a[href="/viewer/atomic-models.html"]')).not.toContainText(/Atomic Compare|Comparar átomos/);
 });
 
 test('PT/EN workspace rerender', async ({ page }) => {
@@ -249,16 +249,14 @@ test('mobile 390x844: bottom nav, drawer, no horizontal overflow', async ({ page
   expect(Math.max(...tops) - Math.min(...tops)).toBeLessThan(8);
   await expect(page.locator('#app-study')).toContainText(/1 card is due today|1 card vence hoje/);
   await expect(page.locator('#app-study')).not.toContainText(/1 cards are due|1 cards vencem/);
-  const destCards = page.locator('.ws-study-dests .ws-dest-card');
-  await expect(destCards).toHaveCount(4);
-  const destLayout = await destCards.evaluateAll((els) => els.map((el) => {
-    const box = el.getBoundingClientRect();
-    return { left: box.left, top: box.top, right: box.right, bottom: box.bottom };
-  }));
-  expect(destLayout.every((box, i) => destLayout.every((other, j) => {
-    if (i === j) return true;
-    return box.bottom <= other.top + 1 || other.bottom <= box.top + 1;
-  }))).toBeTruthy();
+  const review = page.locator('[data-hub="review"]');
+  const practice = page.locator('[data-hub="practice"]');
+  const insights = page.locator('[data-hub="insights"]');
+  await expect(review).toBeVisible();
+  await expect(practice).toBeVisible();
+  const hubTops = await Promise.all([review, practice, insights].map((loc) => loc.evaluate((el) => el.getBoundingClientRect().top)));
+  expect(hubTops[0]).toBeLessThan(hubTops[1]);
+  expect(hubTops[1]).toBeLessThan(hubTops[2]);
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 2);
   expect(overflow).toBeFalsy();
   await saveShot(page, 'mobile-overview');
@@ -299,4 +297,114 @@ test('desktop public screenshots', async ({ page }) => {
   await page.goto('/login');
   await expect(page.locator('#auth-login-form')).toBeVisible();
   await saveShot(page, 'desktop-login');
+});
+
+test('Guest Study Hub is a presentation, not locked Pro cards', async ({ page }) => {
+  await installApi(page, { kind: 'guest', signedIn: false });
+  await gotoWorkspace(page, '/app');
+  await expect(page.locator('#app-study')).toContainText(/Study with Atomurus|Estude com o Atomurus/);
+  await expect(page.locator('#app-study')).toContainText(/Save chemistry resources, build sets and continue learning|Salve materiais de química/);
+  await expect(page.locator('#app-study a[href*="signup"]')).toContainText(/Create free account|Criar conta gratuita/);
+  await expect(page.locator('#app-study')).toContainText(/Practice Chemistry|Praticar química/);
+  await expect(page.locator('#app-study')).not.toContainText(/Unlock with Pro|Liberar com o Pro/);
+  await expect(page.locator('#app-study')).not.toContainText(/chemistry workspace|workspace de química/i);
+  await expect(page.locator('#app-study')).not.toContainText(/Start Smart Review|Começar Smart Review/);
+  await saveShot(page, 'desktop-study-hub-guest');
+
+  await gotoWorkspace(page, '/app?section=library');
+  await expect(page.locator('#app-study')).toContainText(/Study with Atomurus|Estude com o Atomurus/);
+});
+
+test('Study Hub empty account shows architecture without invented progress', async ({ page }) => {
+  const store = createStore();
+  store.items = [];
+  store.sets = [];
+  store.cards = [];
+  await installApi(page, { kind: 'free', store });
+  await gotoWorkspace(page, '/app');
+  await expect(page.locator('[data-study-hub="account"]')).toBeVisible();
+  await expect(page.locator('#app-study')).toContainText(/Continue your chemistry work|Continue seu trabalho de química/);
+  await expect(page.locator('#app-study')).toContainText(/You're caught up|Você está em dia/);
+  await expect(page.locator('#app-study')).toContainText(/Practice Chemistry|Praticar química/);
+  await expect(page.locator('#app-study')).toContainText(/Learning Paths|Caminhos de aprendizado/);
+  await expect(page.locator('[data-hub="continue"]')).toHaveCount(0);
+  await expect(page.locator('[data-hub="saved"]')).toHaveCount(0);
+  await expect(page.locator('#app-study')).not.toContainText(/62% complete|62% concluído/);
+  await expect(page.locator('#app-study')).not.toContainText(/Start Smart Review|Começar Smart Review/);
+  await saveShot(page, 'desktop-study-hub-empty');
+});
+
+test('Study Hub shows saved resources from the library', async ({ page }) => {
+  await installApi(page, { kind: 'free' });
+  await gotoWorkspace(page, '/app');
+  await expect(page.locator('[data-hub="saved"]')).toContainText('Iron');
+  await expect(page.locator('[data-hub="continue"]')).toHaveCount(0);
+  await saveShot(page, 'desktop-study-hub-library');
+});
+
+test('Study Hub summarizes study sets and due cards without Smart Review for Free', async ({ page }) => {
+  const store = createStore();
+  store.sets = [{
+    id: SET_ID,
+    title: 'Organic Chemistry',
+    cardCount: 18,
+    dueCount: 6,
+    masteredCount: 0,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  }];
+  await installApi(page, { kind: 'free', store });
+  await gotoWorkspace(page, '/app');
+  await expect(page.locator('[data-hub="sets"]')).toContainText('Organic Chemistry');
+  await expect(page.locator('[data-hub="sets"]')).toContainText(/18 cards/);
+  await expect(page.locator('[data-hub="sets"]')).toContainText(/6 due/);
+  await expect(page.locator('[data-hub="review"]')).toContainText(/6 cards due in your sets|6 cards vencidos/);
+  await expect(page.locator('#app-study')).not.toContainText(/Start Smart Review|Começar Smart Review/);
+  await saveShot(page, 'desktop-study-hub-sets');
+});
+
+test('Study Hub Continue Learning uses real progress titles', async ({ page }) => {
+  const store = createStore();
+  store.continueStudying = [{
+    contentType: 'element',
+    contentKey: 'ferrum',
+    progress: 62,
+    lastPosition: '/periodic-table/ferrum',
+    updatedAt: new Date().toISOString()
+  }];
+  await installApi(page, { kind: 'free', store });
+  await gotoWorkspace(page, '/app');
+  await expect(page.locator('[data-hub="continue"]')).toContainText('Iron');
+  await expect(page.locator('[data-hub="continue"]')).toContainText(/62%/);
+  await expect(page.locator('#app-study')).not.toContainText(/Nothing in progress yet|Nada em andamento/);
+  await saveShot(page, 'desktop-study-hub-continue');
+});
+
+test('Study Hub Pro with due cards and insights stays a learning home', async ({ page }) => {
+  const store = createStore();
+  store.sets = [{
+    id: SET_ID,
+    title: 'Organic Chemistry',
+    cardCount: 2,
+    dueCount: 2,
+    masteredCount: 0,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  }];
+  store.cards = [dueCard({
+    front: 'Periodic trend: atomic radius',
+    lapses: 5,
+    easeFactor: 1.5,
+    reviewState: 'learning',
+    studySetId: SET_ID
+  })];
+  await installApi(page, { kind: 'pro', store });
+  await gotoWorkspace(page, '/app');
+  await expect(page.locator('[data-hub="review"]')).toContainText(/Ready to study|Pronto para estudar/);
+  await expect(page.locator('[data-hub="review"]').getByRole('link', { name: /Start Smart Review|Começar Smart Review/i })).toBeVisible();
+  await expect(page.locator('[data-hub="insights"]')).toContainText(/Open Insights|Abrir Insights/);
+  await expect(page.locator('[data-hub="weak"]')).toContainText('Periodic trend: atomic radius');
+  await expect(page.locator('[data-hub="weak"]')).toContainText(/From review history|histórico de revisão/);
+  await expect(page.locator('#app-study')).not.toContainText(/Unlock your potential|Become a chemistry master/i);
+  await saveShot(page, 'desktop-study-hub-pro');
 });

@@ -234,7 +234,8 @@ function createStore() {
     sets: [],
     cards: [],
     reviews: [],
-    labSessions: []
+    labSessions: [],
+    continueStudying: []
   };
 }
 
@@ -377,7 +378,7 @@ async function installApi(page, options = {}) {
         ok: true,
         counts: { element: data.items.length },
         recentItems: data.items.slice(0, 5),
-        continueStudying: []
+        continueStudying: Array.isArray(data.continueStudying) ? data.continueStudying : []
       });
     }
     if (path === '/api/study/review/overview') {
