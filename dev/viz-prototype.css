@@ -64,12 +64,30 @@
 
 .viz-stage-wide canvas { height: 340px; }
 
+.viz-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  align-items: center;
+  margin: 0 0 12px;
+}
+
 .viz-pills {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   margin: 0 0 12px;
 }
+
+.viz-toolbar .viz-pills { margin: 0; }
+
+.viz-split.is-one {
+  grid-template-columns: 1fr;
+}
+
+.viz-stage.is-off { display: none; }
+
+.viz-stage-tall canvas { height: 360px; }
 
 .viz-pill {
   min-height: 36px;

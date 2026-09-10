@@ -11,7 +11,7 @@
 <link rel="preload" href="/assets/fonts/instrument-serif-400-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/fonts/fonts.css?v=202608041630">
 <link rel="stylesheet" href="/assets/ui/index.css?v=202609090400">
-<link rel="stylesheet" href="/dev/viz-prototype.css?v=202609100930">
+<link rel="stylesheet" href="/dev/viz-prototype.css?v=202609101100">
 <script>
 (function(){
   try {
@@ -43,7 +43,7 @@
   <div class="ui-cluster">
     <button class="ui-btn ui-btn-ghost ui-btn-sm" type="button" id="viz-lang">PT</button>
     <button class="ui-btn ui-btn-ghost ui-btn-sm" type="button" id="viz-theme">Theme</button>
-    <a class="ui-btn ui-btn-ghost ui-btn-sm" href="/viewer/molecules.html">Open Lab</a>
+    <a class="ui-btn ui-btn-ghost ui-btn-sm" href="/viewer/atomic-models.html">Open Lab</a>
   </div>
 </header>
 
@@ -51,7 +51,7 @@
   <p class="ui-kicker" data-copy="kicker">Internal prototype · not indexed</p>
   <h1 class="ui-display" data-copy="title">Paper models</h1>
   <p class="ui-lede" data-copy="lede">The Open Lab chrome is already Atomurus. The WebGL still looks like a white void with plastic spheres. This page tests a paper laboratory look — cream stage, quieter light, 2D beside 3D — without changing production viewers.</p>
-  <p class="viz-note" data-copy="note">Prototype only. Molecules, atomic models, allotropes and isomerism stay as they are until this direction is chosen.</p>
+  <p class="viz-note" data-copy="note">Prototype only. Production molecules, atomic models, allotropes and isomerism stay as they are until this direction is chosen.</p>
 
   <section class="viz-section" id="viz-compare">
     <h2 class="ui-h2" data-copy="compareTitle">Same molecule, two rooms</h2>
@@ -82,19 +82,33 @@
     <p class="viz-legend" data-copy="legend">O oxygen · H hydrogen · CPK colors, warmer hydrogen so it reads on cream.</p>
   </section>
 
-  <section class="viz-section" id="viz-bohr">
-    <h2 class="ui-h2" data-copy="bohrTitle">Bohr, 3D and 2D together</h2>
-    <p class="ui-meta" data-copy="bohrMeta">Carbon, 6 electrons. The 3D shell should feel like the 2D diagram — ink, green, paper — not chrome tori in a white studio.</p>
-    <div class="viz-split">
-      <figure class="viz-stage is-paper">
+  <section class="viz-section" id="viz-atoms">
+    <h2 class="ui-h2" data-copy="atomTitle">Atomic models</h2>
+    <p class="ui-meta" data-copy="atomMeta">Carbon, Z = 6. Same paper room as the molecule. 3D and 2D, light and dark — Dalton through Quantum.</p>
+    <div class="viz-toolbar">
+      <div class="viz-pills" role="tablist" aria-label="Atomic model">
+        <button type="button" class="viz-pill" data-atom="dalton">Dalton</button>
+        <button type="button" class="viz-pill" data-atom="thomson">Thomson</button>
+        <button type="button" class="viz-pill" data-atom="rutherford">Rutherford</button>
+        <button type="button" class="viz-pill is-on" data-atom="bohr">Bohr</button>
+        <button type="button" class="viz-pill" data-atom="quantum">Quantum</button>
+      </div>
+      <div class="viz-pills" role="group" aria-label="View mode">
+        <button type="button" class="viz-pill is-on" data-atom-view="3d" aria-pressed="true">3D</button>
+        <button type="button" class="viz-pill is-on" data-atom-view="2d" aria-pressed="true">2D</button>
+      </div>
+    </div>
+    <div class="viz-split" id="atom-split">
+      <figure class="viz-stage is-paper" id="atom-3d-stage">
         <figcaption>3D</figcaption>
-        <canvas id="bohr-3d" data-proto="bohr-3d" aria-label="Bohr model 3D"></canvas>
+        <canvas id="atom-3d" data-proto="atom-3d" aria-label="Atomic model 3D"></canvas>
       </figure>
-      <figure class="viz-stage is-paper">
+      <figure class="viz-stage is-paper" id="atom-2d-stage">
         <figcaption>2D</figcaption>
-        <canvas id="bohr-2d" data-proto="bohr-2d" aria-label="Bohr model 2D"></canvas>
+        <canvas id="atom-2d" data-proto="atom-2d" aria-label="Atomic model 2D"></canvas>
       </figure>
     </div>
+    <p class="viz-legend" id="atom-caption" data-copy="bohrCap">Bohr · 1913 · quantized K and L shells. Not chrome tori in a white studio.</p>
   </section>
 
   <section class="viz-section" id="viz-orbital">
@@ -110,7 +124,7 @@
     <ul class="viz-list">
       <li data-copy="n1">Carry paper clear color, quieter lights and contact ground into molecule / atomic runtimes.</li>
       <li data-copy="n2">Add ball-and-stick / space-fill / stick on molecules. Do not invent new pedagogy.</li>
-      <li data-copy="n3">Restyle Bohr orbits to match the 2D canvas; keep Dalton–Quantum as history, not chrome toys.</li>
+      <li data-copy="n3">Replace the five production atomic models with this paper 3D/2D pair. Keep Dalton–Quantum as history.</li>
       <li data-copy="n4">Cap devicePixelRatio, add touch orbit on molecules and allotropes.</li>
       <li data-copy="n5">Leave Open Lab public. Prototype stays on /dev/ until chosen.</li>
     </ul>
@@ -118,6 +132,6 @@
 </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="/dev/viz-prototype.js?v=202609101015"></script>
+<script src="/dev/viz-prototype.js?v=202609101100"></script>
 </body>
 </html>

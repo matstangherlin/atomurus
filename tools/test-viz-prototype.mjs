@@ -15,6 +15,13 @@ assert.match(js, /F2EFE7/);
 assert.match(js, /space-fill|spacefill|repStyle|data-rep/);
 assert.match(js, /2p_z/);
 assert.match(js, /putImageData/);
+assert.match(html, /data-atom="dalton"/);
+assert.match(html, /data-atom="thomson"/);
+assert.match(html, /data-atom="rutherford"/);
+assert.match(html, /data-atom="bohr"/);
+assert.match(html, /data-atom="quantum"/);
+assert.match(js, /buildDalton|buildThomson|buildRutherford|buildQuantum/);
+assert.doesNotMatch(js, /atomurusInitAtomicViewer/);
 assert.match(css, /#F2EFE7|#F8F5EC/);
 assert.match(robots, /Disallow: \/dev\//);
 
