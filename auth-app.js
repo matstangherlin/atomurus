@@ -818,6 +818,17 @@
     return Boolean(logic().hasFeature(user, name));
   }
 
+  var SECTION_FEATURE = {
+    library: 'studyCloud',
+    sets: 'studySets',
+    review: 'smartReview',
+    insights: 'studyInsights',
+    'pro-lab': 'proLab',
+    history: 'calculatorHistory',
+    notes: 'studyNotes',
+    progress: 'studyProgress'
+  };
+
   function showProNotice(section, labelKey) {
     var feature = t(labelKey);
     var guest = !currentUser;
@@ -884,39 +895,28 @@
       }
     }
     if (studyNav) {
-      var context = [
-        ['overview', 'overview', 'overview', area === 'overview'],
-        ['library', 'study', 'library', area === 'study'],
-        ['pro-lab', 'navGroupLab', 'pro-lab', area === 'lab'],
-        ['progress', 'navGroupActivity', 'progress', area === 'activity']
-      ];
-      var contextHtml = '<div class="ws-context-nav" role="navigation" aria-label="' + escapeHtml(t('navGroupWorkspace')) + '">' +
-        context.map(function (pair) {
-          return navItemHtml('/app?section=' + pair[0], pair[1], pair[2], pair[3], false, pair[0]);
-        }).join('') + '</div>';
+      var groupsHtml = NAV_GROUPS.map(function (group) {
+        return '<div class="ws-study-group"><h2 class="ws-nav-group">' + escapeHtml(t(group.key)) + '</h2>' +
+          '<div class="ws-local-nav" role="navigation" aria-label="' + escapeHtml(t(group.key)) + '">' +
+          group.items.map(function (pair) {
+            var section = pair[0];
+            var labelKey = pair[1];
+            var feature = SECTION_FEATURE[section];
+            var locked = Boolean(feature && !featureOn(user, feature));
+            return navItemHtml('/app?section=' + section, labelKey, section, current === section, locked, section);
+          }).join('') + '</div></div>';
+      }).join('');
       var localHtml = '';
-      if (area === 'study') {
-        localHtml = '<div class="ws-local-nav" role="navigation" aria-label="' + escapeHtml(t('navGroupStudy')) + '">' +
-          [['library', 'library', 'studyCloud'], ['sets', 'sets', 'studySets'], ['practice', 'practiceNav'], ['review', 'reviewShort', 'smartReview', 'review'], ['insights', 'insightsNav', 'studyInsights', 'insights']].map(function (pair) {
-            var key = pair[3] || pair[0];
-            var locked = pair[2] && !featureOn(user, pair[2]);
-            return navItemHtml('/app?section=' + pair[0], pair[1], pair[0], current === pair[0], locked, pair[0]);
-          }).join('') + '</div>';
-      } else if (area === 'lab') {
+      if (area === 'lab') {
+        var labLocked = !featureOn(user, 'proLab');
         localHtml = '<div class="ws-local-nav" role="navigation" aria-label="' + escapeHtml(t('navGroupLab')) + '">' +
-          navItemHtml('/app?section=pro-lab', 'labNavHome', 'pro-lab', currentTool === 'home', false, 'pro-lab') +
-          navItemHtml('/app?section=pro-lab&tool=reactions', 'labNavSolve', 'pro-lab', /reactions|formula|solutions|calculations/.test(currentTool), false, 'pro-lab') +
-          navItemHtml('/app?section=pro-lab&tool=elements', 'labNavCompare', 'pro-lab', /elements|molecules|atomic/.test(currentTool), false, 'pro-lab') +
-          navItemHtml('/app?section=pro-lab&tool=sessions', 'labNavSessions', 'history', currentTool === 'sessions', false, 'pro-lab') +
+          navItemHtml('/app?section=pro-lab', 'labNavHome', 'pro-lab', currentTool === 'home', labLocked, 'pro-lab') +
+          navItemHtml('/app?section=pro-lab&tool=reactions', 'labNavSolve', 'pro-lab', /reactions|formula|solutions|calculations/.test(currentTool), labLocked, 'pro-lab') +
+          navItemHtml('/app?section=pro-lab&tool=elements', 'labNavCompare', 'pro-lab', /elements|molecules|atomic/.test(currentTool), labLocked, 'pro-lab') +
+          navItemHtml('/app?section=pro-lab&tool=sessions', 'labNavSessions', 'history', currentTool === 'sessions', labLocked, 'pro-lab') +
           '</div>';
-      } else if (area === 'activity') {
-        localHtml = '<div class="ws-local-nav" role="navigation" aria-label="' + escapeHtml(t('navGroupActivity')) + '">' +
-          [['history', 'history', 'studyCloud'], ['notes', 'notes', 'studyCloud'], ['progress', 'continueNav', 'studyCloud']].map(function (pair) {
-            var locked = pair[2] && !featureOn(user, pair[2]);
-            return navItemHtml('/app?section=' + pair[0], pair[1], pair[0], current === pair[0], locked, pair[0]);
-          }).join('') + '</div>';
       }
-      studyNav.innerHTML = contextHtml + localHtml;
+      studyNav.innerHTML = groupsHtml + localHtml;
       bindProNav(studyNav);
     }
     if (foot) {
@@ -944,6 +944,9 @@
         if (aside) aside.addEventListener('click', doLogout);
       }
     }
+    if (window.AtomurusNav && typeof window.AtomurusNav.paintWorkspaceNav === 'function') {
+      window.AtomurusNav.paintWorkspaceNav({ user: user || null });
+    }
     if (bottom) {
       var primary = [
         ['overview', 'overview', 'overview', area === 'overview'],
@@ -955,7 +958,11 @@
       bottom.innerHTML = primary.map(function (pair) {
         var guestAccount = pair[0] === 'account' && !user;
         var href = guestAccount ? '/login?next=%2Fapp%3Fsection%3Daccount' : '/app?section=' + pair[0];
-        return '<a class="' + (pair[3] ? 'is-active' : '') + '" href="' + href + '">' + icon(pair[0]) + '<span>' + escapeHtml(t(pair[1])) + '</span></a>';
+        var feature = SECTION_FEATURE[pair[0]];
+        var locked = Boolean(feature && !featureOn(user, feature));
+        var gate = locked ? ' data-pro-nav="' + pair[0] + '" data-pro-label="' + pair[1] + '"' : '';
+        return '<a class="' + (pair[3] ? 'is-active' : '') + (locked ? ' is-locked' : '') + '" href="' + href + '"' + gate + '>' +
+          icon(pair[0]) + '<span>' + escapeHtml(t(pair[1])) + '</span></a>';
       }).join('');
       bindProNav(bottom);
     }
@@ -3096,7 +3103,9 @@
     if (window.I18N && typeof window.I18N.onChange === 'function' && !boot.i18nBound) {
       boot.i18nBound = true;
       window.I18N.onChange(function () {
-        if (!currentUser) return;
+        if (window.AtomurusNav && typeof window.AtomurusNav.paintWorkspaceNav === 'function') {
+          window.AtomurusNav.paintWorkspaceNav({ user: currentUser || null });
+        }
         if (reviewSession && reviewSession.active) {
           renderNav(currentUser);
           return;

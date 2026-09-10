@@ -25,8 +25,8 @@ test('public home uses workspace chrome, not lab-console ticker', async ({ page 
   await page.goto('/index.html');
   await expect(page.locator('.ps-shell')).toBeVisible();
   await expect(page.locator('#ws-sidebar, .ps-pub-sidebar')).toBeVisible();
-  await expect(page.locator('#ws-sidebar a[href*="/app"]')).toBeVisible();
-  await expect(page.locator('#ws-sidebar a[href*="/app"]')).toContainText(/Workspace/i);
+  await expect(page.locator('#ws-sidebar a[data-nav="workspace"]')).toBeVisible();
+  await expect(page.locator('#ws-sidebar a[data-nav="workspace"]')).toContainText(/Workspace/i);
   await expect(page.locator('.lc-topnav-name')).toBeVisible();
   await expect.poll(() => fontFamily(page.locator('.lc-topnav-name'))).toMatch(/Instrument Serif/i);
   await expect(page.locator('.lc-tn-no').first()).toBeHidden();
@@ -49,6 +49,24 @@ test('public home uses workspace chrome, not lab-console ticker', async ({ page 
   expect(openBg).toMatch(/rgb\(\s*30,\s*106,\s*80\s*\)/);
   await expect(page.locator('.lc-footer-bottom > span:has(.lc-st-dot)')).toBeHidden();
   await saveShot(page, 'desktop-public-home');
+});
+
+test('public sidebar lists workspace options and warns that Pro is required', async ({ page }) => {
+  await page.goto('/index.html');
+  const nav = page.locator('#ws-workspace-nav');
+  await expect(nav).toBeVisible();
+  await expect(nav).toContainText(/Library|Biblioteca/);
+  await expect(nav).toContainText(/Study Sets/);
+  await expect(nav).toContainText(/Smart Review/);
+  await expect(nav).toContainText(/Pro Lab/);
+  await expect(nav).toContainText(/Notes|Notas/);
+  const proLab = nav.locator('a[data-ws-section="pro-lab"]');
+  await expect(proLab).toContainText(/PRO/);
+  await proLab.click();
+  const notice = page.locator('#atm-pro-notice, #ws-dialog-host');
+  await expect(notice).toContainText(/available only|disponível somente/i);
+  await expect(page).toHaveURL(/\/($|index)/);
+  await saveShot(page, 'desktop-public-pro-notice');
 });
 
 test('public table, calculators, login and pricing share the new chrome', async ({ page }) => {
@@ -85,11 +103,12 @@ test('public table, calculators, login and pricing share the new chrome', async 
   await page.goto('/calculators.html');
   await expect(page.locator('.ps-shell')).toBeVisible();
   await expect(page.locator('.ps-shell > .topbar .mobile-menu-btn')).toBeHidden();
-  await expect(page.locator('#ws-sidebar .ws-nav-group')).toBeVisible();
+  await expect(page.locator('#ws-sidebar .ws-nav-group').first()).toBeVisible();
+  await expect(page.locator('#ws-sidebar').getByRole('heading', { name: 'Laboratory' })).toBeVisible();
   await expect(page.locator('#ws-nav-foot a[href*="login"]')).toBeVisible();
   await expect(page.locator('#ws-nav-foot a[href*="pricing"]')).toBeVisible();
-  await expect(page.locator('#ws-sidebar a[href*="/app"]')).toBeVisible();
-  await expect(page.locator('#ws-sidebar a[href*="/app"]')).toContainText(/Workspace/i);
+  await expect(page.locator('#ws-sidebar a[data-nav="workspace"]')).toBeVisible();
+  await expect(page.locator('#ws-sidebar a[data-nav="workspace"]')).toContainText(/Workspace/i);
   await expect(page.locator('#ws-sidebar .nav-expandable, #ws-sidebar [data-nav="molar"]')).toHaveCount(0);
   await expect(page.locator('.data-strip').first()).toBeHidden();
   await expect.poll(() => fontFamily(page.locator('.ph-title'))).toMatch(/Instrument Serif/i);
@@ -313,7 +332,7 @@ test('public home dark mode and mobile keep the workspace chrome', async ({ page
   await page.locator('.lc-mobile-hamb').click();
   await expect(page.locator('#ws-sidebar')).toBeVisible();
   await expect(page.locator('#ws-sidebar')).toContainText(/Workspace/i);
-  await expect(page.locator('#ws-sidebar a[href*="/app"]')).toContainText(/Workspace/i);
+  await expect(page.locator('#ws-sidebar a[data-nav="workspace"]')).toContainText(/Workspace/i);
   await saveShot(page, 'mobile-public-home-menu');
 
   await page.goto('/calculators.html');
