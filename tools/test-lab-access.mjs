@@ -248,6 +248,8 @@ assert.match(paperLab, /camZForMol/);
 assert.match(paperLab, /bindLiveLoop/);
 assert.match(paperLab, /bindPageScrollWheel/);
 assert.match(paperLab, /createRenderer/);
+assert.match(paperLab, /cancelAnimationFrame/);
+assert.match(paperLab, /function kick/);
 
 const allotropes = read('viewer/allotropes.html');
 assert.match(allotropes, /atomurusBootLabViewer/);
@@ -578,5 +580,10 @@ assert.match(sitemap, /<loc>https:\/\/atomurus.com\/viewer\/allotropes<\/loc>/);
 const bohr = read('viewer/atomic-models/bohr.html');
 assert.match(bohr, /isAccessibleForFree": true/);
 assert.match(bohr, /share-button\.js/);
+
+const exploreMol = read('explore/viewer/mol-viewer.js');
+assert.match(exploreMol, /bindLiveLoop/);
+assert.match(exploreMol, /bindPageScrollWheel/);
+assert.match(exploreMol, /cancelAnimationFrame|kick\(\)/);
 
 console.log('lab-access tests passed');

@@ -83,41 +83,55 @@
       return true;
     }
     function loop(now) {
-      raf = requestAnimationFrame(loop);
+      raf = 0;
       if (!shouldRun()) {
         paintOnce = true;
         return;
       }
       var busy = opts.busy && opts.busy();
       if (busy) {
-        if (now - last < idleMs) return;
-        paintOnce = true;
-      } else if (!paintOnce) {
+        if (now - last >= idleMs) {
+          last = now;
+          tick(now);
+        }
+        raf = requestAnimationFrame(loop);
         return;
-      } else {
+      }
+      if (paintOnce) {
+        last = now;
+        tick(now);
         paintOnce = false;
       }
-      last = now;
-      tick(now);
     }
-    raf = requestAnimationFrame(loop);
+    function kick() {
+      paintOnce = true;
+      if (!raf && shouldRun()) raf = requestAnimationFrame(loop);
+    }
     document.addEventListener('visibilitychange', function () {
       hidden = document.hidden;
-      if (!hidden) paintOnce = true;
+      if (!hidden) kick();
     });
     if (canvas && typeof IntersectionObserver === 'function') {
       var io = new IntersectionObserver(function (entries) {
         var e = entries[0];
         onscreen = !!(e && e.isIntersecting);
-        if (onscreen) paintOnce = true;
+        if (onscreen) kick();
       }, { rootMargin: '64px', threshold: 0.01 });
       io.observe(canvas);
     }
+    if (canvas) {
+      canvas.addEventListener('pointerdown', kick);
+    }
+    window.addEventListener('resize', kick);
+    document.addEventListener('click', kick, true);
+    window.addEventListener('atomurus:themechange', kick);
+    kick();
     return {
       stop: function () {
         if (raf) cancelAnimationFrame(raf);
         raf = 0;
-      }
+      },
+      wake: kick
     };
   }
 

@@ -11,8 +11,17 @@
   var canvas = document.getElementById('mvwr-canvas');
   if (!canvas || !window.MOL_DATA) return;
 
-  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+  var lab = window.atomurusPaperLab;
+  var renderer = lab && lab.createRenderer
+    ? lab.createRenderer(THREE, canvas)
+    : new THREE.WebGLRenderer({
+        canvas: canvas,
+        antialias: (window.devicePixelRatio || 1) < 1.25,
+        alpha: false,
+        powerPreference: 'high-performance',
+        stencil: false
+      });
+  if (!lab || !lab.createRenderer) renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
 
   function updateBg() {
     var dark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -51,7 +60,7 @@
   var ATOM_SCALE = 1.4, BOND_R = 0.10, BOND_GAP = -0.04;
 
   function makeSphere(r, color) {
-    return new THREE.Mesh(new THREE.SphereGeometry(r, 32, 32),
+    return new THREE.Mesh(new THREE.SphereGeometry(r, 24, 24),
       new THREE.MeshStandardMaterial({ color: color, roughness: 0.35, metalness: 0.15 }));
   }
   function makeBond(p1, p2, r1, r2, color1, color2, order) {
@@ -178,11 +187,17 @@
     e.preventDefault();
   }, { passive: false });
   canvas.addEventListener('touchend', function () { isDragging = false; });
-  canvas.addEventListener('wheel', function (e) {
-    if (!(e.ctrlKey || e.metaKey)) return;
-    camera.position.z = Math.max(4, Math.min(18, camera.position.z + e.deltaY * 0.01));
-    e.preventDefault();
-  }, { passive: false });
+  if (lab && lab.bindPageScrollWheel) {
+    lab.bindPageScrollWheel(canvas, function (e) {
+      camera.position.z = Math.max(4, Math.min(18, camera.position.z + e.deltaY * 0.01));
+    });
+  } else {
+    canvas.addEventListener('wheel', function (e) {
+      if (!(e.ctrlKey || e.metaKey)) return;
+      camera.position.z = Math.max(4, Math.min(18, camera.position.z + e.deltaY * 0.01));
+      e.preventDefault();
+    }, { passive: false });
+  }
 
   function updateRotateBtn() {
     var b = document.getElementById('mvwr-rotate');
@@ -212,22 +227,7 @@
   resize();
 
   // ── Render loop ──
-  var _docHidden = false;
-  var _onscreen = true;
-  document.addEventListener('visibilitychange', function () { _docHidden = document.hidden; });
-  if (typeof IntersectionObserver === 'function') {
-    var io = new IntersectionObserver(function (entries) {
-      _onscreen = !!(entries[0] && entries[0].isIntersecting);
-    }, { rootMargin: '64px', threshold: 0.01 });
-    io.observe(canvas);
-  }
-  var _last = 0;
-  function animate(now) {
-    requestAnimationFrame(animate);
-    if (_docHidden || !_onscreen) return;
-    var busy = isDragging || autoRotate || Math.abs(rotVelX) > 1e-4 || Math.abs(rotVelY) > 1e-4;
-    if (!busy && now - _last < 33) return;
-    _last = now;
+  function tickFrame() {
     if (autoRotate) { rotY += 0.005; }
     else if (!isDragging) {
       rotY += rotVelY; rotX += rotVelX;
@@ -240,5 +240,43 @@
     currentGroup.rotation.x = rotX;
     renderer.render(scene, camera);
   }
-  requestAnimationFrame(animate);
+  function isBusy() {
+    return isDragging || autoRotate || Math.abs(rotVelX) > 1e-4 || Math.abs(rotVelY) > 1e-4;
+  }
+  if (lab && lab.bindLiveLoop) {
+    lab.bindLiveLoop(canvas, tickFrame, { busy: isBusy });
+  } else {
+    var _hidden = document.hidden;
+    var _onscreen = true;
+    var _raf = 0;
+    var _last = 0;
+    function shouldRun() { return !_hidden && _onscreen; }
+    function loop(now) {
+      _raf = 0;
+      if (!shouldRun()) return;
+      if (isBusy()) {
+        if (now - _last >= 33) { _last = now; tickFrame(); }
+        _raf = requestAnimationFrame(loop);
+        return;
+      }
+      tickFrame();
+    }
+    function kick() {
+      if (!_raf && shouldRun()) _raf = requestAnimationFrame(loop);
+    }
+    document.addEventListener('visibilitychange', function () {
+      _hidden = document.hidden;
+      if (!_hidden) kick();
+    });
+    if (typeof IntersectionObserver === 'function') {
+      var io = new IntersectionObserver(function (entries) {
+        _onscreen = !!(entries[0] && entries[0].isIntersecting);
+        if (_onscreen) kick();
+      }, { rootMargin: '64px', threshold: 0.01 });
+      io.observe(canvas);
+    }
+    canvas.addEventListener('pointerdown', kick);
+    document.addEventListener('click', kick, true);
+    kick();
+  }
 })();
