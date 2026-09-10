@@ -102,7 +102,7 @@
   --viewer-pill-active-bg:rgba(30,106,80,.12);
   --viewer-pill-active-border:#1E6A50;
   --viewer-pill-active-text:#0e4f3a;
-  --canvas-bg-1:#ffffff;
+  --canvas-bg-1:#F2EFE7;
   --ctrl-bg:rgba(255,255,255,.85);
   --ctrl-border:rgba(0,0,0,.10);
   --ctrl-text:#3a3631;
@@ -143,7 +143,7 @@
   --viewer-pill-active-bg:#1e3a8a;
   --viewer-pill-active-border:#1d4e89;
   --viewer-pill-active-text:#93c5fd;
-  --canvas-bg-1:#161616;
+  --canvas-bg-1:#0E0D0C;
   --ctrl-bg:rgba(20,20,20,.75);
   --ctrl-border:rgba(255,255,255,.10);
   --ctrl-text:rgba(255,255,255,.78);
@@ -641,6 +641,10 @@ html[data-theme="dark"] .chiral-rs-item{background:rgba(255,255,255,0.04)}
           <div class="viewer-mode-toggle">
             <button class="vc-btn active" id="mode-btn-3d" onclick="setViewerMode('3d')" data-tip="3D" aria-pressed="true">3D</button>
             <button class="vc-btn" id="mode-btn-2d" onclick="setViewerMode('2d')" data-tip="2D" aria-pressed="false">2D</button>
+            <span class="vc-sep"></span>
+            <button class="vc-btn active" data-mol-rep="ball" onclick="setMolRep('ball')" data-tip="Ball-and-stick" aria-pressed="true">Ball</button>
+            <button class="vc-btn" data-mol-rep="space" onclick="setMolRep('space')" data-tip="Space-fill" aria-pressed="false">Space</button>
+            <button class="vc-btn" data-mol-rep="stick" onclick="setMolRep('stick')" data-tip="Stick" aria-pressed="false">Stick</button>
           </div>
 
           <canvas id="viewer3d" aria-label="3D Molecules Viewer" data-i18n-attr="aria-label:molecules.viewerAria"></canvas>
@@ -701,7 +705,7 @@ html[data-theme="dark"] .chiral-rs-item{background:rgba(255,255,255,0.04)}
       <div class="legend-card">
         <div class="legend-title" data-i18n="molecules.legendTitle">CPK Legend (international standard)</div>
         <div class="legend-grid">
-          <div class="legend-item"><span class="legend-dot" style="background:#e8e8e8"></span> <span data-i18n="molecules.legend.H">H — Hydrogen</span></div>
+          <div class="legend-item"><span class="legend-dot" style="background:#E7E2D4"></span> <span data-i18n="molecules.legend.H">H — Hydrogen</span></div>
           <div class="legend-item"><span class="legend-dot" style="background:#666"></span> <span data-i18n="molecules.legend.C">C — Carbon</span></div>
           <div class="legend-item"><span class="legend-dot" style="background:#e33"></span> <span data-i18n="molecules.legend.O">O — Oxygen</span></div>
           <div class="legend-item"><span class="legend-dot" style="background:#3af"></span> <span data-i18n="molecules.legend.N">N — Nitrogen</span></div>
@@ -774,7 +778,7 @@ function toggleNavGroup(name){
 })();
 </script>
 
-<script src="load-three.js?v=202608290330"></script>
+<script src="load-three.js?v=202609101200"></script>
 <script>
 atomurusBootLabViewer(document.getElementById('viewer3d'), 'moleculeViewer', function () {
   return atomurusLoadViewerRuntime('molecule-viewer.js').then(function () {

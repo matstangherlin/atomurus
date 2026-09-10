@@ -4,21 +4,35 @@
 return (function(){
   const canvas = document.getElementById('viewer3d');
   const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:false });
-  renderer.setPixelRatio(window.devicePixelRatio);
+  const paper = () => window.atomurusPaperLab;
+  if (paper()) paper().capDpr(renderer);
+  else renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  let paperGround = null;
   function updateBg(){
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    renderer.setClearColor(isDark ? 0x000000 : 0xffffff, 1);
+    if (paper()) paper().applyClear(renderer);
+    else {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      renderer.setClearColor(isDark ? 0x0E0D0C : 0xF2EFE7, 1);
+    }
+    if (paperGround) scene.remove(paperGround);
+    if (paper() && typeof THREE !== 'undefined') {
+      paperGround = paper().ground(THREE, { scale: 1.35, y: -2.9 });
+      scene.add(paperGround);
+    }
+  }
+
+  const camera = new THREE.PerspectiveCamera(50, 2, 0.1, 100);
+  camera.position.set(0, 0.35, 10);
+  const scene = new THREE.Scene();
+  if (paper()) paper().lightScene(scene, THREE);
+  else {
+    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+    const dL1 = new THREE.DirectionalLight(0xffffff, 1.0); dL1.position.set(5,10,7); scene.add(dL1);
+    const dL2 = new THREE.DirectionalLight(0x88bbff, 0.5); dL2.position.set(-5,-3,-5); scene.add(dL2);
+    const dL3 = new THREE.DirectionalLight(0xffeecc, 0.3); dL3.position.set(0,5,-8); scene.add(dL3);
   }
   updateBg();
   window.addEventListener('atomurus:themechange', updateBg);
-
-  const camera = new THREE.PerspectiveCamera(50, 2, 0.1, 100);
-  camera.position.set(0,0,10);
-  const scene = new THREE.Scene();
-  scene.add(new THREE.AmbientLight(0xffffff, 0.7));
-  const dL1 = new THREE.DirectionalLight(0xffffff, 1.0); dL1.position.set(5,10,7); scene.add(dL1);
-  const dL2 = new THREE.DirectionalLight(0x88bbff, 0.5); dL2.position.set(-5,-3,-5); scene.add(dL2);
-  const dL3 = new THREE.DirectionalLight(0xffeecc, 0.3); dL3.position.set(0,5,-8); scene.add(dL3);
 
   let currentGroup = new THREE.Group();
   scene.add(currentGroup);
@@ -48,6 +62,16 @@ return (function(){
     camera.position.z = Math.max(3, Math.min(20, camera.position.z + e.deltaY*0.01));
     e.preventDefault();
   }, { passive:false });
+  if (paper()) {
+    paper().bindTouchOrbit(canvas, {
+      onDown: function () { isDragging=true; autoRotate=false; updateRotateBtn(); rotVelX=0; rotVelY=0; },
+      onDrag: function (dx, dy) {
+        rotY += dx; rotX += dy;
+        rotVelY = dx * 0.6 + rotVelY * 0.4;
+        rotVelX = dy * 0.6 + rotVelX * 0.4;
+      }
+    });
+  }
 
   function updateRotateBtn(){
     const b=document.getElementById('vc-rotate');
@@ -61,8 +85,10 @@ return (function(){
   const BOND_GAP   = -0.04;
 
   function makeSphere(r,color,seg=32){
-    return new THREE.Mesh(new THREE.SphereGeometry(r,seg,seg),
-      new THREE.MeshStandardMaterial({color,roughness:0.35,metalness:0.15}));
+    const mat = paper()
+      ? paper().mat(THREE, color)
+      : new THREE.MeshStandardMaterial({color,roughness:0.35,metalness:0.15});
+    return new THREE.Mesh(new THREE.SphereGeometry(r,seg,seg), mat);
   }
   function makeBond(p1,p2,r1,r2,color1,color2,order=1){
     const group = new THREE.Group();
@@ -92,7 +118,9 @@ return (function(){
       const mid = new THREE.Vector3().addVectors(s,e).multiplyScalar(0.5);
       const cyl = new THREE.Mesh(
         new THREE.CylinderGeometry(r, r, s.distanceTo(e), 12),
-        new THREE.MeshStandardMaterial({color, roughness:0.4, metalness:0.1})
+        paper()
+          ? paper().mat(THREE, color, { roughness: 0.48, metalness: 0.05 })
+          : new THREE.MeshStandardMaterial({color, roughness:0.48, metalness:0.05})
       );
       cyl.position.copy(mid);
       const d = new THREE.Vector3().subVectors(e,s).normalize();
@@ -123,7 +151,7 @@ return (function(){
   }
 
   const COLOR_TO_ELEMENT = {
-    0xdddddd:'H', 0xe8e8e8:'H',
+    0xdddddd:'H', 0xe8e8e8:'H', 0xe7e2d4:'H',
     0xee3333:'O',
     0x666666:'C', 0x555555:'C', 0x444444:'C', 0x333333:'C', 0x222222:'C',
     0x3399ff:'N',
@@ -203,12 +231,20 @@ return (function(){
   let currentMolecule = 'water';
   let mirrorMode = false;
 
+  let molRep = 'ball';
+
+  function atomRadius(a){
+    if (molRep === 'space') return a.r * ATOM_SCALE * 1.85;
+    if (molRep === 'stick') return 0.12;
+    return a.r * ATOM_SCALE;
+  }
+
   function buildMolecule(key){
     const g=new THREE.Group(); trackedAtoms=[];
     const mol=molData[key];
     const sx = mirrorMode ? -1 : 1;
     const meshes=mol.atoms.map(a=>{
-      const radius=a.r*ATOM_SCALE;
+      const radius=atomRadius(a);
       const m=makeSphere(radius,a.color);
       const pos = [a.pos[0]*sx, a.pos[1], a.pos[2]];
       m.position.fromArray(pos);
@@ -216,12 +252,14 @@ return (function(){
       trackedAtoms.push({mesh:m, label, radius, color:a.color, pos});
       g.add(m); return m;
     });
-    mol.bonds.forEach(b=>{
-      const i = b[0], j = b[1], order = b[2] || 1;
-      const a1 = mol.atoms[i], a2 = mol.atoms[j];
-      const r1 = a1.r * ATOM_SCALE, r2 = a2.r * ATOM_SCALE;
-      g.add(makeBond(meshes[i].position, meshes[j].position, r1, r2, a1.color, a2.color, order));
-    });
+    if (molRep !== 'space') {
+      mol.bonds.forEach(b=>{
+        const i = b[0], j = b[1], order = b[2] || 1;
+        const a1 = mol.atoms[i], a2 = mol.atoms[j];
+        const r1 = atomRadius(a1), r2 = atomRadius(a2);
+        g.add(makeBond(meshes[i].position, meshes[j].position, r1, r2, a1.color, a2.color, order));
+      });
+    }
     bondCount = mol.bonds.length;
     return g;
   }
@@ -232,10 +270,26 @@ return (function(){
     scene.add(currentGroup);
     // Default camera tilt — gives an isometric-ish 3D perspective instead of a flat front view.
     rotX = 0.18; rotY = 0.35;
-    camera.position.set(0,0,DEFAULT_CAM_Z);
+    camera.position.set(0, 0.35, DEFAULT_CAM_Z);
     autoRotate = true; updateRotateBtn();
     refreshLabels();
   }
+
+  window.setMolRep = function(style){
+    if (style !== 'ball' && style !== 'space' && style !== 'stick') return;
+    molRep = style;
+    document.querySelectorAll('[data-mol-rep]').forEach(function (b) {
+      const on = b.getAttribute('data-mol-rep') === style;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    if (!molData[currentMolecule]) return;
+    scene.remove(currentGroup);
+    currentGroup = buildMolecule(currentMolecule);
+    scene.add(currentGroup);
+    refreshLabels();
+    if (viewMode === '2d') draw2DMolecule(0);
+  };
 
   // ── Label sprites ──
   function makeLabelSprite(text, atomRadius){
@@ -308,7 +362,7 @@ return (function(){
 
     ctx2d.save();
     ctx2d.clearRect(0, 0, W, H);
-    ctx2d.fillStyle = isDark ? '#111111' : '#ffffff';
+    ctx2d.fillStyle = paper() ? paper().fillCss() : (isDark ? '#0E0D0C' : '#F2EFE7');
     ctx2d.fillRect(0, 0, W, H);
 
     const mol = molData[currentMolecule];
@@ -333,7 +387,7 @@ return (function(){
       if (l === 'F') return 0xb3ff3a;
       if (l === 'NA') return 0xaaaaff;
       if (l === 'FE') return 0xcc6633;
-      if (l.match(/^H\d?$/)) return 0xdddddd;
+      if (l.match(/^H\d?$/)) return paper() ? paper().atomColor(0xdddddd) : 0xdddddd;
       return 0x666666;
     }
     function elemRadius(lbl) {
@@ -405,7 +459,8 @@ return (function(){
 
       atomsToDraw = mol.atoms.map(a => {
         const label = COLOR_TO_ELEMENT[a.color] || '';
-        return { p: project(a.pos), r: a.r * z * 1.5, color: a.color, label };
+        const col = paper() ? paper().atomColor(a.color) : a.color;
+        return { p: project(a.pos), r: a.r * z * 1.5, color: col, label };
       });
       bondsToDraw = mol.bonds.map(([i, j]) => ({
         p1: atomsToDraw[i].p, p2: atomsToDraw[j].p,
@@ -673,7 +728,7 @@ return (function(){
       draw2DMolecule(anim2dEnabled ? t : _t2dFrozen);
     } else {
       rotX = 0.18; rotY = 0.35;
-      camera.position.set(0,0,DEFAULT_CAM_Z);
+      camera.position.set(0, 0.35, DEFAULT_CAM_Z);
       autoRotate = true; updateRotateBtn();
     }
   };

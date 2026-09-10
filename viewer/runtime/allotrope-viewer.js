@@ -4,20 +4,33 @@
 (function(){
   const canvas = document.getElementById('viewer3d');
   const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:false });
-  renderer.setPixelRatio(window.devicePixelRatio);
+  const paper = () => window.atomurusPaperLab;
+  if (paper()) paper().capDpr(renderer);
+  else renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  const camera = new THREE.PerspectiveCamera(50, 2, 0.1, 100);
+  camera.position.set(0, 0.35, 10);
+  const scene = new THREE.Scene();
+  let paperGround = null;
   function updateBg(){
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    renderer.setClearColor(isDark ? 0x000000 : 0xffffff, 1);
+    if (paper()) paper().applyClear(renderer);
+    else {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      renderer.setClearColor(isDark ? 0x0E0D0C : 0xF2EFE7, 1);
+    }
+    if (paperGround) scene.remove(paperGround);
+    if (paper()) {
+      paperGround = paper().ground(THREE, { scale: 1.6, y: -3.2 });
+      scene.add(paperGround);
+    }
+  }
+  if (paper()) paper().lightScene(scene, THREE);
+  else {
+    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+    const dL1 = new THREE.DirectionalLight(0xffffff, 1.0); dL1.position.set(5,10,7); scene.add(dL1);
+    const dL2 = new THREE.DirectionalLight(0x88bbff, 0.5); dL2.position.set(-5,-3,-5); scene.add(dL2);
   }
   updateBg();
   window.addEventListener('atomurus:themechange', updateBg);
-
-  const camera = new THREE.PerspectiveCamera(50, 2, 0.1, 100);
-  camera.position.set(0,0,10);
-  const scene = new THREE.Scene();
-  scene.add(new THREE.AmbientLight(0xffffff, 0.7));
-  const dL1 = new THREE.DirectionalLight(0xffffff, 1.0); dL1.position.set(5,10,7); scene.add(dL1);
-  const dL2 = new THREE.DirectionalLight(0x88bbff, 0.5); dL2.position.set(-5,-3,-5); scene.add(dL2);
 
   let currentGroup = new THREE.Group();
   scene.add(currentGroup);
@@ -46,11 +59,23 @@
     camera.position.z = Math.max(3, Math.min(20, camera.position.z + e.deltaY*0.01));
     e.preventDefault();
   }, { passive:false });
+  if (paper()) {
+    paper().bindTouchOrbit(canvas, {
+      onDown: function () { isDragging=true; autoRotate=false; updateRotateBtn(); rotVelX=0; rotVelY=0; },
+      onDrag: function (dx, dy) {
+        rotY += dx; rotX += dy;
+        rotVelY = dx * 0.6 + rotVelY * 0.4;
+        rotVelX = dy * 0.6 + rotVelX * 0.4;
+      }
+    });
+  }
   function updateRotateBtn(){ const b=document.getElementById('vc-rotate'); if (b) b.classList.toggle('active', autoRotate); }
 
   function makeSphere(r,color,seg=16){
-    return new THREE.Mesh(new THREE.SphereGeometry(r,seg,seg),
-      new THREE.MeshStandardMaterial({color,roughness:0.4,metalness:0.15}));
+    const mat = paper()
+      ? paper().mat(THREE, color)
+      : new THREE.MeshStandardMaterial({color,roughness:0.4,metalness:0.15});
+    return new THREE.Mesh(new THREE.SphereGeometry(r,seg,seg), mat);
   }
   function makeGlow(r,color){
     return new THREE.Mesh(new THREE.SphereGeometry(r,24,24),
@@ -61,7 +86,9 @@
     const len=dir.length();
     const mid=new THREE.Vector3().addVectors(p1,p2).multiplyScalar(0.5);
     const cyl=new THREE.Mesh(new THREE.CylinderGeometry(r,r,len,12),
-      new THREE.MeshPhongMaterial({color,shininess:40}));
+      paper()
+        ? paper().mat(THREE, color, { roughness: 0.5, metalness: 0.05 })
+        : new THREE.MeshStandardMaterial({color, roughness:0.5, metalness:0.05}));
     cyl.position.copy(mid);
     cyl.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir.normalize());
     return cyl;
@@ -292,7 +319,7 @@
     currentGroup = buildAllotrope(currentAllotrope);
     scene.add(currentGroup);
     rotX = 0; rotY = 0;
-    camera.position.set(0,0,DEFAULT_CAM_Z);
+    camera.position.set(0, 0.35, DEFAULT_CAM_Z);
     autoRotate = true; updateRotateBtn();
   }
 
@@ -368,7 +395,7 @@
   window.toggleAutoRotate = function(){ autoRotate = !autoRotate; updateRotateBtn(); };
   window.resetView = function(){
     rotX = 0; rotY = 0;
-    camera.position.set(0,0,DEFAULT_CAM_Z);
+    camera.position.set(0, 0.35, DEFAULT_CAM_Z);
     autoRotate = true; updateRotateBtn();
   };
   window.zoomBy = function(direction){
