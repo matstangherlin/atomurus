@@ -114,21 +114,21 @@
       el;
   }
 
-  function clearProViewerStatus(el) {
+  function clearLabViewerStatus(el) {
     var host = statusHost(el);
     if (!host) return;
-    var box = host.querySelector(':scope > .pro-viewer-status');
+    var box = host.querySelector(':scope > .lab-viewer-status, :scope > .pro-viewer-status');
     if (box) box.remove();
   }
 
-  function showProViewerStatus(el, kind, message, retryFn) {
+  function showLabViewerStatus(el, kind, message, retryFn) {
     var host = statusHost(el);
     if (!host) return;
     if (host !== el && getComputedStyle(host).position === 'static') host.style.position = 'relative';
-    clearProViewerStatus(el);
+    clearLabViewerStatus(el);
     if (kind === 'clear') return;
     var box = document.createElement('div');
-    box.className = 'pro-viewer-status';
+    box.className = 'lab-viewer-status';
     box.setAttribute('data-kind', kind);
     box.setAttribute('role', 'status');
     box.style.cssText = 'position:absolute;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center;pointer-events:auto;background:rgba(242,239,231,.55)';
@@ -194,18 +194,19 @@
   }
 
   /**
-   * Boot a viewer after entitlement. Public educational viewers load
-   * immediately. Pro viewers wait for ads/auth and a true feature flag.
-   * Locked / pending / failed-auth: do not load Three.js.
-   * Loading overlay stays up until `fn` finishes (including returned thenables).
+   * Boot a lab viewer. Public educational viewers (atomic models,
+   * molecules, allotropes, isomerism) load Three + the allowlisted
+   * runtime for Guest — they do not wait on ads/auth.
+   * Remaining Pro runtimes still wait for ads/auth and a true flag.
+   * Loading overlay stays up until `fn` finishes (including thenables).
    */
-  function bootProViewer(el, featureKey, fn, options) {
+  function bootLabViewer(el, featureKey, fn, options) {
     options = options || {};
     var started = false;
     function start() {
       if (started) return;
       started = true;
-      showProViewerStatus(
+      showLabViewerStatus(
         el,
         'loading',
         langIsPt() ? 'Carregando visualizador 3D…' : 'Loading 3D viewer…'
@@ -213,10 +214,10 @@
       bootViewer(el, function (THREE) {
         return fn(THREE);
       }, options).then(function () {
-        clearProViewerStatus(el);
+        clearLabViewerStatus(el);
       }).catch(function () {
         started = false;
-        showProViewerStatus(
+        showLabViewerStatus(
           el,
           'error',
           langIsPt() ? 'O visualizador 3D não carregou.' : "3D viewer couldn't load.",
@@ -230,14 +231,14 @@
     }
     whenAdsReady(function () {
       if (!hasPremiumFeature(featureKey)) {
-        clearProViewerStatus(el);
+        clearLabViewerStatus(el);
         return;
       }
       start();
     });
   }
 
-  // HTML onclick handlers exist before Pro runtime boots. Keep them callable
+  // HTML onclick handlers exist before the lab runtime boots. Keep them callable
   // so 3D/2D and model pills do not throw `X is not defined`.
   var VIEWER_CONTROL_STUBS = [
     'setViewerMode', 'setMolecule', 'setMoleculeByElement', 'setAtomModel',
@@ -251,8 +252,9 @@
     }
   });
 
-  // Interactive viewer engines are not in the public HTML. After
-  // entitlement, load one allowlisted runtime — never a free-form path.
+  // Interactive viewer engines are not in the public HTML. After the
+  // canvas is near the viewport, load one allowlisted runtime — never a
+  // free-form path. Public access does not mean eager-loading every model.
   var VIEWER_RUNTIME_SRC = {
     'atomic-viewer.js': '/viewer/runtime/atomic-viewer.js?v=202608290200',
     'molecule-viewer.js': '/viewer/runtime/molecule-viewer.js?v=202608290200',
@@ -284,15 +286,17 @@
   global.atomurusLoadThree = loadThree;
   global.atomurusWhenVisible = whenVisible;
   global.atomurusBootViewer = bootViewer;
-  global.atomurusBootProViewer = bootProViewer;
+  global.atomurusBootLabViewer = bootLabViewer;
+  global.atomurusBootProViewer = bootLabViewer;
   global.atomurusLoadViewerRuntime = loadViewerRuntime;
   global.atomurusHasPremiumFeature = hasPremiumFeature;
-  global.atomurusShowProViewerError = function (el) {
-    showProViewerStatus(
+  global.atomurusShowLabViewerError = function (el) {
+    showLabViewerStatus(
       el,
       'error',
       langIsPt() ? 'O visualizador 3D não carregou.' : "3D viewer couldn't load.",
       function () { location.reload(); }
     );
   };
+  global.atomurusShowProViewerError = global.atomurusShowLabViewerError;
 })(typeof window !== 'undefined' ? window : this);

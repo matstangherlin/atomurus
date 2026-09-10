@@ -87,6 +87,11 @@ test('guest atomic models, allotropes and element compare stay open', async ({ p
   await page.goto('/viewer/allotropes.html');
   await expect.poll(() => page.evaluate(() => Boolean(window.AtomurusLabToolGate))).toBe(true);
   await expect(page.locator('#lab-tool-gate')).toHaveCount(0);
+  await page.locator('#viewer3d').scrollIntoViewIfNeeded();
+  await expect.poll(() => page.evaluate(() => Boolean(
+    window.THREE && document.querySelector('script[data-atomurus-dep="viewer-runtime"]')
+  ))).toBe(true);
+  await saveShot(page, 'guest-allotropes-open');
 
   await page.goto('/periodic-table/compare.html');
   await expect.poll(() => page.evaluate(() => Boolean(window.AtomurusLabToolGate))).toBe(true);
@@ -152,7 +157,7 @@ test('Pro loads the molecule runtime after entitlement', async ({ page }) => {
     window.THREE && document.querySelector('script[data-atomurus-dep="viewer-runtime"]')
   ))).toBe(true);
   await expect.poll(() => moleculeHits).toBeGreaterThan(0);
-  await expect(page.locator('.pro-viewer-status')).toHaveCount(0);
+  await expect(page.locator('.lab-viewer-status, .pro-viewer-status')).toHaveCount(0);
   await saveShot(page, 'pro-molecules-runtime');
 
   await expect.poll(() => page.evaluate(() => {
@@ -272,3 +277,107 @@ test('pricing access ladder and keep-free copy', async ({ page }) => {
   await expect(page.locator('#ladder-trial-note')).toContainText(/No card required/i);
   await saveShot(page, 'pricing-keep-free-split');
 });
+
+async function expectShareWorks(page) {
+  const host = page.locator('.share-host').first();
+  await expect(host).toBeVisible();
+  await host.hover();
+  await host.focus();
+  await expect(page.locator('.share-copy').first()).toBeVisible();
+  await expect(page.locator('a[data-channel="whatsapp"]').first()).toBeVisible();
+  await page.locator('.share-copy').first().click();
+  await expect(page.locator('.share-toast').first()).toContainText(/copied|copiado/i);
+}
+
+async function expectViewerCanvas(page, selector) {
+  await expect.poll(() => page.evaluate(() => Boolean(window.AtomurusLabToolGate))).toBe(true);
+  await expect(page.locator('#lab-tool-gate')).toHaveCount(0);
+  await page.locator(selector).first().scrollIntoViewIfNeeded();
+  await expect.poll(() => page.evaluate(() => Boolean(
+    window.THREE && document.querySelector('script[data-atomurus-dep="viewer-runtime"]')
+  ))).toBe(true);
+  await expect(page.locator('#lab-tool-gate')).toHaveCount(0);
+}
+
+test('guest can share all four Open Lab viewers without a gate', async ({ page }) => {
+  const pages = [
+    { url: '/viewer/atomic-models.html', canvas: '#viewer3d' },
+    { url: '/viewer/molecules.html', canvas: '#viewer3d' },
+    { url: '/viewer/allotropes.html', canvas: '#viewer3d' },
+    { url: '/viewer/isomerism.html', canvas: null }
+  ];
+  for (const item of pages) {
+    await page.goto(item.url);
+    await expect(page.locator('#lab-tool-gate')).toHaveCount(0);
+    if (item.canvas) await expectViewerCanvas(page, item.canvas);
+    await expectShareWorks(page);
+    await expect(page.locator('#lab-tool-gate')).toHaveCount(0);
+  }
+
+  await page.goto('/viewer/isomerism/constitutional/function.html');
+  await expectViewerCanvas(page, '.iso-3d-stage canvas');
+  await expectShareWorks(page);
+});
+
+test('guest save on molecules is a contextual account CTA, not a canvas gate', async ({ page }) => {
+  await page.goto('/viewer/molecules.html');
+  await expectViewerCanvas(page, '#viewer3d');
+  await expect.poll(() => page.evaluate(() => Boolean(
+    window.AtomurusStudySave && window.AtomurusWorkspaceUI && document.querySelector('#atomurus-study-save [data-study-save]')
+  ))).toBe(true);
+  const save = page.locator('#atomurus-study-save [data-study-save]');
+  await expect(save).toBeVisible({ timeout: 15_000 });
+  await expect(page.locator('#atomurus-study-save [data-study-save] .study-pro-badge')).toHaveCount(0);
+  await save.click();
+  await expect(page.locator('#ws-dialog-title')).toContainText(/Save this molecule|workspace/i);
+  await expect(page.locator('#ws-dialog-host .ws-dialog-body')).toContainText(/free account/i);
+  await expect(page.locator('#ws-dialog-host a.ws-btn-primary')).toHaveAttribute('href', /signup/);
+  await expect(page.locator('#lab-tool-gate')).toHaveCount(0);
+  await expect(page.locator('#viewer3d')).toBeVisible();
+  await saveShot(page, 'guest-molecules-save-cta');
+});
+
+test('signed-in free can save a molecule without a Pro overlay', async ({ page }) => {
+  const free = userFixture('free');
+  await installApi(page, { kind: 'free' });
+  await page.goto('/viewer/molecules.html');
+  await expect.poll(() => page.evaluate(() => {
+    const ads = window.__ATOMURUS_ADS__ || {};
+    return Boolean(window.AtomurusLabToolGate && ads.ready && ads.signedIn && ads.user && ads.user.features && ads.user.features.studyCloud);
+  })).toBe(true);
+  await expectViewerCanvas(page, '#viewer3d');
+  const save = page.locator('#atomurus-study-save [data-study-save]');
+  await expect(save).toBeVisible({ timeout: 15_000 });
+  await expect(page.locator('#atomurus-study-save [data-study-save] .study-pro-badge')).toHaveCount(0);
+  await save.click();
+  await expect(page.locator('#atomurus-study-save')).toContainText(/Saved|Salvo/i, { timeout: 8_000 });
+  await expect(page.locator('#ws-dialog-host.is-open')).toHaveCount(0);
+  await expect(page.locator('#lab-tool-gate')).toHaveCount(0);
+  await saveShot(page, 'free-molecules-save');
+});
+
+test('Pro generate stays an extra after a public molecule save', async ({ page }) => {
+  await installApi(page, { kind: 'pro' });
+  await page.goto('/viewer/molecules.html');
+  await expectViewerCanvas(page, '#viewer3d');
+  const save = page.locator('#atomurus-study-save [data-study-save]');
+  await expect(save).toBeVisible({ timeout: 15_000 });
+  await save.click();
+  await expect(page.locator('#atomurus-study-save')).toContainText(/Saved|Salvo/i, { timeout: 8_000 });
+  await expect(page.locator('[data-study-generate]')).toBeVisible();
+  await expect(page.locator('#lab-tool-gate')).toHaveCount(0);
+});
+
+test('guest Open Lab molecule viewer works on a phone viewport', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/viewer/molecules.html');
+  await expectViewerCanvas(page, '#viewer3d');
+  await expectShareWorks(page);
+  await expect(page.locator('.vz-tabs')).toBeVisible();
+  await expect(page.locator('.vz-tabs')).not.toContainText(/PRO/);
+  const isomerismTab = page.locator('.vz-tabs a[href*="isomerism"]');
+  await isomerismTab.scrollIntoViewIfNeeded();
+  await expect(isomerismTab).toBeVisible();
+  await saveShot(page, 'guest-molecules-mobile');
+});
+

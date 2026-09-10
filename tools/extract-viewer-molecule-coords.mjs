@@ -119,7 +119,7 @@ function patchHtml(file, keys) {
 
   html = html.replace(
     'atomurusBootViewer(document.getElementById(\'viewer3d\'), function () {',
-    'atomurusBootProViewer(document.getElementById(\'viewer3d\'), \'moleculeViewer\', function () {'
+    'atomurusBootLabViewer(document.getElementById(\'viewer3d\'), \'moleculeViewer\', function () {'
   );
   html = html.replace(
     '  window.setMolecule = function(key, skipUrl){\n    if (!molData[key]) return;\n',

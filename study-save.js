@@ -71,12 +71,15 @@
       cardsCreated: t('cardsCreated', pt ? 'flashcards criados' : 'flashcards created'),
       cardsNoneNeeded: t('cardsNoneNeeded', pt ? 'Nenhum card novo era necessário. Esses flashcards já existem neste Study Set.' : 'No new cards were needed. These flashcards already exist in this Study Set.'),
       signIn: t('signIn', pt ? 'Entre para salvar no Study Cloud.' : 'Sign in to save to Study Cloud.'),
-      proOnly: t('proOnly', pt ? 'A Biblioteca é um recurso Pro' : 'Study Library is a Pro feature'),
+      proOnly: t('proOnly', pt ? 'Gerar cards é um recurso Pro' : 'Generate cards is a Pro feature'),
       upgrade: t('upgrade', pt ? 'Assinar o Pro' : 'Upgrade to Pro'),
       login: t('login', pt ? 'Entrar' : 'Sign in'),
       createAccount: t('createAccount', pt ? 'Criar conta' : 'Create account'),
-      saveTitle: t('saveTitle', pt ? 'Salve isto na sua Biblioteca' : 'Save this to your Study Library'),
-      saveBody: t('saveBody', pt ? 'Crie uma conta Atomurus e comece seu trial Pro de 30 dias para salvar e sincronizar material de estudo.' : 'Create an Atomurus account and start your 30-day Pro trial to save and sync study material.'),
+      saveTitle: t('saveTitle', pt ? 'Salve isto no seu workspace' : 'Save this to your workspace'),
+      saveMoleculeTitle: t('saveMoleculeTitle', pt ? 'Salve esta molécula' : 'Save this molecule'),
+      saveBody: t('saveBody', pt ? 'Crie uma conta gratuita para guardar no seu workspace.' : 'Create a free account to keep it in your workspace.'),
+      generatePro: t('generatePro', pt ? 'Gerar cards é um recurso Pro' : 'Generate cards is a Pro feature'),
+      generateBody: t('generateBody', pt ? 'A geração automática de flashcards faz parte do Atomurus Pro. Ver e salvar o material continua disponível na conta gratuita.' : 'Automated flashcard generation is part of Atomurus Pro. Viewing stays free, and a free account can still save this to your workspace.'),
       lockedBody: t('lockedBody', pt ? 'Salve materiais, notas e progresso de estudo em todos os dispositivos.' : 'Save materials, notes and study progress across devices.'),
       proBadge: t('proBadge', 'PRO'),
       couldNotSave: t('couldNotSave', pt ? 'Não foi possível salvar. Tente de novo.' : 'Could not save. Try again.'),
@@ -113,15 +116,38 @@
   }
 
   function sessionHint() {
-    var ads = window.__ATOMURUS_ADS__;
-    if (ads && ads.ready) {
-      return { signedIn: Boolean(ads.signedIn), isPro: Boolean(ads.user && ads.user.isPro), user: ads.user };
-    }
-    var managed = window.__ATOMURUS_AUTH__;
-    if (managed && managed.ready) {
-      return { signedIn: Boolean(managed.signedIn), isPro: Boolean(managed.user && managed.user.isPro), user: managed.user };
-    }
-    return { signedIn: false, isPro: false, user: null };
+    var ads = window.__ATOMURUS_ADS__ || {};
+    var auth = window.__ATOMURUS_AUTH__ || {};
+    var user = ads.user || auth.user || null;
+    var features = (user && user.features) || ads.features || {};
+    return {
+      signedIn: Boolean(ads.signedIn || auth.signedIn || (user && (user.id || user.email))),
+      isPro: Boolean((user && user.isPro) || ads.isPro),
+      ready: Boolean(ads.ready || auth.ready),
+      user: user,
+      features: features
+    };
+  }
+
+  function featureFlag(hint, key) {
+    if (!hint || !key) return null;
+    var features = hint.features || {};
+    if (typeof features[key] === 'boolean') return features[key];
+    return null;
+  }
+
+  function canUseAccountSave(hint) {
+    var study = featureFlag(hint, 'studyCloud');
+    if (study !== null) return study;
+    var history = featureFlag(hint, 'calculatorHistory');
+    if (history !== null) return history;
+    return Boolean(hint && hint.signedIn);
+  }
+
+  function canGeneratePractice(hint) {
+    var generate = featureFlag(hint, 'automatedPractice');
+    if (generate !== null) return generate;
+    return Boolean(hint && hint.isPro);
   }
 
   function goLogin() {
@@ -209,7 +235,15 @@
       };
     }
 
-    if (path.indexOf('/explore/') === 0 || path === '/viewer/atomic-models' || path.indexOf('/viewer/atomic-models/') === 0 || path.indexOf('/viewer/isomerism') === 0 || path === '/explore') {
+    if (
+      path.indexOf('/explore/') === 0 ||
+      path === '/viewer/atomic-models' ||
+      path.indexOf('/viewer/atomic-models/') === 0 ||
+      path === '/viewer/allotropes' ||
+      path.indexOf('/viewer/allotropes/') === 0 ||
+      path.indexOf('/viewer/isomerism') === 0 ||
+      path === '/explore'
+    ) {
       var heading = document.querySelector('h1, .lc-doc-title, .lc-el-name');
       return {
         kind: 'library',
@@ -240,14 +274,23 @@
     }
   }
 
-  function handleError(err, msgNode, labels) {
+  function handleError(err, msgNode, labels, kind, ctx) {
     if (!err) return;
     if (err.status === 401 || err.code === 'session_expired') {
       goLogin();
       return;
     }
     if (err.status === 403 || err.code === 'feature_locked') {
-      setMsg(msgNode, labels.proOnly, err.upgradeUrl || '/pricing', labels.upgrade);
+      var hint = sessionHint();
+      if (kind === 'generate' || err.feature === 'automatedPractice') {
+        openSaveGate(labels, hint, 'generate', ctx);
+        return;
+      }
+      if (!hint.signedIn) {
+        openSaveGate(labels, hint, 'save', ctx);
+        return;
+      }
+      setMsg(msgNode, labels.couldNotSave || (langIsPt() ? 'Não foi possível salvar. Tente de novo.' : 'Could not save. Try again.'));
       return;
     }
     setMsg(msgNode, labels.couldNotSave || (langIsPt() ? 'Não foi possível salvar. Tente de novo.' : 'Could not save. Try again.'));
@@ -266,7 +309,13 @@
     mark.textContent = on ? '✓' : '♡';
     button.appendChild(mark);
     button.appendChild(document.createTextNode(' ' + base));
-    if (!on && !sessionHint().isPro) {
+  }
+
+  function paintGenerate(button, labels) {
+    if (!button) return;
+    while (button.firstChild) button.removeChild(button.firstChild);
+    button.appendChild(document.createTextNode(labels.generate));
+    if (!canGeneratePractice(sessionHint())) {
       var badge = document.createElement('span');
       badge.className = 'study-pro-badge';
       badge.textContent = labels.proBadge;
@@ -274,16 +323,36 @@
     }
   }
 
-  function openSaveGate(labels, hint) {
+  function guestSaveTitle(labels, ctx) {
+    if (ctx && ctx.itemType === 'molecule') return labels.saveMoleculeTitle;
+    return labels.saveTitle;
+  }
+
+  function openSaveGate(labels, hint, kind, ctx) {
     var ui = window.AtomurusWorkspaceUI;
+    kind = kind || 'save';
     if (!ui || typeof ui.openDialog !== 'function') {
-      if (!hint.signedIn) location.assign(signupHref());
-      else location.assign('/pricing');
+      if (kind === 'generate' && hint.signedIn) location.assign('/pricing');
+      else if (!hint.signedIn) location.assign(signupHref());
+      else location.assign(loginHref());
+      return;
+    }
+    if (kind === 'generate') {
+      ui.openDialog({
+        title: labels.generatePro || labels.proOnly,
+        body: labels.generateBody || labels.lockedBody,
+        actions: hint.signedIn
+          ? [{ label: labels.upgrade, kind: 'ws-btn-primary', href: '/pricing' }]
+          : [
+              { label: labels.createAccount, kind: 'ws-btn-primary', href: signupHref() },
+              { label: labels.login, kind: 'ws-btn-ghost', href: loginHref() }
+            ]
+      });
       return;
     }
     if (!hint.signedIn) {
       ui.openDialog({
-        title: labels.saveTitle,
+        title: guestSaveTitle(labels, ctx),
         body: labels.saveBody,
         actions: [
           { label: labels.createAccount, kind: 'ws-btn-primary', href: signupHref() },
@@ -293,10 +362,10 @@
       return;
     }
     ui.openDialog({
-      title: labels.proOnly,
-      body: labels.lockedBody,
+      title: labels.saveTitle,
+      body: labels.couldNotSave,
       actions: [
-        { label: labels.upgrade, kind: 'ws-btn-primary', href: '/pricing' }
+        { label: labels.login, kind: 'ws-btn-primary', href: loginHref() }
       ]
     });
   }
@@ -329,7 +398,7 @@
 
   function hydrateLibrary(ctx, host, button, labels) {
     if (!ctx || ctx.kind !== 'library') return;
-    if (!sessionHint().isPro) return;
+    if (!canUseAccountSave(sessionHint())) return;
     withStudy(function (api) {
       if (!api) return null;
       return api.items({ type: ctx.itemType, itemKey: ctx.itemKey, limit: 1 }).then(function (data) {
@@ -356,6 +425,7 @@
     row.className = 'study-save-row';
     var button = document.createElement('button');
     button.type = 'button';
+    button.setAttribute('data-study-save', '1');
     paintSaved(button, labels, false);
     var details = document.createElement('button');
     details.type = 'button';
@@ -400,7 +470,8 @@
     addBtn.setAttribute('aria-expanded', 'false');
     var genBtn = document.createElement('button');
     genBtn.type = 'button';
-    genBtn.textContent = labels.generate;
+    genBtn.setAttribute('data-study-generate', '1');
+    paintGenerate(genBtn, labels);
     genBtn.hidden = !setCanGenerate(ctx);
     genBtn.disabled = true;
     var setStatus = document.createElement('div');
@@ -503,7 +574,7 @@
           });
         });
       }).catch(function (err) {
-        handleError(err, setStatus, labels);
+        handleError(err, setStatus, labels, 'save', ctx);
       });
     }
 
@@ -516,8 +587,8 @@
     addBtn.addEventListener('click', function (event) {
       event.stopPropagation();
       var hint = sessionHint();
-      if (!hint.isPro) {
-        openSaveGate(labels, hint);
+      if (!canUseAccountSave(hint)) {
+        openSaveGate(labels, hint, 'save', ctx);
         return;
       }
       setStatus.textContent = '';
@@ -531,7 +602,7 @@
           if (first) first.focus();
         });
       }).catch(function (err) {
-        handleError(err, setStatus, labels);
+        handleError(err, setStatus, labels, 'save', ctx);
       });
     });
 
@@ -549,12 +620,17 @@
         });
       }).catch(function (err) {
         createBtn.disabled = false;
-        handleError(err, setStatus, labels);
+        handleError(err, setStatus, labels, 'save', ctx);
       });
     });
 
     genBtn.addEventListener('click', function (event) {
       event.stopPropagation();
+      var hint = sessionHint();
+      if (!canGeneratePractice(hint)) {
+        openSaveGate(labels, hint, 'generate', ctx);
+        return;
+      }
       if (!lastSet || !lastSet.id) {
         addBtn.click();
         return;
@@ -597,8 +673,8 @@
 
     button.addEventListener('click', function () {
       var hint = sessionHint();
-      if (!hint.isPro) {
-        openSaveGate(labels, hint);
+      if (!canUseAccountSave(hint)) {
+        openSaveGate(labels, hint, 'save', ctx);
         return;
       }
       if (pending) return;
@@ -627,7 +703,7 @@
           markSavedHost(host, true);
         }).catch(function (err) {
           paintSaved(button, labels, false);
-          handleError(err, msg, labels);
+          handleError(err, msg, labels, 'save', ctx);
         }).then(function () {
           pending = false;
         });
@@ -691,6 +767,7 @@
     row.className = 'study-save-row';
     var button = document.createElement('button');
     button.type = 'button';
+    button.setAttribute('data-study-save', '1');
     paintSaved(button, labels, false);
     var msg = document.createElement('div');
     msg.className = 'study-save-msg';
@@ -702,8 +779,8 @@
 
     button.addEventListener('click', function () {
       var hint = sessionHint();
-      if (!hint.isPro) {
-        openSaveGate(labels, hint);
+      if (!canUseAccountSave(hint)) {
+        openSaveGate(labels, hint, 'save', { kind: 'calculator' });
         return;
       }
       var run = lastCalculatorRun || captureCalculatorRun();
@@ -726,7 +803,7 @@
           paintSaved(button, labels, true);
         }).catch(function (err) {
           paintSaved(button, labels, false);
-          handleError(err, msg, labels);
+          handleError(err, msg, labels, 'save', { kind: 'calculator' });
         }).then(function () {
           pending = false;
         });

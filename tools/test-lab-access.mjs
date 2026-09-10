@@ -91,6 +91,10 @@ assert.equal(calcTabFeature('stoich'), 'publicStoichiometry');
 assert.equal(pageToolPolicy('/periodic-table').need, 'public');
 assert.equal(pageToolPolicy('/explore/what-is-isomerism').need, 'public');
 assert.equal(pageToolPolicy('/viewer/molecules').need, 'public');
+assert.equal(pageToolPolicy('/viewer/atomic-models').need, 'public');
+assert.equal(pageToolPolicy('/viewer/allotropes').need, 'public');
+assert.equal(pageToolPolicy('/viewer/isomerism').need, 'public');
+assert.equal(pageToolPolicy('/viewer/isomerism/constitutional/function').need, 'public');
 assert.equal(pageToolPolicy('/periodic-table/compare').need, 'public');
 
 const pending = { signedIn: true, isPro: true, ready: false, features: { publicThermodynamics: true } };
@@ -154,7 +158,9 @@ assert.match(gate, /features\.moleculeViewer|moleculeViewer/);
 assert.doesNotMatch(gate, /security boundary/i);
 
 const loadThree = read('viewer/load-three.js');
-assert.match(loadThree, /atomurusBootProViewer/);
+assert.match(loadThree, /atomurusBootLabViewer/);
+assert.match(loadThree, /atomurusBootProViewer = bootLabViewer/);
+assert.match(loadThree, /isPublicViewerFeature/);
 assert.match(loadThree, /VIEWER_CONTROL_STUBS/);
 assert.match(loadThree, /el\.closest\('\.viewer'\)/);
 assert.match(loadThree, /Loading 3D viewer/);
@@ -164,10 +170,13 @@ assert.match(loadThree, /atomurusLoadViewerRuntime/);
 assert.match(loadThree, /VIEWER_RUNTIME_SRC/);
 assert.match(loadThree, /atomic-viewer\.js/);
 assert.match(loadThree, /function nearViewport/);
+assert.match(loadThree, /Public access does not mean eager-loading/);
 assert.doesNotMatch(loadThree, /VIEWER_RUNTIME_SRC\[name\] \+|src = name/);
 
 const molecules = read('viewer/molecules.html');
-assert.match(molecules, /atomurusBootProViewer/);
+assert.match(molecules, /atomurusBootLabViewer/);
+assert.match(molecules, /href="isomerism.html"/);
+assert.doesNotMatch(molecules, /href="isomerism\/constitutional\/function.html"/);
 assert.match(molecules, /atomurusLoadViewerRuntime\('molecule-viewer\.js'\)/);
 assert.doesNotMatch(molecules, /const molData = \{/);
 assert.doesNotMatch(molecules, /atoms:\[\{pos:/);
@@ -190,13 +199,13 @@ assert.match(molRuntime, /return fetchMolecule\(initialMol\)/);
 assert.match(molRuntime, /atomurusInitMoleculeViewer/);
 
 const moleculesPt = read('viewer/molecules.pt.html');
-assert.match(moleculesPt, /atomurusBootProViewer/);
+assert.match(moleculesPt, /atomurusBootLabViewer/);
 assert.match(moleculesPt, /atomurusLoadViewerRuntime\('molecule-viewer\.js'\)/);
 assert.doesNotMatch(moleculesPt, /const molData = \{/);
 assert.doesNotMatch(moleculesPt, /WebGLRenderer/);
 
 const atomic = read('viewer/atomic-models.html');
-assert.match(atomic, /atomurusBootProViewer/);
+assert.match(atomic, /atomurusBootLabViewer/);
 assert.match(atomic, /atomicModelViewer/);
 assert.match(atomic, /atomurusLoadViewerRuntime\('atomic-viewer\.js'\)/);
 assert.match(atomic, /canvas-wrap\.is-2d/);
@@ -210,7 +219,7 @@ assert.match(atomicRuntime, /WebGLRenderer/);
 assert.match(atomicRuntime, /viewer3d\.style\.visibility = 'visible'/);
 
 const allotropes = read('viewer/allotropes.html');
-assert.match(allotropes, /atomurusBootProViewer/);
+assert.match(allotropes, /atomurusBootLabViewer/);
 assert.match(allotropes, /allotropeViewer/);
 assert.match(allotropes, /atomurusLoadViewerRuntime\('allotrope-viewer\.js'\)/);
 assert.doesNotMatch(allotropes, /WebGLRenderer/);
@@ -234,7 +243,7 @@ for (const file of isoPages) {
   const html = readFileSync(file, 'utf8');
   assert.match(html, /atomurusLoadViewerRuntime\('isomerism-3d\.js'\)/, file);
   assert.match(html, /<script src="\.\.\/\.\.\/load-three\.js\?v=[^"]+"><\/script>/, file);
-  assert.doesNotMatch(html, /<script defer>\s*atomurusBootProViewer/, file);
+  assert.doesNotMatch(html, /<script defer>\s*atomurusBoot(?:Lab|Pro)Viewer/, file);
   assert.doesNotMatch(html, /load-three\.js[^"']*["']\s+defer/, file);
   assert.doesNotMatch(html, /src="\.\.\/isomerism-3d\.js/, file);
   assert.doesNotMatch(html, /WebGLRenderer/, file);
@@ -244,7 +253,7 @@ const exploreIso = read('explore/what-is-isomerism.html');
 assert.match(exploreIso, /isomerism-3d\.js/);
 
 const iso3d = read('viewer/isomerism/isomerism-3d.js');
-assert.match(iso3d, /atomurusBootProViewer/);
+assert.match(iso3d, /atomurusBootLabViewer/);
 assert.match(iso3d, /isomerismViewer/);
 assert.match(iso3d, /isExplorePage/);
 assert.match(iso3d, /loadedAsProRuntime/);
@@ -480,5 +489,56 @@ await withAuthEnv(async () => {
   ));
   assert.equal(traversal.status, 400);
 });
+
+const studySave = read('study-save.js');
+assert.match(studySave, /canUseAccountSave/);
+assert.match(studySave, /canGeneratePractice/);
+assert.match(studySave, /data-study-save/);
+assert.match(studySave, /Create a free account to keep it in your workspace/);
+assert.match(studySave, /Save this molecule/);
+assert.doesNotMatch(studySave, /Study Library is a Pro feature/);
+assert.doesNotMatch(studySave, /start your 30-day Pro trial to save/);
+assert.doesNotMatch(studySave, /if \(!hint\.isPro\) \{\s*openSaveGate/);
+assert.doesNotMatch(studySave, /if \(!on && !sessionHint\(\)\.isPro\)/);
+
+const localNav = read('templates/chrome/viewer-local-nav.html');
+assert.match(localNav, /data-local-nav="atomic-models"/);
+assert.match(localNav, /data-local-nav="molecules"/);
+assert.match(localNav, /data-local-nav="allotropes"/);
+assert.match(localNav, /data-local-nav="isomerism"/);
+assert.doesNotMatch(localNav, /PRO/);
+
+const shareBtn = read('share-button.js');
+assert.match(shareBtn, /injectShareButton/);
+assert.match(shareBtn, /share-copy/);
+assert.doesNotMatch(shareBtn, /isPro/);
+assert.doesNotMatch(shareBtn, /signedIn/);
+
+const pageShare = read('page-share-init.js');
+assert.match(pageShare, /atomic_models_share/);
+assert.match(pageShare, /molecules_share/);
+assert.match(pageShare, /allotropes_share/);
+assert.match(pageShare, /isomerism_share/);
+
+const robots = read('robots.txt');
+assert.match(robots, /^Allow: \//m);
+assert.doesNotMatch(robots, /Disallow: \/viewer/);
+
+const isomerismHub = read('viewer/isomerism.html');
+assert.match(isomerismHub, /<link rel="canonical" href="https:\/\/atomurus.com\/viewer\/isomerism">/);
+assert.doesNotMatch(isomerismHub, /canonical" href="https:\/\/atomurus.com\/viewer\/isomerism\?lang=pt-BR"/);
+assert.match(isomerismHub, /isAccessibleForFree": true/);
+assert.match(isomerismHub, /share-button\.js/);
+assert.match(isomerismHub, /page-share-init\.js/);
+
+const sitemap = read('sitemap.xml');
+assert.match(sitemap, /<loc>https:\/\/atomurus.com\/viewer\/isomerism<\/loc>/);
+assert.match(sitemap, /<loc>https:\/\/atomurus.com\/viewer\/molecules<\/loc>/);
+assert.match(sitemap, /<loc>https:\/\/atomurus.com\/viewer\/atomic-models<\/loc>/);
+assert.match(sitemap, /<loc>https:\/\/atomurus.com\/viewer\/allotropes<\/loc>/);
+
+const bohr = read('viewer/atomic-models/bohr.html');
+assert.match(bohr, /isAccessibleForFree": true/);
+assert.match(bohr, /share-button\.js/);
 
 console.log('lab-access tests passed');
