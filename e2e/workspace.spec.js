@@ -268,6 +268,11 @@ test('mobile 390x844: bottom nav, drawer, no horizontal overflow', async ({ page
   await saveShot(page, 'mobile-overview');
   await page.locator('#ws-menu-btn').click();
   await expect(page.locator('#ws-sidebar')).toBeVisible();
+  const account = page.locator('#ws-nav-foot a[data-nav="account"]');
+  await expect(account).toBeVisible();
+  const accountBox = await account.boundingBox();
+  expect(accountBox).toBeTruthy();
+  expect(accountBox.y + accountBox.height).toBeLessThan(844);
   await saveShot(page, 'mobile-drawer');
   await page.keyboard.press('Escape');
   await gotoWorkspace(page, '/app?section=library');
@@ -428,6 +433,10 @@ test('Guest workspace footer opens signup, not login', async ({ page }) => {
   await gotoWorkspace(page, '/app');
   const signup = page.locator('#ws-nav-foot a[data-nav="signup"]');
   await expect(signup).toBeVisible();
+  const footBox = await signup.boundingBox();
+  expect(footBox).toBeTruthy();
+  expect(footBox.y).toBeGreaterThan(64);
+  expect(footBox.y + footBox.height).toBeLessThan(800);
   await expect(signup).toHaveAttribute('href', /\/signup/);
   await expect(page.locator('#ws-nav-foot a[data-nav="signin"]')).toHaveAttribute('href', /\/login/);
   await expect(page.locator('#ws-nav-foot a[data-nav="plans"]')).toHaveAttribute('href', /\/pricing/);

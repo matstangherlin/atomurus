@@ -6,6 +6,8 @@ Atomurus Workspace is the personal chemistry workbench. Account is a separate se
 
 - Global sidebar is the same on Home, Periodic Table, Viewer, Calculators, Explore, Workspace, and Account.
 - Footer is painted only by `assets/global-nav.js` `paintFoot()` from auth state.
+- Workspace shell is viewport-locked (`100dvh`): the global sidebar no longer grows with page content, so Account / Plans stay in the lower corner. Main content scrolls independently. Nav items scroll inside the sidebar; the foot stays put.
+- Guest: Create account (`/signup?next=`), Sign in, Plans.
 - Guest: Create account (`/signup?next=`), Sign in, Plans.
 - Free: Account (`/account`), Plan (`/account?tab=plan`), Sign out, Upgrade to Pro.
 - Trial / Pro: Account, Plan, Sign out. No Upgrade CTA. Trial still shows the PRO TRIAL badge.

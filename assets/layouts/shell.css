@@ -176,7 +176,7 @@ aside[data-atomurus-sidebar] {
   background: color-mix(in oklab, var(--color-surface, var(--lc-paper, #F8F5EC)) 88%, var(--color-bg, var(--lc-bg, #F2EFE7)));
   padding: var(--space-4, 16px) var(--space-3, 12px) 18px;
   min-height: 0;
-  overflow-y: auto;
+  overflow: hidden;
   scrollbar-width: thin;
   scrollbar-color: var(--color-border, var(--lc-rule, #D8D2BF)) transparent;
 }
@@ -187,6 +187,7 @@ aside[data-atomurus-sidebar] {
   gap: 4px;
   flex: 1 1 auto;
   min-height: 0;
+  overflow-y: auto;
 }
 
 .ws-nav-block {
