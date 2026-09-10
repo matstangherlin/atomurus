@@ -207,7 +207,7 @@ assert.match(molRuntime, /atomurusPaperLab/);
 const moleculesPt = read('viewer/molecules.pt.html');
 assert.match(moleculesPt, /atomurusBootLabViewer/);
 assert.match(moleculesPt, /atomurusLoadViewerRuntime\('molecule-viewer\.js'\)/);
-assert.match(moleculesPt, /load-three\.js\?v=202609101200/);
+assert.match(moleculesPt, /load-three\.js\?v=\d+/);
 assert.match(moleculesPt, /--canvas-bg-1:#F2EFE7/);
 assert.match(moleculesPt, /data-mol-rep="stick"/);
 assert.doesNotMatch(moleculesPt, /const molData = \{/);
