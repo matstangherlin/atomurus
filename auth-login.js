@@ -215,30 +215,27 @@
     applyAuthTitle(mode);
     if (mode === 'signup') {
       clearSignupDraft();
-      setTimeout(clearSignupDraft, 80);
-      setTimeout(clearSignupDraft, 400);
+      setTimeout(function () { clearSignupDraft({ hintsOnly: true }); }, 80);
+      setTimeout(function () { clearSignupDraft({ hintsOnly: true }); }, 400);
     }
     if (!options.skipHistory && history && history.replaceState) {
       history.replaceState(null, document.title, authScreenPath(mode));
     }
   }
 
-  function clearSignupDraft() {
-    ['auth-signup-name', 'auth-signup-username', 'auth-signup-email', 'auth-signup-password', 'auth-signup-password-confirm'].forEach(function (id) {
-      var el = $(id);
-      if (el) el.value = '';
-    });
+  function looksLikeFounderHint(value) {
+    return /matheus|stangherlin|matstan|stan gherlin/i.test(String(value || ''));
   }
 
-  function armAntiAutofill(input) {
-    if (!input || input.dataset.antiAutofill === '1') return;
-    input.dataset.antiAutofill = '1';
-    input.setAttribute('readonly', 'readonly');
-    function release() {
-      input.removeAttribute('readonly');
-    }
-    input.addEventListener('focus', release);
-    input.addEventListener('pointerdown', release);
+  function clearSignupDraft(opts) {
+    opts = opts || {};
+    ['auth-signup-name', 'auth-signup-username', 'auth-signup-email', 'auth-signup-password', 'auth-signup-password-confirm'].forEach(function (id) {
+      var el = $(id);
+      if (!el) return;
+      if (opts.hintsOnly && !looksLikeFounderHint(el.value)) return;
+      if (id.indexOf('password') !== -1 && opts.hintsOnly) return;
+      el.value = '';
+    });
   }
 
   function bindModeLinks() {
@@ -551,9 +548,6 @@
     bindAuthForms();
     bindPasswordToggles();
     bindPasswordHints();
-    ['auth-signup-name', 'auth-signup-username', 'auth-signup-email'].forEach(function (id) {
-      armAntiAutofill($(id));
-    });
     if (window.I18N && typeof window.I18N.onChange === 'function') {
       window.I18N.onChange(function () {
         applyAuthTitle(currentMode());
