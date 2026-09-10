@@ -239,6 +239,7 @@ const atomicPt = read('viewer/atomic-models.pt.html');
 assert.match(atomicPt, /what-is-an-atom\.html/);
 assert.match(atomicPt, /lab-readmore/);
 assert.match(atomicPt, /data-i18n="atomicModels.pillQuantum">Quântico/);
+assert.match(read('build-i18n.js'), /function bakeDataI18nText/);
 
 const atomicRuntime = read('viewer/runtime/atomic-viewer.js');
 assert.match(atomicRuntime, /atomurusInitAtomicViewer/);
