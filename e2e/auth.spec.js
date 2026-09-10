@@ -17,7 +17,7 @@ test('signed-out workspace shows Pro navigation and explains locked features', a
   await page.locator('#ws-study-nav a[href="/app?section=sets"]').click();
   await expect(page.locator('#app-study')).toContainText(/Study Sets/);
   await expect(page.locator('#app-study a[href*="signup"]')).toContainText(/Create free account|Criar conta gratuita/);
-  await expect(page.locator('#ws-dialog-host')).not.toContainText(/available only|disponível somente/i);
+  await expect(page.locator('#ws-dialog-host')).toHaveCount(0);
   await page.locator('#ws-study-nav a[href="/app?section=review"]').click();
   await expect(page.locator('#ws-dialog-host')).toContainText(/available only|disponível somente/i);
   await expect(page.locator('#ws-dialog-host a[href^="/login"]')).toBeVisible();
