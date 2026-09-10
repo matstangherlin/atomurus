@@ -2,6 +2,7 @@ User-agent: *
 Allow: /
 Disallow: /netlify/
 Disallow: /propostas/
+Disallow: /dev/
 Disallow: /hanzi-logic/
 Disallow: /tools/
 Disallow: /scripts/

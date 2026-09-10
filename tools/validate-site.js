@@ -413,6 +413,14 @@ function assertUiV2() {
   if (showcase.includes('atomurus-lab-console.css') || showcase.includes('public-workspace.js')) {
     fail('dev/ui.html must not load lab-console or public-workspace');
   }
+  const vizProto = read('dev/viz-prototype.html');
+  if (!vizProto.includes('noindex')) fail('dev/viz-prototype.html must be noindex');
+  if (vizProto.includes('viewer/runtime/') || vizProto.includes('atomurus-lab-console.css')) {
+    fail('visualization prototype must not load production viewer runtimes or lab console');
+  }
+  if (!read('robots.txt').includes('Disallow: /dev/')) {
+    fail('robots.txt must disallow /dev/');
+  }
   if (!read('index.html').includes('assets/ui/index.css')) {
     fail('index.html must load UI V2 after the Home migration');
   }
