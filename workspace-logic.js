@@ -6,12 +6,13 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
 
-  var SECTIONS = ['overview', 'library', 'sets', 'review', 'insights', 'pro-lab', 'history', 'notes', 'progress', 'account'];
+  var SECTIONS = ['overview', 'library', 'sets', 'practice', 'review', 'insights', 'pro-lab', 'history', 'notes', 'progress', 'account'];
   var ACCOUNT_TABS = ['overview', 'profile', 'security', 'plan', 'preferences'];
   var AREA_BY_SECTION = {
     overview: 'overview',
     library: 'study',
     sets: 'study',
+    practice: 'study',
     review: 'study',
     insights: 'study',
     'pro-lab': 'lab',
@@ -178,6 +179,58 @@
         return part.charAt(0).toUpperCase() + part.slice(1);
       })
       .join(' ');
+  }
+
+  function continueTitle(row, recentItems) {
+    if (row && row.title) return String(row.title);
+    var key = row && row.contentKey;
+    var href = row && row.lastPosition;
+    var items = recentItems || [];
+    var i;
+    for (i = 0; i < items.length; i += 1) {
+      if (key && items[i].itemKey === key) return items[i].title || items[i].itemKey || '';
+      if (href && items[i].href === href) return items[i].title || items[i].itemKey || '';
+    }
+    return humanizeKey(key);
+  }
+
+  function continueHref(row, recentItems, fallback) {
+    var next = fallback || '/app';
+    var raw = String(row && row.lastPosition || '').trim();
+    if (raw) {
+      var fromRow = safeHref(raw, next);
+      if (fromRow !== next || raw === next) return fromRow;
+    }
+    var key = row && row.contentKey;
+    var items = recentItems || [];
+    var i;
+    for (i = 0; i < items.length; i += 1) {
+      if (key && items[i].itemKey === key && items[i].href) return safeHref(items[i].href, next);
+    }
+    return next;
+  }
+
+  function setsDueCount(sets) {
+    return (sets || []).reduce(function (sum, set) {
+      return sum + (Number(set && set.dueCount) || 0);
+    }, 0);
+  }
+
+  function dueTomorrowCount(forecast) {
+    var rows = forecast || [];
+    var i;
+    for (i = 0; i < rows.length; i += 1) {
+      if (rows[i] && rows[i].kind === 'tomorrow') return Number(rows[i].due) || 0;
+    }
+    return 0;
+  }
+
+  function recentNotes(items, limit) {
+    var rows = (items || []).filter(function (item) {
+      return String(item && item.note || '').trim();
+    });
+    var n = Number(limit);
+    return n > 0 ? rows.slice(0, n) : rows;
   }
 
   function reviewStartHref(id) {
@@ -376,6 +429,11 @@
     progressPercent: progressPercent,
     safeHref: safeHref,
     humanizeKey: humanizeKey,
+    continueTitle: continueTitle,
+    continueHref: continueHref,
+    setsDueCount: setsDueCount,
+    dueTomorrowCount: dueTomorrowCount,
+    recentNotes: recentNotes,
     reviewStartHref: reviewStartHref,
     focusReviewHref: focusReviewHref,
     reviewModeFromQuery: reviewModeFromQuery,

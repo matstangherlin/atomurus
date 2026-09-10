@@ -197,6 +197,28 @@
       focusLandingBody: 'Review the cards that need the most attention.',
       insightsOn: 'Study Insights unlocked', focusOn: 'Focus Review unlocked',
       openInsights: 'Open Insights',
+      studyWithAtomurus: 'Study with Atomurus',
+      studyGuestLede: 'Save chemistry resources, build sets and continue learning.',
+      createFreeAccount: 'Create free account',
+      continueLearning: 'Continue learning',
+      reviewDueTitle: 'Review due',
+      learningPaths: 'Learning Paths',
+      learningPathsLede: 'Existing chemistry pages, grouped into paths.',
+      pathPlanned: 'Planned',
+      pathAvailable: 'Available',
+      practiceChemistry: 'Practice Chemistry',
+      practiceLede: 'Work a problem. Flashcards stay in Study Sets.',
+      practicePlanned: 'Planned',
+      practiceNav: 'Practice',
+      viewAll: 'View all',
+      weakConcepts: 'Weak concepts',
+      weakConceptsSource: 'From review history.',
+      dueTomorrow: 'Due tomorrow',
+      setsDueReady: '{n} cards due in your sets',
+      setsDueReadyOne: '{n} card due in your sets',
+      lastOpened: 'Last opened {when}',
+      recentNotes: 'Recent notes',
+      openLibrary: 'Open Library',
       publicCalc: 'Calculators',
       addScenario: '+ Add scenario', calculateAll: 'Calculate all', saveSession: 'Save session',
       sessionTitle: 'Session title', sessionSaved: 'Lab session saved',
@@ -484,6 +506,28 @@
       focusLandingBody: 'Revise os cards que mais precisam de atenção.',
       insightsOn: 'Insights de Estudo liberados', focusOn: 'Focus Review liberado',
       openInsights: 'Abrir Insights',
+      studyWithAtomurus: 'Estude com o Atomurus',
+      studyGuestLede: 'Salve materiais de química, monte sets e continue aprendendo.',
+      createFreeAccount: 'Criar conta gratuita',
+      continueLearning: 'Continuar aprendendo',
+      reviewDueTitle: 'Revisão vencida',
+      learningPaths: 'Caminhos de aprendizado',
+      learningPathsLede: 'Páginas de química existentes, agrupadas em percursos.',
+      pathPlanned: 'Planejado',
+      pathAvailable: 'Disponível',
+      practiceChemistry: 'Praticar química',
+      practiceLede: 'Resolva um problema. Os flashcards continuam nos Study Sets.',
+      practicePlanned: 'Planejado',
+      practiceNav: 'Prática',
+      viewAll: 'Ver todos',
+      weakConcepts: 'Conceitos fracos',
+      weakConceptsSource: 'A partir do histórico de revisão.',
+      dueTomorrow: 'Vence amanhã',
+      setsDueReady: '{n} cards vencidos nos seus sets',
+      setsDueReadyOne: '{n} card vencido nos seus sets',
+      lastOpened: 'Aberto {when}',
+      recentNotes: 'Notas recentes',
+      openLibrary: 'Abrir Biblioteca',
       publicCalc: 'Calculadoras',
       addScenario: '+ Adicionar cenário', calculateAll: 'Calcular todos', saveSession: 'Salvar sessão',
       sessionTitle: 'Título da sessão', sessionSaved: 'Sessão do Lab salva',
@@ -713,6 +757,7 @@
       sets: '<path d="M3 5h10M3 8h10M3 11h10M5 3v10"/>',
       review: '<path d="M8 2.5a5.5 5.5 0 1 1-4.6 2.5M8 5v3.5L10 10"/>',
       insights: '<path d="M3 12V8M6.5 12V5M10 12V7M13 12V3"/>',
+      practice: '<path d="M4 13V6l4-3 4 3v7M6 13h6M6.5 8.5h3"/>',
       'pro-lab': '<path d="M5 2h6l1 3H4zM5 5v7h6V5M6.5 8v2.5M9.5 8v2.5"/>',
       history: '<path d="M8 3v5l3 2M3.5 8a4.5 4.5 0 1 0 1-2.8"/>',
       notes: '<path d="M4 3h6l3 3v7H4zM10 3v3h3"/>',
@@ -737,6 +782,7 @@
         ['overview', 'overview', false],
         ['library', 'library', true],
         ['sets', 'sets', true],
+        ['practice', 'practiceNav', false],
         ['review', 'review', true, 'reviewShort'],
         ['insights', 'insights', true, 'insightsNav']
       ]
@@ -851,7 +897,7 @@
       var localHtml = '';
       if (area === 'study') {
         localHtml = '<div class="ws-local-nav" role="navigation" aria-label="' + escapeHtml(t('navGroupStudy')) + '">' +
-          [['library', 'library', 'studyCloud'], ['sets', 'sets', 'studySets'], ['review', 'reviewShort', 'smartReview', 'review'], ['insights', 'insightsNav', 'studyInsights', 'insights']].map(function (pair) {
+          [['library', 'library', 'studyCloud'], ['sets', 'sets', 'studySets'], ['practice', 'practiceNav'], ['review', 'reviewShort', 'smartReview', 'review'], ['insights', 'insightsNav', 'studyInsights', 'insights']].map(function (pair) {
             var key = pair[3] || pair[0];
             var locked = pair[2] && !featureOn(user, pair[2]);
             return navItemHtml('/app?section=' + pair[0], pair[1], pair[0], current === pair[0], locked, pair[0]);
@@ -983,6 +1029,7 @@
     if (area === 'account') parts.push(escapeHtml(t('account')));
     if (section === 'library') parts.push(escapeHtml(t('library')));
     if (section === 'sets') parts.push(escapeHtml(t('sets')));
+    if (section === 'practice') parts.push(escapeHtml(t('practiceNav')));
     if (section === 'review') parts.push(escapeHtml(t('review')));
     if (section === 'insights') parts.push(escapeHtml(t('insights')));
     if (section === 'history') parts.push(escapeHtml(t('history')));
@@ -1274,13 +1321,80 @@
     }
   }
 
-  function continueCard(row) {
-    var pct = logic().progressPercent(row.progress);
-    var title = (row && row.title) || logic().humanizeKey(row && row.contentKey) || (row && row.contentType) || '';
-    return '<a class="ws-study-item" href="' + escapeHtml(safeHref(row.lastPosition)) + '"><div class="ws-item-symbol">' + icon('progress') + '</div><div>' +
-      '<h3 class="ws-item-title">' + escapeHtml(title) + '</h3>' +
-      '<div class="ws-progress-label">' + escapeHtml(t('complete', '', { n: pct })) + '</div>' + progressBar(pct) +
+  function catalogLang() {
+    return langIsPt() ? 'pt' : 'en';
+  }
+
+  function catalogLabel(entry) {
+    if (entry && typeof entry.label === 'function') return entry.label(entry, catalogLang());
+    var curriculum = window.AtomurusStudyCurriculum;
+    var practice = window.AtomurusStudyPractice;
+    if (curriculum && typeof curriculum.label === 'function' && entry && entry.pages) return curriculum.label(entry, catalogLang());
+    if (practice && typeof practice.label === 'function') return practice.label(entry, catalogLang());
+    return '';
+  }
+
+  function catalogHref(entry) {
+    var curriculum = window.AtomurusStudyCurriculum;
+    if (curriculum && typeof curriculum.hrefFor === 'function' && entry && entry.pages) {
+      return curriculum.hrefFor(entry, catalogLang()) || entry.href || '';
+    }
+    return (entry && entry.href) || '';
+  }
+
+  function continueCard(row, recentItems) {
+    var pct = logic().progressPercent(row && row.progress);
+    var title = logic().continueTitle ? logic().continueTitle(row, recentItems) : ((row && row.title) || logic().humanizeKey(row && row.contentKey) || '');
+    var href = logic().continueHref ? logic().continueHref(row, recentItems, '/app') : safeHref(row && row.lastPosition);
+    var when = logic().relativeTime ? logic().relativeTime(row && row.updatedAt, Date.now(), catalogLang()) : '';
+    var meta = pct > 0
+      ? '<div class="ws-progress-label">' + escapeHtml(t('complete', '', { n: pct })) + '</div>' + progressBar(pct)
+      : (when ? '<div class="ws-item-meta">' + escapeHtml(t('lastOpened', '', { when: when })) + '</div>' : '');
+    return '<a class="ws-study-item" href="' + escapeHtml(href) + '"><div class="ws-item-symbol">' + icon('progress') + '</div><div>' +
+      '<h3 class="ws-item-title">' + escapeHtml(title) + '</h3>' + meta +
       '</div><span class="ws-btn ws-btn-sm">' + escapeHtml(t('continueCta')) + ' →</span></a>';
+  }
+
+  function hubPathCard(entry) {
+    var title = window.AtomurusStudyCurriculum && window.AtomurusStudyCurriculum.label
+      ? window.AtomurusStudyCurriculum.label(entry, catalogLang())
+      : catalogLabel(entry);
+    var live = window.AtomurusStudyCurriculum && window.AtomurusStudyCurriculum.isLive
+      ? window.AtomurusStudyCurriculum.isLive(entry)
+      : Boolean(entry && entry.href);
+    var href = catalogHref(entry);
+    var meta = live ? t('pathAvailable') : t('pathPlanned');
+    if (!live) {
+      return '<div class="ws-study-item ws-hub-path is-planned"><div><h3 class="ws-item-title">' + escapeHtml(title) + '</h3>' +
+        '<div class="ws-hub-path-meta">' + escapeHtml(meta) + '</div></div></div>';
+    }
+    return '<a class="ws-study-item ws-hub-path" href="' + escapeHtml(safeHref(href)) + '"><div><h3 class="ws-item-title">' + escapeHtml(title) + '</h3>' +
+      '<div class="ws-hub-path-meta">' + escapeHtml(meta) + '</div></div></a>';
+  }
+
+  function hubPracticeCard(entry) {
+    var title = window.AtomurusStudyPractice && window.AtomurusStudyPractice.label
+      ? window.AtomurusStudyPractice.label(entry, catalogLang())
+      : catalogLabel(entry);
+    var live = window.AtomurusStudyPractice && window.AtomurusStudyPractice.isLive
+      ? window.AtomurusStudyPractice.isLive(entry)
+      : Boolean(entry && entry.href);
+    if (!live) {
+      return '<div class="ws-study-item is-planned"><div><h3 class="ws-item-title">' + escapeHtml(title) + '</h3>' +
+        '<div class="ws-hub-path-meta">' + escapeHtml(t('practicePlanned')) + '</div></div></div>';
+    }
+    return '<a class="ws-study-item" href="' + escapeHtml(safeHref(entry.href)) + '"><div class="ws-item-symbol">' + icon('practice') + '</div><div>' +
+      '<h3 class="ws-item-title">' + escapeHtml(title) + '</h3></div></a>';
+  }
+
+  function hubSetCard(set) {
+    var href = set && set.id ? setHref(set.id) : '/app?section=sets';
+    var cards = Number(set && set.cardCount) || 0;
+    var due = Number(set && set.dueCount) || 0;
+    return '<a class="ws-study-item" href="' + escapeHtml(href) + '"><div class="ws-item-symbol">' + icon('sets') + '</div><div>' +
+      '<h3 class="ws-item-title">' + escapeHtml(set.title || t('sets')) + '</h3>' +
+      '<div class="ws-item-meta">' + escapeHtml(tCount('cardsCount', 'cardsCountOne', cards)) +
+      ' · ' + escapeHtml(tCount('dueCount', 'dueCountOne', due)) + '</div></div></a>';
   }
 
   function recentCard(item) {
@@ -1306,56 +1420,136 @@
       .catch(function () { return []; });
   }
 
+  function hubMetric(value, label) {
+    return '<div class="ws-hub-metric"><div class="ws-hub-metric-value">' + escapeHtml(String(value)) + '</div>' +
+      '<div class="ws-hub-metric-label">' + escapeHtml(label) + '</div></div>';
+  }
+
+  function learningPathCards(limit) {
+    var curriculum = window.AtomurusStudyCurriculum;
+    var paths = (curriculum && curriculum.PATHS) || [];
+    var n = Number(limit);
+    var rows = n > 0 ? paths.slice(0, n) : paths;
+    return rows.map(hubPathCard).join('');
+  }
+
+  function practiceLiveCards(limit) {
+    var practice = window.AtomurusStudyPractice;
+    var rows = practice && typeof practice.live === 'function' ? practice.live(limit) : [];
+    return rows.map(hubPracticeCard).join('');
+  }
+
   async function renderOverview(node, api, user) {
     node.innerHTML = skeleton();
+    var canReview = featureOn(user, 'smartReview');
+    var canInsights = featureOn(user, 'studyInsights');
     var pair = await Promise.all([
       api.overview(),
-      api.reviewOverview().catch(function () { return null; }),
-      api.insights({ range: '7d' }).catch(function () { return null; }),
+      canReview ? api.reviewOverview().catch(function () { return null; }) : Promise.resolve(null),
+      canInsights ? api.insights({ range: '7d' }).catch(function () { return null; }) : Promise.resolve(null),
+      api.listSets ? api.listSets().catch(function () { return { sets: [] }; }) : Promise.resolve({ sets: [] }),
       listLabSessions()
     ]);
-    var overview = pair[0];
+    var overview = pair[0] || {};
     var review = pair[1];
     var insights = pair[2];
-    var sessions = pair[3] || [];
-    var dueNow = review && review.dueNow != null ? review.dueNow : 0;
+    var sets = ((pair[3] && pair[3].sets) || []);
+    var sessions = pair[4] || [];
+    var recentItems = overview.recentItems || [];
+    var dueNow = review && review.dueNow != null ? Number(review.dueNow) || 0 : 0;
+    var setDue = logic().setsDueCount ? logic().setsDueCount(sets) : 0;
     var name = displayName(user);
     var hour = logic().greetingKey();
     var greet = t(hour === 'morning' ? 'greetingMorning' : hour === 'afternoon' ? 'greetingAfternoon' : 'greetingEvening', '', { name: name });
-    var attention = dueNow
-      ? '<section class="ws-hero is-ready"><div><h2 class="ws-hero-title">' + escapeHtml(t('readyToStudy')) + '</h2><p class="ws-hero-copy">' + escapeHtml(tCount('dueTodayHero', 'dueTodayHeroOne', dueNow)) + '</p><a class="ws-btn ws-btn-primary" href="/app?section=review&start=1">' + escapeHtml(t('startReview')) + '</a></div></section>'
+
+    var continueRows = (overview.continueStudying || []).slice(0, 5);
+    var continueBlock = continueRows.length
+      ? '<section class="ws-overview-block ws-hub-continue" data-hub="continue"><h2 class="ws-h2">' + escapeHtml(t('continueLearning')) + '</h2><div class="ws-grid">' +
+        continueRows.map(function (row) { return continueCard(row, recentItems); }).join('') + '</div></section>'
       : '';
-    var metrics = review
-      ? '<div class="ws-metrics">' +
-        [['dueToday', dueNow], ['metricSets', logic().overviewSetCount(review)], ['metricCards', review.totalCards || 0], ['mastered', review.masteredCards || 0]].map(function (row) {
-          return '<div class="ws-metric"><div class="ws-metric-value">' + escapeHtml(String(row[1])) + '</div><div class="ws-metric-label">' + escapeHtml(t(row[0])) + '</div></div>';
-        }).join('') + '</div>'
+
+    var minutes = logic().estimateReviewMinutes ? logic().estimateReviewMinutes(dueNow) : 0;
+    var reviewBlock = '';
+    if (canReview && dueNow > 0) {
+      reviewBlock = '<section class="ws-hero is-ready ws-hub-review" data-hub="review"><div>' +
+        '<h2 class="ws-hero-title">' + escapeHtml(t('readyToStudy')) + '</h2>' +
+        '<p class="ws-hero-copy">' + escapeHtml(tCount('dueTodayHero', 'dueTodayHeroOne', dueNow)) + '</p>' +
+        '<p class="ws-hub-estimate">' + escapeHtml(tCount('reviewEstimate', 'reviewEstimateOne', minutes)) + '</p>' +
+        '<a class="ws-btn ws-btn-primary" href="/app?section=review&start=1">' + escapeHtml(t('startReview')) + '</a>' +
+        '</div></section>';
+    } else if (!canReview && setDue > 0) {
+      reviewBlock = '<section class="ws-overview-block ws-hub-review" data-hub="review"><h2 class="ws-h2">' + escapeHtml(t('reviewDueTitle')) + '</h2>' +
+        '<p class="ws-lede">' + escapeHtml(tCount('setsDueReady', 'setsDueReadyOne', setDue)) + '</p>' +
+        '<p><a class="ws-btn ws-btn-primary" href="/app?section=sets">' + escapeHtml(t('openSets')) + '</a></p></section>';
+    } else {
+      reviewBlock = '<section class="ws-hub-review ws-hub-caughtup" data-hub="review"><p class="ws-hub-caughtup-text">' + escapeHtml(t('caughtUpTitle')) + '</p></section>';
+    }
+
+    var practiceBlock = '<section class="ws-overview-block ws-hub-practice" data-hub="practice"><h2 class="ws-h2">' + escapeHtml(t('practiceChemistry')) + '</h2>' +
+      '<p class="ws-lede">' + escapeHtml(t('practiceLede')) + '</p>' +
+      '<div class="ws-grid">' + practiceLiveCards(4) + '</div>' +
+      '<p><a class="ws-btn ws-btn-secondary" href="/app?section=practice">' + escapeHtml(t('viewAll')) + '</a></p></section>';
+
+    var pathsBlock = '<section class="ws-overview-block ws-hub-paths" data-hub="paths"><h2 class="ws-h2">' + escapeHtml(t('learningPaths')) + '</h2>' +
+      '<p class="ws-lede">' + escapeHtml(t('learningPathsLede')) + '</p>' +
+      '<div class="ws-grid">' + learningPathCards() + '</div></section>';
+
+    var setPreview = sets.slice(0, 4);
+    var setsBlock = setPreview.length
+      ? '<section class="ws-overview-block ws-hub-sets" data-hub="sets"><h2 class="ws-h2">' + escapeHtml(t('sets')) + '</h2>' +
+        '<div class="ws-grid">' + setPreview.map(hubSetCard).join('') + '</div>' +
+        '<p><a class="ws-btn ws-btn-secondary" href="/app?section=sets">' + escapeHtml(t('viewAll')) + '</a></p></section>'
       : '';
-    var cont = (overview.continueStudying || []).slice(0, 5);
-    var continueBlock = cont.length
-      ? '<section class="ws-overview-block"><h2 class="ws-h2">' + escapeHtml(t('continueTitle')) + '</h2><div class="ws-grid">' + cont.map(continueCard).join('') + '</div></section>'
+
+    var savedPreview = recentItems.slice(0, 4);
+    var savedBlock = savedPreview.length
+      ? '<section class="ws-overview-block ws-hub-saved" data-hub="saved"><h2 class="ws-h2">' + escapeHtml(t('recentSaved')) + '</h2>' +
+        '<div class="ws-grid">' + savedPreview.map(recentCard).join('') + '</div>' +
+        '<p><a class="ws-btn ws-btn-secondary" href="/app?section=library">' + escapeHtml(t('openLibrary')) + '</a></p></section>'
       : '';
-    var studyBlock = '<section class="ws-overview-block"><h2 class="ws-h2">' + escapeHtml(t('studyBlockTitle')) + '</h2>' + metrics +
-      '<div class="ws-dest-grid ws-study-dests">' +
-      '<a class="ws-dest-card" href="/app?section=library"><h2 class="ws-h2">' + escapeHtml(t('library')) + '</h2></a>' +
-      '<a class="ws-dest-card" href="/app?section=sets"><h2 class="ws-h2">' + escapeHtml(t('sets')) + '</h2></a>' +
-      '<a class="ws-dest-card" href="/app?section=review"><h2 class="ws-h2">' + escapeHtml(t('review')) + '</h2></a>' +
-      '<a class="ws-dest-card" href="/app?section=insights"><h2 class="ws-h2">' + escapeHtml(t('insights')) + '</h2></a>' +
-      '</div></section>';
+
+    var noteItems = logic().recentNotes ? logic().recentNotes(recentItems, 3) : [];
+    var notesBlock = noteItems.length
+      ? '<section class="ws-overview-block ws-hub-notes" data-hub="notes"><h2 class="ws-h2">' + escapeHtml(t('recentNotes')) + '</h2>' +
+        '<div class="ws-grid">' + noteItems.map(function (item) {
+          return '<a class="ws-study-item" href="' + escapeHtml(safeHref(item.href)) + '"><div><h3 class="ws-item-title">' + escapeHtml(item.title || item.itemKey || '') + '</h3>' +
+            '<div class="ws-item-note"></div></div></a>';
+        }).join('') + '</div></section>'
+      : '';
+
+    var weak = (insights && insights.weakCards) || [];
+    var weakBlock = (canInsights && weak.length)
+      ? '<section class="ws-overview-block ws-hub-weak" data-hub="weak"><h2 class="ws-h2">' + escapeHtml(t('weakConcepts')) + '</h2>' +
+        '<p class="ws-lede">' + escapeHtml(t('weakConceptsSource')) + '</p>' +
+        '<div class="ws-grid">' + weak.slice(0, 3).map(function (card) {
+          return '<div class="ws-study-item"><div><h3 class="ws-item-title">' + escapeHtml(card.front || '') + '</h3>' +
+            (card.studySetTitle ? '<div class="ws-item-meta">' + escapeHtml(card.studySetTitle) + '</div>' : '') +
+            '</div></div>';
+        }).join('') + '</div>' +
+        (featureOn(user, 'focusReview')
+          ? '<p><a class="ws-btn ws-btn-secondary" href="' + escapeHtml(focusReviewHref('', 20)) + '">' + escapeHtml(t('startFocusReview')) + '</a></p>'
+          : '') +
+        '</section>'
+      : '';
+
     var summary = insights && insights.summary;
-    var insightsPreview = '<section class="ws-overview-block"><h2 class="ws-h2">' + escapeHtml(t('insights')) + '</h2>' +
-      '<div class="ws-metrics">' +
-      [['metricReviews', (summary && summary.reviews) || 0], ['activeDays', (summary && summary.activeDays) || 0], ['cardsDue', dueNow]].map(function (row) {
-        return '<div class="ws-metric"><div class="ws-metric-value">' + escapeHtml(String(row[1])) + '</div><div class="ws-metric-label">' + escapeHtml(t(row[0])) + '</div></div>';
-      }).join('') + '</div>' +
-      '<p><a class="ws-btn ws-btn-secondary" href="/app?section=insights">' + escapeHtml(t('openInsights')) + '</a></p></section>';
-    var solveBlock = '<section class="ws-overview-block"><h2 class="ws-h2">' + escapeHtml(t('solveAnalyzeTitle')) + '</h2>' +
-      '<div class="ws-dest-grid">' +
-      '<a class="ws-dest-card" data-dest="solver" href="/app?section=pro-lab&tool=reactions"><h2 class="ws-h2">' + escapeHtml(t('chemistrySolver')) + '</h2><p class="ws-lede">' + escapeHtml(t('chemistrySolverLede')) + '</p></a>' +
-      '<a class="ws-dest-card" href="/app?section=pro-lab&tool=calculations"><h3 class="ws-lab-card-title">' + escapeHtml(t('labCalc')) + '</h3><p class="ws-lede">' + escapeHtml(t('labCalcLede')) + '</p></a>' +
-      '<a class="ws-dest-card" href="/app?section=pro-lab&tool=elements"><h3 class="ws-lab-card-title">' + escapeHtml(t('labElements')) + '</h3><p class="ws-lede">' + escapeHtml(t('labElementsLede')) + '</p></a>' +
-      '</div><p><a class="ws-btn ws-btn-secondary" href="/app?section=pro-lab">' + escapeHtml(t('openLabSuite')) + '</a></p></section>';
-    var visualizeBlock = '<section class="ws-overview-block"><h2 class="ws-h2">' + escapeHtml(t('visualizeTitle')) + '</h2>' +
+    var tomorrow = logic().dueTomorrowCount ? logic().dueTomorrowCount(insights && insights.dueForecast) : 0;
+    var insightsBlock = '';
+    if (canInsights) {
+      var insightMetrics = '';
+      if (summary && ((summary.reviews || 0) > 0 || (summary.activeDays || 0) > 0 || tomorrow > 0)) {
+        insightMetrics = '<div class="ws-hub-metrics">' +
+          hubMetric(summary.reviews || 0, t('metricReviews')) +
+          hubMetric(summary.activeDays || 0, t('activeDays')) +
+          hubMetric(tomorrow, t('dueTomorrow')) +
+          '</div>';
+      }
+      insightsBlock = '<section class="ws-overview-block ws-hub-insights" data-hub="insights"><h2 class="ws-h2">' + escapeHtml(t('insights')) + '</h2>' +
+        insightMetrics +
+        '<p><a class="ws-btn ws-btn-secondary" href="/app?section=insights">' + escapeHtml(t('openInsights')) + '</a></p></section>';
+    }
+
+    var visualizeBlock = '<section class="ws-overview-block ws-hub-visualize" data-hub="visualize"><h2 class="ws-h2">' + escapeHtml(t('visualizeTitle')) + '</h2>' +
       '<nav class="ws-viz-links">' +
       '<a href="/viewer/atomic-models.html">' + escapeHtml(t('labViewerAtomic')) + '</a>' +
       '<a href="/viewer/molecules.html">' + escapeHtml(t('labViewerMolecules')) + '</a>' +
@@ -1363,19 +1557,68 @@
       '<a href="/viewer/isomerism.html">' + escapeHtml(t('labIsomerism')) + '</a>' +
       '</nav></section>';
     var recent = sessions.slice(0, 4);
-    var lang = langIsPt() ? 'pt' : 'en';
+    var lang = catalogLang();
     var recentBlock = recent.length
-      ? '<section class="ws-overview-block"><h2 class="ws-h2">' + escapeHtml(t('recentLabSessions')) + '</h2><div class="ws-grid">' + recent.map(function (row) {
+      ? '<section class="ws-overview-block ws-hub-sessions" data-hub="sessions"><h2 class="ws-h2">' + escapeHtml(t('recentLabSessions')) + '</h2><div class="ws-grid">' + recent.map(function (row) {
         var when = logic().relativeTime ? logic().relativeTime(row.updatedAt || row.updated_at, Date.now(), lang) : '';
         var href = '/app?section=pro-lab&tool=' + encodeURIComponent(labToolForSession(row.sessionType)) + '&session=' + encodeURIComponent(row.id);
         return '<a class="ws-study-item" href="' + escapeHtml(href) + '"><div><h3 class="ws-item-title">' + escapeHtml(row.title || t('labSessions')) + '</h3>' +
           (when ? '<div class="ws-item-meta">' + escapeHtml(when) + '</div>' : '') + '</div></a>';
       }).join('') + '</div></section>'
       : '';
+
+    var hubLinks = '<nav class="ws-hub-links" data-hub="links">' +
+      '<a href="/app?section=library">' + escapeHtml(t('library')) + '</a>' +
+      '<a href="/app?section=sets">' + escapeHtml(t('sets')) + '</a>' +
+      '<a href="/app?section=practice">' + escapeHtml(t('practiceNav')) + '</a>' +
+      '<a href="/app?section=insights">' + escapeHtml(t('insights')) + '</a>' +
+      '</nav>';
+
     node.innerHTML =
       crumbTrail('overview') +
+      '<div class="ws-study-hub" data-study-hub="account">' +
       '<p class="ws-kicker">Atomurus</p><h1 class="ws-title">' + escapeHtml(greet) + '</h1><p class="ws-lede">' + escapeHtml(t('continueChemistry')) + '</p>' +
-      attention + continueBlock + studyBlock + solveBlock + visualizeBlock + recentBlock + insightsPreview;
+      continueBlock + reviewBlock + practiceBlock + pathsBlock + setsBlock + savedBlock + notesBlock + weakBlock + insightsBlock + visualizeBlock + recentBlock + hubLinks +
+      '</div>';
+
+    node.querySelectorAll('.ws-hub-notes .ws-item-note').forEach(function (noteNode, index) {
+      if (noteItems[index] && noteItems[index].note) noteNode.textContent = noteItems[index].note;
+    });
+  }
+
+  function renderGuestStudyHub() {
+    var node = $('app-study');
+    if (!node) return;
+    var section = studySection();
+    node.innerHTML = crumbTrail(section) +
+      '<div class="ws-study-hub" data-study-hub="guest">' +
+      '<p class="ws-kicker">Atomurus</p>' +
+      '<h1 class="ws-title">' + escapeHtml(t('studyWithAtomurus')) + '</h1>' +
+      '<p class="ws-lede">' + escapeHtml(t('studyGuestLede')) + '</p>' +
+      '<p><a class="ws-btn ws-btn-primary" href="/signup?next=%2Fapp">' + escapeHtml(t('createFreeAccount')) + '</a></p>' +
+      '<section class="ws-overview-block ws-hub-practice" data-hub="practice"><h2 class="ws-h2">' + escapeHtml(t('practiceChemistry')) + '</h2>' +
+      '<p class="ws-lede">' + escapeHtml(t('practiceLede')) + '</p>' +
+      '<div class="ws-grid">' + practiceLiveCards(4) + '</div></section>' +
+      '<section class="ws-overview-block ws-hub-paths" data-hub="paths"><h2 class="ws-h2">' + escapeHtml(t('learningPaths')) + '</h2>' +
+      '<p class="ws-lede">' + escapeHtml(t('learningPathsLede')) + '</p>' +
+      '<div class="ws-grid">' + (window.AtomurusStudyCurriculum && window.AtomurusStudyCurriculum.live
+        ? window.AtomurusStudyCurriculum.live().map(hubPathCard).join('')
+        : '') + '</div></section>' +
+      '</div>';
+  }
+
+  function renderPracticeSection(node, user) {
+    var practice = window.AtomurusStudyPractice;
+    var liveRows = practice && typeof practice.live === 'function' ? practice.live() : [];
+    var plannedRows = practice && typeof practice.planned === 'function' ? practice.planned() : [];
+    var guestCta = user ? '' : '<p><a class="ws-btn ws-btn-primary" href="/signup?next=%2Fapp%3Fsection%3Dpractice">' + escapeHtml(t('createFreeAccount')) + '</a></p>';
+    node.innerHTML = crumbTrail('practice') +
+      '<p class="ws-kicker">Atomurus</p><h1 class="ws-title">' + escapeHtml(t('practiceChemistry')) + '</h1>' +
+      '<p class="ws-lede">' + escapeHtml(t('practiceLede')) + '</p>' + guestCta +
+      '<section class="ws-overview-block"><div class="ws-grid">' + liveRows.map(hubPracticeCard).join('') + '</div></section>' +
+      (plannedRows.length
+        ? '<section class="ws-overview-block"><h2 class="ws-h2">' + escapeHtml(t('practicePlanned')) + '</h2><div class="ws-grid">' + plannedRows.map(hubPracticeCard).join('') + '</div></section>'
+        : '');
   }
 
   function libraryRow(item) {
@@ -2647,6 +2890,22 @@
     if (section === 'pro-lab') {
       return mountProLab(node, user);
     }
+    if (section === 'practice') {
+      renderPracticeSection(node, user);
+      return;
+    }
+    if (!user) {
+      if (section === 'review') {
+        showStudyLocked(node);
+        return;
+      }
+      if (section === 'insights') {
+        renderLockedInsights();
+        return;
+      }
+      renderGuestStudyHub();
+      return;
+    }
     var needed = {
       overview: 'studyCloud',
       library: 'studyCloud',
@@ -2657,9 +2916,8 @@
       review: 'smartReview',
       insights: 'studyInsights'
     }[section];
-    if (!user || (needed && !featureOn(user, needed))) {
-      if (section === 'overview') renderFreeOverview(user);
-      else if (section === 'insights') renderLockedInsights();
+    if (needed && !featureOn(user, needed)) {
+      if (section === 'insights') renderLockedInsights();
       else showStudyLocked(node);
       return;
     }
@@ -2672,6 +2930,7 @@
       if (section === 'overview') { await renderOverview(node, api, user); return; }
       if (section === 'library') { await renderLibrary(node, api); return; }
       if (section === 'sets') { await renderSetsSection(node, api); return; }
+      if (section === 'practice') { renderPracticeSection(node, user); return; }
       if (section === 'review') { await renderReviewSection(node, api); return; }
       if (section === 'insights') { await renderInsights(node, api); return; }
       if (section === 'history') { await renderHistory(node, api); return; }
