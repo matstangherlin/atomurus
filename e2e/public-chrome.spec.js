@@ -336,6 +336,8 @@ test('signup and recover keep UI V2 forms and the 30-day trial copy', async ({ p
   await expect(page.locator('#auth-signup-form')).toBeVisible();
   await expect(page.locator('#auth-signup-name')).toHaveValue('');
   await expect(page.locator('#auth-signup-email')).toHaveValue('');
+  await expect(page.locator('#auth-signup-name')).not.toHaveAttribute('placeholder', /Matheus|Stangherlin|matheusstan/i);
+  await expect(page.locator('#auth-signup-email')).not.toHaveAttribute('placeholder', /@|matheus/i);
   await expect(page.locator('#auth-panel-signup')).toContainText(/30 days/i);
   await expect.poll(async () => page.locator('#auth-signup-submit').evaluate((el) => getComputedStyle(el).backgroundColor))
     .toMatch(/rgb\(\s*20,\s*18,\s*14\s*\)/);

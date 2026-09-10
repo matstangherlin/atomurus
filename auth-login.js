@@ -215,8 +215,9 @@
     applyAuthTitle(mode);
     if (mode === 'signup') {
       clearSignupDraft();
-      setTimeout(function () { clearSignupDraft({ hintsOnly: true }); }, 80);
-      setTimeout(function () { clearSignupDraft({ hintsOnly: true }); }, 400);
+      clearFounderLoginHint();
+      setTimeout(function () { clearSignupDraft({ hintsOnly: true }); clearFounderLoginHint(); }, 80);
+      setTimeout(function () { clearSignupDraft({ hintsOnly: true }); clearFounderLoginHint(); }, 400);
     }
     if (!options.skipHistory && history && history.replaceState) {
       history.replaceState(null, document.title, authScreenPath(mode));
@@ -225,6 +226,11 @@
 
   function looksLikeFounderHint(value) {
     return /matheus|stangherlin|matstan|stan gherlin/i.test(String(value || ''));
+  }
+
+  function clearFounderLoginHint() {
+    var el = $('auth-email');
+    if (el && looksLikeFounderHint(el.value)) el.value = '';
   }
 
   function clearSignupDraft(opts) {
@@ -415,6 +421,12 @@
       hide(okBox);
       hide(errBox);
       hide($('auth-login-err'));
+      var loginId = $('auth-email');
+      var loginPw = $('auth-password');
+      if (loginId) loginId.value = looksLikeFounderHint(email) ? '' : email;
+      if (loginPw) loginPw.value = '';
+      setTimeout(clearFounderLoginHint, 80);
+      setTimeout(clearFounderLoginHint, 400);
       show(
         $('auth-login-ok'),
         t('common.auth.signupOk', 'Account created. Check your email if confirmation is required, then sign in.')

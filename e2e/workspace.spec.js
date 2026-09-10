@@ -475,7 +475,10 @@ test('Workspace home is the Virtual Lab and Open Bench runs', async ({ page }) =
   await expect(page.locator('.lab-beaker')).toBeVisible();
   await page.locator('.lab-chip[data-add="water"]').click();
   await expect(page.locator('.lab-notes')).toContainText(/Water|água|H₂O|Added virtual/i);
+  await expect.poll(async () => page.locator('[data-vessel="beaker-a"] .lab-liquid').evaluate((el) => parseFloat(el.style.height) || 0)).toBeGreaterThan(15);
   await expect(page.locator('.lab-flask, .lab-cylinder')).toHaveCount(2);
+  await page.locator('.lab-chip[data-add="nacl"]').click();
+  await expect(page.locator('[data-vessel="beaker-a"]')).toContainText(/Saline|salina/i);
   await page.locator('[data-lab-pour]').click();
   await page.locator('[data-vessel="flask-b"]').click();
   await expect(page.locator('.lab-notes')).toContainText(/Poured|Transfer/i);

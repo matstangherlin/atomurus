@@ -92,6 +92,8 @@ test('signup with confirmation required returns to login with a success message'
   await expect(page.locator('#auth-signup-name')).toHaveValue('');
   await expect(page.locator('#auth-signup-email')).toHaveValue('');
   await expect(page.locator('#auth-signup-name')).not.toHaveAttribute('placeholder', /Matheus|Stangherlin|matheusstan/i);
+  await expect(page.locator('#auth-signup-email')).not.toHaveAttribute('placeholder', /@|matheus/i);
+  await expect(page.locator('#auth-email')).not.toHaveAttribute('placeholder', /Matheus|matheusstan|@gmail/i);
   await page.locator('#auth-signup-name').fill('Pro User');
   await page.locator('#auth-signup-username').fill('prouser1');
   await page.locator('#auth-signup-email').fill('newpro@atomurus.test');
@@ -101,6 +103,8 @@ test('signup with confirmation required returns to login with a success message'
   await expect(page.locator('#auth-login-form')).toBeVisible();
   await expect(page.locator('#auth-login-ok')).toBeVisible();
   await expect(page.locator('#auth-login-ok')).toContainText(/Account created|Check your email/i);
+  await expect(page.locator('#auth-email')).toHaveValue('newpro@atomurus.test');
+  await expect(page.locator('#auth-email')).not.toHaveValue(/matheus|stangherlin/i);
 });
 
 test('password recovery shows the generic success copy', async ({ page }) => {

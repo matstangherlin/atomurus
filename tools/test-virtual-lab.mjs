@@ -49,6 +49,31 @@ const ph = lab.measure(session, 'beaker-a', 'ph');
 assert.equal(ph.ok, true);
 assert.equal(typeof ph.row.value, 'number');
 
+const mix = lab.emptySession({ title: 'Mix', mode: 'bench' });
+assert.equal(lab.addToContainer(mix, 'beaker-a', 'water', 50).ok, true);
+assert.ok(lab.visualFillPct(mix.containers[0]) >= 18);
+assert.equal(lab.addToContainer(mix, 'beaker-a', 'nacl', 10).ok, true);
+assert.equal(mix.containers[0].productId, 'saline');
+assert.equal(lab.emptyContainer(mix, 'beaker-a').ok, true);
+assert.equal(findVol(mix, 'beaker-a'), 0);
+
+const full = lab.emptySession({ title: 'Full', mode: 'bench' });
+assert.equal(lab.addToContainer(full, 'beaker-a', 'water', 250).ok, true);
+assert.equal(lab.addToContainer(full, 'beaker-a', 'water', 10).ok, false);
+assert.equal(lab.addToContainer(full, 'beaker-a', 'water', 10).reason, 'full');
+
+const fizz = lab.emptySession({ title: 'Fizz', mode: 'bench' });
+assert.equal(lab.addToContainer(fizz, 'beaker-a', 'water', 40).ok, true);
+assert.equal(lab.addToContainer(fizz, 'beaker-a', 'citric_acid', 10).ok, true);
+assert.equal(lab.addToContainer(fizz, 'beaker-a', 'bicarbonate', 10).ok, true);
+assert.equal(fizz.containers[0].productId, 'fizz');
+assert.equal(fizz.containers[0].fizz, true);
+
+const copper = lab.emptySession({ title: 'Copper', mode: 'bench' });
+assert.equal(lab.addToContainer(copper, 'flask-b', 'water', 40).ok, true);
+assert.equal(lab.addToContainer(copper, 'flask-b', 'cusulfate', 8).ok, true);
+assert.equal(copper.containers.find((row) => row.id === 'flask-b').productId, 'cu-sol');
+
 const saved = lab.saveSession(session);
 assert.equal(saved.id, session.id);
 assert.ok(Array.isArray(lab.CREATIONS));

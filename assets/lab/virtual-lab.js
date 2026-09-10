@@ -24,7 +24,7 @@
     limonene: { id: 'limonene', name: 'Limonene', formula: 'C₁₀H₁₆', category: 'fragrance', color: '#E8C15A', family: 'citrus', note: 'top', allowed: true },
     linalool: { id: 'linalool', name: 'Linalool', formula: 'C₁₀H₁₈O', category: 'fragrance', color: '#C9D48A', family: 'floral', note: 'heart', allowed: true },
     vanillin: { id: 'vanillin', name: 'Vanillin', formula: 'C₈H₈O₃', category: 'fragrance', color: '#E6C39A', family: 'gourmand', note: 'base', allowed: true },
-    carbon: { id: 'carbon', name: 'Carbon (graphite)', formula: 'C', category: 'allotrope', color: '#3A3732', state: 'solid', allowed: true }
+    carbon: { id: 'carbon', name: 'Carbon (graphite)', formula: 'C', category: 'allotrope', color: '#3A3732', state: 'solid', allowed: true, inventory: false }
   };
 
   var EQUIPMENT = {
@@ -190,6 +190,7 @@
       title: opts.title || 'Open Bench',
       mode: opts.mode || 'bench',
       creationId: opts.creationId || '',
+      lang: opts.lang || 'en',
       createdAt: nowIso(),
       updatedAt: nowIso(),
       selectedId: 'beaker-a',
@@ -261,6 +262,10 @@
       selectedId: session.selectedId
     })]);
     if (session.history.length > HISTORY_CAP) session.history = session.history.slice(-HISTORY_CAP);
+  }
+
+  function line(session, en, pt) {
+    return (session && session.lang === 'pt' && pt) ? pt : en;
   }
 
   function observe(session, text) {
@@ -353,13 +358,98 @@
     else if (acids) appearance = 'acidic solution';
     else if (bases) appearance = 'basic solution';
     else if (elements && !volume) appearance = 'dry sample';
+    else if (elements && (Number(container.temperatureC) || 22) >= 40) appearance = 'warm suspension';
     else if (elements) appearance = 'suspension';
     container.ph = Math.round(ph * 10) / 10;
     container.appearance = appearance;
     container.color = mixColor(container);
     container.fizz = fizz;
     container.modeled = Boolean(contents.length);
+    var product = identifyProduct(container);
+    container.productId = product ? product.id : '';
+    container.product = product ? product.en : '';
+    container.productPt = product ? product.pt : '';
     return container;
+  }
+
+  function identifyProduct(container) {
+    var has = {};
+    (container.contents || []).forEach(function (row) {
+      if ((Number(row.amount) || 0) > 0.05) has[row.id] = true;
+    });
+    var wet = (Number(container.volumeMl) || 0) > 0;
+    var warm = (Number(container.temperatureC) || 22) >= 40;
+    if (has.citric_acid && has.bicarbonate && wet) {
+      return { id: 'fizz', en: 'Effervescent mixture', pt: 'Mistura efervescente' };
+    }
+    if (has.indicator && wet) {
+      return { id: 'indicator-mix', en: 'pH indicator mixture', pt: 'Mistura com indicador de pH' };
+    }
+    if (has.cusulfate && wet) {
+      return { id: 'cu-sol', en: 'Copper sulfate solution', pt: 'Solução de sulfato de cobre' };
+    }
+    if (has.nacl && wet) {
+      return { id: 'saline', en: 'Saline solution', pt: 'Solução salina' };
+    }
+    if (has.sucrose && wet) {
+      return { id: 'sugar-sol', en: 'Sugar solution', pt: 'Solução de açúcar' };
+    }
+    if (has.limonene || has.linalool || has.vanillin) {
+      return { id: 'accord', en: 'Fragrance accord', pt: 'Acorde de fragrância' };
+    }
+    if (has.cu && has.zn) {
+      return { id: 'brass', en: 'Copper–zinc mix', pt: 'Mistura cobre–zinco' };
+    }
+    if (has.fe && has.s) {
+      return { id: 'fes', en: 'Iron–sulfur mix', pt: 'Mistura ferro–enxofre' };
+    }
+    if (has.fe && wet) {
+      return {
+        id: warm ? 'iron-warm' : 'iron-water',
+        en: warm ? 'Warm iron–water mix' : 'Iron in water',
+        pt: warm ? 'Mistura quente de ferro e água' : 'Ferro em água'
+      };
+    }
+    return null;
+  }
+
+  function noteProduct(session, container, beforeId) {
+    if (container.productId && container.productId !== beforeId) {
+      var name = line(session, container.product, container.productPt);
+      observe(session, line(session, 'Created: ' + name + '.', 'Criou: ' + name + '.'));
+    }
+  }
+
+  function visualFillPct(container) {
+    var vol = Number(container.volumeMl) || 0;
+    var cap = Math.max(1, Number(container.capacityMl) || 1);
+    if (vol <= 0) return 0;
+    return Math.round(Math.max(18, Math.min(96, 12 + (vol / cap) * 84)));
+  }
+
+  function emptyContainer(session, containerId) {
+    var container = findContainer(session, containerId);
+    if (!container) return { ok: false, reason: 'no-container' };
+    if (!(container.contents || []).length && !(Number(container.volumeMl) || 0)) {
+      return { ok: true, container: container };
+    }
+    pushHistory(session);
+    container.contents = [];
+    container.volumeMl = 0;
+    mixContainer(container);
+    observe(session, line(session, 'Emptied ' + (container.label || container.id) + '.', 'Esvaziou ' + (container.label || container.id) + '.'));
+    return { ok: true, container: container };
+  }
+
+  function ensureWorkbench(session) {
+    if (!session.containers) session.containers = [];
+    var types = {};
+    session.containers.forEach(function (row) { types[row.type || 'beaker'] = true; });
+    if (!session.containers.length) session.containers.push(makeVessel('beaker', 0));
+    if (!types.flask && session.containers.length < MAX_VESSELS) session.containers.push(makeVessel('flask', 1));
+    if (!types.cylinder && session.containers.length < MAX_VESSELS) session.containers.push(makeVessel('cylinder', 2));
+    if (!session.selectedId) session.selectedId = session.containers[0].id;
+    return session;
   }
 
   function addToContainer(session, containerId, substanceId, amount, unit) {
@@ -374,17 +464,22 @@
     var nextVol = Number(container.volumeMl) || 0;
     if (spec.state === 'liquid') nextVol += qty;
     if (nextVol > container.capacityMl + 0.05) {
-      observe(session, (container.label || container.id) + ' is full.');
+      observe(session, line(session, (container.label || container.id) + ' is full.', (container.label || container.id) + ' está cheio.'));
       return { ok: false, reason: 'full' };
     }
     pushHistory(session);
+    var beforeProduct = container.productId || '';
     var existing = (container.contents || []).filter(function (row) { return row.id === spec.id; })[0];
     if (existing) existing.amount += qty;
     else container.contents.push({ id: spec.id, amount: qty, unit: unit || (spec.state === 'liquid' ? 'mL' : 'g') });
     if (spec.state === 'liquid') container.volumeMl = Math.min(container.capacityMl, (Number(container.volumeMl) || 0) + qty);
-    else if (!container.volumeMl) container.volumeMl = Math.min(container.capacityMl, Math.max(8, qty * 0.6));
     mixContainer(container);
-    observe(session, 'Added virtual ' + spec.name + ' (' + spec.formula + ') to ' + (container.label || container.id) + '.');
+    observe(session, line(
+      session,
+      'Added virtual ' + spec.name + ' (' + spec.formula + ') to ' + (container.label || container.id) + '.',
+      'Adicionou ' + spec.name + ' (' + spec.formula + ') virtual em ' + (container.label || container.id) + '.'
+    ));
+    noteProduct(session, container, beforeProduct);
     return { ok: true, container: container };
   }
 
@@ -398,8 +493,12 @@
     if (vol <= 0) return { ok: false, reason: 'empty' };
     var room = Math.max(0, (Number(to.capacityMl) || 0) - (Number(to.volumeMl) || 0));
     var qty = Math.min(vol, Number(amount) > 0 ? Number(amount) : vol, room);
-    if (qty <= 0) return { ok: false, reason: 'full' };
+    if (qty <= 0) {
+      observe(session, line(session, (to.label || to.id) + ' is full.', (to.label || to.id) + ' está cheio.'));
+      return { ok: false, reason: 'full' };
+    }
     pushHistory(session);
+    var beforeProduct = to.productId || '';
     var ratio = qty / vol;
     to.contents = to.contents || [];
     (from.contents || []).forEach(function (row) {
@@ -414,7 +513,12 @@
     to.volumeMl = Math.round(((Number(to.volumeMl) || 0) + qty) * 10) / 10;
     mixContainer(from);
     mixContainer(to);
-    observe(session, 'Poured ' + qty + ' mL from ' + (from.label || from.id) + ' into ' + (to.label || to.id) + '.');
+    observe(session, line(
+      session,
+      'Poured ' + qty + ' mL from ' + (from.label || from.id) + ' into ' + (to.label || to.id) + '.',
+      'Transferiu ' + qty + ' mL de ' + (from.label || from.id) + ' para ' + (to.label || to.id) + '.'
+    ));
+    noteProduct(session, to, beforeProduct);
     return { ok: true, amount: qty };
   }
 
@@ -426,7 +530,7 @@
     vessel.id = spec.type + '-' + uid().slice(-5);
     session.containers.push(vessel);
     session.selectedId = vessel.id;
-    observe(session, 'Added ' + (vessel.label || spec.type) + ' to the bench.');
+    observe(session, line(session, 'Added ' + (vessel.label || spec.type) + ' to the bench.', 'Adicionou ' + (vessel.label || spec.type) + ' à bancada.'));
     return { ok: true, container: vessel };
   }
 
@@ -437,7 +541,10 @@
     if (temp === container.temperatureC) return { ok: true, container: container };
     pushHistory(session);
     container.temperatureC = temp;
-    observe(session, (container.label || container.id) + ' is now ' + temp + ' °C (virtual).');
+    var beforeProduct = container.productId || '';
+    observe(session, line(session, (container.label || container.id) + ' is now ' + temp + ' °C (virtual).', (container.label || container.id) + ' está a ' + temp + ' °C (virtual).'));
+    mixContainer(container);
+    noteProduct(session, container, beforeProduct);
     return { ok: true, container: container };
   }
 
@@ -490,6 +597,9 @@
 
   function mount(node, opts) {
     if (!node) return;
+    if (node._labAbort && typeof node._labAbort.abort === 'function') {
+      try { node._labAbort.abort(); } catch (e) {}
+    }
     opts = opts || {};
     var lang = (document.documentElement.lang || '').toLowerCase().indexOf('pt') === 0 ? 'pt' : 'en';
     var user = opts.user || null;
@@ -509,16 +619,20 @@
       session = emptySession({
         title: creation ? labelOf(creation, lang) : 'Guided creation',
         mode: 'guided',
-        creationId: creationId
+        creationId: creationId,
+        lang: lang
       });
     }
-    if (!session && mode === 'bench') session = emptySession({ title: lang === 'pt' ? 'Bancada aberta' : 'Open Bench', mode: 'bench' });
-    if (!session) session = last || emptySession({ title: lang === 'pt' ? 'Bancada aberta' : 'Open Bench' });
+    if (!session && mode === 'bench') session = emptySession({ title: lang === 'pt' ? 'Bancada aberta' : 'Open Bench', mode: 'bench', lang: lang });
+    if (!session) session = last || emptySession({ title: lang === 'pt' ? 'Bancada aberta' : 'Open Bench', lang: lang });
+    session.lang = lang;
+    ensureWorkbench(session);
     if (!session.selectedId) session.selectedId = (session.containers[0] || {}).id;
-    var amount = 10;
+    var amount = 25;
     var pourFrom = '';
     var saveTimer = 0;
     var stirTimer = 0;
+    var lastStatus = '';
 
     function copy(en, pt) { return lang === 'pt' ? pt : en; }
     function esc(value) {
@@ -557,32 +671,50 @@
     }
 
     function inventoryHtml() {
-      return Object.keys(SUBSTANCES).map(function (id) {
-        var spec = SUBSTANCES[id];
-        return '<button type="button" class="lab-chip" data-add="' + esc(id) + '">' + esc(spec.name) + '<span>' + esc(spec.formula) + '</span></button>';
+      var groups = [
+        { title: copy('Liquids', 'Líquidos'), ids: ['water'] },
+        { title: copy('Salts & sugars', 'Sais e açúcares'), ids: ['nacl', 'sucrose', 'cusulfate'] },
+        { title: copy('Acids & bases', 'Ácidos e bases'), ids: ['citric_acid', 'bicarbonate', 'indicator'] },
+        { title: copy('Elements', 'Elementos'), ids: ['fe', 'cu', 'zn', 's', 'c'] },
+        { title: copy('Fragrance notes', 'Notas de fragrância'), ids: ['limonene', 'linalool', 'vanillin'] }
+      ];
+      return groups.map(function (group) {
+        return '<div class="lab-chip-group"><span class="lab-chip-group-title">' + esc(group.title) + '</span><div class="lab-chips">' +
+          group.ids.map(function (id) {
+            var spec = SUBSTANCES[id];
+            if (!spec || spec.inventory === false) return '';
+            return '<button type="button" class="lab-chip" data-add="' + esc(id) + '">' +
+              '<i class="lab-chip-swatch" style="background:' + esc(spec.color) + '"></i>' +
+              esc(spec.name) + '<span>' + esc(spec.formula) + '</span></button>';
+          }).join('') + '</div></div>';
       }).join('');
     }
 
     function vesselHtml(container) {
       mixContainer(container);
-      var fill = Math.max(0, Math.min(100, ((Number(container.volumeMl) || 0) / container.capacityMl) * 100));
+      var fill = visualFillPct(container);
       var sediment = 0;
       var solids = (container.contents || []).filter(function (row) {
         var spec = SUBSTANCES[row.id];
         return spec && spec.state === 'solid';
       });
-      if (solids.length && fill < 8) sediment = Math.min(18, solids.reduce(function (sum, row) { return sum + Number(row.amount) || 0; }, 0));
+      if (solids.length) {
+        sediment = Math.min(22, 6 + solids.reduce(function (sum, row) { return sum + (Number(row.amount) || 0); }, 0) * 0.35);
+      }
       var color = container.color || mixColor(container);
       var active = container.id === session.selectedId;
       var kind = container.type || 'beaker';
-      var cls = 'lab-glass lab-' + kind + (kind === 'beaker' ? ' lab-beaker' : '') + (active ? ' is-active' : '') + (container.fizz ? ' is-fizz' : '');
+      var pourCls = pourFrom === container.id ? ' is-pour-source' : (pourFrom ? ' is-pour-target' : '');
+      var cls = 'lab-glass lab-' + kind + (kind === 'beaker' ? ' lab-beaker' : '') + (active ? ' is-active' : '') + (container.fizz ? ' is-fizz' : '') + pourCls;
+      var product = lang === 'pt' ? (container.productPt || container.product) : container.product;
       return '<button type="button" class="' + cls + '" data-vessel="' + esc(container.id) + '" aria-pressed="' + (active ? 'true' : 'false') + '">' +
         '<span class="lab-glass-body">' +
         (sediment ? '<span class="lab-sediment" style="height:' + sediment + '%"></span>' : '') +
-        '<span class="lab-liquid" style="height:' + fill + '%;background:' + esc(color) + '"></span>' +
+        '<span class="lab-liquid' + (container.fizz ? ' is-fizz-liquid' : '') + '" style="height:' + fill + '%;background:' + esc(color) + '"></span>' +
         '</span>' +
         '<span class="lab-glass-name">' + esc(container.label || kind) + '</span>' +
         '<span class="lab-glass-meta">' + esc(container.volumeMl) + ' / ' + esc(container.capacityMl) + ' mL</span>' +
+        (product ? '<span class="lab-glass-product">' + esc(product) + '</span>' : '') +
         '</button>';
     }
 
@@ -601,6 +733,8 @@
         '<div class="lab-kv"><span>' + esc(copy('Temperature', 'Temperatura')) + '</span><strong>' + esc(container.temperatureC) + ' °C</strong></div>' +
         '<div class="lab-kv"><span>pH</span><strong>' + esc(container.ph == null ? '—' : container.ph) + '</strong></div>' +
         '<div class="lab-kv"><span>' + esc(copy('Appearance', 'Aparência')) + '</span><strong>' + esc(container.appearance) + '</strong></div>' +
+        (container.product ? '<div class="lab-kv lab-kv-product"><span>' + esc(copy('Created', 'Criado')) + '</span><strong>' + esc(lang === 'pt' ? (container.productPt || container.product) : container.product) + '</strong></div>' : '') +
+        (pourFrom ? '<p class="lab-pour-hint">' + esc(copy('Pouring: click another vessel to transfer.', 'Transferindo: clique em outro vidro para despejar.')) + '</p>' : '') +
         '<p class="ws-lede">' + esc(copy('Virtual laboratory simulation. Values are educational, not experimental.', 'Simulação de laboratório virtual. Os valores são educacionais, não experimentais.')) + '</p>' +
         '<div class="lab-measures">' +
         '<button type="button" class="ws-btn ws-btn-sm" data-measure="volume">' + esc(copy('Volume', 'Volume')) + '</button>' +
@@ -617,6 +751,25 @@
       return notes;
     }
 
+    function pulseLiquid() {
+      if (document.documentElement.getAttribute('data-reduced-motion')) return;
+      var liquid = node.querySelector('.lab-glass.is-active .lab-liquid') || node.querySelector('.lab-glass.is-fizz .lab-liquid');
+      if (!liquid) return;
+      liquid.classList.remove('is-stirring');
+      void liquid.offsetWidth;
+      liquid.classList.add('is-stirring');
+      if (stirTimer) clearTimeout(stirTimer);
+      stirTimer = setTimeout(function () {
+        if (liquid.classList) liquid.classList.remove('is-stirring');
+      }, 420);
+    }
+
+    function flashStatus(html) {
+      lastStatus = html || '';
+      var status = node.querySelector('[data-lab-status]');
+      if (status) status.innerHTML = lastStatus;
+    }
+
     function updateLive() {
       var bench = node.querySelector('[data-lab-bench]');
       var inspector = node.querySelector('[data-lab-inspector]');
@@ -630,14 +783,6 @@
       });
       var pourBtn = node.querySelector('[data-lab-pour]');
       if (pourBtn) pourBtn.classList.toggle('is-on', Boolean(pourFrom));
-      var fizzNode = node.querySelector('.lab-glass.is-fizz .lab-liquid');
-      if (fizzNode && !document.documentElement.getAttribute('data-reduced-motion')) {
-        fizzNode.classList.add('is-stirring');
-        if (stirTimer) clearTimeout(stirTimer);
-        stirTimer = setTimeout(function () {
-          if (fizzNode.classList) fizzNode.classList.remove('is-stirring');
-        }, 420);
-      }
     }
 
     function paint(results) {
@@ -712,14 +857,18 @@
         '<section class="lab-pane"><h2>' + esc(copy('Inventory', 'Inventário')) + '</h2><div class="lab-chips">' + inventoryHtml() + '</div>' +
         '<div class="lab-amount" role="group" aria-label="' + esc(copy('Amount', 'Quantidade')) + '">' +
         '<button type="button" class="ws-btn ws-btn-sm" data-amount="5">5</button>' +
-        '<button type="button" class="ws-btn ws-btn-sm is-on" data-amount="10">10</button>' +
-        '<button type="button" class="ws-btn ws-btn-sm" data-amount="25">25</button>' +
+        '<button type="button" class="ws-btn ws-btn-sm" data-amount="10">10</button>' +
+        '<button type="button" class="ws-btn ws-btn-sm is-on" data-amount="25">25</button>' +
+        '<button type="button" class="ws-btn ws-btn-sm" data-amount="50">50</button>' +
+        '<button type="button" class="ws-btn ws-btn-sm" data-amount="100">100</button>' +
         '<span class="ws-lede">' + esc(copy('mL or g, virtual', 'mL ou g, virtual')) + '</span></div>' +
-        '<p class="ws-lede">' + esc(copy('Select a vessel, then a material. Keyboard works; drag is optional.', 'Selecione um vidro e depois um material. O teclado funciona; arrastar é opcional.')) + '</p></section>' +
+        '<p class="ws-lede">' + esc(copy('Select a vessel, then tap a material to fill it. Mix in the same glass, then Pour into another.', 'Selecione um vidro e toque em um material para enchê-lo. Misture no mesmo copo e use Transferir para outro.')) + '</p></section>' +
         '<section class="lab-pane lab-bench"><h2>' + esc(copy('Workbench', 'Bancada')) + '</h2>' +
         '<div class="lab-glass-row" data-lab-bench>' + session.containers.map(vesselHtml).join('') + '</div>' +
         '<div class="lab-bench-actions">' +
         '<button type="button" class="ws-btn ws-btn-sm" data-lab-pour>' + esc(copy('Pour', 'Transferir')) + '</button>' +
+        '<button type="button" class="ws-btn ws-btn-sm" data-lab-stir>' + esc(copy('Stir', 'Agitar')) + '</button>' +
+        '<button type="button" class="ws-btn ws-btn-sm" data-lab-empty>' + esc(copy('Empty', 'Esvaziar')) + '</button>' +
         '<button type="button" class="ws-btn ws-btn-sm" data-heat="-10">' + esc(copy('Cool', 'Esfriar')) + '</button>' +
         '<button type="button" class="ws-btn ws-btn-sm" data-heat="10">' + esc(copy('Heat', 'Aquecer')) + '</button>' +
         '<button type="button" class="ws-btn ws-btn-sm" data-add-vessel="beaker">' + esc(copy('Add beaker', 'Adicionar becker')) + '</button>' +
@@ -741,7 +890,16 @@
     }
 
     function bind(rootEl) {
-      if (rootEl.dataset.labBound === '1') return;
+      var opts = {};
+      if (typeof AbortController === 'function') {
+        if (node._labAbort && typeof node._labAbort.abort === 'function') {
+          try { node._labAbort.abort(); } catch (e) {}
+        }
+        node._labAbort = new AbortController();
+        opts.signal = node._labAbort.signal;
+      } else if (rootEl.dataset.labBound === '1') {
+        return;
+      }
       rootEl.dataset.labBound = '1';
       rootEl.addEventListener('submit', function (event) {
         var form = event.target && event.target.closest && event.target.closest('[data-lab-search]');
@@ -760,96 +918,134 @@
           return;
         }
         if (found.resolved && found.resolved.kind === 'substance') {
+          pourFrom = '';
           addToContainer(session, selected().id, found.resolved.id, amount);
           queueSave();
           params.set('q', q);
           paint(found);
+          pulseLiquid();
           return;
         }
         params.set('q', q);
         paint(found);
-      });
+      }, opts);
       rootEl.addEventListener('click', function (event) {
-        var t = event.target && event.target.closest ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-heat], [data-add-vessel]') : null;
-        if (!t) return;
-        if (t.getAttribute('data-amount')) {
-          amount = Number(t.getAttribute('data-amount')) || 10;
-          updateLive();
-          return;
-        }
-        if (t.getAttribute('data-vessel')) {
-          var id = t.getAttribute('data-vessel');
-          if (pourFrom && pourFrom !== id) {
-            pour(session, pourFrom, id, amount);
+        try {
+          var t = event.target && event.target.closest
+            ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel]')
+            : null;
+          if (!t) return;
+          if (t.getAttribute('data-amount')) {
+            amount = Number(t.getAttribute('data-amount')) || 25;
+            updateLive();
+            return;
+          }
+          if (t.getAttribute('data-vessel')) {
+            var id = t.getAttribute('data-vessel');
+            if (pourFrom && pourFrom !== id) {
+              var poured = pour(session, pourFrom, id, amount);
+              pourFrom = '';
+              session.selectedId = id;
+              queueSave();
+              updateLive();
+              if (poured.ok) pulseLiquid();
+              else if (poured.reason === 'empty') flashStatus('<div class="lab-msg" role="status">' + esc(copy('That vessel is empty.', 'Esse vidro está vazio.')) + '</div>');
+              else if (poured.reason === 'full') flashStatus('<div class="lab-msg" role="status">' + esc(copy('That vessel is full.', 'Esse vidro está cheio.')) + '</div>');
+              return;
+            }
+            session.selectedId = id;
             pourFrom = '';
+            updateLive();
+            return;
+          }
+          if (t.getAttribute('data-add')) {
+            pourFrom = '';
+            var added = addToContainer(session, selected().id, t.getAttribute('data-add'), amount);
+            queueSave();
+            updateLive();
+            if (added.ok) {
+              flashStatus('');
+              pulseLiquid();
+            } else if (added.reason === 'full') {
+              flashStatus('<div class="lab-msg" role="status">' + esc(copy('That vessel is full. Empty it or pour into another glass.', 'Esse vidro está cheio. Esvazie ou transfira para outro.')) + '</div>');
+            }
+            return;
+          }
+          if (t.getAttribute('data-measure')) {
+            measure(session, selected().id, t.getAttribute('data-measure'));
             queueSave();
             updateLive();
             return;
           }
-          session.selectedId = id;
-          pourFrom = '';
-          updateLive();
-          return;
+          if (t.getAttribute('data-heat')) {
+            var delta = Number(t.getAttribute('data-heat')) || 0;
+            var vessel = selected();
+            setTemperature(session, vessel.id, (Number(vessel.temperatureC) || 22) + delta);
+            queueSave();
+            updateLive();
+            pulseLiquid();
+            return;
+          }
+          if (t.getAttribute('data-add-vessel')) {
+            addVessel(session, t.getAttribute('data-add-vessel'));
+            queueSave();
+            updateLive();
+            return;
+          }
+          if (t.hasAttribute('data-lab-pour')) {
+            pourFrom = pourFrom ? '' : selected().id;
+            updateLive();
+            return;
+          }
+          if (t.hasAttribute('data-lab-stir')) {
+            mixContainer(selected());
+            observe(session, copy('Stirred the selected vessel.', 'Agitou o vidro selecionado.'));
+            queueSave();
+            updateLive();
+            pulseLiquid();
+            return;
+          }
+          if (t.hasAttribute('data-lab-empty')) {
+            emptyContainer(session, selected().id);
+            pourFrom = '';
+            queueSave();
+            updateLive();
+            flashStatus('');
+            return;
+          }
+          if (t.hasAttribute('data-lab-undo')) {
+            var prev = (session.history || []).pop();
+            if (!prev) return;
+            session.containers = prev.containers;
+            session.measurements = prev.measurements;
+            session.stage = prev.stage;
+            session.selectedId = prev.selectedId || (session.containers[0] || {}).id;
+            observe(session, copy('Undid the last change.', 'Desfez a última alteração.'));
+            queueSave();
+            updateLive();
+            return;
+          }
+          if (t.hasAttribute('data-lab-reset')) {
+            var keep = { id: session.id, title: session.title, mode: session.mode, creationId: session.creationId, createdAt: session.createdAt, lang: lang };
+            session = emptySession(keep);
+            session.id = keep.id;
+            session.createdAt = keep.createdAt;
+            observe(session, copy('Bench reset.', 'Bancada reiniciada.'));
+            pourFrom = '';
+            flushSave();
+            updateLive();
+            flashStatus('');
+            return;
+          }
+          if (t.hasAttribute('data-lab-save')) {
+            observe(session, copy('Session saved on this device.', 'Sessão salva neste dispositivo.'));
+            flushSave();
+            updateLive();
+          }
+        } catch (err) {
+          try { if (typeof console !== 'undefined' && console.debug) console.debug('[atomurus-lab] click', err); } catch (e) {}
         }
-        if (t.getAttribute('data-add')) {
-          addToContainer(session, selected().id, t.getAttribute('data-add'), amount);
-          queueSave();
-          updateLive();
-          return;
-        }
-        if (t.getAttribute('data-measure')) {
-          measure(session, selected().id, t.getAttribute('data-measure'));
-          queueSave();
-          updateLive();
-          return;
-        }
-        if (t.getAttribute('data-heat')) {
-          var delta = Number(t.getAttribute('data-heat')) || 0;
-          var vessel = selected();
-          setTemperature(session, vessel.id, (Number(vessel.temperatureC) || 22) + delta);
-          queueSave();
-          updateLive();
-          return;
-        }
-        if (t.getAttribute('data-add-vessel')) {
-          addVessel(session, t.getAttribute('data-add-vessel'));
-          queueSave();
-          updateLive();
-          return;
-        }
-        if (t.hasAttribute('data-lab-pour')) {
-          pourFrom = pourFrom ? '' : selected().id;
-          updateLive();
-          return;
-        }
-        if (t.hasAttribute('data-lab-undo')) {
-          var prev = (session.history || []).pop();
-          if (!prev) return;
-          session.containers = prev.containers;
-          session.measurements = prev.measurements;
-          session.stage = prev.stage;
-          session.selectedId = prev.selectedId || (session.containers[0] || {}).id;
-          observe(session, copy('Undid the last change.', 'Desfez a última alteração.'));
-          queueSave();
-          updateLive();
-          return;
-        }
-        if (t.hasAttribute('data-lab-reset')) {
-          var keep = { id: session.id, title: session.title, mode: session.mode, creationId: session.creationId, createdAt: session.createdAt };
-          session = emptySession(keep);
-          session.id = keep.id;
-          session.createdAt = keep.createdAt;
-          observe(session, copy('Bench reset.', 'Bancada reiniciada.'));
-          flushSave();
-          updateLive();
-          return;
-        }
-        if (t.hasAttribute('data-lab-save')) {
-          observe(session, copy('Session saved on this device.', 'Sessão salva neste dispositivo.'));
-          flushSave();
-          updateLive();
-        }
-      });
+      }, opts);
     }
 
     paint();
@@ -870,6 +1066,9 @@
     saveSession: saveSession,
     addToContainer: addToContainer,
     addVessel: addVessel,
+    emptyContainer: emptyContainer,
+    identifyProduct: identifyProduct,
+    visualFillPct: visualFillPct,
     pour: pour,
     setTemperature: setTemperature,
     measure: measure,

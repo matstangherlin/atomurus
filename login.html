@@ -173,7 +173,7 @@
       <form class="lc-form" id="auth-login-form" novalidate>
       <div class="field ui-field">
         <label class="ui-label" for="auth-email" data-i18n="common.auth.emailOrUsername">Email or username</label>
-        <input class="ui-input" id="auth-email" name="identifier" type="text" required autocomplete="username" maxlength="200">
+        <input class="ui-input" id="auth-email" name="identifier" type="text" required autocomplete="username" maxlength="200" placeholder="email or username" data-i18n-attr="placeholder:common.auth.identifierPlaceholder">
       </div>
       <div class="field ui-field">
         <label class="ui-label" for="auth-password" data-i18n="common.auth.password">Password</label>
@@ -209,7 +209,7 @@
       </div>
       <div class="field ui-field">
         <label class="ui-label" for="auth-signup-email" data-i18n="common.auth.email">Email</label>
-        <input class="ui-input" id="auth-signup-email" name="email" type="email" required autocomplete="off" maxlength="200" data-lpignore="true" data-1p-ignore="true">
+        <input class="ui-input" id="auth-signup-email" name="email" type="email" required autocomplete="off" maxlength="200" placeholder="email" data-i18n-attr="placeholder:common.auth.emailPlaceholder" data-lpignore="true" data-1p-ignore="true">
       </div>
       <div class="field ui-field">
         <label class="ui-label" for="auth-signup-password" data-i18n="common.auth.password">Password</label>
@@ -379,7 +379,7 @@ setTimeout(function(){
   if(boot) boot.hidden=true;
 },8000);
 </script>
-<script src="auth-login.js?v=202609110600"></script>
+<script src="auth-login.js?v=202609110800"></script>
 <script type="text/javascript">
     (window.atomurusRunAutoTag||function(){})({ zoneId: '6p1sooifu8' });
 </script>
