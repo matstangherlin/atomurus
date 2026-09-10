@@ -252,11 +252,15 @@ const studySave = readFileSync(new URL('../study-save.js', import.meta.url), 'ut
 assert.doesNotMatch(studySave, /innerHTML/);
 assert.match(studySave, /openSaveGate/);
 assert.match(studySave, /sessionHint/);
+assert.match(studySave, /canUseAccountSave/);
+assert.match(studySave, /canGeneratePractice/);
 assert.match(studySave, /section=review&start=1&set=/);
 assert.match(studySave, /bindSetMenuDismiss/);
 assert.match(studySave, /labels\.genPartial/);
 assert.match(studySave, /aria-expanded/);
 assert.match(studySave, /study-add-set/);
+assert.match(studySave, /Create a free account to keep it in your workspace/);
+assert.doesNotMatch(studySave, /Study Library is a Pro feature/);
 assert.doesNotMatch(studySave, /setMsg\(msg, 'Could not save\.'\)/);
 
 const dictSrc = readFileSync(new URL('../tools/i18n-dict-source.js', import.meta.url), 'utf8');

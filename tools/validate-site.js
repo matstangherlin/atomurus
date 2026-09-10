@@ -204,8 +204,8 @@ function assertPerfGuards() {
   if (/cdnjs\.cloudflare\.com\/ajax\/libs\/three\.js/.test(molecules)) {
     fail('viewer/molecules.html still loads three.min.js eagerly');
   }
-  if (!molecules.includes('atomurusBootProViewer') || !molecules.includes('load-three.js')) {
-    fail('viewer/molecules.html is not using entitlement-gated Three.js boot');
+  if (!molecules.includes('atomurusBootLabViewer') || !molecules.includes('load-three.js')) {
+    fail('viewer/molecules.html is not using lazy lab Three.js boot');
   }
   if (!molecules.includes('atomurusLoadViewerRuntime') || molecules.includes('WebGLRenderer')) {
     fail('viewer/molecules.html still embeds the interactive molecule runtime');
@@ -218,17 +218,17 @@ function assertPerfGuards() {
     fail('lab-tool-gate.js is still described as a security boundary');
   }
   const atomic = read('viewer/atomic-models.html');
-  if (!atomic.includes('atomurusBootProViewer')) {
-    fail('viewer/atomic-models.html is not using entitlement-gated Three.js boot');
+  if (!atomic.includes('atomurusBootLabViewer')) {
+    fail('viewer/atomic-models.html is not using lazy lab Three.js boot');
   }
   if (!atomic.includes('atomurusLoadViewerRuntime') || atomic.includes('WebGLRenderer')) {
     fail('viewer/atomic-models.html still embeds the interactive atomic runtime');
   }
   const isomerism = read('viewer/isomerism/constitutional/function.html');
-  if (!isomerism.includes('atomurusBootProViewer') || !isomerism.includes('atomurusLoadViewerRuntime')) {
-    fail('isomerism viewer pages are not using entitlement-gated runtime loading');
+  if (!isomerism.includes('atomurusBootLabViewer') || !isomerism.includes('atomurusLoadViewerRuntime')) {
+    fail('isomerism viewer pages are not using lazy lab runtime loading');
   }
-  if (/<script defer>\s*atomurusBootProViewer/.test(isomerism) || /load-three\.js[^"']*["']\s+defer/.test(isomerism)) {
+  if (/<script defer>\s*atomurusBoot(?:Lab|Pro)Viewer/.test(isomerism) || /load-three\.js[^"']*["']\s+defer/.test(isomerism)) {
     fail('isomerism viewer boot still uses defer on an inline script (runs before load-three.js)');
   }
   if (isomerism.includes('WebGLRenderer') || /src="\.\.\/isomerism-3d\.js/.test(isomerism)) {

@@ -37,7 +37,7 @@ Inventory is from HEAD `5a2703a` (UI V2) **before** this change. New state is th
 | `viewer/load-three.js` | Public 3D boots immediately. Pro viewers wait for a true flag |
 | `assets/pro-features.js` `grouped()` | Merchandises **Pro-only** live tools |
 
-Guest 3D used to fail in three places: feature flags, lab-tool-gate overlay, and `atomurusBootProViewer` waiting on ads + Pro. All three now treat educational viewers as `public`.
+Guest 3D used to fail in three places: feature flags, lab-tool-gate overlay, and the 3D boot waiting on ads + Pro. All three now treat educational viewers as `public` (`atomurusBootLabViewer`).
 
 Molecule coordinates stay on a **static allowlist** (`netlify/lib/viewer-molecule-coords.mjs`). `GET /api/pro-lab/viewer/molecule` is public **and still validates `isSafeMoleculeKey`**. That is not a security bypass of Pro Lab solvers.
 

@@ -686,6 +686,15 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://atomurus.com/viewer/isomerism/spatial/optical"/>
   </url>
   <url>
+    <loc>https://atomurus.com/viewer/isomerism</loc>
+    <lastmod>2026-06-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atomurus.com/viewer/isomerism?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://atomurus.com/viewer/isomerism?lang=pt-BR"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atomurus.com/viewer/isomerism"/>
+  </url>
+  <url>
     <loc>https://atomurus.com/viewer/isomerism?lang=pt-BR</loc>
     <lastmod>2026-06-10</lastmod>
     <changefreq>monthly</changefreq>

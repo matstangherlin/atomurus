@@ -958,7 +958,7 @@
 
   function ensureAndInit() {
     // Explore stays public. Viewer pages loaded through the allowlisted
-    // runtime already passed atomurusBootProViewer — do not re-gate here,
+    // runtime already passed atomurusBootLabViewer — do not re-gate here,
     // because lab-tool-gate may overwrite atomurusHasPremiumFeature.
     if (!isExplorePage() && !loadedAsProRuntime()) {
       if (typeof window.atomurusHasPremiumFeature === 'function') {
@@ -1057,9 +1057,9 @@
       }, 500);
       return;
     }
-    // Viewer pages: Three.js is already loaded by bootProViewer
+    // Viewer pages: Three.js is already loaded by atomurusBootLabViewer
     // (lazy runtime). Init immediately — the HTML stub already waited
-    // for entitlement and viewport.
+    // for viewport, not a Pro gate.
     if (typeof THREE !== 'undefined' || loadedAsProRuntime()) {
       ensureAndInit();
       return;
@@ -1067,8 +1067,9 @@
     panels.forEach(function (panel) {
       var canvas = panel.querySelector('.iso-3d-stage canvas') || panel.querySelector('canvas');
       if (!canvas) return;
-      if (window.atomurusBootProViewer) {
-        window.atomurusBootProViewer(canvas, 'isomerismViewer', ensureAndInit);
+      var boot = window.atomurusBootLabViewer || window.atomurusBootProViewer;
+      if (boot) {
+        boot(canvas, 'isomerismViewer', ensureAndInit);
       }
     });
   }
