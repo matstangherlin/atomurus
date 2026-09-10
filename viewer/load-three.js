@@ -256,12 +256,12 @@
   // canvas is near the viewport, load one allowlisted runtime — never a
   // free-form path. Public access does not mean eager-loading every model.
   var VIEWER_RUNTIME_SRC = {
-    'atomic-viewer.js': '/viewer/runtime/atomic-viewer.js?v=202609101700',
-    'molecule-viewer.js': '/viewer/runtime/molecule-viewer.js?v=202609101700',
-    'allotrope-viewer.js': '/viewer/runtime/allotrope-viewer.js?v=202609101530',
-    'isomerism-3d.js': '/viewer/isomerism/isomerism-3d.js?v=202609101700'
+    'atomic-viewer.js': '/viewer/runtime/atomic-viewer.js?v=202609102200',
+    'molecule-viewer.js': '/viewer/runtime/molecule-viewer.js?v=202609102200',
+    'allotrope-viewer.js': '/viewer/runtime/allotrope-viewer.js?v=202609102200',
+    'isomerism-3d.js': '/viewer/isomerism/isomerism-3d.js?v=202609102200'
   };
-  var PAPER_LAB_SRC = '/viewer/runtime/paper-lab.js?v=202609101700';
+  var PAPER_LAB_SRC = '/viewer/runtime/paper-lab.js?v=202609102200';
   var runtimePending = Object.create(null);
   var paperLabPending = null;
 
@@ -321,4 +321,17 @@
     );
   };
   global.atomurusShowProViewerError = global.atomurusShowLabViewerError;
+
+  (function prefetchLikelyViewer() {
+    var path = (global.location && global.location.pathname) || '';
+    if (!/\/viewer\//.test(path)) return;
+    function warm() {
+      loadThree().then(function () { return loadPaperLab(); }).catch(function () {});
+    }
+    if (typeof global.requestIdleCallback === 'function') {
+      global.requestIdleCallback(warm, { timeout: 1800 });
+    } else {
+      setTimeout(warm, 400);
+    }
+  })();
 })(typeof window !== 'undefined' ? window : this);

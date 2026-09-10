@@ -17,10 +17,14 @@ return (function(){
       const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
       renderer.setClearColor(isDark ? 0x0E0D0C : 0xF2EFE7, 1);
     }
-    if (paperGround) scene.remove(paperGround);
-    if (paper() && typeof THREE !== 'undefined') {
-      paperGround = paper().ground(THREE, paper().moleculeGroundOpts(paperMolForGround));
-      scene.add(paperGround);
+    if (paper() && paper().setGround) {
+      paperGround = paper().setGround(scene, THREE, paperGround, paper().moleculeGroundOpts(paperMolForGround));
+    } else {
+      if (paperGround) scene.remove(paperGround);
+      if (paper() && typeof THREE !== 'undefined') {
+        paperGround = paper().ground(THREE, paper().moleculeGroundOpts(paperMolForGround));
+        scene.add(paperGround);
+      }
     }
   }
 
@@ -41,12 +45,20 @@ return (function(){
   scene.add(currentGroup);
 
   let isDragging=false, lastX=0, lastY=0, rotX=0, rotY=0, autoRotate=!((paper() && paper().prefersReducedMotion && paper().prefersReducedMotion()));
+  const intro = paper() && paper().introSpin ? paper().introSpin({ ms: 3200 }) : null;
+  function spinning(){
+    if (!intro) return autoRotate;
+    const on = intro.spinning(autoRotate);
+    if (!intro.isHeld() && autoRotate && !on) { autoRotate = false; updateRotateBtn(); }
+    return on;
+  }
   let rotVelX = 0, rotVelY = 0;
   const ROT_DAMPING = 0.92, ROT_SENS = 0.0085;
   let labelsVisible = true;
   const DEFAULT_CAM_Z = paper() ? 6.2 : 10;
 
   canvas.addEventListener('mousedown', e => {
+    if (intro) intro.userToggle();
     isDragging=true; autoRotate=false; updateRotateBtn();
     rotVelX = 0; rotVelY = 0;
     lastX=e.clientX; lastY=e.clientY; canvas.style.cursor='grabbing';
@@ -73,12 +85,13 @@ return (function(){
   }
   if (paper()) {
     paper().bindTouchOrbit(canvas, {
-      onDown: function () { isDragging=true; autoRotate=false; updateRotateBtn(); rotVelX=0; rotVelY=0; },
+      onDown: function () { if (intro) intro.userToggle(); isDragging=true; autoRotate=false; updateRotateBtn(); rotVelX=0; rotVelY=0; },
       onDrag: function (dx, dy) {
         rotY += dx; rotX += dy;
         rotVelY = dx * 0.6 + rotVelY * 0.4;
         rotVelX = dy * 0.6 + rotVelX * 0.4;
-      }
+      },
+      onUp: function () { isDragging=false; }
     });
   }
 
@@ -110,11 +123,13 @@ return (function(){
     camera.position.set(0, 0.35, paperCamZ());
   }
 
-  function makeSphere(r,color,seg=24){
-    const mat = paper()
-      ? paper().mat(THREE, color)
-      : new THREE.MeshStandardMaterial({color,roughness:0.35,metalness:0.15});
-    return new THREE.Mesh(new THREE.SphereGeometry(r,seg,seg), mat);
+  function makeSphere(r,color,seg){
+    const segs = seg || (paper() && paper().sphereSegments
+      ? paper().sphereSegments((molData[currentMolecule] && molData[currentMolecule].atoms && molData[currentMolecule].atoms.length) || 8)
+      : 24);
+    if (paper() && paper().sphereMesh) return paper().sphereMesh(THREE, r, color, segs);
+    const mat = new THREE.MeshStandardMaterial({color,roughness:0.35,metalness:0.15});
+    return new THREE.Mesh(new THREE.SphereGeometry(r,segs,segs), mat);
   }
   function makeBond(p1,p2,r1,r2,color1,color2,order=1){
     const group = new THREE.Group();
@@ -142,15 +157,19 @@ return (function(){
 
     function addCyl(s, e, color, r) {
       const mid = new THREE.Vector3().addVectors(s,e).multiplyScalar(0.5);
-      const cyl = new THREE.Mesh(
-        new THREE.CylinderGeometry(r, r, s.distanceTo(e), 10),
-        paper()
-          ? paper().mat(THREE, color, { roughness: 0.55, metalness: 0.05 })
-          : new THREE.MeshStandardMaterial({color, roughness:0.48, metalness:0.05})
-      );
-      cyl.position.copy(mid);
-      const d = new THREE.Vector3().subVectors(e,s).normalize();
-      cyl.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), d);
+      let cyl;
+      if (paper() && paper().bondMesh) {
+        cyl = paper().bondMesh(THREE, s, e, r, color, 10);
+        if (!cyl) return;
+      } else {
+        cyl = new THREE.Mesh(
+          new THREE.CylinderGeometry(r, r, s.distanceTo(e), 10),
+          new THREE.MeshStandardMaterial({color, roughness:0.48, metalness:0.05})
+        );
+        cyl.position.copy(mid);
+        const d = new THREE.Vector3().subVectors(e,s).normalize();
+        cyl.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), d);
+      }
       group.add(cyl);
     }
     function addPair(s, e, r) {
@@ -301,13 +320,21 @@ return (function(){
   }
 
   function rebuildScene(){
-    scene.remove(currentGroup);
-    currentGroup = buildMolecule(currentMolecule);
-    scene.add(currentGroup);
+    if (paper() && paper().replaceChild) {
+      currentGroup = paper().replaceChild(scene, currentGroup, buildMolecule(currentMolecule));
+    } else {
+      scene.remove(currentGroup);
+      currentGroup = buildMolecule(currentMolecule);
+      scene.add(currentGroup);
+    }
     paperMolForGround = molData[currentMolecule];
     updateBg();
     applyDefaultOrbit();
-    autoRotate = true; updateRotateBtn();
+    if (intro) intro.restart();
+    if (!intro || !intro.isHeld()) {
+      autoRotate = !((paper() && paper().prefersReducedMotion && paper().prefersReducedMotion()));
+    }
+    updateRotateBtn();
     refreshLabels();
   }
 
@@ -320,9 +347,13 @@ return (function(){
       b.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
     if (!molData[currentMolecule]) return;
-    scene.remove(currentGroup);
-    currentGroup = buildMolecule(currentMolecule);
-    scene.add(currentGroup);
+    if (paper() && paper().replaceChild) {
+      currentGroup = paper().replaceChild(scene, currentGroup, buildMolecule(currentMolecule));
+    } else {
+      scene.remove(currentGroup);
+      currentGroup = buildMolecule(currentMolecule);
+      scene.add(currentGroup);
+    }
     refreshLabels();
     if (viewMode === '2d') draw2DMolecule(0);
   };
@@ -370,7 +401,8 @@ return (function(){
     trackedAtoms.forEach(a=>{
       if (!a.label) return;
       const sp = makeLabelSprite(a.label, a.radius);
-      sp.position.set(0, a.radius + 0.28, 0);
+      const localY = (paper() && paper().sphereMesh) ? (1 + 0.28 / Math.max(a.radius, 0.08)) : (a.radius + 0.28);
+      sp.position.set(0, localY, 0);
       a.mesh.add(sp); a.labelSprite = sp;
     });
   }
@@ -390,7 +422,7 @@ return (function(){
     const wrap = document.getElementById('canvas-wrap');
     const w = (wrap && wrap.clientWidth) || canvas.clientWidth || 800;
     const h = (wrap && wrap.clientHeight) || canvas.clientHeight || 460;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = paper() && paper().maxDpr ? Math.max(1, paper().maxDpr(viewer2d)) : Math.min(window.devicePixelRatio || 1, 1.5);
     viewer2d.width  = Math.max(1, w) * dpr;
     viewer2d.height = Math.max(1, h) * dpr;
     viewer2d.style.width  = '100%';
@@ -403,7 +435,7 @@ return (function(){
 
   function draw2DMolecule(time){
     if (viewMode !== '2d') return;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = viewer2d.width / Math.max(1, viewer2d.clientWidth || viewer2d.width);
     const W = viewer2d.width / dpr, H = viewer2d.height / dpr;
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
 
@@ -772,6 +804,7 @@ return (function(){
   };
 
   window.toggleAutoRotate = function(){
+    if (intro) intro.userToggle();
     autoRotate = !autoRotate; updateRotateBtn();
   };
   window.resetView = function(){
@@ -780,7 +813,13 @@ return (function(){
       draw2DMolecule(anim2dEnabled ? t : _t2dFrozen);
     } else {
       applyDefaultOrbit();
-      autoRotate = true; updateRotateBtn();
+      if (intro && intro.isHeld()) {
+        autoRotate = true; updateRotateBtn();
+      } else {
+        if (intro) intro.restart();
+        autoRotate = !((paper() && paper().prefersReducedMotion && paper().prefersReducedMotion()));
+        updateRotateBtn();
+      }
     }
   };
   window.zoomBy = function(direction){
@@ -876,6 +915,7 @@ return (function(){
     const w = (wrap && wrap.clientWidth) || canvas.clientWidth || 800;
     const h = (wrap && wrap.clientHeight) || canvas.clientHeight || 460;
     if (w < 2 || h < 2) return;
+    if (paper()) paper().capDpr(renderer, canvas);
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
@@ -902,7 +942,7 @@ return (function(){
       rotVelX *= ROT_DAMPING; rotVelY *= ROT_DAMPING;
     }
     t += 0.016;
-    if (autoRotate && !isDragging && Math.abs(rotVelX) < 1e-4 && Math.abs(rotVelY) < 1e-4) {
+    if (spinning() && !isDragging && Math.abs(rotVelX) < 1e-4 && Math.abs(rotVelY) < 1e-4) {
       rotY += 0.004;
     }
     currentGroup.rotation.y = rotY;
@@ -912,9 +952,13 @@ return (function(){
 
   if (paper() && paper().bindLiveLoop) {
     paper().bindLiveLoop(canvas, tickFrame, {
+      renderer: renderer,
       busy: function () {
         return isDragging || Math.abs(rotVelX) > 1e-4 || Math.abs(rotVelY) > 1e-4 ||
-          (viewMode === '3d' && autoRotate) || (viewMode === '2d' && anim2dEnabled);
+          (viewMode === '3d' && spinning()) || (viewMode === '2d' && anim2dEnabled);
+      },
+      priority: function () {
+        return isDragging || Math.abs(rotVelX) > 1e-4 || Math.abs(rotVelY) > 1e-4;
       },
       active: function () { return viewMode === '3d' || anim2dEnabled; }
     });

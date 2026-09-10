@@ -250,22 +250,22 @@ function normalizeLandingCta(navHtml, basename, prefix) {
   if (!cta) return navHtml;
   if (/href=["'][^"']*(login|signup|account)/i.test(cta.html)) return navHtml;
   let next = cta.html;
-  next = next.replace(/href=["'][^"']*["']/, `href="${prefix}login.html"`);
+  next = next.replace(/href=["'][^"']*["']/, `href="${prefix}signup.html"`);
   if (/\baria-label=/.test(next)) {
-    next = next.replace(/\baria-label=["'][^"']*["']/, 'aria-label="Account"');
+    next = next.replace(/\baria-label=["'][^"']*["']/, 'aria-label="Create account"');
   } else {
-    next = next.replace(/<a\b/, '<a aria-label="Account"');
+    next = next.replace(/<a\b/, '<a aria-label="Create account"');
   }
   next = next.replace(/\sdata-i18n-attr=["'][^"']*["']/, '');
   if (/<span\b/i.test(next)) {
     next = next.replace(
       /<span\b[^>]*>[\s\S]*?<\/span>/,
-      '<span data-i18n="pricing.ctaAccount">Account</span>'
+      '<span data-i18n="common.auth.createAccount">Create account</span>'
     );
   } else {
     next = next.replace(
       /(>)([\s\S]*?)(<svg\b|<\/a>)/i,
-      '$1<span data-i18n="pricing.ctaAccount">Account</span>$3'
+      '$1<span data-i18n="common.auth.createAccount">Create account</span>$3'
     );
   }
   return navHtml.slice(0, cta.start) + next + navHtml.slice(cta.end);
@@ -413,7 +413,7 @@ function findShellAside(html) {
 
 function ensureGlobalNavScript(html, prefix) {
   if (/assets\/global-nav\.js/.test(html)) return html;
-  const tag = `<script src="${prefix}assets/global-nav.js?v=202609090500"><\/script>\n`;
+  const tag = `<script src="${prefix}assets/global-nav.js?v=202609102200"><\/script>\n`;
   const pw = html.search(/<script[^>]*src=["'][^"']*public-workspace\.js/);
   if (pw !== -1) return html.slice(0, pw) + tag + html.slice(pw);
   const i18n = html.search(/<script[^>]*src=["'][^"']*i18n\.js/);

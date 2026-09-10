@@ -200,6 +200,15 @@
       studyWithAtomurus: 'Study with Atomurus',
       studyGuestLede: 'Save chemistry resources, build sets and continue learning.',
       createFreeAccount: 'Create free account',
+      createAccount: 'Create account',
+      guestUnlockTitle: 'With a free account',
+      guestUnlockBody: 'Keep a library, study sets and notes. New accounts include 30 days of Pro.',
+      guestOpenLabLede: 'Open Lab stays free — inspect atoms, molecules, allotropes and isomerism in 3D.',
+      guestLibraryLede: 'Save elements, molecules and articles to reopen them later.',
+      guestSetsLede: 'Study Sets hold flashcards you generate from the lab.',
+      guestNotesLede: 'Notes stay in your workspace after you create an account.',
+      guestHistoryLede: 'Lab sessions you save will appear here.',
+      guestProgressLede: 'Track what you have been studying once you have an account.',
       continueLearning: 'Continue learning',
       reviewDueTitle: 'Review due',
       learningPaths: 'Learning Paths',
@@ -509,6 +518,15 @@
       studyWithAtomurus: 'Estude com o Atomurus',
       studyGuestLede: 'Salve materiais de química, monte sets e continue aprendendo.',
       createFreeAccount: 'Criar conta gratuita',
+      createAccount: 'Criar conta',
+      guestUnlockTitle: 'Com uma conta gratuita',
+      guestUnlockBody: 'Guarde biblioteca, study sets e notas. Contas novas incluem 30 dias de Pro.',
+      guestOpenLabLede: 'O Open Lab continua livre — veja átomos, moléculas, alótropos e isomeria em 3D.',
+      guestLibraryLede: 'Salve elementos, moléculas e artigos para reabrir depois.',
+      guestSetsLede: 'Os Study Sets guardam flashcards gerados a partir do laboratório.',
+      guestNotesLede: 'As notas ficam no seu workspace depois que você criar uma conta.',
+      guestHistoryLede: 'As sessões do Lab que você salvar aparecem aqui.',
+      guestProgressLede: 'Acompanhe o que você estudou depois de criar uma conta.',
       continueLearning: 'Continuar aprendendo',
       reviewDueTitle: 'Revisão vencida',
       learningPaths: 'Caminhos de aprendizado',
@@ -900,6 +918,7 @@
           [['library', 'library', 'studyCloud'], ['sets', 'sets', 'studySets'], ['practice', 'practiceNav'], ['review', 'reviewShort', 'smartReview', 'review'], ['insights', 'insightsNav', 'studyInsights', 'insights']].map(function (pair) {
             var key = pair[3] || pair[0];
             var locked = pair[2] && !featureOn(user, pair[2]);
+            if (!user && (pair[0] === 'library' || pair[0] === 'sets' || pair[0] === 'practice')) locked = false;
             return navItemHtml('/app?section=' + pair[0], pair[1], pair[0], current === pair[0], locked, pair[0]);
           }).join('') + '</div>';
       } else if (area === 'lab') {
@@ -913,6 +932,7 @@
         localHtml = '<div class="ws-local-nav" role="navigation" aria-label="' + escapeHtml(t('navGroupActivity')) + '">' +
           [['history', 'history', 'studyCloud'], ['notes', 'notes', 'studyCloud'], ['progress', 'continueNav', 'studyCloud']].map(function (pair) {
             var locked = pair[2] && !featureOn(user, pair[2]);
+            if (!user) locked = false;
             return navItemHtml('/app?section=' + pair[0], pair[1], pair[0], current === pair[0], locked, pair[0]);
           }).join('') + '</div>';
       }
@@ -930,8 +950,9 @@
         if (asideLogout) asideLogout.addEventListener('click', doLogout);
       } else if (!user) {
         foot.innerHTML =
-          '<a class="ws-nav-item" href="/login?next=%2Fapp%3Fsection%3Daccount">' + icon('account') + '<span class="ws-nav-label">' + escapeHtml(t('account')) + '</span></a>' +
-          '<a class="ws-nav-item is-upgrade" href="/pricing">' + icon('plan') + '<span class="ws-nav-label">' + escapeHtml(t('viewPlans')) + '</span></a>';
+          '<a class="ws-nav-item is-upgrade" href="/signup?next=%2Fapp">' + icon('account') + '<span class="ws-nav-label">' + escapeHtml(t('createAccount')) + '</span></a>' +
+          '<a class="ws-nav-item" href="/login?next=%2Fapp">' + icon('account') + '<span class="ws-nav-label">' + escapeHtml(t('login')) + '</span></a>' +
+          '<a class="ws-nav-item" href="/pricing">' + icon('plan') + '<span class="ws-nav-label">' + escapeHtml(t('viewPlans') || t('plan')) + '</span></a>';
       } else {
         var upgrade = proUser(user) ? '' :
           '<a class="ws-nav-item is-upgrade" href="/pricing">' + icon('plan') + '<span class="ws-nav-label">' + escapeHtml(t('upgrade')) + '</span></a>';
@@ -954,7 +975,7 @@
       ];
       bottom.innerHTML = primary.map(function (pair) {
         var guestAccount = pair[0] === 'account' && !user;
-        var href = guestAccount ? '/login?next=%2Fapp%3Fsection%3Daccount' : '/app?section=' + pair[0];
+        var href = guestAccount ? '/signup?next=%2Fapp%3Fsection%3Daccount' : '/app?section=' + pair[0];
         return '<a class="' + (pair[3] ? 'is-active' : '') + '" href="' + href + '">' + icon(pair[0]) + '<span>' + escapeHtml(t(pair[1])) + '</span></a>';
       }).join('');
       bindProNav(bottom);
@@ -967,11 +988,21 @@
     var bottomNav = $('ws-bottom');
     if (bottomNav) bottomNav.setAttribute('aria-label', t('workspaceNav'));
     var chip = $('ws-user-name');
-    if (chip) chip.textContent = user ? displayName(user) : t('account');
+    if (chip) {
+      if (user) {
+        chip.textContent = displayName(user);
+        chip.removeAttribute('data-i18n');
+      } else {
+        chip.setAttribute('data-i18n', 'common.auth.createAccount');
+        chip.textContent = (window.I18N && typeof window.I18N.t === 'function' && window.I18N.t('common.auth.createAccount')) || t('createAccount');
+      }
+    }
     var userChip = $('ws-userchip');
     if (userChip) {
       userChip.hidden = false;
-      userChip.href = user ? '/app?section=account' : '/login?next=%2Fapp%3Fsection%3Daccount';
+      userChip.href = user ? '/app?section=account' : '/signup?next=' + encodeURIComponent((location.pathname || '/app') + (location.search || ''));
+      userChip.classList.toggle('is-guest-cta', !user);
+      userChip.setAttribute('aria-label', user ? displayName(user) : (chip && chip.textContent) || 'Create account');
     }
     var planBadge = $('ws-plan-badge');
     if (planBadge) {
@@ -1593,16 +1624,68 @@
     });
   }
 
+  function guestSignupNext(section) {
+    return '/signup?next=' + encodeURIComponent(section ? '/app?section=' + section : '/app');
+  }
+
+  function renderGuestEmpty(section) {
+    var node = $('app-study');
+    if (!node) return;
+    var copy = {
+      library: ['library', 'guestLibraryLede'],
+      sets: ['sets', 'guestSetsLede'],
+      notes: ['notes', 'guestNotesLede'],
+      history: ['history', 'guestHistoryLede'],
+      progress: ['continueNav', 'guestProgressLede']
+    }[section];
+    if (!copy) {
+      renderGuestStudyHub();
+      return;
+    }
+    node.innerHTML = crumbTrail(section) +
+      '<div class="ws-study-hub" data-study-hub="guest" data-guest-section="' + section + '">' +
+      '<p class="ws-kicker">Atomurus</p>' +
+      '<h1 class="ws-title">' + escapeHtml(t(copy[0])) + '</h1>' +
+      '<p class="ws-lede">' + escapeHtml(t(copy[1])) + '</p>' +
+      '<p><a class="ws-btn ws-btn-primary" href="' + guestSignupNext(section) + '">' + escapeHtml(t('createFreeAccount')) + '</a>' +
+      ' <a class="ws-btn ws-btn-secondary" href="/login?next=' + encodeURIComponent('/app?section=' + section) + '">' + escapeHtml(t('login')) + '</a></p>' +
+      '</div>';
+  }
+
   function renderGuestStudyHub() {
     var node = $('app-study');
     if (!node) return;
     var section = studySection();
+    var visualizeBlock = '<section class="ws-overview-block ws-hub-visualize" data-hub="visualize"><h2 class="ws-h2">' + escapeHtml(t('visualizeTitle')) + '</h2>' +
+      '<p class="ws-lede">' + escapeHtml(t('guestOpenLabLede')) + '</p>' +
+      '<nav class="ws-viz-links">' +
+      '<a href="/viewer/atomic-models.html">' + escapeHtml(t('labViewerAtomic')) + '</a>' +
+      '<a href="/viewer/molecules.html">' + escapeHtml(t('labViewerMolecules')) + '</a>' +
+      '<a href="/viewer/allotropes.html">' + escapeHtml(t('labAllotropes')) + '</a>' +
+      '<a href="/viewer/isomerism.html">' + escapeHtml(t('labIsomerism')) + '</a>' +
+      '</nav></section>';
+    var toolsBlock = '<section class="ws-overview-block ws-hub-openlab" data-hub="openlab"><h2 class="ws-h2">' + escapeHtml(t('openLabSuite')) + '</h2>' +
+      '<div class="ws-grid ws-public-grid">' +
+      '<a class="ws-lab-card" href="/periodic-table.html"><span class="ws-lab-badge">' + escapeHtml(t('publicTool')) + '</span><h3 class="ws-lab-card-title">' + escapeHtml(t('openTable')) + '</h3><p class="ws-lab-card-copy">' + escapeHtml(t('tableCardCopy')) + '</p></a>' +
+      '<a class="ws-lab-card" href="/calculators.html"><span class="ws-lab-badge">' + escapeHtml(t('publicTool')) + '</span><h3 class="ws-lab-card-title">' + escapeHtml(t('publicCalc')) + '</h3><p class="ws-lab-card-copy">' + escapeHtml(t('calcCardCopy')) + '</p></a>' +
+      '<a class="ws-lab-card" href="/explore.html"><span class="ws-lab-badge">' + escapeHtml(t('publicTool')) + '</span><h3 class="ws-lab-card-title">' + escapeHtml(t('openExplore')) + '</h3><p class="ws-lab-card-copy">' + escapeHtml(t('exploreCardCopy')) + '</p></a>' +
+      '</div></section>';
+    var unlockBlock = '<section class="ws-overview-block ws-hub-unlock" data-hub="unlock"><h2 class="ws-h2">' + escapeHtml(t('guestUnlockTitle')) + '</h2>' +
+      '<p class="ws-lede">' + escapeHtml(t('guestUnlockBody')) + '</p>' +
+      '<nav class="ws-hub-links">' +
+      '<a href="/app?section=library">' + escapeHtml(t('library')) + '</a>' +
+      '<a href="/app?section=sets">' + escapeHtml(t('sets')) + '</a>' +
+      '<a href="/app?section=practice">' + escapeHtml(t('practiceNav')) + '</a>' +
+      '<a href="/app?section=notes">' + escapeHtml(t('notes')) + '</a>' +
+      '</nav></section>';
     node.innerHTML = crumbTrail(section) +
       '<div class="ws-study-hub" data-study-hub="guest">' +
       '<p class="ws-kicker">Atomurus</p>' +
       '<h1 class="ws-title">' + escapeHtml(t('studyWithAtomurus')) + '</h1>' +
       '<p class="ws-lede">' + escapeHtml(t('studyGuestLede')) + '</p>' +
-      '<p><a class="ws-btn ws-btn-primary" href="/signup?next=%2Fapp">' + escapeHtml(t('createFreeAccount')) + '</a></p>' +
+      '<p><a class="ws-btn ws-btn-primary" href="/signup?next=%2Fapp">' + escapeHtml(t('createFreeAccount')) + '</a>' +
+      ' <a class="ws-btn ws-btn-secondary" href="/login?next=%2Fapp">' + escapeHtml(t('login')) + '</a></p>' +
+      visualizeBlock + toolsBlock + unlockBlock +
       '<section class="ws-overview-block ws-hub-practice" data-hub="practice"><h2 class="ws-h2">' + escapeHtml(t('practiceChemistry')) + '</h2>' +
       '<p class="ws-lede">' + escapeHtml(t('practiceLede')) + '</p>' +
       '<div class="ws-grid">' + practiceLiveCards(4) + '</div></section>' +
@@ -2908,6 +2991,10 @@
       }
       if (section === 'insights') {
         renderLockedInsights();
+        return;
+      }
+      if (section === 'library' || section === 'sets' || section === 'notes' || section === 'history' || section === 'progress') {
+        renderGuestEmpty(section);
         return;
       }
       renderGuestStudyHub();

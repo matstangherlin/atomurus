@@ -21,10 +21,14 @@
       const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
       renderer.setClearColor(isDark ? 0x0E0D0C : 0xF2EFE7, 1);
     }
-    if (paperGround) scene.remove(paperGround);
-    if (paper()) {
-      paperGround = paper().ground(THREE, paper().atomGroundOpts ? paper().atomGroundOpts() : { scale: 1.15, y: -1.35 });
-      scene.add(paperGround);
+    if (paper() && paper().setGround) {
+      paperGround = paper().setGround(scene, THREE, paperGround, paper().atomGroundOpts ? paper().atomGroundOpts() : { scale: 1.15, y: -1.35 });
+    } else {
+      if (paperGround) scene.remove(paperGround);
+      if (paper()) {
+        paperGround = paper().ground(THREE, paper().atomGroundOpts ? paper().atomGroundOpts() : { scale: 1.15, y: -1.35 });
+        scene.add(paperGround);
+      }
     }
   }
   if (paper()) paper().lightScene(scene, THREE);
@@ -45,6 +49,13 @@
 
   // Mouse / touch orbit + state
   let isDragging=false,lastX=0,lastY=0,rotX=(paper() && paper().ATOM_ORBIT_X) || 0.28,rotY=(paper() && paper().ATOM_ORBIT_Y) || 0.55,autoRotate=!((paper() && paper().prefersReducedMotion && paper().prefersReducedMotion()));
+  const intro = paper() && paper().introSpin ? paper().introSpin({ ms: 3200 }) : null;
+  function spinning(){
+    if (!intro) return autoRotate;
+    const on = intro.spinning(autoRotate);
+    if (!intro.isHeld() && autoRotate && !on) { autoRotate = false; updateRotateBtn(); }
+    return on;
+  }
   let staticMode=false, labelsVisible=false;
   const DEFAULT_CAM_Z=(paper() && paper().ATOM_CAM_Z) || 6.6;
 
@@ -55,6 +66,7 @@
 
   canvas.addEventListener('mousedown', e => {
     if (staticMode) return;
+    if (intro) intro.userToggle();
     isDragging=true; autoRotate=false; updateRotateBtn();
     rotVelX = 0; rotVelY = 0;
     lastX=e.clientX; lastY=e.clientY; canvas.style.cursor='grabbing';
@@ -85,11 +97,13 @@
   let lastTouchX=0,lastTouchY=0;
   canvas.addEventListener('touchstart', e => {
     if (staticMode) return;
-    autoRotate=false; updateRotateBtn();
+    if (intro) intro.userToggle();
+    isDragging=true; autoRotate=false; updateRotateBtn();
     lastTouchX=e.touches[0].clientX; lastTouchY=e.touches[0].clientY;
   });
   canvas.addEventListener('touchmove', e => {
     if (staticMode) return;
+    isDragging=true;
     const dx = (e.touches[0].clientX - lastTouchX) * 0.011;
     const dy = (e.touches[0].clientY - lastTouchY) * 0.011;
     rotY += dx; rotX += dy;
@@ -98,6 +112,10 @@
     lastTouchX=e.touches[0].clientX; lastTouchY=e.touches[0].clientY;
     e.preventDefault();
   }, { passive:false });
+  function endAtomicTouch(){ isDragging=false; }
+  canvas.addEventListener('touchend', endAtomicTouch);
+  canvas.addEventListener('touchcancel', endAtomicTouch);
+  window.addEventListener('touchend', endAtomicTouch);
 
   function updateRotateBtn(){
     const b=document.getElementById('vc-rotate');
@@ -111,14 +129,15 @@
   const ORBIT_COLOR    = (paper() && paper().GREEN) || 0x1E6A50;
 
   // Helpers
-  function makeSphere(r,color,segments=24){
-    const mat = paper()
-      ? paper().mat(THREE, color)
-      : new THREE.MeshStandardMaterial({color,roughness:0.35,metalness:0.15});
-    return new THREE.Mesh(new THREE.SphereGeometry(r,segments,segments), mat);
+  function makeSphere(r,color,segments){
+    const segs = segments || (paper() && paper().sphereSegments ? paper().sphereSegments(8) : 24);
+    if (paper() && paper().sphereMesh) return paper().sphereMesh(THREE, r, color, segs);
+    const mat = new THREE.MeshStandardMaterial({color,roughness:0.35,metalness:0.15});
+    return new THREE.Mesh(new THREE.SphereGeometry(r,segs,segs), mat);
   }
   function makeGlow(r,color){
-    return new THREE.Mesh(new THREE.SphereGeometry(r,24,24),
+    if (paper() && paper().glowMesh) return paper().glowMesh(THREE, r, color);
+    return new THREE.Mesh(new THREE.SphereGeometry(r,12,12),
       new THREE.MeshBasicMaterial({color,transparent:true,opacity:0.08}));
   }
   function makeOrbit(radius,color=ORBIT_COLOR,opacity=0.85,tilt=0){
@@ -133,12 +152,14 @@
 
   function makeBareParticle(r, color, segments=24){
     const g = new THREE.Group();
-    g.add(new THREE.Mesh(
-      new THREE.SphereGeometry(r, segments, segments),
-      paper()
-        ? paper().mat(THREE, color, { roughness: 0.48, metalness: 0.04 })
-        : new THREE.MeshStandardMaterial({color, roughness:0.42, metalness:0.06})
-    ));
+    if (paper() && paper().sphereMesh) {
+      g.add(paper().sphereMesh(THREE, r, color, segments, { roughness: 0.48, metalness: 0.04 }));
+    } else {
+      g.add(new THREE.Mesh(
+        new THREE.SphereGeometry(r, segments, segments),
+        new THREE.MeshStandardMaterial({color, roughness:0.42, metalness:0.06})
+      ));
+    }
     return g;
   }
 
@@ -290,10 +311,12 @@
         p = makeLabeledParticle(partR, color, '+', 16);
       } else {
         p = new THREE.Group();
-        p.add(new THREE.Mesh(new THREE.SphereGeometry(partR,16,16),
+        p.add(new THREE.Mesh(
+          (paper() && paper().unitSphere) ? paper().unitSphere(THREE, 16) : new THREE.SphereGeometry(partR,16,16),
           paper()
-            ? paper().mat(THREE, NEUTRON_COLOR, { roughness: 0.4, metalness: 0.1 })
+            ? paper().sharedMat(THREE, NEUTRON_COLOR, { roughness: 0.4, metalness: 0.1 })
             : new THREE.MeshStandardMaterial({color:NEUTRON_COLOR,roughness:0.4,metalness:0.1})));
+        if (paper() && paper().unitSphere) p.children[0].scale.set(partR, partR, partR);
       }
       const phi   = Math.acos(1 - 2 * (i + 0.5) / total);
       const theta = Math.PI * (1 + Math.sqrt(5)) * (i + 0.5);
@@ -308,6 +331,9 @@
     return g;
   }
   function makeBond(p1,p2,color=0x888,r=0.06){
+    if (paper() && paper().bondMesh) {
+      return paper().bondMesh(THREE, p1, p2, r, color, 10) || new THREE.Group();
+    }
     const dir=new THREE.Vector3().subVectors(p2,p1);
     const len=dir.length();
     const mid=new THREE.Vector3().addVectors(p1,p2).multiplyScalar(0.5);
@@ -318,6 +344,36 @@
     cyl.position.copy(mid);
     cyl.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir.normalize());
     return cyl;
+  }
+  function addAtoms(g, positions, color, r, segs){
+    if (paper() && paper().addInstancedSpheres && positions.length > 4) {
+      paper().addInstancedSpheres(g, THREE, positions, color, r, segs);
+      return;
+    }
+    positions.forEach(p => { const a = makeSphere(r, color, segs); a.position.copy(p); g.add(a); });
+  }
+  function addGlows(g, positions, color, r){
+    if (paper() && paper().addInstancedSpheres && positions.length > 4) {
+      paper().addInstancedSpheres(g, THREE, positions, color, r, 12, { basic: true, opacity: 0.08 });
+      return;
+    }
+    positions.forEach(p => { const glow = makeGlow(r, color); glow.position.copy(p); g.add(glow); });
+  }
+  function addBondsNear(g, positions, maxDist, color, r){
+    const pairs = (paper() && paper().nearbyPairs)
+      ? paper().nearbyPairs(positions, maxDist)
+      : (function(){
+          const out = [];
+          for (let i = 0; i < positions.length; i++)
+            for (let j = i + 1; j < positions.length; j++)
+              if (positions[i].distanceTo(positions[j]) < maxDist) out.push([positions[i], positions[j]]);
+          return out;
+        })();
+    if (paper() && paper().addInstancedBonds && pairs.length > 4) {
+      paper().addInstancedBonds(g, THREE, pairs, color, r);
+      return;
+    }
+    pairs.forEach(pair => g.add(makeBond(pair[0], pair[1], color, r)));
   }
 
   let electrons=[];
@@ -346,24 +402,28 @@
   const atomicModels = {
     dalton: () => {
       const g = new THREE.Group(); electrons = []; trackedAtoms = []; bondCount = 0;
-      const ball = new THREE.Mesh(
-        new THREE.SphereGeometry(paper() ? 1.18 : 2.0, 40, 40),
-        paper()
-          ? paper().mat(THREE, paper().isDark() ? 0x6B5A42 : 0x8A6A4A, { roughness: 0.62, metalness: 0.04 })
-          : new THREE.MeshStandardMaterial({color:0x8A6A4A, roughness:0.62, metalness:0.04})
-      );
+      const segs = paper() && paper().sphereSegments ? paper().sphereSegments(1, 'hero') : 40;
+      const r = paper() ? 1.18 : 2.0;
+      const ball = (paper() && paper().sphereMesh)
+        ? paper().sphereMesh(THREE, r, paper().isDark() ? 0x6B5A42 : 0x8A6A4A, segs, { roughness: 0.62, metalness: 0.04 })
+        : new THREE.Mesh(
+            new THREE.SphereGeometry(r, segs, segs),
+            new THREE.MeshStandardMaterial({color:0x8A6A4A, roughness:0.62, metalness:0.04})
+          );
       if (!paper()) ball.add(makeGlow(2.5, 0xaa8855));
       g.add(ball);
       return g;
     },
     thomson: (el = 6) => {
       const g = new THREE.Group(); electrons = []; trackedAtoms = []; bondCount = 0;
-      const pudding = new THREE.Mesh(
-        new THREE.SphereGeometry(paper() ? 1.55 : 2.5, 32, 32),
-        paper()
-          ? paper().mat(THREE, 0xD4A07A, { transparent: true, opacity: paper().isDark() ? 0.22 : 0.32, roughness: 0.86, metalness: 0, side: THREE.DoubleSide })
-          : new THREE.MeshStandardMaterial({ color: 0xff9966, transparent: true, opacity: 0.22, roughness:0.8 })
-      );
+      const segs = paper() && paper().sphereSegments ? paper().sphereSegments(1, 'hero') : 32;
+      const r = paper() ? 1.55 : 2.5;
+      const pudding = (paper() && paper().sphereMesh)
+        ? paper().sphereMesh(THREE, r, 0xD4A07A, segs, { transparent: true, opacity: paper().isDark() ? 0.22 : 0.32, roughness: 0.86, metalness: 0, side: THREE.DoubleSide })
+        : new THREE.Mesh(
+            new THREE.SphereGeometry(r, segs, segs),
+            new THREE.MeshStandardMaterial({ color: 0xff9966, transparent: true, opacity: 0.22, roughness:0.8 })
+          );
       g.add(pudding);
       if (!paper()) g.add(makeGlow(2.7, 0xff5533));
       const points = paper()
@@ -631,14 +691,8 @@
         const cz=(Math.min(...zs)+Math.max(...zs))/2;
         pos.forEach(p=>{p.x-=cx; p.z-=cz;});
         const shade=li===1?0x555555:0x333333;
-        pos.forEach(p=>{
-          const a=makeSphere(0.16,shade,10);
-          a.position.copy(p); g.add(a);
-        });
-        for (let i=0;i<pos.length;i++)
-          for (let j=i+1;j<pos.length;j++)
-            if (pos[i].distanceTo(pos[j])<b*1.1)
-              g.add(makeBond(pos[i],pos[j],0x666666,0.055));
+        addAtoms(g, pos, shade, 0.16, 10);
+        addBondsNear(g, pos, b*1.1, 0x666666, 0.055);
       });
     }
     else if (key==='diamond'){
@@ -654,17 +708,11 @@
             });
       const uniq=[];
       sites.forEach(s=>{ if (!uniq.some(u=>u.distanceTo(s)<0.05)) uniq.push(s); });
-      uniq.forEach(s=>{
-        const atom=makeSphere(0.22,0x99ddff,14);
-        atom.position.copy(s); atom.add(makeGlow(0.34,0x88ccff));
-        g.add(atom);
-      });
+      addAtoms(g, uniq, 0x99ddff, 0.22, 14);
+      addGlows(g, uniq, 0x88ccff, 0.34);
       const bondLen=a0*Math.sqrt(3)/4;
       const tol=bondLen*1.08;
-      for (let i=0;i<uniq.length;i++)
-        for (let j=i+1;j<uniq.length;j++)
-          if (uniq[i].distanceTo(uniq[j])<tol)
-            g.add(makeBond(uniq[i],uniq[j],0xaaddff,0.07));
+      addBondsNear(g, uniq, tol, 0xaaddff, 0.07);
     }
     else if (key==='fullerene'){
       const phi=(1+Math.sqrt(5))/2;
@@ -688,15 +736,9 @@
       const sampleLen=Math.sqrt(uniqVerts[0][0]**2+uniqVerts[0][1]**2+uniqVerts[0][2]**2);
       const scale=targetR/sampleLen;
       const pts=uniqVerts.map(v=>new THREE.Vector3(v[0]*scale,v[1]*scale,v[2]*scale));
-      pts.forEach(p=>{
-        const a=makeSphere(0.18,0x333333,14);
-        a.position.copy(p); g.add(a);
-      });
+      addAtoms(g, pts, 0x333333, 0.18, 14);
       const bondDist=2*scale*1.08;
-      for (let i=0;i<pts.length;i++)
-        for (let j=i+1;j<pts.length;j++)
-          if (pts[i].distanceTo(pts[j])<bondDist)
-            g.add(makeBond(pts[i],pts[j],0x666666,0.055));
+      addBondsNear(g, pts, bondDist, 0x666666, 0.055);
     }
     else if (key==='graphene'){
       const rows=4,cols=5;
@@ -706,14 +748,10 @@
           const x=col*1.4+(row%2)*0.7-3.5;
           const z=row*1.21-2.4;
           pos.push(new THREE.Vector3(x,0,z));
-          const atom=makeSphere(0.18,0x222222,12);
-          atom.position.set(x,0,z); g.add(atom);
         }
       }
-      for (let i=0;i<pos.length;i++)
-        for (let j=i+1;j<pos.length;j++)
-          if (pos[i].distanceTo(pos[j])<1.5)
-            g.add(makeBond(pos[i],pos[j],0x444444,0.055));
+      addAtoms(g, pos, 0x222222, 0.18, 12);
+      addBondsNear(g, pos, 1.5, 0x444444, 0.055);
     }
     else if (key==='nanotube'){
       const R=1.5,segs=10,rings=8;
@@ -724,28 +762,25 @@
           const a=(s/segs)*Math.PI*2+(ring%2)*(Math.PI/segs);
           const x=Math.cos(a)*R, z=Math.sin(a)*R;
           pos.push(new THREE.Vector3(x,y,z));
-          const atom=makeSphere(0.16,0x333333,12);
-          atom.position.set(x,y,z); g.add(atom);
         }
       }
-      for (let i=0;i<pos.length;i++)
-        for (let j=i+1;j<pos.length;j++)
-          if (pos[i].distanceTo(pos[j])<1.0)
-            g.add(makeBond(pos[i],pos[j],0x555555,0.05));
+      addAtoms(g, pos, 0x333333, 0.16, 12);
+      addBondsNear(g, pos, 1.0, 0x555555, 0.05);
     }
     else if (key==='o2'){
       const a1=makeSphere(0.5,0xee3333), a2=makeSphere(0.5,0xee3333);
       a1.position.set(-0.7,0,0); a2.position.set(0.7,0,0);
-      a1.add(makeGlow(0.75,0xff2200)); a2.add(makeGlow(0.75,0xff2200));
-      g.add(a1); g.add(a2);
+      const g1=makeGlow(0.75,0xff2200); g1.position.copy(a1.position);
+      const g2=makeGlow(0.75,0xff2200); g2.position.copy(a2.position);
+      g.add(a1); g.add(a2); g.add(g1); g.add(g2);
       g.add(makeBond(a1.position,a2.position,0xcc2222,0.1));
       g.add(makeBond(new THREE.Vector3(-0.7,0.12,0),new THREE.Vector3(0.7,0.12,0),0xcc2222,0.1));
     }
     else if (key==='ozone'){
       [[-1.1,-0.3,0],[0,0.5,0],[1.1,-0.3,0]].forEach(([x,y,z])=>{
         const a=makeSphere(0.45,0x5599ff);
-        a.position.set(x,y,z); a.add(makeGlow(0.65,0x4488ff));
-        g.add(a);
+        a.position.set(x,y,z); g.add(a);
+        const glow=makeGlow(0.65,0x4488ff); glow.position.set(x,y,z); g.add(glow);
       });
       g.add(makeBond(new THREE.Vector3(-1.1,-0.3,0),new THREE.Vector3(0,0.5,0),0x4477cc,0.09));
       g.add(makeBond(new THREE.Vector3(0,0.5,0),new THREE.Vector3(1.1,-0.3,0),0x4477cc,0.09));
@@ -768,8 +803,8 @@
       const pSites=[[0,h*0.75,0],[-1.15,-h*0.25,1.0],[1.15,-h*0.25,1.0],[0,-h*0.25,-1.5]];
       pSites.forEach(([x,y,z])=>{
         const a=makeSphere(0.4,0xffdd44,16);
-        a.position.set(x,y,z); a.add(makeGlow(0.6,0xffcc00));
-        g.add(a);
+        a.position.set(x,y,z); g.add(a);
+        const glow=makeGlow(0.6,0xffcc00); glow.position.set(x,y,z); g.add(glow);
       });
       [[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]].forEach(([i,j])=>{
         g.add(makeBond(new THREE.Vector3(...pSites[i]),new THREE.Vector3(...pSites[j]),0xddaa00,0.09));
@@ -805,15 +840,9 @@
         const cz=(Math.min(...zs)+Math.max(...zs))/2;
         positions.forEach(p=>{p.x-=cx; p.z-=cz;});
         const shade=li===0?0x4a1d6b:0x6b2d8a;
-        positions.forEach(p=>{
-          const atom=makeSphere(0.26,shade,12);
-          atom.position.copy(p); atom.add(makeGlow(0.38,0x7c3aed));
-          g.add(atom);
-        });
-        for (let i=0;i<positions.length;i++)
-          for (let j=i+1;j<positions.length;j++)
-            if (positions[i].distanceTo(positions[j])<a*1.15)
-              g.add(makeBond(positions[i],positions[j],0x5b21b6,0.06));
+        addAtoms(g, positions, shade, 0.26, 12);
+        addGlows(g, positions, 0x7c3aed, 0.38);
+        addBondsNear(g, positions, a*1.15, 0x5b21b6, 0.06);
       });
     }
     return g;
@@ -823,14 +852,24 @@
   let currentAtomModel='bohr', currentMolecule='water', currentAllotrope='graphite';
 
   function rebuildScene(buildFn){
-    scene.remove(currentGroup);
-    currentGroup = buildFn();
-    currentGroup.position.y = paper() ? 0.12 : 0.45;
-    scene.add(currentGroup);
+    const next = buildFn();
+    next.position.y = paper() ? 0.12 : 0.45;
+    if (paper() && paper().replaceChild) {
+      currentGroup = paper().replaceChild(scene, currentGroup, next);
+    } else {
+      scene.remove(currentGroup);
+      currentGroup = next;
+      scene.add(currentGroup);
+    }
     rotX = (paper() && paper().ATOM_ORBIT_X) || 0.28;
     rotY = (paper() && paper().ATOM_ORBIT_Y) || 0.55;
     camera.position.set(0, paper() ? 0.2 : 0.35, DEFAULT_CAM_Z);
-    if (!staticMode){ autoRotate=true; }
+    if (!staticMode){
+      if (intro) intro.restart();
+      if (!intro || !intro.isHeld()) {
+        autoRotate = !((paper() && paper().prefersReducedMotion && paper().prefersReducedMotion()));
+      }
+    }
     if (typeof updateRotateBtn==='function') updateRotateBtn();
   }
 
@@ -1103,7 +1142,8 @@
     trackedAtoms.forEach(a=>{
       if (!a.label) return;
       const sp = makeLabelSprite(a.label);
-      sp.position.set(0, a.radius + 0.42, 0);
+      const localY = (paper() && paper().sphereMesh) ? (1 + 0.42 / Math.max(a.radius, 0.08)) : (a.radius + 0.42);
+      sp.position.set(0, localY, 0);
       a.mesh.add(sp);
       a.labelSprite = sp;
     });
@@ -1123,6 +1163,7 @@
   // ── Public controls
   window.toggleAutoRotate = function(){
     if (staticMode) return;
+    if (intro) intro.userToggle();
     autoRotate = !autoRotate;
     updateRotateBtn();
   };
@@ -2195,6 +2236,7 @@
     const w = (wrap && wrap.clientWidth) || canvas.clientWidth || 800;
     const h = (wrap && wrap.clientHeight) || canvas.clientHeight || 460;
     if (w < 2 || h < 2) return;
+    if (paper()) paper().capDpr(renderer, canvas);
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
@@ -2236,29 +2278,31 @@
     }
     _staticRendered = false;
     t += 0.016;
-    if (autoRotate && !isDragging && Math.abs(rotVelX) < 1e-4 && Math.abs(rotVelY) < 1e-4) {
+    if (spinning() && !isDragging && Math.abs(rotVelX) < 1e-4 && Math.abs(rotVelY) < 1e-4) {
       rotY += 0.004;
     }
     currentGroup.rotation.y = rotY;
     currentGroup.rotation.x = rotX;
 
-    electrons.forEach(e => {
-      const ud = e.userData;
-      if (!ud.orbitR) return;
-      const a = t * ud.speed + ud.phase;
-      if (ud.elliptic && ud.euler) {
-        _orbitVec.set(Math.cos(a) * ud.orbitR, Math.sin(a) * ud.orbitR, 0);
-        _orbitEuler.set(ud.euler.x, ud.euler.y, ud.euler.z);
-        _orbitVec.applyEuler(_orbitEuler);
-        e.position.copy(_orbitVec);
-      } else {
-        const tilt = ud.tilt || 0;
-        e.position.x = Math.cos(a) * ud.orbitR;
-        e.position.y = Math.sin(a) * ud.orbitR * Math.cos(tilt);
-        e.position.z = Math.sin(a) * ud.orbitR * Math.sin(tilt);
-      }
-    });
-    currentGroup.children.forEach(c => { if (c.userData.isCloud) c.rotation.y += 0.0025; });
+    if (spinning() && !isDragging) {
+      electrons.forEach(e => {
+        const ud = e.userData;
+        if (!ud.orbitR) return;
+        const a = t * ud.speed + ud.phase;
+        if (ud.elliptic && ud.euler) {
+          _orbitVec.set(Math.cos(a) * ud.orbitR, Math.sin(a) * ud.orbitR, 0);
+          _orbitEuler.set(ud.euler.x, ud.euler.y, ud.euler.z);
+          _orbitVec.applyEuler(_orbitEuler);
+          e.position.copy(_orbitVec);
+        } else {
+          const tilt = ud.tilt || 0;
+          e.position.x = Math.cos(a) * ud.orbitR;
+          e.position.y = Math.sin(a) * ud.orbitR * Math.cos(tilt);
+          e.position.z = Math.sin(a) * ud.orbitR * Math.sin(tilt);
+        }
+      });
+      currentGroup.children.forEach(c => { if (c.userData.isCloud) c.rotation.y += 0.0025; });
+    }
     renderer.render(scene, camera);
 
     if (currentTab === 'atomic') drive2D();
@@ -2266,9 +2310,13 @@
 
   if (paper() && paper().bindLiveLoop) {
     paper().bindLiveLoop(canvas, tickFrame, {
+      renderer: renderer,
       busy: function () {
         return isDragging || Math.abs(rotVelX) > 1e-4 || Math.abs(rotVelY) > 1e-4 ||
-          (!staticMode && viewMode === '3d') || anim2dEnabled;
+          (!staticMode && viewMode === '3d' && spinning()) || anim2dEnabled;
+      },
+      priority: function () {
+        return isDragging || Math.abs(rotVelX) > 1e-4 || Math.abs(rotVelY) > 1e-4;
       },
       active: function () { return viewMode === '3d' || anim2dEnabled; }
     });

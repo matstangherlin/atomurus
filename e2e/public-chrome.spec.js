@@ -200,8 +200,8 @@ test('public table, calculators, login and pricing share the new chrome', async 
   await expect.poll(() => fontFamily(page.locator('.lc-topnav-name'))).toMatch(/Instrument Serif/i);
   await expect.poll(() => fontFamily(page.locator('.price-card h3').first())).toMatch(/Instrument Serif/i);
   await expect(page.locator('.lc-doc-kicker .pill')).toBeHidden();
-  await expect(page.locator('.ps-shell > .lc-topnav .lc-topnav-cta')).toHaveAttribute('href', /login/);
-  await expect(page.locator('.ps-shell > .lc-topnav .lc-topnav-cta')).toContainText(/Account/i);
+  await expect(page.locator('.ps-shell > .lc-topnav .lc-topnav-cta')).toHaveAttribute('href', /signup/, { timeout: 15_000 });
+  await expect(page.locator('.ps-shell > .lc-topnav .lc-topnav-cta')).toContainText(/Create account|Criar conta/i);
   await expect.poll(async () => page.locator('#pricing-pro-cta').evaluate((el) => getComputedStyle(el).backgroundColor))
     .toMatch(/rgb\(\s*20,\s*18,\s*14\s*\)/);
   await saveShot(page, 'desktop-public-pricing');
@@ -246,8 +246,8 @@ test('settings, compare, docs and articles keep the workspace pattern', async ({
   await expect(page.locator('.lc-doc-title')).toBeVisible();
   await expect.poll(() => fontFamily(page.locator('.lc-doc-title'))).toMatch(/Instrument Serif/i);
   await expect(page.locator('.lc-landing .data-strip, .data-strip').first()).toBeHidden();
-  await expect(page.locator('.ps-shell > .lc-topnav .lc-topnav-cta')).toHaveAttribute('href', /login/);
-  await expect(page.locator('.ps-shell > .lc-topnav .lc-topnav-cta')).toContainText(/Account/i);
+  await expect(page.locator('.ps-shell > .lc-topnav .lc-topnav-cta')).toHaveAttribute('href', /signup/, { timeout: 15_000 });
+  await expect(page.locator('.ps-shell > .lc-topnav .lc-topnav-cta')).toContainText(/Create account|Criar conta/i);
   await saveShot(page, 'desktop-public-about');
 
   await page.goto('/explore/what-is-an-atom.html');

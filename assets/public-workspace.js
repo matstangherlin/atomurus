@@ -31,6 +31,18 @@
     return '/login?next=' + encodeURIComponent((location.pathname || '/') + (location.search || ''));
   }
 
+  function guestSignupHref() {
+    if (window.AtomurusNav && typeof window.AtomurusNav.guestSignupHref === 'function') {
+      return window.AtomurusNav.guestSignupHref();
+    }
+    if (window.I18N && typeof window.I18N.guestSignupHref === 'function') {
+      return window.I18N.guestSignupHref();
+    }
+    var path = location.pathname || '/';
+    if (/\/(login|signup)(?:\.html)?$/i.test(path)) return '/signup';
+    return '/signup?next=' + encodeURIComponent((location.pathname || '/') + (location.search || ''));
+  }
+
   function normalizeLandingCta(topnav) {
     var cta = topnav.querySelector('.lc-topnav-cta');
     if (!cta) return;
@@ -40,16 +52,16 @@
     var href = (cta.getAttribute('href') || '').toLowerCase();
     if (/login|signup|account/.test(href)) return;
     var p = prefix();
-    cta.setAttribute('href', p + 'login.html');
-    cta.setAttribute('aria-label', 'Account');
+    cta.setAttribute('href', p + 'signup.html');
+    cta.setAttribute('aria-label', 'Create account');
     cta.removeAttribute('data-i18n-attr');
     var span = cta.querySelector('span');
     if (!span) {
       span = document.createElement('span');
       cta.insertBefore(span, cta.firstChild);
     }
-    span.setAttribute('data-i18n', 'pricing.ctaAccount');
-    span.textContent = 'Account';
+    span.setAttribute('data-i18n', 'common.auth.createAccount');
+    span.textContent = 'Create account';
   }
 
   function stripKickerMarks(root) {
@@ -117,13 +129,13 @@
     var wrap = document.createElement('div');
     wrap.className = 'ps-account';
     wrap.setAttribute('data-atomurus-account', '');
-    wrap.innerHTML =
+      wrap.innerHTML =
       '<span class="ps-plan-badge" hidden data-atomurus-plan-badge></span>' +
-      '<a class="ps-userchip lc-topnav-cta" href="' +
-      guestLoginHref() +
-      '" data-atomurus-account-chip aria-label="Account">' +
+      '<a class="ps-userchip lc-topnav-cta is-guest-cta" href="' +
+      guestSignupHref() +
+      '" data-atomurus-account-chip aria-label="Create account">' +
       '<svg class="ps-userchip-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
-      '<span data-i18n="pricing.ctaAccount">Account</span></a>';
+      '<span data-i18n="common.auth.createAccount">Create account</span></a>';
     var existingCta = bar.querySelector('.lc-topnav-cta:not([data-atomurus-account-chip])');
     if (existingCta && existingCta.parentNode) {
       existingCta.parentNode.replaceChild(wrap, existingCta);
@@ -167,6 +179,7 @@
   function loadLabGate() {
     loadScript('/assets/access-policy.js?v=202609090100', 'data-access-policy');
     loadScript('/assets/lab-tool-gate.js?v=202609090100', 'data-lab-tool-gate');
+    loadScript('/assets/guest-nudge.js?v=202609102200', 'data-guest-nudge');
   }
 
   function run() {

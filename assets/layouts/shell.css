@@ -41,6 +41,18 @@
   border-color: color-mix(in oklab, var(--color-brand, #1E6A50) 40%, var(--color-border, #D8D2BF));
 }
 
+.ps-userchip.is-guest-cta,
+.ws-userchip.is-guest-cta {
+  background: var(--color-brand, #1E6A50);
+  border-color: var(--color-brand, #1E6A50);
+  color: var(--color-on-brand, #F8F5EC);
+}
+
+.ps-userchip.is-guest-cta:hover,
+.ws-userchip.is-guest-cta:hover {
+  filter: brightness(1.06);
+}
+
 .ps-userchip-icon {
   flex: 0 0 16px;
 }

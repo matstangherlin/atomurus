@@ -665,6 +665,14 @@ html body.ps-body.lc-doc .ps-shell {
   color: var(--lc-ink) !important;
   font-weight: 600;
 }
+.ps-shell > .lc-topnav .lc-topnav-cta.ps-userchip.is-guest-cta {
+  background: var(--color-brand, #1E6A50) !important;
+  border-color: var(--color-brand, #1E6A50) !important;
+  color: var(--color-on-brand, #F8F5EC) !important;
+}
+.ps-shell > .lc-topnav .lc-topnav-cta.ps-userchip.is-guest-cta:hover {
+  filter: brightness(1.06);
+}
 .ps-shell > .lc-topnav .lc-topnav-cta.ps-userchip svg { display: block; }
 .ps-shell > .topbar .ps-account {
   margin-left: 4px;
