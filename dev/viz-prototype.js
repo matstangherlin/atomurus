@@ -375,7 +375,7 @@
         x = (px - cx) * scale;
         r = Math.sqrt(x * x + z * z);
         t = Math.min(1, z * z * Math.exp(-r) * norm);
-        t = t * t;
+        t = Math.pow(t, 0.62);
         i = (pz * w + px) * 4;
         ch = z >= 0 ? plus : minus;
         data[i] = paper[0] + (ch[0] - paper[0]) * t;
