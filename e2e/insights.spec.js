@@ -216,7 +216,7 @@ test('Overview hierarchy: Pro due hero and Free workspace copy', async ({ page }
   await expect(page.locator('#app-study a[href="/app?section=library"]').first()).toContainText(/Library|Biblioteca/);
   await expect(page.locator('#app-study a[href="/app?section=sets"]').first()).toContainText(/Study Sets/);
   await expect(page.locator('#app-study a[href="/app?section=insights"]').first()).toBeVisible();
-  await expect(page.locator('#app-study a[href="/viewer/atomic-models.html"]')).toBeVisible();
+  await expect(page.locator('#app-study .ws-viz-links a[href="/viewer/atomic-models.html"]')).toBeVisible();
   await expect(page.locator('#app-study')).not.toContainText(/chemistry workspace|workspace de química/i);
   await saveShot(page, 'desktop-overview-free');
 });

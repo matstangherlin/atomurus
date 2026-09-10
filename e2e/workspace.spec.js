@@ -199,8 +199,8 @@ test('Overview lists recent lab sessions and viewer names', async ({ page }) => 
   await gotoWorkspace(page, '/app');
   await expect(page.locator('#app-study')).toContainText(/Recent Lab Sessions|Sessões recentes/);
   await expect(page.locator('#app-study')).toContainText('Combustion of CH4');
-  await expect(page.locator('#app-study a[href="/viewer/atomic-models.html"]')).toContainText(/Atomic Models|Modelos atômicos/);
-  await expect(page.locator('#app-study a[href="/viewer/atomic-models.html"]')).not.toContainText(/Atomic Compare|Comparar átomos/);
+  await expect(page.locator('#app-study .ws-viz-links a[href="/viewer/atomic-models.html"]')).toContainText(/Atomic Models|Modelos atômicos/);
+  await expect(page.locator('#app-study .ws-viz-links a[href="/viewer/atomic-models.html"]')).not.toContainText(/Atomic Compare|Comparar átomos/);
 });
 
 test('PT/EN workspace rerender', async ({ page }) => {
