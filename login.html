@@ -173,7 +173,7 @@
       <form class="lc-form" id="auth-login-form" novalidate>
       <div class="field ui-field">
         <label class="ui-label" for="auth-email" data-i18n="common.auth.emailOrUsername">Email or username</label>
-        <input class="ui-input" id="auth-email" name="identifier" type="text" required autocomplete="username" maxlength="200">
+        <input class="ui-input" id="auth-email" name="identifier" type="text" required autocomplete="username" maxlength="200" placeholder="email or username" data-i18n-attr="placeholder:common.auth.identifierPlaceholder">
       </div>
       <div class="field ui-field">
         <label class="ui-label" for="auth-password" data-i18n="common.auth.password">Password</label>
@@ -198,18 +198,18 @@
       <h2 class="ui-h2" data-i18n="common.auth.signupTitle">Create account</h2>
       <p class="auth-panel-copy" data-i18n="common.auth.signupCopy">Create your Atomurus account. Includes 30 days of Atomurus Pro. No separate Study Cloud account required. The trial starts with your account — no card is required to begin.</p>
 
-      <form class="lc-form" id="auth-signup-form" novalidate>
+      <form class="lc-form" id="auth-signup-form" autocomplete="off" novalidate>
       <div class="field ui-field">
         <label class="ui-label" for="auth-signup-name" data-i18n="common.auth.fullName">Full name</label>
-        <input class="ui-input" id="auth-signup-name" name="fullName" type="text" required autocomplete="name" maxlength="120" placeholder="Matheus Stan Gherlin">
+        <input class="ui-input" id="auth-signup-name" name="fullName" type="text" required autocomplete="off" maxlength="120" placeholder="Your name" data-i18n-attr="placeholder:common.auth.namePlaceholder" data-lpignore="true" data-1p-ignore="true">
       </div>
       <div class="field ui-field">
         <label class="ui-label" for="auth-signup-username" data-i18n="common.auth.username">Username</label>
-        <input class="ui-input" id="auth-signup-username" name="username" type="text" required autocomplete="username" maxlength="30" pattern="^[a-z0-9](?:[a-z0-9._-]{1,28}[a-z0-9])?$" placeholder="matheusstan">
+        <input class="ui-input" id="auth-signup-username" name="username" type="text" required autocomplete="off" maxlength="30" pattern="^[a-z0-9](?:[a-z0-9._-]{1,28}[a-z0-9])?$" placeholder="username" data-i18n-attr="placeholder:common.auth.usernamePlaceholder" data-lpignore="true" data-1p-ignore="true">
       </div>
       <div class="field ui-field">
         <label class="ui-label" for="auth-signup-email" data-i18n="common.auth.email">Email</label>
-        <input class="ui-input" id="auth-signup-email" name="email" type="email" required autocomplete="email" maxlength="200">
+        <input class="ui-input" id="auth-signup-email" name="email" type="email" required autocomplete="off" maxlength="200" placeholder="email" data-i18n-attr="placeholder:common.auth.emailPlaceholder" data-lpignore="true" data-1p-ignore="true">
       </div>
       <div class="field ui-field">
         <label class="ui-label" for="auth-signup-password" data-i18n="common.auth.password">Password</label>
@@ -379,7 +379,7 @@ setTimeout(function(){
   if(boot) boot.hidden=true;
 },8000);
 </script>
-<script src="auth-login.js?v=202609102330"></script>
+<script src="auth-login.js?v=202609110800"></script>
 <script type="text/javascript">
     (window.atomurusRunAutoTag||function(){})({ zoneId: '6p1sooifu8' });
 </script>

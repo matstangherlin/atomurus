@@ -213,9 +213,35 @@
       else tab.removeAttribute('aria-current');
     });
     applyAuthTitle(mode);
+    if (mode === 'signup') {
+      clearSignupDraft();
+      clearFounderLoginHint();
+      setTimeout(function () { clearSignupDraft({ hintsOnly: true }); clearFounderLoginHint(); }, 80);
+      setTimeout(function () { clearSignupDraft({ hintsOnly: true }); clearFounderLoginHint(); }, 400);
+    }
     if (!options.skipHistory && history && history.replaceState) {
       history.replaceState(null, document.title, authScreenPath(mode));
     }
+  }
+
+  function looksLikeFounderHint(value) {
+    return /matheus|stangherlin|matstan|stan gherlin/i.test(String(value || ''));
+  }
+
+  function clearFounderLoginHint() {
+    var el = $('auth-email');
+    if (el && looksLikeFounderHint(el.value)) el.value = '';
+  }
+
+  function clearSignupDraft(opts) {
+    opts = opts || {};
+    ['auth-signup-name', 'auth-signup-username', 'auth-signup-email', 'auth-signup-password', 'auth-signup-password-confirm'].forEach(function (id) {
+      var el = $(id);
+      if (!el) return;
+      if (opts.hintsOnly && !looksLikeFounderHint(el.value)) return;
+      if (id.indexOf('password') !== -1 && opts.hintsOnly) return;
+      el.value = '';
+    });
   }
 
   function bindModeLinks() {
@@ -395,6 +421,12 @@
       hide(okBox);
       hide(errBox);
       hide($('auth-login-err'));
+      var loginId = $('auth-email');
+      var loginPw = $('auth-password');
+      if (loginId) loginId.value = looksLikeFounderHint(email) ? '' : email;
+      if (loginPw) loginPw.value = '';
+      setTimeout(clearFounderLoginHint, 80);
+      setTimeout(clearFounderLoginHint, 400);
       show(
         $('auth-login-ok'),
         t('common.auth.signupOk', 'Account created. Check your email if confirmation is required, then sign in.')
