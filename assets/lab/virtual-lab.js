@@ -12,6 +12,102 @@
   var ZOOM_MIN = 0.25;
   var ZOOM_MAX = 3;
 
+  var SOUND_KEY = 'atomurus-lab-sound';
+  var SOUNDS = {
+    place: { wave: 'triangle', from: 300, to: 186, dur: 0.11, gain: 0.11 },
+    material: { wave: 'sine', from: 610, to: 790, dur: 0.13, gain: 0.09 },
+    pour: { wave: 'noise', from: 900, to: 240, dur: 0.34, gain: 0.08 },
+    drop: { wave: 'sine', from: 980, to: 610, dur: 0.07, gain: 0.10 },
+    stir: { wave: 'noise', from: 380, to: 540, dur: 0.26, gain: 0.06 },
+    heat: { wave: 'sawtooth', from: 170, to: 410, dur: 0.36, gain: 0.05 },
+    select: { wave: 'sine', from: 470, to: 470, dur: 0.04, gain: 0.05 },
+    undo: { wave: 'triangle', from: 430, to: 300, dur: 0.09, gain: 0.07 },
+    deny: { wave: 'square', from: 196, to: 138, dur: 0.18, gain: 0.05 },
+    step: { wave: 'sine', from: 660, to: 880, dur: 0.17, gain: 0.10 },
+    complete: { wave: 'sine', from: 523, to: 1046, dur: 0.42, gain: 0.11 }
+  };
+
+  var audioCtx = null;
+  var noiseBuffer = null;
+
+  function soundEnabled() {
+    try {
+      return root.localStorage.getItem(SOUND_KEY) !== '0';
+    } catch (e) {
+      return true;
+    }
+  }
+
+  function setSoundEnabled(on) {
+    var next = on !== false;
+    try { root.localStorage.setItem(SOUND_KEY, next ? '1' : '0'); } catch (e) {}
+    return next;
+  }
+
+  function audioContext() {
+    if (audioCtx) return audioCtx;
+    var Ctor = typeof root.AudioContext === 'function'
+      ? root.AudioContext
+      : (typeof root.webkitAudioContext === 'function' ? root.webkitAudioContext : null);
+    if (!Ctor) return null;
+    try { audioCtx = new Ctor(); } catch (e) { audioCtx = null; }
+    return audioCtx;
+  }
+
+  function whiteNoise(ctx) {
+    if (noiseBuffer) return noiseBuffer;
+    var frames = Math.floor(ctx.sampleRate * 0.5);
+    var buffer = ctx.createBuffer(1, frames, ctx.sampleRate);
+    var data = buffer.getChannelData(0);
+    for (var i = 0; i < frames; i += 1) data[i] = Math.random() * 2 - 1;
+    noiseBuffer = buffer;
+    return noiseBuffer;
+  }
+
+  /* Short synthesized cues. No audio files, no network, nothing plays while idle. */
+  function playSound(name) {
+    var spec = SOUNDS[name];
+    if (!spec || !soundEnabled()) return false;
+    var ctx = audioContext();
+    if (!ctx) return false;
+    try {
+      if (ctx.state === 'suspended' && ctx.resume) ctx.resume();
+      var t0 = ctx.currentTime;
+      var t1 = t0 + spec.dur;
+      var gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.0001, t0);
+      gain.gain.exponentialRampToValueAtTime(spec.gain, t0 + Math.min(0.03, spec.dur / 3));
+      gain.gain.exponentialRampToValueAtTime(0.0001, t1);
+      gain.connect(ctx.destination);
+      var source;
+      if (spec.wave === 'noise') {
+        source = ctx.createBufferSource();
+        source.buffer = whiteNoise(ctx);
+        var filter = ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.Q.value = 1.1;
+        filter.frequency.setValueAtTime(spec.from, t0);
+        filter.frequency.exponentialRampToValueAtTime(Math.max(40, spec.to), t1);
+        source.connect(filter);
+        filter.connect(gain);
+      } else {
+        source = ctx.createOscillator();
+        source.type = spec.wave;
+        source.frequency.setValueAtTime(spec.from, t0);
+        source.frequency.exponentialRampToValueAtTime(Math.max(40, spec.to), t1);
+        source.connect(gain);
+      }
+      source.start(t0);
+      source.stop(t1 + 0.02);
+      source.onended = function () {
+        try { source.disconnect(); gain.disconnect(); } catch (e) {}
+      };
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   var SUBSTANCES = {
     water: { id: 'water', name: 'Water', formula: 'H₂O', category: 'solvent', color: '#7EB6D9', state: 'liquid', ph: 7, allowed: true },
     nacl: { id: 'nacl', name: 'Sodium chloride', formula: 'NaCl', category: 'salt', color: '#F4F1E4', state: 'solid', allowed: true },
@@ -258,8 +354,8 @@
       },
       tutorial: [
         { id: 'eq', action: 'addEquipment', needEquipment: ['beaker'], en: 'Place a beaker on the board.', pt: 'Coloque um becker no board.', why: { en: 'A beaker holds an approximate volume.', pt: 'O becker contém um volume aproximado.' } },
-        { id: 'water', action: 'addMaterial', need: { water: true }, en: 'Add virtual water.', pt: 'Adicione água virtual.' },
-        { id: 'salt', action: 'addMaterial', need: { nacl: true }, en: 'Add sodium chloride and stir.', pt: 'Adicione cloreto de sódio e agite.', stir: true },
+        { id: 'water', action: 'addMaterial', need: { water: true }, amounts: { water: 60 }, en: 'Add 60 mL of virtual water to the beaker.', pt: 'Adicione 60 mL de água virtual ao becker.', why: { en: 'The solvent goes in first so the solute has somewhere to dissolve.', pt: 'O solvente entra primeiro para o soluto ter onde dissolver.' } },
+        { id: 'salt', action: 'addMaterial', need: { nacl: true }, amounts: { nacl: 10 }, en: 'Add 10 g of sodium chloride and stir.', pt: 'Adicione 10 g de cloreto de sódio e agite.', stir: true, why: { en: 'Stirring spreads the solute through the solvent.', pt: 'Agitar espalha o soluto pelo solvente.' } },
         { id: 'read', action: 'inspect', product: 'saline', en: 'Measure volume and read the named product.', pt: 'Meça o volume e leia o produto nomeado.' }
       ]
     },
@@ -283,9 +379,9 @@
         pt: 'Notas de topo, coração e fundo. Não é fórmula segura para pele.'
       },
       tutorial: [
-        { id: 'top', action: 'addMaterial', need: { limonene: true }, en: 'Add a top note (limonene).', pt: 'Adicione uma nota de topo (limoneno).', why: { en: 'Top notes evaporate first.', pt: 'Notas de topo evaporam primeiro.' } },
-        { id: 'heart', action: 'addMaterial', need: { linalool: true }, en: 'Add a heart note (linalool).', pt: 'Adicione uma nota de coração (linalol).' },
-        { id: 'base', action: 'addMaterial', need: { vanillin: true }, en: 'Add a base note (vanillin).', pt: 'Adicione uma nota de fundo (vanilina).' },
+        { id: 'top', action: 'addMaterial', need: { limonene: true }, amounts: { limonene: 8 }, needEquipment: ['beaker'], en: 'Add 8 mL of a top note (limonene) to a beaker.', pt: 'Adicione uma nota de topo (limoneno).', why: { en: 'Top notes evaporate first.', pt: 'Notas de topo evaporam primeiro.' } },
+        { id: 'heart', action: 'addMaterial', need: { linalool: true }, amounts: { linalool: 6 }, en: 'Add 6 mL of a heart note (linalool).', pt: 'Adicione 6 mL de uma nota de coração (linalol).', why: { en: 'Heart notes carry the accord after the top fades.', pt: 'As notas de coração sustentam o acorde depois que o topo evapora.' } },
+        { id: 'base', action: 'addMaterial', need: { vanillin: true }, amounts: { vanillin: 4 }, en: 'Add 4 mL of a base note (vanillin).', pt: 'Adicione 4 mL de uma nota de fundo (vanilina).', why: { en: 'Base notes are the least volatile and stay longest.', pt: 'As notas de fundo são as menos voláteis e permanecem mais tempo.' } },
         { id: 'read', action: 'inspect', product: 'accord', en: 'Read the virtual family. This is not a wearable perfume.', pt: 'Leia a família virtual. Isto não é um perfume para a pele.' }
       ]
     },
@@ -306,7 +402,7 @@
       safetyClass: 'conceptual',
       version: 2,
       tutorial: [
-        { id: 'carbon', action: 'addMaterial', needAny: ['c', 'carbon'], en: 'Place virtual carbon on the board.', pt: 'Coloque carbono virtual no board.' },
+        { id: 'carbon', action: 'addMaterial', needAny: ['c', 'carbon'], amounts: { c: 10 }, needEquipment: ['beaker'], en: 'Place 10 g of virtual carbon in a beaker.', pt: 'Coloque 10 g de carbono virtual em um becker.', why: { en: 'Graphite and diamond are both carbon in different lattices.', pt: 'Grafite e diamante são carbono em redes diferentes.' } },
         { id: 'inspect', action: 'inspect', en: 'Open Allotropes to compare graphite and diamond conceptually.', pt: 'Abra Alótropos para comparar grafite e diamante de forma conceitual.' }
       ]
     },
@@ -326,8 +422,8 @@
       safetyClass: 'educational',
       version: 2,
       tutorial: [
-        { id: 'acid', action: 'addMaterial', need: { citric_acid: true }, en: 'Add citric acid to water.', pt: 'Adicione ácido cítrico à água.' },
-        { id: 'base', action: 'addMaterial', need: { bicarbonate: true }, en: 'Add bicarbonate. The mixture may fizz.', pt: 'Adicione bicarbonato.' },
+        { id: 'acid', action: 'addMaterial', need: { water: true, citric_acid: true }, amounts: { water: 50, citric_acid: 6 }, needEquipment: ['beaker'], en: 'Add water, then 6 g of citric acid.', pt: 'Adicione água e depois 6 g de ácido cítrico.', why: { en: 'The acid needs water before a virtual pH can be read.', pt: 'O ácido precisa de água antes de um pH virtual ser lido.' } },
+        { id: 'base', action: 'addMaterial', need: { bicarbonate: true }, amounts: { bicarbonate: 6 }, en: 'Add 6 g of bicarbonate. The mixture may fizz.', pt: 'Adicione 6 g de bicarbonato. A mistura pode efervescer.', why: { en: 'A base neutralises the acid and moves the virtual pH.', pt: 'Uma base neutraliza o ácido e move o pH virtual.' } },
         { id: 'measure', action: 'measure', en: 'Measure virtual pH from the inspector.', pt: 'Meça o pH virtual no inspetor.' }
       ]
     },
@@ -347,7 +443,7 @@
       safetyClass: 'educational',
       version: 2,
       tutorial: [
-        { id: 'dissolve', action: 'addMaterial', need: { water: true, sucrose: true }, en: 'Dissolve sucrose in water.', pt: 'Dissolva sacarose em água.' },
+        { id: 'dissolve', action: 'addMaterial', need: { water: true, sucrose: true }, amounts: { water: 60, sucrose: 20 }, needEquipment: ['beaker'], en: 'Dissolve 20 g of sucrose in 60 mL of water.', pt: 'Dissolva 20 g de sacarose em 60 mL de água.', why: { en: 'Crystals only grow from a concentrated solution.', pt: 'Cristais só crescem a partir de uma solução concentrada.' } },
         { id: 'heat', action: 'heat', en: 'Warm the vessel with a Bunsen or heat control (virtual).', pt: 'Aqueça o vidro com Bunsen ou o controle de calor (virtual).' },
         { id: 'observe', action: 'inspect', product: 'sugar-sol', en: 'Observe the modeled solution. This is not a crystal-growing recipe.', pt: 'Observe a solução modelada. Não é uma receita de cristalização.' }
       ]
@@ -367,8 +463,8 @@
       },
       stages: ['choose', 'disperse', 'emulsify', 'observe'],
       tutorial: [
-        { id: 'base', action: 'addMaterial', need: { water: true, oil: true }, en: 'Add water and virtual carrier oil to a beaker.', pt: 'Coloque água e óleo virtual em um becker.', why: { en: 'Aqueous and oil phases must meet before a mineral filter can disperse.', pt: 'As fases aquosa e oleosa precisam se encontrar antes de dispersar o filtro mineral.' } },
-        { id: 'filter', action: 'addMaterial', needAny: ['zno', 'tio2'], en: 'Disperse zinc oxide or titanium dioxide into the base.', pt: 'Dispersar óxido de zinco ou dióxido de titânio na base.', why: { en: 'These are modeled as mineral UV-filter roles, not a certified SPF.', pt: 'Isto modela o papel de filtro UV mineral, não um FPS certificado.' } },
+        { id: 'base', action: 'addMaterial', need: { water: true, oil: true }, amounts: { water: 20, oil: 15 }, needEquipment: ['beaker'], en: 'Add 20 mL of water and 15 mL of virtual carrier oil to a beaker.', pt: 'Coloque 20 mL de água e 15 mL de óleo virtual em um becker.', why: { en: 'Aqueous and oil phases must meet before a mineral filter can disperse.', pt: 'As fases aquosa e oleosa precisam se encontrar antes de dispersar o filtro mineral.' } },
+        { id: 'filter', action: 'addMaterial', needAny: ['zno', 'tio2'], amounts: { zno: 8, tio2: 8 }, en: 'Disperse 8 g of zinc oxide or titanium dioxide into the base.', pt: 'Dispersar óxido de zinco ou dióxido de titânio na base.', why: { en: 'These are modeled as mineral UV-filter roles, not a certified SPF.', pt: 'Isto modela o papel de filtro UV mineral, não um FPS certificado.' } },
         { id: 'stir', action: 'mix', stir: true, en: 'Stir to form a virtual emulsion.', pt: 'Agite para formar uma emulsão virtual.' },
         { id: 'observe', action: 'inspect', product: 'sunscreen', en: 'Read the inspector. This models a mineral UV filter, not a real SPF.', pt: 'Leia o inspetor. Isto modela um filtro UV mineral, não um FPS real.' }
       ]
@@ -1260,6 +1356,91 @@
     };
   }
 
+  function defaultAmountFor(id) {
+    var spec = SUBSTANCES[id];
+    if (!spec) return 25;
+    if (spec.state === 'solid') return 10;
+    if (spec.category === 'fragrance') return 6;
+    return 25;
+  }
+
+  function materialPlan(step, id) {
+    var spec = SUBSTANCES[id];
+    if (!spec || spec.inventory === false) return null;
+    var amounts = step.amounts || {};
+    var amount = Number(amounts[id]) || defaultAmountFor(id);
+    return {
+      id: id,
+      name: spec.name,
+      formula: spec.formula,
+      color: spec.color,
+      amount: amount,
+      unit: spec.state === 'solid' ? 'g' : 'mL'
+    };
+  }
+
+  var ACTION_VERB = {
+    addEquipment: { en: 'Place the glassware', pt: 'Coloque a vidraria' },
+    addMaterial: { en: 'Add the material', pt: 'Adicione o material' },
+    transfer: { en: 'Transfer', pt: 'Transfira' },
+    mix: { en: 'Stir the vessel', pt: 'Agite o vidro' },
+    heat: { en: 'Warm the vessel', pt: 'Aqueça o vidro' },
+    measure: { en: 'Take a measurement', pt: 'Faça uma medição' },
+    inspect: { en: 'Read the inspector', pt: 'Leia o inspetor' },
+    grind: { en: 'Grind the solid', pt: 'Triture o sólido' },
+    connect: { en: 'Connect the ports', pt: 'Conecte os portos' }
+  };
+
+  /* What a guided step asks for, as data the panel can turn into real actions. */
+  function stepPlan(creation, index) {
+    if (!creation || !Array.isArray(creation.tutorial)) return null;
+    var step = creation.tutorial[index];
+    if (!step) return null;
+    var equipment = (step.needEquipment || []).filter(function (id) { return !!EQUIPMENT[id]; })
+      .map(function (id) {
+        var spec = EQUIPMENT[id];
+        return { type: id, labelEn: spec.labelEn, labelPt: spec.labelPt, category: spec.category };
+      });
+    var materials = Object.keys(step.need || {}).map(function (id) { return materialPlan(step, id); })
+      .filter(Boolean);
+    var options = (step.needAny || []).map(function (id) { return materialPlan(step, id); }).filter(Boolean);
+    var verb = ACTION_VERB[step.action] || ACTION_VERB.inspect;
+    var names = equipment.map(function (row) { return row.labelEn; })
+      .concat(materials.concat(options).map(function (row) { return row.name; }));
+    var hints = [
+      step.why
+        ? { en: step.why.en || step.why.pt, pt: step.why.pt || step.why.en }
+        : { en: verb.en + ' to move this step forward.', pt: verb.pt + ' para avançar neste passo.' },
+      names.length
+        ? { en: 'You need: ' + names.join(', ') + '.', pt: 'Você precisa de: ' + names.join(', ') + '.' }
+        : { en: 'Use the board actions under the canvas.', pt: 'Use as ações do board abaixo do canvas.' },
+      {
+        en: equipment.length || materials.length || options.length
+          ? 'Open the Tools dock and click the highlighted item in this step.'
+          : 'Select a vessel, then use the action bar below the board.',
+        pt: equipment.length || materials.length || options.length
+          ? 'Abra o dock de ferramentas e clique no item destacado deste passo.'
+          : 'Selecione um vidro e use a barra de ações abaixo do board.'
+      }
+    ];
+    return {
+      id: step.id,
+      index: index,
+      action: step.action || 'inspect',
+      verb: verb,
+      text: { en: step.en, pt: step.pt },
+      why: step.why || null,
+      equipment: equipment,
+      materials: materials,
+      options: options,
+      needsStir: !!step.stir || step.action === 'mix',
+      needsHeat: step.action === 'heat',
+      needsMeasure: step.action === 'measure',
+      product: step.product || '',
+      hints: hints
+    };
+  }
+
   function searchCatalog(raw) {
     var q = norm(raw);
     var resolved = resolveQuery(raw);
@@ -1346,6 +1527,11 @@
     var dropFrom = '';
     var fxTimer = 0;
     var heatTimer = 0;
+    var dockOpen = '';
+    var autoCam = true;
+    var sideTab = session.creationId ? 'guide' : 'inspector';
+    var hintLevel = 0;
+    var lastStepKey = '';
 
     function copy(en, pt) { return lang === 'pt' ? pt : en; }
     function esc(value) {
@@ -1354,6 +1540,14 @@
     }
     function selected() {
       return findContainer(session, session.selectedId) || session.containers[0];
+    }
+    /* Guided actions land in something that can actually hold a mixture. */
+    function preferredVessel() {
+      var current = selected();
+      if (current && canHold(current) && hasCap(current, 'contain')) return current;
+      return (session.containers || []).filter(function (row) {
+        return canHold(row) && hasCap(row, 'contain');
+      })[0] || null;
     }
     function queueSave() {
       if (saveTimer) clearTimeout(saveTimer);
@@ -1383,7 +1577,24 @@
       return '';
     }
 
-    function inventoryHtml() {
+    var EQUIPMENT_GROUPS = {
+      glassware: ['beaker', 'flask', 'cylinder', 'volumetric-flask', 'round-flask', 'test-tube', 'test-tube-capped', 'watch-glass', 'reagent-bottle'],
+      transfer: ['pipette-graduated', 'pipette-volumetric', 'pipettor', 'dropper', 'burette', 'funnel', 'separatory-funnel'],
+      heat: ['bunsen', 'hot-plate', 'heating-gauze', 'heating-mantle', 'tripod', 'retort-stand', 'ring', 'clamp', 'condenser', 'receiving-flask', 'piston'],
+      measure: ['thermometer', 'ph-meter', 'balance', 'mortar', 'pestle', 'spatula', 'weighing-boat', 'rack']
+    };
+
+    function equipmentChips(ids, highlight) {
+      return '<div class="lab-chips">' + ids.map(function (id) {
+        var spec = EQUIPMENT[id];
+        if (!spec) return '';
+        var on = highlight && highlight[id] ? ' is-wanted' : '';
+        return '<button type="button" class="lab-chip lab-chip-eq' + on + '" data-add-vessel="' + esc(id) + '">' +
+          esc(lang === 'pt' ? spec.labelPt : spec.labelEn) + '</button>';
+      }).join('') + '</div>';
+    }
+
+    function materialChips(highlight) {
       var groups = [
         { title: copy('Liquids', 'Líquidos'), ids: ['water', 'oil'] },
         { title: copy('Salts & sugars', 'Sais e açúcares'), ids: ['nacl', 'sucrose', 'cusulfate'] },
@@ -1397,32 +1608,20 @@
           group.ids.map(function (id) {
             var spec = SUBSTANCES[id];
             if (!spec || spec.inventory === false) return '';
-            return '<button type="button" class="lab-chip" data-add="' + esc(id) + '">' +
+            var on = highlight && highlight[id] ? ' is-wanted' : '';
+            return '<button type="button" class="lab-chip' + on + '" data-add="' + esc(id) + '">' +
               '<i class="lab-chip-swatch" style="background:' + esc(spec.color) + '"></i>' +
               esc(spec.name) + '<span>' + esc(spec.formula) + '</span></button>';
           }).join('') + '</div></div>';
       }).join('');
     }
 
-    function equipmentHtml() {
-      var groups = [
-        { title: copy('On the board', 'No board'), ids: ['beaker', 'flask', 'pipette-volumetric', 'bunsen', 'condenser', 'mortar'] },
-        { title: copy('Glassware', 'Vidraria'), ids: ['beaker', 'flask', 'cylinder', 'volumetric-flask', 'round-flask', 'test-tube', 'test-tube-capped', 'watch-glass', 'reagent-bottle'] },
-        { title: copy('Transfer', 'Transferência'), ids: ['pipette-graduated', 'pipette-volumetric', 'pipettor', 'dropper', 'burette', 'funnel', 'separatory-funnel'] },
-        { title: copy('Prep', 'Preparo'), ids: ['mortar', 'pestle', 'spatula', 'weighing-boat', 'rack'] },
-        { title: copy('Heat', 'Aquecimento'), ids: ['bunsen', 'hot-plate', 'heating-gauze', 'heating-mantle', 'tripod'] },
-        { title: copy('Support', 'Suporte'), ids: ['retort-stand', 'ring', 'clamp'] },
-        { title: copy('Measure', 'Medição'), ids: ['thermometer', 'ph-meter', 'balance'] },
-        { title: copy('Condense / gas', 'Condensação'), ids: ['condenser', 'receiving-flask', 'piston'] }
-      ];
-      return groups.map(function (group) {
-        return '<div class="lab-chip-group"><span class="lab-chip-group-title">' + esc(group.title) + '</span><div class="lab-chips">' +
-          group.ids.map(function (id) {
-            var spec = EQUIPMENT[id];
-            if (!spec) return '';
-            return '<button type="button" class="lab-chip" data-add-vessel="' + esc(id) + '">' + esc(lang === 'pt' ? spec.labelPt : spec.labelEn) + '</button>';
-          }).join('') + '</div></div>';
-      }).join('');
+    function amountHtml() {
+      return '<div class="lab-amount" role="group" aria-label="' + esc(copy('Amount', 'Quantidade')) + '">' +
+        [5, 10, 25, 50, 100].map(function (value) {
+          return '<button type="button" class="ws-btn ws-btn-sm' + (value === amount ? ' is-on' : '') + '" data-amount="' + value + '">' + value + '</button>';
+        }).join('') +
+        '<span class="ws-lede">' + esc(copy('mL or g, virtual', 'mL ou g, virtual')) + '</span></div>';
     }
 
     function readyHtml() {
@@ -1431,23 +1630,213 @@
       }).join('');
     }
 
-    function tutorialHtml() {
+    /* Items the active guided step is asking for, so the dock can highlight them. */
+    function wantedNow() {
       var creation = CREATIONS.filter(function (row) { return row.id === session.creationId; })[0];
+      var empty = { materials: {}, equipment: {}, plan: null, state: null, creation: creation || null };
+      if (!creation) return empty;
       var state = tutorialState(session, creation);
-      if (!state) return '';
-      var now = state.steps[state.current] || null;
-      var items = state.steps.map(function (step, i) {
+      if (!state) return empty;
+      var plan = stepPlan(creation, Math.min(state.current, creation.tutorial.length - 1));
+      if (!plan) return empty;
+      var materials = {};
+      var equipment = {};
+      plan.materials.concat(plan.options).forEach(function (row) { materials[row.id] = row; });
+      plan.equipment.forEach(function (row) { equipment[row.type] = row; });
+      return { materials: materials, equipment: equipment, plan: plan, state: state, creation: creation };
+    }
+
+    function icon(name) {
+      var paths = {
+        create: '<circle cx="9.5" cy="9.5" r="6"/><path d="M14 14 L19 19"/>',
+        glassware: '<path d="M5 4 L5 15 Q5 19 11 19 Q17 19 17 15 L17 4"/><path d="M3 4 H19"/><path d="M5.6 12 H16.4"/>',
+        transfer: '<path d="M9 2 V8 Q6.5 10 6.5 13 Q6.5 16 9 17 V21"/><path d="M13 2 V8 Q15.5 10 15.5 13 Q15.5 16 13 17 V21"/>',
+        heat: '<path d="M11 20.5 Q4.5 16.5 8 10.5 Q9 13.5 11 12.5 Q8.8 6.5 14 2.5 Q12.8 8.5 16.6 11.5 Q19 17.5 11 20.5 Z"/>',
+        measure: '<path d="M8.5 3 h5 v11.2 a3.4 3.4 0 1 1 -5 0 Z"/><path d="M13.5 6.5 h3.5 M13.5 9.5 h2.5 M13.5 12.5 h3.5"/>',
+        materials: '<path d="M11 2.5 Q17.5 11 17.5 15 A6.5 6.5 0 1 1 4.5 15 Q4.5 11 11 2.5 Z"/>',
+        ready: '<path d="M3.5 7.5 L11 3.5 L18.5 7.5 L11 11.5 Z"/><path d="M3.5 14 L11 18 L18.5 14"/>',
+        sound: '<path d="M4 8.5 h3.5 L12 4.5 v13 L7.5 13.5 H4 Z"/><path d="M15 8 q2.4 3 0 6"/><path d="M17.6 5.8 q4 5.2 0 10.4"/>',
+        muted: '<path d="M4 8.5 h3.5 L12 4.5 v13 L7.5 13.5 H4 Z"/><path d="M15.5 8.5 L20 13 M20 8.5 L15.5 13"/>'
+      };
+      return '<svg class="lab-dock-icon" viewBox="0 0 22 22" aria-hidden="true">' + (paths[name] || paths.create) + '</svg>';
+    }
+
+    function dockGroups() {
+      return [
+        { key: 'create', icon: 'create', title: copy('Create', 'Criar') },
+        { key: 'glassware', icon: 'glassware', title: copy('Glassware', 'Vidraria') },
+        { key: 'transfer', icon: 'transfer', title: copy('Transfer', 'Transferência') },
+        { key: 'heat', icon: 'heat', title: copy('Heat & assembly', 'Calor e montagem') },
+        { key: 'measure', icon: 'measure', title: copy('Measure & prep', 'Medir e preparar') },
+        { key: 'materials', icon: 'materials', title: copy('Materials', 'Materiais') },
+        { key: 'ready', icon: 'ready', title: copy('Ready mixes', 'Misturas prontas') }
+      ];
+    }
+
+    function dockTitle(key) {
+      var found = dockGroups().filter(function (row) { return row.key === key; })[0];
+      return found ? found.title : '';
+    }
+
+    function creationCardHtml(row, wanted) {
+      var active = session.creationId === row.id;
+      return '<article class="lab-create-card' + (active ? ' is-active' : '') + '">' +
+        '<span class="ws-lab-badge">' + esc(row.category) + '</span>' +
+        '<h3>' + esc(labelOf(row, lang)) + '</h3>' +
+        '<p>' + esc(lang === 'pt' ? row.lede.pt : row.lede.en) + '</p>' +
+        '<p class="lab-create-meta">' + esc(row.tutorial.length) + ' ' + esc(copy('steps', 'passos')) + ' · ' +
+        esc(lang === 'pt' ? row.difficulty.pt : row.difficulty.en) + '</p>' +
+        '<button type="button" class="ws-btn ws-btn-sm ' + (active ? '' : 'ws-btn-primary ') + '" data-start-creation="' + esc(row.id) + '">' +
+        esc(active ? copy('Continue step-by-step', 'Continuar passo a passo') : copy('Start step-by-step', 'Iniciar passo a passo')) + '</button>' +
+        '</article>';
+    }
+
+    function searchResultsHtml(results) {
+      if (!results || results.status !== 'ok' || !results.items || !results.items.length) return '';
+      var q = params.get('q') || '';
+      if (!q) return '';
+      var creations = results.items.filter(function (row) { return row.type === 'creation'; }).slice(0, 4);
+      var substances = results.items.filter(function (row) { return row.type === 'substance'; }).slice(0, 8);
+      var out = '<p class="lab-dock-note">' + esc(copy('Results for', 'Resultados para')) + ' “' + esc(q) + '”</p>';
+      if (creations.length) {
+        out += '<div class="lab-create-list">' + creations.map(function (row) { return creationCardHtml(row.row); }).join('') + '</div>';
+      }
+      if (substances.length) {
+        out += '<span class="lab-chip-group-title">' + esc(copy('Materials found', 'Materiais encontrados')) + '</span><div class="lab-chips">' +
+          substances.map(function (row) {
+            return '<button type="button" class="lab-chip" data-add="' + esc(row.row.id) + '">' +
+              '<i class="lab-chip-swatch" style="background:' + esc(row.row.color) + '"></i>' + esc(row.row.name) + '</button>';
+          }).join('') + '</div>';
+      }
+      return out;
+    }
+
+    function dockBodyHtml(key, results) {
+      var wanted = wantedNow();
+      if (key === 'create') {
+        return searchResultsHtml(results) +
+          '<p class="lab-dock-note">' + esc(copy('Pick what you want to build. Each one walks you through the glassware and the materials, step by step.', 'Escolha o que quer construir. Cada um guia a vidraria e os materiais, passo a passo.')) + '</p>' +
+          '<div class="lab-create-list">' + CREATIONS.map(function (row) { return creationCardHtml(row); }).join('') + '</div>';
+      }
+      if (key === 'materials') {
+        return amountHtml() + materialChips(wanted.materials) +
+          '<p class="lab-dock-note">' + esc(copy('Materials go into the selected vessel. Catalog stays allowlisted.', 'Os materiais vão para o vidro selecionado. O catálogo continua allowlist.')) + '</p>';
+      }
+      if (key === 'ready') {
+        return '<div class="lab-chips">' + readyHtml() + '</div>' +
+          '<p class="lab-dock-note">' + esc(copy('Reviewed mixtures, poured into the selected vessel.', 'Misturas revisadas, despejadas no vidro selecionado.')) + '</p>';
+      }
+      var ids = EQUIPMENT_GROUPS[key] || [];
+      return equipmentChips(ids, wanted.equipment) +
+        '<p class="lab-dock-note">' + esc(copy('Click to drop it on the board, then drag it anywhere.', 'Clique para soltar no board e depois arraste para onde quiser.')) + '</p>';
+    }
+
+    function dockHtml(results) {
+      var wanted = wantedNow();
+      return '<div class="lab-dock' + (dockOpen ? ' is-open' : '') + '" data-lab-dock>' +
+        '<div class="lab-dock-rail" role="toolbar" aria-label="' + esc(copy('Lab tools', 'Ferramentas do Lab')) + '">' +
+        dockGroups().map(function (group) {
+          var on = dockOpen === group.key;
+          var badge = group.key === 'create' && wanted.creation ? '<i class="lab-dock-dot" aria-hidden="true"></i>' : '';
+          return '<button type="button" class="lab-dock-btn' + (on ? ' is-on' : '') + '" data-dock="' + esc(group.key) + '"' +
+            ' aria-expanded="' + (on ? 'true' : 'false') + '" title="' + esc(group.title) + '">' +
+            icon(group.icon) + badge + '<span class="lab-dock-name">' + esc(group.title) + '</span></button>';
+        }).join('') +
+        '</div>' +
+        '<div class="lab-dock-panel"' + (dockOpen ? '' : ' hidden') + ' data-dock-panel>' +
+        '<div class="lab-dock-head"><h2>' + esc(dockTitle(dockOpen) || copy('Tools', 'Ferramentas')) + '</h2>' +
+        '<button type="button" class="lab-dock-close" data-dock-close aria-label="' + esc(copy('Close', 'Fechar')) + '">×</button></div>' +
+        '<div class="lab-dock-body" data-dock-body>' + (dockOpen ? dockBodyHtml(dockOpen, results) : '') + '</div>' +
+        '</div></div>';
+    }
+
+    function stepChips(plan) {
+      var out = [];
+      plan.equipment.forEach(function (row) {
+        out.push('<button type="button" class="lab-do-chip" data-add-vessel="' + esc(row.type) + '">+ ' +
+          esc(lang === 'pt' ? row.labelPt : row.labelEn) + '</button>');
+      });
+      plan.materials.forEach(function (row) {
+        out.push('<button type="button" class="lab-do-chip" data-step-add="' + esc(row.id) + '" data-step-amount="' + esc(row.amount) + '">' +
+          '<i class="lab-chip-swatch" style="background:' + esc(row.color) + '"></i>+ ' +
+          esc(row.name) + ' ' + esc(row.amount) + ' ' + esc(row.unit) + '</button>');
+      });
+      if (plan.options.length) {
+        out.push('<span class="lab-do-or">' + esc(copy('either', 'ou')) + '</span>');
+        plan.options.forEach(function (row) {
+          out.push('<button type="button" class="lab-do-chip" data-step-add="' + esc(row.id) + '" data-step-amount="' + esc(row.amount) + '">' +
+            '<i class="lab-chip-swatch" style="background:' + esc(row.color) + '"></i>+ ' +
+            esc(row.name) + ' ' + esc(row.amount) + ' ' + esc(row.unit) + '</button>');
+        });
+      }
+      if (plan.needsStir) {
+        out.push('<button type="button" class="lab-do-chip" data-lab-stir>' + esc(copy('Stir', 'Agitar')) + '</button>');
+      }
+      if (plan.needsHeat) {
+        out.push('<button type="button" class="lab-do-chip" data-heat="20">' + esc(copy('Warm +20 °C', 'Aquecer +20 °C')) + '</button>');
+      }
+      if (plan.needsMeasure) {
+        out.push('<button type="button" class="lab-do-chip" data-measure="ph">' + esc(copy('Measure pH', 'Medir pH')) + '</button>');
+        out.push('<button type="button" class="lab-do-chip" data-measure="volume">' + esc(copy('Measure volume', 'Medir volume')) + '</button>');
+      }
+      if (!out.length) {
+        out.push('<button type="button" class="lab-do-chip" data-measure="volume">' + esc(copy('Read the vessel', 'Ler o vidro')) + '</button>');
+      }
+      return '<div class="lab-do-row">' + out.join('') + '</div>';
+    }
+
+    function hintsHtml(plan) {
+      if (!hintLevel) {
+        return '<button type="button" class="ws-btn ws-btn-sm" data-lab-hint>' + esc(copy('Show hint', 'Mostrar dica')) + '</button>';
+      }
+      var shown = plan.hints.slice(0, hintLevel).map(function (hint, i) {
+        return '<li><strong>' + esc(copy('Hint', 'Dica')) + ' ' + (i + 1) + '.</strong> ' + esc(lang === 'pt' ? hint.pt : hint.en) + '</li>';
+      }).join('');
+      return '<ul class="lab-hints">' + shown + '</ul>' +
+        (hintLevel < plan.hints.length
+          ? '<button type="button" class="ws-btn ws-btn-sm" data-lab-hint>' + esc(copy('More help', 'Mais ajuda')) + '</button>'
+          : '<button type="button" class="ws-btn ws-btn-sm" data-lab-hint="reset">' + esc(copy('Hide hints', 'Ocultar dicas')) + '</button>');
+    }
+
+    function tutorialHtml() {
+      var wanted = wantedNow();
+      var creation = wanted.creation;
+      if (!creation || !wanted.state || !wanted.plan) {
+        return '<div class="lab-guide lab-guide-empty" data-lab-guide>' +
+          '<h2>' + esc(copy('Step-by-step', 'Passo a passo')) + '</h2>' +
+          '<p class="ws-lede">' + esc(copy('Search what you want to create, then build it here one step at a time.', 'Pesquise o que você quer criar e construa aqui, um passo de cada vez.')) + '</p>' +
+          '<button type="button" class="ws-btn ws-btn-sm ws-btn-primary" data-dock="create">' + esc(copy('Browse creations', 'Ver criações')) + '</button>' +
+          '</div>';
+      }
+      var state = wanted.state;
+      var total = creation.tutorial.length;
+      var plan = wanted.plan;
+      var pct = Math.max(4, Math.round((state.current / total) * 100));
+      var stepList = state.steps.map(function (step, i) {
         var mark = state.done[i] ? ' is-done' : (i === state.current ? ' is-now' : '');
         return '<li class="lab-guide-step' + mark + '">' + esc(lang === 'pt' ? step.pt : step.en) + '</li>';
       }).join('');
-      var why = now && stepWhy(now);
+      if (state.complete) {
+        return '<section class="lab-guide is-complete" data-lab-guide>' +
+          '<h2>' + esc(labelOf(creation, lang)) + '</h2>' +
+          '<p class="lab-guide-progress">' + esc(copy('All steps done', 'Todos os passos concluídos')) + ' · ' + total + '/' + total + '</p>' +
+          '<div class="lab-guide-bar"><i style="width:100%"></i></div>' +
+          '<p class="lab-guide-done">' + esc(copy('Practice complete (virtual).', 'Prática concluída (virtual).')) + '</p>' +
+          '<p class="ws-lede">' + esc(lang === 'pt' ? creation.lede.pt : creation.lede.en) + '</p>' +
+          '<ol>' + stepList + '</ol>' +
+          '<button type="button" class="ws-btn ws-btn-sm" data-stop-creation>' + esc(copy('Leave guide', 'Sair do guia')) + '</button>' +
+          '</section>';
+      }
       return '<section class="lab-guide" data-lab-guide>' +
-        '<h2>' + esc(copy('Tutorial + practice', 'Tutorial + prática')) + '</h2>' +
-        '<p class="lab-guide-progress">' + esc(copy('Step', 'Passo')) + ' ' + Math.min(state.current + 1, state.steps.length) + ' / ' + state.steps.length + '</p>' +
-        '<p class="ws-lede">' + esc(lang === 'pt' ? creation.lede.pt : creation.lede.en) + '</p>' +
-        '<ol>' + items + '</ol>' +
-        (why ? '<p class="lab-guide-why"><strong>' + esc(copy('Why?', 'Por quê?')) + '</strong> ' + esc(why) + '</p>' : '') +
-        (state.complete ? '<p class="lab-guide-done">' + esc(copy('Practice complete (virtual).', 'Prática concluída (virtual).')) + '</p>' : '') +
+        '<h2>' + esc(labelOf(creation, lang)) + '</h2>' +
+        '<p class="lab-guide-progress">' + esc(copy('Step', 'Passo')) + ' ' + Math.min(state.current + 1, total) + ' ' + esc(copy('of', 'de')) + ' ' + total + '</p>' +
+        '<div class="lab-guide-bar"><i style="width:' + pct + '%"></i></div>' +
+        '<p class="lab-guide-now">' + esc(lang === 'pt' ? plan.text.pt : plan.text.en) + '</p>' +
+        stepChips(plan) +
+        (plan.why ? '<p class="lab-guide-why"><strong>' + esc(copy('Why?', 'Por quê?')) + '</strong> ' + esc(stepWhy(plan)) + '</p>' : '') +
+        hintsHtml(plan) +
+        '<details class="lab-guide-all"><summary>' + esc(copy('All steps', 'Todos os passos')) + '</summary><ol>' + stepList + '</ol></details>' +
+        '<button type="button" class="ws-btn ws-btn-sm" data-stop-creation>' + esc(copy('Leave guide', 'Sair do guia')) + '</button>' +
         '</section>';
     }
 
@@ -1620,6 +2009,7 @@
     }
 
     function playTransferFx(fromId, toId, color, kind) {
+      playSound(kind === 'drop' ? 'drop' : 'pour');
       pulseLiquid();
       if (document.documentElement.getAttribute('data-reduced-motion')) return;
       var world = node.querySelector('[data-lab-world]');
@@ -1673,6 +2063,53 @@
       if (status) status.innerHTML = lastStatus;
     }
 
+    /* Insets keep the floating dock and inspector from covering the glassware. */
+    function boardInsets(rect) {
+      return {
+        left: 16,
+        right: 16,
+        top: 16,
+        bottom: rect.width > 780 ? 72 : 84
+      };
+    }
+
+    function boardBounds() {
+      var minX = Infinity;
+      var minY = Infinity;
+      var maxX = -Infinity;
+      var maxY = -Infinity;
+      (session.containers || []).forEach(function (row) {
+        var obj = findObject(session, row.id);
+        var spec = specOf(row.type);
+        var x = Number(obj ? obj.x : row.x);
+        var y = Number(obj ? obj.y : row.y);
+        if (!isFinite(x) || !isFinite(y)) return;
+        minX = Math.min(minX, x);
+        minY = Math.min(minY, y);
+        maxX = Math.max(maxX, x + Math.max(132, Number(spec.w) || 124));
+        maxY = Math.max(maxY, y + Math.max(196, Number(spec.h) || 188) + 52);
+      });
+      if (!isFinite(minX)) return null;
+      return { x: minX, y: minY, w: Math.max(1, maxX - minX), h: Math.max(1, maxY - minY) };
+    }
+
+    function fitView() {
+      var stage = node.querySelector('[data-lab-stage]');
+      var box = boardBounds();
+      if (!stage || !box) return false;
+      var rect = stage.getBoundingClientRect();
+      if (!rect.width || !rect.height) return false;
+      var pad = boardInsets(rect);
+      var availW = Math.max(160, rect.width - pad.left - pad.right);
+      var availH = Math.max(160, rect.height - pad.top - pad.bottom);
+      var next = Math.min(1, availW / box.w, availH / box.h);
+      zoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, next));
+      panX = Math.round(pad.left + (availW - box.w * zoom) / 2 - box.x * zoom);
+      panY = Math.round(pad.top + (availH - box.h * zoom) / 2 - box.y * zoom);
+      applyWorld();
+      return true;
+    }
+
     function applyWorld() {
       ensureBoard(session);
       session.board.camera.x = panX;
@@ -1687,22 +2124,103 @@
       if (zoomLabel) zoomLabel.textContent = Math.round(zoom * 100) + '%';
     }
 
+    /* Guided progress is derived, so the cue fires only when the step really moves. */
+    function announceStep() {
+      var wanted = wantedNow();
+      if (!wanted.creation || !wanted.state) {
+        lastStepKey = '';
+        return;
+      }
+      var key = wanted.creation.id + ':' + wanted.state.current;
+      if (!lastStepKey) {
+        lastStepKey = key;
+        return;
+      }
+      if (key === lastStepKey) return;
+      var moved = wanted.state.current > Number(String(lastStepKey).split(':')[1] || 0);
+      lastStepKey = key;
+      if (!moved) return;
+      hintLevel = 0;
+      playSound(wanted.state.complete ? 'complete' : 'step');
+    }
+
     function updateLive() {
       var bench = node.querySelector('[data-lab-bench]');
       var inspector = node.querySelector('[data-lab-inspector]');
       var notes = node.querySelector('[data-lab-notes]');
       var guide = node.querySelector('[data-lab-guide-host]');
+      var dockBody = node.querySelector('[data-dock-body]');
       var amounts = node.querySelectorAll('[data-amount]');
+      announceStep();
       if (bench && !dragging) bench.innerHTML = connectionsHtml() + session.containers.map(vesselHtml).join('');
       if (inspector) inspector.innerHTML = inspectorHtml();
       if (notes) notes.innerHTML = notesHtml();
       if (guide) guide.innerHTML = tutorialHtml();
+      if (dockBody && dockOpen) {
+        var keepTop = dockBody.scrollTop;
+        dockBody.innerHTML = dockBodyHtml(dockOpen);
+        dockBody.scrollTop = keepTop;
+      }
       amounts.forEach(function (btn) {
         btn.classList.toggle('is-on', Number(btn.getAttribute('data-amount')) === amount);
       });
       var pourBtn = node.querySelector('[data-lab-pour]');
       if (pourBtn) pourBtn.classList.toggle('is-on', Boolean(pourFrom));
       applyWorld();
+    }
+
+    function syncDock(results) {
+      var dock = node.querySelector('[data-lab-dock]');
+      if (!dock) return;
+      dock.classList.toggle('is-open', Boolean(dockOpen));
+      dock.querySelectorAll('[data-dock]').forEach(function (btn) {
+        var on = btn.getAttribute('data-dock') === dockOpen;
+        btn.classList.toggle('is-on', on);
+        btn.setAttribute('aria-expanded', on ? 'true' : 'false');
+      });
+      var panel = dock.querySelector('[data-dock-panel]');
+      var head = dock.querySelector('.lab-dock-head h2');
+      var body = dock.querySelector('[data-dock-body]');
+      var createBtn = dock.querySelector('[data-dock="create"]');
+      if (createBtn) {
+        var dot = createBtn.querySelector('.lab-dock-dot');
+        var wantDot = Boolean(session.creationId);
+        if (wantDot && !dot) createBtn.insertAdjacentHTML('afterbegin', '<i class="lab-dock-dot" aria-hidden="true"></i>');
+        if (!wantDot && dot) dot.remove();
+      }
+      if (panel) panel.hidden = !dockOpen;
+      if (head) head.textContent = dockTitle(dockOpen) || copy('Tools', 'Ferramentas');
+      if (body) {
+        var bodyTop = body.scrollTop;
+        body.innerHTML = dockOpen ? dockBodyHtml(dockOpen, results) : '';
+        if (dockOpen) body.scrollTop = bodyTop;
+      }
+      var shell = node.querySelector('.lab-stage-shell');
+      if (shell) shell.classList.toggle('is-dock-open', Boolean(dockOpen));
+      if (autoCam) fitView();
+    }
+
+    function syncSide() {
+      node.querySelectorAll('[data-side]').forEach(function (btn) {
+        var on = btn.getAttribute('data-side') === sideTab;
+        btn.classList.toggle('is-on', on);
+        btn.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      var inspector = node.querySelector('[data-lab-inspector-pane]');
+      var guide = node.querySelector('[data-lab-guide-host]');
+      if (inspector) inspector.hidden = sideTab !== 'inspector';
+      if (guide) guide.hidden = sideTab !== 'guide';
+    }
+
+    function syncSound() {
+      var btn = node.querySelector('[data-lab-sound]');
+      if (!btn) return;
+      var on = soundEnabled();
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      btn.classList.toggle('is-off', !on);
+      btn.innerHTML = icon(on ? 'sound' : 'muted') +
+        '<span class="lc-sr-only">' + esc(on ? copy('Mute lab sounds', 'Silenciar sons do Lab') : copy('Unmute lab sounds', 'Ativar sons do Lab')) + '</span>';
+      btn.title = on ? copy('Sound on', 'Som ligado') : copy('Sound off', 'Som desligado');
     }
 
     function paint(results) {
@@ -1752,67 +2270,65 @@
         var status = node.querySelector('[data-lab-status]');
         if (status) status.innerHTML = statusHtml(results);
         updateLive();
+        syncDock(results);
+        syncSide();
+        syncSound();
         return;
       }
 
       node.innerHTML =
         '<div class="lab-board" data-lab-root>' +
         '<div class="lab-board-bar">' +
-        '<div><p class="ws-kicker">Atomurus Lab</p>' +
+        '<div class="lab-board-title"><p class="ws-kicker">Atomurus Lab</p>' +
         '<h1 class="ws-title">' + esc(session.title || copy('Creation board', 'Board de criação')) + '</h1></div>' +
-        '<form class="lab-search" data-lab-search>' +
+        '<form class="lab-search" data-lab-search role="search">' +
         '<label class="lc-sr-only" for="lab-q">' + esc(copy('What would you like to create?', 'O que você quer criar?')) + '</label>' +
         '<input id="lab-q" name="q" type="search" value="' + esc(searchValue) + '" placeholder="' + esc(copy('What would you like to create?', 'O que você quer criar?')) + '" autocomplete="off">' +
-        '<button type="submit" class="ws-btn ws-btn-secondary">' + esc(copy('Search catalog', 'Pesquisar catálogo')) + '</button>' +
+        '<button type="submit" class="ws-btn ws-btn-secondary">' + esc(copy('Search', 'Pesquisar')) + '</button>' +
         '</form>' +
         '<div class="lab-toolbar">' +
-        '<a class="ws-btn ws-btn-secondary" href="/app?section=lab&mode=bench">' + esc(copy('Open Bench', 'Bancada aberta')) + '</a>' +
-        '<a class="ws-btn ws-btn-secondary" href="/app?section=creations">' + esc(copy('Guided Creations', 'Criações guiadas')) + '</a>' +
-        '<button type="button" class="ws-btn" data-lab-zoom="out">−</button>' +
+        '<button type="button" class="ws-btn ws-btn-sm" data-lab-undo>' + esc(copy('Undo', 'Desfazer')) + '</button>' +
+        '<button type="button" class="ws-btn ws-btn-sm" data-lab-redo>' + esc(copy('Redo', 'Refazer')) + '</button>' +
+        '<span class="lab-zoom" role="group" aria-label="' + esc(copy('Zoom', 'Zoom')) + '">' +
+        '<button type="button" class="ws-btn ws-btn-sm" data-lab-zoom="out" aria-label="' + esc(copy('Zoom out', 'Reduzir')) + '">−</button>' +
         '<span class="lab-zoom-label" data-lab-zoom-label>' + Math.round(zoom * 100) + '%</span>' +
-        '<button type="button" class="ws-btn" data-lab-zoom="in">+</button>' +
-        '<button type="button" class="ws-btn" data-lab-undo>' + esc(copy('Undo', 'Desfazer')) + '</button>' +
-        '<button type="button" class="ws-btn" data-lab-redo>' + esc(copy('Redo', 'Refazer')) + '</button>' +
-        '<button type="button" class="ws-btn" data-lab-fit>' + esc(copy('Fit', 'Ajustar')) + '</button>' +
-        '<button type="button" class="ws-btn" data-lab-reset>' + esc(copy('Reset', 'Reiniciar')) + '</button>' +
-        '<button type="button" class="ws-btn ws-btn-primary" data-lab-save>' + esc(copy('Save session', 'Salvar sessão')) + '</button>' +
+        '<button type="button" class="ws-btn ws-btn-sm" data-lab-zoom="in" aria-label="' + esc(copy('Zoom in', 'Ampliar')) + '">+</button>' +
+        '</span>' +
+        '<button type="button" class="ws-btn ws-btn-sm" data-lab-fit>' + esc(copy('Fit', 'Ajustar')) + '</button>' +
+        '<button type="button" class="lab-icon-btn" data-lab-sound aria-pressed="true" title="' + esc(copy('Sound on', 'Som ligado')) + '">' + icon('sound') + '</button>' +
+        '<button type="button" class="ws-btn ws-btn-sm" data-lab-reset>' + esc(copy('Reset', 'Reiniciar')) + '</button>' +
+        '<button type="button" class="ws-btn ws-btn-sm ws-btn-primary" data-lab-save>' + esc(copy('Save', 'Salvar')) + '</button>' +
         '</div></div>' +
         notice + diamondNote +
         '<div data-lab-status>' + statusHtml(results) + '</div>' +
-        '<div class="lab-board-layout">' +
-        '<aside class="lab-board-rail lab-pane">' +
-        '<h2>' + esc(copy('Add to board', 'Adicionar ao board')) + '</h2>' +
-        equipmentHtml() +
-        '<h2>' + esc(copy('Ready mixtures', 'Misturas prontas')) + '</h2>' +
-        '<div class="lab-chips">' + readyHtml() + '</div>' +
-        '<p class="ws-lede">' + esc(copy('Drag equipment. Space or empty-canvas drag pans. Scroll zooms. Catalog stays allowlisted.', 'Arraste equipamentos. Espaço ou o canvas vazio faz pan. Role para zoom. O catálogo continua allowlist.')) + '</p>' +
-        '</aside>' +
-        '<section class="lab-pane lab-bench lab-board-stage-wrap">' +
+        '<div class="lab-stage-shell' + (dockOpen ? ' is-dock-open' : '') + '">' +
+        dockHtml(results) +
+        '<div class="lab-stage-frame">' +
         '<div class="lab-board-stage" data-lab-stage tabindex="0">' +
         '<div class="lab-board-world" data-lab-world data-lab-bench>' + connectionsHtml() + session.containers.map(vesselHtml).join('') + '</div>' +
         '</div>' +
-        '<div class="lab-bench-actions">' +
+        '<div class="lab-actionbar" role="toolbar" aria-label="' + esc(copy('Board actions', 'Ações do board')) + '">' +
         '<button type="button" class="ws-btn ws-btn-sm" data-lab-pour>' + esc(copy('Pour', 'Transferir')) + '</button>' +
         '<button type="button" class="ws-btn ws-btn-sm" data-lab-stir>' + esc(copy('Stir', 'Agitar')) + '</button>' +
         '<button type="button" class="ws-btn ws-btn-sm" data-lab-empty>' + esc(copy('Empty', 'Esvaziar')) + '</button>' +
         '<button type="button" class="ws-btn ws-btn-sm" data-heat="-10">' + esc(copy('Cool', 'Esfriar')) + '</button>' +
         '<button type="button" class="ws-btn ws-btn-sm" data-heat="10">' + esc(copy('Heat', 'Aquecer')) + '</button>' +
-        '</div></section>' +
-        '<aside class="lab-pane lab-board-side">' +
-        '<h2>' + esc(copy('Elements', 'Elementos')) + '</h2>' + inventoryHtml() +
-        '<div class="lab-amount" role="group" aria-label="' + esc(copy('Amount', 'Quantidade')) + '">' +
-        '<button type="button" class="ws-btn ws-btn-sm" data-amount="5">5</button>' +
-        '<button type="button" class="ws-btn ws-btn-sm" data-amount="10">10</button>' +
-        '<button type="button" class="ws-btn ws-btn-sm is-on" data-amount="25">25</button>' +
-        '<button type="button" class="ws-btn ws-btn-sm" data-amount="50">50</button>' +
-        '<button type="button" class="ws-btn ws-btn-sm" data-amount="100">100</button>' +
-        '<span class="ws-lede">' + esc(copy('mL or g, virtual', 'mL ou g, virtual')) + '</span></div>' +
-        '<h2>' + esc(copy('Inspector', 'Inspetor')) + '</h2><div data-lab-inspector>' + inspectorHtml() + '</div>' +
-        '<div data-lab-guide-host>' + tutorialHtml() + '</div>' +
-        '</aside></div>' +
+        '</div></div>' +
+        '<aside class="lab-side" data-lab-side>' +
+        '<div class="lab-side-tabs" role="tablist">' +
+        '<button type="button" role="tab" class="lab-side-tab" data-side="inspector" aria-selected="false">' + esc(copy('Inspector', 'Inspetor')) + '</button>' +
+        '<button type="button" role="tab" class="lab-side-tab" data-side="guide" aria-selected="false">' + esc(copy('Step-by-step', 'Passo a passo')) + '</button>' +
+        '</div>' +
+        '<div class="lab-side-body">' +
+        '<div data-lab-inspector-pane hidden><div data-lab-inspector>' + inspectorHtml() + '</div></div>' +
+        '<div data-lab-guide-host hidden>' + tutorialHtml() + '</div>' +
+        '</div></aside>' +
+        '</div>' +
         '<section class="ws-overview-block"><h2 class="ws-h2">' + esc(copy('Notebook', 'Caderno')) + '</h2><ol class="lab-notes" data-lab-notes>' + notesHtml() + '</ol></section>' +
         '</div>';
       bind(node);
+      syncSide();
+      syncSound();
       applyWorld();
     }
 
@@ -1841,33 +2357,133 @@
         var input = rootEl.querySelector('#lab-q');
         var q = input ? input.value : '';
         var found = searchCatalog(q);
+        params.set('q', q);
         if (found.status === 'unavailable' || found.status === 'unknown') {
-          params.set('q', q);
+          dockOpen = '';
           paint(found);
+          playSound('deny');
           return;
         }
         if (found.resolved && found.resolved.kind === 'creation') {
-          location.assign('/app?section=lab&mode=guided&creation=' + encodeURIComponent(found.resolved.id));
+          session.creationId = found.resolved.id;
+          session.mode = 'guided';
+          hintLevel = 0;
+          lastStepKey = '';
+          sideTab = 'guide';
+          dockOpen = 'create';
+          observe(session, copy('Started a guided creation.', 'Iniciou uma criação guiada.'));
+          flushSave();
+          paint(found);
+          playSound('step');
           return;
         }
         if (found.resolved && found.resolved.kind === 'substance') {
           pourFrom = '';
-          addToContainer(session, selected().id, found.resolved.id, amount);
+          var into = preferredVessel();
+          var hit = into ? addToContainer(session, into.id, found.resolved.id, amount) : { ok: false };
+          if (into) session.selectedId = into.id;
           queueSave();
-          params.set('q', q);
+          dockOpen = 'create';
           paint(found);
-          pulseLiquid();
+          if (hit.ok) {
+            pulseLiquid();
+            playSound('material');
+          } else {
+            playSound('deny');
+          }
           return;
         }
-        params.set('q', q);
+        dockOpen = 'create';
         paint(found);
       }, opts);
       rootEl.addEventListener('click', function (event) {
         try {
           var t = event.target && event.target.closest
-            ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-redo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel], [data-ready], [data-lab-zoom], [data-lab-fit], [data-lab-aspirate], [data-lab-dispense], [data-lab-drop], [data-lab-grind], [data-lab-drain], [data-lab-connect], [data-lab-duplicate], [data-lab-delete], [data-lab-rotate]')
+            ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-redo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel], [data-ready], [data-lab-zoom], [data-lab-fit], [data-lab-aspirate], [data-lab-dispense], [data-lab-drop], [data-lab-grind], [data-lab-drain], [data-lab-connect], [data-lab-duplicate], [data-lab-delete], [data-lab-rotate], [data-dock], [data-dock-close], [data-side], [data-lab-sound], [data-start-creation], [data-stop-creation], [data-step-add], [data-lab-hint]')
             : null;
           if (!t) return;
+          if (t.hasAttribute('data-lab-sound')) {
+            var soundOn = setSoundEnabled(!soundEnabled());
+            syncSound();
+            if (soundOn) playSound('select');
+            return;
+          }
+          if (t.hasAttribute('data-dock-close')) {
+            dockOpen = '';
+            syncDock();
+            return;
+          }
+          if (t.getAttribute('data-dock')) {
+            var key = t.getAttribute('data-dock');
+            dockOpen = dockOpen === key ? '' : key;
+            syncDock();
+            if (dockOpen) playSound('select');
+            return;
+          }
+          if (t.getAttribute('data-side')) {
+            sideTab = t.getAttribute('data-side');
+            syncSide();
+            return;
+          }
+          if (t.getAttribute('data-start-creation')) {
+            var startId = t.getAttribute('data-start-creation');
+            if (!CREATIONS.some(function (row) { return row.id === startId; })) return;
+            session.creationId = startId;
+            session.mode = 'guided';
+            hintLevel = 0;
+            lastStepKey = '';
+            sideTab = 'guide';
+            dockOpen = '';
+            observe(session, copy('Started a guided creation.', 'Iniciou uma criação guiada.'));
+            flushSave();
+            syncDock();
+            syncSide();
+            updateLive();
+            playSound('step');
+            return;
+          }
+          if (t.hasAttribute('data-stop-creation')) {
+            session.creationId = '';
+            session.mode = 'bench';
+            hintLevel = 0;
+            lastStepKey = '';
+            flushSave();
+            updateLive();
+            return;
+          }
+          if (t.getAttribute('data-lab-hint')) {
+            hintLevel = 0;
+            updateLive();
+            return;
+          }
+          if (t.hasAttribute('data-lab-hint')) {
+            hintLevel = Math.min(3, hintLevel + 1);
+            updateLive();
+            return;
+          }
+          if (t.getAttribute('data-step-add')) {
+            var stepId = t.getAttribute('data-step-add');
+            var stepAmount = Number(t.getAttribute('data-step-amount')) || amount;
+            var target = preferredVessel();
+            if (!target) {
+              flashStatus('<div class="lab-msg" role="status">' + esc(copy('Add a beaker to the board first.', 'Adicione um becker ao board primeiro.')) + '</div>');
+              playSound('deny');
+              return;
+            }
+            var stepAdded = addToContainer(session, target.id, stepId, stepAmount);
+            session.selectedId = target.id;
+            queueSave();
+            updateLive();
+            if (stepAdded.ok) {
+              flashStatus('');
+              pulseLiquid();
+              playSound('material');
+            } else {
+              flashStatus('<div class="lab-msg" role="status">' + esc(copy('That vessel cannot take this material right now.', 'Esse vidro não pode receber este material agora.')) + '</div>');
+              playSound('deny');
+            }
+            return;
+          }
           if (t.getAttribute('data-amount')) {
             amount = Number(t.getAttribute('data-amount')) || 25;
             updateLive();
@@ -1969,6 +2585,7 @@
             pourFrom = '';
             heatFrom = spec.heat ? id : '';
             updateLive();
+            playSound('select');
             return;
           }
           if (t.getAttribute('data-add')) {
@@ -1979,10 +2596,15 @@
             if (added.ok) {
               flashStatus('');
               pulseLiquid();
+              playSound('material');
             } else if (added.reason === 'full') {
+              playSound('deny');
               flashStatus('<div class="lab-msg" role="status">' + esc(copy('That vessel is full. Empty it or pour into another glass.', 'Esse vidro está cheio. Esvazie ou transfira para outro.')) + '</div>');
             } else if (added.reason === 'tool') {
               flashStatus('<div class="lab-msg" role="status">' + esc(copy('That tool does not hold a mixture. Select a beaker or flask.', 'Essa ferramenta não retém mistura. Selecione um becker ou erlenmeyer.')) + '</div>');
+              playSound('deny');
+            } else {
+              playSound('deny');
             }
             return;
           }
@@ -1999,13 +2621,15 @@
             queueSave();
             updateLive();
             pulseLiquid();
+            playSound(delta > 0 ? 'heat' : 'select');
             if (delta > 0) playHeatFx(vessel.id);
             return;
           }
           if (t.getAttribute('data-add-vessel')) {
-            addVessel(session, t.getAttribute('data-add-vessel'));
+            var placed = addVessel(session, t.getAttribute('data-add-vessel'));
             queueSave();
             updateLive();
+            playSound(placed && placed.ok === false ? 'deny' : 'place');
             return;
           }
           if (t.getAttribute('data-ready')) {
@@ -2015,22 +2639,28 @@
             if (kit.ok) {
               flashStatus('');
               pulseLiquid();
+              playSound('pour');
             } else {
+              playSound('deny');
               flashStatus('<div class="lab-msg" role="status">' + esc(copy('Select a vessel that can hold a mixture first.', 'Selecione um vidro que possa reter a mistura.')) + '</div>');
             }
             return;
           }
           if (t.getAttribute('data-lab-zoom')) {
+            autoCam = false;
             zoom = t.getAttribute('data-lab-zoom') === 'in' ? Math.min(ZOOM_MAX, zoom + 0.1) : Math.max(ZOOM_MIN, zoom - 0.1);
             applyWorld();
             queueSave();
             return;
           }
           if (t.hasAttribute('data-lab-fit')) {
-            panX = 24;
-            panY = 24;
-            zoom = 1;
-            applyWorld();
+            autoCam = true;
+            if (!fitView()) {
+              panX = 24;
+              panY = 24;
+              zoom = 1;
+              applyWorld();
+            }
             queueSave();
             return;
           }
@@ -2118,6 +2748,7 @@
             return;
           }
           if (t.hasAttribute('data-lab-stir')) {
+            playSound('stir');
             mixContainer(selected());
             session.stirred = true;
             observe(session, copy('Stirred the selected vessel.', 'Agitou o vidro selecionado.'));
@@ -2136,6 +2767,7 @@
           }
           if (t.hasAttribute('data-lab-undo')) {
             if (!undoSession(session).ok) return;
+            playSound('undo');
             observe(session, copy('Undid the last change.', 'Desfez a última alteração.'));
             queueSave();
             updateLive();
@@ -2143,6 +2775,7 @@
           }
           if (t.hasAttribute('data-lab-redo')) {
             if (!redoSession(session).ok) return;
+            playSound('undo');
             observe(session, copy('Redid the last change.', 'Refez a última alteração.'));
             queueSave();
             updateLive();
@@ -2262,6 +2895,7 @@
           } else if (panning && panStart) {
             var moved = Math.abs(panX - panStart.panX) > 4 || Math.abs(panY - panStart.panY) > 4;
             if (moved) {
+              autoCam = false;
               ignoreClickUntil = Date.now() + 280;
               queueSave();
             }
@@ -2284,6 +2918,7 @@
           var my = event.clientY - rect.top;
           var wx = (mx - panX) / zoom;
           var wy = (my - panY) / zoom;
+          autoCam = false;
           var next = zoom + (event.deltaY > 0 ? -0.08 : 0.08);
           zoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, next));
           panX = mx - wx * zoom;
@@ -2298,6 +2933,11 @@
       }
       rootEl.addEventListener('keydown', function (event) {
         if (keyTarget(event)) return;
+        if (event.key === 'Escape' && dockOpen) {
+          dockOpen = '';
+          syncDock();
+          return;
+        }
         if (event.code === 'Space') { spaceDown = true; event.preventDefault(); return; }
         if ((event.metaKey || event.ctrlKey) && String(event.key).toLowerCase() === 'z') {
           event.preventDefault();
@@ -2342,6 +2982,17 @@
     }
 
     paint();
+    autoCam = !panX && !panY && zoom === 1;
+    if (autoCam) fitView();
+    if (typeof ResizeObserver === 'function') {
+      var stageEl = node.querySelector('[data-lab-stage]');
+      if (stageEl) {
+        var observer = new ResizeObserver(function () {
+          if (autoCam) fitView();
+        });
+        observer.observe(stageEl);
+      }
+    }
     if (typeof window !== 'undefined') {
       window.addEventListener('pagehide', flushSave, { once: true });
     }
@@ -2367,6 +3018,12 @@
     identifyProduct: identifyProduct,
     visualFillPct: visualFillPct,
     tutorialState: tutorialState,
+    stepPlan: stepPlan,
+    SOUNDS: SOUNDS,
+    SOUND_KEY: SOUND_KEY,
+    soundEnabled: soundEnabled,
+    setSoundEnabled: setSoundEnabled,
+    playSound: playSound,
     canHold: canHold,
     hasCap: hasCap,
     ensureBoard: ensureBoard,

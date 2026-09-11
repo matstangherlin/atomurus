@@ -473,6 +473,10 @@ test('Workspace home is the Virtual Lab and Open Bench runs', async ({ page }) =
   await expect(page.locator('#ws-lab-q')).toBeVisible();
   await page.locator('#ws-study-nav a[href="/app?section=lab"]').first().click();
   await expect(page.locator('.lab-beaker')).toBeVisible();
+
+  // The dock starts compact: material chips only exist once a panel is opened.
+  await expect(page.locator('.lab-chip[data-add="water"]')).toHaveCount(0);
+  await page.locator('[data-dock="materials"]').click();
   await page.locator('.lab-chip[data-add="water"]').click();
   await expect(page.locator('.lab-notes')).toContainText(/Water|água|H₂O|Added virtual/i);
   await expect.poll(async () => page.locator('[data-vessel="beaker-a"] .lab-liquid').evaluate((el) => parseFloat(el.style.height) || 0)).toBeGreaterThan(15);
@@ -483,22 +487,45 @@ test('Workspace home is the Virtual Lab and Open Bench runs', async ({ page }) =
   await page.locator('[data-vessel="flask-b"]').click();
   await expect(page.locator('.lab-notes')).toContainText(/Poured|Transfer/i);
   await expect(page.locator('[data-lab-stage]')).toBeVisible();
-  await expect(page.locator('[data-add-vessel="condenser"]').first()).toBeVisible();
+
+  await page.locator('[data-dock="glassware"]').click();
   await page.locator('[data-add-vessel="test-tube"]').first().click();
   await expect(page.locator('.lab-test-tube')).toBeVisible();
+  await page.locator('[data-dock="heat"]').click();
+  await expect(page.locator('[data-add-vessel="condenser"]').first()).toBeVisible();
   await page.locator('[data-add-vessel="bunsen"]').first().click();
   await expect(page.locator('.lab-bunsen .lab-flame')).toBeVisible();
+  await page.locator('[data-dock="transfer"]').click();
   await page.locator('[data-add-vessel="burette"]').first().click();
   await expect(page.locator('.lab-burette')).toBeVisible();
+  await page.locator('[data-dock="materials"]').click();
   await page.locator('.lab-chip[data-add="water"]').click();
+  await page.locator('[data-dock-close]').click();
+  await expect(page.locator('[data-dock-panel]')).toBeHidden();
   await page.locator('[data-lab-drop]').click();
   await page.locator('[data-vessel="beaker-a"]').click();
   await expect(page.locator('.lab-notes')).toContainText(/1 mL/);
+
+  // Sound is opt-out and the choice survives a reload.
+  const soundBtn = page.locator('[data-lab-sound]');
+  await expect(soundBtn).toHaveAttribute('aria-pressed', 'true');
+  await soundBtn.click();
+  await expect(soundBtn).toHaveAttribute('aria-pressed', 'false');
+  await expect.poll(async () => page.evaluate(() => localStorage.getItem('atomurus-lab-sound'))).toBe('0');
+
   await page.locator('#lab-q').fill('cocaine');
   await page.locator('[data-lab-search]').evaluate((form) => form.requestSubmit());
   await expect(page.locator('.lab-msg')).toContainText(/isn't available|não está disponível/i);
+
+  // Searching an approved creation starts the step-by-step guide on this board.
   await page.locator('#lab-q').fill('sunscreen');
   await page.locator('[data-lab-search]').evaluate((form) => form.requestSubmit());
-  await expect(page).toHaveURL(/creation=sunscreen/);
-  await expect(page.locator('[data-lab-guide]')).toContainText(/Tutorial|zinc oxide|óxido de zinco/i);
+  await expect(page.locator('[data-lab-guide]')).toContainText(/Step 1 of 4|Passo 1 de 4/i);
+  await expect(page.locator('[data-lab-guide] .lab-do-chip').first()).toBeVisible();
+  await page.locator('[data-lab-guide] [data-lab-hint]').click();
+  await expect(page.locator('[data-lab-guide] .lab-hints li')).toHaveCount(1);
+  await page.locator('[data-lab-guide] [data-step-add="water"]').click();
+  await page.locator('[data-lab-guide] [data-step-add="oil"]').click();
+  await expect(page.locator('[data-lab-guide]')).toContainText(/Step 2 of 4|Passo 2 de 4/i);
+  await expect(page.locator('[data-lab-guide]')).toContainText(/zinc oxide|óxido de zinco/i);
 });

@@ -168,4 +168,89 @@ assert.ok(Number(condObj.y) >= 200 || Number(condObj.x) < 560);
 
 assert.equal(lab.addToContainer(session, 'beaker-a', 'cocaine', 10).ok, false);
 
+// Guided step plans drive the step-by-step panel.
+const solution = lab.CREATIONS.find((row) => row.id === 'solution');
+const waterStep = lab.stepPlan(solution, 1);
+assert.equal(waterStep.action, 'addMaterial');
+assert.equal(waterStep.materials.length, 1);
+assert.equal(waterStep.materials[0].id, 'water');
+assert.equal(waterStep.materials[0].amount, 60);
+assert.equal(waterStep.materials[0].unit, 'mL');
+assert.equal(waterStep.hints.length, 3);
+assert.ok(waterStep.hints.every((hint) => hint.en && hint.pt));
+
+const saltStep = lab.stepPlan(solution, 2);
+assert.equal(saltStep.materials[0].id, 'nacl');
+assert.equal(saltStep.materials[0].unit, 'g');
+assert.equal(saltStep.needsStir, true);
+
+const glassStep = lab.stepPlan(solution, 0);
+assert.equal(glassStep.equipment[0].type, 'beaker');
+assert.ok(glassStep.equipment[0].labelPt);
+
+// needAny steps expose every approved alternative.
+const lotionStep = lab.stepPlan(lab.CREATIONS.find((row) => row.id === 'sunscreen'), 1);
+assert.deepEqual(lotionStep.options.map((row) => row.id), ['zno', 'tio2']);
+assert.equal(lotionStep.materials.length, 0);
+
+// Every catalog step must be renderable and stay inside the allowlist.
+for (const creation of lab.CREATIONS) {
+  for (let i = 0; i < creation.tutorial.length; i += 1) {
+    const plan = lab.stepPlan(creation, i);
+    assert.ok(plan, `${creation.id} step ${i}`);
+    assert.ok(plan.text.en && plan.text.pt, `${creation.id} step ${i} copy`);
+    assert.equal(plan.hints.length, 3);
+    for (const row of plan.materials.concat(plan.options)) {
+      assert.ok(lab.SUBSTANCES[row.id], `${creation.id} uses unknown ${row.id}`);
+      assert.ok(row.amount > 0);
+    }
+    for (const row of plan.equipment) {
+      assert.ok(lab.EQUIPMENT[row.type], `${creation.id} uses unknown equipment ${row.type}`);
+    }
+  }
+}
+assert.equal(lab.stepPlan(solution, 99), null);
+assert.equal(lab.stepPlan(null, 0), null);
+
+// Following a plan actually advances the guide.
+const guided = lab.emptySession({ title: 'Guided', mode: 'guided', creationId: 'solution' });
+assert.equal(lab.tutorialState(guided, solution).current, 1);
+lab.addToContainer(guided, 'beaker-a', 'water', waterStep.materials[0].amount);
+assert.equal(lab.tutorialState(guided, solution).current, 2);
+lab.addToContainer(guided, 'beaker-a', 'nacl', saltStep.materials[0].amount);
+guided.stirred = true;
+assert.ok(lab.tutorialState(guided, solution).current >= 3);
+
+// Sound preference is a stored toggle, never an autoplaying loop.
+assert.equal(lab.SOUND_KEY, 'atomurus-lab-sound');
+assert.equal(lab.soundEnabled(), true);
+assert.ok(lab.SOUNDS.place && lab.SOUNDS.deny && lab.SOUNDS.step);
+Object.keys(lab.SOUNDS).forEach((key) => {
+  const cue = lab.SOUNDS[key];
+  assert.ok(cue.dur > 0 && cue.dur <= 0.6, `${key} cue must be short`);
+  assert.ok(cue.gain > 0 && cue.gain <= 0.2, `${key} cue must stay quiet`);
+});
+// No Web Audio in Node: playSound degrades to a no-op instead of throwing.
+assert.equal(lab.playSound('place'), false);
+assert.equal(lab.playSound('not-a-cue'), false);
+
+// Mute round-trips through the same storage the UI toggle writes.
+const store = new Map();
+globalThis.localStorage = {
+  getItem: (key) => (store.has(key) ? store.get(key) : null),
+  setItem: (key, value) => store.set(key, String(value)),
+  removeItem: (key) => store.delete(key)
+};
+try {
+  assert.equal(lab.soundEnabled(), true, 'sound defaults to on');
+  assert.equal(lab.setSoundEnabled(false), false);
+  assert.equal(store.get(lab.SOUND_KEY), '0');
+  assert.equal(lab.soundEnabled(), false);
+  assert.equal(lab.playSound('place'), false, 'muted cues never reach the mixer');
+  assert.equal(lab.setSoundEnabled(true), true);
+  assert.equal(lab.soundEnabled(), true);
+} finally {
+  delete globalThis.localStorage;
+}
+
 console.log('virtual lab tests passed');
