@@ -1809,3 +1809,293 @@ html[data-reduced-motion="1"] .lab-liquid {
   text-decoration: none;
   border-bottom: 1px solid color-mix(in oklab, var(--lc-green) 45%, transparent);
 }
+
+.lab-board-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin: 0 0 14px;
+}
+.lab-board-bar .lab-search,
+.lab-board-bar .lab-toolbar { margin: 0; }
+.lab-board-layout {
+  display: grid;
+  grid-template-columns: minmax(196px, 250px) minmax(0, 1fr) minmax(230px, 300px);
+  gap: 12px;
+  align-items: stretch;
+}
+.lab-board-rail,
+.lab-board-side {
+  max-height: calc(100vh - 210px);
+  overflow: auto;
+}
+.lab-board-stage-wrap {
+  min-height: 480px;
+  padding: 12px;
+}
+.lab-board-stage {
+  position: relative;
+  flex: 1;
+  min-height: 480px;
+  height: calc(100vh - 280px);
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid var(--lc-rule, #D8D2BF);
+  background:
+    radial-gradient(circle, color-mix(in oklab, var(--lc-ink-3, #8E8978) 22%, transparent) 1.1px, transparent 1.6px) 0 0 / 22px 22px,
+    color-mix(in oklab, var(--lc-paper, #F8F5EC) 88%, #fff);
+  cursor: grab;
+  touch-action: none;
+  overscroll-behavior: contain;
+  user-select: none;
+}
+.lab-board-stage:active { cursor: grabbing; }
+.lab-board-world {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2400px;
+  height: 1600px;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+.lab-board .lab-piece,
+.lab-board .lab-flask {
+  position: absolute;
+  z-index: 1;
+  touch-action: none;
+  width: 124px;
+}
+.lab-board .lab-piece.is-active { z-index: 3; }
+.lab-tool-body {
+  position: relative;
+  width: 72px;
+  height: 120px;
+  pointer-events: none;
+}
+.lab-volumetric-flask { padding-top: 34px; }
+.lab-volumetric-flask .lab-glass-body {
+  width: 92px;
+  height: 108px;
+  border-radius: 50%;
+}
+.lab-volumetric-flask .lab-liquid,
+.lab-volumetric-flask .lab-sediment {
+  border-radius: 0 0 50% 50%;
+}
+.lab-volumetric-flask::before {
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  width: 18px;
+  height: 36px;
+  margin-left: -9px;
+  border: 2px solid var(--lc-ink-2, #58544A);
+  border-bottom: 0;
+  border-radius: 4px 5px 0 0;
+  background: color-mix(in oklab, #fff 42%, transparent);
+  pointer-events: none;
+}
+.lab-pipette-graduated .lab-glass-body,
+.lab-pipette-volumetric .lab-glass-body {
+  width: 16px;
+  height: 168px;
+  border-radius: 8px 8px 4px 4px;
+  background-image: repeating-linear-gradient(
+    to top,
+    transparent 0 11px,
+    color-mix(in oklab, var(--lc-ink-3, #8E8978) 30%, transparent) 11px 12px
+  );
+}
+.lab-pipette-volumetric { padding-top: 18px; }
+.lab-pipette-volumetric::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  width: 28px;
+  height: 22px;
+  margin-left: -14px;
+  border: 2px solid var(--lc-ink-2, #58544A);
+  border-radius: 50%;
+  background: color-mix(in oklab, #fff 40%, transparent);
+  pointer-events: none;
+}
+.lab-piston .lab-glass-body {
+  width: 28px;
+  height: 140px;
+  border-radius: 6px;
+  border-top-width: 8px;
+}
+.lab-test-tube .lab-glass-body,
+.lab-test-tube-capped .lab-glass-body {
+  width: 28px;
+  height: 150px;
+  border-radius: 0 0 16px 16px;
+}
+.lab-test-tube-capped::before {
+  content: "";
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  width: 34px;
+  height: 10px;
+  margin-left: -17px;
+  border-radius: 4px;
+  background: var(--lc-ink-2, #58544A);
+  pointer-events: none;
+}
+.lab-separatory-funnel { padding-top: 28px; }
+.lab-separatory-funnel .lab-glass-body {
+  width: 86px;
+  height: 148px;
+  border-radius: 46% 46% 50% 50% / 12% 18% 70% 70%;
+}
+.lab-separatory-funnel::before {
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  width: 22px;
+  height: 24px;
+  margin-left: -11px;
+  border: 2px solid var(--lc-ink-2, #58544A);
+  border-bottom: 0;
+  background: color-mix(in oklab, #fff 40%, transparent);
+  pointer-events: none;
+}
+.lab-separatory-funnel::after {
+  content: "";
+  position: absolute;
+  bottom: 38px;
+  left: 50%;
+  width: 10px;
+  height: 18px;
+  margin-left: -5px;
+  border: 2px solid var(--lc-ink-2, #58544A);
+  border-radius: 0 0 4px 4px;
+  pointer-events: none;
+}
+.lab-mortar .lab-glass-body {
+  width: 108px;
+  height: 78px;
+  border-radius: 8px 8px 50% 50% / 10% 8% 90% 90%;
+  margin-top: 36px;
+}
+.lab-funnel .lab-tool-body,
+.lab-pipettor .lab-tool-body,
+.lab-rack .lab-tool-body,
+.lab-bunsen .lab-tool-body,
+.lab-heating-gauze .lab-tool-body,
+.lab-condenser .lab-tool-body {
+  border: 2px solid var(--lc-ink-2, #58544A);
+  background: linear-gradient(180deg, color-mix(in oklab, #fff 50%, transparent), color-mix(in oklab, #fff 16%, transparent));
+}
+.lab-funnel .lab-tool-body {
+  width: 86px;
+  height: 92px;
+  border-radius: 8px;
+  clip-path: polygon(8% 0, 92% 0, 58% 62%, 58% 100%, 42% 100%, 42% 62%);
+}
+.lab-pipettor .lab-tool-body {
+  width: 42px;
+  height: 92px;
+  border-radius: 10px 10px 6px 6px;
+  margin-top: 18px;
+}
+.lab-rack {
+  width: 168px;
+}
+.lab-rack .lab-tool-body {
+  width: 148px;
+  height: 54px;
+  border-radius: 8px;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 14px, color-mix(in oklab, var(--lc-ink-2, #58544A) 35%, transparent) 14px 18px),
+    color-mix(in oklab, #fff 30%, transparent);
+}
+.lab-bunsen .lab-tool-body {
+  width: 48px;
+  height: 88px;
+  border-radius: 8px 8px 10px 10px;
+  margin-top: 28px;
+}
+.lab-flame {
+  position: absolute;
+  left: 50%;
+  top: -28px;
+  width: 18px;
+  height: 34px;
+  margin-left: -9px;
+  border-radius: 50% 50% 40% 40%;
+  background: radial-gradient(ellipse at 50% 78%, #fff 0 18%, #ffd56a 32%, #ff6a28 68%, transparent 72%);
+  animation: lab-flame 640ms ease-in-out infinite alternate;
+}
+.lab-heating-gauze .lab-tool-body {
+  width: 108px;
+  height: 72px;
+  border-radius: 8px;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 7px, color-mix(in oklab, var(--lc-ink-2, #58544A) 28%, transparent) 7px 8px),
+    repeating-linear-gradient(90deg, transparent 0 7px, color-mix(in oklab, var(--lc-ink-2, #58544A) 28%, transparent) 7px 8px),
+    color-mix(in oklab, #d8c9a2 55%, #fff);
+}
+.lab-condenser .lab-tool-body {
+  width: 28px;
+  height: 150px;
+  border-radius: 12px;
+  transform: rotate(-18deg);
+  background:
+    repeating-linear-gradient(180deg, transparent 0 10px, color-mix(in oklab, #7EB6D9 35%, transparent) 10px 14px),
+    color-mix(in oklab, #fff 35%, transparent);
+}
+.lab-glass.is-heat-source {
+  border-style: solid;
+  border-color: color-mix(in oklab, #d06020 55%, var(--lc-rule, #D8D2BF));
+}
+.lab-liquid.is-filled::before {
+  content: "";
+  position: absolute;
+  left: -24%;
+  top: -7px;
+  width: 148%;
+  height: 14px;
+  border-radius: 50%;
+  background: color-mix(in oklab, #fff 42%, transparent);
+  animation: lab-wave 2.6s ease-in-out infinite;
+}
+.lab-glass.is-emulsion .lab-liquid {
+  opacity: .94;
+  box-shadow:
+    inset 0 10px 14px color-mix(in oklab, #fff 40%, transparent),
+    inset 0 -8px 10px color-mix(in oklab, #e6d5a2 28%, transparent);
+}
+.lab-guide { margin-top: 16px; }
+.lab-guide ol { margin: 8px 0 0; padding-left: 18px; }
+.lab-guide-step { margin: 6px 0; color: var(--lc-ink-2, #58544A); }
+.lab-guide-step.is-done { color: var(--lc-green, #1E6A50); text-decoration: line-through; }
+.lab-guide-step.is-now { color: var(--lc-ink, #1b1914); font-weight: 650; }
+.lab-guide-done { color: var(--lc-green, #1E6A50); font-weight: 650; }
+@keyframes lab-wave {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(7%); }
+}
+@keyframes lab-flame {
+  0% { transform: scaleY(.92) translateY(1px); opacity: .82; }
+  100% { transform: scaleY(1.08) translateY(-2px); opacity: 1; }
+}
+@media (max-width: 1100px) {
+  .lab-board-layout { grid-template-columns: 1fr; }
+  .lab-board-rail,
+  .lab-board-side { max-height: none; }
+  .lab-board-stage { height: 520px; }
+}
+html[data-reduced-motion] .lab-liquid.is-filled::before,
+html[data-reduced-motion] .lab-flame,
+html[data-reduced-motion="1"] .lab-liquid.is-filled::before,
+html[data-reduced-motion="1"] .lab-flame {
+  animation: none;
+}

@@ -77,7 +77,36 @@ assert.equal(copper.containers.find((row) => row.id === 'flask-b').productId, 'c
 const saved = lab.saveSession(session);
 assert.equal(saved.id, session.id);
 assert.ok(Array.isArray(lab.CREATIONS));
-assert.ok(lab.CREATIONS.some((row) => row.id === 'diamond'));
-assert.ok(lab.CREATIONS.every((row) => Array.isArray(row.stages)));
+assert.equal(lab.resolveQuery('sunscreen').kind, 'creation');
+assert.equal(lab.resolveQuery('sunscreen').id, 'sunscreen');
+assert.equal(lab.resolveQuery('protetor solar').id, 'sunscreen');
+assert.ok(lab.CREATIONS.some((row) => row.id === 'sunscreen' && Array.isArray(row.tutorial)));
+assert.equal(lab.canHold({ type: 'beaker', capacityMl: 250 }), true);
+assert.equal(lab.canHold({ type: 'bunsen', capacityMl: 0 }), false);
+assert.ok(lab.EQUIPMENT['test-tube']);
+assert.ok(lab.EQUIPMENT['separatory-funnel']);
+assert.ok(lab.READY.some((row) => row.id === 'sunscreen_ready'));
+
+const extraGlass = lab.emptySession({ title: 'Glass', mode: 'bench' });
+assert.equal(lab.addVessel(extraGlass, 'test-tube').ok, true);
+assert.equal(lab.addVessel(extraGlass, 'bunsen').ok, true);
+assert.equal(lab.addToContainer(extraGlass, extraGlass.containers.find((row) => row.type === 'bunsen').id, 'water', 10).ok, false);
+
+const lotion = lab.emptySession({ title: 'Sunscreen', mode: 'bench', creationId: 'sunscreen' });
+assert.equal(lab.addToContainer(lotion, 'beaker-a', 'water', 20).ok, true);
+assert.equal(lab.addToContainer(lotion, 'beaker-a', 'oil', 15).ok, true);
+assert.equal(lab.addToContainer(lotion, 'beaker-a', 'zno', 8).ok, true);
+assert.equal(lotion.containers[0].productId, 'sunscreen');
+lotion.creationId = 'sunscreen';
+const sunscreen = lab.CREATIONS.find((row) => row.id === 'sunscreen');
+lotion.stirred = true;
+const guide = lab.tutorialState(lotion, sunscreen);
+assert.equal(guide.complete, true);
+
+const ready = lab.emptySession({ title: 'Ready', mode: 'bench' });
+assert.equal(lab.addReady(ready, 'saline_ready', 'beaker-a').ok, true);
+assert.equal(ready.containers[0].productId, 'saline');
+
+assert.equal(lab.addToContainer(session, 'beaker-a', 'cocaine', 10).ok, false);
 
 console.log('virtual lab tests passed');
