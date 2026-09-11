@@ -6,7 +6,7 @@
   var SCHEMA_VERSION = 2;
   var MAX_SESSIONS = 24;
   var HISTORY_CAP = 80;
-  var MAX_VESSELS = 80;
+  var MAX_VESSELS = 120;
   var SAVE_MS = 400;
   var SNAP_PX = 14;
   var ZOOM_MIN = 0.25;
@@ -1942,12 +1942,18 @@
 
   var HEAT_OFFSET = 34;
 
-  function heaterIsCupped(session, heaterId) {
-    return (session.containers || []).some(function (row) {
-      if (row.id === heaterId || !hasCap(row, 'heat')) return false;
+  function cuppedHeaterIds(session) {
+    var ids = {};
+    (session.containers || []).forEach(function (row) {
+      if (!canHold(row) || !hasCap(row, 'heat')) return;
       var zone = heatZoneFor(session, row.id);
-      return zone && zone.id === heaterId;
+      if (zone) ids[zone.id] = true;
     });
+    return ids;
+  }
+
+  function heaterIsCupped(session, heaterId) {
+    return Boolean(cuppedHeaterIds(session)[heaterId]);
   }
 
   function heatZoneFor(session, vesselId) {
@@ -2894,6 +2900,16 @@
       }).join('') + '</svg>';
     }
 
+    var renderPass = null;
+
+    function boardHtml() {
+      renderPass = { cupped: cuppedHeaterIds(session), attach: {} };
+      ensureAttachments(session).forEach(function (row) { renderPass.attach[row.toolId] = row; });
+      var html = connectionsHtml() + linkingHtml() + session.containers.map(vesselHtml).join('');
+      renderPass = null;
+      return html;
+    }
+
     function vesselHtml(container) {
       mixContainer(container);
       ensureBoard(session);
@@ -2913,8 +2929,9 @@
       var heatCls = heatFrom === container.id ? ' is-heat-source' : '';
       var snap = heatZoneFor(session, container.id);
       if (snap && hasCap(container, 'heat')) heatCls += ' is-heat-zone';
-      var cupped = specOf(kind).heat && heaterIsCupped(session, container.id);
-      var fittedNow = attachmentOf(session, container.id);
+      var cupped = specOf(kind).heat &&
+        (renderPass ? Boolean(renderPass.cupped[container.id]) : heaterIsCupped(session, container.id));
+      var fittedNow = renderPass ? (renderPass.attach[container.id] || null) : attachmentOf(session, container.id);
       var emulsion = String(container.appearance || '').indexOf('emulsion') !== -1 || container.productId === 'sunscreen';
       var warm = (Number(container.temperatureC) || 22) >= 40;
       var cls = 'lab-glass lab-piece lab-' + kind + (kind === 'beaker' ? ' lab-beaker' : '') + (active ? ' is-active' : '') + (container.fizz ? ' is-fizz' : '') + (emulsion ? ' is-emulsion' : '') + (warm ? ' is-warm' : '') + (cupped ? ' is-cupped' : '') + (fittedNow ? ' is-fitted' : '') + pourCls + heatCls;
@@ -3070,9 +3087,14 @@
     function refreshMotion() {
       var stage = node.querySelector('[data-lab-stage]');
       if (!stage) return;
+      /* Ask the session which vessels are in a state that animates, rather than
+         querying every piece in the DOM. */
       var pieces = [];
-      node.querySelectorAll('[data-vessel]').forEach(function (piece) {
-        if (piece.querySelector('.lab-svg-bubble, .lab-svg-flame, .lab-svg-vapor')) pieces.push(piece);
+      (session.containers || []).forEach(function (row) {
+        var warm = (Number(row.temperatureC) || 22) >= 40;
+        if (!warm && !row.fizz && row.type !== 'bunsen') return;
+        var piece = node.querySelector('[data-vessel="' + row.id + '"]');
+        if (piece && piece.querySelector('.lab-svg-bubble, .lab-svg-flame, .lab-svg-vapor')) pieces.push(piece);
       });
       if (motionObserver) motionObserver.disconnect();
       if (!pieces.length || typeof IntersectionObserver !== 'function') return;
@@ -3319,7 +3341,7 @@
       var dockBody = node.querySelector('[data-dock-body]');
       var amounts = node.querySelectorAll('[data-amount]');
       announceStep();
-      if (bench && !dragging) bench.innerHTML = connectionsHtml() + linkingHtml() + session.containers.map(vesselHtml).join('');
+      if (bench && !dragging) bench.innerHTML = boardHtml();
       if (inspector) inspector.innerHTML = inspectorHtml();
       if (notes) notes.innerHTML = notesHtml();
       if (guide) guide.innerHTML = tutorialHtml();
@@ -3473,7 +3495,7 @@
         dockHtml(results) +
         '<div class="lab-stage-frame">' +
         '<div class="lab-board-stage" data-lab-stage tabindex="0">' +
-        '<div class="lab-board-world" data-lab-world data-lab-bench>' + connectionsHtml() + linkingHtml() + session.containers.map(vesselHtml).join('') + '</div>' +
+        '<div class="lab-board-world" data-lab-world data-lab-bench>' + boardHtml() + '</div>' +
         '</div>' +
         '<div class="lab-actionbar" role="toolbar" aria-label="' + esc(copy('Board actions', 'Ações do board')) + '">' +
         '<button type="button" class="ws-btn ws-btn-sm" data-lab-pour>' + esc(copy('Pour', 'Transferir')) + '</button>' +
@@ -4352,6 +4374,8 @@
     canHold: canHold,
     hasCap: hasCap,
     ensureBoard: ensureBoard,
+    cuppedHeaterIds: cuppedHeaterIds,
+    MAX_VESSELS: MAX_VESSELS,
     aspirate: aspirate,
     dispense: dispense,
     drop: drop,

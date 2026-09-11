@@ -579,4 +579,27 @@ lab.addToContainer(tight, 'beaker-a', 'fe', 5);
 assert.equal(lab.filterThrough(tight, 'beaker-a').reason, 'receiver-full');
 assert.equal(tight.containers[0].volumeMl, 200, 'a refused filter changes nothing');
 
+// The board holds a full bench, not an arbitrary handful.
+const roomy = lab.emptySession({ title: 'Roomy', mode: 'bench' });
+let seated = 0;
+while (lab.addVessel(roomy, 'test-tube').ok) seated += 1;
+assert.ok(roomy.containers.length >= 100, `the board should take 100 pieces, took ${roomy.containers.length}`);
+assert.equal(lab.addVessel(roomy, 'beaker').reason, 'limit', 'and still has a ceiling');
+
+// One pass finds every cuppedSet heater, instead of one pass per heater.
+const heat = lab.emptySession({ title: 'Heat', mode: 'bench' });
+lab.addVessel(heat, 'round-flask');
+lab.addVessel(heat, 'heating-mantle');
+lab.addVessel(heat, 'bunsen');
+const heatFlask = heat.containers.find((row) => row.type === 'round-flask');
+const mantlePiece = heat.containers.find((row) => row.type === 'heating-mantle');
+const idleBurner = heat.containers.find((row) => row.type === 'bunsen');
+const flaskObj = heat.board.objects.find((row) => row.id === heatFlask.id);
+const mantleObj = heat.board.objects.find((row) => row.id === mantlePiece.id);
+mantleObj.x = flaskObj.x;
+mantleObj.y = flaskObj.y + 34;
+const cuppedSet = lab.cuppedHeaterIds(heat);
+assert.equal(cuppedSet[mantlePiece.id], true, 'the mantle under the flask is cuppedSet');
+assert.equal(cuppedSet[idleBurner.id], undefined, 'the idle burner is not');
+
 console.log('virtual lab tests passed');
