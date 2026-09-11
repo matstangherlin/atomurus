@@ -466,6 +466,78 @@ test('Pro footer has Plan billing and no Upgrade', async ({ page }) => {
   await expect(page.locator('#ws-nav-foot a[data-nav="plan"]')).toHaveAttribute('href', /\/account\?tab=plan/);
 });
 
+test('Lab board pinch-zooms with two fingers', async ({ page }) => {
+  await installApi(page, { kind: 'free' });
+  await gotoWorkspace(page, '/app?section=lab&mode=bench');
+  await page.waitForSelector('.lab-beaker');
+  await page.locator('[data-lab-fit]').click();
+  const before = await page.locator('[data-lab-zoom-label]').innerText();
+
+  await page.locator('[data-lab-stage]').evaluate((stage) => {
+    const box = stage.getBoundingClientRect();
+    const cx = box.left + box.width / 2;
+    const cy = box.top + box.height / 2;
+    function touch(type, id, x, y) {
+      stage.dispatchEvent(new PointerEvent(type, {
+        bubbles: true, pointerId: id, pointerType: 'touch', isPrimary: id === 1,
+        clientX: x, clientY: y, button: 0
+      }));
+    }
+    touch('pointerdown', 1, cx - 40, cy);
+    touch('pointerdown', 2, cx + 40, cy);
+    for (let i = 1; i <= 8; i += 1) {
+      touch('pointermove', 1, cx - 40 - i * 10, cy);
+      touch('pointermove', 2, cx + 40 + i * 10, cy);
+    }
+    touch('pointerup', 1, cx - 120, cy);
+    touch('pointerup', 2, cx + 120, cy);
+  });
+
+  const after = await page.locator('[data-lab-zoom-label]').innerText();
+  expect(parseInt(after, 10)).toBeGreaterThan(parseInt(before, 10));
+});
+
+test('Lab board selects with a marquee, moves the group and restacks', async ({ page }) => {
+  await installApi(page, { kind: 'free' });
+  await gotoWorkspace(page, '/app?section=lab&mode=bench');
+  await page.waitForSelector('.lab-beaker');
+  await page.locator('[data-lab-fit]').click();
+
+  // Dragging empty canvas draws a selection rectangle, it does not pan.
+  const first = await page.locator('[data-vessel="beaker-a"]').boundingBox();
+  const last = await page.locator('[data-vessel="cylinder-c"]').boundingBox();
+  await page.mouse.move(first.x - 30, first.y - 30);
+  await page.mouse.down();
+  await page.mouse.move(last.x + last.width + 20, last.y + last.height + 20, { steps: 12 });
+  await expect(page.locator('.lab-marquee')).toHaveCount(1);
+  await page.mouse.up();
+  await expect(page.locator('.lab-marquee')).toHaveCount(0);
+  await expect(page.locator('.lab-piece.is-active')).toHaveCount(3);
+  await expect(page.locator('.lab-multi')).toContainText(/3 pieces|3 peças/);
+
+  // Dragging one of them carries the whole selection.
+  const beakerBefore = await page.locator('[data-vessel="beaker-a"]').evaluate((el) => el.style.left);
+  const flaskBefore = await page.locator('[data-vessel="flask-b"]').evaluate((el) => el.style.left);
+  const grab = await page.locator('[data-vessel="beaker-a"]').boundingBox();
+  await page.mouse.move(grab.x + grab.width / 2, grab.y + 30);
+  await page.mouse.down();
+  await page.mouse.move(grab.x + grab.width / 2 + 90, grab.y + 30, { steps: 10 });
+  await page.mouse.up();
+  const beakerAfter = await page.locator('[data-vessel="beaker-a"]').evaluate((el) => el.style.left);
+  const flaskAfter = await page.locator('[data-vessel="flask-b"]').evaluate((el) => el.style.left);
+  expect(parseFloat(beakerAfter)).toBeGreaterThan(parseFloat(beakerBefore));
+  expect(parseFloat(flaskAfter)).toBeGreaterThan(parseFloat(flaskBefore));
+
+  // Escape clears it, and one piece gets the stacking controls back.
+  await page.locator('[data-lab-stage]').press('Escape');
+  await expect(page.locator('.lab-multi')).toHaveCount(0);
+  await page.locator('[data-vessel="flask-b"]').click();
+  const zBefore = await page.locator('[data-vessel="flask-b"]').evaluate((el) => el.style.zIndex);
+  await page.locator('[data-lab-stack="1"]').click();
+  const zAfter = await page.locator('[data-vessel="flask-b"]').evaluate((el) => el.style.zIndex);
+  expect(Number(zAfter)).toBeGreaterThan(Number(zBefore));
+});
+
 test('Lab names glassware properly, ferments sugar and drops a material', async ({ page }) => {
   await installApi(page, { kind: 'free' });
   await gotoWorkspace(page, '/app?section=lab&mode=bench');

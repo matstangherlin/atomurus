@@ -751,4 +751,28 @@ assert.equal(lab.resolveQuery('acucar').id, 'sugar');
 assert.equal(lab.resolveQuery('levedura').id, 'yeast');
 assert.equal(lab.resolveQuery('moonshine').ok, false);
 
+// The marquee picks up anything it overlaps, in world coordinates.
+const board2 = lab.emptySession({ title: 'Marquee', mode: 'bench' });
+const beakerBox = lab.pieceBox(board2, 'beaker-a');
+assert.ok(beakerBox && beakerBox.w > 0 && beakerBox.h > 0);
+assert.deepEqual(lab.objectsInRect(board2, { x: 0, y: 0, w: 2000, h: 2000 }).sort(),
+  ['beaker-a', 'cylinder-c', 'flask-b']);
+assert.deepEqual(lab.objectsInRect(board2, { x: beakerBox.x + 4, y: beakerBox.y + 4, w: 10, h: 10 }), ['beaker-a']);
+assert.deepEqual(lab.objectsInRect(board2, { x: 4000, y: 4000, w: 100, h: 100 }), []);
+assert.deepEqual(lab.objectsInRect(board2, null), []);
+// A rectangle dragged up and to the left is the same rectangle.
+const flipped = lab.objectsInRect(board2, { x: beakerBox.x + 14, y: beakerBox.y + 14, w: -14, h: -14 });
+assert.deepEqual(flipped, ['beaker-a']);
+
+// Restacking swaps with the neighbour and stops at the ends.
+const stack = lab.emptySession({ title: 'Stack', mode: 'bench' });
+lab.ensureBoard(stack);
+const bottomId = lab.orderedObjects(stack)[0].id;
+const topId = lab.orderedObjects(stack)[stack.board.objects.length - 1].id;
+assert.equal(lab.restack(stack, topId, 1).reason, 'edge', 'the top piece cannot go higher');
+assert.equal(lab.restack(stack, bottomId, -1).reason, 'edge', 'the bottom piece cannot go lower');
+assert.equal(lab.restack(stack, bottomId, 1).ok, true);
+assert.equal(lab.orderedObjects(stack)[1].id, bottomId, 'it moved up one place');
+assert.equal(lab.restack(stack, 'not-a-piece', 1).reason, 'no-object');
+
 console.log('virtual lab tests passed');

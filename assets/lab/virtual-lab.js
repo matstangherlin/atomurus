@@ -1295,6 +1295,63 @@
     }
   }
 
+  function pieceBox(session, id) {
+    var row = findContainer(session, id);
+    if (!row) return null;
+    var obj = findObject(session, id);
+    var spec = specOf(row.type);
+    var x = Number(obj ? obj.x : row.x);
+    var y = Number(obj ? obj.y : row.y);
+    if (!isFinite(x) || !isFinite(y)) return null;
+    return {
+      x: x,
+      y: y,
+      w: Math.max(132, Number(spec.w) || 124),
+      h: Math.max(196, Number(spec.h) || 188) + 52
+    };
+  }
+
+  /* Everything the marquee touches, in world coordinates. */
+  function objectsInRect(session, rect) {
+    if (!rect) return [];
+    var left = Math.min(rect.x, rect.x + rect.w);
+    var top = Math.min(rect.y, rect.y + rect.h);
+    var right = left + Math.abs(rect.w);
+    var bottom = top + Math.abs(rect.h);
+    return (session.containers || []).filter(function (row) {
+      var box = pieceBox(session, row.id);
+      if (!box) return false;
+      return box.x < right && box.x + box.w > left && box.y < bottom && box.y + box.h > top;
+    }).map(function (row) { return row.id; });
+  }
+
+  function orderedObjects(session) {
+    ensureBoard(session);
+    return (session.board.objects || []).slice().sort(function (a, b) {
+      return (Number(a.zIndex) || 0) - (Number(b.zIndex) || 0);
+    });
+  }
+
+  /* Swap places with the neighbour above or below in the stack. */
+  function restack(session, id, direction) {
+    ensureBoard(session);
+    var order = orderedObjects(session);
+    var index = -1;
+    order.forEach(function (row, i) { if (row.id === id) index = i; });
+    if (index === -1) return { ok: false, reason: 'no-object' };
+    var swapWith = direction > 0 ? index + 1 : index - 1;
+    if (swapWith < 0 || swapWith >= order.length) return { ok: false, reason: 'edge' };
+    pushHistory(session);
+    var a = order[index];
+    var b = order[swapWith];
+    var az = Number(a.zIndex) || 0;
+    var bz = Number(b.zIndex) || 0;
+    if (az === bz) bz = az + (direction > 0 ? 1 : -1);
+    a.zIndex = bz;
+    b.zIndex = az;
+    return { ok: true, zIndex: a.zIndex };
+  }
+
   function nextZ(session) {
     return ((session.board && session.board.objects) || []).reduce(function (max, row) {
       return Math.max(max, Number(row.zIndex) || 0);
@@ -2862,6 +2919,9 @@
     var lastStepKey = '';
     var motionObserver = null;
     var linking = null;
+    var marquee = null;
+    var pointers = {};
+    var pinch = null;
 
     function copy(en, pt) { return lang === 'pt' ? pt : en; }
     function esc(value) {
@@ -3238,6 +3298,15 @@
       };
     }
 
+    function marqueeHtml() {
+      if (!marquee) return '';
+      var x = Math.min(marquee.x0, marquee.x1);
+      var y = Math.min(marquee.y0, marquee.y1);
+      var w = Math.abs(marquee.x1 - marquee.x0);
+      var h = Math.abs(marquee.y1 - marquee.y0);
+      return '<div class="lab-marquee" style="left:' + x + 'px;top:' + y + 'px;width:' + w + 'px;height:' + h + 'px"></div>';
+    }
+
     function linkingHtml() {
       if (!linking || !linking.to) return '';
       return '<svg class="lab-linking" width="2400" height="1600" viewBox="0 0 2400 1600" aria-hidden="true">' +
@@ -3262,7 +3331,7 @@
     function boardHtml() {
       renderPass = { cupped: cuppedHeaterIds(session), attach: {} };
       ensureAttachments(session).forEach(function (row) { renderPass.attach[row.toolId] = row; });
-      var html = connectionsHtml() + linkingHtml() + session.containers.map(vesselHtml).join('');
+      var html = connectionsHtml() + linkingHtml() + session.containers.map(vesselHtml).join('') + marqueeHtml();
       renderPass = null;
       return html;
     }
@@ -3354,6 +3423,15 @@
     function inspectorHtml() {
       var container = selected();
       if (!container) return '';
+      if (selectedIds.length > 1) {
+        return '<div class="lab-multi"><span class="lab-reaction-tag">' + esc(copy('Selection', 'Seleção')) + '</span>' +
+          '<p>' + esc(selectedIds.length + ' ' + copy('pieces selected', 'peças selecionadas')) + '</p>' +
+          '<div class="lab-measures">' +
+          '<button type="button" class="ws-btn ws-btn-sm" data-lab-duplicate>' + esc(copy('Duplicate all', 'Duplicar todas')) + '</button>' +
+          '<button type="button" class="ws-btn ws-btn-sm" data-lab-delete>' + esc(copy('Delete all', 'Remover todas')) + '</button>' +
+          '</div>' +
+          '<p class="ws-lede">' + esc(copy('Drag any of them to move the group. Esc clears the selection.', 'Arraste qualquer uma para mover o grupo. Esc limpa a seleção.')) + '</p></div>';
+      }
       mixContainer(container);
       var contentRows = (container.contents || []).map(function (row) {
         var spec = SUBSTANCES[row.id];
@@ -3428,6 +3506,8 @@
         ((specOf(container.type).ports || []).length ? '<button type="button" class="ws-btn ws-btn-sm' + (connectFrom === container.id ? ' is-on' : '') + '" data-lab-connect>' + esc(copy('Connect', 'Conectar')) + '</button>' : '') +
         '<button type="button" class="ws-btn ws-btn-sm" data-lab-duplicate>' + esc(copy('Duplicate', 'Duplicar')) + '</button>' +
         '<button type="button" class="ws-btn ws-btn-sm" data-lab-delete>' + esc(copy('Delete', 'Remover')) + '</button>' +
+        '<button type="button" class="ws-btn ws-btn-sm" data-lab-stack="1" title="' + esc(copy('Bring forward', 'Trazer para frente')) + '">▲</button>' +
+        '<button type="button" class="ws-btn ws-btn-sm" data-lab-stack="-1" title="' + esc(copy('Send backward', 'Enviar para trás')) + '">▼</button>' +
         '<button type="button" class="ws-btn ws-btn-sm" data-lab-rotate="-15">↺</button>' +
         '<button type="button" class="ws-btn ws-btn-sm" data-lab-rotate="15">↻</button>' +
         '<button type="button" class="ws-btn ws-btn-sm" data-measure="volume">' + esc(copy('Volume', 'Volume')) + '</button>' +
@@ -3467,6 +3547,29 @@
     function fillLevelOf(id) {
       var rect = node.querySelector('[data-vessel="' + id + '"] .lab-liquid');
       return rect ? Number(rect.getAttribute('data-fill')) || 0 : 0;
+    }
+
+    function worldPoint(event) {
+      var stage = node.querySelector('[data-lab-stage]');
+      if (!stage) return { x: 0, y: 0 };
+      var rect = stage.getBoundingClientRect();
+      return {
+        x: (event.clientX - rect.left - panX) / zoom,
+        y: (event.clientY - rect.top - panY) / zoom
+      };
+    }
+
+    function actingOn() {
+      if (selectedIds.length > 1) return selectedIds.slice();
+      var one = selected();
+      return one ? [one.id] : [];
+    }
+
+    function applySelection(ids, additive) {
+      var next = additive ? selectedIds.slice() : [];
+      ids.forEach(function (id) { if (next.indexOf(id) === -1) next.push(id); });
+      selectedIds = next;
+      if (selectedIds.length) session.selectedId = selectedIds[selectedIds.length - 1];
     }
 
     function captureLevels(fromId, toId) {
@@ -3919,6 +4022,10 @@
         '<div class="lab-board-stage" data-lab-stage tabindex="0">' +
         '<div class="lab-board-world" data-lab-world data-lab-bench>' + boardHtml() + '</div>' +
         '</div>' +
+        '<p class="lab-hint">' + esc(copy(
+          'Drag the canvas to select · Space or middle-drag to pan · Scroll to zoom',
+          'Arraste o canvas para selecionar · Espaço ou botão do meio para mover · Role para zoom'
+        )) + '</p>' +
         '<div class="lab-actionbar" role="toolbar" aria-label="' + esc(copy('Board actions', 'Ações do board')) + '">' +
         '<button type="button" class="ws-btn ws-btn-sm" data-lab-pour>' + esc(copy('Pour', 'Transferir')) + '</button>' +
         '<button type="button" class="ws-btn ws-btn-sm" data-lab-stir>' + esc(copy('Stir', 'Agitar')) + '</button>' +
@@ -4011,7 +4118,7 @@
       rootEl.addEventListener('click', function (event) {
         try {
           var t = event.target && event.target.closest
-            ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-redo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel], [data-ready], [data-lab-zoom], [data-lab-fit], [data-lab-aspirate], [data-lab-dispense], [data-lab-drop], [data-lab-grind], [data-lab-drain], [data-lab-connect], [data-lab-duplicate], [data-lab-delete], [data-lab-rotate], [data-dock], [data-dock-close], [data-side], [data-lab-sound], [data-start-creation], [data-stop-creation], [data-step-add], [data-lab-hint], [data-step-connect], [data-step-heat], [data-step-distill], [data-lab-distill], [data-lab-filter], [data-lab-reflux], [data-step-reflux], [data-step-reflux-connect], [data-lab-remove], [data-lab-ferment], [data-step-ferment], [data-lab-crystallise], [data-step-crystallise], [data-step-filter]')
+            ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-redo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel], [data-ready], [data-lab-zoom], [data-lab-fit], [data-lab-aspirate], [data-lab-dispense], [data-lab-drop], [data-lab-grind], [data-lab-drain], [data-lab-connect], [data-lab-duplicate], [data-lab-delete], [data-lab-rotate], [data-dock], [data-dock-close], [data-side], [data-lab-sound], [data-start-creation], [data-stop-creation], [data-step-add], [data-lab-hint], [data-step-connect], [data-step-heat], [data-step-distill], [data-lab-distill], [data-lab-filter], [data-lab-reflux], [data-step-reflux], [data-step-reflux-connect], [data-lab-remove], [data-lab-stack], [data-lab-ferment], [data-step-ferment], [data-lab-crystallise], [data-step-crystallise], [data-step-filter]')
             : null;
           if (!t) return;
           if (t.hasAttribute('data-lab-sound')) {
@@ -4536,15 +4643,27 @@
             return;
           }
           if (t.hasAttribute('data-lab-duplicate')) {
-            duplicateObject(session, selected().id);
+            var copies = actingOn();
+            copies.forEach(function (id) { duplicateObject(session, id); });
+            selectedIds = [];
+            queueSave();
+            updateLive();
+            playSound('place');
+            return;
+          }
+          if (t.hasAttribute('data-lab-delete')) {
+            actingOn().forEach(function (id) { removeObject(session, id); });
+            selectedIds = [];
             queueSave();
             updateLive();
             return;
           }
-          if (t.hasAttribute('data-lab-delete')) {
-            removeObject(session, selected().id);
+          if (t.getAttribute('data-lab-stack')) {
+            var moved = restack(session, selected().id, Number(t.getAttribute('data-lab-stack')));
             queueSave();
             updateLive();
+            if (!moved.ok) playSound('deny');
+            else playSound('select');
             return;
           }
           if (t.getAttribute('data-lab-rotate')) {
@@ -4628,6 +4747,26 @@
       var stage = rootEl.querySelector('[data-lab-stage]');
       if (stage) {
         stage.addEventListener('pointerdown', function (event) {
+          pointers[event.pointerId] = { x: event.clientX, y: event.clientY };
+          /* Two fingers is always pinch-zoom and pan, whatever was underneath. */
+          if (Object.keys(pointers).length === 2 && event.pointerType === 'touch') {
+            dragging = null;
+            marquee = null;
+            panning = false;
+            linking = null;
+            var two = Object.keys(pointers).map(function (key) { return pointers[key]; });
+            pinch = {
+              dist: Math.hypot(two[0].x - two[1].x, two[0].y - two[1].y) || 1,
+              cx: (two[0].x + two[1].x) / 2,
+              cy: (two[0].y + two[1].y) / 2,
+              zoom: zoom,
+              panX: panX,
+              panY: panY
+            };
+            updateLive();
+            event.preventDefault();
+            return;
+          }
           if (event.button === 1 || spaceDown) {
             panning = true;
             panStart = { x: event.pageX, y: event.pageY, panX: panX, panY: panY };
@@ -4664,23 +4803,79 @@
             var obj = findObject(session, id);
             var vessel = findContainer(session, id);
             if (!vessel) return;
+            /* Dragging one of a multi-selection moves the whole selection. */
+            var group = selectedIds.length > 1 && selectedIds.indexOf(id) !== -1
+              ? selectedIds.map(function (memberId) {
+                var memberObj = findObject(session, memberId);
+                var member = findContainer(session, memberId);
+                if (!member) return null;
+                return {
+                  id: memberId,
+                  origX: memberObj ? Number(memberObj.x) : Number(member.x) || 0,
+                  origY: memberObj ? Number(memberObj.y) : Number(member.y) || 0
+                };
+              }).filter(Boolean)
+              : null;
             dragging = {
               id: id,
               startX: event.pageX,
               startY: event.pageY,
               origX: obj ? Number(obj.x) : Number(vessel.x) || 0,
-              origY: obj ? Number(obj.y) : Number(vessel.y) || 0
+              origY: obj ? Number(obj.y) : Number(vessel.y) || 0,
+              group: group
             };
             dragMoved = false;
             try { piece.setPointerCapture(event.pointerId); } catch (e) {}
             return;
           }
-          panning = true;
-          panStart = { x: event.pageX, y: event.pageY, panX: panX, panY: panY };
+          /* Empty canvas draws a selection rectangle; space or middle-drag pans. */
+          var start = worldPoint(event);
+          marquee = { x0: start.x, y0: start.y, x1: start.x, y1: start.y, additive: event.shiftKey };
           dragMoved = false;
           try { stage.setPointerCapture(event.pointerId); } catch (e2) {}
         }, opts);
         stage.addEventListener('pointermove', function (event) {
+          if (pointers[event.pointerId]) {
+            pointers[event.pointerId].x = event.clientX;
+            pointers[event.pointerId].y = event.clientY;
+          }
+          if (pinch) {
+            var keys = Object.keys(pointers);
+            if (keys.length < 2) return;
+            var a2 = pointers[keys[0]];
+            var b2 = pointers[keys[1]];
+            var dist = Math.hypot(a2.x - b2.x, a2.y - b2.y) || 1;
+            var stageRect = stage.getBoundingClientRect();
+            var next = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, pinch.zoom * (dist / pinch.dist)));
+            var cx = (a2.x + b2.x) / 2 - stageRect.left;
+            var cy = (a2.y + b2.y) / 2 - stageRect.top;
+            var anchorX = (pinch.cx - stageRect.left - pinch.panX) / pinch.zoom;
+            var anchorY = (pinch.cy - stageRect.top - pinch.panY) / pinch.zoom;
+            zoom = next;
+            panX = cx - anchorX * zoom;
+            panY = cy - anchorY * zoom;
+            autoCam = false;
+            dragMoved = true;
+            applyWorld();
+            event.preventDefault();
+            return;
+          }
+          if (marquee) {
+            var here = worldPoint(event);
+            marquee.x1 = here.x;
+            marquee.y1 = here.y;
+            if (Math.abs(marquee.x1 - marquee.x0) > 4 || Math.abs(marquee.y1 - marquee.y0) > 4) dragMoved = true;
+            var box = node.querySelector('.lab-marquee');
+            if (box) {
+              box.style.left = Math.min(marquee.x0, marquee.x1) + 'px';
+              box.style.top = Math.min(marquee.y0, marquee.y1) + 'px';
+              box.style.width = Math.abs(marquee.x1 - marquee.x0) + 'px';
+              box.style.height = Math.abs(marquee.y1 - marquee.y0) + 'px';
+            } else {
+              updateLive();
+            }
+            return;
+          }
           if (linking) {
             var rect = stage.getBoundingClientRect();
             linking.to = {
@@ -4702,18 +4897,21 @@
             if (Math.abs(event.pageX - dragging.startX) > 4 || Math.abs(event.pageY - dragging.startY) > 4) {
               dragMoved = true;
             }
-            var obj = findObject(session, dragging.id);
-            var moving = findContainer(session, dragging.id);
-            var nx = Math.round(dragging.origX + dx);
-            var ny = Math.round(dragging.origY + dy);
-            if (obj) { obj.x = nx; obj.y = ny; }
-            if (moving) { moving.x = nx; moving.y = ny; }
-            var el = node.querySelector('[data-lab-world] [data-vessel="' + dragging.id + '"]');
-            if (el) {
-              el.style.left = nx + 'px';
-              el.style.top = ny + 'px';
-            }
-            showSnapHint(dragging.id);
+            var moveSet = dragging.group || [{ id: dragging.id, origX: dragging.origX, origY: dragging.origY }];
+            moveSet.forEach(function (member) {
+              var obj = findObject(session, member.id);
+              var moving = findContainer(session, member.id);
+              var nx = Math.round(member.origX + dx);
+              var ny = Math.round(member.origY + dy);
+              if (obj) { obj.x = nx; obj.y = ny; }
+              if (moving) { moving.x = nx; moving.y = ny; }
+              var el = node.querySelector('[data-lab-world] [data-vessel="' + member.id + '"]');
+              if (el) {
+                el.style.left = nx + 'px';
+                el.style.top = ny + 'px';
+              }
+            });
+            if (!dragging.group) showSnapHint(dragging.id);
             return;
           }
           if (panning && panStart) {
@@ -4726,6 +4924,40 @@
           animateFill(node.querySelector('[data-vessel="' + id + '"]'), 'is-sloshing', 660);
         }
         function endPointer(event) {
+          if (event && event.pointerId != null) delete pointers[event.pointerId];
+          if (pinch) {
+            if (Object.keys(pointers).length < 2) {
+              pinch = null;
+              ignoreClickUntil = Date.now() + 280;
+              ignoreClickId = '';
+              queueSave();
+            }
+            return;
+          }
+          if (marquee) {
+            var picked = dragMoved
+              ? objectsInRect(session, {
+                x: Math.min(marquee.x0, marquee.x1),
+                y: Math.min(marquee.y0, marquee.y1),
+                w: Math.abs(marquee.x1 - marquee.x0),
+                h: Math.abs(marquee.y1 - marquee.y0)
+              })
+              : [];
+            var additive = marquee.additive;
+            var wasDrag = dragMoved;
+            marquee = null;
+            dragMoved = false;
+            if (wasDrag) {
+              applySelection(picked, additive);
+              ignoreClickUntil = Date.now() + 280;
+              ignoreClickId = '';
+              if (picked.length) playSound('select');
+            } else if (!additive) {
+              selectedIds = [];
+            }
+            updateLive();
+            return;
+          }
           if (linking) {
             var made = null;
             if (event && event.clientX != null) {
@@ -4757,6 +4989,15 @@
             return;
           }
           var movedId = dragging && dragMoved ? dragging.id : '';
+          if (dragging && dragMoved && dragging.group) {
+            ignoreClickUntil = Date.now() + 280;
+            ignoreClickId = dragging.id;
+            dragging = null;
+            dragMoved = false;
+            queueSave();
+            updateLive();
+            return;
+          }
           if (dragging && dragMoved) {
             ignoreClickUntil = Date.now() + 280;
             ignoreClickId = dragging.id;
@@ -4828,14 +5069,27 @@
         }
         if ((event.metaKey || event.ctrlKey) && String(event.key).toLowerCase() === 'd') {
           event.preventDefault();
-          duplicateObject(session, selected().id);
+          actingOn().forEach(function (id) { duplicateObject(session, id); });
+          selectedIds = [];
           queueSave();
+          updateLive();
+          return;
+        }
+        if ((event.metaKey || event.ctrlKey) && String(event.key).toLowerCase() === 'a') {
+          event.preventDefault();
+          applySelection((session.containers || []).map(function (row) { return row.id; }), false);
+          updateLive();
+          return;
+        }
+        if (event.key === 'Escape' && selectedIds.length > 1) {
+          selectedIds = [];
           updateLive();
           return;
         }
         if (event.key === 'Delete' || event.key === 'Backspace') {
           event.preventDefault();
-          removeObject(session, selected().id);
+          actingOn().forEach(function (id) { removeObject(session, id); });
+          selectedIds = [];
           queueSave();
           updateLive();
           return;
@@ -4843,14 +5097,16 @@
         if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
           event.preventDefault();
           ensureBoard(session);
-          var obj = findObject(session, selected().id);
-          if (!obj) return;
           var step = event.shiftKey ? 24 : 8;
-          if (event.key === 'ArrowLeft') obj.x -= step;
-          if (event.key === 'ArrowRight') obj.x += step;
-          if (event.key === 'ArrowUp') obj.y -= step;
-          if (event.key === 'ArrowDown') obj.y += step;
-          syncVisual(session, obj.id);
+          actingOn().forEach(function (id) {
+            var obj = findObject(session, id);
+            if (!obj) return;
+            if (event.key === 'ArrowLeft') obj.x -= step;
+            if (event.key === 'ArrowRight') obj.x += step;
+            if (event.key === 'ArrowUp') obj.y -= step;
+            if (event.key === 'ArrowDown') obj.y += step;
+            syncVisual(session, id);
+          });
           queueSave();
           updateLive();
         }
@@ -4938,6 +5194,10 @@
     canHold: canHold,
     hasCap: hasCap,
     ensureBoard: ensureBoard,
+    objectsInRect: objectsInRect,
+    pieceBox: pieceBox,
+    restack: restack,
+    orderedObjects: orderedObjects,
     cuppedHeaterIds: cuppedHeaterIds,
     MAX_VESSELS: MAX_VESSELS,
     aspirate: aspirate,

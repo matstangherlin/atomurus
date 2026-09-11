@@ -1833,6 +1833,30 @@ svg.lab-links {
   background: color-mix(in oklab, var(--lc-green, #1E6A50) 75%, #fff);
   box-shadow: 0 0 0 4px color-mix(in oklab, var(--lc-green, #1E6A50) 24%, transparent);
 }
+.lab-hint {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  margin: 0;
+  z-index: 2;
+  padding: 4px 10px;
+  border-radius: 99px;
+  background: color-mix(in oklab, var(--lc-paper, #F8F5EC) 82%, transparent);
+  font-size: 11px;
+  color: var(--lc-ink-3, #8E8978);
+  pointer-events: none;
+}
+@media (max-width: 900px) { .lab-hint { display: none; } }
+
+.lab-marquee {
+  position: absolute;
+  z-index: 6;
+  pointer-events: none;
+  border: 1px solid var(--lc-green, #1E6A50);
+  background: color-mix(in oklab, var(--lc-green, #1E6A50) 12%, transparent);
+  border-radius: 3px;
+}
+.lab-piece.is-active { outline: none; }
 svg.lab-linking {
   position: absolute;
   left: 0;
@@ -2059,6 +2083,15 @@ html[data-reduced-motion="1"] .lab-stream { animation: none; }
   color: var(--lc-ink, #1b1914);
   overflow-x: auto;
 }
+.lab-multi {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in oklab, var(--lc-green, #1E6A50) 32%, transparent);
+  background: color-mix(in oklab, var(--lc-green, #1E6A50) 7%, transparent);
+}
+.lab-multi p { margin: 4px 0 8px; font-size: 13px; }
+.lab-multi .ws-lede { font-size: 12px; margin-bottom: 0; }
+
 .lab-contents {
   margin: 0 0 10px;
   padding: 0;
