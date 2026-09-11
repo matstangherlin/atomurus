@@ -483,12 +483,12 @@ test('Workspace home is the Virtual Lab and Open Bench runs', async ({ page }) =
   await page.locator('[data-vessel="flask-b"]').click();
   await expect(page.locator('.lab-notes')).toContainText(/Poured|Transfer/i);
   await expect(page.locator('[data-lab-stage]')).toBeVisible();
-  await expect(page.locator('[data-add-vessel="condenser"]')).toBeVisible();
-  await page.locator('[data-add-vessel="test-tube"]').click();
+  await expect(page.locator('[data-add-vessel="condenser"]').first()).toBeVisible();
+  await page.locator('[data-add-vessel="test-tube"]').first().click();
   await expect(page.locator('.lab-test-tube')).toBeVisible();
-  await page.locator('[data-add-vessel="bunsen"]').click();
+  await page.locator('[data-add-vessel="bunsen"]').first().click();
   await expect(page.locator('.lab-bunsen .lab-flame')).toBeVisible();
-  await page.locator('[data-add-vessel="burette"]').click();
+  await page.locator('[data-add-vessel="burette"]').first().click();
   await expect(page.locator('.lab-burette')).toBeVisible();
   await page.locator('.lab-chip[data-add="water"]').click();
   await page.locator('[data-lab-drop]').click();
