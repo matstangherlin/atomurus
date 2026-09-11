@@ -466,6 +466,128 @@ test('Pro footer has Plan billing and no Upgrade', async ({ page }) => {
   await expect(page.locator('#ws-nav-foot a[data-nav="plan"]')).toHaveAttribute('href', /\/account\?tab=plan/);
 });
 
+test('Lab tools clip onto their hosts and ports link by dragging', async ({ page }) => {
+  await installApi(page, { kind: 'free' });
+  await gotoWorkspace(page, '/app?section=lab&mode=bench');
+  await page.waitForSelector('.lab-beaker');
+  await page.locator('[data-dock="measure"]').click();
+  await page.locator('[data-add-vessel="mortar"]').first().click();
+  await page.locator('[data-add-vessel="pestle"]').first().click();
+  await page.locator('[data-add-vessel="thermometer"]').first().click();
+  await page.locator('[data-dock="materials"]').click();
+  await page.locator('[data-vessel="beaker-a"]').click();
+  await page.locator('.lab-chip[data-add="water"]').click();
+  await page.locator('[data-dock-close]').click();
+  await page.locator('[data-lab-fit]').click();
+
+  async function dragOnto(toolSelector, hostSelector, dx = 0) {
+    const tool = await page.locator(toolSelector).boundingBox();
+    const host = await page.locator(hostSelector).boundingBox();
+    await page.mouse.move(tool.x + tool.width / 2, tool.y + 40);
+    await page.mouse.down();
+    await page.mouse.move(host.x + host.width / 2 + dx, host.y + 30, { steps: 12 });
+    await page.mouse.up();
+  }
+
+  // A mortar alone will not grind; the pestle has to be fitted into it.
+  await page.locator('.lab-mortar').click();
+  await page.locator('[data-lab-grind]').click();
+  await expect(page.locator('.lab-msg')).toBeVisible();
+  await dragOnto('.lab-pestle', '.lab-mortar');
+  await expect(page.locator('.lab-notes')).toContainText(/Fitted|Encaixou/i);
+  await expect(page.locator('.lab-pestle')).toHaveClass(/is-fitted/);
+
+  // A fitted thermometer reads on the vessel it measures, not on itself.
+  await dragOnto('.lab-thermometer', '[data-vessel="beaker-a"]', 24);
+  await expect(page.locator('.lab-thermometer')).toHaveClass(/is-fitted/);
+  await expect(page.locator('[data-vessel="beaker-a"] .lab-readout')).toContainText('°C');
+  await expect(page.locator('.lab-thermometer .lab-glass-name')).toBeHidden();
+
+  // A funnel over a vessel filters: the solid stays, the filtrate runs through.
+  await page.locator('[data-dock="transfer"]').click();
+  await page.locator('[data-add-vessel="funnel"]').first().click();
+  await page.locator('[data-dock-close]').click();
+  await page.locator('[data-lab-fit]').click();
+  await page.locator('[data-vessel="beaker-a"]').click();
+  await page.locator('[data-dock="materials"]').click();
+  await page.locator('.lab-chip[data-add="fe"]').click();
+  await page.locator('[data-dock-close]').click();
+  await page.locator('[data-lab-fit]').click();
+  await dragOnto('.lab-funnel', '[data-vessel="flask-b"]');
+  await page.locator('[data-vessel="beaker-a"]').click();
+  await page.locator('[data-lab-filter]').click();
+  await expect(page.locator('.lab-notes')).toContainText(/Filtered|Filtrou/i);
+  await expect(page.locator('[data-vessel="beaker-a"]')).toContainText('0 / 250 mL');
+  await expect(page.locator('[data-vessel="flask-b"]')).toContainText('25 / 250 mL');
+
+  // Ports appear on the selected piece and drag out a connection.
+  await page.locator('[data-dock="glassware"]').click();
+  await page.locator('[data-add-vessel="round-flask"]').first().click();
+  await page.locator('[data-dock="heat"]').click();
+  await page.locator('[data-add-vessel="condenser"]').first().click();
+  await page.locator('[data-dock-close]').click();
+  await page.locator('[data-lab-fit]').click();
+  await expect(page.locator('[data-vessel="flask-b"] .lab-port')).toHaveCount(0);
+  await page.locator('.lab-round-flask').click();
+  await expect(page.locator('.lab-round-flask')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('.lab-round-flask .lab-port')).toHaveCount(1);
+  const port = await page.locator('.lab-round-flask .lab-port').boundingBox();
+  const condenser = await page.locator('.lab-condenser').boundingBox();
+  await page.mouse.move(port.x + port.width / 2, port.y + port.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(condenser.x + condenser.width / 2, condenser.y + 40, { steps: 14 });
+  await expect(page.locator('.lab-linking path')).toHaveCount(1);
+  await page.mouse.up();
+  await expect(page.locator('.lab-notes')).toContainText(/Connected|Conectou/i);
+  await expect(page.locator('.lab-links path')).toHaveCount(1);
+  await expect(page.locator('.lab-linking')).toHaveCount(0);
+});
+
+test('Lab reactions fire with an equation and the still runs from the guide', async ({ page }) => {
+  await installApi(page, { kind: 'free' });
+  await gotoWorkspace(page, '/app?section=lab');
+  await page.waitForSelector('.lab-beaker');
+
+  // Iron in copper sulfate solution is a registered reaction, not free text.
+  await page.locator('[data-dock="materials"]').click();
+  await page.locator('.lab-chip[data-add="water"]').click();
+  await page.locator('.lab-chip[data-add="cusulfate"]').click();
+  await expect(page.locator('[data-lab-reaction]')).toHaveCount(0);
+  await page.locator('.lab-chip[data-add="fe"]').click();
+  await page.locator('[data-dock-close]').click();
+  await expect(page.locator('[data-lab-reaction] .lab-reaction-eq')).toContainText('Fe + CuSO');
+  await expect(page.locator('.lab-notes')).toContainText(/Fe \+ CuSO/);
+
+  // Searching for gasoline reaches the conceptual separation, never a recipe.
+  await page.locator('#lab-q').fill('gasolina');
+  await page.locator('[data-lab-search]').evaluate((form) => form.requestSubmit());
+  await expect(page.locator('[data-lab-guide]')).toContainText(/Petroleum Fractions|Frações do petróleo/i);
+
+  // The distillation guide builds a working still step by step.
+  await page.locator('#lab-q').fill('distillation');
+  await page.locator('[data-lab-search]').evaluate((form) => form.requestSubmit());
+  await page.locator('[data-dock-close]').click();
+  await expect(page.locator('[data-lab-guide]')).toContainText(/Step 1 of 8|Passo 1 de 8/i);
+  for (const type of ['round-flask', 'condenser', 'receiving-flask', 'heating-mantle']) {
+    await page.locator(`[data-lab-guide] [data-add-vessel="${type}"]`).click();
+  }
+  await expect(page.locator('[data-lab-guide]')).toContainText(/Step 5 of 8|Passo 5 de 8/i);
+  await page.locator('[data-lab-guide] [data-step-add="water"]').click();
+  await page.locator('[data-lab-guide] [data-step-add="ethanol"]').click();
+  // The charge went into the flask the step named, not the beaker that was selected.
+  await expect(page.locator('.lab-round-flask')).toContainText('100 / 250 mL');
+  await expect(page.locator('[data-vessel="beaker-a"]')).toContainText('25 / 250 mL');
+  await expect(page.locator('[data-lab-guide]')).toContainText(/Step 6 of 8|Passo 6 de 8/i);
+  await page.locator('[data-lab-guide] [data-step-connect]').click();
+  await expect(page.locator('.lab-links path')).toHaveCount(2);
+  await page.locator('[data-lab-guide] [data-step-heat="80"]').click();
+  await expect(page.locator('[data-lab-guide]')).toContainText(/Step 8 of 8|Passo 8 de 8/i);
+  await page.locator('[data-lab-guide] [data-step-distill]').click();
+  await expect(page.locator('.lab-notes')).toContainText(/Distilled|Destilou/i);
+  await expect(page.locator('.lab-notes')).toContainText(/azeotrope|azeótropo/i);
+  await expect(page.locator('[data-lab-guide]')).toContainText(/All steps done|Todos os passos/i);
+});
+
 test('Workspace home is the Virtual Lab and Open Bench runs', async ({ page }) => {
   await installApi(page, { kind: 'free' });
   await gotoWorkspace(page, '/app');
@@ -473,9 +595,13 @@ test('Workspace home is the Virtual Lab and Open Bench runs', async ({ page }) =
   await expect(page.locator('#ws-lab-q')).toBeVisible();
   await page.locator('#ws-study-nav a[href="/app?section=lab"]').first().click();
   await expect(page.locator('.lab-beaker')).toBeVisible();
+
+  // The dock starts compact: material chips only exist once a panel is opened.
+  await expect(page.locator('.lab-chip[data-add="water"]')).toHaveCount(0);
+  await page.locator('[data-dock="materials"]').click();
   await page.locator('.lab-chip[data-add="water"]').click();
   await expect(page.locator('.lab-notes')).toContainText(/Water|água|H₂O|Added virtual/i);
-  await expect.poll(async () => page.locator('[data-vessel="beaker-a"] .lab-liquid').evaluate((el) => parseFloat(el.style.height) || 0)).toBeGreaterThan(15);
+  await expect.poll(async () => page.locator('[data-vessel="beaker-a"] .lab-liquid').evaluate((el) => Number(el.getAttribute('data-fill')) || 0)).toBeGreaterThan(15);
   await expect(page.locator('.lab-flask, .lab-cylinder')).toHaveCount(2);
   await page.locator('.lab-chip[data-add="nacl"]').click();
   await expect(page.locator('[data-vessel="beaker-a"]')).toContainText(/Saline|salina/i);
@@ -483,22 +609,45 @@ test('Workspace home is the Virtual Lab and Open Bench runs', async ({ page }) =
   await page.locator('[data-vessel="flask-b"]').click();
   await expect(page.locator('.lab-notes')).toContainText(/Poured|Transfer/i);
   await expect(page.locator('[data-lab-stage]')).toBeVisible();
-  await expect(page.locator('[data-add-vessel="condenser"]').first()).toBeVisible();
+
+  await page.locator('[data-dock="glassware"]').click();
   await page.locator('[data-add-vessel="test-tube"]').first().click();
   await expect(page.locator('.lab-test-tube')).toBeVisible();
+  await page.locator('[data-dock="heat"]').click();
+  await expect(page.locator('[data-add-vessel="condenser"]').first()).toBeVisible();
   await page.locator('[data-add-vessel="bunsen"]').first().click();
-  await expect(page.locator('.lab-bunsen .lab-flame')).toBeVisible();
+  await expect(page.locator('.lab-bunsen .lab-svg-flame')).toBeVisible();
+  await page.locator('[data-dock="transfer"]').click();
   await page.locator('[data-add-vessel="burette"]').first().click();
   await expect(page.locator('.lab-burette')).toBeVisible();
+  await page.locator('[data-dock="materials"]').click();
   await page.locator('.lab-chip[data-add="water"]').click();
+  await page.locator('[data-dock-close]').click();
+  await expect(page.locator('[data-dock-panel]')).toBeHidden();
   await page.locator('[data-lab-drop]').click();
   await page.locator('[data-vessel="beaker-a"]').click();
   await expect(page.locator('.lab-notes')).toContainText(/1 mL/);
+
+  // Sound is opt-out and the choice survives a reload.
+  const soundBtn = page.locator('[data-lab-sound]');
+  await expect(soundBtn).toHaveAttribute('aria-pressed', 'true');
+  await soundBtn.click();
+  await expect(soundBtn).toHaveAttribute('aria-pressed', 'false');
+  await expect.poll(async () => page.evaluate(() => localStorage.getItem('atomurus-lab-sound'))).toBe('0');
+
   await page.locator('#lab-q').fill('cocaine');
   await page.locator('[data-lab-search]').evaluate((form) => form.requestSubmit());
   await expect(page.locator('.lab-msg')).toContainText(/isn't available|não está disponível/i);
+
+  // Searching an approved creation starts the step-by-step guide on this board.
   await page.locator('#lab-q').fill('sunscreen');
   await page.locator('[data-lab-search]').evaluate((form) => form.requestSubmit());
-  await expect(page).toHaveURL(/creation=sunscreen/);
-  await expect(page.locator('[data-lab-guide]')).toContainText(/Tutorial|zinc oxide|óxido de zinco/i);
+  await expect(page.locator('[data-lab-guide]')).toContainText(/Step 1 of 4|Passo 1 de 4/i);
+  await expect(page.locator('[data-lab-guide] .lab-do-chip').first()).toBeVisible();
+  await page.locator('[data-lab-guide] [data-lab-hint]').click();
+  await expect(page.locator('[data-lab-guide] .lab-hints li')).toHaveCount(1);
+  await page.locator('[data-lab-guide] [data-step-add="water"]').click();
+  await page.locator('[data-lab-guide] [data-step-add="oil"]').click();
+  await expect(page.locator('[data-lab-guide]')).toContainText(/Step 2 of 4|Passo 2 de 4/i);
+  await expect(page.locator('[data-lab-guide]')).toContainText(/zinc oxide|óxido de zinco/i);
 });
