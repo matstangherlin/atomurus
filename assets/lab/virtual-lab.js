@@ -278,6 +278,408 @@
     })
   };
 
+  /* Scale drawings of each piece on one 100x160 stage.
+     `glass` is the drawn body, `cavity` is the real inner volume the liquid is
+     clipped to, and fillTop/fillBottom are the y range that volume spans. */
+  function va(glass, o) {
+    o = o || {};
+    return {
+      glass: glass,
+      cavity: o.cavity || '',
+      fillTop: o.top == null ? 40 : o.top,
+      fillBottom: o.bottom == null ? 146 : o.bottom,
+      marks: o.marks || null,
+      shine: o.shine || '',
+      shape: o.shape || 'straight',
+      base: o.base || ''
+    };
+  }
+
+  var VESSEL_ART = {
+    beaker: va(
+      '<path d="M23 29 H77" /><path d="M26 29 V141 Q26 147 32 147 H68 Q74 147 74 141 V29" />' +
+      '<path d="M74 33 L82 29 L82 34 L74 38" />',
+      {
+        cavity: '<path d="M29 32 V141 Q29 144 33 144 H67 Q71 144 71 141 V32 Z" />',
+        top: 34, bottom: 144,
+        marks: { x1: 31, x2: 40, from: 52, to: 136, count: 5 },
+        shine: '<path d="M33 42 V130" />'
+      }
+    ),
+    flask: va(
+      '<path d="M39 15 H61" /><path d="M42 15 V44 L21 133 Q19 147 28 147 H72 Q81 147 79 133 L58 44 V15" />',
+      {
+        cavity: '<path d="M45 18 V45 L25 134 Q24 144 30 144 H70 Q76 144 75 134 L55 45 V18 Z" />',
+        top: 20, bottom: 144,
+        marks: { x1: 30, x2: 38, from: 118, to: 138, count: 3 },
+        shine: '<path d="M40 58 L32 122" />'
+      }
+    ),
+    cylinder: va(
+      '<path d="M39 18 H61" /><path d="M59 22 L66 18" />' +
+      '<path d="M41 20 V132 M59 20 V132" />' +
+      '<path d="M41 132 L31 145 Q30 150 35 150 H65 Q70 150 69 145 L59 132" />',
+      {
+        cavity: '<path d="M43.5 22 H56.5 V131 H43.5 Z" />',
+        top: 24, bottom: 131,
+        marks: { x1: 44.5, x2: 51, from: 32, to: 128, count: 10 },
+        shine: '<path d="M46 30 V124" />'
+      }
+    ),
+    'volumetric-flask': va(
+      '<path d="M44 10 H56" /><path d="M46 10 V54 Q23 72 22 114 Q22 147 50 147 Q78 147 78 114 Q77 72 54 54 V10" />' +
+      '<path d="M46 38 H54" />',
+      {
+        cavity: '<path d="M48.5 13 V56 Q26 73 25 114 Q25 144 50 144 Q75 144 75 114 Q74 73 51.5 56 V13 Z" />',
+        shape: 'bulb', top: 14, bottom: 144,
+        shine: '<path d="M36 78 Q30 106 33 128" />'
+      }
+    ),
+    'round-flask': va(
+      '<path d="M43 10 H57" /><path d="M45 10 V50 Q20 62 20 102 Q20 148 50 148 Q80 148 80 102 Q80 62 55 50 V10" />',
+      {
+        cavity: '<path d="M47.5 13 V52 Q23 63 23 102 Q23 145 50 145 Q77 145 77 102 Q77 63 52.5 52 V13 Z" />',
+        shape: 'bulb', top: 14, bottom: 145,
+        shine: '<path d="M33 82 Q28 108 34 128" />'
+      }
+    ),
+    'test-tube': va(
+      '<path d="M40 26 H60" /><path d="M42 28 V126 Q42 140 50 140 Q58 140 58 126 V28" />',
+      {
+        cavity: '<path d="M44.5 31 V126 Q44.5 137 50 137 Q55.5 137 55.5 126 V31 Z" />',
+        top: 32, bottom: 137,
+        shine: '<path d="M46 40 V120" />'
+      }
+    ),
+    'test-tube-capped': va(
+      '<path d="M39 16 H61 V27 H39 Z" /><path d="M42 27 V126 Q42 140 50 140 Q58 140 58 126 V27" />',
+      {
+        cavity: '<path d="M44.5 31 V126 Q44.5 137 50 137 Q55.5 137 55.5 126 V31 Z" />',
+        top: 32, bottom: 137,
+        shine: '<path d="M46 40 V120" />'
+      }
+    ),
+    rack: va(
+      '<path d="M12 60 H88 V70 H12 Z" /><path d="M12 126 H88 V138 H12 Z" />' +
+      '<path d="M18 70 V126 M82 70 V126" />' +
+      '<circle cx="26" cy="65" r="4.5" /><circle cx="42" cy="65" r="4.5" />' +
+      '<circle cx="58" cy="65" r="4.5" /><circle cx="74" cy="65" r="4.5" />',
+      { top: 120, bottom: 132 }
+    ),
+    'reagent-bottle': va(
+      '<path d="M43 8 H57 V18 H43 Z" /><path d="M45 18 V30 Q28 38 28 58 V138 Q28 146 36 146 H64 Q72 146 72 138 V58 Q72 38 55 30 V18" />',
+      {
+        cavity: '<path d="M48 33 Q31 41 31 59 V138 Q31 143 37 143 H63 Q69 143 69 138 V59 Q69 41 52 33 Z" />',
+        top: 34, bottom: 143,
+        shine: '<path d="M38 62 V128" />'
+      }
+    ),
+    'watch-glass': va(
+      '<path d="M16 118 Q50 94 84 118 Q50 132 16 118 Z" />',
+      {
+        cavity: '<path d="M21 118 Q50 99 79 118 Q50 129 21 118 Z" />',
+        top: 110, bottom: 127
+      }
+    ),
+    burette: va(
+      '<path d="M42 10 H58" /><path d="M44 12 V120 M56 12 V120" />' +
+      '<path d="M40 120 H60 V131 H40 Z" /><path d="M60 125 H72" />' +
+      '<path d="M47 131 L50 151 L53 131" />',
+      {
+        cavity: '<path d="M46.5 15 H53.5 V119 H46.5 Z" />',
+        top: 16, bottom: 119,
+        marks: { x1: 34, x2: 44, from: 24, to: 114, count: 10 }
+      }
+    ),
+    'separatory-funnel': va(
+      '<path d="M30 14 H70" /><path d="M32 16 V58 Q32 66 40 78 L47 121 H53 L60 78 Q68 66 68 58 V16" />' +
+      '<path d="M43 121 H57 V132 H43 Z" /><path d="M57 126 H69" />' +
+      '<path d="M47 132 L50 151 L53 132" />',
+      {
+        cavity: '<path d="M35 19 V58 Q35 66 43 79 L49 120 H51 L57 79 Q65 66 65 58 V19 Z" />',
+        top: 20, bottom: 120,
+        shine: '<path d="M39 30 V60" />'
+      }
+    ),
+    funnel: va(
+      '<path d="M20 38 H80 L54 92 V134 H46 V92 Z" />',
+      {
+        cavity: '<path d="M27 43 H73 L51 91 V130 H49 V91 Z" />',
+        top: 44, bottom: 130
+      }
+    ),
+    'pipette-graduated': va(
+      '<path d="M44 10 H56" /><path d="M46 10 V118 Q46 130 50 148 Q54 130 54 118 V10" />',
+      {
+        cavity: '<path d="M47.5 13 V118 Q47.5 128 50 142 Q52.5 128 52.5 118 V13 Z" />',
+        top: 14, bottom: 142,
+        marks: { x1: 36, x2: 46, from: 24, to: 112, count: 8 }
+      }
+    ),
+    'pipette-volumetric': va(
+      '<path d="M44 10 H56" /><path d="M46 10 V50 Q37 58 37 74 Q37 90 46 98 V118 Q46 130 50 148 Q54 130 54 118 V98 Q63 90 63 74 Q63 58 54 50 V10" />' +
+      '<path d="M46 34 H54" />',
+      {
+        cavity: '<path d="M47.5 13 V51 Q39.5 59 39.5 74 Q39.5 89 47.5 97 V118 Q47.5 128 50 142 Q52.5 128 52.5 118 V97 Q60.5 89 60.5 74 Q60.5 59 52.5 51 V13 Z" />',
+        top: 14, bottom: 142
+      }
+    ),
+    pipettor: va(
+      '<path d="M35 20 Q35 10 50 10 Q65 10 65 20 V60 Q65 72 50 72 Q35 72 35 60 Z" />' +
+      '<circle cx="70" cy="40" r="6" /><path d="M46 72 V100 H54 V72" />',
+      { top: 90, bottom: 98 }
+    ),
+    dropper: va(
+      '<path d="M42 12 Q42 3 50 3 Q58 3 58 12 V34 Q58 43 50 43 Q42 43 42 34 Z" />' +
+      '<path d="M47 43 V126 Q47 138 50 150 Q53 138 53 126 V43" />',
+      {
+        cavity: '<path d="M48.3 45 V126 Q48.3 136 50 145 Q51.7 136 51.7 126 V45 Z" />',
+        top: 46, bottom: 145
+      }
+    ),
+    mortar: va(
+      '<path d="M15 72 H85" /><path d="M20 74 Q20 126 50 131 Q80 126 80 74" />' +
+      '<path d="M38 131 H62 V143 H38 Z" />',
+      {
+        cavity: '<path d="M26 78 Q26 120 50 125 Q74 120 74 78 Z" />',
+        top: 79, bottom: 125
+      }
+    ),
+    pestle: va(
+      '<path d="M44 12 H56 V94 Q56 102 61 110 Q61 128 50 133 Q39 128 39 110 Q44 102 44 94 Z" />',
+      { top: 120, bottom: 130 }
+    ),
+    spatula: va(
+      '<path d="M48 10 V94" /><path d="M41 94 Q50 89 59 94 L57 126 Q50 133 43 126 Z" />',
+      { top: 108, bottom: 126 }
+    ),
+    'weighing-boat': va(
+      '<path d="M22 102 H78 L69 130 H31 Z" />',
+      {
+        cavity: '<path d="M27 107 H73 L66 126 H34 Z" />',
+        top: 108, bottom: 126
+      }
+    ),
+    piston: va(
+      '<path d="M40 6 H60" /><path d="M50 6 V36" /><path d="M36 36 H64 V140 H36 Z" />' +
+      '<path d="M46 140 V152 H54 V140" />',
+      {
+        cavity: '<path d="M39 39 H61 V137 H39 Z" />',
+        top: 40, bottom: 137,
+        marks: { x1: 29, x2: 36, from: 50, to: 130, count: 6 }
+      }
+    ),
+    condenser: va(
+      '<path d="M44 8 V152 M56 8 V152" />' +
+      '<path d="M34 38 Q34 30 41 30 H59 Q66 30 66 38 V122 Q66 130 59 130 H41 Q34 130 34 122 Z" />' +
+      '<path d="M34 50 L18 41 M66 110 L82 119" />',
+      {
+        cavity: '<path d="M46 12 H54 V148 H46 Z" />',
+        top: 14, bottom: 148
+      }
+    ),
+    'receiving-flask': va(
+      '<path d="M43 10 H57" /><path d="M45 10 V50 Q20 62 20 102 Q20 148 50 148 Q80 148 80 102 Q80 62 55 50 V10" />',
+      {
+        cavity: '<path d="M47.5 13 V52 Q23 63 23 102 Q23 145 50 145 Q77 145 77 102 Q77 63 52.5 52 V13 Z" />',
+        shape: 'bulb', top: 14, bottom: 145,
+        shine: '<path d="M33 82 Q28 108 34 128" />'
+      }
+    ),
+    bunsen: va(
+      '<path d="M30 131 Q30 148 50 148 Q70 148 70 131 Z" />' +
+      '<path d="M43 54 H57 V131 H43 Z" /><path d="M41 76 H59 M41 90 H59" />' +
+      '<path d="M57 124 H74" />',
+      { top: 120, bottom: 130 }
+    ),
+    'hot-plate': va(
+      '<path d="M12 98 H88 V108 H12 Z" />' +
+      '<path d="M14 108 H86 Q90 108 90 114 V132 Q90 139 83 139 H17 Q10 139 10 132 V114 Q10 108 14 108 Z" />' +
+      '<circle cx="76" cy="124" r="5" /><path d="M20 124 H60" />',
+      { top: 92, bottom: 100 }
+    ),
+    'heating-mantle': va(
+      '<path d="M20 96 Q20 138 50 144 Q80 138 80 96 Z" /><path d="M80 110 H92" />',
+      { top: 96, bottom: 140 }
+    ),
+    'heating-gauze': va(
+      '<path d="M16 100 H84 V110 H16 Z" /><circle cx="50" cy="105" r="13" />' +
+      '<path d="M28 100 V110 M40 100 V110 M60 100 V110 M72 100 V110" />',
+      { top: 96, bottom: 106 }
+    ),
+    tripod: va(
+      '<path d="M24 90 H76" /><path d="M29 90 L20 142 M71 90 L80 142 M50 90 V142" />',
+      { top: 84, bottom: 92 }
+    ),
+    'retort-stand': va(
+      '<path d="M14 138 H86 Q90 138 90 142 V148 H10 V142 Q10 138 14 138 Z" />' +
+      '<path d="M46 14 H54 V138 H46 Z" />',
+      { top: 120, bottom: 134 }
+    ),
+    ring: va(
+      '<ellipse cx="46" cy="100" rx="26" ry="9" /><path d="M72 100 H90" />',
+      { top: 94, bottom: 106 }
+    ),
+    clamp: va(
+      '<path d="M14 100 H40" /><path d="M40 90 Q54 100 40 110" /><path d="M54 86 Q70 100 54 114" />' +
+      '<path d="M70 100 H88" />',
+      { top: 94, bottom: 106 }
+    ),
+    thermometer: va(
+      '<path d="M45 12 H55 V116 H45 Z" /><circle cx="50" cy="128" r="11" />' +
+      '<path d="M38 28 H45 M38 44 H45 M38 60 H45 M38 76 H45 M38 92 H45" />',
+      { top: 30, bottom: 118 }
+    ),
+    'ph-meter': va(
+      '<path d="M32 16 H68 V82 H32 Z" /><path d="M38 26 H62 V48 H38 Z" />' +
+      '<circle cx="42" cy="64" r="4" /><circle cx="58" cy="64" r="4" />' +
+      '<path d="M50 82 V138" /><path d="M46 138 Q50 150 54 138 Z" />',
+      { top: 120, bottom: 140 }
+    ),
+    balance: va(
+      '<path d="M12 116 H88 Q92 116 92 121 V136 Q92 141 87 141 H13 Q8 141 8 136 V121 Q8 116 12 116 Z" />' +
+      '<path d="M24 98 H76 V106 H24 Z" /><path d="M48 106 H52 V116 H48 Z" />' +
+      '<path d="M56 122 H84 V133 H56 Z" />',
+      { top: 90, bottom: 100 }
+    )
+  };
+
+  function r1(value) {
+    return Math.round(Number(value) * 10) / 10;
+  }
+
+  function safeColor(value) {
+    return /^#[0-9a-fA-F]{3,8}$/.test(String(value == null ? '' : value)) ? String(value) : '#7EB6D9';
+  }
+
+  function svgId(id) {
+    return 'labv-' + String(id == null ? '' : id).replace(/[^a-zA-Z0-9_-]/g, '');
+  }
+
+  function marksSvg(art) {
+    if (!art.marks) return '';
+    var m = art.marks;
+    var count = Math.max(2, Number(m.count) || 2);
+    var step = (m.to - m.from) / (count - 1);
+    var out = '';
+    for (var i = 0; i < count; i += 1) {
+      var y = Math.round((m.from + step * i) * 10) / 10;
+      var end = i % 2 === 0 ? m.x2 : m.x1 + (m.x2 - m.x1) * 0.55;
+      out += '<path d="M' + m.x1 + ' ' + y + ' H' + (Math.round(end * 10) / 10) + '" />';
+    }
+    return '<g class="lab-svg-marks">' + out + '</g>';
+  }
+
+  function bubblesSvg(art, geo, count) {
+    var out = '';
+    var span = Math.max(6, geo.height - 6);
+    for (var i = 0; i < count; i += 1) {
+      var cx = 36 + ((i * 37) % 29);
+      var r = 1.4 + (i % 3) * 0.6;
+      var delay = (i * 260) % 1400;
+      out += '<circle class="lab-svg-bubble" cx="' + cx + '" cy="' + r1(geo.bottom - 3) + '" r="' + r +
+        '" style="--lab-rise:' + Math.round(span) + 'px;--lab-delay:' + delay + 'ms" />';
+    }
+    return out;
+  }
+
+  /* One SVG per piece: the glass is drawn to scale and the liquid is clipped to
+     the real inner cavity, so the surface follows the actual profile. */
+  function vesselSvg(container, state) {
+    state = state || {};
+    var type = container.type || 'beaker';
+    var art = vesselArt(type);
+    var holds = canHold(container);
+    var pct = holds ? visualFillPct(container) : 0;
+    var geo = fillGeometry(type, pct);
+    var color = safeColor(state.color || container.color || mixColor(container));
+    var id = svgId(container.id);
+    var filled = holds && (Number(container.volumeMl) || 0) > 0;
+    var inside = '';
+
+    if (holds && art.cavity) {
+      var layers = '';
+      if (filled) {
+        layers += '<rect class="lab-liquid" data-fill="' + pct + '" x="-14" y="' + r1(geo.y) +
+          '" width="128" height="' + r1(geo.height + 8) + '" fill="' + color + '" />';
+        if (state.phases && state.phases.length === 2) {
+          var topPhase = state.phases[0];
+          var topRatio = Math.max(0.12, Math.min(0.88, Number(topPhase.ratio) || 0.4));
+          var topSpec = SUBSTANCES[topPhase.id];
+          layers += '<rect class="lab-svg-phase" x="-14" y="' + r1(geo.y) + '" width="128" height="' +
+            r1(geo.height * topRatio) + '" fill="' + safeColor((topSpec && topSpec.color) || '#E6D5A2') + '" />' +
+            '<path class="lab-svg-phase-line" d="M-14 ' + r1(geo.y + geo.height * topRatio) + ' H114" />';
+        }
+        layers += '<ellipse class="lab-svg-surface" cx="50" cy="' + r1(geo.y) + '" rx="54" ry="2.1" />';
+      }
+      if (state.sediment > 0) {
+        var span = geo.bottom - geo.top;
+        var sedH = Math.max(2, Math.min(span * 0.28, (Number(state.sediment) / 100) * span));
+        layers += '<rect class="lab-svg-sediment" x="-14" y="' + r1(geo.bottom - sedH) + '" width="128" height="' + r1(sedH) + '" />' +
+          '<ellipse class="lab-svg-sediment" cx="50" cy="' + r1(geo.bottom - sedH) + '" rx="30" ry="2.2" />';
+      }
+      if (filled && (state.fizz || state.warm)) {
+        layers += bubblesSvg(art, geo, state.fizz ? 6 : 4);
+      }
+      if (layers) {
+        inside = '<defs><clipPath id="' + id + '-cav">' + art.cavity + '</clipPath></defs>' +
+          '<g class="lab-svg-fill" clip-path="url(#' + id + '-cav)">' + layers + '</g>';
+      }
+    }
+
+    var flame = type === 'bunsen'
+      ? '<g class="lab-svg-flame' + (state.lit ? ' is-lit' : ' is-off') + '" aria-hidden="true">' +
+        (state.lit
+          ? '<path d="M50 54 Q62 34 50 10 Q38 34 50 54 Z" /><path class="lab-svg-flame-core" d="M50 52 Q57 39 50 23 Q43 39 50 52 Z" />'
+          : '<path d="M50 54 Q56 45 50 36 Q44 45 50 54 Z" />') +
+        '</g>'
+      : '';
+    var vapor = state.warm && holds
+      ? '<g class="lab-svg-vapor" aria-hidden="true">' +
+        '<path d="M40 ' + (art.fillTop - 4) + ' q6 -9 0 -18" />' +
+        '<path d="M50 ' + (art.fillTop - 8) + ' q7 -10 0 -20" />' +
+        '<path d="M60 ' + (art.fillTop - 4) + ' q6 -9 0 -18" />' +
+        '</g>'
+      : '';
+
+    return '<svg class="lab-vessel" viewBox="0 0 100 160" preserveAspectRatio="xMidYMax meet" aria-hidden="true" focusable="false">' +
+      inside +
+      flame +
+      '<g class="lab-svg-glass">' + art.glass + '</g>' +
+      (art.shine ? '<g class="lab-svg-shine">' + art.shine + '</g>' : '') +
+      marksSvg(art) +
+      vapor +
+      '</svg>';
+  }
+
+  function vesselArt(type) {
+    return VESSEL_ART[type] || VESSEL_ART.beaker;
+  }
+
+  /* A sphere holds most of its volume around the middle, so half a round flask
+     is not half its height. Solve 3x^2 - 2x^3 = f for the spherical cap. */
+  function bulbHeightFraction(f) {
+    var lo = 0;
+    var hi = 1;
+    for (var i = 0; i < 26; i += 1) {
+      var mid = (lo + hi) / 2;
+      if (3 * mid * mid - 2 * mid * mid * mid < f) lo = mid;
+      else hi = mid;
+    }
+    return (lo + hi) / 2;
+  }
+
+  /* Fill height maps onto the drawn cavity, never onto the whole sprite. */
+  function fillGeometry(type, pct) {
+    var art = vesselArt(type);
+    var clamped = Math.max(0, Math.min(100, Number(pct) || 0));
+    var f = clamped / 100;
+    if (art.shape === 'bulb' && f > 0 && f < 1) f = bulbHeightFraction(f);
+    var span = art.fillBottom - art.fillTop;
+    var y = art.fillBottom - span * f;
+    return { y: y, height: Math.max(0, art.fillBottom - y), top: art.fillTop, bottom: art.fillBottom };
+  }
+
   var PROCESSES = {
     mix: { id: 'mix', allowed: true },
     pour: { id: 'pour', allowed: true },
@@ -1532,6 +1934,7 @@
     var sideTab = session.creationId ? 'guide' : 'inspector';
     var hintLevel = 0;
     var lastStepKey = '';
+    var motionObserver = null;
 
     function copy(en, pt) { return lang === 'pt' ? pt : en; }
     function esc(value) {
@@ -1845,30 +2248,6 @@
       return lang === 'pt' ? (step.why.pt || step.why.en) : (step.why.en || step.why.pt);
     }
 
-    function outlineSvg(kind) {
-      var d = {
-        beaker: 'M24 16 L24 126 Q24 148 50 148 Q76 148 76 126 L76 16',
-        flask: 'M42 8 L42 34 L20 96 Q18 148 50 148 Q82 148 80 96 L58 34 L58 8',
-        cylinder: 'M38 10 L38 148 L62 148 L62 10',
-        'volumetric-flask': 'M46 8 L42 40 Q18 78 20 118 Q24 148 50 148 Q76 148 80 118 Q82 78 58 40 L54 8',
-        'round-flask': 'M46 8 L46 36 Q18 52 18 96 Q18 148 50 148 Q82 148 82 96 Q82 52 54 36 L54 8',
-        'receiving-flask': 'M46 8 L46 36 Q18 52 18 96 Q18 148 50 148 Q82 148 82 96 Q82 52 54 36 L54 8',
-        'test-tube': 'M40 10 L40 132 Q40 150 50 148 Q60 150 60 132 L60 10',
-        'test-tube-capped': 'M40 16 L40 132 Q40 150 50 148 Q60 150 60 132 L60 16 M36 10 H64',
-        'pipette-graduated': 'M48 6 L48 150 M52 6 L52 150',
-        'pipette-volumetric': 'M48 6 L48 48 Q38 58 38 70 Q38 82 48 88 L48 150 M52 6 L52 48 Q62 58 62 70 Q62 82 52 88 L52 150',
-        burette: 'M46 8 L46 140 L50 150 L54 140 L54 8 M40 132 H60',
-        dropper: 'M48 10 L48 130 Q50 148 52 130 L52 10',
-        'separatory-funnel': 'M38 10 H62 L70 28 Q88 70 50 148 Q12 70 30 28 Z M46 148 L46 156 L54 156 L54 148',
-        mortar: 'M18 70 Q20 120 50 128 Q80 120 82 70 Z',
-        bunsen: 'M38 70 H62 L58 148 H42 Z M44 58 H56',
-        condenser: 'M40 10 L40 150 M60 10 L60 150 M36 40 H64 M36 80 H64 M36 120 H64',
-        piston: 'M40 18 H60 V140 H40 Z M46 8 H54'
-      };
-      var path = d[kind] || d.beaker;
-      return '<svg class="lab-outline" viewBox="0 0 100 160" aria-hidden="true"><path d="' + path + '" /></svg>';
-    }
-
     function connectionsHtml() {
       var links = (session.board && session.board.connections) || [];
       if (!links.length) return '';
@@ -1888,7 +2267,6 @@
       mixContainer(container);
       ensureBoard(session);
       var obj = findObject(session, container.id);
-      var fill = canHold(container) ? visualFillPct(container) : 0;
       var sediment = 0;
       var solids = (container.contents || []).filter(function (row) {
         var spec = SUBSTANCES[row.id];
@@ -1915,21 +2293,14 @@
       if (!isFinite(x)) x = 80;
       if (!isFinite(y)) y = 80;
       var holds = canHold(container);
-      var phaseHtml = '';
-      if (holds && container.phases && container.phases.length === 2 && hasCap(container, 'separate')) {
-        var top = Math.round((container.phases[0].ratio || 0.4) * fill);
-        phaseHtml = '<span class="lab-phase lab-phase-top" style="height:' + top + '%"></span>';
-      }
-      var vapor = warm ? '<span class="lab-vapor" aria-hidden="true"></span>' : '';
-      var body = holds
-        ? ('<span class="lab-glass-body">' +
-          (sediment ? '<span class="lab-sediment" style="height:' + sediment + '%"></span>' : '') +
-          phaseHtml +
-          '<span class="lab-liquid' + (container.fizz ? ' is-fizz-liquid' : '') + (Number(container.volumeMl) > 0 ? ' is-filled' : '') + '" style="height:' + fill + '%;background:' + esc(color) + '">' +
-          (Number(container.volumeMl) > 0 ? '<span class="lab-meniscus" aria-hidden="true"></span>' : '') +
-          '</span>' +
-          '</span>' + vapor)
-        : '<span class="lab-tool-body">' + (kind === 'bunsen' && heatFrom === container.id ? '<span class="lab-flame is-lit" aria-hidden="true"></span>' : (kind === 'bunsen' ? '<span class="lab-flame" aria-hidden="true"></span>' : '')) + '</span>';
+      var body = vesselSvg(container, {
+        color: color,
+        warm: warm,
+        fizz: container.fizz,
+        sediment: sediment,
+        phases: container.phases,
+        lit: kind === 'bunsen' && heatFrom === container.id
+      });
       var spec = specOf(kind);
       var meta = holds
         ? (esc(container.volumeMl) + ' / ' + esc(container.capacityMl) + ' mL')
@@ -1940,7 +2311,6 @@
         }).join('') + '</span>'
         : '';
       return '<button type="button" class="' + cls + '" data-vessel="' + esc(container.id) + '" draggable="false" aria-pressed="' + (active ? 'true' : 'false') + '" style="left:' + x + 'px;top:' + y + 'px;z-index:' + z + ';--lab-rot:' + rot + 'deg;transform:rotate(' + rot + 'deg)">' +
-        outlineSvg(kind) +
         body +
         ports +
         '<span class="lab-glass-name">' + esc(container.label || kind) + '</span>' +
@@ -1995,17 +2365,46 @@
       return notes;
     }
 
-    function pulseLiquid() {
-      if (document.documentElement.getAttribute('data-reduced-motion')) return;
-      var liquid = node.querySelector('.lab-glass.is-active .lab-liquid') || node.querySelector('.lab-glass.is-fizz .lab-liquid');
-      if (!liquid) return;
-      liquid.classList.remove('is-stirring');
-      void liquid.offsetWidth;
-      liquid.classList.add('is-stirring');
-      if (stirTimer) clearTimeout(stirTimer);
-      stirTimer = setTimeout(function () {
-        if (liquid.classList) liquid.classList.remove('is-stirring');
-      }, 420);
+    function reducedMotion() {
+      return Boolean(document.documentElement.getAttribute('data-reduced-motion'));
+    }
+
+    /* One short class on the clipped fill group; nothing animates at rest. */
+    function animateFill(target, cls, ms) {
+      if (reducedMotion() || !target) return;
+      var group = target.querySelector ? target.querySelector('.lab-svg-fill') : null;
+      if (!group) return;
+      group.classList.remove(cls);
+      void group.getBoundingClientRect();
+      group.classList.add(cls);
+      setTimeout(function () {
+        if (group.classList) group.classList.remove(cls);
+      }, ms);
+    }
+
+    function pulseLiquid(id) {
+      var piece = id
+        ? node.querySelector('[data-vessel="' + id + '"]')
+        : (node.querySelector('.lab-glass.is-active') || node.querySelector('.lab-glass.is-fizz'));
+      animateFill(piece, 'is-rising', 440);
+    }
+
+    /* Only vessels that are actually bubbling or flaming get an observer. */
+    function refreshMotion() {
+      var stage = node.querySelector('[data-lab-stage]');
+      if (!stage) return;
+      var pieces = [];
+      node.querySelectorAll('[data-vessel]').forEach(function (piece) {
+        if (piece.querySelector('.lab-svg-bubble, .lab-svg-flame, .lab-svg-vapor')) pieces.push(piece);
+      });
+      if (motionObserver) motionObserver.disconnect();
+      if (!pieces.length || typeof IntersectionObserver !== 'function') return;
+      motionObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          entry.target.classList.toggle('is-offscreen', !entry.isIntersecting);
+        });
+      }, { root: stage, rootMargin: '40px' });
+      pieces.forEach(function (piece) { motionObserver.observe(piece); });
     }
 
     function playTransferFx(fromId, toId, color, kind) {
@@ -2167,6 +2566,7 @@
       var pourBtn = node.querySelector('[data-lab-pour]');
       if (pourBtn) pourBtn.classList.toggle('is-on', Boolean(pourFrom));
       applyWorld();
+      refreshMotion();
     }
 
     function syncDock(results) {
@@ -2749,12 +3149,13 @@
           }
           if (t.hasAttribute('data-lab-stir')) {
             playSound('stir');
-            mixContainer(selected());
+            var stirred = selected();
+            mixContainer(stirred);
             session.stirred = true;
             observe(session, copy('Stirred the selected vessel.', 'Agitou o vidro selecionado.'));
             queueSave();
             updateLive();
-            pulseLiquid();
+            animateFill(node.querySelector('[data-vessel="' + stirred.id + '"]'), 'is-stirring', 540);
             return;
           }
           if (t.hasAttribute('data-lab-empty')) {
@@ -2869,15 +3270,7 @@
           }
         }, opts);
         function slosh(id) {
-          if (document.documentElement.getAttribute('data-reduced-motion')) return;
-          var liquid = node.querySelector('[data-vessel="' + id + '"] .lab-liquid');
-          if (!liquid) return;
-          liquid.classList.remove('is-sloshing');
-          void liquid.offsetWidth;
-          liquid.classList.add('is-sloshing');
-          setTimeout(function () {
-            if (liquid.classList) liquid.classList.remove('is-sloshing');
-          }, 640);
+          animateFill(node.querySelector('[data-vessel="' + id + '"]'), 'is-sloshing', 660);
         }
         function endPointer() {
           var movedId = dragging && dragMoved ? dragging.id : '';
@@ -3018,6 +3411,10 @@
     identifyProduct: identifyProduct,
     visualFillPct: visualFillPct,
     tutorialState: tutorialState,
+    VESSEL_ART: VESSEL_ART,
+    vesselArt: vesselArt,
+    vesselSvg: vesselSvg,
+    fillGeometry: fillGeometry,
     stepPlan: stepPlan,
     SOUNDS: SOUNDS,
     SOUND_KEY: SOUND_KEY,

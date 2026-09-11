@@ -253,4 +253,77 @@ try {
   delete globalThis.localStorage;
 }
 
+// Every piece is drawn, and every container declares a real inner cavity.
+const holders = Object.keys(lab.EQUIPMENT).filter((id) => lab.canHold({ type: id, capacityMl: lab.EQUIPMENT[id].capacityMl }));
+assert.ok(holders.length >= 15);
+for (const id of Object.keys(lab.EQUIPMENT)) {
+  const drawn = lab.VESSEL_ART[id];
+  assert.ok(drawn, `${id} has no drawing`);
+  assert.ok(drawn.glass.indexOf('<') === 0, `${id} glass must be svg markup`);
+  assert.ok(drawn.fillBottom > drawn.fillTop, `${id} cavity must have height`);
+  if (holders.includes(id)) {
+    assert.ok(drawn.cavity.indexOf('<') === 0, `${id} must declare a cavity to clip liquid to`);
+  }
+}
+
+// Fill maps onto the cavity, clamped at both ends and monotonic in between.
+for (const id of holders) {
+  const drawn = lab.VESSEL_ART[id];
+  const empty = lab.fillGeometry(id, 0);
+  const full = lab.fillGeometry(id, 100);
+  assert.equal(empty.height, 0, `${id} empty`);
+  assert.equal(Math.round(full.y), Math.round(drawn.fillTop), `${id} full reaches the cavity top`);
+  assert.equal(lab.fillGeometry(id, -50).height, 0, `${id} clamps below zero`);
+  assert.equal(lab.fillGeometry(id, 500).height, full.height, `${id} clamps above full`);
+  let previous = -1;
+  for (let pct = 0; pct <= 100; pct += 10) {
+    const step = lab.fillGeometry(id, pct).height;
+    assert.ok(step >= previous, `${id} fill must not go backwards`);
+    previous = step;
+  }
+}
+
+// A sphere is symmetric, so half its volume is half its height, but a quarter
+// of the volume sits well above a quarter of the height.
+const bulbSpan = lab.VESSEL_ART['round-flask'].fillBottom - lab.VESSEL_ART['round-flask'].fillTop;
+assert.equal(Math.round(lab.fillGeometry('round-flask', 50).height / bulbSpan * 100), 50);
+assert.ok(lab.fillGeometry('round-flask', 25).height / bulbSpan > 0.3);
+assert.ok(lab.fillGeometry('round-flask', 25).height / bulbSpan < 0.36);
+// A straight-walled vessel stays linear.
+const beakerSpan = lab.VESSEL_ART.beaker.fillBottom - lab.VESSEL_ART.beaker.fillTop;
+assert.equal(Math.round(lab.fillGeometry('beaker', 25).height / beakerSpan * 100), 25);
+
+// The rendered piece clips liquid to that cavity and reports its level.
+const glassSession = lab.emptySession({ title: 'Glass', mode: 'bench' });
+const emptyBeaker = lab.vesselSvg(glassSession.containers[0], {});
+assert.ok(emptyBeaker.indexOf('lab-liquid') === -1, 'an empty vessel draws no liquid');
+assert.ok(emptyBeaker.indexOf('lab-svg-glass') !== -1);
+lab.addToContainer(glassSession, 'beaker-a', 'water', 120);
+const wet = lab.vesselSvg(glassSession.containers[0], { warm: true, sediment: 10 });
+assert.ok(wet.indexOf('clipPath') !== -1, 'liquid is clipped to the cavity');
+assert.ok(wet.indexOf('clip-path="url(#labv-beaker-a-cav)"') !== -1);
+assert.ok(/data-fill="\d+"/.test(wet), 'level is readable from the markup');
+assert.ok(wet.indexOf('lab-svg-vapor') !== -1, 'a warm vessel steams');
+assert.ok(wet.indexOf('lab-svg-sediment') !== -1);
+
+// A burner only shows a lit flame when it is actually lit.
+const burner = lab.emptySession({ title: 'Burner', mode: 'bench' });
+lab.addVessel(burner, 'bunsen');
+const bunsenRow = burner.containers.find((row) => row.type === 'bunsen');
+assert.ok(lab.vesselSvg(bunsenRow, { lit: false }).indexOf('is-off') !== -1);
+assert.ok(lab.vesselSvg(bunsenRow, { lit: true }).indexOf('is-lit') !== -1);
+
+// Colour comes from stored state, so it is sanitised before reaching the SVG.
+const tampered = lab.vesselSvg(glassSession.containers[0], { color: '"/><script>alert(1)</script>' });
+assert.ok(tampered.indexOf('<script') === -1, 'stored colour cannot inject markup');
+assert.ok(tampered.indexOf('fill="#7EB6D9"') !== -1, 'a rejected colour falls back');
+
+// Oil over water is drawn as two layers, not one blended block.
+const twoPhase = lab.emptySession({ title: 'Phases', mode: 'bench' });
+lab.addToContainer(twoPhase, 'beaker-a', 'water', 40);
+lab.addToContainer(twoPhase, 'beaker-a', 'oil', 30);
+const phased = twoPhase.containers[0];
+assert.equal(phased.phases.length, 2);
+assert.ok(lab.vesselSvg(phased, { phases: phased.phases }).indexOf('lab-svg-phase') !== -1);
+
 console.log('virtual lab tests passed');
