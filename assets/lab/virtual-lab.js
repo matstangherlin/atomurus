@@ -3052,7 +3052,20 @@
         materials: '<path d="M11 2.5 Q17.5 11 17.5 15 A6.5 6.5 0 1 1 4.5 15 Q4.5 11 11 2.5 Z"/>',
         ready: '<path d="M3.5 7.5 L11 3.5 L18.5 7.5 L11 11.5 Z"/><path d="M3.5 14 L11 18 L18.5 14"/>',
         sound: '<path d="M4 8.5 h3.5 L12 4.5 v13 L7.5 13.5 H4 Z"/><path d="M15 8 q2.4 3 0 6"/><path d="M17.6 5.8 q4 5.2 0 10.4"/>',
-        muted: '<path d="M4 8.5 h3.5 L12 4.5 v13 L7.5 13.5 H4 Z"/><path d="M15.5 8.5 L20 13 M20 8.5 L15.5 13"/>'
+        muted: '<path d="M4 8.5 h3.5 L12 4.5 v13 L7.5 13.5 H4 Z"/><path d="M15.5 8.5 L20 13 M20 8.5 L15.5 13"/>',
+        pour: '<path d="M5 5 h7 v8 q0 3 -3.5 3 T5 13 Z"/><path d="M12 7 l4 -2"/><path d="M17 9 v3 M17 15 v2"/>',
+        stir: '<path d="M4 9 q3.5 -5 7 0 t7 0"/><path d="M4 14 q3.5 -5 7 0 t7 0"/>',
+        empty: '<path d="M6 4 h10 l-1.4 11 q-.3 2.5 -3.6 2.5 T7.4 15 Z"/><path d="M4 20 h14"/>',
+        flame: '<path d="M11 20.5 Q4.5 16.5 8 10.5 Q9 13.5 11 12.5 Q8.8 6.5 14 2.5 Q12.8 8.5 16.6 11.5 Q19 17.5 11 20.5 Z"/>',
+        cool: '<path d="M11 3 v16 M4 7 l14 8 M18 7 l-14 8"/>',
+        duplicate: '<path d="M7 3 h10 v10"/><path d="M3.5 7.5 h10 v11 h-10 Z"/>',
+        trash: '<path d="M4 6 h14"/><path d="M8.5 6 V4 h5 v2"/><path d="M6 6 l1 13 h8 l1 -13"/><path d="M9.5 9.5 v6 M12.5 9.5 v6"/>',
+        up: '<path d="M11 18 V5"/><path d="M5.5 10.5 L11 5 l5.5 5.5"/>',
+        down: '<path d="M11 4 v13"/><path d="M5.5 11.5 L11 17 l5.5 -5.5"/>',
+        rotateLeft: '<path d="M4.5 11 a6.5 6.5 0 1 1 2.2 4.9"/><path d="M4.5 6.5 v4.5 h4.5"/>',
+        rotateRight: '<path d="M17.5 11 a6.5 6.5 0 1 0 -2.2 4.9"/><path d="M17.5 6.5 v4.5 h-4.5"/>',
+        undo: '<path d="M4.5 10 h8.5 a4.8 4.8 0 0 1 0 9.6 H8.5"/><path d="M8.5 5.8 L4.2 10 L8.5 14.2"/>',
+        redo: '<path d="M17.5 10 H9 a4.8 4.8 0 0 0 0 9.6 h4.5"/><path d="M13.5 5.8 L17.8 10 L13.5 14.2"/>'
       };
       return '<svg class="lab-dock-icon" viewBox="0 0 22 22" aria-hidden="true">' + (paths[name] || paths.create) + '</svg>';
     }
@@ -3231,6 +3244,59 @@
           'Conceptual only. Atomurus does not simulate operating a refinery.',
           'Apenas conceitual. O Atomurus não simula a operação de uma refinaria.'
         )) + '</p></details>';
+    }
+
+    /* Miro-style: the actions for what is selected float over it, rather than
+       filling a permanent toolbar. */
+    function toolBtn(attr, iconName, label, extra) {
+      return '<button type="button" class="lab-tool-btn' + (extra || '') + '" ' + attr +
+        ' title="' + esc(label) + '" aria-label="' + esc(label) + '">' + icon(iconName) + '</button>';
+    }
+
+    function contextToolbarHtml() {
+      var many = selectedIds.length > 1;
+      var container = selected();
+      if (!container) return '';
+      var out = '';
+      if (!many && canHold(container)) {
+        out += toolBtn('data-lab-pour', 'pour', copy('Pour into…', 'Transferir para…'), pourFrom === container.id ? ' is-on' : '') +
+          toolBtn('data-lab-stir', 'stir', copy('Stir', 'Agitar')) +
+          toolBtn('data-lab-empty', 'empty', copy('Empty', 'Esvaziar')) +
+          toolBtn('data-heat="10"', 'flame', copy('Heat', 'Aquecer')) +
+          toolBtn('data-heat="-10"', 'cool', copy('Cool', 'Esfriar')) +
+          '<i class="lab-tool-sep"></i>';
+      }
+      out += toolBtn('data-lab-duplicate', 'duplicate', many ? copy('Duplicate all', 'Duplicar todas') : copy('Duplicate', 'Duplicar'));
+      if (!many) {
+        out += toolBtn('data-lab-stack="1"', 'up', copy('Bring forward', 'Trazer para frente')) +
+          toolBtn('data-lab-stack="-1"', 'down', copy('Send backward', 'Enviar para trás')) +
+          toolBtn('data-lab-rotate="-15"', 'rotateLeft', copy('Rotate left', 'Girar à esquerda')) +
+          toolBtn('data-lab-rotate="15"', 'rotateRight', copy('Rotate right', 'Girar à direita'));
+      }
+      out += toolBtn('data-lab-delete', 'trash', many ? copy('Delete all', 'Remover todas') : copy('Delete', 'Remover'), ' is-danger');
+      return '<div class="lab-context" data-lab-context hidden>' + out + '</div>';
+    }
+
+    /* Anchored to the piece in screen space, so it does not scale with zoom. */
+    function placeContextToolbar() {
+      var bar = node.querySelector('[data-lab-context]');
+      var stage = node.querySelector('[data-lab-stage]');
+      if (!bar || !stage) return;
+      var container = selected();
+      var box = container ? pieceBox(session, container.id) : null;
+      if (!box || dragging || marquee || linking) {
+        bar.hidden = true;
+        return;
+      }
+      bar.hidden = false;
+      var rect = stage.getBoundingClientRect();
+      var barWidth = bar.offsetWidth || 240;
+      var cx = panX + (box.x + box.w / 2) * zoom;
+      var top = panY + box.y * zoom - 46;
+      if (top < 6) top = panY + (box.y + box.h) * zoom + 10;
+      var left = Math.max(6, Math.min(rect.width - barWidth - 6, cx - barWidth / 2));
+      bar.style.left = Math.round(left) + 'px';
+      bar.style.top = Math.round(Math.max(6, Math.min(rect.height - 48, top))) + 'px';
     }
 
     function tutorialHtml() {
@@ -3426,11 +3492,7 @@
       if (selectedIds.length > 1) {
         return '<div class="lab-multi"><span class="lab-reaction-tag">' + esc(copy('Selection', 'Seleção')) + '</span>' +
           '<p>' + esc(selectedIds.length + ' ' + copy('pieces selected', 'peças selecionadas')) + '</p>' +
-          '<div class="lab-measures">' +
-          '<button type="button" class="ws-btn ws-btn-sm" data-lab-duplicate>' + esc(copy('Duplicate all', 'Duplicar todas')) + '</button>' +
-          '<button type="button" class="ws-btn ws-btn-sm" data-lab-delete>' + esc(copy('Delete all', 'Remover todas')) + '</button>' +
-          '</div>' +
-          '<p class="ws-lede">' + esc(copy('Drag any of them to move the group. Esc clears the selection.', 'Arraste qualquer uma para mover o grupo. Esc limpa a seleção.')) + '</p></div>';
+          '<p class="ws-lede">' + esc(copy('Use the bar above the selection. Drag any of them to move the group; Esc clears it.', 'Use a barra acima da seleção. Arraste qualquer uma para mover o grupo; Esc limpa.')) + '</p></div>';
       }
       mixContainer(container);
       var contentRows = (container.contents || []).map(function (row) {
@@ -3504,12 +3566,7 @@
         (hasCap(container, 'grind') ? '<button type="button" class="ws-btn ws-btn-sm" data-lab-grind>' + esc(copy('Grind', 'Triturar')) + '</button>' : '') +
         (hasCap(container, 'separate') ? '<button type="button" class="ws-btn ws-btn-sm" data-lab-drain>' + esc(copy('Open valve', 'Abrir válvula')) + '</button>' : '') +
         ((specOf(container.type).ports || []).length ? '<button type="button" class="ws-btn ws-btn-sm' + (connectFrom === container.id ? ' is-on' : '') + '" data-lab-connect>' + esc(copy('Connect', 'Conectar')) + '</button>' : '') +
-        '<button type="button" class="ws-btn ws-btn-sm" data-lab-duplicate>' + esc(copy('Duplicate', 'Duplicar')) + '</button>' +
-        '<button type="button" class="ws-btn ws-btn-sm" data-lab-delete>' + esc(copy('Delete', 'Remover')) + '</button>' +
-        '<button type="button" class="ws-btn ws-btn-sm" data-lab-stack="1" title="' + esc(copy('Bring forward', 'Trazer para frente')) + '">▲</button>' +
-        '<button type="button" class="ws-btn ws-btn-sm" data-lab-stack="-1" title="' + esc(copy('Send backward', 'Enviar para trás')) + '">▼</button>' +
-        '<button type="button" class="ws-btn ws-btn-sm" data-lab-rotate="-15">↺</button>' +
-        '<button type="button" class="ws-btn ws-btn-sm" data-lab-rotate="15">↻</button>' +
+
         '<button type="button" class="ws-btn ws-btn-sm" data-measure="volume">' + esc(copy('Volume', 'Volume')) + '</button>' +
         '<button type="button" class="ws-btn ws-btn-sm" data-measure="mass">' + esc(copy('Mass', 'Massa')) + '</button>' +
         '<button type="button" class="ws-btn ws-btn-sm" data-measure="temperature">' + esc(copy('Temperature', 'Temperatura')) + '</button>' +
@@ -3836,6 +3893,7 @@
       if (world) world.style.transform = 'translate(' + panX + 'px,' + panY + 'px) scale(' + zoom + ')';
       var zoomLabel = node.querySelector('[data-lab-zoom-label]');
       if (zoomLabel) zoomLabel.textContent = Math.round(zoom * 100) + '%';
+      placeContextToolbar();
     }
 
     /* Guided progress is derived, so the cue fires only when the step really moves. */
@@ -3882,6 +3940,7 @@
       if (pourBtn) pourBtn.classList.toggle('is-on', Boolean(pourFrom));
       applyWorld();
       refreshMotion();
+      placeContextToolbar();
     }
 
     function syncDock(results) {
@@ -4002,14 +4061,6 @@
         '<button type="submit" class="ws-btn ws-btn-secondary">' + esc(copy('Search', 'Pesquisar')) + '</button>' +
         '</form>' +
         '<div class="lab-toolbar">' +
-        '<button type="button" class="ws-btn ws-btn-sm" data-lab-undo>' + esc(copy('Undo', 'Desfazer')) + '</button>' +
-        '<button type="button" class="ws-btn ws-btn-sm" data-lab-redo>' + esc(copy('Redo', 'Refazer')) + '</button>' +
-        '<span class="lab-zoom" role="group" aria-label="' + esc(copy('Zoom', 'Zoom')) + '">' +
-        '<button type="button" class="ws-btn ws-btn-sm" data-lab-zoom="out" aria-label="' + esc(copy('Zoom out', 'Reduzir')) + '">−</button>' +
-        '<span class="lab-zoom-label" data-lab-zoom-label>' + Math.round(zoom * 100) + '%</span>' +
-        '<button type="button" class="ws-btn ws-btn-sm" data-lab-zoom="in" aria-label="' + esc(copy('Zoom in', 'Ampliar')) + '">+</button>' +
-        '</span>' +
-        '<button type="button" class="ws-btn ws-btn-sm" data-lab-fit>' + esc(copy('Fit', 'Ajustar')) + '</button>' +
         '<button type="button" class="lab-icon-btn" data-lab-sound aria-pressed="true" title="' + esc(copy('Sound on', 'Som ligado')) + '">' + icon('sound') + '</button>' +
         '<button type="button" class="ws-btn ws-btn-sm" data-lab-reset>' + esc(copy('Reset', 'Reiniciar')) + '</button>' +
         '<button type="button" class="ws-btn ws-btn-sm ws-btn-primary" data-lab-save>' + esc(copy('Save', 'Salvar')) + '</button>' +
@@ -4026,12 +4077,17 @@
           'Drag the canvas to select · Space or middle-drag to pan · Scroll to zoom',
           'Arraste o canvas para selecionar · Espaço ou botão do meio para mover · Role para zoom'
         )) + '</p>' +
-        '<div class="lab-actionbar" role="toolbar" aria-label="' + esc(copy('Board actions', 'Ações do board')) + '">' +
-        '<button type="button" class="ws-btn ws-btn-sm" data-lab-pour>' + esc(copy('Pour', 'Transferir')) + '</button>' +
-        '<button type="button" class="ws-btn ws-btn-sm" data-lab-stir>' + esc(copy('Stir', 'Agitar')) + '</button>' +
-        '<button type="button" class="ws-btn ws-btn-sm" data-lab-empty>' + esc(copy('Empty', 'Esvaziar')) + '</button>' +
-        '<button type="button" class="ws-btn ws-btn-sm" data-heat="-10">' + esc(copy('Cool', 'Esfriar')) + '</button>' +
-        '<button type="button" class="ws-btn ws-btn-sm" data-heat="10">' + esc(copy('Heat', 'Aquecer')) + '</button>' +
+        contextToolbarHtml() +
+        '<div class="lab-hud lab-hud-left" role="toolbar" aria-label="' + esc(copy('History', 'Histórico')) + '">' +
+        '<button type="button" class="lab-tool-btn" data-lab-undo title="' + esc(copy('Undo', 'Desfazer')) + '" aria-label="' + esc(copy('Undo', 'Desfazer')) + '">' + icon('undo') + '</button>' +
+        '<button type="button" class="lab-tool-btn" data-lab-redo title="' + esc(copy('Redo', 'Refazer')) + '" aria-label="' + esc(copy('Redo', 'Refazer')) + '">' + icon('redo') + '</button>' +
+        '</div>' +
+        '<div class="lab-hud lab-hud-right" role="toolbar" aria-label="' + esc(copy('Zoom', 'Zoom')) + '">' +
+        '<button type="button" class="lab-tool-btn" data-lab-zoom="out" aria-label="' + esc(copy('Zoom out', 'Reduzir')) + '">−</button>' +
+        '<span class="lab-zoom-label" data-lab-zoom-label>' + Math.round(zoom * 100) + '%</span>' +
+        '<button type="button" class="lab-tool-btn" data-lab-zoom="in" aria-label="' + esc(copy('Zoom in', 'Ampliar')) + '">+</button>' +
+        '<i class="lab-tool-sep"></i>' +
+        '<button type="button" class="lab-tool-btn lab-tool-wide" data-lab-fit>' + esc(copy('Fit', 'Ajustar')) + '</button>' +
         '</div></div>' +
         '<aside class="lab-side" data-lab-side>' +
         '<div class="lab-side-tabs" role="tablist">' +

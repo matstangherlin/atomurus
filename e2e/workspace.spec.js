@@ -506,7 +506,7 @@ test('Lab board selects with a marquee, moves the group and restacks', async ({ 
   // Dragging empty canvas draws a selection rectangle, it does not pan.
   const first = await page.locator('[data-vessel="beaker-a"]').boundingBox();
   const last = await page.locator('[data-vessel="cylinder-c"]').boundingBox();
-  await page.mouse.move(first.x - 30, first.y - 30);
+  await page.mouse.move(first.x - 40, first.y + 20);
   await page.mouse.down();
   await page.mouse.move(last.x + last.width + 20, last.y + last.height + 20, { steps: 12 });
   await expect(page.locator('.lab-marquee')).toHaveCount(1);
@@ -736,7 +736,7 @@ test('Workspace home is the Virtual Lab and Open Bench runs', async ({ page }) =
   await expect(page.locator('.lab-flask, .lab-cylinder')).toHaveCount(2);
   await page.locator('.lab-chip[data-add="nacl"]').click();
   await expect(page.locator('[data-vessel="beaker-a"]')).toContainText(/Saline|salina/i);
-  await page.locator('[data-lab-pour]').click();
+  await page.locator('[data-lab-context] [data-lab-pour]').click();
   await page.locator('[data-vessel="flask-b"]').click();
   await expect(page.locator('.lab-notes')).toContainText(/Poured|Transfer/i);
   await expect(page.locator('[data-lab-stage]')).toBeVisible();
