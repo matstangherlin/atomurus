@@ -109,4 +109,47 @@ assert.equal(ready.containers[0].productId, 'saline');
 
 assert.equal(lab.addToContainer(session, 'beaker-a', 'cocaine', 10).ok, false);
 
+assert.equal(session.schemaVersion, 2);
+assert.ok(session.board && session.board.camera);
+assert.ok(Array.isArray(session.board.objects));
+assert.ok(session.board.objects.some((row) => row.id === 'beaker-a'));
+assert.ok(lab.PROCESSES.pour.allowed);
+assert.equal(lab.hasCap({ type: 'beaker' }, 'contain'), true);
+assert.equal(lab.hasCap({ type: 'bunsen' }, 'contain'), false);
+assert.ok(lab.EQUIPMENT['round-flask']);
+assert.ok(lab.EQUIPMENT.pestle);
+assert.ok(lab.EQUIPMENT['heating-gauze'].labelEn.indexOf('Ceramic') !== -1);
+
+const pip = lab.emptySession({ title: 'Pipette' });
+assert.equal(lab.addVessel(pip, 'pipette-volumetric').ok, true);
+const pipetteId = pip.containers.find((row) => row.type === 'pipette-volumetric').id;
+assert.equal(lab.addToContainer(pip, 'beaker-a', 'water', 40).ok, true);
+assert.equal(lab.aspirate(pip, pipetteId, 'beaker-a').ok, true);
+assert.equal(findVol(pip, pipetteId) > 0, true);
+assert.equal(lab.dispense(pip, pipetteId, 'flask-b').ok, true);
+assert.equal(findVol(pip, 'flask-b') > 0, true);
+
+const board = lab.emptySession({ title: 'Board' });
+lab.ensureBoard(board);
+lab.duplicateObject(board, 'beaker-a');
+assert.ok(board.containers.length >= 4);
+assert.equal(lab.undoSession(board).ok, true);
+assert.equal(lab.redoSession(board).ok, true);
+
+const mortar = lab.emptySession({ title: 'Grind' });
+assert.equal(lab.addVessel(mortar, 'mortar').ok, true);
+const mortarId = mortar.containers.find((row) => row.type === 'mortar').id;
+assert.equal(lab.addToContainer(mortar, mortarId, 'nacl', 5).ok, true);
+assert.equal(lab.grind(mortar, mortarId).ok, true);
+
+const link = lab.emptySession({ title: 'Connect' });
+assert.equal(lab.addVessel(link, 'round-flask').ok, true);
+assert.equal(lab.addVessel(link, 'condenser').ok, true);
+const roundId = link.containers.find((row) => row.type === 'round-flask').id;
+const condId = link.containers.find((row) => row.type === 'condenser').id;
+assert.equal(lab.connectPorts(link, roundId, 'neck', condId, 'inlet').ok, true);
+assert.ok(link.board.connections.length >= 1);
+
+assert.equal(lab.addToContainer(session, 'beaker-a', 'cocaine', 10).ok, false);
+
 console.log('virtual lab tests passed');
