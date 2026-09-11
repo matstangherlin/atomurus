@@ -602,4 +602,58 @@ const cuppedSet = lab.cuppedHeaterIds(heat);
 assert.equal(cuppedSet[mantlePiece.id], true, 'the mantle under the flask is cuppedSet');
 assert.equal(cuppedSet[idleBurner.id], undefined, 'the idle burner is not');
 
+// Reflux is the still's glassware wired to send nothing onward.
+const back = lab.emptySession({ title: 'Reflux', mode: 'bench' });
+for (const type of ['round-flask', 'condenser', 'heating-mantle']) lab.addVessel(back, type);
+const backFlask = back.containers.find((row) => row.type === 'round-flask');
+assert.equal(lab.refluxSetup(back, backFlask.id), null, 'loose glassware is not a reflux rig');
+assert.equal(lab.assembleReflux(back).ok, true);
+assert.ok(lab.refluxSetup(back, backFlask.id), 'flask to condenser, nothing after it');
+assert.equal(lab.distillSetup(back, backFlask.id), null, 'and it is not a still');
+
+assert.equal(lab.reflux(back, backFlask.id).reason, 'empty');
+lab.addToContainer(back, backFlask.id, 'water', 50);
+lab.addToContainer(back, backFlask.id, 'ethanol', 30);
+assert.equal(lab.reflux(back, backFlask.id).reason, 'cold');
+lab.setTemperature(back, backFlask.id, 80);
+const holding = lab.reflux(back, backFlask.id);
+assert.equal(holding.ok, true);
+assert.equal(holding.bp, 78);
+assert.equal(backFlask.volumeMl, 80, 'reflux holds the volume');
+assert.equal(holding.held, 80);
+assert.ok(backFlask.refluxMin > 0);
+assert.ok(back.observations.some((row) => /Refluxed|Refluxou/.test(row.text)));
+
+// Adding a receiver turns the same glassware back into a still, and then it
+// is a still rather than a reflux rig: the topology decides, not the parts.
+assert.equal(lab.addVessel(back, 'receiving-flask').ok, true);
+const backReceiver = back.containers.find((row) => row.type === 'receiving-flask');
+const backCondenser = back.containers.find((row) => row.type === 'condenser');
+assert.equal(lab.connectPorts(back, backCondenser.id, 'outlet', backReceiver.id, 'neck').ok, true);
+assert.equal(lab.refluxSetup(back, backFlask.id), null, 'a receiver makes it a still again');
+assert.ok(lab.distillSetup(back, backFlask.id));
+// And the still does take volume away, which is the contrast being taught.
+const beforeStill = backFlask.volumeMl;
+assert.equal(lab.distill(back, backFlask.id).ok, true);
+assert.ok(backFlask.volumeMl < beforeStill, 'distillation loses what reflux keeps');
+
+// The guided reflux walks the same board.
+const refluxGuide = lab.CREATIONS.find((row) => row.id === 'reflux');
+assert.ok(refluxGuide && refluxGuide.tutorial.length === 7);
+assert.equal(lab.stepPlan(refluxGuide, 4).needsRefluxConnect, true);
+assert.equal(lab.stepPlan(refluxGuide, 6).needsReflux, true);
+assert.equal(lab.resolveQuery('refluxo').id, 'reflux');
+const refluxWalk = lab.emptySession({ title: 'Walk', mode: 'guided', creationId: 'reflux' });
+for (const type of ['round-flask', 'condenser', 'heating-mantle']) lab.addVessel(refluxWalk, type);
+const walkPot = refluxWalk.containers.find((row) => row.type === 'round-flask');
+lab.addToContainer(refluxWalk, walkPot.id, 'water', 50);
+lab.addToContainer(refluxWalk, walkPot.id, 'ethanol', 30);
+assert.equal(lab.tutorialState(refluxWalk, refluxGuide).current, 4);
+lab.assembleReflux(refluxWalk);
+assert.equal(lab.tutorialState(refluxWalk, refluxGuide).current, 5);
+lab.setTemperature(refluxWalk, walkPot.id, 80);
+assert.equal(lab.tutorialState(refluxWalk, refluxGuide).current, 6);
+assert.equal(lab.reflux(refluxWalk, walkPot.id).ok, true);
+assert.equal(lab.tutorialState(refluxWalk, refluxGuide).complete, true);
+
 console.log('virtual lab tests passed');

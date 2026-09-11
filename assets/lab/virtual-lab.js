@@ -709,7 +709,8 @@
     connect: { id: 'connect', allowed: true },
     measure: { id: 'measure', allowed: true },
     distill: { id: 'distill', allowed: true, maxC: 250 },
-    filter: { id: 'filter', allowed: true }
+    filter: { id: 'filter', allowed: true },
+    reflux: { id: 'reflux', allowed: true }
   };
 
   /* Reviewed reaction models. A reaction only fires when its reactants, state
@@ -824,6 +825,7 @@
     ethanol: 'ethanol', etanol: 'ethanol', alcohol: 'ethanol', álcool: 'ethanol', alcool: 'ethanol',
     distillation: 'guided:distillation', destilacao: 'guided:distillation', 'destilação': 'guided:distillation',
     distill: 'guided:distillation', separation: 'guided:distillation',
+    reflux: 'guided:reflux', refluxo: 'guided:reflux',
     petroleum: 'guided:petroleum', petroleo: 'guided:petroleum', 'petróleo': 'guided:petroleum',
     refinery: 'guided:petroleum', refino: 'guided:petroleum', gasoline: 'guided:petroleum',
     gasolina: 'guided:petroleum', 'fractional distillation': 'guided:petroleum'
@@ -859,6 +861,36 @@
         { id: 'rig', action: 'connect', needConnections: 2, en: 'Connect flask to condenser and condenser to receiver.', pt: 'Conecte o balão ao condensador e o condensador ao coletor.', why: { en: 'The train only works if the vapour has a sealed path.', pt: 'A aparelhagem só funciona se o vapor tiver um caminho fechado.' } },
         { id: 'heat', action: 'heat', heatTo: 80, needTemp: 76, en: 'Heat the flask to about 80 °C.', pt: 'Aqueça o balão até cerca de 80 °C.', why: { en: 'Just above the ethanol boiling point, so mostly ethanol vaporises.', pt: 'Logo acima do ponto de ebulição do etanol, então vaporiza sobretudo etanol.' } },
         { id: 'run', action: 'distill', needIn: { type: 'receiving-flask', id: 'ethanol' }, en: 'Distil, and read the purity in the notebook.', pt: 'Destile e leia a pureza no caderno.', why: { en: 'Ethanol and water form an azeotrope near 95%, so simple distillation cannot go further.', pt: 'Etanol e água formam um azeótropo perto de 95%, então a destilação simples não passa disso.' } }
+      ]
+    },
+    {
+      id: 'reflux',
+      slug: 'heat-without-losing-solvent',
+      title: { en: 'Heat Without Losing Solvent', pt: 'Aquecer sem perder solvente' },
+      category: 'Separations',
+      difficulty: { en: 'Intermediate', pt: 'Intermediário' },
+      access: 'account',
+      demo: true,
+      educational: true,
+      lede: {
+        en: 'The same glassware as a still, wired so nothing leaves the flask. Stand the condenser upright over the pot and the vapour runs back instead of into a receiver.',
+        pt: 'A mesma vidraria da destilação, ligada para que nada saia do balão. Com o condensador na vertical sobre o balão, o vapor volta em vez de ir para um coletor.'
+      },
+      stages: ['assemble', 'heat', 'hold'],
+      safetyClass: 'educational',
+      version: 1,
+      learningObjectives: {
+        en: 'Why a reflux condenser holds the volume that a still takes away.',
+        pt: 'Por que um condensador de refluxo mantém o volume que a destilação retira.'
+      },
+      tutorial: [
+        { id: 'flask', action: 'addEquipment', needEquipment: ['round-flask'], en: 'Place a round-bottom flask.', pt: 'Coloque um balão de fundo redondo.' },
+        { id: 'cond', action: 'addEquipment', needEquipment: ['condenser'], en: 'Add a condenser: this time it stands upright over the flask.', pt: 'Adicione um condensador: desta vez ele fica na vertical sobre o balão.', why: { en: 'Upright, the condensate falls straight back into the pot.', pt: 'Na vertical, o condensado cai de volta no balão.' } },
+        { id: 'heater', action: 'addEquipment', needEquipment: ['heating-mantle'], en: 'Add a heating mantle under the flask.', pt: 'Adicione uma manta de aquecimento sob o balão.' },
+        { id: 'charge', action: 'addMaterial', need: { water: true, ethanol: true }, amounts: { water: 50, ethanol: 30 }, into: 'round-flask', en: 'Charge the flask with 50 mL of water and 30 mL of ethanol.', pt: 'Carregue o balão com 50 mL de água e 30 mL de etanol.' },
+        { id: 'rig', action: 'reflux-connect', needConnections: 1, en: 'Stand the condenser over the flask and connect it. Note there is no receiver.', pt: 'Monte o condensador sobre o balão e conecte. Note que não há coletor.', why: { en: 'A receiver is what turns this into a still.', pt: 'É o coletor que transforma isto em uma destilação.' } },
+        { id: 'heat', action: 'heat', heatTo: 80, needTemp: 76, en: 'Heat the flask to about 80 °C.', pt: 'Aqueça o balão até cerca de 80 °C.' },
+        { id: 'hold', action: 'reflux', needReflux: true, en: 'Reflux, then compare the volume with the distillation run.', pt: 'Refluxe e compare o volume com a destilação.', why: { en: 'Distillation moved the ethanol out; reflux holds everything and only keeps it boiling.', pt: 'A destilação levou o etanol embora; o refluxo mantém tudo e só o conserva fervendo.' } }
       ]
     },
     {
@@ -2070,6 +2102,87 @@
       .sort(function (a, b) { return SUBSTANCES[a.id].bp - SUBSTANCES[b.id].bp; });
   }
 
+  /* Same pieces as the still, wired to send nothing onward. */
+  function assembleReflux(session) {
+    ensureBoard(session);
+    var flask = firstOfType(session, 'round-flask');
+    var condenser = firstOfType(session, 'condenser');
+    if (!flask || !condenser) return { ok: false, reason: 'missing' };
+    var heater = firstOfType(session, 'heating-mantle') || firstOfType(session, 'hot-plate') || firstOfType(session, 'bunsen');
+    var base = findObject(session, flask.id);
+    if (!base) return { ok: false, reason: 'missing' };
+    pushHistory(session);
+    var x = Number(base.x) || 200;
+    var y = Number(base.y) || 200;
+    function place(id, nx, ny) {
+      var obj = findObject(session, id);
+      var row = findContainer(session, id);
+      if (!obj) return;
+      obj.x = Math.round(nx);
+      obj.y = Math.round(ny);
+      if (row) { row.x = obj.x; row.y = obj.y; }
+    }
+    /* Straight above the flask, which is what makes it a reflux condenser. */
+    place(condenser.id, x, y - 150);
+    if (heater) place(heater.id, x, y + HEAT_OFFSET);
+    session.board.connections = (session.board.connections || []).filter(function (row) {
+      return row.fromId !== condenser.id && row.toId !== condenser.id;
+    });
+    var wired = connectPorts(session, flask.id, 'neck', condenser.id, 'inlet');
+    observe(session, line(session, 'Set the condenser upright over the flask.', 'Montou o condensador na vertical sobre o balão.'));
+    return { ok: Boolean(wired.ok), flask: flask, condenser: condenser, heater: heater };
+  }
+
+  /* Reflux is the same glassware as a still, wired differently: the condenser
+     returns to the flask it came from, so nothing leaves the pot. */
+  function refluxSetup(session, flaskId) {
+    ensureBoard(session);
+    var flask = findContainer(session, flaskId);
+    if (!flask || !canHold(flask) || !hasCap(flask, 'heat')) return null;
+    var links = (session.board.connections || []).filter(function (row) {
+      return row.fromId === flaskId || row.toId === flaskId;
+    });
+    for (var i = 0; i < links.length; i += 1) {
+      var otherId = links[i].fromId === flaskId ? links[i].toId : links[i].fromId;
+      var condenser = findContainer(session, otherId);
+      if (!condenser || !hasCap(condenser, 'condense')) continue;
+      /* A still sends the condenser on to a receiver; reflux does not. */
+      var onward = (session.board.connections || []).some(function (row) {
+        var a = row.fromId === condenser.id ? row.toId : (row.toId === condenser.id ? row.fromId : '');
+        if (!a || a === flaskId) return false;
+        var next = findContainer(session, a);
+        return next && canHold(next) && hasCap(next, 'contain');
+      });
+      if (onward) continue;
+      return { flask: flask, condenser: condenser };
+    }
+    return null;
+  }
+
+  function reflux(session, flaskId) {
+    if (!processAllowed('reflux')) return { ok: false, reason: 'unavailable' };
+    var rig = refluxSetup(session, flaskId);
+    if (!rig) return { ok: false, reason: 'no-rig' };
+    var parts = volatileParts(rig.flask);
+    if (!parts.length) return { ok: false, reason: 'empty' };
+    var lightest = SUBSTANCES[parts[0].id];
+    var ceiling = maxTemperatureFor(session, rig.flask);
+    var needed = Math.min(lightest.bp, ceiling);
+    var temp = Number(rig.flask.temperatureC) || 22;
+    if (temp < needed - 2) return { ok: false, reason: 'cold', needed: needed, ceiling: ceiling };
+
+    pushHistory(session);
+    var before = Math.round((Number(rig.flask.volumeMl) || 0) * 10) / 10;
+    rig.flask.refluxMin = Math.round(((Number(rig.flask.refluxMin) || 0) + 10) * 10) / 10;
+    mixContainer(rig.flask);
+    observe(session, line(
+      session,
+      'Refluxed ' + (rig.flask.label || flaskId) + ' for 10 virtual minutes at ' + Math.round(needed) + ' °C. Volume held at ' + before + ' mL: the vapour condensed and ran back.',
+      'Refluxou ' + (rig.flask.label || flaskId) + ' por 10 minutos virtuais a ' + Math.round(needed) + ' °C. Volume mantido em ' + before + ' mL: o vapor condensou e voltou.'
+    ));
+    return { ok: true, rig: rig, held: before, minutes: rig.flask.refluxMin, bp: lightest.bp };
+  }
+
   /* Salts and sugars dissolve and run through a filter; elements and minerals
      stay on it. That split is the whole point of the experiment. */
   function passesFilter(spec) {
@@ -2301,6 +2414,10 @@
         });
         if (!hot) ok = false;
       }
+      if (ok && step.needReflux) {
+        var held = (session.containers || []).some(function (row) { return (Number(row.refluxMin) || 0) > 0; });
+        if (!held) ok = false;
+      }
       if (ok && step.needIn) {
         var host = firstOfType(session, step.needIn.type);
         var landed = host && (host.contents || []).some(function (row) {
@@ -2366,6 +2483,8 @@
     inspect: { en: 'Read the inspector', pt: 'Leia o inspetor' },
     grind: { en: 'Grind the solid', pt: 'Triture o sólido' },
     connect: { en: 'Connect the ports', pt: 'Conecte os portos' },
+    'reflux-connect': { en: 'Stand the condenser upright', pt: 'Monte o condensador na vertical' },
+    reflux: { en: 'Hold it at reflux', pt: 'Mantenha em refluxo' },
     distill: { en: 'Run the distillation', pt: 'Execute a destilação' }
   };
 
@@ -2410,6 +2529,8 @@
       index: index,
       into: step.into || '',
       needsConnect: step.action === 'connect',
+      needsRefluxConnect: step.action === 'reflux-connect',
+      needsReflux: step.action === 'reflux',
       needsDistill: step.action === 'distill',
       heatTo: Number(step.heatTo) || 0,
       action: step.action || 'inspect',
@@ -2770,6 +2891,12 @@
       if (plan.needsConnect) {
         out.push('<button type="button" class="lab-do-chip" data-step-connect>' + esc(copy('Assemble the apparatus', 'Montar a aparelhagem')) + '</button>');
       }
+      if (plan.needsRefluxConnect) {
+        out.push('<button type="button" class="lab-do-chip" data-step-reflux-connect>' + esc(copy('Stand the condenser up', 'Montar o condensador na vertical')) + '</button>');
+      }
+      if (plan.needsReflux) {
+        out.push('<button type="button" class="lab-do-chip" data-step-reflux>' + esc(copy('Reflux', 'Refluxar')) + '</button>');
+      }
       if (plan.heatTo) {
         out.push('<button type="button" class="lab-do-chip" data-step-heat="' + esc(plan.heatTo) + '">' +
           esc(copy('Heat to ' + plan.heatTo + ' °C', 'Aquecer até ' + plan.heatTo + ' °C')) + '</button>');
@@ -3008,6 +3135,12 @@
           '<code class="lab-reaction-eq">' + esc(model.equation) + '</code>' +
           '<p>' + esc(lang === 'pt' ? model.pt : model.en) + '</p></div>'
         : '';
+      var refluxRig = refluxSetup(session, container.id);
+      var refluxBlock = refluxRig
+        ? '<div class="lab-rig"><span class="lab-reaction-tag">' + esc(copy('Reflux ready', 'Refluxo pronto')) + '</span>' +
+          '<p>' + esc(container.label || container.id) + ' ↑ ' + esc(refluxRig.condenser.label || refluxRig.condenser.id) + ' ' + esc(copy('(returns to the flask)', '(retorna ao balão)')) + '</p>' +
+          '<button type="button" class="ws-btn ws-btn-sm ws-btn-primary" data-lab-reflux>' + esc(copy('Reflux', 'Refluxar')) + '</button></div>'
+        : '';
       var filterRig = filterSetup(session, container.id);
       var filterBlock = filterRig
         ? '<div class="lab-rig"><span class="lab-reaction-tag">' + esc(copy('Filter ready', 'Filtro pronto')) + '</span>' +
@@ -3020,7 +3153,7 @@
           '<p>' + esc(container.label || container.id) + ' → ' + esc(rig.condenser.label || rig.condenser.id) + ' → ' + esc(rig.receiver.label || rig.receiver.id) + '</p>' +
           '<button type="button" class="ws-btn ws-btn-sm ws-btn-primary" data-lab-distill>' + esc(copy('Distil', 'Destilar')) + '</button></div>'
         : '';
-      return reactionBlock + rigBlock + filterBlock +
+      return reactionBlock + rigBlock + refluxBlock + filterBlock +
         '<div class="lab-kv"><span>' + esc(copy('Vessel', 'Vidro')) + '</span><strong>' + esc(container.label || container.id) + '</strong></div>' +
         '<div class="lab-kv"><span>' + esc(copy('Contents', 'Conteúdo')) + '</span><strong>' + contents + '</strong></div>' +
         '<div class="lab-kv"><span>' + esc(copy('Volume', 'Volume')) + '</span><strong>' + esc(container.volumeMl) + ' mL</strong></div>' +
@@ -3589,7 +3722,7 @@
       rootEl.addEventListener('click', function (event) {
         try {
           var t = event.target && event.target.closest
-            ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-redo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel], [data-ready], [data-lab-zoom], [data-lab-fit], [data-lab-aspirate], [data-lab-dispense], [data-lab-drop], [data-lab-grind], [data-lab-drain], [data-lab-connect], [data-lab-duplicate], [data-lab-delete], [data-lab-rotate], [data-dock], [data-dock-close], [data-side], [data-lab-sound], [data-start-creation], [data-stop-creation], [data-step-add], [data-lab-hint], [data-step-connect], [data-step-heat], [data-step-distill], [data-lab-distill], [data-lab-filter]')
+            ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-redo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel], [data-ready], [data-lab-zoom], [data-lab-fit], [data-lab-aspirate], [data-lab-dispense], [data-lab-drop], [data-lab-grind], [data-lab-drain], [data-lab-connect], [data-lab-duplicate], [data-lab-delete], [data-lab-rotate], [data-dock], [data-dock-close], [data-side], [data-lab-sound], [data-start-creation], [data-stop-creation], [data-step-add], [data-lab-hint], [data-step-connect], [data-step-heat], [data-step-distill], [data-lab-distill], [data-lab-filter], [data-lab-reflux], [data-step-reflux], [data-step-reflux-connect]')
             : null;
           if (!t) return;
           if (t.hasAttribute('data-lab-sound')) {
@@ -3922,6 +4055,45 @@
             dropFrom = bur.id;
             flashStatus('<div class="lab-msg" role="status">' + esc(copy('Click a vessel to drop 1 mL.', 'Clique em um vidro para pingar 1 mL.')) + '</div>');
             updateLive();
+            return;
+          }
+          if (t.hasAttribute('data-step-reflux-connect')) {
+            var stood = assembleReflux(session);
+            queueSave();
+            updateLive();
+            if (autoCam) fitView();
+            if (stood.ok) {
+              playSound('place');
+              flashStatus('');
+            } else {
+              playSound('deny');
+              flashStatus('<div class="lab-msg" role="status">' + esc(copy('Add a round-bottom flask and a condenser first.', 'Adicione um balão de fundo redondo e um condensador primeiro.')) + '</div>');
+            }
+            return;
+          }
+          if (t.hasAttribute('data-lab-reflux') || t.hasAttribute('data-step-reflux')) {
+            var pot = t.hasAttribute('data-step-reflux') ? (preferredVessel('round-flask') || selected()) : selected();
+            if (!pot) return;
+            session.selectedId = pot.id;
+            var held = reflux(session, pot.id);
+            queueSave();
+            updateLive();
+            if (held.ok) {
+              playSound('distill');
+              playHeatFx(pot.id);
+              flashStatus('');
+              return;
+            }
+            playSound('deny');
+            var note = copy('This setup cannot reflux yet.', 'Esta montagem ainda não pode refluxar.');
+            if (held.reason === 'cold') {
+              note = copy('Heat the flask to about ' + Math.round(held.needed) + ' °C first.', 'Aqueça o balão até cerca de ' + Math.round(held.needed) + ' °C primeiro.');
+            } else if (held.reason === 'empty') {
+              note = copy('Charge the flask with something that boils.', 'Carregue o balão com algo que ferva.');
+            } else if (held.reason === 'no-rig') {
+              note = copy('Stand a condenser over the flask, with nothing after it.', 'Monte um condensador sobre o balão, sem nada depois dele.');
+            }
+            flashStatus('<div class="lab-msg" role="status">' + esc(note) + '</div>');
             return;
           }
           if (t.hasAttribute('data-lab-filter')) {
@@ -4334,8 +4506,11 @@
     distillSetup: distillSetup,
     filterThrough: filterThrough,
     filterSetup: filterSetup,
+    reflux: reflux,
+    refluxSetup: refluxSetup,
     passesFilter: passesFilter,
     assembleRig: assembleRig,
+    assembleReflux: assembleReflux,
     attachTool: attachTool,
     detachTool: detachTool,
     attachmentOf: attachmentOf,

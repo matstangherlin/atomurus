@@ -466,6 +466,30 @@ test('Pro footer has Plan billing and no Upgrade', async ({ page }) => {
   await expect(page.locator('#ws-nav-foot a[data-nav="plan"]')).toHaveAttribute('href', /\/account\?tab=plan/);
 });
 
+test('Lab reflux holds the volume a still would take away', async ({ page }) => {
+  await installApi(page, { kind: 'free' });
+  await gotoWorkspace(page, '/app?section=lab&mode=bench');
+  await page.waitForSelector('.lab-beaker');
+  await page.locator('#lab-q').fill('refluxo');
+  await page.locator('[data-lab-search]').evaluate((form) => form.requestSubmit());
+  await page.locator('[data-dock-close]').click();
+  await expect(page.locator('[data-lab-guide]')).toContainText(/Step 1 of 7|Passo 1 de 7/i);
+  for (const type of ['round-flask', 'condenser', 'heating-mantle']) {
+    await page.locator(`[data-lab-guide] [data-add-vessel="${type}"]`).click();
+  }
+  await page.locator('[data-lab-guide] [data-step-add="water"]').click();
+  await page.locator('[data-lab-guide] [data-step-add="ethanol"]').click();
+  await expect(page.locator('.lab-round-flask')).toContainText('80 / 250 mL');
+  await page.locator('[data-lab-guide] [data-step-reflux-connect]').click();
+  await expect(page.locator('.lab-links path')).toHaveCount(1);
+  await page.locator('[data-lab-guide] [data-step-heat="80"]').click();
+  await page.locator('[data-lab-guide] [data-step-reflux]').click();
+  await expect(page.locator('.lab-notes')).toContainText(/Refluxed|Refluxou/i);
+  // The whole point: nothing left the flask.
+  await expect(page.locator('.lab-round-flask')).toContainText('80 / 250 mL');
+  await expect(page.locator('[data-lab-guide]')).toContainText(/All steps done|Todos os passos/i);
+});
+
 test('Lab tools clip onto their hosts and ports link by dragging', async ({ page }) => {
   await installApi(page, { kind: 'free' });
   await gotoWorkspace(page, '/app?section=lab&mode=bench');
