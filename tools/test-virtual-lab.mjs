@@ -140,6 +140,11 @@ const mortar = lab.emptySession({ title: 'Grind' });
 assert.equal(lab.addVessel(mortar, 'mortar').ok, true);
 const mortarId = mortar.containers.find((row) => row.type === 'mortar').id;
 assert.equal(lab.addToContainer(mortar, mortarId, 'nacl', 5).ok, true);
+// A mortar alone grinds nothing: the pestle has to be fitted into it.
+assert.equal(lab.grind(mortar, mortarId).reason, 'no-pestle');
+assert.equal(lab.addVessel(mortar, 'pestle').ok, true);
+const pestleId = mortar.containers.find((row) => row.type === 'pestle').id;
+assert.equal(lab.attachTool(mortar, pestleId, mortarId).kind, 'grind');
 assert.equal(lab.grind(mortar, mortarId).ok, true);
 
 const link = lab.emptySession({ title: 'Connect' });
@@ -441,5 +446,85 @@ assert.ok(crude.fractions.every((row) => row.en && row.pt));
 // Still deny-by-default after all the new vocabulary.
 assert.equal(lab.resolveQuery('moonshine').ok, false);
 assert.equal(lab.addToContainer(still, stillFlask.id, 'gasoline', 10).ok, false);
+
+// Tools clip onto hosts by rule, not by proximity alone.
+const fitSession = lab.emptySession({ title: 'Fit', mode: 'bench' });
+for (const type of ['mortar', 'pestle', 'funnel', 'thermometer', 'ph-meter', 'pipette-volumetric', 'pipettor']) {
+  assert.equal(lab.addVessel(fitSession, type).ok, true);
+}
+const pick = (type) => fitSession.containers.find((row) => row.type === type);
+assert.equal(lab.attachRuleFor('pestle', pick('mortar')).kind, 'grind');
+assert.equal(lab.attachRuleFor('pestle', fitSession.containers[0]), null, 'a pestle does not clip into a beaker');
+assert.equal(lab.attachRuleFor('thermometer', fitSession.containers[0]).reads, 'temperature');
+assert.equal(lab.attachRuleFor('thermometer', pick('pestle')), null, 'a probe needs something that holds a sample');
+assert.equal(lab.attachRuleFor('funnel', pick('pestle')), null);
+assert.equal(lab.attachRuleFor('pipettor', pick('pipette-volumetric')).kind, 'filler');
+for (const rule of lab.ATTACH_RULES) {
+  assert.ok(lab.EQUIPMENT[rule.tool], `attach rule names unknown tool ${rule.tool}`);
+  if (rule.host) assert.ok(lab.EQUIPMENT[rule.host], `attach rule names unknown host ${rule.host}`);
+}
+
+// Attaching records the link and moves the tool onto its host.
+assert.equal(lab.attachTool(fitSession, pick('pestle').id, fitSession.containers[0].id).ok, false);
+const fitted = lab.attachTool(fitSession, pick('thermometer').id, fitSession.containers[0].id);
+assert.equal(fitted.ok, true);
+assert.equal(lab.attachmentOf(fitSession, pick('thermometer').id).kind, 'probe');
+assert.equal(lab.attachmentsOn(fitSession, fitSession.containers[0].id).length, 1);
+const hostObj = fitSession.board.objects.find((row) => row.id === fitSession.containers[0].id);
+const toolObj = fitSession.board.objects.find((row) => row.id === pick('thermometer').id);
+assert.equal(toolObj.x - hostObj.x, 26);
+assert.equal(toolObj.y - hostObj.y, -34);
+// A tool only fits one host at a time.
+assert.equal(lab.attachTool(fitSession, pick('thermometer').id, fitSession.containers[1].id).ok, true);
+assert.equal(lab.attachmentsOn(fitSession, fitSession.containers[0].id).length, 0);
+assert.equal(lab.detachTool(fitSession, pick('thermometer').id), true);
+assert.equal(lab.attachmentOf(fitSession, pick('thermometer').id), null);
+
+// Snapping only reaches a host that is actually near.
+const snapSession = lab.emptySession({ title: 'Snap', mode: 'bench' });
+lab.addVessel(snapSession, 'mortar');
+lab.addVessel(snapSession, 'pestle');
+const snapMortar = snapSession.containers.find((row) => row.type === 'mortar');
+const snapPestle = snapSession.containers.find((row) => row.type === 'pestle');
+const mortarObj = snapSession.board.objects.find((row) => row.id === snapMortar.id);
+const pestleObj = snapSession.board.objects.find((row) => row.id === snapPestle.id);
+pestleObj.x = mortarObj.x + 600;
+pestleObj.y = mortarObj.y;
+assert.equal(lab.snapTargetFor(snapSession, snapPestle.id), null, 'far away is no snap');
+pestleObj.x = mortarObj.x + 10;
+pestleObj.y = mortarObj.y - 24;
+const near = lab.snapTargetFor(snapSession, snapPestle.id);
+assert.ok(near && near.host.id === snapMortar.id);
+assert.ok(near.distance < 20);
+
+// A funnel is a route: what goes in lands in the vessel under it.
+const route = lab.emptySession({ title: 'Route', mode: 'bench' });
+lab.addVessel(route, 'funnel');
+const routeFunnel = route.containers.find((row) => row.type === 'funnel');
+assert.equal(lab.routeTarget(route, routeFunnel).id, routeFunnel.id, 'an unattached funnel keeps what it gets');
+assert.equal(lab.attachTool(route, routeFunnel.id, 'flask-b').kind, 'funnel');
+assert.equal(lab.routeTarget(route, routeFunnel).id, 'flask-b');
+assert.equal(lab.addToContainer(route, routeFunnel.id, 'water', 30).ok, true);
+assert.equal(Number(routeFunnel.volumeMl) || 0, 0, 'nothing stays in the funnel');
+assert.equal(route.containers.find((row) => row.id === 'flask-b').volumeMl, 30);
+// Removing the host takes the attachment with it.
+assert.equal(lab.removeObject(route, 'flask-b').ok, true);
+assert.equal(lab.attachmentOf(route, routeFunnel.id), null);
+
+// A volumetric pipette takes its nominal volume or refuses, and says so.
+const exact = lab.emptySession({ title: 'Exact', mode: 'bench' });
+assert.equal(lab.addVessel(exact, 'pipette-volumetric').ok, true);
+const exactPip = exact.containers.find((row) => row.type === 'pipette-volumetric');
+const nominal = lab.EQUIPMENT['pipette-volumetric'].nominalVolumeMl;
+assert.ok(nominal > 0);
+assert.equal(lab.addToContainer(exact, 'beaker-a', 'water', nominal - 5).ok, true);
+const short = lab.aspirate(exact, exactPip.id, 'beaker-a');
+assert.equal(short.ok, false);
+assert.equal(short.reason, 'short');
+assert.equal(short.need, nominal);
+assert.equal(lab.addToContainer(exact, 'beaker-a', 'water', 20).ok, true);
+const exactDraw = lab.aspirate(exact, exactPip.id, 'beaker-a', 13.42);
+assert.equal(exactDraw.ok, true);
+assert.equal(exactPip.volumeMl, nominal, 'it takes the nominal volume, never 13.42 mL');
 
 console.log('virtual lab tests passed');

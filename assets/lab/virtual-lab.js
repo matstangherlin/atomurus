@@ -1581,7 +1581,7 @@
       return { ok: false, reason: resolved.reason || 'unavailable' };
     }
     var spec = SUBSTANCES[resolved.id];
-    var container = findContainer(session, containerId);
+    var container = routeTarget(session, findContainer(session, containerId));
     if (!container) return { ok: false, reason: 'no-container' };
     if (!canAddSubstance(container, spec)) {
       observe(session, line(session, 'That tool does not hold that material.', 'Essa ferramenta não aceita esse material.'));
@@ -1681,6 +1681,9 @@
       session.board.connections = (session.board.connections || []).filter(function (row) {
         return row.fromId !== id && row.toId !== id;
       });
+      session.board.attachments = (session.board.attachments || []).filter(function (row) {
+        return row.toolId !== id && row.hostId !== id;
+      });
     }
     if (session.selectedId === id) session.selectedId = (session.containers[0] || {}).id;
     observe(session, line(session, 'Removed ' + (container.label || id) + '.', 'Removeu ' + (container.label || id) + '.'));
@@ -1717,6 +1720,9 @@
     var qty = Number(amount);
     if (hasCap(pip, 'dispense_exact') || spec.precision) {
       qty = spec.nominalVolumeMl || pip.capacityMl;
+      if ((Number(from.volumeMl) || 0) + 0.05 < qty) {
+        return { ok: false, reason: 'short', need: qty, have: Number(from.volumeMl) || 0 };
+      }
     } else if (!(qty > 0)) {
       qty = Math.min(pip.capacityMl, Number(from.volumeMl) || 0);
     }
@@ -1751,6 +1757,7 @@
     if (!processAllowed('grind')) return { ok: false, reason: 'unavailable' };
     var mortar = findContainer(session, mortarId);
     if (!mortar || !hasCap(mortar, 'grind')) return { ok: false, reason: 'tool' };
+    if (!attachedTool(session, mortarId, 'grind')) return { ok: false, reason: 'no-pestle' };
     var solids = (mortar.contents || []).filter(function (row) {
       var spec = SUBSTANCES[row.id];
       return spec && spec.state === 'solid' && (Number(row.amount) || 0) > 0.05;
@@ -1804,6 +1811,113 @@
     });
     observe(session, line(session, 'Connected ' + (a.label || fromId) + ' to ' + (b.label || toId) + '.', 'Conectou ' + (a.label || fromId) + ' a ' + (b.label || toId) + '.'));
     return { ok: true };
+  }
+
+  /* Which tool clips onto which host, and where it sits once it does.
+     Offsets are in board pixels, relative to the host's top-left. */
+  var ATTACH_RULES = [
+    { tool: 'pestle', host: 'mortar', kind: 'grind', dx: 4, dy: -20 },
+    { tool: 'funnel', hostHolds: true, kind: 'funnel', dx: 0, dy: -100 },
+    { tool: 'thermometer', hostHolds: true, kind: 'probe', reads: 'temperature', dx: 26, dy: -34 },
+    { tool: 'ph-meter', hostHolds: true, kind: 'probe', reads: 'ph', dx: -28, dy: -38 },
+    { tool: 'pipettor', hostTool: ['pipette-graduated', 'pipette-volumetric'], kind: 'filler', dx: 0, dy: -96 }
+  ];
+
+  var ATTACH_RADIUS = 86;
+
+  function attachRuleFor(toolType, host) {
+    if (!host) return null;
+    for (var i = 0; i < ATTACH_RULES.length; i += 1) {
+      var rule = ATTACH_RULES[i];
+      if (rule.tool !== toolType) continue;
+      if (rule.host && host.type !== rule.host) continue;
+      if (rule.hostTool && rule.hostTool.indexOf(host.type) === -1) continue;
+      if (rule.hostHolds && !(canHold(host) && hasCap(host, 'contain'))) continue;
+      return rule;
+    }
+    return null;
+  }
+
+  function ensureAttachments(session) {
+    ensureBoard(session);
+    if (!Array.isArray(session.board.attachments)) session.board.attachments = [];
+    return session.board.attachments;
+  }
+
+  function attachmentOf(session, toolId) {
+    return ensureAttachments(session).filter(function (row) { return row.toolId === toolId; })[0] || null;
+  }
+
+  function attachmentsOn(session, hostId) {
+    return ensureAttachments(session).filter(function (row) { return row.hostId === hostId; });
+  }
+
+  function attachedTool(session, hostId, kind) {
+    var found = attachmentsOn(session, hostId).filter(function (row) { return row.kind === kind; })[0];
+    return found ? findContainer(session, found.toolId) : null;
+  }
+
+  function detachTool(session, toolId) {
+    var list = ensureAttachments(session);
+    var before = list.length;
+    session.board.attachments = list.filter(function (row) { return row.toolId !== toolId; });
+    return before !== session.board.attachments.length;
+  }
+
+  function attachTool(session, toolId, hostId) {
+    var tool = findContainer(session, toolId);
+    var host = findContainer(session, hostId);
+    if (!tool || !host || toolId === hostId) return { ok: false, reason: 'no-container' };
+    var rule = attachRuleFor(tool.type, host);
+    if (!rule) return { ok: false, reason: 'incompatible' };
+    detachTool(session, toolId);
+    session.board.attachments.push({ toolId: toolId, hostId: hostId, kind: rule.kind });
+    var hostObj = findObject(session, hostId);
+    var toolObj = findObject(session, toolId);
+    if (hostObj && toolObj) {
+      toolObj.x = Math.round(Number(hostObj.x) + rule.dx);
+      toolObj.y = Math.round(Number(hostObj.y) + rule.dy);
+      tool.x = toolObj.x;
+      tool.y = toolObj.y;
+    }
+    observe(session, line(
+      session,
+      'Fitted ' + (tool.label || toolId) + ' to ' + (host.label || hostId) + '.',
+      'Encaixou ' + (tool.label || toolId) + ' em ' + (host.label || hostId) + '.'
+    ));
+    return { ok: true, kind: rule.kind, host: host, tool: tool };
+  }
+
+  /* The nearest compatible host for a tool being dragged, for snap feedback. */
+  function snapTargetFor(session, toolId) {
+    var tool = findContainer(session, toolId);
+    var toolObj = findObject(session, toolId);
+    if (!tool || !toolObj) return null;
+    var best = null;
+    var bestDist = ATTACH_RADIUS;
+    (session.containers || []).forEach(function (host) {
+      if (host.id === toolId) return;
+      var rule = attachRuleFor(tool.type, host);
+      if (!rule) return;
+      var hostObj = findObject(session, host.id);
+      if (!hostObj) return;
+      var dx = (Number(toolObj.x) - rule.dx) - Number(hostObj.x);
+      var dy = (Number(toolObj.y) - rule.dy) - Number(hostObj.y);
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < bestDist) {
+        bestDist = dist;
+        best = { host: host, rule: rule, distance: Math.round(dist) };
+      }
+    });
+    return best;
+  }
+
+  /* A funnel is a route, not a container: whatever goes in lands below it. */
+  function routeTarget(session, container) {
+    if (!container || container.type !== 'funnel') return container;
+    var link = attachmentOf(session, container.id);
+    if (!link || link.kind !== 'funnel') return container;
+    return findContainer(session, link.hostId) || container;
   }
 
   var HEAT_OFFSET = 34;
@@ -2296,6 +2410,7 @@
     var dragging = null;
     var dragMoved = false;
     var ignoreClickUntil = 0;
+    var ignoreClickId = '';
     var panning = false;
     var panStart = null;
     var selectedIds = [];
@@ -2311,6 +2426,7 @@
     var hintLevel = 0;
     var lastStepKey = '';
     var motionObserver = null;
+    var linking = null;
 
     function copy(en, pt) { return lang === 'pt' ? pt : en; }
     function esc(value) {
@@ -2671,6 +2787,12 @@
       };
     }
 
+    function linkingHtml() {
+      if (!linking || !linking.to) return '';
+      return '<svg class="lab-linking" width="2400" height="1600" viewBox="0 0 2400 1600" aria-hidden="true">' +
+        '<path d="M' + linking.from.x + ' ' + linking.from.y + ' L' + linking.to.x + ' ' + linking.to.y + '" /></svg>';
+    }
+
     function connectionsHtml() {
       var links = (session.board && session.board.connections) || [];
       if (!links.length) return '';
@@ -2704,9 +2826,10 @@
       var snap = heatZoneFor(session, container.id);
       if (snap && hasCap(container, 'heat')) heatCls += ' is-heat-zone';
       var cupped = specOf(kind).heat && heaterIsCupped(session, container.id);
+      var fittedNow = attachmentOf(session, container.id);
       var emulsion = String(container.appearance || '').indexOf('emulsion') !== -1 || container.productId === 'sunscreen';
       var warm = (Number(container.temperatureC) || 22) >= 40;
-      var cls = 'lab-glass lab-piece lab-' + kind + (kind === 'beaker' ? ' lab-beaker' : '') + (active ? ' is-active' : '') + (container.fizz ? ' is-fizz' : '') + (emulsion ? ' is-emulsion' : '') + (warm ? ' is-warm' : '') + (cupped ? ' is-cupped' : '') + pourCls + heatCls;
+      var cls = 'lab-glass lab-piece lab-' + kind + (kind === 'beaker' ? ' lab-beaker' : '') + (active ? ' is-active' : '') + (container.fizz ? ' is-fizz' : '') + (emulsion ? ' is-emulsion' : '') + (warm ? ' is-warm' : '') + (cupped ? ' is-cupped' : '') + (fittedNow ? ' is-fitted' : '') + (fittedNow && fittedNow.kind !== 'probe' && fittedNow.kind !== 'funnel' ? ' is-fitted-quiet' : '') + pourCls + heatCls;
       var product = lang === 'pt' ? (container.productPt || container.product) : container.product;
       var x = obj ? Number(obj.x) : Number(container.x);
       var y = obj ? Number(obj.y) : Number(container.y);
@@ -2724,14 +2847,36 @@
         lit: kind === 'bunsen' && heatFrom === container.id
       });
       var spec = specOf(kind);
+      var fitted = attachmentOf(session, container.id);
+      var host = fitted ? findContainer(session, fitted.hostId) : null;
       var meta = holds
         ? (esc(container.volumeMl) + ' / ' + esc(container.capacityMl) + ' mL')
         : esc(lang === 'pt' ? spec.labelPt : spec.labelEn);
-      var ports = ((spec.ports || []).length && (active || connectFrom))
-        ? '<span class="lab-ports">' + (spec.ports || []).map(function (port) {
-          return '<i class="lab-port" data-port="' + esc(port.id) + '" data-port-type="' + esc(port.type) + '"></i>';
-        }).join('') + '</span>'
-        : '';
+      /* A fitted probe reads the vessel it is in, right on the board. */
+      if (fitted && host && fitted.kind === 'probe') {
+        mixContainer(host);
+        if (kind === 'thermometer') meta = esc(host.temperatureC) + ' °C';
+        else if (kind === 'ph-meter') meta = 'pH ' + esc(host.ph == null ? '—' : host.ph);
+      } else if (fitted && host && fitted.kind === 'funnel') {
+        meta = esc(copy('into ', 'para ')) + esc(host.label || host.id);
+      } else if (fitted) {
+        meta = '';
+      }
+      var showPorts = (spec.ports || []).length && (active || connectFrom || linking);
+      var ports = '';
+      if (showPorts) {
+        var dot = function (port) {
+          var live = linking && linking.fromId !== container.id && linking.type === port.type;
+          return '<span class="lab-port' + (live ? ' is-open' : '') + '" data-port="' + esc(port.id) +
+            '" data-port-type="' + esc(port.type) + '" data-port-owner="' + esc(container.id) +
+            '" role="button" title="' + esc(port.id + ' · ' + port.type) + '" aria-label="' + esc(port.id) + '"></span>';
+        };
+        /* An outlet belongs at the bottom of the drawing, the way it is plumbed. */
+        var lower = (spec.ports || []).filter(function (port) { return String(port.id).indexOf('outlet') !== -1; });
+        var upper = (spec.ports || []).filter(function (port) { return String(port.id).indexOf('outlet') === -1; });
+        if (upper.length) ports += '<span class="lab-ports lab-ports-top">' + upper.map(dot).join('') + '</span>';
+        if (lower.length) ports += '<span class="lab-ports lab-ports-bottom">' + lower.map(dot).join('') + '</span>';
+      }
       return '<button type="button" class="' + cls + '" data-vessel="' + esc(container.id) + '" draggable="false" aria-pressed="' + (active ? 'true' : 'false') + '" style="left:' + x + 'px;top:' + y + 'px;z-index:' + z + ';--lab-rot:' + rot + 'deg;transform:rotate(' + rot + 'deg)">' +
         body +
         ports +
@@ -2854,6 +2999,45 @@
       setTimeout(function () {
         if (piece.classList) piece.classList.remove('is-reacting');
       }, 900);
+    }
+
+    function clearSnapHints() {
+      node.querySelectorAll('.is-snap-target').forEach(function (el) {
+        el.classList.remove('is-snap-target');
+      });
+    }
+
+    function showSnapHint(toolId) {
+      var target = snapTargetFor(session, toolId);
+      var current = node.querySelector('.is-snap-target');
+      var wanted = target ? node.querySelector('[data-vessel="' + target.host.id + '"]') : null;
+      if (current === wanted) return;
+      clearSnapHints();
+      if (wanted) wanted.classList.add('is-snap-target');
+    }
+
+    /* Dropping a tool on a compatible host fits it; dragging it clear of the
+       host it was fitted to takes it off again. */
+    function settleAttachment(toolId) {
+      clearSnapHints();
+      var target = snapTargetFor(session, toolId);
+      if (target) {
+        var fitted = attachTool(session, toolId, target.host.id);
+        if (fitted.ok) {
+          syncVisual(session, toolId);
+          playSound('place');
+        }
+        return;
+      }
+      var existing = attachmentOf(session, toolId);
+      if (existing && detachTool(session, toolId)) {
+        var tool = findContainer(session, toolId);
+        observe(session, copy(
+          'Took ' + (tool ? tool.label || toolId : toolId) + ' off.',
+          'Retirou ' + (tool ? tool.label || toolId : toolId) + '.'
+        ));
+        playSound('select');
+      }
     }
 
     function runDistill(fromGuide) {
@@ -3038,7 +3222,7 @@
       var dockBody = node.querySelector('[data-dock-body]');
       var amounts = node.querySelectorAll('[data-amount]');
       announceStep();
-      if (bench && !dragging) bench.innerHTML = connectionsHtml() + session.containers.map(vesselHtml).join('');
+      if (bench && !dragging) bench.innerHTML = connectionsHtml() + linkingHtml() + session.containers.map(vesselHtml).join('');
       if (inspector) inspector.innerHTML = inspectorHtml();
       if (notes) notes.innerHTML = notesHtml();
       if (guide) guide.innerHTML = tutorialHtml();
@@ -3192,7 +3376,7 @@
         dockHtml(results) +
         '<div class="lab-stage-frame">' +
         '<div class="lab-board-stage" data-lab-stage tabindex="0">' +
-        '<div class="lab-board-world" data-lab-world data-lab-bench>' + connectionsHtml() + session.containers.map(vesselHtml).join('') + '</div>' +
+        '<div class="lab-board-world" data-lab-world data-lab-bench>' + connectionsHtml() + linkingHtml() + session.containers.map(vesselHtml).join('') + '</div>' +
         '</div>' +
         '<div class="lab-actionbar" role="toolbar" aria-label="' + esc(copy('Board actions', 'Ações do board')) + '">' +
         '<button type="button" class="ws-btn ws-btn-sm" data-lab-pour>' + esc(copy('Pour', 'Transferir')) + '</button>' +
@@ -3413,8 +3597,9 @@
             return;
           }
           if (t.getAttribute('data-vessel')) {
-            if (Date.now() < ignoreClickUntil) return;
             var id = t.getAttribute('data-vessel');
+            /* Only the piece that was just dragged swallows its click. */
+            if (Date.now() < ignoreClickUntil && (!ignoreClickId || ignoreClickId === id)) return;
             var clicked = findContainer(session, id);
             var spec = clicked ? EQUIPMENT[clicked.type] || {} : {};
             if (event.shiftKey) {
@@ -3477,7 +3662,12 @@
               queueSave();
               updateLive();
               if (piped.ok) playTransferFx(pipFrom, pipTo, pipColor, 'dispense');
-              else flashStatus('<div class="lab-msg" role="status">' + esc(copy('This tool can\'t be used with that material or vessel.', 'Essa ferramenta não pode ser usada com esse material ou vidro.')) + '</div>');
+              else if (piped.reason === 'short') {
+                flashStatus('<div class="lab-msg" role="status">' + esc(copy(
+                  'A volumetric pipette takes its full ' + piped.need + ' mL or nothing. That vessel holds ' + piped.have + ' mL.',
+                  'Uma pipeta volumétrica leva os ' + piped.need + ' mL nominais ou nada. Esse vidro tem ' + piped.have + ' mL.'
+                )) + '</div>');
+              } else flashStatus('<div class="lab-msg" role="status">' + esc(copy('This tool can\'t be used with that material or vessel.', 'Essa ferramenta não pode ser usada com esse material ou vidro.')) + '</div>');
               return;
             }
             if (heatFrom && pourFrom === '' && id !== heatFrom && canHold(clicked) && hasCap(clicked, 'heat')) {
@@ -3741,13 +3931,33 @@
         stage.addEventListener('pointerdown', function (event) {
           if (event.button === 1 || spaceDown) {
             panning = true;
-            panStart = { x: event.clientX, y: event.clientY, panX: panX, panY: panY };
+            panStart = { x: event.pageX, y: event.pageY, panX: panX, panY: panY };
             dragMoved = false;
             try { stage.setPointerCapture(event.pointerId); } catch (e0) {}
             event.preventDefault();
             return;
           }
           if (event.button != null && event.button !== 0) return;
+          var port = event.target.closest && event.target.closest('[data-port]');
+          if (port) {
+            var ownerId = port.getAttribute('data-port-owner');
+            var anchor = portAnchor(ownerId, port.getAttribute('data-port'));
+            if (anchor) {
+              linking = {
+                fromId: ownerId,
+                fromPort: port.getAttribute('data-port'),
+                type: port.getAttribute('data-port-type'),
+                from: anchor,
+                to: anchor
+              };
+              dragMoved = false;
+              try { stage.setPointerCapture(event.pointerId); } catch (ep) {}
+              updateLive();
+              event.preventDefault();
+              event.stopPropagation();
+            }
+            return;
+          }
           var piece = event.target.closest && event.target.closest('[data-vessel]');
           if (piece) {
             var id = piece.getAttribute('data-vessel');
@@ -3757,8 +3967,8 @@
             if (!vessel) return;
             dragging = {
               id: id,
-              startX: event.clientX,
-              startY: event.clientY,
+              startX: event.pageX,
+              startY: event.pageY,
               origX: obj ? Number(obj.x) : Number(vessel.x) || 0,
               origY: obj ? Number(obj.y) : Number(vessel.y) || 0
             };
@@ -3767,15 +3977,30 @@
             return;
           }
           panning = true;
-          panStart = { x: event.clientX, y: event.clientY, panX: panX, panY: panY };
+          panStart = { x: event.pageX, y: event.pageY, panX: panX, panY: panY };
           dragMoved = false;
           try { stage.setPointerCapture(event.pointerId); } catch (e2) {}
         }, opts);
         stage.addEventListener('pointermove', function (event) {
+          if (linking) {
+            var rect = stage.getBoundingClientRect();
+            linking.to = {
+              x: Math.round((event.clientX - rect.left - panX) / zoom),
+              y: Math.round((event.clientY - rect.top - panY) / zoom)
+            };
+            dragMoved = true;
+            var band = node.querySelector('.lab-linking path');
+            if (band) {
+              band.setAttribute('d', 'M' + linking.from.x + ' ' + linking.from.y + ' L' + linking.to.x + ' ' + linking.to.y);
+            } else {
+              updateLive();
+            }
+            return;
+          }
           if (dragging) {
-            var dx = (event.clientX - dragging.startX) / zoom;
-            var dy = (event.clientY - dragging.startY) / zoom;
-            if (Math.abs(event.clientX - dragging.startX) > 4 || Math.abs(event.clientY - dragging.startY) > 4) {
+            var dx = (event.pageX - dragging.startX) / zoom;
+            var dy = (event.pageY - dragging.startY) / zoom;
+            if (Math.abs(event.pageX - dragging.startX) > 4 || Math.abs(event.pageY - dragging.startY) > 4) {
               dragMoved = true;
             }
             var obj = findObject(session, dragging.id);
@@ -3789,21 +4014,53 @@
               el.style.left = nx + 'px';
               el.style.top = ny + 'px';
             }
+            showSnapHint(dragging.id);
             return;
           }
           if (panning && panStart) {
-            panX = panStart.panX + (event.clientX - panStart.x);
-            panY = panStart.panY + (event.clientY - panStart.y);
+            panX = panStart.panX + (event.pageX - panStart.x);
+            panY = panStart.panY + (event.pageY - panStart.y);
             applyWorld();
           }
         }, opts);
         function slosh(id) {
           animateFill(node.querySelector('[data-vessel="' + id + '"]'), 'is-sloshing', 660);
         }
-        function endPointer() {
+        function endPointer(event) {
+          if (linking) {
+            var made = null;
+            if (event && event.clientX != null) {
+              var under = document.elementFromPoint(event.clientX, event.clientY);
+              var dropPort = under && under.closest ? under.closest('[data-port]') : null;
+              var dropPiece = under && under.closest ? under.closest('[data-vessel]') : null;
+              var toId = dropPort ? dropPort.getAttribute('data-port-owner') : (dropPiece ? dropPiece.getAttribute('data-vessel') : '');
+              if (toId && toId !== linking.fromId) {
+                made = connectPorts(session, linking.fromId, linking.fromPort, toId, dropPort ? dropPort.getAttribute('data-port') : '');
+              }
+            }
+            var wasLinking = linking;
+            linking = null;
+            ignoreClickUntil = Date.now() + 280;
+            ignoreClickId = wasLinking ? wasLinking.fromId : '';
+            if (made && made.ok) {
+              queueSave();
+              playSound('place');
+            } else if (made) {
+              playSound('deny');
+              flashStatus('<div class="lab-msg" role="status">' + esc(copy(
+                'Those ports are not compatible. A fluid port only joins another fluid port.',
+                'Esses portos não são compatíveis. Um porto de fluido só liga em outro porto de fluido.'
+              )) + '</div>');
+            }
+            dragMoved = false;
+            updateLive();
+            if (wasLinking && autoCam) fitView();
+            return;
+          }
           var movedId = dragging && dragMoved ? dragging.id : '';
           if (dragging && dragMoved) {
             ignoreClickUntil = Date.now() + 280;
+            ignoreClickId = dragging.id;
             var obj = findObject(session, dragging.id);
             var vessel = findContainer(session, dragging.id);
             var heater = heatZoneFor(session, dragging.id);
@@ -3812,12 +4069,14 @@
               obj.y = Number(heater.y) - HEAT_OFFSET;
               syncVisual(session, dragging.id);
             }
+            settleAttachment(dragging.id);
             queueSave();
           } else if (panning && panStart) {
             var moved = Math.abs(panX - panStart.panX) > 4 || Math.abs(panY - panStart.panY) > 4;
             if (moved) {
               autoCam = false;
               ignoreClickUntil = Date.now() + 280;
+              ignoreClickId = '';
               queueSave();
             }
           }
@@ -3931,6 +4190,15 @@
     distill: distill,
     distillSetup: distillSetup,
     assembleRig: assembleRig,
+    attachTool: attachTool,
+    detachTool: detachTool,
+    attachmentOf: attachmentOf,
+    attachmentsOn: attachmentsOn,
+    attachedTool: attachedTool,
+    attachRuleFor: attachRuleFor,
+    snapTargetFor: snapTargetFor,
+    routeTarget: routeTarget,
+    ATTACH_RULES: ATTACH_RULES,
     firstOfType: firstOfType,
     maxTemperatureFor: maxTemperatureFor,
     volatileParts: volatileParts,

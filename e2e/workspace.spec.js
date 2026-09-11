@@ -466,6 +466,65 @@ test('Pro footer has Plan billing and no Upgrade', async ({ page }) => {
   await expect(page.locator('#ws-nav-foot a[data-nav="plan"]')).toHaveAttribute('href', /\/account\?tab=plan/);
 });
 
+test('Lab tools clip onto their hosts and ports link by dragging', async ({ page }) => {
+  await installApi(page, { kind: 'free' });
+  await gotoWorkspace(page, '/app?section=lab&mode=bench');
+  await page.waitForSelector('.lab-beaker');
+  await page.locator('[data-dock="measure"]').click();
+  await page.locator('[data-add-vessel="mortar"]').first().click();
+  await page.locator('[data-add-vessel="pestle"]').first().click();
+  await page.locator('[data-add-vessel="thermometer"]').first().click();
+  await page.locator('[data-dock="materials"]').click();
+  await page.locator('[data-vessel="beaker-a"]').click();
+  await page.locator('.lab-chip[data-add="water"]').click();
+  await page.locator('[data-dock-close]').click();
+  await page.locator('[data-lab-fit]').click();
+
+  async function dragOnto(toolSelector, hostSelector, dx = 0) {
+    const tool = await page.locator(toolSelector).boundingBox();
+    const host = await page.locator(hostSelector).boundingBox();
+    await page.mouse.move(tool.x + tool.width / 2, tool.y + 40);
+    await page.mouse.down();
+    await page.mouse.move(host.x + host.width / 2 + dx, host.y + 30, { steps: 12 });
+    await page.mouse.up();
+  }
+
+  // A mortar alone will not grind; the pestle has to be fitted into it.
+  await page.locator('.lab-mortar').click();
+  await page.locator('[data-lab-grind]').click();
+  await expect(page.locator('.lab-msg')).toBeVisible();
+  await dragOnto('.lab-pestle', '.lab-mortar');
+  await expect(page.locator('.lab-notes')).toContainText(/Fitted|Encaixou/i);
+  await expect(page.locator('.lab-pestle')).toHaveClass(/is-fitted/);
+
+  // A fitted thermometer reads its vessel on the board.
+  await dragOnto('.lab-thermometer', '[data-vessel="beaker-a"]', 24);
+  await expect(page.locator('.lab-thermometer .lab-glass-meta')).toContainText('°C');
+  await expect(page.locator('.lab-thermometer')).toHaveClass(/is-fitted/);
+
+  // Ports appear on the selected piece and drag out a connection.
+  await page.locator('[data-dock="glassware"]').click();
+  await page.locator('[data-add-vessel="round-flask"]').first().click();
+  await page.locator('[data-dock="heat"]').click();
+  await page.locator('[data-add-vessel="condenser"]').first().click();
+  await page.locator('[data-dock-close]').click();
+  await page.locator('[data-lab-fit]').click();
+  await expect(page.locator('.lab-beaker .lab-port')).toHaveCount(0);
+  await page.locator('.lab-round-flask').click();
+  await expect(page.locator('.lab-round-flask')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('.lab-round-flask .lab-port')).toHaveCount(1);
+  const port = await page.locator('.lab-round-flask .lab-port').boundingBox();
+  const condenser = await page.locator('.lab-condenser').boundingBox();
+  await page.mouse.move(port.x + port.width / 2, port.y + port.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(condenser.x + condenser.width / 2, condenser.y + 40, { steps: 14 });
+  await expect(page.locator('.lab-linking path')).toHaveCount(1);
+  await page.mouse.up();
+  await expect(page.locator('.lab-notes')).toContainText(/Connected|Conectou/i);
+  await expect(page.locator('.lab-links path')).toHaveCount(1);
+  await expect(page.locator('.lab-linking')).toHaveCount(0);
+});
+
 test('Lab reactions fire with an equation and the still runs from the guide', async ({ page }) => {
   await installApi(page, { kind: 'free' });
   await gotoWorkspace(page, '/app?section=lab');

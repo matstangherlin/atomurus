@@ -1807,19 +1807,61 @@ svg.lab-links {
 }
 .lab-ports {
   position: absolute;
-  inset: 18px 8px auto;
+  left: 4px;
+  right: 4px;
   display: flex;
   justify-content: center;
-  gap: 6px;
-  pointer-events: none;
+  gap: 8px;
+  z-index: 4;
 }
+.lab-ports-top { top: 4px; }
+.lab-ports-bottom { top: 140px; }
 .lab-port {
-  width: 8px;
-  height: 8px;
+  display: block;
+  box-sizing: border-box;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: 2px solid color-mix(in oklab, var(--lc-paper, #F8F5EC) 80%, transparent);
   border-radius: 99px;
   background: var(--lc-green, #1E6A50);
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--lc-paper, #F8F5EC) 80%, transparent);
+  cursor: crosshair;
+  touch-action: none;
 }
+.lab-port:hover,
+.lab-port.is-open {
+  background: color-mix(in oklab, var(--lc-green, #1E6A50) 75%, #fff);
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--lc-green, #1E6A50) 24%, transparent);
+}
+svg.lab-linking {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2400px;
+  height: 1600px;
+  max-width: none;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 3;
+}
+svg.lab-linking path {
+  fill: none;
+  stroke: var(--lc-green, #1E6A50);
+  stroke-width: 3;
+  stroke-dasharray: 7 6;
+  stroke-linecap: round;
+}
+/* A tool near a host it can clip onto. */
+.lab-piece.is-snap-target {
+  border-style: solid;
+  border-color: var(--lc-green, #1E6A50);
+  background: color-mix(in oklab, var(--lc-green, #1E6A50) 9%, transparent);
+}
+.lab-piece.is-fitted .lab-glass-meta { color: var(--lc-green, #1E6A50); font-weight: 650; }
+/* A fitted tool sits inside its host, so its own name would collide. */
+.lab-piece.is-fitted .lab-glass-name { display: none; }
+.lab-piece.is-fitted-quiet .lab-glass-meta { display: none; }
+.lab-piece.is-fitted { z-index: 5; }
 .lab-zoom-label {
   min-width: 48px;
   text-align: center;
