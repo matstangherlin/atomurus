@@ -472,8 +472,9 @@ assert.equal(lab.attachmentOf(fitSession, pick('thermometer').id).kind, 'probe')
 assert.equal(lab.attachmentsOn(fitSession, fitSession.containers[0].id).length, 1);
 const hostObj = fitSession.board.objects.find((row) => row.id === fitSession.containers[0].id);
 const toolObj = fitSession.board.objects.find((row) => row.id === pick('thermometer').id);
-assert.equal(toolObj.x - hostObj.x, 26);
-assert.equal(toolObj.y - hostObj.y, -34);
+const probeRule = lab.ATTACH_RULES.find((row) => row.tool === 'thermometer');
+assert.equal(toolObj.x - hostObj.x, probeRule.dx);
+assert.equal(toolObj.y - hostObj.y, probeRule.dy);
 // A tool only fits one host at a time.
 assert.equal(lab.attachTool(fitSession, pick('thermometer').id, fitSession.containers[1].id).ok, true);
 assert.equal(lab.attachmentsOn(fitSession, fitSession.containers[0].id).length, 0);
@@ -526,5 +527,56 @@ assert.equal(lab.addToContainer(exact, 'beaker-a', 'water', 20).ok, true);
 const exactDraw = lab.aspirate(exact, exactPip.id, 'beaker-a', 13.42);
 assert.equal(exactDraw.ok, true);
 assert.equal(exactPip.volumeMl, nominal, 'it takes the nominal volume, never 13.42 mL');
+
+// A fitted instrument is drawn as the part that goes in the vessel.
+const probeArt = lab.VESSEL_ART.thermometer;
+assert.ok(probeArt.fitted && probeArt.fitted !== probeArt.glass);
+const loose = lab.emptySession({ title: 'Probe', mode: 'bench' });
+lab.addVessel(loose, 'thermometer');
+const probePiece = loose.containers.find((row) => row.type === 'thermometer');
+assert.notEqual(lab.vesselSvg(probePiece, { fitted: true }), lab.vesselSvg(probePiece, { fitted: false }));
+assert.ok(lab.vesselSvg(probePiece, { fitted: true }).indexOf('lab-svg-marks') === -1,
+  'a fitted probe drops the scale it cannot show at that size');
+for (const id of ['thermometer', 'ph-meter', 'funnel']) {
+  assert.ok(lab.VESSEL_ART[id].fitted, `${id} needs a fitted drawing`);
+}
+
+// Filtering keeps what will not dissolve and lets the rest run through.
+assert.equal(lab.passesFilter(lab.SUBSTANCES.water), true);
+assert.equal(lab.passesFilter(lab.SUBSTANCES.nacl), true, 'salt dissolves and passes');
+assert.equal(lab.passesFilter(lab.SUBSTANCES.sucrose), true);
+assert.equal(lab.passesFilter(lab.SUBSTANCES.fe), false, 'iron stays on the filter');
+assert.equal(lab.passesFilter(lab.SUBSTANCES.zno), false);
+
+const filterSession = lab.emptySession({ title: 'Filter', mode: 'bench' });
+assert.equal(lab.addVessel(filterSession, 'funnel').ok, true);
+const filterFunnel = filterSession.containers.find((row) => row.type === 'funnel');
+assert.equal(lab.filterSetup(filterSession, 'beaker-a'), null, 'a loose funnel is not a filter rig');
+assert.equal(lab.attachTool(filterSession, filterFunnel.id, 'flask-b').kind, 'funnel');
+assert.ok(lab.filterSetup(filterSession, 'beaker-a'));
+assert.equal(lab.filterThrough(filterSession, 'beaker-a').reason, 'empty');
+lab.addToContainer(filterSession, 'beaker-a', 'water', 60);
+lab.addToContainer(filterSession, 'beaker-a', 'nacl', 5);
+assert.equal(lab.filterThrough(filterSession, 'beaker-a').reason, 'nothing-to-retain');
+lab.addToContainer(filterSession, 'beaker-a', 'fe', 8);
+const filtered = lab.filterThrough(filterSession, 'beaker-a');
+assert.equal(filtered.ok, true);
+assert.deepEqual(filtered.retained.map((row) => row.id), ['fe']);
+assert.deepEqual(filterFunnel.contents.map((row) => row.id), ['fe'], 'the residue is on the filter');
+const filtrate = filterSession.containers.find((row) => row.id === 'flask-b');
+assert.equal(filtrate.volumeMl, 60);
+assert.ok(filtrate.contents.some((row) => row.id === 'nacl'), 'dissolved salt goes through with the water');
+assert.ok(!filtrate.contents.some((row) => row.id === 'fe'));
+assert.equal(filterSession.containers[0].volumeMl, 0, 'the source is poured out');
+assert.ok(filterSession.observations.some((row) => /Filtered|Filtrou/.test(row.text)));
+// Filtering into a vessel with no room is refused rather than overfilled.
+const tight = lab.emptySession({ title: 'Tight', mode: 'bench' });
+lab.addVessel(tight, 'funnel');
+const tightFunnel = tight.containers.find((row) => row.type === 'funnel');
+lab.attachTool(tight, tightFunnel.id, 'cylinder-c');
+lab.addToContainer(tight, 'beaker-a', 'water', 200);
+lab.addToContainer(tight, 'beaker-a', 'fe', 5);
+assert.equal(lab.filterThrough(tight, 'beaker-a').reason, 'receiver-full');
+assert.equal(tight.containers[0].volumeMl, 200, 'a refused filter changes nothing');
 
 console.log('virtual lab tests passed');

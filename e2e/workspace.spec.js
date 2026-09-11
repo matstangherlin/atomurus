@@ -497,10 +497,28 @@ test('Lab tools clip onto their hosts and ports link by dragging', async ({ page
   await expect(page.locator('.lab-notes')).toContainText(/Fitted|Encaixou/i);
   await expect(page.locator('.lab-pestle')).toHaveClass(/is-fitted/);
 
-  // A fitted thermometer reads its vessel on the board.
+  // A fitted thermometer reads on the vessel it measures, not on itself.
   await dragOnto('.lab-thermometer', '[data-vessel="beaker-a"]', 24);
-  await expect(page.locator('.lab-thermometer .lab-glass-meta')).toContainText('°C');
   await expect(page.locator('.lab-thermometer')).toHaveClass(/is-fitted/);
+  await expect(page.locator('[data-vessel="beaker-a"] .lab-readout')).toContainText('°C');
+  await expect(page.locator('.lab-thermometer .lab-glass-name')).toBeHidden();
+
+  // A funnel over a vessel filters: the solid stays, the filtrate runs through.
+  await page.locator('[data-dock="transfer"]').click();
+  await page.locator('[data-add-vessel="funnel"]').first().click();
+  await page.locator('[data-dock-close]').click();
+  await page.locator('[data-lab-fit]').click();
+  await page.locator('[data-vessel="beaker-a"]').click();
+  await page.locator('[data-dock="materials"]').click();
+  await page.locator('.lab-chip[data-add="fe"]').click();
+  await page.locator('[data-dock-close]').click();
+  await page.locator('[data-lab-fit]').click();
+  await dragOnto('.lab-funnel', '[data-vessel="flask-b"]');
+  await page.locator('[data-vessel="beaker-a"]').click();
+  await page.locator('[data-lab-filter]').click();
+  await expect(page.locator('.lab-notes')).toContainText(/Filtered|Filtrou/i);
+  await expect(page.locator('[data-vessel="beaker-a"]')).toContainText('0 / 250 mL');
+  await expect(page.locator('[data-vessel="flask-b"]')).toContainText('25 / 250 mL');
 
   // Ports appear on the selected piece and drag out a connection.
   await page.locator('[data-dock="glassware"]').click();
@@ -509,7 +527,7 @@ test('Lab tools clip onto their hosts and ports link by dragging', async ({ page
   await page.locator('[data-add-vessel="condenser"]').first().click();
   await page.locator('[data-dock-close]').click();
   await page.locator('[data-lab-fit]').click();
-  await expect(page.locator('.lab-beaker .lab-port')).toHaveCount(0);
+  await expect(page.locator('[data-vessel="flask-b"] .lab-port')).toHaveCount(0);
   await page.locator('.lab-round-flask').click();
   await expect(page.locator('.lab-round-flask')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('.lab-round-flask .lab-port')).toHaveCount(1);

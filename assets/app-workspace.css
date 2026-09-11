@@ -1857,11 +1857,34 @@ svg.lab-linking path {
   border-color: var(--lc-green, #1E6A50);
   background: color-mix(in oklab, var(--lc-green, #1E6A50) 9%, transparent);
 }
-.lab-piece.is-fitted .lab-glass-meta { color: var(--lc-green, #1E6A50); font-weight: 650; }
-/* A fitted tool sits inside its host, so its own name would collide. */
-.lab-piece.is-fitted .lab-glass-name { display: none; }
-.lab-piece.is-fitted-quiet .lab-glass-meta { display: none; }
-.lab-piece.is-fitted { z-index: 5; }
+/* A fitted tool sits inside its host: no caption of its own, and it reads
+   through the glass rather than on top of it. */
+.lab-piece.is-fitted .lab-glass-name,
+.lab-piece.is-fitted .lab-glass-meta { display: none; }
+.lab-piece.is-fitted { z-index: 0; }
+.lab-piece.is-fitted .lab-svg-glass > * { fill: color-mix(in oklab, #fff 55%, transparent); }
+.lab-readouts {
+  position: absolute;
+  top: 8px;
+  left: 6px;
+  right: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  pointer-events: none;
+}
+.lab-readout {
+  padding: 1px 7px;
+  border-radius: 99px;
+  border: 1px solid color-mix(in oklab, var(--lc-green, #1E6A50) 32%, transparent);
+  background: color-mix(in oklab, var(--lc-paper, #F8F5EC) 94%, #fff);
+  font-size: 11px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  color: var(--lc-green, #1E6A50);
+  white-space: nowrap;
+}
 .lab-zoom-label {
   min-width: 48px;
   text-align: center;

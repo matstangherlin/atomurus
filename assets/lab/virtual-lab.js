@@ -297,6 +297,7 @@
       marks: o.marks || null,
       shine: o.shine || '',
       shape: o.shape || 'straight',
+      fitted: o.fitted || '',
       base: o.base || ''
     };
   }
@@ -411,7 +412,8 @@
       '<path d="M20 38 H80 L54 92 V134 H46 V92 Z" />',
       {
         cavity: '<path d="M27 43 H73 L51 91 V130 H49 V91 Z" />',
-        top: 44, bottom: 130
+        top: 44, bottom: 130,
+        fitted: '<path d="M26 30 H74 L53 78 V108 H47 V78 Z" />'
       }
     ),
     'pipette-graduated': va(
@@ -534,13 +536,21 @@
     thermometer: va(
       '<path d="M45 12 H55 V116 H45 Z" /><circle cx="50" cy="128" r="11" />' +
       '<path d="M38 28 H45 M38 44 H45 M38 60 H45 M38 76 H45 M38 92 H45" />',
-      { top: 30, bottom: 118 }
+      {
+        top: 30, bottom: 118,
+        fitted: '<path d="M46 30 H54 V116 H46 Z" /><circle cx="50" cy="126" r="9" />' +
+          '<path d="M41 46 H46 M41 62 H46 M41 78 H46 M41 94 H46" />'
+      }
     ),
     'ph-meter': va(
       '<path d="M32 16 H68 V82 H32 Z" /><path d="M38 26 H62 V48 H38 Z" />' +
       '<circle cx="42" cy="64" r="4" /><circle cx="58" cy="64" r="4" />' +
       '<path d="M50 82 V138" /><path d="M46 138 Q50 150 54 138 Z" />',
-      { top: 120, bottom: 140 }
+      {
+        top: 120, bottom: 140,
+        fitted: '<path d="M40 26 H60 V56 H40 Z" /><path d="M44 32 H56 V44 H44 Z" />' +
+          '<path d="M50 56 V128" /><path d="M46 128 Q50 140 54 128 Z" />'
+      }
     ),
     balance: va(
       '<path d="M12 116 H88 Q92 116 92 121 V136 Q92 141 87 141 H13 Q8 141 8 136 V121 Q8 116 12 116 Z" />' +
@@ -633,6 +643,7 @@
       }
     }
 
+    var drawing = state.fitted && art.fitted ? art.fitted : art.glass;
     var flame = type === 'bunsen'
       ? '<g class="lab-svg-flame' + (state.lit ? ' is-lit' : ' is-off') + '" aria-hidden="true">' +
         (state.lit
@@ -651,9 +662,9 @@
     return '<svg class="lab-vessel" viewBox="0 0 100 160" preserveAspectRatio="xMidYMax meet" aria-hidden="true" focusable="false">' +
       inside +
       flame +
-      '<g class="lab-svg-glass">' + art.glass + '</g>' +
-      (art.shine ? '<g class="lab-svg-shine">' + art.shine + '</g>' : '') +
-      marksSvg(art) +
+      '<g class="lab-svg-glass">' + drawing + '</g>' +
+      (art.shine && !state.fitted ? '<g class="lab-svg-shine">' + art.shine + '</g>' : '') +
+      (state.fitted ? '' : marksSvg(art)) +
       vapor +
       '</svg>';
   }
@@ -697,7 +708,8 @@
     separate: { id: 'separate', allowed: true },
     connect: { id: 'connect', allowed: true },
     measure: { id: 'measure', allowed: true },
-    distill: { id: 'distill', allowed: true, maxC: 250 }
+    distill: { id: 'distill', allowed: true, maxC: 250 },
+    filter: { id: 'filter', allowed: true }
   };
 
   /* Reviewed reaction models. A reaction only fires when its reactants, state
@@ -1817,9 +1829,9 @@
      Offsets are in board pixels, relative to the host's top-left. */
   var ATTACH_RULES = [
     { tool: 'pestle', host: 'mortar', kind: 'grind', dx: 4, dy: -20 },
-    { tool: 'funnel', hostHolds: true, kind: 'funnel', dx: 0, dy: -100 },
-    { tool: 'thermometer', hostHolds: true, kind: 'probe', reads: 'temperature', dx: 26, dy: -34 },
-    { tool: 'ph-meter', hostHolds: true, kind: 'probe', reads: 'ph', dx: -28, dy: -38 },
+    { tool: 'funnel', hostHolds: true, kind: 'funnel', dx: 0, dy: -72 },
+    { tool: 'thermometer', hostHolds: true, kind: 'probe', reads: 'temperature', dx: 12, dy: -6 },
+    { tool: 'ph-meter', hostHolds: true, kind: 'probe', reads: 'ph', dx: -12, dy: -10 },
     { tool: 'pipettor', hostTool: ['pipette-graduated', 'pipette-volumetric'], kind: 'filler', dx: 0, dy: -96 }
   ];
 
@@ -1861,7 +1873,12 @@
     var list = ensureAttachments(session);
     var before = list.length;
     session.board.attachments = list.filter(function (row) { return row.toolId !== toolId; });
-    return before !== session.board.attachments.length;
+    var freed = before !== session.board.attachments.length;
+    if (freed) {
+      var obj = findObject(session, toolId);
+      if (obj) obj.zIndex = nextZ(session);
+    }
+    return freed;
   }
 
   function attachTool(session, toolId, hostId) {
@@ -1879,6 +1896,9 @@
       toolObj.y = Math.round(Number(hostObj.y) + rule.dy);
       tool.x = toolObj.x;
       tool.y = toolObj.y;
+      /* Sit behind the glass, so the vessel stays clickable and the probe
+         reads as being inside it rather than pasted on top. */
+      toolObj.zIndex = Math.max(0, (Number(hostObj.zIndex) || 1) - 1);
     }
     observe(session, line(
       session,
@@ -2042,6 +2062,74 @@
         return spec && spec.bp && (Number(row.amount) || 0) > 0.05;
       })
       .sort(function (a, b) { return SUBSTANCES[a.id].bp - SUBSTANCES[b.id].bp; });
+  }
+
+  /* Salts and sugars dissolve and run through a filter; elements and minerals
+     stay on it. That split is the whole point of the experiment. */
+  function passesFilter(spec) {
+    if (!spec) return true;
+    if (spec.state !== 'solid') return true;
+    return spec.category === 'salt' || spec.category === 'sugar';
+  }
+
+  function filterSetup(session, sourceId) {
+    var source = findContainer(session, sourceId);
+    if (!source || !canHold(source)) return null;
+    var funnels = (session.containers || []).filter(function (row) {
+      if (row.type !== 'funnel' || row.id === sourceId) return false;
+      var link = attachmentOf(session, row.id);
+      return link && link.kind === 'funnel';
+    });
+    for (var i = 0; i < funnels.length; i += 1) {
+      var host = findContainer(session, attachmentOf(session, funnels[i].id).hostId);
+      if (host && host.id !== sourceId && canHold(host) && hasCap(host, 'contain')) {
+        return { source: source, funnel: funnels[i], receiver: host };
+      }
+    }
+    return null;
+  }
+
+  function filterThrough(session, sourceId) {
+    if (!processAllowed('filter')) return { ok: false, reason: 'unavailable' };
+    var rig = filterSetup(session, sourceId);
+    if (!rig) return { ok: false, reason: 'no-rig' };
+    var source = rig.source;
+    var contents = source.contents || [];
+    if (!contents.length) return { ok: false, reason: 'empty' };
+    var retained = contents.filter(function (row) { return !passesFilter(SUBSTANCES[row.id]); });
+    var through = contents.filter(function (row) { return passesFilter(SUBSTANCES[row.id]); });
+    if (!retained.length) return { ok: false, reason: 'nothing-to-retain' };
+    if (!through.length) return { ok: false, reason: 'no-liquid' };
+    var volume = Number(source.volumeMl) || 0;
+    var room = Math.max(0, (Number(rig.receiver.capacityMl) || 0) - (Number(rig.receiver.volumeMl) || 0));
+    if (volume > room + 0.05) return { ok: false, reason: 'receiver-full' };
+
+    pushHistory(session);
+    var beforeProduct = rig.receiver.productId || '';
+    var beforeReaction = rig.receiver.reactionId || '';
+    through.forEach(function (row) {
+      var existing = (rig.receiver.contents || []).filter(function (item) { return item.id === row.id; })[0];
+      if (existing) existing.amount = Math.round((Number(existing.amount) + Number(row.amount)) * 10) / 10;
+      else rig.receiver.contents.push({ id: row.id, amount: row.amount, unit: row.unit });
+    });
+    rig.receiver.volumeMl = Math.round(((Number(rig.receiver.volumeMl) || 0) + volume) * 10) / 10;
+    rig.funnel.contents = retained.map(function (row) { return { id: row.id, amount: row.amount, unit: row.unit }; });
+    rig.funnel.residue = true;
+    source.contents = [];
+    source.volumeMl = 0;
+
+    mixContainer(source);
+    mixContainer(rig.funnel);
+    mixContainer(rig.receiver);
+    noteProduct(session, rig.receiver, beforeProduct);
+    noteReaction(session, rig.receiver, beforeReaction);
+    var names = retained.map(function (row) { return (SUBSTANCES[row.id] || {}).name || row.id; }).join(', ');
+    observe(session, line(
+      session,
+      'Filtered ' + (source.label || sourceId) + ': ' + names + ' stayed on the filter, the filtrate ran into ' + (rig.receiver.label || rig.receiver.id) + '.',
+      'Filtrou ' + (source.label || sourceId) + ': ' + names + ' ficou no filtro e o filtrado passou para ' + (rig.receiver.label || rig.receiver.id) + '.'
+    ));
+    return { ok: true, rig: rig, retained: retained, volume: volume };
   }
 
   /* Simple distillation, driven by the rig the user actually assembled.
@@ -2829,12 +2917,12 @@
       var fittedNow = attachmentOf(session, container.id);
       var emulsion = String(container.appearance || '').indexOf('emulsion') !== -1 || container.productId === 'sunscreen';
       var warm = (Number(container.temperatureC) || 22) >= 40;
-      var cls = 'lab-glass lab-piece lab-' + kind + (kind === 'beaker' ? ' lab-beaker' : '') + (active ? ' is-active' : '') + (container.fizz ? ' is-fizz' : '') + (emulsion ? ' is-emulsion' : '') + (warm ? ' is-warm' : '') + (cupped ? ' is-cupped' : '') + (fittedNow ? ' is-fitted' : '') + (fittedNow && fittedNow.kind !== 'probe' && fittedNow.kind !== 'funnel' ? ' is-fitted-quiet' : '') + pourCls + heatCls;
+      var cls = 'lab-glass lab-piece lab-' + kind + (kind === 'beaker' ? ' lab-beaker' : '') + (active ? ' is-active' : '') + (container.fizz ? ' is-fizz' : '') + (emulsion ? ' is-emulsion' : '') + (warm ? ' is-warm' : '') + (cupped ? ' is-cupped' : '') + (fittedNow ? ' is-fitted' : '') + pourCls + heatCls;
       var product = lang === 'pt' ? (container.productPt || container.product) : container.product;
       var x = obj ? Number(obj.x) : Number(container.x);
       var y = obj ? Number(obj.y) : Number(container.y);
       var rot = obj ? Number(obj.rotation) || 0 : 0;
-      var z = obj ? Number(obj.zIndex) || 1 : 1;
+      var z = obj && isFinite(Number(obj.zIndex)) ? Number(obj.zIndex) : 1;
       if (!isFinite(x)) x = 80;
       if (!isFinite(y)) y = 80;
       var holds = canHold(container);
@@ -2844,24 +2932,14 @@
         fizz: container.fizz,
         sediment: sediment,
         phases: container.phases,
+        fitted: Boolean(fittedNow),
         lit: kind === 'bunsen' && heatFrom === container.id
       });
       var spec = specOf(kind);
-      var fitted = attachmentOf(session, container.id);
-      var host = fitted ? findContainer(session, fitted.hostId) : null;
       var meta = holds
         ? (esc(container.volumeMl) + ' / ' + esc(container.capacityMl) + ' mL')
         : esc(lang === 'pt' ? spec.labelPt : spec.labelEn);
-      /* A fitted probe reads the vessel it is in, right on the board. */
-      if (fitted && host && fitted.kind === 'probe') {
-        mixContainer(host);
-        if (kind === 'thermometer') meta = esc(host.temperatureC) + ' °C';
-        else if (kind === 'ph-meter') meta = 'pH ' + esc(host.ph == null ? '—' : host.ph);
-      } else if (fitted && host && fitted.kind === 'funnel') {
-        meta = esc(copy('into ', 'para ')) + esc(host.label || host.id);
-      } else if (fitted) {
-        meta = '';
-      }
+      if (fittedNow) meta = '';
       var showPorts = (spec.ports || []).length && (active || connectFrom || linking);
       var ports = '';
       if (showPorts) {
@@ -2877,9 +2955,22 @@
         if (upper.length) ports += '<span class="lab-ports lab-ports-top">' + upper.map(dot).join('') + '</span>';
         if (lower.length) ports += '<span class="lab-ports lab-ports-bottom">' + lower.map(dot).join('') + '</span>';
       }
+      /* The reading belongs to the vessel being measured, inside its own box. */
+      var readouts = attachmentsOn(session, container.id)
+        .filter(function (row) { return row.kind === 'probe'; })
+        .map(function (row) {
+          var probe = findContainer(session, row.toolId);
+          if (!probe) return '';
+          if (probe.type === 'thermometer') return '<span class="lab-readout">' + esc(container.temperatureC) + ' °C</span>';
+          if (probe.type === 'ph-meter') return '<span class="lab-readout">pH ' + esc(container.ph == null ? '—' : container.ph) + '</span>';
+          return '';
+        }).join('');
+      var readoutHtml = readouts ? '<span class="lab-readouts">' + readouts + '</span>' : '';
+
       return '<button type="button" class="' + cls + '" data-vessel="' + esc(container.id) + '" draggable="false" aria-pressed="' + (active ? 'true' : 'false') + '" style="left:' + x + 'px;top:' + y + 'px;z-index:' + z + ';--lab-rot:' + rot + 'deg;transform:rotate(' + rot + 'deg)">' +
         body +
         ports +
+        readoutHtml +
         '<span class="lab-glass-name">' + esc(container.label || kind) + '</span>' +
         '<span class="lab-glass-meta">' + meta + '</span>' +
         (product ? '<span class="lab-glass-product">' + esc(product) + '</span>' : '') +
@@ -2900,13 +2991,19 @@
           '<code class="lab-reaction-eq">' + esc(model.equation) + '</code>' +
           '<p>' + esc(lang === 'pt' ? model.pt : model.en) + '</p></div>'
         : '';
+      var filterRig = filterSetup(session, container.id);
+      var filterBlock = filterRig
+        ? '<div class="lab-rig"><span class="lab-reaction-tag">' + esc(copy('Filter ready', 'Filtro pronto')) + '</span>' +
+          '<p>' + esc(container.label || container.id) + ' → ' + esc(filterRig.funnel.label || filterRig.funnel.id) + ' → ' + esc(filterRig.receiver.label || filterRig.receiver.id) + '</p>' +
+          '<button type="button" class="ws-btn ws-btn-sm ws-btn-primary" data-lab-filter>' + esc(copy('Filter', 'Filtrar')) + '</button></div>'
+        : '';
       var rig = distillSetup(session, container.id);
       var rigBlock = rig
         ? '<div class="lab-rig"><span class="lab-reaction-tag">' + esc(copy('Apparatus ready', 'Aparelhagem pronta')) + '</span>' +
           '<p>' + esc(container.label || container.id) + ' → ' + esc(rig.condenser.label || rig.condenser.id) + ' → ' + esc(rig.receiver.label || rig.receiver.id) + '</p>' +
           '<button type="button" class="ws-btn ws-btn-sm ws-btn-primary" data-lab-distill>' + esc(copy('Distil', 'Destilar')) + '</button></div>'
         : '';
-      return reactionBlock + rigBlock +
+      return reactionBlock + rigBlock + filterBlock +
         '<div class="lab-kv"><span>' + esc(copy('Vessel', 'Vidro')) + '</span><strong>' + esc(container.label || container.id) + '</strong></div>' +
         '<div class="lab-kv"><span>' + esc(copy('Contents', 'Conteúdo')) + '</span><strong>' + contents + '</strong></div>' +
         '<div class="lab-kv"><span>' + esc(copy('Volume', 'Volume')) + '</span><strong>' + esc(container.volumeMl) + ' mL</strong></div>' +
@@ -3470,7 +3567,7 @@
       rootEl.addEventListener('click', function (event) {
         try {
           var t = event.target && event.target.closest
-            ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-redo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel], [data-ready], [data-lab-zoom], [data-lab-fit], [data-lab-aspirate], [data-lab-dispense], [data-lab-drop], [data-lab-grind], [data-lab-drain], [data-lab-connect], [data-lab-duplicate], [data-lab-delete], [data-lab-rotate], [data-dock], [data-dock-close], [data-side], [data-lab-sound], [data-start-creation], [data-stop-creation], [data-step-add], [data-lab-hint], [data-step-connect], [data-step-heat], [data-step-distill], [data-lab-distill]')
+            ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-redo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel], [data-ready], [data-lab-zoom], [data-lab-fit], [data-lab-aspirate], [data-lab-dispense], [data-lab-drop], [data-lab-grind], [data-lab-drain], [data-lab-connect], [data-lab-duplicate], [data-lab-delete], [data-lab-rotate], [data-dock], [data-dock-close], [data-side], [data-lab-sound], [data-start-creation], [data-stop-creation], [data-step-add], [data-lab-hint], [data-step-connect], [data-step-heat], [data-step-distill], [data-lab-distill], [data-lab-filter]')
             : null;
           if (!t) return;
           if (t.hasAttribute('data-lab-sound')) {
@@ -3803,6 +3900,30 @@
             dropFrom = bur.id;
             flashStatus('<div class="lab-msg" role="status">' + esc(copy('Click a vessel to drop 1 mL.', 'Clique em um vidro para pingar 1 mL.')) + '</div>');
             updateLive();
+            return;
+          }
+          if (t.hasAttribute('data-lab-filter')) {
+            var poured = selected();
+            var run = filterThrough(session, poured.id);
+            queueSave();
+            updateLive();
+            if (run.ok) {
+              playTransferFx(run.rig.funnel.id, run.rig.receiver.id, mixColor(run.rig.receiver), 'drop');
+              flashStatus('');
+              return;
+            }
+            playSound('deny');
+            var reason = copy('This setup cannot filter yet.', 'Esta montagem ainda não pode filtrar.');
+            if (run.reason === 'nothing-to-retain') {
+              reason = copy('Everything here dissolves, so nothing would stay on the filter.', 'Tudo aqui se dissolve, então nada ficaria no filtro.');
+            } else if (run.reason === 'no-liquid') {
+              reason = copy('Add a liquid: filtering needs something to run through.', 'Adicione um líquido: filtrar precisa de algo que atravesse.');
+            } else if (run.reason === 'receiver-full') {
+              reason = copy('The vessel under the funnel is full.', 'O vidro sob o funil está cheio.');
+            } else if (run.reason === 'empty') {
+              reason = copy('That vessel is empty.', 'Esse vidro está vazio.');
+            }
+            flashStatus('<div class="lab-msg" role="status">' + esc(reason) + '</div>');
             return;
           }
           if (t.hasAttribute('data-lab-distill') || t.hasAttribute('data-step-distill')) {
@@ -4189,6 +4310,9 @@
     reactionFor: reactionFor,
     distill: distill,
     distillSetup: distillSetup,
+    filterThrough: filterThrough,
+    filterSetup: filterSetup,
+    passesFilter: passesFilter,
     assembleRig: assembleRig,
     attachTool: attachTool,
     detachTool: detachTool,
