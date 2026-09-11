@@ -1655,7 +1655,7 @@ html.auth-error .ws-auth-only { visibility: hidden; }
   overflow: hidden;
   background:
     linear-gradient(180deg, color-mix(in oklab, #fff 55%, transparent), color-mix(in oklab, #fff 18%, transparent));
-  border: 2px solid var(--lc-ink-2, #58544A);
+  border: 2px solid #2F2C28;
   border-top: 0;
 }
 .lab-beaker .lab-glass-body {
@@ -1684,7 +1684,8 @@ html.auth-error .ws-auth-only { visibility: hidden; }
   width: 28px;
   height: 22px;
   margin-left: -14px;
-  border: 2px solid var(--lc-ink-2, #58544A);
+  z-index: 2;
+  border: 2px solid #2F2C28;
   border-bottom: 0;
   border-radius: 5px 5px 0 0;
   background: color-mix(in oklab, #fff 42%, transparent);
@@ -1808,4 +1809,526 @@ html[data-reduced-motion="1"] .lab-liquid {
   font-weight: 550;
   text-decoration: none;
   border-bottom: 1px solid color-mix(in oklab, var(--lc-green) 45%, transparent);
+}
+
+.lab-board-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin: 0 0 14px;
+}
+.lab-board-bar .lab-search,
+.lab-board-bar .lab-toolbar { margin: 0; }
+.lab-board-layout {
+  display: grid;
+  grid-template-columns: minmax(196px, 250px) minmax(0, 1fr) minmax(230px, 300px);
+  gap: 12px;
+  align-items: stretch;
+}
+.lab-board-rail,
+.lab-board-side {
+  max-height: calc(100vh - 210px);
+  overflow: auto;
+}
+.lab-board-stage-wrap {
+  min-height: 480px;
+  padding: 12px;
+}
+.lab-board-stage {
+  position: relative;
+  flex: 1;
+  min-height: 480px;
+  height: calc(100vh - 280px);
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid var(--lc-rule, #D8D2BF);
+  background:
+    radial-gradient(circle, color-mix(in oklab, var(--lc-ink-3, #8E8978) 22%, transparent) 1.1px, transparent 1.6px) 0 0 / 22px 22px,
+    color-mix(in oklab, var(--lc-paper, #F8F5EC) 88%, #fff);
+  cursor: grab;
+  touch-action: none;
+  overscroll-behavior: contain;
+  user-select: none;
+}
+.lab-board-stage:active { cursor: grabbing; }
+.lab-board-world {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2400px;
+  height: 1600px;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+.lab-board .lab-piece,
+.lab-board .lab-flask {
+  position: absolute;
+  z-index: 1;
+  touch-action: none;
+  width: 124px;
+  overflow: visible;
+}
+.lab-board .lab-piece.is-active { z-index: 3; }
+.lab-tool-body {
+  position: relative;
+  width: 72px;
+  height: 120px;
+  pointer-events: none;
+}
+.lab-volumetric-flask { padding-top: 34px; }
+.lab-volumetric-flask .lab-glass-body {
+  width: 92px;
+  height: 108px;
+  border-radius: 50%;
+}
+.lab-volumetric-flask .lab-liquid,
+.lab-volumetric-flask .lab-sediment {
+  border-radius: 0 0 50% 50%;
+}
+.lab-volumetric-flask::before {
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  width: 18px;
+  height: 36px;
+  margin-left: -9px;
+  z-index: 2;
+  border: 2px solid #2F2C28;
+  border-bottom: 0;
+  border-radius: 4px 5px 0 0;
+  background: color-mix(in oklab, #fff 42%, transparent);
+  pointer-events: none;
+}
+.lab-pipette-graduated .lab-glass-body,
+.lab-pipette-volumetric .lab-glass-body {
+  width: 16px;
+  height: 168px;
+  border-radius: 8px 8px 4px 4px;
+  background-image: repeating-linear-gradient(
+    to top,
+    transparent 0 11px,
+    color-mix(in oklab, var(--lc-ink-3, #8E8978) 30%, transparent) 11px 12px
+  );
+}
+.lab-pipette-volumetric { padding-top: 18px; }
+.lab-pipette-volumetric::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  width: 28px;
+  height: 22px;
+  margin-left: -14px;
+  border: 2px solid var(--lc-ink-2, #58544A);
+  border-radius: 50%;
+  background: color-mix(in oklab, #fff 40%, transparent);
+  pointer-events: none;
+}
+.lab-piston .lab-glass-body {
+  width: 28px;
+  height: 140px;
+  border-radius: 6px;
+  border-top-width: 8px;
+}
+.lab-test-tube .lab-glass-body,
+.lab-test-tube-capped .lab-glass-body {
+  width: 28px;
+  height: 150px;
+  border-radius: 0 0 16px 16px;
+}
+.lab-test-tube-capped::before {
+  content: "";
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  width: 34px;
+  height: 10px;
+  margin-left: -17px;
+  border-radius: 4px;
+  background: var(--lc-ink-2, #58544A);
+  pointer-events: none;
+}
+.lab-separatory-funnel { padding-top: 28px; }
+.lab-separatory-funnel .lab-glass-body {
+  width: 86px;
+  height: 148px;
+  border-radius: 46% 46% 50% 50% / 12% 18% 70% 70%;
+}
+.lab-separatory-funnel::before {
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  width: 22px;
+  height: 24px;
+  margin-left: -11px;
+  border: 2px solid var(--lc-ink-2, #58544A);
+  border-bottom: 0;
+  background: color-mix(in oklab, #fff 40%, transparent);
+  pointer-events: none;
+}
+.lab-separatory-funnel::after {
+  content: "";
+  position: absolute;
+  bottom: 38px;
+  left: 50%;
+  width: 10px;
+  height: 18px;
+  margin-left: -5px;
+  border: 2px solid var(--lc-ink-2, #58544A);
+  border-radius: 0 0 4px 4px;
+  pointer-events: none;
+}
+.lab-mortar .lab-glass-body {
+  width: 108px;
+  height: 78px;
+  border-radius: 8px 8px 50% 50% / 10% 8% 90% 90%;
+  margin-top: 36px;
+}
+.lab-funnel .lab-tool-body,
+.lab-pipettor .lab-tool-body,
+.lab-rack .lab-tool-body,
+.lab-bunsen .lab-tool-body,
+.lab-heating-gauze .lab-tool-body,
+.lab-condenser .lab-tool-body {
+  border: 2px solid var(--lc-ink-2, #58544A);
+  background: linear-gradient(180deg, color-mix(in oklab, #fff 50%, transparent), color-mix(in oklab, #fff 16%, transparent));
+}
+.lab-funnel .lab-tool-body {
+  width: 86px;
+  height: 92px;
+  border-radius: 8px;
+  clip-path: polygon(8% 0, 92% 0, 58% 62%, 58% 100%, 42% 100%, 42% 62%);
+}
+.lab-pipettor .lab-tool-body {
+  width: 42px;
+  height: 92px;
+  border-radius: 10px 10px 6px 6px;
+  margin-top: 18px;
+}
+.lab-rack {
+  width: 168px;
+}
+.lab-rack .lab-tool-body {
+  width: 148px;
+  height: 54px;
+  border-radius: 8px;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 14px, color-mix(in oklab, var(--lc-ink-2, #58544A) 35%, transparent) 14px 18px),
+    color-mix(in oklab, #fff 30%, transparent);
+}
+.lab-bunsen .lab-tool-body {
+  width: 48px;
+  height: 88px;
+  border-radius: 8px 8px 10px 10px;
+  margin-top: 28px;
+}
+.lab-flame {
+  position: absolute;
+  left: 50%;
+  top: -28px;
+  width: 18px;
+  height: 34px;
+  margin-left: -9px;
+  border-radius: 50% 50% 40% 40%;
+  background: radial-gradient(ellipse at 50% 78%, #fff 0 18%, #ffd56a 32%, #ff6a28 68%, transparent 72%);
+  animation: lab-flame 640ms ease-in-out infinite alternate;
+}
+.lab-heating-gauze .lab-tool-body {
+  width: 108px;
+  height: 72px;
+  border-radius: 8px;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 7px, color-mix(in oklab, var(--lc-ink-2, #58544A) 28%, transparent) 7px 8px),
+    repeating-linear-gradient(90deg, transparent 0 7px, color-mix(in oklab, var(--lc-ink-2, #58544A) 28%, transparent) 7px 8px),
+    color-mix(in oklab, #d8c9a2 55%, #fff);
+}
+.lab-condenser .lab-tool-body {
+  width: 28px;
+  height: 150px;
+  border-radius: 12px;
+  transform: rotate(-18deg);
+  background:
+    repeating-linear-gradient(180deg, transparent 0 10px, color-mix(in oklab, #7EB6D9 35%, transparent) 10px 14px),
+    color-mix(in oklab, #fff 35%, transparent);
+}
+.lab-glass.is-heat-source {
+  border-style: solid;
+  border-color: color-mix(in oklab, #d06020 55%, var(--lc-rule, #D8D2BF));
+}
+.lab-liquid.is-filled::before {
+  content: none;
+}
+.lab-meniscus {
+  position: absolute;
+  left: -6%;
+  right: -6%;
+  top: -5px;
+  height: 10px;
+  border-radius: 50%;
+  background: color-mix(in oklab, #fff 42%, transparent);
+  pointer-events: none;
+}
+.lab-liquid.is-sloshing {
+  animation: lab-slosh 640ms ease-out;
+}
+.lab-links {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2400px;
+  height: 1600px;
+  pointer-events: none;
+  overflow: visible;
+}
+.lab-links path {
+  fill: none;
+  stroke: color-mix(in oklab, var(--lc-green, #1E6A50) 55%, var(--lc-rule, #D8D2BF));
+  stroke-width: 2;
+}
+.lab-ports {
+  position: absolute;
+  inset: 18px 8px auto;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  pointer-events: none;
+}
+.lab-port {
+  width: 8px;
+  height: 8px;
+  border-radius: 99px;
+  background: var(--lc-green, #1E6A50);
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--lc-paper, #F8F5EC) 80%, transparent);
+}
+.lab-zoom-label {
+  min-width: 48px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--lc-ink-2, #58544A);
+}
+.lab-glass.is-heat-zone {
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--lc-green, #1E6A50) 45%, transparent);
+}
+.lab-phase {
+  position: absolute;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+}
+.lab-phase-top {
+  top: auto;
+  background: color-mix(in oklab, #E6D5A2 70%, transparent);
+}
+.lab-round-flask .lab-glass-body,
+.lab-receiving-flask .lab-glass-body {
+  width: 96px;
+  height: 108px;
+  border-radius: 50%;
+  margin-top: 28px;
+}
+.lab-watch-glass .lab-glass-body {
+  width: 104px;
+  height: 28px;
+  border-radius: 50%;
+  margin-top: 40px;
+}
+.lab-reagent-bottle .lab-glass-body {
+  width: 70px;
+  height: 140px;
+  border-radius: 8px 8px 10px 10px;
+}
+.lab-dropper .lab-glass-body,
+.lab-burette .lab-glass-body {
+  width: 18px;
+  height: 168px;
+  border-radius: 8px;
+}
+.lab-hot-plate .lab-tool-body,
+.lab-heating-mantle .lab-tool-body,
+.lab-tripod .lab-tool-body,
+.lab-retort-stand .lab-tool-body,
+.lab-ring .lab-tool-body,
+.lab-clamp .lab-tool-body,
+.lab-balance .lab-tool-body,
+.lab-thermometer .lab-tool-body,
+.lab-ph-meter .lab-tool-body,
+.lab-pestle .lab-tool-body,
+.lab-spatula .lab-tool-body,
+.lab-weighing-boat .lab-glass-body {
+  border: 2px solid var(--lc-ink-2, #58544A);
+}
+.lab-pestle .lab-tool-body {
+  width: 22px;
+  height: 110px;
+  border-radius: 10px 10px 4px 4px;
+}
+.lab-hot-plate .lab-tool-body {
+  width: 120px;
+  height: 56px;
+  border-radius: 8px;
+  margin-top: 24px;
+}
+.lab-guide-progress { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--lc-ink-3, #8E8978); }
+.lab-guide-why { font-size: 13px; color: var(--lc-ink-2, #58544A); }
+.lab-board-stage:focus { outline: 2px solid color-mix(in oklab, var(--lc-green, #1E6A50) 35%, transparent); }
+@keyframes lab-slosh {
+  0% { transform: translateX(0) skewX(0); }
+  35% { transform: translateX(4px) skewX(-4deg); }
+  100% { transform: translateX(0) skewX(0); }
+}
+html[data-reduced-motion] .lab-liquid.is-sloshing,
+html[data-reduced-motion="1"] .lab-liquid.is-sloshing {
+  animation: none;
+}
+.lab-glass.is-emulsion .lab-liquid {
+  opacity: .94;
+  box-shadow:
+    inset 0 10px 14px color-mix(in oklab, #fff 40%, transparent),
+    inset 0 -8px 10px color-mix(in oklab, #e6d5a2 28%, transparent);
+}
+.lab-guide { margin-top: 16px; }
+.lab-guide ol { margin: 8px 0 0; padding-left: 18px; }
+.lab-guide-step { margin: 6px 0; color: var(--lc-ink-2, #58544A); }
+.lab-guide-step.is-done { color: var(--lc-green, #1E6A50); text-decoration: line-through; }
+.lab-guide-step.is-now { color: var(--lc-ink, #1b1914); font-weight: 650; }
+.lab-guide-done { color: var(--lc-green, #1E6A50); font-weight: 650; }
+@keyframes lab-wave {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(7%); }
+}
+@keyframes lab-flame {
+  0% { transform: scaleY(.92) translateY(1px); opacity: .82; }
+  100% { transform: scaleY(1.08) translateY(-2px); opacity: 1; }
+}
+@media (max-width: 1100px) {
+  .lab-board-layout { grid-template-columns: 1fr; }
+  .lab-board-rail,
+  .lab-board-side { max-height: none; }
+  .lab-board-stage { height: 520px; }
+}
+html[data-reduced-motion] .lab-liquid.is-filled::before,
+html[data-reduced-motion] .lab-flame,
+html[data-reduced-motion="1"] .lab-liquid.is-filled::before,
+html[data-reduced-motion="1"] .lab-flame {
+  animation: none;
+}
+
+.lab-outline {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 168px;
+  z-index: 4;
+  pointer-events: none;
+  overflow: visible;
+}
+.lab-outline path {
+  fill: none;
+  stroke: #2F2C28;
+  stroke-width: 2.6;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.lab-stream {
+  position: absolute;
+  height: 4px;
+  border-radius: 999px;
+  transform-origin: left center;
+  pointer-events: none;
+  z-index: 8;
+  opacity: .9;
+  box-shadow: 0 0 6px color-mix(in oklab, currentColor 35%, transparent);
+  animation: lab-stream-fade 760ms ease-out forwards;
+}
+.lab-stream.is-drip {
+  width: 10px !important;
+  height: 12px;
+  border-radius: 50%;
+  transform-origin: center;
+  animation: lab-drip 480ms ease-out forwards;
+}
+.lab-piece.is-pouring {
+  animation: lab-pour-tilt 700ms ease;
+  transform-origin: 50% 78%;
+}
+.lab-piece.is-receiving .lab-glass-body {
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--lc-green, #1E6A50) 28%, transparent);
+}
+.lab-piece.is-heating .lab-glass-body,
+.lab-piece.is-heating .lab-tool-body {
+  animation: lab-heat-pulse 720ms ease;
+}
+.lab-vapor {
+  position: absolute;
+  left: 26%;
+  right: 26%;
+  top: 10%;
+  height: 52px;
+  z-index: 6;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 28% 78%, rgba(90,86,78,.42) 0 26%, transparent 64%),
+    radial-gradient(ellipse at 70% 52%, rgba(90,86,78,.34) 0 20%, transparent 62%),
+    radial-gradient(ellipse at 48% 18%, rgba(90,86,78,.22) 0 16%, transparent 58%);
+  filter: blur(.4px);
+  animation: lab-vapor 1.8s ease-in-out infinite;
+  opacity: .85;
+}
+.lab-piece.is-warm .lab-glass-body {
+  box-shadow: inset 0 -28px 28px color-mix(in oklab, #d06020 16%, transparent);
+}
+.lab-condenser .lab-tool-body {
+  width: 34px;
+  height: 168px;
+  border-radius: 12px;
+  margin-top: 8px;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      color-mix(in oklab, #7EB6D9 28%, #fff) 0 10px,
+      color-mix(in oklab, #fff 40%, transparent) 10px 16px
+    );
+  border: 2px solid #2F2C28;
+}
+@keyframes lab-pour-tilt {
+  0% { transform: rotate(var(--lab-rot, 0deg)); }
+  35% { transform: rotate(calc(var(--lab-rot, 0deg) + 22deg)); }
+  100% { transform: rotate(var(--lab-rot, 0deg)); }
+}
+@keyframes lab-stream-fade {
+  0% { opacity: .95; }
+  70% { opacity: .7; }
+  100% { opacity: 0; }
+}
+@keyframes lab-drip {
+  0% { transform: translateY(0) scale(1); opacity: .95; }
+  100% { transform: translateY(18px) scale(.6); opacity: 0; }
+}
+@keyframes lab-vapor {
+  0% { transform: translateY(8px) scale(.92); opacity: .25; }
+  45% { transform: translateY(-6px) scale(1.05); opacity: .7; }
+  100% { transform: translateY(-22px) scale(1.12); opacity: .12; }
+}
+@keyframes lab-heat-pulse {
+  0% { filter: none; }
+  40% { filter: saturate(1.2) brightness(1.08); }
+  100% { filter: none; }
+}
+html[data-reduced-motion] .lab-vapor,
+html[data-reduced-motion="1"] .lab-vapor {
+  animation: none;
+  opacity: .4;
+}
+html[data-reduced-motion] .lab-piece.is-pouring,
+html[data-reduced-motion] .lab-stream,
+html[data-reduced-motion] .lab-piece.is-heating .lab-glass-body,
+html[data-reduced-motion="1"] .lab-piece.is-pouring,
+html[data-reduced-motion="1"] .lab-stream,
+html[data-reduced-motion="1"] .lab-piece.is-heating .lab-glass-body {
+  animation: none;
 }
