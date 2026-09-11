@@ -1061,6 +1061,15 @@
     return result;
   }
 
+  function drop(session, fromId, toId) {
+    if (!processAllowed('dispense')) return { ok: false, reason: 'unavailable' };
+    var from = findContainer(session, fromId);
+    if (!from || !hasCap(from, 'dispense_controlled')) return { ok: false, reason: 'tool' };
+    var result = pour(session, fromId, toId, 1);
+    if (result.ok) session.lastTransfer = { kind: 'drop', fromId: fromId, toId: toId, amount: result.amount };
+    return result;
+  }
+
   function grind(session, mortarId) {
     if (!processAllowed('grind')) return { ok: false, reason: 'unavailable' };
     var mortar = findContainer(session, mortarId);
@@ -1334,6 +1343,9 @@
     var connectFrom = '';
     var spaceDown = false;
     var pipetteFrom = '';
+    var dropFrom = '';
+    var fxTimer = 0;
+    var heatTimer = 0;
 
     function copy(en, pt) { return lang === 'pt' ? pt : en; }
     function esc(value) {
@@ -1394,6 +1406,7 @@
 
     function equipmentHtml() {
       var groups = [
+        { title: copy('On the board', 'No board'), ids: ['beaker', 'flask', 'pipette-volumetric', 'bunsen', 'condenser', 'mortar'] },
         { title: copy('Glassware', 'Vidraria'), ids: ['beaker', 'flask', 'cylinder', 'volumetric-flask', 'round-flask', 'test-tube', 'test-tube-capped', 'watch-glass', 'reagent-bottle'] },
         { title: copy('Transfer', 'Transferência'), ids: ['pipette-graduated', 'pipette-volumetric', 'pipettor', 'dropper', 'burette', 'funnel', 'separatory-funnel'] },
         { title: copy('Prep', 'Preparo'), ids: ['mortar', 'pestle', 'spatula', 'weighing-boat', 'rack'] },
@@ -1443,6 +1456,30 @@
       return lang === 'pt' ? (step.why.pt || step.why.en) : (step.why.en || step.why.pt);
     }
 
+    function outlineSvg(kind) {
+      var d = {
+        beaker: 'M24 16 L24 126 Q24 148 50 148 Q76 148 76 126 L76 16',
+        flask: 'M42 8 L42 34 L20 96 Q18 148 50 148 Q82 148 80 96 L58 34 L58 8',
+        cylinder: 'M38 10 L38 148 L62 148 L62 10',
+        'volumetric-flask': 'M46 8 L42 40 Q18 78 20 118 Q24 148 50 148 Q76 148 80 118 Q82 78 58 40 L54 8',
+        'round-flask': 'M46 8 L46 36 Q18 52 18 96 Q18 148 50 148 Q82 148 82 96 Q82 52 54 36 L54 8',
+        'receiving-flask': 'M46 8 L46 36 Q18 52 18 96 Q18 148 50 148 Q82 148 82 96 Q82 52 54 36 L54 8',
+        'test-tube': 'M40 10 L40 132 Q40 150 50 148 Q60 150 60 132 L60 10',
+        'test-tube-capped': 'M40 16 L40 132 Q40 150 50 148 Q60 150 60 132 L60 16 M36 10 H64',
+        'pipette-graduated': 'M48 6 L48 150 M52 6 L52 150',
+        'pipette-volumetric': 'M48 6 L48 48 Q38 58 38 70 Q38 82 48 88 L48 150 M52 6 L52 48 Q62 58 62 70 Q62 82 52 88 L52 150',
+        burette: 'M46 8 L46 140 L50 150 L54 140 L54 8 M40 132 H60',
+        dropper: 'M48 10 L48 130 Q50 148 52 130 L52 10',
+        'separatory-funnel': 'M38 10 H62 L70 28 Q88 70 50 148 Q12 70 30 28 Z M46 148 L46 156 L54 156 L54 148',
+        mortar: 'M18 70 Q20 120 50 128 Q80 120 82 70 Z',
+        bunsen: 'M38 70 H62 L58 148 H42 Z M44 58 H56',
+        condenser: 'M40 10 L40 150 M60 10 L60 150 M36 40 H64 M36 80 H64 M36 120 H64',
+        piston: 'M40 18 H60 V140 H40 Z M46 8 H54'
+      };
+      var path = d[kind] || d.beaker;
+      return '<svg class="lab-outline" viewBox="0 0 100 160" aria-hidden="true"><path d="' + path + '" /></svg>';
+    }
+
     function connectionsHtml() {
       var links = (session.board && session.board.connections) || [];
       if (!links.length) return '';
@@ -1479,7 +1516,8 @@
       var snap = heatZoneFor(session, container.id);
       if (snap && hasCap(container, 'heat')) heatCls += ' is-heat-zone';
       var emulsion = String(container.appearance || '').indexOf('emulsion') !== -1 || container.productId === 'sunscreen';
-      var cls = 'lab-glass lab-piece lab-' + kind + (kind === 'beaker' ? ' lab-beaker' : '') + (active ? ' is-active' : '') + (container.fizz ? ' is-fizz' : '') + (emulsion ? ' is-emulsion' : '') + pourCls + heatCls;
+      var warm = (Number(container.temperatureC) || 22) >= 40;
+      var cls = 'lab-glass lab-piece lab-' + kind + (kind === 'beaker' ? ' lab-beaker' : '') + (active ? ' is-active' : '') + (container.fizz ? ' is-fizz' : '') + (emulsion ? ' is-emulsion' : '') + (warm ? ' is-warm' : '') + pourCls + heatCls;
       var product = lang === 'pt' ? (container.productPt || container.product) : container.product;
       var x = obj ? Number(obj.x) : Number(container.x);
       var y = obj ? Number(obj.y) : Number(container.y);
@@ -1493,6 +1531,7 @@
         var top = Math.round((container.phases[0].ratio || 0.4) * fill);
         phaseHtml = '<span class="lab-phase lab-phase-top" style="height:' + top + '%"></span>';
       }
+      var vapor = warm ? '<span class="lab-vapor" aria-hidden="true"></span>' : '';
       var body = holds
         ? ('<span class="lab-glass-body">' +
           (sediment ? '<span class="lab-sediment" style="height:' + sediment + '%"></span>' : '') +
@@ -1500,7 +1539,7 @@
           '<span class="lab-liquid' + (container.fizz ? ' is-fizz-liquid' : '') + (Number(container.volumeMl) > 0 ? ' is-filled' : '') + '" style="height:' + fill + '%;background:' + esc(color) + '">' +
           (Number(container.volumeMl) > 0 ? '<span class="lab-meniscus" aria-hidden="true"></span>' : '') +
           '</span>' +
-          '</span>')
+          '</span>' + vapor)
         : '<span class="lab-tool-body">' + (kind === 'bunsen' && heatFrom === container.id ? '<span class="lab-flame is-lit" aria-hidden="true"></span>' : (kind === 'bunsen' ? '<span class="lab-flame" aria-hidden="true"></span>' : '')) + '</span>';
       var spec = specOf(kind);
       var meta = holds
@@ -1511,7 +1550,8 @@
           return '<i class="lab-port" data-port="' + esc(port.id) + '" data-port-type="' + esc(port.type) + '"></i>';
         }).join('') + '</span>'
         : '';
-      return '<button type="button" class="' + cls + '" data-vessel="' + esc(container.id) + '" draggable="false" aria-pressed="' + (active ? 'true' : 'false') + '" style="left:' + x + 'px;top:' + y + 'px;z-index:' + z + ';transform:rotate(' + rot + 'deg)">' +
+      return '<button type="button" class="' + cls + '" data-vessel="' + esc(container.id) + '" draggable="false" aria-pressed="' + (active ? 'true' : 'false') + '" style="left:' + x + 'px;top:' + y + 'px;z-index:' + z + ';--lab-rot:' + rot + 'deg;transform:rotate(' + rot + 'deg)">' +
+        outlineSvg(kind) +
         body +
         ports +
         '<span class="lab-glass-name">' + esc(container.label || kind) + '</span>' +
@@ -1538,11 +1578,13 @@
         (container.product ? '<div class="lab-kv lab-kv-product"><span>' + esc(copy('Created', 'Criado')) + '</span><strong>' + esc(lang === 'pt' ? (container.productPt || container.product) : container.product) + '</strong></div>' : '') +
         (pourFrom ? '<p class="lab-pour-hint">' + esc(copy('Pouring: click another vessel to transfer.', 'Transferindo: clique em outro vidro para despejar.')) + '</p>' : '') +
         (pipetteFrom ? '<p class="lab-pour-hint">' + esc(copy('Pipette loaded. Click a vessel to dispense.', 'Pipeta carregada. Clique em um vidro para dispensar.')) + '</p>' : '') +
+        (dropFrom ? '<p class="lab-pour-hint">' + esc(copy('Burette ready. Click a vessel for a 1 mL drop.', 'Bureta pronta. Clique em um vidro para uma gota de 1 mL.')) + '</p>' : '') +
         (connectFrom ? '<p class="lab-pour-hint">' + esc(copy('Connecting: click a compatible port or vessel.', 'Conectando: clique em um porto ou vidro compatível.')) + '</p>' : '') +
         '<p class="ws-lede">' + esc(copy('Virtual laboratory simulation. Values are educational, not experimental.', 'Simulação de laboratório virtual. Os valores são educacionais, não experimentais.')) + '</p>' +
         '<div class="lab-measures">' +
         (hasCap(container, 'aspirate') ? '<button type="button" class="ws-btn ws-btn-sm" data-lab-aspirate>' + esc(copy('Aspirate', 'Aspirar')) + '</button>' : '') +
-        (hasCap(container, 'dispense') || hasCap(container, 'dispense_exact') || hasCap(container, 'dispense_controlled') ? '<button type="button" class="ws-btn ws-btn-sm" data-lab-dispense>' + esc(copy('Dispense', 'Dispensar')) + '</button>' : '') +
+        (hasCap(container, 'dispense') || hasCap(container, 'dispense_exact') ? '<button type="button" class="ws-btn ws-btn-sm" data-lab-dispense>' + esc(copy('Dispense', 'Dispensar')) + '</button>' : '') +
+        (hasCap(container, 'dispense_controlled') ? '<button type="button" class="ws-btn ws-btn-sm" data-lab-drop>' + esc(copy('Drop 1 mL', 'Gota 1 mL')) + '</button>' : '') +
         (hasCap(container, 'grind') ? '<button type="button" class="ws-btn ws-btn-sm" data-lab-grind>' + esc(copy('Grind', 'Triturar')) + '</button>' : '') +
         (hasCap(container, 'separate') ? '<button type="button" class="ws-btn ws-btn-sm" data-lab-drain>' + esc(copy('Open valve', 'Abrir válvula')) + '</button>' : '') +
         ((specOf(container.type).ports || []).length ? '<button type="button" class="ws-btn ws-btn-sm' + (connectFrom === container.id ? ' is-on' : '') + '" data-lab-connect>' + esc(copy('Connect', 'Conectar')) + '</button>' : '') +
@@ -1575,6 +1617,54 @@
       stirTimer = setTimeout(function () {
         if (liquid.classList) liquid.classList.remove('is-stirring');
       }, 420);
+    }
+
+    function playTransferFx(fromId, toId, color, kind) {
+      pulseLiquid();
+      if (document.documentElement.getAttribute('data-reduced-motion')) return;
+      var world = node.querySelector('[data-lab-world]');
+      var src = node.querySelector('[data-vessel="' + fromId + '"]');
+      var dst = node.querySelector('[data-vessel="' + toId + '"]');
+      if (!world || !src || !dst) return;
+      src.classList.add('is-pouring');
+      dst.classList.add('is-receiving');
+      var x1 = (parseFloat(src.style.left) || 0) + 58;
+      var y1 = (parseFloat(src.style.top) || 0) + 78;
+      var x2 = (parseFloat(dst.style.left) || 0) + 58;
+      var y2 = (parseFloat(dst.style.top) || 0) + 36;
+      var dx = x2 - x1;
+      var dy = y2 - y1;
+      var len = Math.max(12, Math.sqrt(dx * dx + dy * dy));
+      var ang = Math.atan2(dy, dx) * 180 / Math.PI;
+      var el = document.createElement('span');
+      el.className = 'lab-stream' + (kind === 'drop' ? ' is-drip' : '');
+      el.setAttribute('aria-hidden', 'true');
+      el.style.left = x1 + 'px';
+      el.style.top = y1 + 'px';
+      el.style.width = len + 'px';
+      el.style.background = color || '#7EB6D9';
+      el.style.transform = 'rotate(' + ang + 'deg)';
+      world.appendChild(el);
+      if (fxTimer) clearTimeout(fxTimer);
+      fxTimer = setTimeout(function () {
+        src.classList.remove('is-pouring');
+        dst.classList.remove('is-receiving');
+        if (el.parentNode) el.remove();
+      }, kind === 'drop' ? 480 : 760);
+    }
+
+    function playHeatFx(id) {
+      var el = node.querySelector('[data-vessel="' + id + '"]');
+      if (!el) return;
+      el.classList.add('is-heating');
+      if (document.documentElement.getAttribute('data-reduced-motion')) {
+        el.classList.remove('is-heating');
+        return;
+      }
+      if (heatTimer) clearTimeout(heatTimer);
+      heatTimer = setTimeout(function () {
+        if (el.classList) el.classList.remove('is-heating');
+      }, 720);
     }
 
     function flashStatus(html) {
@@ -1775,7 +1865,7 @@
       rootEl.addEventListener('click', function (event) {
         try {
           var t = event.target && event.target.closest
-            ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-redo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel], [data-ready], [data-lab-zoom], [data-lab-fit], [data-lab-aspirate], [data-lab-dispense], [data-lab-grind], [data-lab-drain], [data-lab-connect], [data-lab-duplicate], [data-lab-delete], [data-lab-rotate]')
+            ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-redo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel], [data-ready], [data-lab-zoom], [data-lab-fit], [data-lab-aspirate], [data-lab-dispense], [data-lab-drop], [data-lab-grind], [data-lab-drain], [data-lab-connect], [data-lab-duplicate], [data-lab-delete], [data-lab-rotate]')
             : null;
           if (!t) return;
           if (t.getAttribute('data-amount')) {
@@ -1805,24 +1895,49 @@
               return;
             }
             if (pipetteFrom && pipetteFrom !== id) {
+              var sentColor = mixColor(findContainer(session, pipetteFrom) || {});
               var sent = dispense(session, pipetteFrom, id);
+              var sentFrom = pipetteFrom;
               pipetteFrom = '';
               session.selectedId = id;
               queueSave();
               updateLive();
-              if (sent.ok) pulseLiquid();
+              if (sent.ok) playTransferFx(sentFrom, id, sentColor, 'dispense');
               else flashStatus('<div class="lab-msg" role="status">' + esc(copy('Could not dispense into that vessel.', 'Não foi possível dispensar nesse vidro.')) + '</div>');
               return;
             }
+            if (dropFrom && dropFrom !== id) {
+              var dripColor = mixColor(findContainer(session, dropFrom) || {});
+              var dripped = drop(session, dropFrom, id);
+              var dripId = dropFrom;
+              dropFrom = '';
+              session.selectedId = id;
+              queueSave();
+              updateLive();
+              if (dripped.ok) playTransferFx(dripId, id, dripColor, 'drop');
+              else flashStatus('<div class="lab-msg" role="status">' + esc(copy('Could not drip into that vessel.', 'Não foi possível pingar nesse vidro.')) + '</div>');
+              return;
+            }
             var current = selected();
+            if (current && hasCap(current, 'dispense_controlled') && current.id !== id && canHold(clicked) && hasCap(clicked, 'contain')) {
+              var buretteColor = mixColor(current);
+              var drippedDirect = drop(session, current.id, id);
+              queueSave();
+              updateLive();
+              if (drippedDirect.ok) playTransferFx(current.id, id, buretteColor, 'drop');
+              else flashStatus('<div class="lab-msg" role="status">' + esc(copy('Fill the burette first.', 'Encha a bureta primeiro.')) + '</div>');
+              return;
+            }
             if (current && hasCap(current, 'aspirate') && current.id !== id && canHold(clicked) && hasCap(clicked, 'contain')) {
-              var piped;
-              if ((Number(current.volumeMl) || 0) > 0) piped = dispense(session, current.id, id);
-              else piped = aspirate(session, current.id, id, amount);
+              var loaded = (Number(current.volumeMl) || 0) > 0;
+              var pipColor = mixColor(loaded ? current : clicked);
+              var piped = loaded ? dispense(session, current.id, id) : aspirate(session, current.id, id, amount);
+              var pipFrom = loaded ? current.id : id;
+              var pipTo = loaded ? id : current.id;
               session.selectedId = current.id;
               queueSave();
               updateLive();
-              if (piped.ok) pulseLiquid();
+              if (piped.ok) playTransferFx(pipFrom, pipTo, pipColor, 'dispense');
               else flashStatus('<div class="lab-msg" role="status">' + esc(copy('This tool can\'t be used with that material or vessel.', 'Essa ferramenta não pode ser usada com esse material ou vidro.')) + '</div>');
               return;
             }
@@ -1833,15 +1948,18 @@
               queueSave();
               updateLive();
               pulseLiquid();
+              playHeatFx(id);
               return;
             }
             if (pourFrom && pourFrom !== id) {
+              var pourColor = mixColor(findContainer(session, pourFrom) || {});
+              var pouredFrom = pourFrom;
               var poured = pour(session, pourFrom, id, amount);
               pourFrom = '';
               session.selectedId = id;
               queueSave();
               updateLive();
-              if (poured.ok) pulseLiquid();
+              if (poured.ok) playTransferFx(pouredFrom, id, pourColor, 'pour');
               else if (poured.reason === 'empty') flashStatus('<div class="lab-msg" role="status">' + esc(copy('That vessel is empty.', 'Esse vidro está vazio.')) + '</div>');
               else if (poured.reason === 'full') flashStatus('<div class="lab-msg" role="status">' + esc(copy('That vessel is full.', 'Esse vidro está cheio.')) + '</div>');
               return;
@@ -1881,6 +1999,7 @@
             queueSave();
             updateLive();
             pulseLiquid();
+            if (delta > 0) playHeatFx(vessel.id);
             return;
           }
           if (t.getAttribute('data-add-vessel')) {
@@ -1930,6 +2049,18 @@
             updateLive();
             return;
           }
+          if (t.hasAttribute('data-lab-drop')) {
+            var bur = selected();
+            if (!bur || !hasCap(bur, 'dispense_controlled')) return;
+            if ((Number(bur.volumeMl) || 0) <= 0) {
+              flashStatus('<div class="lab-msg" role="status">' + esc(copy('Fill the burette first.', 'Encha a bureta primeiro.')) + '</div>');
+              return;
+            }
+            dropFrom = bur.id;
+            flashStatus('<div class="lab-msg" role="status">' + esc(copy('Click a vessel to drop 1 mL.', 'Clique em um vidro para pingar 1 mL.')) + '</div>');
+            updateLive();
+            return;
+          }
           if (t.hasAttribute('data-lab-grind')) {
             var ground = grind(session, selected().id);
             queueSave();
@@ -1943,11 +2074,13 @@
               flashStatus('<div class="lab-msg" role="status">' + esc(copy('Add a receiving vessel first.', 'Adicione um vidro receptor primeiro.')) + '</div>');
               return;
             }
+            var drainColor = mixColor(selected());
+            var drainFrom = selected().id;
             var drained = drainBottom(session, selected().id, drainTo.id);
             queueSave();
             updateLive();
             if (!drained.ok) flashStatus('<div class="lab-msg" role="status">' + esc(copy('Only modeled two-phase mixtures can drain.', 'Só misturas bifásicas modeladas podem ser drenadas.')) + '</div>');
-            else pulseLiquid();
+            else playTransferFx(drainFrom, drainTo.id, drainColor, 'pour');
             return;
           }
           if (t.hasAttribute('data-lab-connect')) {
@@ -2239,6 +2372,7 @@
     ensureBoard: ensureBoard,
     aspirate: aspirate,
     dispense: dispense,
+    drop: drop,
     grind: grind,
     drainBottom: drainBottom,
     connectPorts: connectPorts,

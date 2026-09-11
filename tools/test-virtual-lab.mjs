@@ -150,6 +150,16 @@ const condId = link.containers.find((row) => row.type === 'condenser').id;
 assert.equal(lab.connectPorts(link, roundId, 'neck', condId, 'inlet').ok, true);
 assert.ok(link.board.connections.length >= 1);
 
+const burette = lab.emptySession({ title: 'Burette' });
+assert.equal(lab.addVessel(burette, 'burette').ok, true);
+const burId = burette.containers.find((row) => row.type === 'burette').id;
+assert.equal(lab.addToContainer(burette, burId, 'water', 10).ok, true);
+assert.equal(lab.drop(burette, burId, 'beaker-a').ok, true);
+assert.equal(findVol(burette, 'beaker-a'), 1);
+assert.equal(findVol(burette, burId), 9);
+assert.equal(lab.drop(burette, 'beaker-a', burId).ok, false);
+assert.equal(lab.addToContainer(burette, 'beaker-a', 'cocaine', 1).ok, false);
+
 assert.equal(lab.addToContainer(session, 'beaker-a', 'cocaine', 10).ok, false);
 
 console.log('virtual lab tests passed');

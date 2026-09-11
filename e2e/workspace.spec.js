@@ -483,10 +483,17 @@ test('Workspace home is the Virtual Lab and Open Bench runs', async ({ page }) =
   await page.locator('[data-vessel="flask-b"]').click();
   await expect(page.locator('.lab-notes')).toContainText(/Poured|Transfer/i);
   await expect(page.locator('[data-lab-stage]')).toBeVisible();
+  await expect(page.locator('[data-add-vessel="condenser"]')).toBeVisible();
   await page.locator('[data-add-vessel="test-tube"]').click();
   await expect(page.locator('.lab-test-tube')).toBeVisible();
   await page.locator('[data-add-vessel="bunsen"]').click();
   await expect(page.locator('.lab-bunsen .lab-flame')).toBeVisible();
+  await page.locator('[data-add-vessel="burette"]').click();
+  await expect(page.locator('.lab-burette')).toBeVisible();
+  await page.locator('.lab-chip[data-add="water"]').click();
+  await page.locator('[data-lab-drop]').click();
+  await page.locator('[data-vessel="beaker-a"]').click();
+  await expect(page.locator('.lab-notes')).toContainText(/1 mL/);
   await page.locator('#lab-q').fill('cocaine');
   await page.locator('[data-lab-search]').evaluate((form) => form.requestSubmit());
   await expect(page.locator('.lab-msg')).toContainText(/isn't available|não está disponível/i);

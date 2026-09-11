@@ -1655,7 +1655,7 @@ html.auth-error .ws-auth-only { visibility: hidden; }
   overflow: hidden;
   background:
     linear-gradient(180deg, color-mix(in oklab, #fff 55%, transparent), color-mix(in oklab, #fff 18%, transparent));
-  border: 2px solid var(--lc-ink-2, #58544A);
+  border: 2px solid #2F2C28;
   border-top: 0;
 }
 .lab-beaker .lab-glass-body {
@@ -1684,7 +1684,8 @@ html.auth-error .ws-auth-only { visibility: hidden; }
   width: 28px;
   height: 22px;
   margin-left: -14px;
-  border: 2px solid var(--lc-ink-2, #58544A);
+  z-index: 2;
+  border: 2px solid #2F2C28;
   border-bottom: 0;
   border-radius: 5px 5px 0 0;
   background: color-mix(in oklab, #fff 42%, transparent);
@@ -1893,7 +1894,8 @@ html[data-reduced-motion="1"] .lab-liquid {
   width: 18px;
   height: 36px;
   margin-left: -9px;
-  border: 2px solid var(--lc-ink-2, #58544A);
+  z-index: 2;
+  border: 2px solid #2F2C28;
   border-bottom: 0;
   border-radius: 4px 5px 0 0;
   background: color-mix(in oklab, #fff 42%, transparent);
@@ -2211,5 +2213,113 @@ html[data-reduced-motion] .lab-liquid.is-filled::before,
 html[data-reduced-motion] .lab-flame,
 html[data-reduced-motion="1"] .lab-liquid.is-filled::before,
 html[data-reduced-motion="1"] .lab-flame {
+  animation: none;
+}
+
+.lab-outline {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 168px;
+  z-index: 4;
+  pointer-events: none;
+  overflow: visible;
+}
+.lab-outline path {
+  fill: none;
+  stroke: #2F2C28;
+  stroke-width: 2.6;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.lab-stream {
+  position: absolute;
+  height: 4px;
+  border-radius: 999px;
+  transform-origin: left center;
+  pointer-events: none;
+  z-index: 8;
+  opacity: .9;
+  box-shadow: 0 0 6px color-mix(in oklab, currentColor 35%, transparent);
+  animation: lab-stream-fade 760ms ease-out forwards;
+}
+.lab-stream.is-drip {
+  width: 10px !important;
+  height: 12px;
+  border-radius: 50%;
+  transform-origin: center;
+  animation: lab-drip 480ms ease-out forwards;
+}
+.lab-piece.is-pouring {
+  animation: lab-pour-tilt 700ms ease;
+  transform-origin: 50% 78%;
+}
+.lab-piece.is-receiving .lab-glass-body {
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--lc-green, #1E6A50) 28%, transparent);
+}
+.lab-piece.is-heating .lab-glass-body,
+.lab-piece.is-heating .lab-tool-body {
+  animation: lab-heat-pulse 720ms ease;
+}
+.lab-vapor {
+  position: absolute;
+  left: 22%;
+  right: 22%;
+  top: 4px;
+  height: 36px;
+  z-index: 5;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 30% 80%, color-mix(in oklab, #fff 70%, transparent) 0 28%, transparent 62%),
+    radial-gradient(ellipse at 68% 70%, color-mix(in oklab, #fff 55%, transparent) 0 22%, transparent 64%);
+  animation: lab-vapor 1400ms ease-out 1;
+  opacity: .55;
+}
+.lab-condenser .lab-tool-body {
+  width: 34px;
+  height: 168px;
+  border-radius: 12px;
+  margin-top: 8px;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      color-mix(in oklab, #7EB6D9 28%, #fff) 0 10px,
+      color-mix(in oklab, #fff 40%, transparent) 10px 16px
+    );
+  border: 2px solid #2F2C28;
+}
+@keyframes lab-pour-tilt {
+  0% { transform: rotate(var(--lab-rot, 0deg)); }
+  35% { transform: rotate(calc(var(--lab-rot, 0deg) + 22deg)); }
+  100% { transform: rotate(var(--lab-rot, 0deg)); }
+}
+@keyframes lab-stream-fade {
+  0% { opacity: .95; }
+  70% { opacity: .7; }
+  100% { opacity: 0; }
+}
+@keyframes lab-drip {
+  0% { transform: translateY(0) scale(1); opacity: .95; }
+  100% { transform: translateY(18px) scale(.6); opacity: 0; }
+}
+@keyframes lab-vapor {
+  0% { transform: translateY(8px); opacity: .15; }
+  40% { opacity: .55; }
+  100% { transform: translateY(-18px); opacity: 0; }
+}
+@keyframes lab-heat-pulse {
+  0% { filter: none; }
+  40% { filter: saturate(1.2) brightness(1.08); }
+  100% { filter: none; }
+}
+html[data-reduced-motion] .lab-piece.is-pouring,
+html[data-reduced-motion] .lab-stream,
+html[data-reduced-motion] .lab-vapor,
+html[data-reduced-motion] .lab-piece.is-heating .lab-glass-body,
+html[data-reduced-motion="1"] .lab-piece.is-pouring,
+html[data-reduced-motion="1"] .lab-stream,
+html[data-reduced-motion="1"] .lab-vapor,
+html[data-reduced-motion="1"] .lab-piece.is-heating .lab-glass-body {
   animation: none;
 }
