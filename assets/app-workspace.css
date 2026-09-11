@@ -1868,6 +1868,7 @@ html[data-reduced-motion="1"] .lab-liquid {
   z-index: 1;
   touch-action: none;
   width: 124px;
+  overflow: visible;
 }
 .lab-board .lab-piece.is-active { z-index: 3; }
 .lab-tool-body {
@@ -2266,16 +2267,18 @@ html[data-reduced-motion="1"] .lab-flame {
   position: absolute;
   left: 22%;
   right: 22%;
-  top: 4px;
-  height: 36px;
-  z-index: 5;
+  top: -2px;
+  height: 48px;
+  z-index: 6;
   pointer-events: none;
   background:
-    radial-gradient(ellipse at 30% 80%, color-mix(in oklab, #fff 70%, transparent) 0 28%, transparent 62%),
-    radial-gradient(ellipse at 68% 70%, color-mix(in oklab, #fff 55%, transparent) 0 22%, transparent 64%);
-  animation: lab-vapor 1400ms ease-out 1;
-  opacity: .55;
-}
+    radial-gradient(ellipse at 30% 82%, rgba(255,255,255,.92) 0 22%, transparent 62%),
+    radial-gradient(ellipse at 68% 68%, rgba(255,255,255,.78) 0 18%, transparent 64%),
+    radial-gradient(ellipse at 50% 40%, rgba(255,255,255,.55) 0 14%, transparent 58%);
+  filter: blur(.6px);
+    animation: lab-vapor 1.8s ease-in-out infinite;
+    opacity: .7;
+  }
 .lab-condenser .lab-tool-body {
   width: 34px;
   height: 168px;
@@ -2304,22 +2307,25 @@ html[data-reduced-motion="1"] .lab-flame {
   100% { transform: translateY(18px) scale(.6); opacity: 0; }
 }
 @keyframes lab-vapor {
-  0% { transform: translateY(8px); opacity: .15; }
-  40% { opacity: .55; }
-  100% { transform: translateY(-18px); opacity: 0; }
+  0% { transform: translateY(8px) scale(.92); opacity: .25; }
+  45% { transform: translateY(-6px) scale(1.05); opacity: .7; }
+  100% { transform: translateY(-22px) scale(1.12); opacity: .12; }
 }
 @keyframes lab-heat-pulse {
   0% { filter: none; }
   40% { filter: saturate(1.2) brightness(1.08); }
   100% { filter: none; }
 }
+html[data-reduced-motion] .lab-vapor,
+html[data-reduced-motion="1"] .lab-vapor {
+  animation: none;
+  opacity: .4;
+}
 html[data-reduced-motion] .lab-piece.is-pouring,
 html[data-reduced-motion] .lab-stream,
-html[data-reduced-motion] .lab-vapor,
 html[data-reduced-motion] .lab-piece.is-heating .lab-glass-body,
 html[data-reduced-motion="1"] .lab-piece.is-pouring,
 html[data-reduced-motion="1"] .lab-stream,
-html[data-reduced-motion="1"] .lab-vapor,
 html[data-reduced-motion="1"] .lab-piece.is-heating .lab-glass-body {
   animation: none;
 }

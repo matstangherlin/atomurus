@@ -160,6 +160,12 @@ assert.equal(findVol(burette, burId), 9);
 assert.equal(lab.drop(burette, 'beaker-a', burId).ok, false);
 assert.equal(lab.addToContainer(burette, 'beaker-a', 'cocaine', 1).ok, false);
 
+const place = lab.emptySession({ title: 'Place' });
+assert.equal(lab.addVessel(place, 'burette').ok, true);
+assert.equal(lab.addVessel(place, 'condenser').ok, true);
+const condObj = place.board.objects.find((row) => row.type === 'condenser') || place.containers.find((row) => row.type === 'condenser');
+assert.ok(Number(condObj.y) >= 200 || Number(condObj.x) < 560);
+
 assert.equal(lab.addToContainer(session, 'beaker-a', 'cocaine', 10).ok, false);
 
 console.log('virtual lab tests passed');

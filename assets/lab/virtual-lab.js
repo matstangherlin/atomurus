@@ -419,8 +419,8 @@
 
   function defaultPos(index) {
     return {
-      x: 56 + (index % 5) * 148,
-      y: 48 + Math.floor(index / 5) * 210
+      x: 56 + (index % 4) * 136,
+      y: 48 + Math.floor(index / 4) * 210
     };
   }
 
