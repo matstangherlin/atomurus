@@ -1789,19 +1789,21 @@ html.auth-error .ws-auth-only { visibility: hidden; }
   border-style: solid;
   border-color: color-mix(in oklab, #d06020 55%, var(--lc-rule, #D8D2BF));
 }
-.lab-links {
+svg.lab-links {
   position: absolute;
   left: 0;
   top: 0;
   width: 2400px;
   height: 1600px;
+  max-width: none;
   pointer-events: none;
   overflow: visible;
 }
 .lab-links path {
   fill: none;
-  stroke: color-mix(in oklab, var(--lc-green, #1E6A50) 55%, var(--lc-rule, #D8D2BF));
-  stroke-width: 2;
+  stroke: color-mix(in oklab, var(--lc-green, #1E6A50) 62%, var(--lc-rule, #D8D2BF));
+  stroke-width: 3.2;
+  stroke-linecap: round;
 }
 .lab-ports {
   position: absolute;
@@ -1850,10 +1852,11 @@ html.auth-error .ws-auth-only { visibility: hidden; }
   100% { transform: scaleY(1.08) translateY(-2px); opacity: 1; }
 }
 /* ── Lab glassware: one SVG per piece, liquid clipped to the real cavity ──── */
-.lab-vessel {
+svg.lab-vessel {
   display: block;
   width: 100%;
   height: 172px;
+  max-width: none;
   overflow: visible;
   pointer-events: none;
 }
@@ -1965,6 +1968,57 @@ html[data-reduced-motion="1"] .lab-stream { animation: none; }
   .lab-piece.is-pouring,
   .lab-stream { animation: none; }
   .lab-svg-bubble { opacity: .5; }
+}
+
+/* ── Reactions and assembled apparatus ───────────────────────────────────── */
+.lab-reaction,
+.lab-rig {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in oklab, var(--lc-green, #1E6A50) 32%, var(--lc-rule, #D8D2BF));
+  background: color-mix(in oklab, var(--lc-green, #1E6A50) 7%, transparent);
+}
+.lab-reaction-tag {
+  display: block;
+  font-size: 10.5px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--lc-green, #1E6A50);
+}
+.lab-reaction-eq {
+  display: block;
+  margin: 4px 0 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+  color: var(--lc-ink, #1b1914);
+  overflow-x: auto;
+}
+.lab-reaction p,
+.lab-rig p { margin: 4px 0 8px; font-size: 12.5px; color: var(--lc-ink-2, #58544A); }
+.lab-rig button { margin-top: 2px; }
+
+.lab-piece.is-reacting .lab-vessel { animation: lab-react 900ms ease-out; }
+.lab-piece.is-reacting .lab-svg-fill { animation: lab-stir 520ms ease-out; }
+@keyframes lab-react {
+  0% { filter: none; }
+  25% { filter: brightness(1.25) saturate(1.4) drop-shadow(0 0 6px color-mix(in oklab, var(--lc-green, #1E6A50) 45%, transparent)); }
+  100% { filter: none; }
+}
+.lab-piece.is-boiling .lab-svg-vapor > path { animation-duration: 900ms; }
+.lab-piece.is-boiling .lab-vessel { animation: lab-heat-pulse 900ms ease; }
+/* A heater under a vessel would stack its caption on top of the vessel's. */
+.lab-piece.is-cupped .lab-glass-name,
+.lab-piece.is-cupped .lab-glass-meta { display: none; }
+.lab-piece.is-cupped { z-index: 0; }
+
+html[data-reduced-motion] .lab-piece.is-reacting .lab-vessel,
+html[data-reduced-motion] .lab-piece.is-boiling .lab-vessel,
+html[data-reduced-motion="1"] .lab-piece.is-reacting .lab-vessel,
+html[data-reduced-motion="1"] .lab-piece.is-boiling .lab-vessel { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  .lab-piece.is-reacting .lab-vessel,
+  .lab-piece.is-boiling .lab-vessel { animation: none; }
 }
 
 /* ── Lab board v2: floating Miro-style dock, side tabs, action bar ───────── */
@@ -2188,6 +2242,28 @@ html[data-reduced-motion="1"] .lab-stream { animation: none; }
 .lab-guide-all { margin: 10px 0; font-size: 13px; }
 .lab-guide-all summary { cursor: pointer; color: var(--lc-ink-3, #8E8978); }
 .lab-guide-empty { display: grid; gap: 8px; }
+.lab-tower { margin: 10px 0; font-size: 13px; }
+.lab-tower summary { cursor: pointer; color: var(--lc-ink-3, #8E8978); }
+.lab-tower-list {
+  margin: 8px 0 0;
+  padding: 0 0 0 10px;
+  list-style: none;
+  border-left: 2px solid color-mix(in oklab, var(--lc-green, #1E6A50) 35%, transparent);
+}
+.lab-tower-list li {
+  position: relative;
+  padding: 4px 0 4px 10px;
+  color: var(--lc-ink-2, #58544A);
+}
+.lab-tower-list li::before {
+  content: "";
+  position: absolute;
+  left: -7px;
+  top: 12px;
+  width: 8px;
+  height: 2px;
+  background: color-mix(in oklab, var(--lc-green, #1E6A50) 55%, transparent);
+}
 
 @media (max-width: 1100px) {
   .lab-board-layout { grid-template-columns: 1fr; }

@@ -466,6 +466,51 @@ test('Pro footer has Plan billing and no Upgrade', async ({ page }) => {
   await expect(page.locator('#ws-nav-foot a[data-nav="plan"]')).toHaveAttribute('href', /\/account\?tab=plan/);
 });
 
+test('Lab reactions fire with an equation and the still runs from the guide', async ({ page }) => {
+  await installApi(page, { kind: 'free' });
+  await gotoWorkspace(page, '/app?section=lab');
+  await page.waitForSelector('.lab-beaker');
+
+  // Iron in copper sulfate solution is a registered reaction, not free text.
+  await page.locator('[data-dock="materials"]').click();
+  await page.locator('.lab-chip[data-add="water"]').click();
+  await page.locator('.lab-chip[data-add="cusulfate"]').click();
+  await expect(page.locator('[data-lab-reaction]')).toHaveCount(0);
+  await page.locator('.lab-chip[data-add="fe"]').click();
+  await page.locator('[data-dock-close]').click();
+  await expect(page.locator('[data-lab-reaction] .lab-reaction-eq')).toContainText('Fe + CuSO');
+  await expect(page.locator('.lab-notes')).toContainText(/Fe \+ CuSO/);
+
+  // Searching for gasoline reaches the conceptual separation, never a recipe.
+  await page.locator('#lab-q').fill('gasolina');
+  await page.locator('[data-lab-search]').evaluate((form) => form.requestSubmit());
+  await expect(page.locator('[data-lab-guide]')).toContainText(/Petroleum Fractions|Frações do petróleo/i);
+
+  // The distillation guide builds a working still step by step.
+  await page.locator('#lab-q').fill('distillation');
+  await page.locator('[data-lab-search]').evaluate((form) => form.requestSubmit());
+  await page.locator('[data-dock-close]').click();
+  await expect(page.locator('[data-lab-guide]')).toContainText(/Step 1 of 8|Passo 1 de 8/i);
+  for (const type of ['round-flask', 'condenser', 'receiving-flask', 'heating-mantle']) {
+    await page.locator(`[data-lab-guide] [data-add-vessel="${type}"]`).click();
+  }
+  await expect(page.locator('[data-lab-guide]')).toContainText(/Step 5 of 8|Passo 5 de 8/i);
+  await page.locator('[data-lab-guide] [data-step-add="water"]').click();
+  await page.locator('[data-lab-guide] [data-step-add="ethanol"]').click();
+  // The charge went into the flask the step named, not the beaker that was selected.
+  await expect(page.locator('.lab-round-flask')).toContainText('100 / 250 mL');
+  await expect(page.locator('[data-vessel="beaker-a"]')).toContainText('25 / 250 mL');
+  await expect(page.locator('[data-lab-guide]')).toContainText(/Step 6 of 8|Passo 6 de 8/i);
+  await page.locator('[data-lab-guide] [data-step-connect]').click();
+  await expect(page.locator('.lab-links path')).toHaveCount(2);
+  await page.locator('[data-lab-guide] [data-step-heat="80"]').click();
+  await expect(page.locator('[data-lab-guide]')).toContainText(/Step 8 of 8|Passo 8 de 8/i);
+  await page.locator('[data-lab-guide] [data-step-distill]').click();
+  await expect(page.locator('.lab-notes')).toContainText(/Distilled|Destilou/i);
+  await expect(page.locator('.lab-notes')).toContainText(/azeotrope|azeótropo/i);
+  await expect(page.locator('[data-lab-guide]')).toContainText(/All steps done|Todos os passos/i);
+});
+
 test('Workspace home is the Virtual Lab and Open Bench runs', async ({ page }) => {
   await installApi(page, { kind: 'free' });
   await gotoWorkspace(page, '/app');

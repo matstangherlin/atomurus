@@ -326,4 +326,120 @@ const phased = twoPhase.containers[0];
 assert.equal(phased.phases.length, 2);
 assert.ok(lab.vesselSvg(phased, { phases: phased.phases }).indexOf('lab-svg-phase') !== -1);
 
+// Reactions are registry entries, matched on reactants and state.
+assert.ok(lab.REACTIONS['fe-cu'] && lab.REACTIONS['fe-cu'].equation.includes('CuSO'));
+for (const id of Object.keys(lab.REACTIONS)) {
+  const model = lab.REACTIONS[id];
+  assert.ok(model.equation && model.en && model.pt, `${id} needs an equation and copy`);
+  assert.ok(model.reactants.length >= 2, `${id} needs reactants`);
+  for (const reactant of model.reactants) {
+    assert.ok(lab.SUBSTANCES[reactant], `${id} names unknown reactant ${reactant}`);
+  }
+}
+// A dry mixture does not react; the same reactants in water do.
+assert.equal(lab.reactionFor({ contents: [{ id: 'fe', amount: 5 }, { id: 'cusulfate', amount: 5 }], volumeMl: 0 }), null);
+const wetPair = { contents: [{ id: 'fe', amount: 5 }, { id: 'cusulfate', amount: 5 }], volumeMl: 40 };
+assert.equal(lab.reactionFor(wetPair).id, 'fe-cu');
+
+// Adding the last reactant reports the reaction once, with the equation logged.
+const react = lab.emptySession({ title: 'React', mode: 'bench' });
+lab.addToContainer(react, 'beaker-a', 'water', 60);
+lab.addToContainer(react, 'beaker-a', 'cusulfate', 8);
+assert.equal(react.containers[0].reactionId, '');
+const fired = lab.addToContainer(react, 'beaker-a', 'fe', 5);
+assert.equal(fired.reaction.id, 'fe-cu');
+assert.equal(react.containers[0].reactionId, 'fe-cu');
+assert.equal(react.containers[0].color, '#8FA98A', 'the blue solution fades');
+// The vessel is renamed after what the reaction actually leaves behind.
+assert.equal(react.containers[0].productId, 'feso4');
+assert.ok(react.containers[0].appearance.includes('copper'));
+// Reactions that only recolour keep the mixture's own name.
+assert.equal(lab.REACTIONS['indicator-acid'].product, undefined);
+assert.ok(react.observations.some((row) => row.text.includes('Fe + CuSO')));
+// A second addition of the same reactant does not re-announce it.
+assert.equal(lab.addToContainer(react, 'beaker-a', 'fe', 1).reaction, null);
+
+// Heating is bounded by the equipment under the vessel.
+const still = lab.emptySession({ title: 'Still', mode: 'bench' });
+for (const type of ['round-flask', 'condenser', 'receiving-flask', 'heating-mantle']) {
+  assert.equal(lab.addVessel(still, type).ok, true);
+}
+const stillFlask = still.containers.find((row) => row.type === 'round-flask');
+assert.equal(lab.maxTemperatureFor(still, still.containers[0]), 95, 'a bench vessel stays virtual-safe');
+assert.equal(lab.distillSetup(still, stillFlask.id), null, 'unconnected glassware is not a still');
+
+// Assembling connects the train and puts the mantle under the flask.
+const rigged = lab.assembleRig(still);
+assert.equal(rigged.ok, true);
+assert.ok(lab.distillSetup(still, stillFlask.id), 'the train is now a still');
+assert.equal(lab.maxTemperatureFor(still, stillFlask), 250, 'a mantle reaches distillation heat');
+
+// A still needs a mixture and enough heat before it runs.
+assert.equal(lab.distill(still, stillFlask.id).reason, 'single');
+lab.addToContainer(still, stillFlask.id, 'water', 60);
+lab.addToContainer(still, stillFlask.id, 'ethanol', 40);
+assert.equal(lab.distill(still, stillFlask.id).reason, 'cold');
+assert.equal(lab.setTemperature(still, stillFlask.id, 80).ok, true);
+assert.equal(stillFlask.temperatureC, 80);
+
+// The lower-boiling component comes across, capped by the azeotrope.
+const run = lab.distill(still, stillFlask.id);
+assert.equal(run.ok, true);
+assert.equal(run.bp, 78, 'ethanol leads');
+assert.ok(run.moved > 0);
+assert.ok(run.carry > 0, 'water is carried over');
+assert.ok(run.purity > 90 && run.purity <= 95.5, `simple distillation cannot beat the azeotrope, got ${run.purity}`);
+const receiver = still.containers.find((row) => row.type === 'receiving-flask');
+assert.ok(receiver.contents.some((row) => row.id === 'ethanol'));
+assert.ok(receiver.contents.some((row) => row.id === 'water'));
+assert.ok(stillFlask.volumeMl < 100, 'the still pot loses what came over');
+assert.ok(still.observations.some((row) => row.text.toLowerCase().includes('azeotrop') || row.text.toLowerCase().includes('azeótropo')));
+
+// Mass balance: nothing is created or destroyed by the transfer.
+const total = stillFlask.volumeMl + receiver.volumeMl;
+assert.ok(Math.abs(total - 100) < 0.5, `volume should be conserved, got ${total}`);
+
+// The guided distillation walks the same apparatus.
+const stillGuide = lab.CREATIONS.find((row) => row.id === 'distillation');
+assert.ok(stillGuide && stillGuide.tutorial.length === 8);
+assert.equal(lab.stepPlan(stillGuide, 4).into, 'round-flask', 'the charge goes into the flask, not any beaker');
+assert.equal(lab.stepPlan(stillGuide, 5).needsConnect, true);
+assert.equal(lab.stepPlan(stillGuide, 6).heatTo, 80);
+assert.equal(lab.stepPlan(stillGuide, 7).needsDistill, true);
+const walk = lab.emptySession({ title: 'Walk', mode: 'guided', creationId: 'distillation' });
+assert.equal(lab.tutorialState(walk, stillGuide).current, 0);
+for (const type of ['round-flask', 'condenser', 'receiving-flask', 'heating-mantle']) lab.addVessel(walk, type);
+assert.equal(lab.tutorialState(walk, stillGuide).current, 4);
+const walkFlask = walk.containers.find((row) => row.type === 'round-flask');
+lab.addToContainer(walk, walkFlask.id, 'water', 60);
+lab.addToContainer(walk, walkFlask.id, 'ethanol', 40);
+assert.equal(lab.tutorialState(walk, stillGuide).current, 5);
+lab.assembleRig(walk);
+assert.equal(lab.tutorialState(walk, stillGuide).current, 6);
+lab.setTemperature(walk, walkFlask.id, 80);
+assert.equal(lab.tutorialState(walk, stillGuide).current, 7);
+assert.equal(lab.distill(walk, walkFlask.id).ok, true);
+assert.equal(lab.tutorialState(walk, stillGuide).complete, true);
+
+// Petroleum stays a conceptual separation, and gasoline resolves to it.
+const crude = lab.CREATIONS.find((row) => row.id === 'petroleum');
+assert.equal(crude.safetyClass, 'conceptual');
+assert.ok(/not a procedure/i.test(crude.lede.en));
+assert.equal(lab.resolveQuery('gasolina').id, 'petroleum');
+assert.equal(lab.resolveQuery('petroleum').kind, 'creation');
+assert.equal(lab.resolveQuery('alcool').id, 'ethanol');
+assert.ok(lab.READY.some((row) => row.id === 'crude_ready'));
+// The tower is stored bottom-up, the way the column is fed and drawn off.
+assert.equal(crude.fractions.length, 6);
+assert.deepEqual(crude.fractions.map((row) => row.id),
+  ['residue', 'lubricant', 'fuel-oil', 'kerosene', 'gasoline', 'gas']);
+for (let i = 1; i < crude.fractions.length; i += 1) {
+  assert.ok(crude.fractions[i].bpFrom < crude.fractions[i - 1].bpFrom,
+    'fractions must climb the tower as their boiling range falls');
+}
+assert.ok(crude.fractions.every((row) => row.en && row.pt));
+// Still deny-by-default after all the new vocabulary.
+assert.equal(lab.resolveQuery('moonshine').ok, false);
+assert.equal(lab.addToContainer(still, stillFlask.id, 'gasoline', 10).ok, false);
+
 console.log('virtual lab tests passed');

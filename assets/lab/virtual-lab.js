@@ -24,7 +24,9 @@
     undo: { wave: 'triangle', from: 430, to: 300, dur: 0.09, gain: 0.07 },
     deny: { wave: 'square', from: 196, to: 138, dur: 0.18, gain: 0.05 },
     step: { wave: 'sine', from: 660, to: 880, dur: 0.17, gain: 0.10 },
-    complete: { wave: 'sine', from: 523, to: 1046, dur: 0.42, gain: 0.11 }
+    complete: { wave: 'sine', from: 523, to: 1046, dur: 0.42, gain: 0.11 },
+    reaction: { wave: 'noise', from: 1200, to: 300, dur: 0.42, gain: 0.09 },
+    distill: { wave: 'sine', from: 340, to: 760, dur: 0.5, gain: 0.07 }
   };
 
   var audioCtx = null;
@@ -109,7 +111,7 @@
   }
 
   var SUBSTANCES = {
-    water: { id: 'water', name: 'Water', formula: 'H₂O', category: 'solvent', color: '#7EB6D9', state: 'liquid', ph: 7, allowed: true },
+    water: { id: 'water', name: 'Water', formula: 'H₂O', category: 'solvent', color: '#7EB6D9', state: 'liquid', ph: 7, bp: 100, allowed: true },
     nacl: { id: 'nacl', name: 'Sodium chloride', formula: 'NaCl', category: 'salt', color: '#F4F1E4', state: 'solid', allowed: true },
     sucrose: { id: 'sucrose', name: 'Sucrose', formula: 'C₁₂H₂₂O₁₁', category: 'sugar', color: '#F7E7C6', state: 'solid', allowed: true },
     citric_acid: { id: 'citric_acid', name: 'Citric acid', formula: 'C₆H₈O₇', category: 'acid', color: '#F3E27A', state: 'solid', ph: 2.2, allowed: true },
@@ -127,7 +129,11 @@
     carbon: { id: 'carbon', name: 'Carbon (graphite)', formula: 'C', category: 'allotrope', color: '#3A3732', state: 'solid', allowed: true, inventory: false },
     zno: { id: 'zno', name: 'Zinc oxide', formula: 'ZnO', category: 'mineral', color: '#F4F1EA', state: 'solid', allowed: true },
     tio2: { id: 'tio2', name: 'Titanium dioxide', formula: 'TiO₂', category: 'mineral', color: '#E8EEF2', state: 'solid', allowed: true },
-    oil: { id: 'oil', name: 'Virtual carrier oil', formula: 'oil', category: 'solvent', color: '#E6D5A2', state: 'liquid', allowed: true }
+    oil: { id: 'oil', name: 'Virtual carrier oil', formula: 'oil', category: 'solvent', color: '#E6D5A2', state: 'liquid', bp: 300, allowed: true },
+    ethanol: { id: 'ethanol', name: 'Ethanol', formula: 'C₂H₅OH', category: 'solvent', color: '#E8E2CE', state: 'liquid', bp: 78, allowed: true },
+    frac_light: { id: 'frac_light', name: 'Virtual light fraction', formula: 'C₅–C₈', category: 'fraction', color: '#F2E3B0', state: 'liquid', bp: 65, allowed: true },
+    frac_mid: { id: 'frac_mid', name: 'Virtual mid fraction', formula: 'C₉–C₁₆', category: 'fraction', color: '#DCC07C', state: 'liquid', bp: 175, allowed: true },
+    frac_heavy: { id: 'frac_heavy', name: 'Virtual heavy fraction', formula: 'C₁₇+', category: 'fraction', color: '#A88B4E', state: 'liquid', bp: 330, allowed: true }
   };
 
   function eq(id, category, en, pt, o) {
@@ -690,24 +696,95 @@
     dispense: { id: 'dispense', allowed: true },
     separate: { id: 'separate', allowed: true },
     connect: { id: 'connect', allowed: true },
-    measure: { id: 'measure', allowed: true }
+    measure: { id: 'measure', allowed: true },
+    distill: { id: 'distill', allowed: true, maxC: 250 }
   };
 
+  /* Reviewed reaction models. A reaction only fires when its reactants, state
+     and conditions all match; nothing is inferred from free text. */
   var REACTIONS = {
-    fizz: { id: 'fizz', reactants: ['citric_acid', 'bicarbonate'], needsLiquid: true },
-    saline: { id: 'saline', reactants: ['nacl', 'water'] },
-    'cu-sol': { id: 'cu-sol', reactants: ['cusulfate', 'water'] },
-    'sugar-sol': { id: 'sugar-sol', reactants: ['sucrose', 'water'] },
-    sunscreen: { id: 'sunscreen', reactants: ['zno', 'oil', 'water'] },
-    emulsion: { id: 'emulsion', reactants: ['oil', 'water'] },
-    accord: { id: 'accord', reactants: ['limonene'] }
+    'acid-base': {
+      id: 'acid-base',
+      reactants: ['citric_acid', 'bicarbonate'],
+      needsLiquid: true,
+      equation: 'C₆H₈O₇ + 3 NaHCO₃ → Na₃C₆H₅O₇ + 3 H₂O + 3 CO₂',
+      effect: 'gas',
+      appearance: 'effervescent mixture',
+      product: { id: 'fizz', en: 'Sodium citrate solution + CO₂', pt: 'Solução de citrato de sódio + CO₂' },
+      en: 'Carbon dioxide is released, so the mixture fizzes.',
+      pt: 'Há liberação de dióxido de carbono, por isso a mistura efervesce.'
+    },
+    'fe-cu': {
+      id: 'fe-cu',
+      reactants: ['fe', 'cusulfate'],
+      needsLiquid: true,
+      equation: 'Fe + CuSO₄ → FeSO₄ + Cu',
+      effect: 'precipitate',
+      color: '#8FA98A',
+      appearance: 'pale green solution with copper',
+      product: { id: 'feso4', en: 'Iron(II) sulfate solution + copper', pt: 'Solução de sulfato de ferro(II) + cobre' },
+      en: 'Iron displaces copper: the blue solution fades and copper settles out.',
+      pt: 'O ferro desloca o cobre: a solução azul desbota e o cobre se deposita.'
+    },
+    'zn-cu': {
+      id: 'zn-cu',
+      reactants: ['zn', 'cusulfate'],
+      needsLiquid: true,
+      equation: 'Zn + CuSO₄ → ZnSO₄ + Cu',
+      effect: 'precipitate',
+      color: '#C9CFCB',
+      appearance: 'colourless solution with copper',
+      product: { id: 'znso4', en: 'Zinc sulfate solution + copper', pt: 'Solução de sulfato de zinco + cobre' },
+      en: 'Zinc displaces copper and the solution loses its blue colour.',
+      pt: 'O zinco desloca o cobre e a solução perde a cor azul.'
+    },
+    'indicator-acid': {
+      id: 'indicator-acid',
+      reactants: ['indicator', 'citric_acid'],
+      needsLiquid: true,
+      equation: 'In + H⁺ → InH⁺',
+      effect: 'color',
+      color: '#D2606A',
+      appearance: 'indicator, acid colour',
+      en: 'The indicator turns towards its acid colour.',
+      pt: 'O indicador vira para a cor ácida.'
+    },
+    'indicator-base': {
+      id: 'indicator-base',
+      reactants: ['indicator', 'bicarbonate'],
+      needsLiquid: true,
+      equation: 'InH⁺ + OH⁻ → In + H₂O',
+      effect: 'color',
+      color: '#6F86C4',
+      appearance: 'indicator, basic colour',
+      en: 'The indicator turns towards its basic colour.',
+      pt: 'O indicador vira para a cor básica.'
+    }
   };
+
+  var REACTION_ORDER = ['acid-base', 'fe-cu', 'zn-cu', 'indicator-acid', 'indicator-base'];
+
+  function reactionFor(container) {
+    var has = {};
+    (container.contents || []).forEach(function (row) {
+      if ((Number(row.amount) || 0) > 0.05) has[row.id] = true;
+    });
+    var wet = (Number(container.volumeMl) || 0) > 0;
+    for (var i = 0; i < REACTION_ORDER.length; i += 1) {
+      var model = REACTIONS[REACTION_ORDER[i]];
+      if (model.needsLiquid && !wet) continue;
+      var matched = model.reactants.every(function (id) { return has[id]; });
+      if (matched) return model;
+    }
+    return null;
+  }
 
   var READY = [
     { id: 'saline_ready', labelEn: 'Saline (ready)', labelPt: 'Soro (pronto)', parts: [{ id: 'water', amount: 40 }, { id: 'nacl', amount: 8 }] },
     { id: 'cu_ready', labelEn: 'Copper sulfate solution', labelPt: 'Sulfato de cobre (pronto)', parts: [{ id: 'water', amount: 40 }, { id: 'cusulfate', amount: 8 }] },
     { id: 'sugar_ready', labelEn: 'Sugar solution', labelPt: 'Solução de açúcar', parts: [{ id: 'water', amount: 40 }, { id: 'sucrose', amount: 10 }] },
     { id: 'sunscreen_ready', labelEn: 'Mineral lotion (ready)', labelPt: 'Loção mineral (pronta)', parts: [{ id: 'water', amount: 20 }, { id: 'oil', amount: 15 }, { id: 'zno', amount: 8 }] },
+    { id: 'crude_ready', labelEn: 'Virtual crude blend', labelPt: 'Blend bruto virtual', parts: [{ id: 'frac_light', amount: 25 }, { id: 'frac_mid', amount: 25 }, { id: 'frac_heavy', amount: 15 }] },
     { id: 'accord_ready', labelEn: 'Citrus accord (ready)', labelPt: 'Acorde cítrico (pronto)', parts: [{ id: 'limonene', amount: 8 }, { id: 'linalool', amount: 6 }, { id: 'vanillin', amount: 4 }] }
   ];
 
@@ -731,10 +808,86 @@
     'copper sulfate': 'cusulfate', 'sulfato de cobre': 'cusulfate', carbon: 'c',
     sunscreen: 'guided:sunscreen', 'protetor solar': 'guided:sunscreen', protetor: 'guided:sunscreen',
     'zinc oxide': 'zno', 'oxido de zinco': 'zno', 'óxido de zinco': 'zno',
-    'titanium dioxide': 'tio2', oil: 'oil', oleo: 'oil', óleo: 'oil'
+    'titanium dioxide': 'tio2', oil: 'oil', oleo: 'oil', óleo: 'oil',
+    ethanol: 'ethanol', etanol: 'ethanol', alcohol: 'ethanol', álcool: 'ethanol', alcool: 'ethanol',
+    distillation: 'guided:distillation', destilacao: 'guided:distillation', 'destilação': 'guided:distillation',
+    distill: 'guided:distillation', separation: 'guided:distillation',
+    petroleum: 'guided:petroleum', petroleo: 'guided:petroleum', 'petróleo': 'guided:petroleum',
+    refinery: 'guided:petroleum', refino: 'guided:petroleum', gasoline: 'guided:petroleum',
+    gasolina: 'guided:petroleum', 'fractional distillation': 'guided:petroleum'
   };
 
   var CREATIONS = [
+    {
+      id: 'distillation',
+      slug: 'separate-a-mixture-by-distillation',
+      title: { en: 'Separate a Mixture by Distillation', pt: 'Separar uma mistura por destilação' },
+      category: 'Separations',
+      difficulty: { en: 'Intermediate', pt: 'Intermediário' },
+      access: 'account',
+      demo: true,
+      educational: true,
+      lede: {
+        en: 'Build a still from the glassware, heat a virtual ethanol-water mixture and watch the lower-boiling component come across. This models the separation principle; it is not a procedure for producing a drinkable or fuel product.',
+        pt: 'Monte a aparelhagem com a vidraria, aqueça uma mistura virtual de etanol e água e veja o componente de menor ponto de ebulição passar. Isto modela o princípio da separação; não é um procedimento para produzir bebida ou combustível.'
+      },
+      stages: ['assemble', 'heat', 'collect'],
+      safetyClass: 'educational',
+      version: 3,
+      learningObjectives: {
+        en: 'Boiling point, vapour, condensation and why an azeotrope caps simple distillation.',
+        pt: 'Ponto de ebulição, vapor, condensação e por que um azeótropo limita a destilação simples.'
+      },
+      tutorial: [
+        { id: 'flask', action: 'addEquipment', needEquipment: ['round-flask'], en: 'Place a round-bottom flask: it heats evenly.', pt: 'Coloque um balão de fundo redondo: ele aquece por igual.', why: { en: 'A round bottom spreads heat without hot spots.', pt: 'O fundo redondo espalha o calor sem pontos quentes.' } },
+        { id: 'cond', action: 'addEquipment', needEquipment: ['condenser'], en: 'Add a Liebig condenser.', pt: 'Adicione um condensador de Liebig.', why: { en: 'Vapour has to cool back to liquid somewhere.', pt: 'O vapor precisa voltar a líquido em algum lugar.' } },
+        { id: 'recv', action: 'addEquipment', needEquipment: ['receiving-flask'], en: 'Add a receiving flask for the distillate.', pt: 'Adicione um balão coletor para o destilado.' },
+        { id: 'heater', action: 'addEquipment', needEquipment: ['heating-mantle'], en: 'Add a heating mantle under the flask.', pt: 'Adicione uma manta de aquecimento sob o balão.', why: { en: 'A mantle reaches distillation temperatures; a warm hand does not.', pt: 'A manta atinge temperaturas de destilação; a mão morna não.' } },
+        { id: 'charge', action: 'addMaterial', need: { water: true, ethanol: true }, amounts: { water: 60, ethanol: 40 }, into: 'round-flask', en: 'Charge the flask with 60 mL of water and 40 mL of ethanol.', pt: 'Carregue o balão com 60 mL de água e 40 mL de etanol.', why: { en: 'Ethanol boils at 78 °C and water at 100 °C, so they can be separated.', pt: 'O etanol ferve a 78 °C e a água a 100 °C, por isso podem ser separados.' } },
+        { id: 'rig', action: 'connect', needConnections: 2, en: 'Connect flask to condenser and condenser to receiver.', pt: 'Conecte o balão ao condensador e o condensador ao coletor.', why: { en: 'The train only works if the vapour has a sealed path.', pt: 'A aparelhagem só funciona se o vapor tiver um caminho fechado.' } },
+        { id: 'heat', action: 'heat', heatTo: 80, needTemp: 76, en: 'Heat the flask to about 80 °C.', pt: 'Aqueça o balão até cerca de 80 °C.', why: { en: 'Just above the ethanol boiling point, so mostly ethanol vaporises.', pt: 'Logo acima do ponto de ebulição do etanol, então vaporiza sobretudo etanol.' } },
+        { id: 'run', action: 'distill', needIn: { type: 'receiving-flask', id: 'ethanol' }, en: 'Distil, and read the purity in the notebook.', pt: 'Destile e leia a pureza no caderno.', why: { en: 'Ethanol and water form an azeotrope near 95%, so simple distillation cannot go further.', pt: 'Etanol e água formam um azeótropo perto de 95%, então a destilação simples não passa disso.' } }
+      ]
+    },
+    {
+      id: 'petroleum',
+      slug: 'petroleum-fractions',
+      title: { en: 'Petroleum Fractions (conceptual)', pt: 'Frações do petróleo (conceitual)' },
+      category: 'Separations',
+      difficulty: { en: 'Intermediate', pt: 'Intermediário' },
+      access: 'account',
+      demo: false,
+      educational: true,
+      lede: {
+        en: 'A conceptual model of fractional distillation using virtual fractions. It shows why a refinery column separates crude oil by boiling range. It is not a procedure for refining fuel.',
+        pt: 'Modelo conceitual da destilação fracionada com frações virtuais. Mostra por que uma coluna de refino separa o petróleo por faixa de ebulição. Não é um procedimento para refinar combustível.'
+      },
+      stages: ['charge', 'heat', 'fractions'],
+      safetyClass: 'conceptual',
+      version: 1,
+      learningObjectives: {
+        en: 'Crude oil is a mixture; a column separates it by boiling range, lightest at the top.',
+        pt: 'O petróleo é uma mistura; a coluna separa por faixa de ebulição, com os mais leves no topo.'
+      },
+      /* Tower order, bottom to top: the heaviest fractions never reach the top
+         trays, which is the whole point of the column. */
+      fractions: [
+        { id: 'residue', bpFrom: 400, en: 'Residue (paraffin wax, asphalt)', pt: 'Resíduos (parafina, asfalto)' },
+        { id: 'lubricant', bpFrom: 350, en: 'Lubricating oil', pt: 'Óleo lubrificante' },
+        { id: 'fuel-oil', bpFrom: 300, en: 'Fuel oil', pt: 'Óleo combustível' },
+        { id: 'kerosene', bpFrom: 175, en: 'Kerosene', pt: 'Querosene' },
+        { id: 'gasoline', bpFrom: 40, en: 'Gasoline', pt: 'Gasolina' },
+        { id: 'gas', bpFrom: -160, en: 'Refinery gas', pt: 'Gás' }
+      ],
+      tutorial: [
+        { id: 'rigup', action: 'addEquipment', needEquipment: ['round-flask', 'condenser', 'receiving-flask', 'heating-mantle'], en: 'Place the flask, condenser, receiver and mantle.', pt: 'Coloque o balão, o condensador, o coletor e a manta.' },
+        { id: 'charge', action: 'addMaterial', need: { frac_light: true, frac_mid: true }, amounts: { frac_light: 30, frac_mid: 30 }, into: 'round-flask', en: 'Charge the flask with the virtual light and mid fractions.', pt: 'Carregue o balão com as frações virtuais leve e média.', why: { en: 'Crude oil is a mixture of hydrocarbons with different chain lengths.', pt: 'O petróleo é uma mistura de hidrocarbonetos com cadeias de tamanhos diferentes.' } },
+        { id: 'rig', action: 'connect', needConnections: 2, en: 'Connect the train.', pt: 'Conecte a aparelhagem.' },
+        { id: 'heat', action: 'heat', heatTo: 70, needTemp: 63, en: 'Heat to about 70 °C to take the lightest fraction first.', pt: 'Aqueça até cerca de 70 °C para tirar primeiro a fração mais leve.', why: { en: 'A refinery heats crude in a furnace and feeds it to the bottom of the tower. The lightest fractions rise highest before they condense.', pt: 'Uma refinaria aquece o petróleo numa fornalha e o injeta na base da torre. As frações mais leves sobem mais alto antes de condensar.' } },
+        { id: 'run', action: 'distill', needIn: { type: 'receiving-flask', id: 'frac_light' }, en: 'Distil the light fraction over, then read the tower order.', pt: 'Destile a fração leve e leia a ordem da torre.', why: { en: 'Top to bottom a real tower gives refinery gas, gasoline, kerosene, fuel oil, lubricating oil and finally residue: paraffin wax and asphalt.', pt: 'Do topo para a base, uma torre real dá gás, gasolina, querosene, óleo combustível, óleo lubrificante e, no fundo, resíduos: parafina e asfalto.' } }
+      ]
+    },
+
     {
       id: 'solution',
       slug: 'prepare-a-solution',
@@ -1298,11 +1451,33 @@
         { id: 'water', ratio: volume / (oilAmt + volume) }
       ];
     }
+    var reaction = reactionFor(container);
+    container.reactionId = reaction ? reaction.id : '';
+    container.reactionEq = reaction ? reaction.equation : '';
+    container.reactionEffect = reaction ? reaction.effect : '';
+    if (reaction && reaction.color) container.color = reaction.color;
+    if (reaction && reaction.effect === 'gas') container.fizz = true;
     var product = identifyProduct(container);
     container.productId = product ? product.id : '';
     container.product = product ? product.en : '';
     container.productPt = product ? product.pt : '';
+    if (reaction) {
+      if (reaction.appearance) container.appearance = reaction.appearance;
+      if (reaction.product) {
+        container.productId = reaction.product.id;
+        container.product = reaction.product.en;
+        container.productPt = reaction.product.pt;
+      }
+    }
     return container;
+  }
+
+  /* A reaction is logged once, when it first appears in that vessel. */
+  function noteReaction(session, container, beforeId) {
+    var model = container.reactionId ? REACTIONS[container.reactionId] : null;
+    if (!model || container.reactionId === beforeId) return null;
+    observe(session, line(session, model.en + ' ' + model.equation, model.pt + ' ' + model.equation));
+    return model;
   }
 
   function identifyProduct(container) {
@@ -1421,6 +1596,7 @@
     }
     pushHistory(session);
     var beforeProduct = container.productId || '';
+    var beforeReaction = container.reactionId || '';
     var existing = (container.contents || []).filter(function (row) { return row.id === spec.id; })[0];
     if (existing) existing.amount += qty;
     else container.contents.push({ id: spec.id, amount: qty, unit: unit || (spec.state === 'liquid' ? 'mL' : 'g') });
@@ -1432,7 +1608,8 @@
       'Adicionou ' + spec.name + ' (' + spec.formula + ') virtual em ' + (container.label || container.id) + '.'
     ));
     noteProduct(session, container, beforeProduct);
-    return { ok: true, container: container };
+    var fired = noteReaction(session, container, beforeReaction);
+    return { ok: true, container: container, reaction: fired };
   }
 
   function pour(session, fromId, toId, amount) {
@@ -1453,6 +1630,7 @@
     }
     pushHistory(session);
     var beforeProduct = to.productId || '';
+    var beforeReaction = to.reactionId || '';
     var ratio = qty / vol;
     to.contents = to.contents || [];
     (from.contents || []).forEach(function (row) {
@@ -1473,7 +1651,8 @@
       'Transferiu ' + qty + ' mL de ' + (from.label || from.id) + ' para ' + (to.label || to.id) + '.'
     ));
     noteProduct(session, to, beforeProduct);
-    return { ok: true, amount: qty };
+    var fired = noteReaction(session, to, beforeReaction);
+    return { ok: true, amount: qty, reaction: fired };
   }
 
   function addVessel(session, type) {
@@ -1627,6 +1806,16 @@
     return { ok: true };
   }
 
+  var HEAT_OFFSET = 34;
+
+  function heaterIsCupped(session, heaterId) {
+    return (session.containers || []).some(function (row) {
+      if (row.id === heaterId || !hasCap(row, 'heat')) return false;
+      var zone = heatZoneFor(session, row.id);
+      return zone && zone.id === heaterId;
+    });
+  }
+
   function heatZoneFor(session, vesselId) {
     var vessel = findObject(session, vesselId);
     if (!vessel) return null;
@@ -1635,9 +1824,9 @@
     });
     var hit = null;
     heaters.forEach(function (heater) {
-      var dx = Math.abs((Number(vessel.x) + 50) - (Number(heater.x) + 50));
-      var dy = (Number(heater.y) + (specOf(heater.type).h || 90) / 2) - (Number(vessel.y) + (specOf(vessel.type).h || 180));
-      if (dx < 70 && dy > -40 && dy < 90) hit = heater;
+      var dx = Math.abs(Number(vessel.x) - Number(heater.x));
+      var dy = Number(heater.y) - Number(vessel.y);
+      if (dx < 70 && dy > HEAT_OFFSET - 44 && dy < HEAT_OFFSET + 120) hit = heater;
     });
     return hit;
   }
@@ -1645,15 +1834,174 @@
   function setTemperature(session, containerId, next) {
     var container = findContainer(session, containerId);
     if (!container) return { ok: false, reason: 'no-container' };
-    var temp = Math.max(5, Math.min(95, Number(next)));
+    var temp = Math.max(5, Math.min(maxTemperatureFor(session, container), Number(next)));
     if (temp === container.temperatureC) return { ok: true, container: container };
     pushHistory(session);
     container.temperatureC = temp;
     var beforeProduct = container.productId || '';
+    var beforeReaction = container.reactionId || '';
     observe(session, line(session, (container.label || container.id) + ' is now ' + temp + ' °C (virtual).', (container.label || container.id) + ' está a ' + temp + ' °C (virtual).'));
     mixContainer(container);
     noteProduct(session, container, beforeProduct);
-    return { ok: true, container: container };
+    var fired = noteReaction(session, container, beforeReaction);
+    return { ok: true, container: container, reaction: fired };
+  }
+
+  /* Heating is bounded by the equipment under the vessel, not by a flat cap. */
+  function maxTemperatureFor(session, container) {
+    if (!container) return 95;
+    var heater = heatZoneFor(session, container.id);
+    if (!heater) return 95;
+    var spec = specOf(heater.type);
+    if (!spec.heat) return 95;
+    if (heater.type === 'heating-mantle' || heater.type === 'hot-plate') {
+      return Math.min(PROCESSES.distill.maxC, 250);
+    }
+    return 150;
+  }
+
+  /* Walks the connections for flask -> condenser -> receiver. */
+  function distillSetup(session, sourceId) {
+    ensureBoard(session);
+    var links = session.board.connections || [];
+    var source = findContainer(session, sourceId);
+    if (!source || !canHold(source) || !hasCap(source, 'heat')) return null;
+    function neighbours(id, skipId) {
+      return links.filter(function (row) { return row.fromId === id || row.toId === id; })
+        .map(function (row) { return row.fromId === id ? row.toId : row.fromId; })
+        .filter(function (next) { return next !== skipId; });
+    }
+    var mids = neighbours(sourceId, '');
+    for (var i = 0; i < mids.length; i += 1) {
+      var condenser = findContainer(session, mids[i]);
+      if (!condenser || !hasCap(condenser, 'condense')) continue;
+      var outs = neighbours(condenser.id, sourceId);
+      for (var j = 0; j < outs.length; j += 1) {
+        var receiver = findContainer(session, outs[j]);
+        if (receiver && canHold(receiver) && hasCap(receiver, 'contain')) {
+          return { source: source, condenser: condenser, receiver: receiver };
+        }
+      }
+    }
+    return null;
+  }
+
+  function firstOfType(session, type) {
+    return (session.containers || []).filter(function (row) { return row.type === type; })[0] || null;
+  }
+
+  /* Places and connects a distillation train the user has already assembled
+     piece by piece. It never adds equipment the user did not put on the board. */
+  function assembleRig(session) {
+    ensureBoard(session);
+    var flask = firstOfType(session, 'round-flask');
+    var condenser = firstOfType(session, 'condenser');
+    var receiver = firstOfType(session, 'receiving-flask') || firstOfType(session, 'flask');
+    if (!flask || !condenser || !receiver) return { ok: false, reason: 'missing' };
+    var heater = firstOfType(session, 'heating-mantle') || firstOfType(session, 'hot-plate') || firstOfType(session, 'bunsen');
+    pushHistory(session);
+    var base = findObject(session, flask.id);
+    if (!base) return { ok: false, reason: 'missing' };
+    var x = Number(base.x) || 200;
+    var y = Number(base.y) || 200;
+    function place(id, nx, ny) {
+      var obj = findObject(session, id);
+      var row = findContainer(session, id);
+      if (!obj) return;
+      obj.x = Math.round(nx);
+      obj.y = Math.round(ny);
+      if (row) { row.x = obj.x; row.y = obj.y; }
+    }
+    place(condenser.id, x + 150, y - 10);
+    place(receiver.id, x + 300, y + 60);
+    if (heater) place(heater.id, x, y + HEAT_OFFSET);
+    var a = connectPorts(session, flask.id, 'neck', condenser.id, 'inlet');
+    var b = connectPorts(session, condenser.id, 'outlet', receiver.id, 'neck');
+    observe(session, line(session, 'Assembled the distillation train.', 'Montou a aparelhagem de destilação.'));
+    return { ok: Boolean(a.ok && b.ok), flask: flask, condenser: condenser, receiver: receiver, heater: heater };
+  }
+
+  function volatileParts(container) {
+    return (container.contents || [])
+      .filter(function (row) {
+        var spec = SUBSTANCES[row.id];
+        return spec && spec.bp && (Number(row.amount) || 0) > 0.05;
+      })
+      .sort(function (a, b) { return SUBSTANCES[a.id].bp - SUBSTANCES[b.id].bp; });
+  }
+
+  /* Simple distillation, driven by the rig the user actually assembled.
+     Educational separation by boiling point: this models the principle, it is
+     not a procedure for producing a drinkable or fuel product. */
+  function distill(session, sourceId) {
+    if (!processAllowed('distill')) return { ok: false, reason: 'unavailable' };
+    var rig = distillSetup(session, sourceId);
+    if (!rig) return { ok: false, reason: 'no-rig' };
+    var parts = volatileParts(rig.source);
+    if (parts.length < 2) return { ok: false, reason: 'single' };
+    var light = parts[0];
+    var lightSpec = SUBSTANCES[light.id];
+    var heavySpec = SUBSTANCES[parts[1].id];
+    if (lightSpec.bp === heavySpec.bp) return { ok: false, reason: 'same-bp' };
+    var temp = Number(rig.source.temperatureC) || 22;
+    var ceiling = maxTemperatureFor(session, rig.source);
+    var needed = Math.min(lightSpec.bp, ceiling);
+    if (temp < needed - 2) return { ok: false, reason: 'cold', needed: needed, ceiling: ceiling };
+
+    var room = Math.max(0, (Number(rig.receiver.capacityMl) || 0) - (Number(rig.receiver.volumeMl) || 0));
+    if (room <= 0) return { ok: false, reason: 'receiver-full' };
+    var move = Math.min(Number(light.amount) || 0, room * 0.9);
+    move = Math.round(move * 0.6 * 10) / 10;
+    if (move <= 0.1) return { ok: false, reason: 'empty' };
+
+    /* Ethanol and water form an azeotrope at about 95%, so simple distillation
+       always carries some water across. That ceiling is the teaching point. */
+    var carry = 0;
+    var water = parts.filter(function (row) { return row.id === 'water'; })[0];
+    if (light.id === 'ethanol' && water) {
+      carry = Math.round(Math.min(Number(water.amount) || 0, move * (5 / 95)) * 10) / 10;
+    }
+    if (move + carry > room) {
+      carry = Math.max(0, room - move);
+    }
+
+    pushHistory(session);
+    var beforeProduct = rig.receiver.productId || '';
+    var beforeReaction = rig.receiver.reactionId || '';
+    light.amount = Math.round((Number(light.amount) - move) * 10) / 10;
+    if (carry && water) water.amount = Math.round((Number(water.amount) - carry) * 10) / 10;
+    rig.source.contents = (rig.source.contents || []).filter(function (row) { return (Number(row.amount) || 0) > 0.05; });
+    rig.source.volumeMl = Math.round(Math.max(0, (Number(rig.source.volumeMl) || 0) - move - carry) * 10) / 10;
+
+    function land(id, amount) {
+      if (amount <= 0) return;
+      var row = (rig.receiver.contents || []).filter(function (item) { return item.id === id; })[0];
+      if (row) row.amount = Math.round((Number(row.amount) + amount) * 10) / 10;
+      else rig.receiver.contents.push({ id: id, amount: amount, unit: 'mL' });
+    }
+    land(light.id, move);
+    land('water', carry);
+    rig.receiver.volumeMl = Math.round(((Number(rig.receiver.volumeMl) || 0) + move + carry) * 10) / 10;
+
+    mixContainer(rig.source);
+    mixContainer(rig.receiver);
+    noteProduct(session, rig.receiver, beforeProduct);
+    noteReaction(session, rig.receiver, beforeReaction);
+
+    var purity = move + carry > 0 ? Math.round((move / (move + carry)) * 1000) / 10 : 100;
+    observe(session, line(
+      session,
+      'Distilled ' + move + ' mL of ' + lightSpec.name + ' at ' + Math.round(needed) + ' °C into ' + (rig.receiver.label || rig.receiver.id) + ' (virtual, ' + purity + '%).',
+      'Destilou ' + move + ' mL de ' + lightSpec.name + ' a ' + Math.round(needed) + ' °C para ' + (rig.receiver.label || rig.receiver.id) + ' (virtual, ' + purity + '%).'
+    ));
+    if (carry > 0) {
+      observe(session, line(
+        session,
+        'Water came across with it: an ethanol-water azeotrope caps simple distillation near 95%.',
+        'Veio água junto: o azeótropo etanol-água limita a destilação simples perto de 95%.'
+      ));
+    }
+    return { ok: true, rig: rig, moved: move, carry: carry, purity: purity, bp: lightSpec.bp, substance: lightSpec };
   }
 
   function measure(session, containerId, kind) {
@@ -1680,6 +2028,7 @@
     if (!canHold(container)) return { ok: false, reason: 'no-container' };
     pushHistory(session);
     var beforeProduct = container.productId || '';
+    var beforeReaction = container.reactionId || '';
     kit.parts.forEach(function (part) {
       var spec = SUBSTANCES[part.id];
       if (!spec || !spec.allowed) return;
@@ -1698,7 +2047,8 @@
       'Adicionou mistura pronta (' + (kit.labelPt || kit.labelEn || kit.id) + ') em ' + (container.label || container.id) + '.'
     ));
     noteProduct(session, container, beforeProduct);
-    return { ok: true, container: container };
+    var fired = noteReaction(session, container, beforeReaction);
+    return { ok: true, container: container, reaction: fired };
   }
 
   function tutorialProgressFor(session, creation, container) {
@@ -1732,6 +2082,23 @@
       }
       if (ok && step.action === 'measure') {
         if (!(session.measurements || []).length) ok = false;
+      }
+      if (ok && step.needConnections) {
+        var wired = ((session.board && session.board.connections) || []).length;
+        if (wired < step.needConnections) ok = false;
+      }
+      if (ok && step.needTemp) {
+        var hot = (session.containers || []).some(function (row) {
+          return (Number(row.temperatureC) || 22) >= step.needTemp;
+        });
+        if (!hot) ok = false;
+      }
+      if (ok && step.needIn) {
+        var host = firstOfType(session, step.needIn.type);
+        var landed = host && (host.contents || []).some(function (row) {
+          return row.id === step.needIn.id && (Number(row.amount) || 0) > 0.05;
+        });
+        if (!landed) ok = false;
       }
       done[i] = ok;
       if (ok) current = i + 1;
@@ -1790,7 +2157,8 @@
     measure: { en: 'Take a measurement', pt: 'Faça uma medição' },
     inspect: { en: 'Read the inspector', pt: 'Leia o inspetor' },
     grind: { en: 'Grind the solid', pt: 'Triture o sólido' },
-    connect: { en: 'Connect the ports', pt: 'Conecte os portos' }
+    connect: { en: 'Connect the ports', pt: 'Conecte os portos' },
+    distill: { en: 'Run the distillation', pt: 'Execute a destilação' }
   };
 
   /* What a guided step asks for, as data the panel can turn into real actions. */
@@ -1807,6 +2175,10 @@
       .filter(Boolean);
     var options = (step.needAny || []).map(function (id) { return materialPlan(step, id); }).filter(Boolean);
     var verb = ACTION_VERB[step.action] || ACTION_VERB.inspect;
+    if (step.into && EQUIPMENT[step.into]) {
+      var host = EQUIPMENT[step.into];
+      verb = { en: verb.en + ' in the ' + host.labelEn, pt: verb.pt + ' no ' + host.labelPt };
+    }
     var names = equipment.map(function (row) { return row.labelEn; })
       .concat(materials.concat(options).map(function (row) { return row.name; }));
     var hints = [
@@ -1828,6 +2200,10 @@
     return {
       id: step.id,
       index: index,
+      into: step.into || '',
+      needsConnect: step.action === 'connect',
+      needsDistill: step.action === 'distill',
+      heatTo: Number(step.heatTo) || 0,
       action: step.action || 'inspect',
       verb: verb,
       text: { en: step.en, pt: step.pt },
@@ -1945,7 +2321,11 @@
       return findContainer(session, session.selectedId) || session.containers[0];
     }
     /* Guided actions land in something that can actually hold a mixture. */
-    function preferredVessel() {
+    function preferredVessel(type) {
+      if (type) {
+        var pinned = firstOfType(session, type);
+        if (pinned && canHold(pinned)) return pinned;
+      }
       var current = selected();
       if (current && canHold(current) && hasCap(current, 'contain')) return current;
       return (session.containers || []).filter(function (row) {
@@ -1999,12 +2379,13 @@
 
     function materialChips(highlight) {
       var groups = [
-        { title: copy('Liquids', 'Líquidos'), ids: ['water', 'oil'] },
+        { title: copy('Liquids', 'Líquidos'), ids: ['water', 'ethanol', 'oil'] },
         { title: copy('Salts & sugars', 'Sais e açúcares'), ids: ['nacl', 'sucrose', 'cusulfate'] },
         { title: copy('Acids & bases', 'Ácidos e bases'), ids: ['citric_acid', 'bicarbonate', 'indicator'] },
         { title: copy('Elements', 'Elementos'), ids: ['fe', 'cu', 'zn', 's', 'c'] },
         { title: copy('Minerals', 'Minerais'), ids: ['zno', 'tio2'] },
-        { title: copy('Fragrance notes', 'Notas de fragrância'), ids: ['limonene', 'linalool', 'vanillin'] }
+        { title: copy('Fragrance notes', 'Notas de fragrância'), ids: ['limonene', 'linalool', 'vanillin'] },
+        { title: copy('Virtual fractions', 'Frações virtuais'), ids: ['frac_light', 'frac_mid', 'frac_heavy'] }
       ];
       return groups.map(function (group) {
         return '<div class="lab-chip-group"><span class="lab-chip-group-title">' + esc(group.title) + '</span><div class="lab-chips">' +
@@ -2159,15 +2540,16 @@
         out.push('<button type="button" class="lab-do-chip" data-add-vessel="' + esc(row.type) + '">+ ' +
           esc(lang === 'pt' ? row.labelPt : row.labelEn) + '</button>');
       });
+      var into = plan.into ? ' data-step-into="' + esc(plan.into) + '"' : '';
       plan.materials.forEach(function (row) {
-        out.push('<button type="button" class="lab-do-chip" data-step-add="' + esc(row.id) + '" data-step-amount="' + esc(row.amount) + '">' +
+        out.push('<button type="button" class="lab-do-chip" data-step-add="' + esc(row.id) + '" data-step-amount="' + esc(row.amount) + '"' + into + '>' +
           '<i class="lab-chip-swatch" style="background:' + esc(row.color) + '"></i>+ ' +
           esc(row.name) + ' ' + esc(row.amount) + ' ' + esc(row.unit) + '</button>');
       });
       if (plan.options.length) {
         out.push('<span class="lab-do-or">' + esc(copy('either', 'ou')) + '</span>');
         plan.options.forEach(function (row) {
-          out.push('<button type="button" class="lab-do-chip" data-step-add="' + esc(row.id) + '" data-step-amount="' + esc(row.amount) + '">' +
+          out.push('<button type="button" class="lab-do-chip" data-step-add="' + esc(row.id) + '" data-step-amount="' + esc(row.amount) + '"' + into + '>' +
             '<i class="lab-chip-swatch" style="background:' + esc(row.color) + '"></i>+ ' +
             esc(row.name) + ' ' + esc(row.amount) + ' ' + esc(row.unit) + '</button>');
         });
@@ -2175,8 +2557,17 @@
       if (plan.needsStir) {
         out.push('<button type="button" class="lab-do-chip" data-lab-stir>' + esc(copy('Stir', 'Agitar')) + '</button>');
       }
-      if (plan.needsHeat) {
+      if (plan.needsConnect) {
+        out.push('<button type="button" class="lab-do-chip" data-step-connect>' + esc(copy('Assemble the apparatus', 'Montar a aparelhagem')) + '</button>');
+      }
+      if (plan.heatTo) {
+        out.push('<button type="button" class="lab-do-chip" data-step-heat="' + esc(plan.heatTo) + '">' +
+          esc(copy('Heat to ' + plan.heatTo + ' °C', 'Aquecer até ' + plan.heatTo + ' °C')) + '</button>');
+      } else if (plan.needsHeat) {
         out.push('<button type="button" class="lab-do-chip" data-heat="20">' + esc(copy('Warm +20 °C', 'Aquecer +20 °C')) + '</button>');
+      }
+      if (plan.needsDistill) {
+        out.push('<button type="button" class="lab-do-chip" data-step-distill>' + esc(copy('Distil', 'Destilar')) + '</button>');
       }
       if (plan.needsMeasure) {
         out.push('<button type="button" class="lab-do-chip" data-measure="ph">' + esc(copy('Measure pH', 'Medir pH')) + '</button>');
@@ -2199,6 +2590,20 @@
         (hintLevel < plan.hints.length
           ? '<button type="button" class="ws-btn ws-btn-sm" data-lab-hint>' + esc(copy('More help', 'Mais ajuda')) + '</button>'
           : '<button type="button" class="ws-btn ws-btn-sm" data-lab-hint="reset">' + esc(copy('Hide hints', 'Ocultar dicas')) + '</button>');
+    }
+
+    /* Tower order, drawn top-down the way a column is read. */
+    function fractionsHtml(creation) {
+      if (!creation || !creation.fractions || !creation.fractions.length) return '';
+      var rows = creation.fractions.slice().reverse().map(function (row) {
+        return '<li><span>' + esc(lang === 'pt' ? row.pt : row.en) + '</span></li>';
+      }).join('');
+      return '<details class="lab-tower"><summary>' + esc(copy('Tower order (top to bottom)', 'Ordem da torre (topo à base)')) + '</summary>' +
+        '<ol class="lab-tower-list">' + rows + '</ol>' +
+        '<p class="lab-dock-note">' + esc(copy(
+          'Conceptual only. Atomurus does not simulate operating a refinery.',
+          'Apenas conceitual. O Atomurus não simula a operação de uma refinaria.'
+        )) + '</p></details>';
     }
 
     function tutorialHtml() {
@@ -2227,6 +2632,7 @@
           '<p class="lab-guide-done">' + esc(copy('Practice complete (virtual).', 'Prática concluída (virtual).')) + '</p>' +
           '<p class="ws-lede">' + esc(lang === 'pt' ? creation.lede.pt : creation.lede.en) + '</p>' +
           '<ol>' + stepList + '</ol>' +
+          fractionsHtml(creation) +
           '<button type="button" class="ws-btn ws-btn-sm" data-stop-creation>' + esc(copy('Leave guide', 'Sair do guia')) + '</button>' +
           '</section>';
       }
@@ -2239,6 +2645,7 @@
         (plan.why ? '<p class="lab-guide-why"><strong>' + esc(copy('Why?', 'Por quê?')) + '</strong> ' + esc(stepWhy(plan)) + '</p>' : '') +
         hintsHtml(plan) +
         '<details class="lab-guide-all"><summary>' + esc(copy('All steps', 'Todos os passos')) + '</summary><ol>' + stepList + '</ol></details>' +
+        fractionsHtml(creation) +
         '<button type="button" class="ws-btn ws-btn-sm" data-stop-creation>' + esc(copy('Leave guide', 'Sair do guia')) + '</button>' +
         '</section>';
     }
@@ -2248,18 +2655,32 @@
       return lang === 'pt' ? (step.why.pt || step.why.en) : (step.why.en || step.why.pt);
     }
 
+    /* Tubing is anchored to the port it is attached to: necks and inlets sit at
+       the top of a piece, outlets at the bottom. */
+    function portAnchor(id, portId) {
+      var obj = findObject(session, id);
+      var row = findContainer(session, id);
+      if (!obj || !row) return null;
+      var art = specOf(row.type);
+      var w = Math.max(124, Number(art.w) || 124);
+      var h = Math.max(160, Number(art.h) || 180);
+      var low = String(portId || '').indexOf('outlet') !== -1;
+      return {
+        x: Number(obj.x) + w / 2,
+        y: Number(obj.y) + (low ? h * 0.82 : 14)
+      };
+    }
+
     function connectionsHtml() {
       var links = (session.board && session.board.connections) || [];
       if (!links.length) return '';
-      return '<svg class="lab-links" viewBox="0 0 2400 1600" aria-hidden="true">' + links.map(function (link) {
-        var a = findObject(session, link.fromId);
-        var b = findObject(session, link.toId);
+      return '<svg class="lab-links" width="2400" height="1600" viewBox="0 0 2400 1600" aria-hidden="true">' + links.map(function (link) {
+        var a = portAnchor(link.fromId, link.fromPort);
+        var b = portAnchor(link.toId, link.toPort);
         if (!a || !b) return '';
-        var x1 = Number(a.x) + 52;
-        var y1 = Number(a.y) + 90;
-        var x2 = Number(b.x) + 52;
-        var y2 = Number(b.y) + 90;
-        return '<path d="M' + x1 + ' ' + y1 + ' C ' + x1 + ' ' + (y1 + 48) + ', ' + x2 + ' ' + (y2 - 48) + ', ' + x2 + ' ' + y2 + '" />';
+        var reach = Math.max(30, Math.abs(b.x - a.x) * 0.45);
+        return '<path d="M' + a.x + ' ' + a.y +
+          ' C ' + (a.x + reach) + ' ' + a.y + ', ' + (b.x - reach) + ' ' + b.y + ', ' + b.x + ' ' + b.y + '" />';
       }).join('') + '</svg>';
     }
 
@@ -2282,9 +2703,10 @@
       var heatCls = heatFrom === container.id ? ' is-heat-source' : '';
       var snap = heatZoneFor(session, container.id);
       if (snap && hasCap(container, 'heat')) heatCls += ' is-heat-zone';
+      var cupped = specOf(kind).heat && heaterIsCupped(session, container.id);
       var emulsion = String(container.appearance || '').indexOf('emulsion') !== -1 || container.productId === 'sunscreen';
       var warm = (Number(container.temperatureC) || 22) >= 40;
-      var cls = 'lab-glass lab-piece lab-' + kind + (kind === 'beaker' ? ' lab-beaker' : '') + (active ? ' is-active' : '') + (container.fizz ? ' is-fizz' : '') + (emulsion ? ' is-emulsion' : '') + (warm ? ' is-warm' : '') + pourCls + heatCls;
+      var cls = 'lab-glass lab-piece lab-' + kind + (kind === 'beaker' ? ' lab-beaker' : '') + (active ? ' is-active' : '') + (container.fizz ? ' is-fizz' : '') + (emulsion ? ' is-emulsion' : '') + (warm ? ' is-warm' : '') + (cupped ? ' is-cupped' : '') + pourCls + heatCls;
       var product = lang === 'pt' ? (container.productPt || container.product) : container.product;
       var x = obj ? Number(obj.x) : Number(container.x);
       var y = obj ? Number(obj.y) : Number(container.y);
@@ -2327,7 +2749,20 @@
         var spec = SUBSTANCES[row.id];
         return esc((spec && spec.name) || row.id) + ' ' + esc(Math.round((Number(row.amount) || 0) * 10) / 10) + (row.unit ? ' ' + row.unit : '');
       }).join(' · ') || copy('Empty', 'Vazio');
-      return '<div class="lab-kv"><span>' + esc(copy('Vessel', 'Vidro')) + '</span><strong>' + esc(container.label || container.id) + '</strong></div>' +
+      var model = container.reactionId ? REACTIONS[container.reactionId] : null;
+      var reactionBlock = model
+        ? '<div class="lab-reaction" data-lab-reaction><span class="lab-reaction-tag">' + esc(copy('Reaction', 'Reação')) + '</span>' +
+          '<code class="lab-reaction-eq">' + esc(model.equation) + '</code>' +
+          '<p>' + esc(lang === 'pt' ? model.pt : model.en) + '</p></div>'
+        : '';
+      var rig = distillSetup(session, container.id);
+      var rigBlock = rig
+        ? '<div class="lab-rig"><span class="lab-reaction-tag">' + esc(copy('Apparatus ready', 'Aparelhagem pronta')) + '</span>' +
+          '<p>' + esc(container.label || container.id) + ' → ' + esc(rig.condenser.label || rig.condenser.id) + ' → ' + esc(rig.receiver.label || rig.receiver.id) + '</p>' +
+          '<button type="button" class="ws-btn ws-btn-sm ws-btn-primary" data-lab-distill>' + esc(copy('Distil', 'Destilar')) + '</button></div>'
+        : '';
+      return reactionBlock + rigBlock +
+        '<div class="lab-kv"><span>' + esc(copy('Vessel', 'Vidro')) + '</span><strong>' + esc(container.label || container.id) + '</strong></div>' +
         '<div class="lab-kv"><span>' + esc(copy('Contents', 'Conteúdo')) + '</span><strong>' + contents + '</strong></div>' +
         '<div class="lab-kv"><span>' + esc(copy('Volume', 'Volume')) + '</span><strong>' + esc(container.volumeMl) + ' mL</strong></div>' +
         '<div class="lab-kv"><span>' + esc(copy('Mass', 'Massa')) + '</span><strong>' + esc(Math.round(containerMass(container) * 10) / 10) + ' g</strong></div>' +
@@ -2405,6 +2840,58 @@
         });
       }, { root: stage, rootMargin: '40px' });
       pieces.forEach(function (piece) { motionObserver.observe(piece); });
+    }
+
+    /* A reaction is a moment, so it gets one short burst and then stops. */
+    function playReactionFx(id, model) {
+      if (!model) return;
+      playSound('reaction');
+      var piece = node.querySelector('[data-vessel="' + id + '"]');
+      if (!piece || reducedMotion()) return;
+      piece.classList.remove('is-reacting');
+      void piece.getBoundingClientRect();
+      piece.classList.add('is-reacting');
+      setTimeout(function () {
+        if (piece.classList) piece.classList.remove('is-reacting');
+      }, 900);
+    }
+
+    function runDistill(fromGuide) {
+      var runner = fromGuide ? (preferredVessel('round-flask') || selected()) : selected();
+      if (!runner) return;
+      session.selectedId = runner.id;
+      var run = distill(session, runner.id);
+      queueSave();
+      updateLive();
+      if (run.ok) {
+        playDistillFx(run.rig, mixColor(run.rig.receiver));
+        flashStatus('');
+        return;
+      }
+      playSound('deny');
+      var why = copy('This apparatus cannot distil yet.', 'Esta aparelhagem ainda não pode destilar.');
+      if (run.reason === 'cold') {
+        why = copy('Heat the flask to about ' + Math.round(run.needed) + ' °C first.', 'Aqueça o balão até cerca de ' + Math.round(run.needed) + ' °C primeiro.');
+      } else if (run.reason === 'single') {
+        why = copy('Distillation separates a mixture: charge the flask with two components that boil at different temperatures.', 'A destilação separa uma mistura: carregue o balão com dois componentes que fervem a temperaturas diferentes.');
+      } else if (run.reason === 'receiver-full') {
+        why = copy('The receiving flask is full.', 'O balão coletor está cheio.');
+      } else if (run.reason === 'no-rig') {
+        why = copy('Connect the flask to a condenser and the condenser to a receiving flask.', 'Conecte o balão ao condensador e o condensador ao balão coletor.');
+      }
+      flashStatus('<div class="lab-msg" role="status">' + esc(why) + '</div>');
+    }
+
+    function playDistillFx(rig, color) {
+      playSound('distill');
+      var source = node.querySelector('[data-vessel="' + rig.source.id + '"]');
+      if (source && !reducedMotion()) {
+        source.classList.add('is-boiling');
+        setTimeout(function () {
+          if (source.classList) source.classList.remove('is-boiling');
+        }, 1200);
+      }
+      playTransferFx(rig.condenser.id, rig.receiver.id, color, 'drop');
     }
 
     function playTransferFx(fromId, toId, color, kind) {
@@ -2799,7 +3286,7 @@
       rootEl.addEventListener('click', function (event) {
         try {
           var t = event.target && event.target.closest
-            ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-redo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel], [data-ready], [data-lab-zoom], [data-lab-fit], [data-lab-aspirate], [data-lab-dispense], [data-lab-drop], [data-lab-grind], [data-lab-drain], [data-lab-connect], [data-lab-duplicate], [data-lab-delete], [data-lab-rotate], [data-dock], [data-dock-close], [data-side], [data-lab-sound], [data-start-creation], [data-stop-creation], [data-step-add], [data-lab-hint]')
+            ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-redo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel], [data-ready], [data-lab-zoom], [data-lab-fit], [data-lab-aspirate], [data-lab-dispense], [data-lab-drop], [data-lab-grind], [data-lab-drain], [data-lab-connect], [data-lab-duplicate], [data-lab-delete], [data-lab-rotate], [data-dock], [data-dock-close], [data-side], [data-lab-sound], [data-start-creation], [data-stop-creation], [data-step-add], [data-lab-hint], [data-step-connect], [data-step-heat], [data-step-distill], [data-lab-distill]')
             : null;
           if (!t) return;
           if (t.hasAttribute('data-lab-sound')) {
@@ -2864,7 +3351,7 @@
           if (t.getAttribute('data-step-add')) {
             var stepId = t.getAttribute('data-step-add');
             var stepAmount = Number(t.getAttribute('data-step-amount')) || amount;
-            var target = preferredVessel();
+            var target = preferredVessel(t.getAttribute('data-step-into') || '');
             if (!target) {
               flashStatus('<div class="lab-msg" role="status">' + esc(copy('Add a beaker to the board first.', 'Adicione um becker ao board primeiro.')) + '</div>');
               playSound('deny');
@@ -2877,10 +3364,46 @@
             if (stepAdded.ok) {
               flashStatus('');
               pulseLiquid();
-              playSound('material');
+              if (stepAdded.reaction) playReactionFx(target.id, stepAdded.reaction);
+              else playSound('material');
             } else {
               flashStatus('<div class="lab-msg" role="status">' + esc(copy('That vessel cannot take this material right now.', 'Esse vidro não pode receber este material agora.')) + '</div>');
               playSound('deny');
+            }
+            return;
+          }
+          if (t.hasAttribute('data-step-connect')) {
+            var rigged = assembleRig(session);
+            queueSave();
+            updateLive();
+            if (autoCam) fitView();
+            if (rigged.ok) {
+              playSound('place');
+              flashStatus('');
+            } else {
+              playSound('deny');
+              flashStatus('<div class="lab-msg" role="status">' + esc(copy('Add the flask, condenser and receiving flask first.', 'Adicione o balão, o condensador e o balão coletor primeiro.')) + '</div>');
+            }
+            return;
+          }
+          if (t.getAttribute('data-step-heat')) {
+            var wantC = Number(t.getAttribute('data-step-heat')) || 0;
+            var heatTarget = preferredVessel('round-flask') || selected();
+            if (!heatTarget) return;
+            var warmed = setTemperature(session, heatTarget.id, wantC);
+            session.selectedId = heatTarget.id;
+            queueSave();
+            updateLive();
+            if (warmed.ok && (Number(heatTarget.temperatureC) || 0) >= wantC - 1) {
+              playSound('heat');
+              playHeatFx(heatTarget.id);
+              flashStatus('');
+            } else {
+              playSound('deny');
+              flashStatus('<div class="lab-msg" role="status">' + esc(copy(
+                'This vessel only reaches ' + Math.round(maxTemperatureFor(session, heatTarget)) + ' °C. Put it on a mantle or hot plate.',
+                'Este vidro só chega a ' + Math.round(maxTemperatureFor(session, heatTarget)) + ' °C. Coloque-o sobre uma manta ou chapa.'
+              )) + '</div>');
             }
             return;
           }
@@ -2996,7 +3519,8 @@
             if (added.ok) {
               flashStatus('');
               pulseLiquid();
-              playSound('material');
+              if (added.reaction) playReactionFx(selected().id, added.reaction);
+              else playSound('material');
             } else if (added.reason === 'full') {
               playSound('deny');
               flashStatus('<div class="lab-msg" role="status">' + esc(copy('That vessel is full. Empty it or pour into another glass.', 'Esse vidro está cheio. Esvazie ou transfira para outro.')) + '</div>');
@@ -3089,6 +3613,10 @@
             dropFrom = bur.id;
             flashStatus('<div class="lab-msg" role="status">' + esc(copy('Click a vessel to drop 1 mL.', 'Clique em um vidro para pingar 1 mL.')) + '</div>');
             updateLive();
+            return;
+          }
+          if (t.hasAttribute('data-lab-distill') || t.hasAttribute('data-step-distill')) {
+            runDistill(t.hasAttribute('data-step-distill'));
             return;
           }
           if (t.hasAttribute('data-lab-grind')) {
@@ -3281,7 +3809,7 @@
             var heater = heatZoneFor(session, dragging.id);
             if (obj && heater && vessel && hasCap(vessel, 'heat')) {
               obj.x = Number(heater.x);
-              obj.y = Number(heater.y) - Math.round((specOf(vessel.type).h || 180) * 0.62);
+              obj.y = Number(heater.y) - HEAT_OFFSET;
               syncVisual(session, dragging.id);
             }
             queueSave();
@@ -3398,6 +3926,14 @@
     EQUIPMENT: EQUIPMENT,
     READY: READY,
     PROCESSES: PROCESSES,
+    REACTIONS: REACTIONS,
+    reactionFor: reactionFor,
+    distill: distill,
+    distillSetup: distillSetup,
+    assembleRig: assembleRig,
+    firstOfType: firstOfType,
+    maxTemperatureFor: maxTemperatureFor,
+    volatileParts: volatileParts,
     SCHEMA_VERSION: SCHEMA_VERSION,
     resolveQuery: resolveQuery,
     searchCatalog: searchCatalog,
