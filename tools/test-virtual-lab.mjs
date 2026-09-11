@@ -656,4 +656,99 @@ assert.equal(lab.tutorialState(refluxWalk, refluxGuide).current, 6);
 assert.equal(lab.reflux(refluxWalk, walkPot.id).ok, true);
 assert.equal(lab.tutorialState(refluxWalk, refluxGuide).complete, true);
 
+// Glassware carries its proper name, in the interface language.
+const named = lab.emptySession({ title: 'Names', mode: 'bench' });
+assert.equal(lab.labelFor(named.containers[1], 'en'), 'Erlenmeyer flask B');
+assert.equal(lab.labelFor(named.containers[1], 'pt'), 'Erlenmeyer B');
+assert.equal(lab.labelFor(named.containers[2], 'en'), 'Graduated cylinder C');
+assert.equal(lab.labelFor(named.containers[2], 'pt'), 'Proveta graduada C');
+assert.equal(lab.EQUIPMENT['test-tube-capped'].labelEn, 'Stoppered test tube');
+assert.equal(lab.EQUIPMENT.rack.labelPt, 'Estante para tubos de ensaio');
+
+// A material can be taken back out one at a time.
+const undoAdd = lab.emptySession({ title: 'Remove', mode: 'bench' });
+lab.addToContainer(undoAdd, 'beaker-a', 'water', 60);
+lab.addToContainer(undoAdd, 'beaker-a', 'nacl', 10);
+assert.equal(undoAdd.containers[0].productId, 'saline');
+assert.equal(lab.removeFromContainer(undoAdd, 'beaker-a', 'nacl').ok, true);
+assert.equal(undoAdd.containers[0].contents.length, 1);
+assert.equal(undoAdd.containers[0].productId, '', 'the product is recomputed without it');
+assert.equal(undoAdd.containers[0].volumeMl, 60, 'removing a solid leaves the liquid');
+assert.equal(lab.removeFromContainer(undoAdd, 'beaker-a', 'water').ok, true);
+assert.equal(undoAdd.containers[0].volumeMl, 0, 'removing the liquid empties the vessel');
+assert.equal(lab.removeFromContainer(undoAdd, 'beaker-a', 'nacl').reason, 'absent');
+assert.equal(lab.removeFromContainer(undoAdd, 'beaker-a', 'cocaine').reason, 'unknown');
+
+// Fermentation: the equation, and the window the yeast works in.
+const brew = lab.emptySession({ title: 'Brew', mode: 'bench' });
+lab.addToContainer(brew, 'beaker-a', 'water', 100);
+lab.addToContainer(brew, 'beaker-a', 'sucrose', 25);
+assert.equal(lab.ferment(brew, 'beaker-a').reason, 'no-yeast');
+lab.addToContainer(brew, 'beaker-a', 'yeast', 3);
+lab.setTemperature(brew, 'beaker-a', 10);
+assert.equal(lab.ferment(brew, 'beaker-a').reason, 'cold');
+lab.setTemperature(brew, 'beaker-a', 60);
+assert.equal(lab.ferment(brew, 'beaker-a').reason, 'too-hot', 'yeast does not survive a boil');
+lab.setTemperature(brew, 'beaker-a', 28);
+const brewed = lab.ferment(brew, 'beaker-a');
+assert.equal(brewed.ok, true);
+assert.ok(brewed.made > 0 && brewed.used > 0);
+const sugarLeft = brew.containers[0].contents.find((row) => row.id === 'sucrose');
+assert.ok(sugarLeft.amount < 25, 'sugar is consumed');
+assert.ok(brew.containers[0].contents.some((row) => row.id === 'ethanol'), 'ethanol appears');
+assert.equal(brew.containers[0].fizz, true, 'and CO2 with it');
+assert.ok(brew.observations.some((row) => row.text.includes('2 CO₂')));
+// The ferment result is distillable, which links the two processes.
+assert.ok(lab.volatileParts(brew.containers[0]).length >= 2);
+
+// Crystallisation needs a dissolved sugar and enough heat to boil water off.
+const pan = lab.emptySession({ title: 'Pan', mode: 'bench' });
+lab.addToContainer(pan, 'beaker-a', 'water', 80);
+assert.equal(lab.crystallise(pan, 'beaker-a').reason, 'no-sugar');
+lab.addToContainer(pan, 'beaker-a', 'sucrose', 30);
+assert.equal(lab.crystallise(pan, 'beaker-a').reason, 'cold');
+lab.setTemperature(pan, 'beaker-a', 70);
+const grown = lab.crystallise(pan, 'beaker-a');
+assert.equal(grown.ok, true);
+assert.ok(grown.evaporated > 0);
+assert.ok(pan.containers[0].volumeMl < 80, 'water boils off');
+assert.equal(pan.containers[0].crystals, true);
+
+// Both guided walks complete on the board.
+const brewGuide = lab.CREATIONS.find((row) => row.id === 'ethanol');
+assert.ok(/not a procedure/i.test(brewGuide.lede.en), 'the framing stays educational');
+const brewWalk = lab.emptySession({ title: 'Walk', mode: 'guided', creationId: 'ethanol' });
+const brewFlask = brewWalk.containers.find((row) => row.type === 'flask');
+lab.addToContainer(brewWalk, brewFlask.id, 'water', 100);
+lab.addToContainer(brewWalk, brewFlask.id, 'sucrose', 25);
+lab.addToContainer(brewWalk, brewFlask.id, 'yeast', 3);
+lab.setTemperature(brewWalk, brewFlask.id, 28);
+assert.equal(lab.tutorialState(brewWalk, brewGuide).current, 4);
+assert.equal(lab.ferment(brewWalk, brewFlask.id).ok, true);
+assert.equal(lab.tutorialState(brewWalk, brewGuide).complete, true);
+
+const sugarGuide = lab.CREATIONS.find((row) => row.id === 'sugar');
+const sugarWalk = lab.emptySession({ title: 'Sugar', mode: 'guided', creationId: 'sugar' });
+lab.addToContainer(sugarWalk, 'beaker-a', 'cane_juice', 90);
+lab.addToContainer(sugarWalk, 'beaker-a', 'fibre', 8);
+lab.addVessel(sugarWalk, 'funnel');
+assert.equal(lab.tutorialState(sugarWalk, sugarGuide).current, 2);
+const sugarFit = lab.assembleFilter(sugarWalk, 'beaker-a');
+assert.equal(sugarFit.ok, true);
+assert.equal(lab.filterThrough(sugarWalk, 'beaker-a').ok, true);
+assert.equal(lab.tutorialState(sugarWalk, sugarGuide).current, 3);
+const filtrateVessel = sugarWalk.containers.find((row) => (Number(row.volumeMl) || 0) > 0 && row.type !== 'funnel');
+lab.setTemperature(sugarWalk, filtrateVessel.id, 70);
+assert.equal(lab.tutorialState(sugarWalk, sugarGuide).current, 4);
+assert.equal(lab.crystallise(sugarWalk, filtrateVessel.id).ok, true);
+assert.equal(lab.tutorialState(sugarWalk, sugarGuide).complete, true);
+
+// New materials are catalogue entries, so the allowlist still governs.
+assert.ok(lab.SUBSTANCES.yeast && lab.SUBSTANCES.cane_juice && lab.SUBSTANCES.fibre);
+assert.equal(lab.passesFilter(lab.SUBSTANCES.fibre), false, 'fibre is what the filter catches');
+assert.equal(lab.passesFilter(lab.SUBSTANCES.cane_juice), true);
+assert.equal(lab.resolveQuery('acucar').id, 'sugar');
+assert.equal(lab.resolveQuery('levedura').id, 'yeast');
+assert.equal(lab.resolveQuery('moonshine').ok, false);
+
 console.log('virtual lab tests passed');

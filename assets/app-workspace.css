@@ -2059,6 +2059,42 @@ html[data-reduced-motion="1"] .lab-stream { animation: none; }
   color: var(--lc-ink, #1b1914);
   overflow-x: auto;
 }
+.lab-contents {
+  margin: 0 0 10px;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 4px;
+}
+.lab-content-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 4px 4px 6px;
+  border-radius: 8px;
+  background: color-mix(in oklab, var(--lc-ink-3, #8E8978) 8%, transparent);
+  font-size: 12.5px;
+}
+.lab-content-row span { flex: 1; min-width: 0; }
+.lab-content-row b { font-variant-numeric: tabular-nums; font-weight: 650; }
+.lab-content-drop {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--lc-ink-3, #8E8978);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+}
+.lab-content-drop:hover {
+  background: color-mix(in oklab, #c0392b 16%, transparent);
+  color: #a8321f;
+}
+.lab-kv-stack { display: block; margin-bottom: 4px; }
+
 .lab-reaction p,
 .lab-rig p { margin: 4px 0 8px; font-size: 12.5px; color: var(--lc-ink-2, #58544A); }
 .lab-rig button { margin-top: 2px; }

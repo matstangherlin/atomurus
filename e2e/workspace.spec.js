@@ -466,6 +466,41 @@ test('Pro footer has Plan billing and no Upgrade', async ({ page }) => {
   await expect(page.locator('#ws-nav-foot a[data-nav="plan"]')).toHaveAttribute('href', /\/account\?tab=plan/);
 });
 
+test('Lab names glassware properly, ferments sugar and drops a material', async ({ page }) => {
+  await installApi(page, { kind: 'free' });
+  await gotoWorkspace(page, '/app?section=lab&mode=bench');
+  await page.waitForSelector('.lab-beaker');
+  // Proper names, not "Flask" and "Cylinder".
+  await expect(page.locator('[data-vessel="flask-b"] .lab-glass-name')).toHaveText('Erlenmeyer flask B');
+  await expect(page.locator('[data-vessel="cylinder-c"] .lab-glass-name')).toHaveText('Graduated cylinder C');
+
+  await page.locator('#lab-q').fill('fermentacao');
+  await page.locator('[data-lab-search]').evaluate((form) => form.requestSubmit());
+  await page.locator('[data-dock-close]').click();
+  await expect(page.locator('[data-lab-guide]')).toContainText(/of 5|de 5/i);
+  await page.locator('[data-lab-guide] [data-step-add="water"]').click();
+  await page.locator('[data-lab-guide] [data-step-add="sucrose"]').click();
+  await page.locator('[data-lab-guide] [data-step-add="yeast"]').click();
+  await page.locator('[data-lab-guide] [data-step-heat="28"]').click();
+  await page.locator('[data-lab-guide] [data-step-ferment]').click();
+  await expect(page.locator('.lab-notes')).toContainText(/2 CO₂/);
+  await expect(page.locator('[data-lab-guide]')).toContainText(/All steps done|Todos os passos/i);
+
+  // Each material can be taken back out on its own.
+  await page.locator('[data-side="inspector"]').click();
+  await expect(page.locator('.lab-content-row')).toHaveCount(4);
+  const before = await page.locator('.lab-round-flask, [data-vessel="flask-b"]').first().innerText();
+  await page.locator('.lab-content-row [data-lab-remove="yeast"]').click();
+  await expect(page.locator('.lab-content-row')).toHaveCount(3);
+  await expect(page.locator('.lab-notes')).toContainText(/Removed|Removeu/i);
+  // Taking the water out leaves only what the fermentation made.
+  await page.locator('.lab-content-row [data-lab-remove="water"]').click();
+  await expect(page.locator('.lab-content-row')).toHaveCount(2);
+  const left = await page.locator('[data-vessel="flask-b"]').innerText();
+  expect(Number(left.match(/([\d.]+) \/ 250 mL/)[1])).toBeLessThan(20);
+  expect(before).toContain('250 mL');
+});
+
 test('Lab reflux holds the volume a still would take away', async ({ page }) => {
   await installApi(page, { kind: 'free' });
   await gotoWorkspace(page, '/app?section=lab&mode=bench');

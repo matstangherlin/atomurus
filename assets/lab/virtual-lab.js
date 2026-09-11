@@ -133,7 +133,10 @@
     ethanol: { id: 'ethanol', name: 'Ethanol', formula: 'C₂H₅OH', category: 'solvent', color: '#E8E2CE', state: 'liquid', bp: 78, allowed: true },
     frac_light: { id: 'frac_light', name: 'Virtual light fraction', formula: 'C₅–C₈', category: 'fraction', color: '#F2E3B0', state: 'liquid', bp: 65, allowed: true },
     frac_mid: { id: 'frac_mid', name: 'Virtual mid fraction', formula: 'C₉–C₁₆', category: 'fraction', color: '#DCC07C', state: 'liquid', bp: 175, allowed: true },
-    frac_heavy: { id: 'frac_heavy', name: 'Virtual heavy fraction', formula: 'C₁₇+', category: 'fraction', color: '#A88B4E', state: 'liquid', bp: 330, allowed: true }
+    frac_heavy: { id: 'frac_heavy', name: 'Virtual heavy fraction', formula: 'C₁₇+', category: 'fraction', color: '#A88B4E', state: 'liquid', bp: 330, allowed: true },
+    yeast: { id: 'yeast', name: 'Virtual yeast', formula: 'S. cerevisiae', category: 'culture', color: '#D8C79A', state: 'solid', allowed: true },
+    cane_juice: { id: 'cane_juice', name: 'Virtual cane juice', formula: 'sucrose + water', category: 'solution', color: '#C9B074', state: 'liquid', bp: 100, allowed: true },
+    fibre: { id: 'fibre', name: 'Virtual plant fibre', formula: 'cellulose', category: 'mineral', color: '#9A8B63', state: 'solid', allowed: true }
   };
 
   function eq(id, category, en, pt, o) {
@@ -162,11 +165,11 @@
       capacityMl: 250, cap: ['contain', 'mix', 'heat', 'pour', 'measure_volume'],
       ports: [{ id: 'mouth', type: 'fluid' }]
     }),
-    flask: eq('flask', 'glassware', 'Flask', 'Erlenmeyer', {
+    flask: eq('flask', 'glassware', 'Erlenmeyer flask', 'Erlenmeyer', {
       capacityMl: 250, cap: ['contain', 'mix', 'heat', 'pour', 'measure_volume'],
       ports: [{ id: 'mouth', type: 'fluid' }]
     }),
-    cylinder: eq('cylinder', 'glassware', 'Cylinder', 'Proveta', {
+    cylinder: eq('cylinder', 'glassware', 'Graduated cylinder', 'Proveta graduada', {
       w: 72, capacityMl: 100, cap: ['contain', 'pour', 'measure_volume']
     }),
     'volumetric-flask': eq('volumetric-flask', 'glassware', 'Volumetric flask', 'Balão volumétrico', {
@@ -180,7 +183,7 @@
     'test-tube': eq('test-tube', 'glassware', 'Test tube', 'Tubo de ensaio', {
       w: 72, capacityMl: 20, cap: ['contain', 'mix', 'heat', 'pour']
     }),
-    'test-tube-capped': eq('test-tube-capped', 'glassware', 'Capped tube', 'Tubo com tampa', {
+    'test-tube-capped': eq('test-tube-capped', 'glassware', 'Stoppered test tube', 'Tubo de ensaio com tampa', {
       w: 72, capacityMl: 20, cap: ['contain', 'mix', 'pour']
     }),
     'watch-glass': eq('watch-glass', 'glassware', 'Watch glass', 'Vidro de relógio', {
@@ -254,7 +257,7 @@
       w: 80, h: 70, holds: false, cap: ['support'],
       ports: [{ id: 'grip', type: 'support' }]
     }),
-    rack: eq('rack', 'prep', 'Test-tube rack', 'Grade de tubos', {
+    rack: eq('rack', 'prep', 'Test tube rack', 'Estante para tubos de ensaio', {
       w: 168, h: 90, holds: false, cap: ['support']
     }),
     thermometer: eq('thermometer', 'measure', 'Thermometer', 'Termômetro', {
@@ -710,7 +713,9 @@
     measure: { id: 'measure', allowed: true },
     distill: { id: 'distill', allowed: true, maxC: 250 },
     filter: { id: 'filter', allowed: true },
-    reflux: { id: 'reflux', allowed: true }
+    reflux: { id: 'reflux', allowed: true },
+    ferment: { id: 'ferment', allowed: true, maxC: 40 },
+    crystallise: { id: 'crystallise', allowed: true }
   };
 
   /* Reviewed reaction models. A reaction only fires when its reactants, state
@@ -826,6 +831,11 @@
     distillation: 'guided:distillation', destilacao: 'guided:distillation', 'destilação': 'guided:distillation',
     distill: 'guided:distillation', separation: 'guided:distillation',
     reflux: 'guided:reflux', refluxo: 'guided:reflux',
+    ethanol_make: 'guided:ethanol', fermentation: 'guided:ethanol', fermentacao: 'guided:ethanol',
+    'fermentação': 'guided:ethanol', alcool_processo: 'guided:ethanol',
+    sugar: 'guided:sugar', acucar: 'guided:sugar', 'açúcar': 'guided:sugar',
+    'cane juice': 'cane_juice', 'caldo de cana': 'cane_juice', yeast: 'yeast', levedura: 'yeast',
+    crystallisation: 'guided:sugar', cristalizacao: 'guided:sugar',
     petroleum: 'guided:petroleum', petroleo: 'guided:petroleum', 'petróleo': 'guided:petroleum',
     refinery: 'guided:petroleum', refino: 'guided:petroleum', gasoline: 'guided:petroleum',
     gasolina: 'guided:petroleum', 'fractional distillation': 'guided:petroleum'
@@ -861,6 +871,61 @@
         { id: 'rig', action: 'connect', needConnections: 2, en: 'Connect flask to condenser and condenser to receiver.', pt: 'Conecte o balão ao condensador e o condensador ao coletor.', why: { en: 'The train only works if the vapour has a sealed path.', pt: 'A aparelhagem só funciona se o vapor tiver um caminho fechado.' } },
         { id: 'heat', action: 'heat', heatTo: 80, needTemp: 76, en: 'Heat the flask to about 80 °C.', pt: 'Aqueça o balão até cerca de 80 °C.', why: { en: 'Just above the ethanol boiling point, so mostly ethanol vaporises.', pt: 'Logo acima do ponto de ebulição do etanol, então vaporiza sobretudo etanol.' } },
         { id: 'run', action: 'distill', needIn: { type: 'receiving-flask', id: 'ethanol' }, en: 'Distil, and read the purity in the notebook.', pt: 'Destile e leia a pureza no caderno.', why: { en: 'Ethanol and water form an azeotrope near 95%, so simple distillation cannot go further.', pt: 'Etanol e água formam um azeótropo perto de 95%, então a destilação simples não passa disso.' } }
+      ]
+    },
+    {
+      id: 'ethanol',
+      slug: 'ethanol-by-fermentation',
+      title: { en: 'Make Ethanol by Fermentation', pt: 'Produzir etanol por fermentação' },
+      category: 'Processes',
+      difficulty: { en: 'Introductory', pt: 'Introdutório' },
+      access: 'account',
+      demo: true,
+      educational: true,
+      lede: {
+        en: 'Yeast turns sugar into ethanol and carbon dioxide. This models the textbook reaction and the temperature window yeast works in. It is not a procedure for producing a drinkable product.',
+        pt: 'A levedura transforma açúcar em etanol e gás carbônico. Isto modela a reação clássica e a faixa de temperatura em que a levedura trabalha. Não é um procedimento para produzir bebida.'
+      },
+      stages: ['charge', 'warm', 'ferment'],
+      safetyClass: 'educational',
+      version: 1,
+      learningObjectives: {
+        en: 'C₆H₁₂O₆ → 2 C₂H₅OH + 2 CO₂, and why yeast stops working when it gets too hot.',
+        pt: 'C₆H₁₂O₆ → 2 C₂H₅OH + 2 CO₂, e por que a levedura para de trabalhar quando esquenta demais.'
+      },
+      tutorial: [
+        { id: 'vessel', action: 'addEquipment', needEquipment: ['flask'], en: 'Place an Erlenmeyer flask: its narrow neck keeps air out.', pt: 'Coloque um erlenmeyer: o gargalo estreito dificulta a entrada de ar.', why: { en: 'Fermentation works without oxygen.', pt: 'A fermentação ocorre sem oxigênio.' } },
+        { id: 'sugar', action: 'addMaterial', need: { water: true, sucrose: true }, amounts: { water: 100, sucrose: 25 }, into: 'flask', en: 'Add 100 mL of water and 25 g of sucrose.', pt: 'Adicione 100 mL de água e 25 g de sacarose.' },
+        { id: 'yeast', action: 'addMaterial', need: { yeast: true }, amounts: { yeast: 3 }, into: 'flask', en: 'Add the virtual yeast.', pt: 'Adicione a levedura virtual.', why: { en: 'The yeast carries the enzymes that do the work.', pt: 'A levedura carrega as enzimas que fazem o trabalho.' } },
+        { id: 'warm', action: 'heat', heatTo: 28, needTemp: 24, en: 'Warm it to about 28 °C.', pt: 'Aqueça até cerca de 28 °C.', why: { en: 'Yeast works between roughly 18 and 40 °C, and stops above that.', pt: 'A levedura trabalha entre cerca de 18 e 40 °C e para acima disso.' } },
+        { id: 'brew', action: 'ferment', needFermented: true, en: 'Let it ferment, then read the equation in the notebook.', pt: 'Deixe fermentar e leia a equação no caderno.', why: { en: 'The bubbles are the carbon dioxide half of the reaction.', pt: 'As bolhas são a metade de gás carbônico da reação.' } }
+      ]
+    },
+    {
+      id: 'sugar',
+      slug: 'refine-sugar',
+      title: { en: 'Refine Sugar from Cane Juice', pt: 'Refinar açúcar do caldo de cana' },
+      category: 'Processes',
+      difficulty: { en: 'Introductory', pt: 'Introdutório' },
+      access: 'account',
+      demo: true,
+      lede: {
+        en: 'Take virtual cane juice, filter the fibre out, boil it down and watch crystals appear. Separation followed by crystallisation, both modelled.',
+        pt: 'Pegue caldo de cana virtual, filtre a fibra, evapore e veja os cristais aparecerem. Separação seguida de cristalização, ambas modeladas.'
+      },
+      stages: ['filter', 'concentrate', 'crystallise'],
+      safetyClass: 'educational',
+      version: 1,
+      learningObjectives: {
+        en: 'Filtration removes what will not dissolve; evaporation makes what did dissolve come back.',
+        pt: 'A filtração remove o que não dissolve; a evaporação faz voltar o que dissolveu.'
+      },
+      tutorial: [
+        { id: 'juice', action: 'addMaterial', need: { cane_juice: true, fibre: true }, anywhere: true, amounts: { cane_juice: 90, fibre: 8 }, into: 'beaker', en: 'Add virtual cane juice and the fibre that comes with it.', pt: 'Adicione caldo de cana virtual e a fibra que vem junto.' },
+        { id: 'funnel', action: 'addEquipment', needEquipment: ['funnel'], en: 'Add a funnel.', pt: 'Adicione um funil.' },
+        { id: 'fit', action: 'filter', needFiltered: true, en: 'Fit the funnel over an empty vessel and filter the juice.', pt: 'Encaixe o funil sobre um vidro vazio e filtre o caldo.', why: { en: 'Fibre does not dissolve, so it stays on the filter while the sugar runs through.', pt: 'A fibra não dissolve, então fica no filtro enquanto o açúcar passa.' } },
+        { id: 'boil', action: 'heat', heatTo: 70, needTemp: 62, en: 'Heat the filtrate to about 70 °C.', pt: 'Aqueça o filtrado até cerca de 70 °C.' },
+        { id: 'grow', action: 'crystallise', needCrystals: true, en: 'Boil it down until crystals form.', pt: 'Evapore até formar cristais.', why: { en: 'Removing water makes the solution supersaturated and the sugar comes out of it.', pt: 'Tirar água deixa a solução supersaturada e o açúcar sai dela.' } }
       ]
     },
     {
@@ -1112,6 +1177,15 @@
     return String.fromCharCode(65 + (index % 26));
   }
 
+  /* The caption follows the interface language; older sessions keep the name
+     they were saved with. */
+  function labelFor(container, lang) {
+    if (!container) return '';
+    var spec = EQUIPMENT[container.type];
+    if (!spec || !container.letter) return container.label || container.type || '';
+    return (lang === 'pt' ? spec.labelPt : spec.labelEn) + ' ' + container.letter;
+  }
+
   function defaultPos(index) {
     return {
       x: 56 + (index % 4) * 136,
@@ -1233,6 +1307,7 @@
     return {
       id: spec.type + '-' + vesselLetter(index).toLowerCase(),
       type: spec.type,
+      letter: vesselLetter(index),
       label: spec.labelEn + ' ' + vesselLetter(index),
       capacityMl: spec.capacityMl || 0,
       volumeMl: 0,
@@ -1654,6 +1729,34 @@
     noteProduct(session, container, beforeProduct);
     var fired = noteReaction(session, container, beforeReaction);
     return { ok: true, container: container, reaction: fired };
+  }
+
+  /* Take one material back out, instead of emptying the whole vessel. */
+  function removeFromContainer(session, containerId, substanceId) {
+    var container = findContainer(session, containerId);
+    if (!container) return { ok: false, reason: 'no-container' };
+    var spec = SUBSTANCES[substanceId];
+    if (!spec) return { ok: false, reason: 'unknown' };
+    var row = (container.contents || []).filter(function (item) { return item.id === substanceId; })[0];
+    if (!row) return { ok: false, reason: 'absent' };
+    pushHistory(session);
+    var beforeProduct = container.productId || '';
+    var beforeReaction = container.reactionId || '';
+    var amount = Number(row.amount) || 0;
+    container.contents = container.contents.filter(function (item) { return item.id !== substanceId; });
+    if (spec.state === 'liquid') {
+      container.volumeMl = Math.max(0, Math.round(((Number(container.volumeMl) || 0) - amount) * 10) / 10);
+    }
+    if (!container.contents.length) container.volumeMl = 0;
+    mixContainer(container);
+    observe(session, line(
+      session,
+      'Removed ' + spec.name + ' from ' + (container.label || containerId) + '.',
+      'Removeu ' + spec.name + ' de ' + (container.label || containerId) + '.'
+    ));
+    noteProduct(session, container, beforeProduct);
+    noteReaction(session, container, beforeReaction);
+    return { ok: true, container: container, amount: amount };
   }
 
   function pour(session, fromId, toId, amount) {
@@ -2133,6 +2236,96 @@
     return { ok: Boolean(wired.ok), flask: flask, condenser: condenser, heater: heater };
   }
 
+  function assembleFilter(session, sourceId) {
+    var funnel = firstOfType(session, 'funnel');
+    if (!funnel) return { ok: false, reason: 'missing' };
+    var host = (session.containers || []).filter(function (row) {
+      return row.id !== funnel.id && row.id !== sourceId && canHold(row) && hasCap(row, 'contain') &&
+        (Number(row.volumeMl) || 0) === 0;
+    })[0];
+    if (!host) return { ok: false, reason: 'no-host' };
+    return attachTool(session, funnel.id, host.id);
+  }
+
+  /* Fermentation: yeast turns sugar into ethanol and carbon dioxide. This is
+     the textbook reaction, modelled for teaching. It is not a procedure for
+     producing a drinkable product. */
+  function ferment(session, containerId) {
+    if (!processAllowed('ferment')) return { ok: false, reason: 'unavailable' };
+    var container = findContainer(session, containerId);
+    if (!container || !canHold(container)) return { ok: false, reason: 'no-container' };
+    var has = {};
+    (container.contents || []).forEach(function (row) {
+      if ((Number(row.amount) || 0) > 0.05) has[row.id] = row;
+    });
+    if (!has.yeast) return { ok: false, reason: 'no-yeast' };
+    var sugar = has.sucrose || has.cane_juice;
+    if (!sugar) return { ok: false, reason: 'no-sugar' };
+    if (!(Number(container.volumeMl) || 0)) return { ok: false, reason: 'dry' };
+    var temp = Number(container.temperatureC) || 22;
+    if (temp < 18) return { ok: false, reason: 'cold', needed: 18 };
+    if (temp > 40) return { ok: false, reason: 'too-hot', limit: 40 };
+
+    pushHistory(session);
+    var beforeProduct = container.productId || '';
+    var used = Math.round(Math.min(Number(sugar.amount), Math.max(2, Number(sugar.amount) * 0.6)) * 10) / 10;
+    var made = Math.round(used * 0.51 * 10) / 10;
+    sugar.amount = Math.round((Number(sugar.amount) - used) * 10) / 10;
+    container.contents = (container.contents || []).filter(function (row) { return (Number(row.amount) || 0) > 0.05; });
+    var spirit = (container.contents || []).filter(function (row) { return row.id === 'ethanol'; })[0];
+    if (spirit) spirit.amount = Math.round((Number(spirit.amount) + made) * 10) / 10;
+    else container.contents.push({ id: 'ethanol', amount: made, unit: 'mL' });
+    container.volumeMl = Math.round(((Number(container.volumeMl) || 0) + made) * 10) / 10;
+    if (container.volumeMl > container.capacityMl) container.volumeMl = container.capacityMl;
+    container.fermented = Math.round(((Number(container.fermented) || 0) + used) * 10) / 10;
+    mixContainer(container);
+    container.fizz = true;
+    noteProduct(session, container, beforeProduct);
+    observe(session, line(
+      session,
+      'Fermented ' + used + ' g of sugar into ' + made + ' mL of virtual ethanol and CO₂. C₆H₁₂O₆ → 2 C₂H₅OH + 2 CO₂',
+      'Fermentou ' + used + ' g de açúcar em ' + made + ' mL de etanol virtual e CO₂. C₆H₁₂O₆ → 2 C₂H₅OH + 2 CO₂'
+    ));
+    return { ok: true, container: container, used: used, made: made };
+  }
+
+  /* Boil a sugar solution down until it is supersaturated and crystals form. */
+  function crystallise(session, containerId) {
+    if (!processAllowed('crystallise')) return { ok: false, reason: 'unavailable' };
+    var container = findContainer(session, containerId);
+    if (!container || !canHold(container)) return { ok: false, reason: 'no-container' };
+    var sugar = (container.contents || []).filter(function (row) {
+      return (row.id === 'sucrose' || row.id === 'cane_juice') && (Number(row.amount) || 0) > 0.05;
+    })[0];
+    if (!sugar) return { ok: false, reason: 'no-sugar' };
+    var water = (container.contents || []).filter(function (row) { return row.id === 'water'; })[0];
+    var volume = Number(container.volumeMl) || 0;
+    if (volume <= 0) return { ok: false, reason: 'dry' };
+    if ((Number(container.temperatureC) || 22) < 60) return { ok: false, reason: 'cold', needed: 60 };
+
+    pushHistory(session);
+    var lost = Math.round(Math.max(1, volume * 0.45) * 10) / 10;
+    container.volumeMl = Math.round(Math.max(0, volume - lost) * 10) / 10;
+    if (water) {
+      water.amount = Math.round(Math.max(0, Number(water.amount) - lost) * 10) / 10;
+      if (water.amount <= 0.05) {
+        container.contents = container.contents.filter(function (row) { return row.id !== 'water'; });
+      }
+    }
+    if (sugar.id === 'cane_juice') {
+      sugar.amount = Math.round(Number(sugar.amount) * 10) / 10;
+    }
+    container.crystals = true;
+    container.particleSize = 'crystalline';
+    mixContainer(container);
+    observe(session, line(
+      session,
+      'Boiled off ' + lost + ' mL: the solution is supersaturated and sugar crystals are forming.',
+      'Evaporou ' + lost + ' mL: a solução ficou supersaturada e cristais de açúcar estão se formando.'
+    ));
+    return { ok: true, container: container, evaporated: lost };
+  }
+
   /* Reflux is the same glassware as a still, wired differently: the condenser
      returns to the flask it came from, so nothing leaves the pot. */
   function refluxSetup(session, flaskId) {
@@ -2381,6 +2574,14 @@
     (container.contents || []).forEach(function (row) {
       if ((Number(row.amount) || 0) > 0.05) has[row.id] = true;
     });
+    /* A step marked `anywhere` survives the material being moved on: filtering
+       or distilling deliberately empties the vessel it started in. */
+    var anywhere = {};
+    (session.containers || []).forEach(function (vessel) {
+      (vessel.contents || []).forEach(function (row) {
+        if ((Number(row.amount) || 0) > 0.05) anywhere[row.id] = true;
+      });
+    });
     var done = [];
     var current = 0;
     var unlocked = true;
@@ -2391,13 +2592,14 @@
         (session.containers || []).forEach(function (row) { types[row.type] = true; });
         step.needEquipment.forEach(function (id) { if (!types[id]) ok = false; });
       }
+      var pool = step.anywhere ? anywhere : has;
       if (ok && step.need) {
-        Object.keys(step.need).forEach(function (id) { if (!has[id]) ok = false; });
+        Object.keys(step.need).forEach(function (id) { if (!pool[id]) ok = false; });
       }
-      if (ok && step.needAny) ok = step.needAny.some(function (id) { return has[id]; });
+      if (ok && step.needAny) ok = step.needAny.some(function (id) { return pool[id]; });
       if (ok && step.stir && !session.stirred) ok = false;
       if (ok && step.product && container.productId !== step.product) ok = false;
-      if (ok && step.action === 'heat') {
+      if (ok && step.action === 'heat' && !step.needTemp) {
         var warm = (session.containers || []).some(function (row) { return (Number(row.temperatureC) || 22) >= 40; });
         if (!warm) ok = false;
       }
@@ -2413,6 +2615,18 @@
           return (Number(row.temperatureC) || 22) >= step.needTemp;
         });
         if (!hot) ok = false;
+      }
+      if (ok && step.needFermented) {
+        var brewed = (session.containers || []).some(function (row) { return (Number(row.fermented) || 0) > 0; });
+        if (!brewed) ok = false;
+      }
+      if (ok && step.needCrystals) {
+        var grown = (session.containers || []).some(function (row) { return row.crystals; });
+        if (!grown) ok = false;
+      }
+      if (ok && step.needFiltered) {
+        var sieved = (session.containers || []).some(function (row) { return row.type === 'funnel' && row.residue; });
+        if (!sieved) ok = false;
       }
       if (ok && step.needReflux) {
         var held = (session.containers || []).some(function (row) { return (Number(row.refluxMin) || 0) > 0; });
@@ -2485,6 +2699,9 @@
     connect: { en: 'Connect the ports', pt: 'Conecte os portos' },
     'reflux-connect': { en: 'Stand the condenser upright', pt: 'Monte o condensador na vertical' },
     reflux: { en: 'Hold it at reflux', pt: 'Mantenha em refluxo' },
+    ferment: { en: 'Let it ferment', pt: 'Deixe fermentar' },
+    crystallise: { en: 'Boil it down', pt: 'Evapore até cristalizar' },
+    filter: { en: 'Filter it', pt: 'Filtre' },
     distill: { en: 'Run the distillation', pt: 'Execute a destilação' }
   };
 
@@ -2531,6 +2748,9 @@
       needsConnect: step.action === 'connect',
       needsRefluxConnect: step.action === 'reflux-connect',
       needsReflux: step.action === 'reflux',
+      needsFerment: step.action === 'ferment',
+      needsCrystallise: step.action === 'crystallise',
+      needsFilter: step.action === 'filter',
       needsDistill: step.action === 'distill',
       heatTo: Number(step.heatTo) || 0,
       action: step.action || 'inspect',
@@ -2716,7 +2936,8 @@
         { title: copy('Elements', 'Elementos'), ids: ['fe', 'cu', 'zn', 's', 'c'] },
         { title: copy('Minerals', 'Minerais'), ids: ['zno', 'tio2'] },
         { title: copy('Fragrance notes', 'Notas de fragrância'), ids: ['limonene', 'linalool', 'vanillin'] },
-        { title: copy('Virtual fractions', 'Frações virtuais'), ids: ['frac_light', 'frac_mid', 'frac_heavy'] }
+        { title: copy('Virtual fractions', 'Frações virtuais'), ids: ['frac_light', 'frac_mid', 'frac_heavy'] },
+        { title: copy('Process materials', 'Materiais de processo'), ids: ['yeast', 'cane_juice', 'fibre'] }
       ];
       return groups.map(function (group) {
         return '<div class="lab-chip-group"><span class="lab-chip-group-title">' + esc(group.title) + '</span><div class="lab-chips">' +
@@ -2896,6 +3117,15 @@
       }
       if (plan.needsReflux) {
         out.push('<button type="button" class="lab-do-chip" data-step-reflux>' + esc(copy('Reflux', 'Refluxar')) + '</button>');
+      }
+      if (plan.needsFerment) {
+        out.push('<button type="button" class="lab-do-chip" data-step-ferment>' + esc(copy('Ferment', 'Fermentar')) + '</button>');
+      }
+      if (plan.needsCrystallise) {
+        out.push('<button type="button" class="lab-do-chip" data-step-crystallise>' + esc(copy('Boil down', 'Evaporar')) + '</button>');
+      }
+      if (plan.needsFilter) {
+        out.push('<button type="button" class="lab-do-chip" data-step-filter>' + esc(copy('Fit funnel and filter', 'Encaixar funil e filtrar')) + '</button>');
       }
       if (plan.heatTo) {
         out.push('<button type="button" class="lab-do-chip" data-step-heat="' + esc(plan.heatTo) + '">' +
@@ -3115,7 +3345,7 @@
         body +
         ports +
         readoutHtml +
-        '<span class="lab-glass-name">' + esc(container.label || kind) + '</span>' +
+        '<span class="lab-glass-name">' + esc(labelFor(container, lang)) + '</span>' +
         '<span class="lab-glass-meta">' + meta + '</span>' +
         (product ? '<span class="lab-glass-product">' + esc(product) + '</span>' : '') +
         '</button>';
@@ -3125,10 +3355,19 @@
       var container = selected();
       if (!container) return '';
       mixContainer(container);
-      var contents = (container.contents || []).map(function (row) {
+      var contentRows = (container.contents || []).map(function (row) {
         var spec = SUBSTANCES[row.id];
-        return esc((spec && spec.name) || row.id) + ' ' + esc(Math.round((Number(row.amount) || 0) * 10) / 10) + (row.unit ? ' ' + row.unit : '');
-      }).join(' · ') || copy('Empty', 'Vazio');
+        return '<li class="lab-content-row">' +
+          '<i class="lab-chip-swatch" style="background:' + esc((spec && spec.color) || '#ccc') + '"></i>' +
+          '<span>' + esc((spec && spec.name) || row.id) + '</span>' +
+          '<b>' + esc(Math.round((Number(row.amount) || 0) * 10) / 10) + (row.unit ? ' ' + esc(row.unit) : '') + '</b>' +
+          '<button type="button" class="lab-content-drop" data-lab-remove="' + esc(row.id) + '" aria-label="' +
+          esc(copy('Remove ', 'Remover ') + ((spec && spec.name) || row.id)) + '" title="' +
+          esc(copy('Remove', 'Remover')) + '">×</button></li>';
+      }).join('');
+      var contentsHtml = contentRows
+        ? '<ul class="lab-contents">' + contentRows + '</ul>'
+        : '<p class="ws-lede">' + esc(copy('Empty', 'Vazio')) + '</p>';
       var model = container.reactionId ? REACTIONS[container.reactionId] : null;
       var reactionBlock = model
         ? '<div class="lab-reaction" data-lab-reaction><span class="lab-reaction-tag">' + esc(copy('Reaction', 'Reação')) + '</span>' +
@@ -3140,6 +3379,19 @@
         ? '<div class="lab-rig"><span class="lab-reaction-tag">' + esc(copy('Reflux ready', 'Refluxo pronto')) + '</span>' +
           '<p>' + esc(container.label || container.id) + ' ↑ ' + esc(refluxRig.condenser.label || refluxRig.condenser.id) + ' ' + esc(copy('(returns to the flask)', '(retorna ao balão)')) + '</p>' +
           '<button type="button" class="ws-btn ws-btn-sm ws-btn-primary" data-lab-reflux>' + esc(copy('Reflux', 'Refluxar')) + '</button></div>'
+        : '';
+      var canBrew = canHold(container) && (container.contents || []).some(function (row) { return row.id === 'yeast'; });
+      var brewBlock = canBrew
+        ? '<div class="lab-rig"><span class="lab-reaction-tag">' + esc(copy('Fermentation', 'Fermentação')) + '</span>' +
+          '<code class="lab-reaction-eq">C₆H₁₂O₆ → 2 C₂H₅OH + 2 CO₂</code>' +
+          '<button type="button" class="ws-btn ws-btn-sm ws-btn-primary" data-lab-ferment>' + esc(copy('Ferment', 'Fermentar')) + '</button></div>'
+        : '';
+      var canGrow = canHold(container) && (Number(container.volumeMl) || 0) > 0 &&
+        (container.contents || []).some(function (row) { return row.id === 'sucrose' || row.id === 'cane_juice'; });
+      var growBlock = canGrow
+        ? '<div class="lab-rig"><span class="lab-reaction-tag">' + esc(copy('Crystallise', 'Cristalizar')) + '</span>' +
+          '<p>' + esc(copy('Boil water off until the sugar comes back out.', 'Evapore água até o açúcar voltar a sair.')) + '</p>' +
+          '<button type="button" class="ws-btn ws-btn-sm" data-lab-crystallise>' + esc(copy('Boil down', 'Evaporar')) + '</button></div>'
         : '';
       var filterRig = filterSetup(session, container.id);
       var filterBlock = filterRig
@@ -3153,9 +3405,9 @@
           '<p>' + esc(container.label || container.id) + ' → ' + esc(rig.condenser.label || rig.condenser.id) + ' → ' + esc(rig.receiver.label || rig.receiver.id) + '</p>' +
           '<button type="button" class="ws-btn ws-btn-sm ws-btn-primary" data-lab-distill>' + esc(copy('Distil', 'Destilar')) + '</button></div>'
         : '';
-      return reactionBlock + rigBlock + refluxBlock + filterBlock +
-        '<div class="lab-kv"><span>' + esc(copy('Vessel', 'Vidro')) + '</span><strong>' + esc(container.label || container.id) + '</strong></div>' +
-        '<div class="lab-kv"><span>' + esc(copy('Contents', 'Conteúdo')) + '</span><strong>' + contents + '</strong></div>' +
+      return reactionBlock + brewBlock + growBlock + rigBlock + refluxBlock + filterBlock +
+        '<div class="lab-kv"><span>' + esc(copy('Vessel', 'Vidro')) + '</span><strong>' + esc(labelFor(container, lang)) + '</strong></div>' +
+        '<div class="lab-kv lab-kv-stack"><span>' + esc(copy('Contents', 'Conteúdo')) + '</span></div>' + contentsHtml +
         '<div class="lab-kv"><span>' + esc(copy('Volume', 'Volume')) + '</span><strong>' + esc(container.volumeMl) + ' mL</strong></div>' +
         '<div class="lab-kv"><span>' + esc(copy('Mass', 'Massa')) + '</span><strong>' + esc(Math.round(containerMass(container) * 10) / 10) + ' g</strong></div>' +
         '<div class="lab-kv"><span>' + esc(copy('Temperature', 'Temperatura')) + '</span><strong>' + esc(container.temperatureC) + ' °C</strong></div>' +
@@ -3207,6 +3459,39 @@
       setTimeout(function () {
         if (group.classList) group.classList.remove(cls);
       }, ms);
+    }
+
+    /* The world is rebuilt on every change, so a CSS transition has nothing to
+       run from. Capture the level before the change and animate the new fill
+       group up from it. */
+    function fillLevelOf(id) {
+      var rect = node.querySelector('[data-vessel="' + id + '"] .lab-liquid');
+      return rect ? Number(rect.getAttribute('data-fill')) || 0 : 0;
+    }
+
+    function captureLevels(fromId, toId) {
+      return { from: fillLevelOf(fromId), to: fillLevelOf(toId) };
+    }
+
+    function animateRise(id, fromPct) {
+      if (reducedMotion()) return;
+      var piece = node.querySelector('[data-vessel="' + id + '"]');
+      var group = piece && piece.querySelector('.lab-svg-fill');
+      var rect = piece && piece.querySelector('.lab-liquid');
+      if (!group || !rect || typeof group.animate !== 'function') return;
+      var container = findContainer(session, id);
+      if (!container) return;
+      var toPct = Number(rect.getAttribute('data-fill')) || 0;
+      if (toPct <= 0 || Math.abs(toPct - fromPct) < 1) return;
+      var from = fillGeometry(container.type, fromPct);
+      var to = fillGeometry(container.type, toPct);
+      if (to.height <= 0) return;
+      var ratio = Math.max(0.02, Math.min(4, from.height / to.height));
+      group.style.transformOrigin = '50px ' + to.bottom + 'px';
+      group.animate(
+        [{ transform: 'scaleY(' + ratio + ')' }, { transform: 'scaleY(1)' }],
+        { duration: toPct > fromPct ? 620 : 420, easing: 'cubic-bezier(.22,.9,.3,1)' }
+      );
     }
 
     function pulseLiquid(id) {
@@ -3330,8 +3615,12 @@
       playTransferFx(rig.condenser.id, rig.receiver.id, color, 'drop');
     }
 
-    function playTransferFx(fromId, toId, color, kind) {
+    function playTransferFx(fromId, toId, color, kind, levels) {
       playSound(kind === 'drop' ? 'drop' : 'pour');
+      if (levels) {
+        animateRise(toId, levels.to);
+        animateRise(fromId, levels.from);
+      }
       pulseLiquid();
       if (document.documentElement.getAttribute('data-reduced-motion')) return;
       var world = node.querySelector('[data-lab-world]');
@@ -3722,7 +4011,7 @@
       rootEl.addEventListener('click', function (event) {
         try {
           var t = event.target && event.target.closest
-            ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-redo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel], [data-ready], [data-lab-zoom], [data-lab-fit], [data-lab-aspirate], [data-lab-dispense], [data-lab-drop], [data-lab-grind], [data-lab-drain], [data-lab-connect], [data-lab-duplicate], [data-lab-delete], [data-lab-rotate], [data-dock], [data-dock-close], [data-side], [data-lab-sound], [data-start-creation], [data-stop-creation], [data-step-add], [data-lab-hint], [data-step-connect], [data-step-heat], [data-step-distill], [data-lab-distill], [data-lab-filter], [data-lab-reflux], [data-step-reflux], [data-step-reflux-connect]')
+            ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-redo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel], [data-ready], [data-lab-zoom], [data-lab-fit], [data-lab-aspirate], [data-lab-dispense], [data-lab-drop], [data-lab-grind], [data-lab-drain], [data-lab-connect], [data-lab-duplicate], [data-lab-delete], [data-lab-rotate], [data-dock], [data-dock-close], [data-side], [data-lab-sound], [data-start-creation], [data-stop-creation], [data-step-add], [data-lab-hint], [data-step-connect], [data-step-heat], [data-step-distill], [data-lab-distill], [data-lab-filter], [data-lab-reflux], [data-step-reflux], [data-step-reflux-connect], [data-lab-remove], [data-lab-ferment], [data-step-ferment], [data-lab-crystallise], [data-step-crystallise], [data-step-filter]')
             : null;
           if (!t) return;
           if (t.hasAttribute('data-lab-sound')) {
@@ -3784,6 +4073,21 @@
             updateLive();
             return;
           }
+          if (t.getAttribute('data-lab-remove')) {
+            var dropId = selected().id;
+            var dropWasAt = fillLevelOf(dropId);
+            var dropped = removeFromContainer(session, dropId, t.getAttribute('data-lab-remove'));
+            queueSave();
+            updateLive();
+            if (dropped.ok) animateRise(dropId, dropWasAt);
+            if (dropped.ok) {
+              playSound('select');
+              flashStatus('');
+            } else {
+              playSound('deny');
+            }
+            return;
+          }
           if (t.getAttribute('data-step-add')) {
             var stepId = t.getAttribute('data-step-add');
             var stepAmount = Number(t.getAttribute('data-step-amount')) || amount;
@@ -3793,10 +4097,12 @@
               playSound('deny');
               return;
             }
+            var stepWasAt = fillLevelOf(target.id);
             var stepAdded = addToContainer(session, target.id, stepId, stepAmount);
             session.selectedId = target.id;
             queueSave();
             updateLive();
+            if (stepAdded.ok) animateRise(target.id, stepWasAt);
             if (stepAdded.ok) {
               flashStatus('');
               pulseLiquid();
@@ -3872,25 +4178,27 @@
             }
             if (pipetteFrom && pipetteFrom !== id) {
               var sentColor = mixColor(findContainer(session, pipetteFrom) || {});
+              var sentLevels = captureLevels(pipetteFrom, id);
               var sent = dispense(session, pipetteFrom, id);
               var sentFrom = pipetteFrom;
               pipetteFrom = '';
               session.selectedId = id;
               queueSave();
               updateLive();
-              if (sent.ok) playTransferFx(sentFrom, id, sentColor, 'dispense');
+              if (sent.ok) playTransferFx(sentFrom, id, sentColor, 'dispense', sentLevels);
               else flashStatus('<div class="lab-msg" role="status">' + esc(copy('Could not dispense into that vessel.', 'Não foi possível dispensar nesse vidro.')) + '</div>');
               return;
             }
             if (dropFrom && dropFrom !== id) {
               var dripColor = mixColor(findContainer(session, dropFrom) || {});
+              var dripLevels = captureLevels(dropFrom, id);
               var dripped = drop(session, dropFrom, id);
               var dripId = dropFrom;
               dropFrom = '';
               session.selectedId = id;
               queueSave();
               updateLive();
-              if (dripped.ok) playTransferFx(dripId, id, dripColor, 'drop');
+              if (dripped.ok) playTransferFx(dripId, id, dripColor, 'drop', dripLevels);
               else flashStatus('<div class="lab-msg" role="status">' + esc(copy('Could not drip into that vessel.', 'Não foi possível pingar nesse vidro.')) + '</div>');
               return;
             }
@@ -3935,12 +4243,13 @@
             if (pourFrom && pourFrom !== id) {
               var pourColor = mixColor(findContainer(session, pourFrom) || {});
               var pouredFrom = pourFrom;
+              var pourLevels = captureLevels(pourFrom, id);
               var poured = pour(session, pourFrom, id, amount);
               pourFrom = '';
               session.selectedId = id;
               queueSave();
               updateLive();
-              if (poured.ok) playTransferFx(pouredFrom, id, pourColor, 'pour');
+              if (poured.ok) playTransferFx(pouredFrom, id, pourColor, 'pour', pourLevels);
               else if (poured.reason === 'empty') flashStatus('<div class="lab-msg" role="status">' + esc(copy('That vessel is empty.', 'Esse vidro está vazio.')) + '</div>');
               else if (poured.reason === 'full') flashStatus('<div class="lab-msg" role="status">' + esc(copy('That vessel is full.', 'Esse vidro está cheio.')) + '</div>');
               return;
@@ -3955,9 +4264,12 @@
           }
           if (t.getAttribute('data-add')) {
             pourFrom = '';
-            var added = addToContainer(session, selected().id, t.getAttribute('data-add'), amount);
+            var intoId = selected().id;
+            var wasAt = fillLevelOf(intoId);
+            var added = addToContainer(session, intoId, t.getAttribute('data-add'), amount);
             queueSave();
             updateLive();
+            if (added.ok) animateRise(intoId, wasAt);
             if (added.ok) {
               flashStatus('');
               pulseLiquid();
@@ -3999,9 +4311,12 @@
             return;
           }
           if (t.getAttribute('data-ready')) {
-            var kit = addReady(session, t.getAttribute('data-ready'), selected().id);
+            var kitId = selected().id;
+            var kitWasAt = fillLevelOf(kitId);
+            var kit = addReady(session, t.getAttribute('data-ready'), kitId);
             queueSave();
             updateLive();
+            if (kit.ok) animateRise(kitId, kitWasAt);
             if (kit.ok) {
               flashStatus('');
               pulseLiquid();
@@ -4094,6 +4409,75 @@
               note = copy('Stand a condenser over the flask, with nothing after it.', 'Monte um condensador sobre o balão, sem nada depois dele.');
             }
             flashStatus('<div class="lab-msg" role="status">' + esc(note) + '</div>');
+            return;
+          }
+          if (t.hasAttribute('data-lab-ferment') || t.hasAttribute('data-step-ferment')) {
+            var vat = t.hasAttribute('data-step-ferment') ? (preferredVessel('flask') || selected()) : selected();
+            if (!vat) return;
+            session.selectedId = vat.id;
+            var vatWasAt = fillLevelOf(vat.id);
+            var brewed = ferment(session, vat.id);
+            queueSave();
+            updateLive();
+            if (brewed.ok) {
+              animateRise(vat.id, vatWasAt);
+              playSound('reaction');
+              flashStatus('');
+              return;
+            }
+            playSound('deny');
+            var brewNote = copy('This mixture cannot ferment.', 'Esta mistura não pode fermentar.');
+            if (brewed.reason === 'no-yeast') brewNote = copy('Add virtual yeast: it carries the enzymes.', 'Adicione levedura virtual: ela carrega as enzimas.');
+            else if (brewed.reason === 'no-sugar') brewNote = copy('Add a sugar for the yeast to work on.', 'Adicione um açúcar para a levedura trabalhar.');
+            else if (brewed.reason === 'cold') brewNote = copy('Warm it to at least ' + brewed.needed + ' °C.', 'Aqueça até pelo menos ' + brewed.needed + ' °C.');
+            else if (brewed.reason === 'too-hot') brewNote = copy('Too hot: yeast stops working above ' + brewed.limit + ' °C.', 'Quente demais: a levedura para acima de ' + brewed.limit + ' °C.');
+            else if (brewed.reason === 'dry') brewNote = copy('Fermentation needs water.', 'A fermentação precisa de água.');
+            flashStatus('<div class="lab-msg" role="status">' + esc(brewNote) + '</div>');
+            return;
+          }
+          if (t.hasAttribute('data-lab-crystallise') || t.hasAttribute('data-step-crystallise')) {
+            var pan = selected();
+            if (!pan) return;
+            var panWasAt = fillLevelOf(pan.id);
+            var grown = crystallise(session, pan.id);
+            queueSave();
+            updateLive();
+            if (grown.ok) {
+              animateRise(pan.id, panWasAt);
+              playSound('heat');
+              playHeatFx(pan.id);
+              flashStatus('');
+              return;
+            }
+            playSound('deny');
+            var growNote = copy('Nothing here will crystallise.', 'Nada aqui vai cristalizar.');
+            if (grown.reason === 'cold') growNote = copy('Heat it to at least ' + grown.needed + ' °C to boil water off.', 'Aqueça até pelo menos ' + grown.needed + ' °C para evaporar água.');
+            else if (grown.reason === 'no-sugar') growNote = copy('Crystallisation needs a dissolved sugar.', 'A cristalização precisa de um açúcar dissolvido.');
+            flashStatus('<div class="lab-msg" role="status">' + esc(growNote) + '</div>');
+            return;
+          }
+          if (t.hasAttribute('data-step-filter')) {
+            var pot2 = selected();
+            if (!filterSetup(session, pot2.id)) {
+              var fitted2 = assembleFilter(session, pot2.id);
+              if (!fitted2.ok) {
+                playSound('deny');
+                flashStatus('<div class="lab-msg" role="status">' + esc(copy('Add a funnel and an empty vessel for it to sit on.', 'Adicione um funil e um vidro vazio para ele apoiar.')) + '</div>');
+                updateLive();
+                return;
+              }
+            }
+            var sieved = filterThrough(session, pot2.id);
+            queueSave();
+            updateLive();
+            if (autoCam) fitView();
+            if (sieved.ok) {
+              playTransferFx(sieved.rig.funnel.id, sieved.rig.receiver.id, mixColor(sieved.rig.receiver), 'drop');
+              flashStatus('');
+            } else {
+              playSound('deny');
+              flashStatus('<div class="lab-msg" role="status">' + esc(copy('Nothing here would stay on the filter.', 'Nada aqui ficaria no filtro.')) + '</div>');
+            }
             return;
           }
           if (t.hasAttribute('data-lab-filter')) {
@@ -4506,7 +4890,10 @@
     distillSetup: distillSetup,
     filterThrough: filterThrough,
     filterSetup: filterSetup,
+    assembleFilter: assembleFilter,
     reflux: reflux,
+    ferment: ferment,
+    crystallise: crystallise,
     refluxSetup: refluxSetup,
     passesFilter: passesFilter,
     assembleRig: assembleRig,
@@ -4533,11 +4920,13 @@
     addVessel: addVessel,
     addReady: addReady,
     emptyContainer: emptyContainer,
+    removeFromContainer: removeFromContainer,
     identifyProduct: identifyProduct,
     visualFillPct: visualFillPct,
     tutorialState: tutorialState,
     VESSEL_ART: VESSEL_ART,
     vesselArt: vesselArt,
+    labelFor: labelFor,
     vesselSvg: vesselSvg,
     fillGeometry: fillGeometry,
     stepPlan: stepPlan,
