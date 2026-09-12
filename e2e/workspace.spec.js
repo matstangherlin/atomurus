@@ -17,7 +17,7 @@ test('Free uses Study Cloud and still sees Review as Pro', async ({ page }) => {
   await expect(page.locator('#ws-study-nav')).toContainText(/Study|Estudo/);
   await expect(page.locator('#ws-study-nav')).toContainText(/Creations|Criações/);
   await page.locator('#ws-study-nav a[href="/app?section=library"]').first().click();
-  await expect(page.locator('#ws-study-nav')).toContainText(/Library|Biblioteca/);
+  await expect(page.locator('#ws-lib-list')).toBeVisible();
   await expect(page.locator('#ws-study-nav')).toContainText(/Study Sets/);
   await expect(page.locator('#ws-study-nav a[href="/app?section=review"]')).toContainText(/Review/);
   await expect(page.locator('#ws-study-nav a[href="/app?section=review"]')).toContainText(/PRO/);
@@ -480,6 +480,22 @@ test('Workspace nav puts sections and tools on one line', async ({ page }) => {
   // The repeated icons are gone from the tools group.
   await expect(page.locator('.ws-local-nav .ws-study-nav-item svg').first()).toBeHidden();
   await expect(page.locator('.ws-context-nav .ws-study-nav-item svg').first()).toBeVisible();
+
+  // No destination is offered twice on the same line.
+  async function navHrefs() {
+    return page.locator('#ws-study-nav .ws-study-nav-item').evaluateAll(
+      (els) => els.map((el) => el.getAttribute('href'))
+    );
+  }
+  for (const where of ['/app?section=lab&mode=bench', '/app?section=sets', '/app?section=history']) {
+    await gotoWorkspace(page, where);
+    await page.waitForSelector('.ws-local-nav .ws-study-nav-item');
+    const hrefs = await navHrefs();
+    expect(hrefs.length).toBe(new Set(hrefs).size, `duplicate nav destination at ${where}: ${hrefs.join(' ')}`);
+  }
+  await gotoWorkspace(page, '/app?section=lab&mode=bench');
+  await page.waitForSelector('.lab-beaker');
+  await expect(page.locator('.ws-local-nav .ws-study-nav-item')).toHaveCount(3);
 
   // Narrow enough and it stacks again without overflowing the page.
   await page.setViewportSize({ width: 390, height: 844 });

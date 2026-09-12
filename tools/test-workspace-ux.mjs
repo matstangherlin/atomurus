@@ -151,7 +151,14 @@ assert.match(authApp, /Balance reactions and solve stoichiometry step by step/);
 assert.doesNotMatch(authApp, /Solve any chemistry problem/);
 assert.match(authApp, /calculationBasis/);
 assert.match(authApp, /labReactions/);
-assert.match(authApp, /tool=reactions/);
+// The lab tool row lists only what is not already a section tab or a card on
+// the Pro Lab page; the solver link itself is asserted on pro-lab.js below.
+assert.doesNotMatch(authApp, /'labNavSolve'/);
+assert.doesNotMatch(authApp, /'labNavCompare'/);
+assert.doesNotMatch(authApp, /navItemHtml\('\/app\?section=creations', 'guidedCreations'/);
+assert.match(authApp, /navItemHtml\('\/app\?section=lab', 'virtualLab'/);
+assert.match(authApp, /navItemHtml\('\/app\?section=lab&mode=bench', 'openBench'/);
+assert.match(authApp, /navItemHtml\('\/app\?section=pro-lab', 'proLab'/);
 const proLab = readFileSync(new URL('../pro-lab.js', import.meta.url), 'utf8');
 assert.match(proLab, /chemistrySolverKicker/);
 assert.match(proLab, /reactionWorkbench/);
