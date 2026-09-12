@@ -2541,3 +2541,57 @@ html[data-reduced-motion="1"] .lab-piece.is-boiling .lab-vessel { animation: non
   40% { filter: saturate(1.2) brightness(1.08); }
   100% { filter: none; }
 }
+
+/* ---- My Work: one page of groups, filtered by a chip row ---- */
+.ws-work-search { margin: 0 0 12px; }
+.ws-work-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 18px;
+}
+.ws-work-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  border: 1px solid var(--ws-line, rgba(15, 23, 42, .12));
+  border-radius: 999px;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--ws-ink-soft, #475569);
+  text-decoration: none;
+  background: var(--ws-surface, #fff);
+  transition: background .14s ease, border-color .14s ease, color .14s ease;
+}
+.ws-work-chip:hover { border-color: var(--ws-accent, #2563eb); color: var(--ws-accent, #2563eb); }
+.ws-work-chip.is-active {
+  background: var(--ws-accent, #2563eb);
+  border-color: var(--ws-accent, #2563eb);
+  color: #fff;
+}
+.ws-work-group + .ws-work-group { margin-top: 26px; }
+
+/* ---- Study home: the library with what is due on top ---- */
+.ws-study-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 0 18px;
+  margin: 0 0 18px;
+  border-bottom: 1px solid var(--ws-line, rgba(15, 23, 42, .12));
+}
+.ws-study-strip-main { flex: 1 1 320px; min-width: 0; }
+.ws-study-strip-main .ws-title { margin: 2px 0 6px; }
+.ws-study-strip-side {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+}
+.ws-study-strip-links { margin: 0; }
+@media (max-width: 640px) {
+  .ws-study-strip { align-items: flex-start; }
+  .ws-study-strip-side { width: 100%; }
+}

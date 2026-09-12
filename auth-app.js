@@ -202,6 +202,15 @@
       createFreeAccount: 'Create free account',
       createAccount: 'Create account',
       navCreations: 'Creations',
+      navWork: 'My Work',
+      workPiece: 'piece', workPieces: 'pieces',
+      workHome: 'Recent',
+      workLede: 'Everything you have made and everything you can pick back up.',
+      workSearch: 'Search my work',
+      workAll: 'All',
+      workEmpty: 'Nothing here yet. Anything you build, save or calculate shows up on this page.',
+      workNoMatch: 'Nothing matches that search.',
+      studyHomeLede: 'Your library, your sets and what is due today.',
       navNotebook: 'Notebook',
       virtualLab: 'Virtual Lab',
       openBench: 'Open Bench',
@@ -532,6 +541,15 @@
       createFreeAccount: 'Criar conta gratuita',
       createAccount: 'Criar conta',
       navCreations: 'Criações',
+      navWork: 'Meu trabalho',
+      workPiece: 'peça', workPieces: 'peças',
+      workHome: 'Recentes',
+      workLede: 'Tudo o que você criou e tudo o que dá para retomar.',
+      workSearch: 'Buscar no meu trabalho',
+      workAll: 'Tudo',
+      workEmpty: 'Ainda não há nada aqui. O que você montar, salvar ou calcular aparece nesta página.',
+      workNoMatch: 'Nada corresponde a essa busca.',
+      studyHomeLede: 'Sua biblioteca, seus conjuntos e o que vence hoje.',
       navNotebook: 'Caderno',
       virtualLab: 'Lab virtual',
       openBench: 'Bancada aberta',
@@ -775,6 +793,19 @@
 
   function workspaceNext() { return location.pathname + location.search; }
 
+  function labPanel() {
+    try { return String(new URLSearchParams(location.search).get('panel') || '').trim().toLowerCase(); }
+    catch (_err) { return ''; }
+  }
+
+  /* An old bookmark lands on the destination that moved, not on the Lab. */
+  function redirectLegacySection() {
+    var to = logic().legacyWorkspaceUrl ? logic().legacyWorkspaceUrl(location.search) : '';
+    if (!to || to === location.pathname + location.search) return false;
+    location.replace(to);
+    return true;
+  }
+
   function studySection() {
     try {
       return logic().normalizeSection(new URLSearchParams(location.search).get('section'));
@@ -843,6 +874,19 @@
       ]
     }
   ];
+
+  /* area key, label key, icon. The whole of the Workspace top navigation. */
+  var PRIMARY_AREAS = [
+    ['lab', 'navGroupLab', 'lab'],
+    ['study', 'navGroupStudy', 'study'],
+    ['work', 'navWork', 'creations']
+  ];
+
+  function areaHref(area) {
+    var fn = logic().areaHref;
+    if (typeof fn === 'function') return fn(area);
+    return area === 'lab' ? '/app' : '/app?section=' + area;
+  }
 
   var LAB_NAV = [
     ['/', 'homeNav', 'home'],
@@ -930,45 +974,21 @@
       }
     }
     if (studyNav) {
-      var labHome = current === 'overview' || current === 'lab' || current === 'pro-lab';
-      var context = [
-        ['overview', 'navGroupLab', 'overview', labHome],
-        ['creations', 'navCreations', 'creations', current === 'creations'],
-        ['notebook', 'navNotebook', 'notebook', current === 'notebook'],
-        ['library', 'study', 'library', area === 'study'],
-        ['progress', 'navGroupActivity', 'progress', area === 'activity']
-      ];
+      /* Three primary areas, and nothing else on this line. Lab carries its own
+         sub-navigation in the dock; My Work shows its groups as sections of the
+         page. Only Study still earns a local row, and only four items of it. */
       var contextHtml = '<div class="ws-context-nav" role="navigation" aria-label="' + escapeHtml(t('navGroupWorkspace')) + '">' +
-        context.map(function (pair) {
-          var href = pair[0] === 'overview' ? '/app' : '/app?section=' + pair[0];
-          return navItemHtml(href, pair[1], pair[2], pair[3], false, pair[0]);
+        PRIMARY_AREAS.map(function (pair) {
+          return navItemHtml(areaHref(pair[0]), pair[1], pair[2], area === pair[0], false, pair[0]);
         }).join('') + '</div>';
       var localHtml = '';
-      var labMode = '';
-      try { labMode = new URLSearchParams(location.search).get('mode') || ''; } catch (_err) {}
       if (area === 'study') {
-        /* The Study section tab already lands on the library. */
         localHtml = '<div class="ws-local-nav" role="navigation" aria-label="' + escapeHtml(t('navGroupStudy')) + '">' +
-          [['sets', 'sets', 'studySets'], ['practice', 'practiceNav'], ['review', 'reviewShort', 'smartReview', 'review'], ['insights', 'insightsNav', 'studyInsights', 'insights']].map(function (pair) {
+          /* No Home item: the Study tab is Home, and repeating it here is the
+             same destination twice on one line. */
+          [['sets', 'sets', 'studySets'], ['practice', 'practiceNav', ''], ['review', 'reviewShort', 'smartReview']].map(function (pair) {
             var locked = pair[2] && !featureOn(user, pair[2]);
-            if (!user && (pair[0] === 'library' || pair[0] === 'sets' || pair[0] === 'practice')) locked = false;
-            return navItemHtml('/app?section=' + pair[0], pair[1], pair[0], current === pair[0], locked, pair[0]);
-          }).join('') + '</div>';
-      } else if (area === 'lab') {
-        /* Guided Creations is the Creations section tab, and Solve and Compare
-           are two of the cards the Pro Lab page itself opens with. Listing
-           them here was the same destination twice on one line. */
-        localHtml = '<div class="ws-local-nav" role="navigation" aria-label="' + escapeHtml(t('navGroupLab')) + '">' +
-          navItemHtml('/app?section=lab', 'virtualLab', 'lab', current === 'lab' && labMode !== 'bench', false, 'lab') +
-          navItemHtml('/app?section=lab&mode=bench', 'openBench', 'lab', current === 'lab' && labMode === 'bench', false, 'lab') +
-          navItemHtml('/app?section=pro-lab', 'proLab', 'pro-lab', current === 'pro-lab', false, 'pro-lab') +
-          '</div>';
-      } else if (area === 'activity') {
-        /* The Activity section tab already lands on progress. */
-        localHtml = '<div class="ws-local-nav" role="navigation" aria-label="' + escapeHtml(t('navGroupActivity')) + '">' +
-          [['history', 'history', 'studyCloud'], ['notes', 'notes', 'studyCloud']].map(function (pair) {
-            var locked = pair[2] && !featureOn(user, pair[2]);
-            if (!user) locked = false;
+            if (!user && pair[0] !== 'review') locked = false;
             return navItemHtml('/app?section=' + pair[0], pair[1], pair[0], current === pair[0], locked, pair[0]);
           }).join('') + '</div>';
       }
@@ -1003,17 +1023,9 @@
       }
     }
     if (bottom) {
-      var labHomeBottom = current === 'overview' || current === 'lab' || current === 'pro-lab';
-      var primary = [
-        ['overview', 'navGroupLab', 'lab', labHomeBottom],
-        ['creations', 'navCreations', 'creations', current === 'creations'],
-        ['notebook', 'navNotebook', 'notebook', current === 'notebook'],
-        ['library', 'study', 'study', area === 'study'],
-        ['progress', 'navGroupActivity', 'activity', area === 'activity']
-      ];
-      bottom.innerHTML = primary.map(function (pair) {
-        var href = pair[0] === 'overview' ? '/app' : '/app?section=' + pair[0];
-        return '<a class="' + (pair[3] ? 'is-active' : '') + '" href="' + href + '">' + icon(pair[2]) + '<span>' + escapeHtml(t(pair[1])) + '</span></a>';
+      bottom.innerHTML = PRIMARY_AREAS.map(function (pair) {
+        return '<a class="' + (area === pair[0] ? 'is-active' : '') + '" href="' + areaHref(pair[0]) + '">' +
+          icon(pair[2]) + '<span>' + escapeHtml(t(pair[1])) + '</span></a>';
       }).join('');
       bindProNav(bottom);
     }
@@ -1083,6 +1095,8 @@
       review: ['lockedReviewTitle', 'lockedReviewBody'],
       insights: ['insightsLockedTitle', 'insightsLockedBody'],
       history: ['lockedHistoryTitle', 'lockedHistoryBody'],
+      work: ['lockedHistoryTitle', 'lockedHistoryBody'],
+      study: ['lockedLibraryTitle', 'lockedLibraryBody'],
       notes: ['lockedNotesTitle', 'lockedNotesBody'],
       progress: ['lockedProgressTitle', 'lockedProgressBody']
     };
@@ -1095,7 +1109,7 @@
     var parts = [escapeHtml(t('crumbWorkspace'))];
     if (area === 'study') parts.push(escapeHtml(t('navGroupStudy')));
     if (area === 'lab') parts.push(escapeHtml(t('navGroupLab')));
-    if (area === 'activity') parts.push(escapeHtml(t('navGroupActivity')));
+    if (area === 'work') parts.push(escapeHtml(t('navWork')));
     if (area === 'account') parts.push(escapeHtml(t('account')));
     if (section === 'library') parts.push(escapeHtml(t('library')));
     if (section === 'sets') parts.push(escapeHtml(t('sets')));
@@ -1252,7 +1266,7 @@
       '<div class="ws-metric"><div class="ws-metric-value">' + escapeHtml(String(stats.again || 0)) + '</div><div class="ws-metric-label">' + escapeHtml(t('again')) + '</div></div>' +
       '</div><p class="ws-row-actions" style="justify-content:center"><a class="ws-btn ws-btn-primary" href="' + escapeHtml(reviewAgainHref(reviewSession)) + '">' + escapeHtml(t('reviewAgain')) + '</a>' +
       '<a class="ws-btn" href="' + escapeHtml(reviewExitHref(reviewSession)) + '">' + escapeHtml(t('exitReview')) + '</a>' +
-      '<a class="ws-btn" href="/app?section=overview">' + escapeHtml(t('backOverview')) + '</a></p></div>';
+      '<a class="ws-btn" href="/app">' + escapeHtml(t('backOverview')) + '</a></p></div>';
   }
 
   function revealReviewCard() {
@@ -1557,13 +1571,17 @@
       '<button type="submit" class="ws-btn ws-btn-secondary">' + escapeHtml(t('search')) + '</button></form>' +
       '<section class="ws-overview-block" data-hub="creations"><h2 class="ws-h2">' + escapeHtml(t('guidedCreations')) + '</h2>' +
       '<div class="ws-grid ws-public-grid">' + cards + '</div>' +
-      '<p><a class="ws-btn ws-btn-secondary" href="/app?section=creations">' + escapeHtml(t('viewAll')) + '</a></p></section>' +
+      '<p><a class="ws-btn ws-btn-secondary" href="/app?section=lab&panel=create">' + escapeHtml(t('viewAll')) + '</a></p></section>' +
       '<section class="ws-overview-block" data-hub="bench"><h2 class="ws-h2">' + escapeHtml(t('openBench')) + '</h2>' +
       '<p class="ws-lede">' + escapeHtml(t('openBenchLede')) + '</p>' +
       '<p><a class="ws-btn ws-btn-secondary" href="/app?section=lab&mode=bench">' + escapeHtml(t('startOpenBench')) + '</a></p></section>';
   }
 
-  async function renderOverview(node, api, user) {
+  async function renderOverview(node, api, user, opts) {
+    /* Study home. The Lab hero and the saved lab sessions used to sit here
+       because /app was one page for everything; the Lab is its own area now
+       and the sessions belong to My Work. */
+    var studyOnly = Boolean(opts && opts.studyOnly);
     node.innerHTML = skeleton();
     var canReview = featureOn(user, 'smartReview');
     var canInsights = featureOn(user, 'studyInsights');
@@ -1629,7 +1647,7 @@
     var savedBlock = savedPreview.length
       ? '<section class="ws-overview-block ws-hub-saved" data-hub="saved"><h2 class="ws-h2">' + escapeHtml(t('recentSaved')) + '</h2>' +
         '<div class="ws-grid">' + savedPreview.map(recentCard).join('') + '</div>' +
-        '<p><a class="ws-btn ws-btn-secondary" href="/app?section=library">' + escapeHtml(t('openLibrary')) + '</a></p></section>'
+        '<p><a class="ws-btn ws-btn-secondary" href="#ws-study-library">' + escapeHtml(t('openLibrary')) + '</a></p></section>'
       : '';
 
     var noteItems = logic().recentNotes ? logic().recentNotes(recentItems, 3) : [];
@@ -1685,24 +1703,24 @@
     var recentBlock = recent.length
       ? '<section class="ws-overview-block ws-hub-sessions" data-hub="sessions"><h2 class="ws-h2">' + escapeHtml(t('recentLabSessions')) + '</h2><div class="ws-grid">' + recent.map(function (row) {
         var when = logic().relativeTime ? logic().relativeTime(row.updatedAt || row.updated_at, Date.now(), lang) : '';
-        var href = '/app?section=pro-lab&tool=' + encodeURIComponent(labToolForSession(row.sessionType)) + '&session=' + encodeURIComponent(row.id);
+        var href = '/app?section=lab&panel=analysis&tool=' + encodeURIComponent(labToolForSession(row.sessionType)) + '&session=' + encodeURIComponent(row.id);
         return '<a class="ws-study-item" href="' + escapeHtml(href) + '"><div><h3 class="ws-item-title">' + escapeHtml(row.title || t('labSessions')) + '</h3>' +
           (when ? '<div class="ws-item-meta">' + escapeHtml(when) + '</div>' : '') + '</div></a>';
       }).join('') + '</div></section>'
       : '';
 
     var hubLinks = '<nav class="ws-hub-links" data-hub="links">' +
-      '<a href="/app?section=library">' + escapeHtml(t('library')) + '</a>' +
+      '<a href="/app?section=study">' + escapeHtml(t('library')) + '</a>' +
       '<a href="/app?section=sets">' + escapeHtml(t('sets')) + '</a>' +
       '<a href="/app?section=practice">' + escapeHtml(t('practiceNav')) + '</a>' +
       '<a href="/app?section=insights">' + escapeHtml(t('insights')) + '</a>' +
       '</nav>';
 
     node.innerHTML =
-      crumbTrail('overview') +
+      crumbTrail(studyOnly ? 'study' : 'overview') +
       '<div class="ws-study-hub" data-study-hub="account">' +
       '<p class="ws-kicker">Atomurus</p><h1 class="ws-title">' + escapeHtml(greet) + '</h1><p class="ws-lede">' + escapeHtml(t('continueChemistry')) + '</p>' +
-      labHeroHtml(user) + continueBlock + reviewBlock + practiceBlock + pathsBlock + setsBlock + savedBlock + notesBlock + weakBlock + insightsBlock + visualizeBlock + recentBlock + hubLinks +
+      (studyOnly ? '' : labHeroHtml(user)) + continueBlock + reviewBlock + practiceBlock + pathsBlock + setsBlock + savedBlock + notesBlock + weakBlock + insightsBlock + visualizeBlock + (studyOnly ? '' : recentBlock) + hubLinks +
       '</div>';
 
     node.querySelectorAll('.ws-hub-notes .ws-item-note').forEach(function (noteNode, index) {
@@ -1718,6 +1736,8 @@
     var node = $('app-study');
     if (!node) return;
     var copy = {
+      work: ['navWork', 'workLede'],
+      study: ['navGroupStudy', 'studyHomeLede'],
       library: ['library', 'guestLibraryLede'],
       sets: ['sets', 'guestSetsLede'],
       notes: ['notes', 'guestNotesLede'],
@@ -1753,10 +1773,10 @@
     var unlockBlock = '<section class="ws-overview-block ws-hub-unlock" data-hub="unlock"><h2 class="ws-h2">' + escapeHtml(t('guestUnlockTitle')) + '</h2>' +
       '<p class="ws-lede">' + escapeHtml(t('guestUnlockBody')) + '</p>' +
       '<nav class="ws-hub-links">' +
-      '<a href="/app?section=library">' + escapeHtml(t('library')) + '</a>' +
+      '<a href="/app?section=study">' + escapeHtml(t('library')) + '</a>' +
       '<a href="/app?section=sets">' + escapeHtml(t('sets')) + '</a>' +
       '<a href="/app?section=practice">' + escapeHtml(t('practiceNav')) + '</a>' +
-      '<a href="/app?section=notes">' + escapeHtml(t('notes')) + '</a>' +
+      '<a href="/app?section=work&tab=notes">' + escapeHtml(t('notes')) + '</a>' +
       '</nav></section>';
     node.innerHTML = crumbTrail(section) +
       '<div class="ws-study-hub" data-study-hub="guest">' +
@@ -1980,6 +2000,29 @@
       clearTimeout(tmr);
       tmr = setTimeout(function () { fn.apply(null, args); }, ms);
     };
+  }
+
+  /* Study home is the hub with the library underneath it. Library and Insights
+     were two more tabs for pages that belong on this one. */
+  async function renderStudyHome(node, api, user) {
+    await renderOverview(node, api, user, { studyOnly: true });
+    var hub = node.querySelector('.ws-study-hub') || node;
+    var box = document.createElement('section');
+    box.className = 'ws-overview-block ws-hub-library';
+    box.setAttribute('data-hub', 'library');
+    box.id = 'ws-study-library';
+    var links = hub.querySelector('.ws-hub-links');
+    if (links) hub.insertBefore(box, links); else hub.appendChild(box);
+    await renderLibrary(box, api);
+    /* The hub already carries the page heading. */
+    var crumb = box.querySelector('.ws-crumb');
+    if (crumb) crumb.remove();
+    var head = box.querySelector('.ws-section-head');
+    if (head) {
+      var title = head.querySelector('.ws-title');
+      box.insertAdjacentHTML('afterbegin', '<h2 class="ws-h2">' + escapeHtml(title ? title.textContent : t('library')) + '</h2>');
+      head.remove();
+    }
   }
 
   async function renderLibrary(node, api) {
@@ -2871,6 +2914,133 @@
     });
   }
 
+  /* ------------------------------------------------------------------ *
+   * My Work: one page with sections, not four tabs.                      *
+   * Sessions, creations, notebook, notes and calculator history all live  *
+   * here. ?tab= narrows to one group so the old deep links still land on  *
+   * the thing they pointed at, instead of on a page of everything.        *
+   * ------------------------------------------------------------------ */
+
+  function workTab() {
+    try {
+      return logic().normalizeWorkTab
+        ? logic().normalizeWorkTab(new URLSearchParams(location.search).get('tab'))
+        : 'home';
+    } catch (_err) { return 'home'; }
+  }
+
+  function workFilterHtml(tab) {
+    var rows = [
+      ['home', 'workAll'],
+      ['sessions', 'labSessions'],
+      ['creations', 'navCreations'],
+      ['notebook', 'navNotebook'],
+      ['notes', 'notes'],
+      ['history', 'history']
+    ];
+    return '<div class="ws-work-filter" role="tablist" aria-label="' + escapeHtml(t('navWork')) + '">' +
+      rows.map(function (pair) {
+        var on = tab === pair[0];
+        return '<a role="tab" aria-selected="' + (on ? 'true' : 'false') + '" class="ws-work-chip' + (on ? ' is-active' : '') +
+          '" href="/app?section=work' + (pair[0] === 'home' ? '' : '&tab=' + pair[0]) + '">' + escapeHtml(t(pair[1])) + '</a>';
+      }).join('') + '</div>';
+  }
+
+  function workGroupHtml(key, title, cards, emptyCopy) {
+    if (!cards) return '';
+    return '<section class="ws-overview-block ws-work-group" data-work-group="' + key + '"><h2 class="ws-h2">' + escapeHtml(title) + '</h2>' +
+      (cards ? '<div class="ws-grid">' + cards + '</div>' : '<p class="ws-lede">' + escapeHtml(emptyCopy || '') + '</p>') + '</section>';
+  }
+
+  function labSessionCard(row, lang) {
+    var href = row.creationId
+      ? '/app?section=lab&creation=' + encodeURIComponent(row.creationId) + '&session=' + encodeURIComponent(row.id)
+      : '/app?section=lab&session=' + encodeURIComponent(row.id);
+    var pieces = Array.isArray(row.containers) ? row.containers.length : 0;
+    var when = row.updatedAt ? new Date(row.updatedAt) : null;
+    var meta = [];
+    if (pieces) meta.push(pieces + ' ' + t(pieces === 1 ? 'workPiece' : 'workPieces'));
+    if (when && !isNaN(when.getTime())) meta.push(when.toLocaleDateString(lang === 'pt' ? 'pt-BR' : 'en-US'));
+    return '<a class="ws-lab-card" href="' + href + '">' +
+      '<span class="ws-lab-badge">' + escapeHtml(row.creationId ? t('guidedCreations') : t('openBench')) + '</span>' +
+      '<h3 class="ws-lab-card-title">' + escapeHtml(row.title || t('virtualLab')) + '</h3>' +
+      '<p class="ws-lab-card-copy">' + escapeHtml(meta.join(' · ')) + '</p></a>';
+  }
+
+  function matchesWorkQuery(text, q) {
+    if (!q) return true;
+    return String(text || '').toLowerCase().indexOf(q) !== -1;
+  }
+
+  async function renderWork(node, api, user) {
+    var tab = workTab();
+    var lang = catalogLang();
+    var q = '';
+    try { q = String(new URLSearchParams(location.search).get('q') || '').trim().toLowerCase(); } catch (_err) {}
+    node.innerHTML = sectionHead(t('navWork'), t('workLede'), false) + workFilterHtml(tab) + skeleton();
+
+    var lab = window.AtomurusLab;
+    var boardRows = lab && typeof lab.listSessions === 'function' ? lab.listSessions() : [];
+    var wants = function (key) { return tab === 'home' || tab === key; };
+
+    var loaded = await Promise.all([
+      wants('notebook') || wants('notes') ? api.items({ hasNote: '1', limit: 40 }).catch(function () { return { items: [] }; }) : Promise.resolve({ items: [] }),
+      wants('history') ? api.items({ type: 'calculator', limit: 20 }).catch(function () { return { items: [] }; }) : Promise.resolve({ items: [] }),
+      wants('sessions') ? listLabSessions() : Promise.resolve([])
+    ]);
+    var noteItems = (loaded[0].items || []).filter(function (row) { return matchesWorkQuery(row.title, q); });
+    var histItems = (loaded[1].items || []).filter(function (row) { return matchesWorkQuery(row.title, q); });
+    var proRows = (loaded[2] || []).filter(function (row) { return matchesWorkQuery(row.title, q); });
+
+    var boardSessions = boardRows.filter(function (row) { return !row.creationId && matchesWorkQuery(row.title, q); });
+    var boardCreations = boardRows.filter(function (row) { return row.creationId && matchesWorkQuery(row.title, q); });
+
+    var blocks = '';
+    if (wants('sessions')) {
+      blocks += workGroupHtml('sessions', t('recentLabSessions'),
+        boardSessions.map(function (row) { return labSessionCard(row, lang); }).join('') +
+        proRows.map(function (row) {
+          return '<a class="ws-lab-card" href="/app?section=lab&panel=analysis&tool=' +
+            encodeURIComponent(labToolForSession(row.sessionType)) + '&session=' + encodeURIComponent(row.id) + '">' +
+            '<span class="ws-lab-badge">' + escapeHtml(t('labShort')) + '</span>' +
+            '<h3 class="ws-lab-card-title">' + escapeHtml(row.title || t('labShort')) + '</h3></a>';
+        }).join(''), t('workEmpty'));
+    }
+    if (wants('creations')) {
+      blocks += workGroupHtml('creations', t('navCreations'),
+        boardCreations.map(function (row) { return labSessionCard(row, lang); }).join(''), t('workEmpty'));
+    }
+    if (wants('notebook')) {
+      blocks += workGroupHtml('notebook', t('navNotebook'), noteItems.map(noteRow).join(''), t('workEmpty'));
+    }
+    if (wants('notes') && tab === 'notes') {
+      blocks += workGroupHtml('notes', t('notes'), noteItems.map(noteRow).join(''), t('workEmpty'));
+    }
+    if (wants('history')) {
+      blocks += workGroupHtml('history', t('history'), histItems.map(historyRow).join(''), t('workEmpty'));
+    }
+
+    var empty = !blocks.replace(/<section[^>]*>|<\/section>|<h2[^>]*>[^<]*<\/h2>/g, '').replace(/<div class="ws-grid">\s*<\/div>/g, '').trim();
+    node.innerHTML = sectionHead(t('navWork'), t('workLede'), false) +
+      '<form class="lab-search ws-work-search" action="/app" method="get">' +
+      '<input type="hidden" name="section" value="work">' +
+      (tab === 'home' ? '' : '<input type="hidden" name="tab" value="' + escapeHtml(tab) + '">') +
+      '<label class="lc-sr-only" for="ws-work-q">' + escapeHtml(t('workSearch')) + '</label>' +
+      '<input id="ws-work-q" name="q" type="search" placeholder="' + escapeHtml(t('workSearch')) + '" autocomplete="off" value="' + escapeHtml(q) + '">' +
+      '<button type="submit" class="ws-btn ws-btn-secondary">' + escapeHtml(t('search')) + '</button></form>' +
+      workFilterHtml(tab) +
+      (blocks || '<p class="ws-lede">' + escapeHtml(t(q ? 'workNoMatch' : 'workEmpty')) + '</p>');
+    node.querySelectorAll('[data-work-group="notebook"] .ws-study-item, [data-work-group="notes"] .ws-study-item').forEach(function (wrap, idx) {
+      if (noteItems[idx % noteItems.length]) fillNoteRow(wrap, noteItems[idx % noteItems.length]);
+    });
+    node.querySelectorAll('[data-work-group="history"] .ws-study-item').forEach(function (wrap, idx) {
+      if (histItems[idx]) fillHistoryRow(wrap, histItems[idx]);
+    });
+    if (empty && !q) {
+      node.insertAdjacentHTML('beforeend', emptyState(t('workEmpty'), '', '/app', t('enterLab')));
+    }
+  }
+
   function openBillingPortal(button) {
     if (logic().emitWorkspaceEvent) logic().emitWorkspaceEvent('billing_portal_open');
     ui().setBusy(button, true, t('openingPortal'));
@@ -3073,6 +3243,7 @@
   }
 
   async function loadStudyCloud(user) {
+    if (redirectLegacySection()) return;
     currentUser = user;
     renderNav(user);
     var node = resetStudyRoot();
@@ -3085,11 +3256,12 @@
       location.replace(dest || '/account');
       return;
     }
-    if (section === 'lab' || section === 'creations' || section === 'notebook') {
+    if (section === 'lab') {
+      /* Analysis is where Pro Lab's tools live now. Prompt 73 turns it into a
+         dock category on the board; until then the panel renders the existing
+         Pro Lab so every old ?section=pro-lab link keeps working. */
+      if (labPanel() === 'analysis') return mountProLab(node, user);
       return mountVirtualLab(node, user, section);
-    }
-    if (section === 'pro-lab') {
-      return mountProLab(node, user);
     }
     if (section === 'practice') {
       renderPracticeSection(node, user);
@@ -3104,7 +3276,8 @@
         renderLockedInsights();
         return;
       }
-      if (section === 'library' || section === 'sets' || section === 'notes' || section === 'history' || section === 'progress') {
+      if (section === 'study') { renderGuestStudyHub(); return; }
+      if (section === 'library' || section === 'work' || section === 'sets' || section === 'notes' || section === 'history' || section === 'progress') {
         renderGuestEmpty(section);
         return;
       }
@@ -3113,6 +3286,8 @@
     }
     var needed = {
       overview: 'studyCloud',
+      work: 'studyCloud',
+      study: 'studyCloud',
       library: 'studyCloud',
       sets: 'studySets',
       notes: 'studyCloud',
@@ -3132,6 +3307,8 @@
       return;
     }
     try {
+      if (section === 'work') { await renderWork(node, api, user); return; }
+      if (section === 'study') { await renderStudyHome(node, api, user); return; }
       if (section === 'overview') { await renderOverview(node, api, user); return; }
       if (section === 'library') { await renderLibrary(node, api); return; }
       if (section === 'sets') { await renderSetsSection(node, api); return; }

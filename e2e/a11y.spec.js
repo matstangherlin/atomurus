@@ -46,7 +46,7 @@ test('Load more does not duplicate library ids', async ({ page }) => {
     updatedAt: new Date().toISOString()
   }));
   await installApi(page, { kind: 'pro', store });
-  await gotoWorkspace(page, '/app?section=library');
+  await gotoWorkspace(page, '/app?section=study');
   const firstIds = await page.locator('[data-library-id]').evaluateAll((nodes) => nodes.map((n) => n.getAttribute('data-library-id')));
   expect(firstIds.length).toBe(40);
   await page.locator('#ws-lib-more').click();

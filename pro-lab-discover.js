@@ -33,7 +33,7 @@
   }
 
   function toolHref(tool) {
-    return '/app?section=pro-lab&tool=' + encodeURIComponent(tool);
+    return '/app?section=lab&panel=analysis&tool=' + encodeURIComponent(tool);
   }
 
   function nextFor(tool) {

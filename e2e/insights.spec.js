@@ -67,11 +67,11 @@ test('Free Insights shows locked preview and never calls the Insights API', asyn
 test('Pro Insights: 30 days, set filter, Needs attention, Focus Review, Good', async ({ page }) => {
   const store = insightsStore();
   await installApi(page, { kind: 'pro', store });
-  await gotoWorkspace(page, '/app');
+  await gotoWorkspace(page, '/app?section=study');
   await expect(page.locator('#ws-study-nav')).toContainText(/Study|Estudo/);
-  await page.locator('#ws-study-nav a[href="/app?section=library"]').first().click();
-  await expect(page.locator('#ws-study-nav a[href*="section=insights"]')).toBeVisible();
-  await page.locator('#ws-study-nav a[href*="section=insights"]').click();
+  // Insights is a link on Study home now, not a tab of its own.
+  await expect(page.locator('#app-study a[href*="section=insights"]').first()).toBeVisible();
+  await page.locator('#app-study a[href*="section=insights"]').first().click();
   await expect(page.locator('#app-study')).toContainText(/Study Insights|Insights de Estudo/);
   await expect(page.locator('#app-study')).toContainText(/30 days|30 dias/);
   await expect(page.locator('#app-study')).toContainText(/Confident reviews|Revisões confiantes/);
@@ -194,7 +194,7 @@ test('Visual regression: public lab, pricing and /app at 360px', async ({ page }
 test('Overview hierarchy: Pro due hero and Free workspace copy', async ({ page }) => {
   const store = insightsStore();
   await installApi(page, { kind: 'pro', store });
-  await gotoWorkspace(page, '/app');
+  await gotoWorkspace(page, '/app?section=study');
   await expect(page.locator('#app-study')).toContainText(/Ready to study|Pronto para estudar/i);
   await expect(page.locator('#app-study').getByRole('link', { name: /Start Smart Review|Começar Smart Review/i })).toBeVisible();
   await expect(page.locator('#app-study').getByRole('link', { name: /Open Insights|Abrir Insights/i })).toBeVisible();
@@ -211,9 +211,9 @@ test('Overview hierarchy: Pro due hero and Free workspace copy', async ({ page }
   await saveShot(page, 'desktop-smart-review-landing');
 
   await installApi(page, { kind: 'free' });
-  await gotoWorkspace(page, '/app');
+  await gotoWorkspace(page, '/app?section=study');
   await expect(page.locator('#app-study')).toContainText(/Continue your chemistry work|Continue seu trabalho de química/i);
-  await expect(page.locator('#app-study a[href="/app?section=library"]').first()).toContainText(/Library|Biblioteca/);
+  await expect(page.locator('#app-study a[href="/app?section=study"]').first()).toContainText(/Library|Biblioteca/);
   await expect(page.locator('#app-study a[href="/app?section=sets"]').first()).toContainText(/Study Sets/);
   await expect(page.locator('#app-study a[href="/app?section=insights"]').first()).toBeVisible();
   await expect(page.locator('#app-study .ws-viz-links a[href="/viewer/atomic-models.html"]')).toBeVisible();

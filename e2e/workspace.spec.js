@@ -12,11 +12,11 @@ function saveShot(page, name) {
 
 test('Free uses Study Cloud and still sees Review as Pro', async ({ page }) => {
   await installApi(page, { kind: 'free' });
-  await gotoWorkspace(page, '/app');
+  await gotoWorkspace(page, '/app?section=study');
   await expect(page.locator('#ws-study-nav')).toContainText(/Lab/);
   await expect(page.locator('#ws-study-nav')).toContainText(/Study|Estudo/);
-  await expect(page.locator('#ws-study-nav')).toContainText(/Creations|Criações/);
-  await page.locator('#ws-study-nav a[href="/app?section=library"]').first().click();
+  await expect(page.locator('#ws-study-nav')).toContainText(/My Work|Meu trabalho/);
+  // The library is a block of Study home now, not a tab.
   await expect(page.locator('#ws-lib-list')).toBeVisible();
   await expect(page.locator('#ws-study-nav')).toContainText(/Study Sets/);
   await expect(page.locator('#ws-study-nav a[href="/app?section=review"]')).toContainText(/Review/);
@@ -202,9 +202,11 @@ test('Overview lists recent lab sessions and viewer names', async ({ page }) => 
     updatedAt: new Date().toISOString()
   }];
   await installApi(page, { kind: 'pro', store });
-  await gotoWorkspace(page, '/app');
+  // Saved sessions are My Work; the viewer links stay on Study home.
+  await gotoWorkspace(page, '/app?section=work');
   await expect(page.locator('#app-study')).toContainText(/Recent Lab Sessions|Sessões recentes/);
   await expect(page.locator('#app-study')).toContainText('Combustion of CH4');
+  await gotoWorkspace(page, '/app?section=study');
   await expect(page.locator('#app-study .ws-viz-links a[href="/viewer/atomic-models.html"]')).toContainText(/Atomic Models|Modelos atômicos/);
   await expect(page.locator('#app-study .ws-viz-links a[href="/viewer/atomic-models.html"]')).not.toContainText(/Atomic Compare|Comparar átomos/);
 });
@@ -248,9 +250,10 @@ test('mobile 390x844: bottom nav, drawer, no horizontal overflow', async ({ page
   const store = createStore();
   store.cards = [dueCard({ front: 'Fe?', back: 'Iron' })];
   await installApi(page, { kind: 'pro', store });
-  await gotoWorkspace(page, '/app');
+  await gotoWorkspace(page, '/app?section=study');
   await expect(page.locator('#ws-bottom')).toBeVisible();
-  await expect(page.locator('#ws-bottom a')).toHaveCount(5);
+  // Lab, Study, My Work. Nothing else.
+  await expect(page.locator('#ws-bottom a')).toHaveCount(3);
   const tops = await page.locator('#ws-bottom a').evaluateAll((els) => els.map((el) => el.getBoundingClientRect().top));
   expect(Math.max(...tops) - Math.min(...tops)).toBeLessThan(8);
   await expect(page.locator('#app-study')).toContainText(/1 card is due today|1 card vence hoje/);
@@ -312,7 +315,7 @@ test('desktop public screenshots', async ({ page }) => {
 
 test('Guest Study Hub is a presentation, not locked Pro cards', async ({ page }) => {
   await installApi(page, { kind: 'guest', signedIn: false });
-  await gotoWorkspace(page, '/app');
+  await gotoWorkspace(page, '/app?section=study');
   await expect(page.locator('#app-study')).toContainText(/Study with Atomurus|Estude com o Atomurus/);
   await expect(page.locator('#app-study')).toContainText(/Save chemistry resources, build sets and continue learning|Salve materiais de química/);
   await expect(page.locator('#app-study a[href*="signup"]').first()).toContainText(/Create free account|Criar conta gratuita/);
@@ -329,8 +332,8 @@ test('Guest Study Hub is a presentation, not locked Pro cards', async ({ page })
   await expect(page.locator('#app-study')).toContainText(/Estude com o Atomurus/);
   await page.locator('[data-i18n-toggle]').first().click();
 
-  await gotoWorkspace(page, '/app?section=library');
-  await expect(page.locator('#app-study')).toContainText(/Library|Biblioteca/);
+  await gotoWorkspace(page, '/app?section=study');
+  await expect(page.locator('#app-study')).toContainText(/Study with Atomurus|Estude com o Atomurus/);
   await expect(page.locator('#app-study a[href*="signup"]').first()).toContainText(/Create free account|Criar conta gratuita/);
 });
 
@@ -340,7 +343,7 @@ test('Study Hub empty account shows architecture without invented progress', asy
   store.sets = [];
   store.cards = [];
   await installApi(page, { kind: 'free', store });
-  await gotoWorkspace(page, '/app');
+  await gotoWorkspace(page, '/app?section=study');
   await expect(page.locator('[data-study-hub="account"]')).toBeVisible();
   await expect(page.locator('#app-study')).toContainText(/Continue your chemistry work|Continue seu trabalho de química/);
   await expect(page.locator('#app-study')).toContainText(/You're caught up|Você está em dia/);
@@ -355,7 +358,7 @@ test('Study Hub empty account shows architecture without invented progress', asy
 
 test('Study Hub shows saved resources from the library', async ({ page }) => {
   await installApi(page, { kind: 'free' });
-  await gotoWorkspace(page, '/app');
+  await gotoWorkspace(page, '/app?section=study');
   await expect(page.locator('[data-hub="saved"]')).toContainText('Iron');
   await expect(page.locator('[data-hub="continue"]')).toHaveCount(0);
   await saveShot(page, 'desktop-study-hub-library');
@@ -373,7 +376,7 @@ test('Study Hub summarizes study sets and due cards without Smart Review for Fre
     updatedAt: new Date().toISOString()
   }];
   await installApi(page, { kind: 'free', store });
-  await gotoWorkspace(page, '/app');
+  await gotoWorkspace(page, '/app?section=study');
   await expect(page.locator('[data-hub="sets"]')).toContainText('Organic Chemistry');
   await expect(page.locator('[data-hub="sets"]')).toContainText(/18 cards/);
   await expect(page.locator('[data-hub="sets"]')).toContainText(/6 due/);
@@ -392,7 +395,7 @@ test('Study Hub Continue Learning uses real progress titles', async ({ page }) =
     updatedAt: new Date().toISOString()
   }];
   await installApi(page, { kind: 'free', store });
-  await gotoWorkspace(page, '/app');
+  await gotoWorkspace(page, '/app?section=study');
   await expect(page.locator('[data-hub="continue"]')).toContainText('Iron');
   await expect(page.locator('[data-hub="continue"]')).toContainText(/62%/);
   await expect(page.locator('#app-study')).not.toContainText(/Nothing in progress yet|Nada em andamento/);
@@ -418,7 +421,7 @@ test('Study Hub Pro with due cards and insights stays a learning home', async ({
     studySetId: SET_ID
   })];
   await installApi(page, { kind: 'pro', store });
-  await gotoWorkspace(page, '/app');
+  await gotoWorkspace(page, '/app?section=study');
   await expect(page.locator('[data-hub="review"]')).toContainText(/Ready to study|Pronto para estudar/);
   await expect(page.locator('[data-hub="review"]').getByRole('link', { name: /Start Smart Review|Começar Smart Review/i })).toBeVisible();
   await expect(page.locator('[data-hub="insights"]')).toContainText(/Open Insights|Abrir Insights/);
@@ -509,38 +512,62 @@ test('Lab board and assembled apparatus survive a reload', async ({ page }) => {
   await expect(page.locator('.lab-notes')).toContainText(/Distilled|Destilou/i);
 });
 
-test('Workspace nav puts sections and tools on one line', async ({ page }) => {
+test('Workspace navigation is three areas and nothing else', async ({ page }) => {
   await installApi(page, { kind: 'free' });
-  await gotoWorkspace(page, '/app?section=lab&mode=bench');
+  await gotoWorkspace(page, '/app');
   await page.waitForSelector('.lab-beaker');
-  const sections = await page.locator('.ws-context-nav').boundingBox();
-  const tools = await page.locator('.ws-local-nav').boundingBox();
-  // Same line, not two stacked rows of chips.
-  expect(Math.abs(sections.y - tools.y)).toBeLessThan(6);
-  expect(tools.x).toBeGreaterThan(sections.x + sections.width - 2);
+
+  // Lab, Study, My Work. The Lab's own destinations are dock categories.
+  const areas = page.locator('.ws-context-nav .ws-study-nav-item');
+  await expect(areas).toHaveCount(3);
+  await expect(areas.nth(0)).toHaveAttribute('href', '/app');
+  await expect(areas.nth(1)).toHaveAttribute('href', '/app?section=study');
+  await expect(areas.nth(2)).toHaveAttribute('href', '/app?section=work');
+  await expect(page.locator('.ws-local-nav')).toHaveCount(0);
   const nav = await page.locator('#ws-study-nav').boundingBox();
   expect(nav.height).toBeLessThan(56);
-  // The repeated icons are gone from the tools group.
+
+  // Study is the only area that still earns a local row: three items on the
+  // same line as the areas. Its Home is the Study tab itself.
+  await gotoWorkspace(page, '/app?section=study');
+  await page.waitForSelector('.ws-local-nav .ws-study-nav-item');
+  await expect(page.locator('.ws-local-nav .ws-study-nav-item')).toHaveCount(3);
+  const sections = await page.locator('.ws-context-nav').boundingBox();
+  const tools = await page.locator('.ws-local-nav').boundingBox();
+  expect(Math.abs(sections.y - tools.y)).toBeLessThan(6);
+  expect(tools.x).toBeGreaterThan(sections.x + sections.width - 2);
   await expect(page.locator('.ws-local-nav .ws-study-nav-item svg').first()).toBeHidden();
   await expect(page.locator('.ws-context-nav .ws-study-nav-item svg').first()).toBeVisible();
 
-  // No destination is offered twice on the same line.
+  // No destination is offered twice on the same line, in any area.
   async function navHrefs() {
     return page.locator('#ws-study-nav .ws-study-nav-item').evaluateAll(
       (els) => els.map((el) => el.getAttribute('href'))
     );
   }
-  for (const where of ['/app?section=lab&mode=bench', '/app?section=sets', '/app?section=history']) {
+  for (const where of ['/app', '/app?section=study', '/app?section=sets', '/app?section=work']) {
     await gotoWorkspace(page, where);
-    await page.waitForSelector('.ws-local-nav .ws-study-nav-item');
+    await page.waitForSelector('.ws-context-nav .ws-study-nav-item');
     const hrefs = await navHrefs();
     expect(hrefs.length).toBe(new Set(hrefs).size, `duplicate nav destination at ${where}: ${hrefs.join(' ')}`);
   }
-  await gotoWorkspace(page, '/app?section=lab&mode=bench');
-  await page.waitForSelector('.lab-beaker');
-  await expect(page.locator('.ws-local-nav .ws-study-nav-item')).toHaveCount(3);
+
+  // Every removed tab keeps its bookmark.
+  for (const [from, to] of [
+    ['/app?section=overview', /section=lab$/],
+    ['/app?section=creations', /panel=create/],
+    ['/app?section=library', /section=study/],
+    ['/app?section=notebook', /section=work&tab=notebook/],
+    ['/app?section=history', /section=work&tab=history/],
+    ['/app?section=progress', /section=work/]
+  ]) {
+    await gotoWorkspace(page, from);
+    await page.waitForFunction(() => !location.search.includes('section=overview'));
+    expect(page.url()).toMatch(to);
+  }
 
   // Narrow enough and it stacks again without overflowing the page.
+  await gotoWorkspace(page, '/app?section=study');
   await page.setViewportSize({ width: 390, height: 844 });
   await page.waitForTimeout(200);
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
@@ -802,11 +829,10 @@ test('Lab reactions fire with an equation and the still runs from the guide', as
 
 test('Workspace home is the Virtual Lab and Open Bench runs', async ({ page }) => {
   await installApi(page, { kind: 'free' });
+  // /app is the board itself now: no hero, no card, no second click.
   await gotoWorkspace(page, '/app');
-  await expect(page.locator('[data-hub="lab"]')).toContainText(/Virtual Laboratory|Laboratório virtual/);
-  await expect(page.locator('#ws-lab-q')).toBeVisible();
-  await page.locator('#ws-study-nav a[href="/app?section=lab"]').first().click();
   await expect(page.locator('.lab-beaker')).toBeVisible();
+  await expect(page.locator('[data-lab-dock]')).toBeVisible();
 
   // The dock starts compact: material chips only exist once a panel is opened.
   await expect(page.locator('.lab-chip[data-add="water"]')).toHaveCount(0);

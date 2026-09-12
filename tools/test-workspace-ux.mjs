@@ -7,8 +7,9 @@ const logic = require('../workspace-logic.js');
 
 assert.equal(logic.normalizeSection('library'), 'library');
 assert.equal(logic.normalizeSection('account'), 'account');
-assert.equal(logic.normalizeSection('nope'), 'overview');
-assert.equal(logic.normalizeSection(''), 'overview');
+/* Lab is the default area now, so an unknown or missing section opens it. */
+assert.equal(logic.normalizeSection('nope'), 'lab');
+assert.equal(logic.normalizeSection(''), 'lab');
 assert.ok(logic.SECTIONS.includes('insights'));
 assert.equal(logic.normalizeSection('insights'), 'insights');
 assert.equal(logic.focusReviewHref(), '/app?section=review&start=1&mode=weak');
@@ -31,23 +32,66 @@ assert.equal(logic.workspaceArea('library'), 'study');
 assert.equal(logic.workspaceArea('practice'), 'study');
 assert.equal(logic.normalizeSection('practice'), 'practice');
 assert.equal(logic.workspaceArea('pro-lab'), 'lab');
-assert.equal(logic.workspaceArea('history'), 'activity');
+assert.equal(logic.workspaceArea('history'), 'work');
 assert.equal(logic.accountHref(), '/account');
 assert.equal(logic.accountHref('plan'), '/account?tab=plan');
 assert.equal(logic.accountHref('overview'), '/account');
 assert.equal(logic.accountRedirectFromWorkspace('?section=account&tab=plan'), '/account?tab=plan');
 assert.equal(logic.accountRedirectFromWorkspace('?section=library'), '');
 assert.equal(logic.workspaceArea('overview'), 'lab');
+/* Three primary areas; every section belongs to exactly one of them. */
+assert.deepEqual(logic.AREAS, ['lab', 'study', 'work']);
+assert.equal(logic.workspaceArea('creations'), 'lab');
+assert.equal(logic.workspaceArea('pro-lab'), 'lab');
+assert.equal(logic.workspaceArea('study'), 'study');
+assert.equal(logic.workspaceArea('sets'), 'study');
+assert.equal(logic.workspaceArea('insights'), 'study');
+assert.equal(logic.workspaceArea('work'), 'work');
+assert.equal(logic.workspaceArea('notebook'), 'work');
+assert.equal(logic.workspaceArea('history'), 'work');
+assert.equal(logic.workspaceArea('notes'), 'work');
+assert.equal(logic.workspaceArea('progress'), 'work');
+assert.equal(logic.areaHref('lab'), '/app');
+assert.equal(logic.areaHref('study'), '/app?section=study');
+assert.equal(logic.areaHref('work'), '/app?section=work');
+assert.equal(logic.defaultSectionForArea('lab'), 'lab');
+assert.equal(logic.defaultSectionForArea('study'), 'study');
+assert.equal(logic.defaultSectionForArea('work'), 'work');
+
+/* Every removed tab keeps its bookmark: the old URL lands on where the thing
+   moved to, carrying the rest of the query with it. */
+assert.equal(logic.legacyWorkspaceUrl('?section=overview'), '/app?section=lab');
+assert.equal(logic.legacyWorkspaceUrl('?section=creations'), '/app?section=lab&panel=create');
+assert.equal(logic.legacyWorkspaceUrl('?section=library'), '/app?section=study');
+assert.equal(logic.legacyWorkspaceUrl('?section=notebook'), '/app?section=work&tab=notebook');
+assert.equal(logic.legacyWorkspaceUrl('?section=notes'), '/app?section=work&tab=notes');
+assert.equal(logic.legacyWorkspaceUrl('?section=history'), '/app?section=work&tab=history');
+assert.equal(logic.legacyWorkspaceUrl('?section=progress'), '/app?section=work');
+assert.match(logic.legacyWorkspaceUrl('?section=pro-lab'), /^\/app\?section=lab&/);
+assert.match(logic.legacyWorkspaceUrl('?section=pro-lab'), /panel=analysis/);
+/* A tool or a session id on an old Pro Lab link survives the move. */
+assert.match(logic.legacyWorkspaceUrl('?section=pro-lab&tool=reactions'), /tool=reactions/);
+assert.match(logic.legacyWorkspaceUrl('?section=pro-lab&tool=reactions'), /panel=analysis/);
+assert.match(logic.legacyWorkspaceUrl('?section=creations&creation=ethanol'), /creation=ethanol/);
+/* Canonical URLs are left alone, so no redirect loop. */
+assert.equal(logic.legacyWorkspaceUrl('?section=lab'), '');
+assert.equal(logic.legacyWorkspaceUrl('?section=study'), '');
+assert.equal(logic.legacyWorkspaceUrl('?section=work&tab=notebook'), '');
+assert.equal(logic.legacyWorkspaceUrl('?section=sets'), '');
+assert.equal(logic.legacyWorkspaceUrl(''), '');
+assert.equal(logic.normalizeWorkTab('notebook'), 'notebook');
+assert.equal(logic.normalizeWorkTab('nope'), 'home');
+assert.equal(logic.normalizeWorkTab(''), 'home');
 assert.equal(logic.workspaceArea('lab'), 'lab');
 assert.equal(logic.workspaceArea('creations'), 'lab');
 assert.ok(logic.SECTIONS.includes('lab'));
 assert.ok(logic.SECTIONS.includes('notebook'));
 assert.equal(logic.accountTabFromQuery('?tab=plan'), 'plan');
 assert.equal(logic.accountTabFromQuery('?tab=nope'), 'overview');
-assert.equal(logic.defaultSectionForArea('study'), 'library');
+assert.equal(logic.defaultSectionForArea('study'), 'study');
 assert.equal(logic.labToolFromQuery('?tool=calculations'), 'calculations');
-assert.equal(logic.labHref('elements'), '/app?section=pro-lab&tool=elements');
-assert.equal(logic.labHref('reactions'), '/app?section=pro-lab&tool=reactions');
+assert.equal(logic.labHref('elements'), '/app?section=lab&panel=analysis&tool=elements');
+assert.equal(logic.labHref('reactions'), '/app?section=lab&panel=analysis&tool=reactions');
 assert.equal(logic.labToolFromQuery('?tool=formula'), 'formula');
 assert.equal(logic.labToolFromQuery('?tool=solutions'), 'solutions');
 assert.ok(!logic.SECTIONS.includes('billing'));
@@ -155,10 +199,25 @@ assert.match(authApp, /labReactions/);
 // the Pro Lab page; the solver link itself is asserted on pro-lab.js below.
 assert.doesNotMatch(authApp, /'labNavSolve'/);
 assert.doesNotMatch(authApp, /'labNavCompare'/);
+/* The Workspace top navigation is exactly three areas. The Lab's own local row
+   is gone: its destinations are dock categories, not tabs. */
+assert.match(authApp, /var PRIMARY_AREAS = \[/);
+const primaryBlock = authApp.slice(authApp.indexOf('var PRIMARY_AREAS = ['), authApp.indexOf('function areaHref'));
+assert.equal((primaryBlock.match(/\['/g) || []).length, 3, 'exactly three primary areas');
+assert.match(primaryBlock, /'lab', 'navGroupLab'/);
+assert.match(primaryBlock, /'study', 'navGroupStudy'/);
+assert.match(primaryBlock, /'work', 'navWork'/);
+/* None of the removed destinations is rendered as a tab any more. */
 assert.doesNotMatch(authApp, /navItemHtml\('\/app\?section=creations', 'guidedCreations'/);
-assert.match(authApp, /navItemHtml\('\/app\?section=lab', 'virtualLab'/);
-assert.match(authApp, /navItemHtml\('\/app\?section=lab&mode=bench', 'openBench'/);
-assert.match(authApp, /navItemHtml\('\/app\?section=pro-lab', 'proLab'/);
+assert.doesNotMatch(authApp, /navItemHtml\('\/app\?section=lab&mode=bench', 'openBench'/);
+assert.doesNotMatch(authApp, /navItemHtml\('\/app\?section=pro-lab', 'proLab'/);
+assert.doesNotMatch(authApp, /navItemHtml\('\/app\?section=insights'/);
+/* Study keeps a local row, and only four items of it. */
+const studyRow = authApp.slice(authApp.indexOf("if (area === 'study') {"), authApp.indexOf("studyNav.innerHTML"));
+assert.equal((studyRow.match(/\['/g) || []).length, 3, 'Study local nav has three items');
+assert.match(authApp, /renderWork/);
+assert.match(authApp, /renderStudyHome/);
+assert.match(authApp, /redirectLegacySection/);
 const proLab = readFileSync(new URL('../pro-lab.js', import.meta.url), 'utf8');
 assert.match(proLab, /chemistrySolverKicker/);
 assert.match(proLab, /reactionWorkbench/);
