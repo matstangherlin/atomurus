@@ -579,4 +579,243 @@ lab.addToContainer(tight, 'beaker-a', 'fe', 5);
 assert.equal(lab.filterThrough(tight, 'beaker-a').reason, 'receiver-full');
 assert.equal(tight.containers[0].volumeMl, 200, 'a refused filter changes nothing');
 
+// The board holds a full bench, not an arbitrary handful.
+const roomy = lab.emptySession({ title: 'Roomy', mode: 'bench' });
+let seated = 0;
+while (lab.addVessel(roomy, 'test-tube').ok) seated += 1;
+assert.ok(roomy.containers.length >= 100, `the board should take 100 pieces, took ${roomy.containers.length}`);
+assert.equal(lab.addVessel(roomy, 'beaker').reason, 'limit', 'and still has a ceiling');
+
+// One pass finds every cupped heater, instead of one pass per heater.
+const heat = lab.emptySession({ title: 'Heat', mode: 'bench' });
+lab.addVessel(heat, 'round-flask');
+lab.addVessel(heat, 'heating-mantle');
+lab.addVessel(heat, 'bunsen');
+const heatFlask = heat.containers.find((row) => row.type === 'round-flask');
+const mantlePiece = heat.containers.find((row) => row.type === 'heating-mantle');
+const idleBurner = heat.containers.find((row) => row.type === 'bunsen');
+const flaskObj = heat.board.objects.find((row) => row.id === heatFlask.id);
+const mantleObj = heat.board.objects.find((row) => row.id === mantlePiece.id);
+mantleObj.x = flaskObj.x;
+mantleObj.y = flaskObj.y + 34;
+const cuppedSet = lab.cuppedHeaterIds(heat);
+assert.equal(cuppedSet[mantlePiece.id], heatFlask.id, 'the mantle is cupped by the flask standing on it');
+assert.equal(cuppedSet[idleBurner.id], undefined, 'the idle burner is not');
+
+// Reflux is the still's glassware wired to send nothing onward.
+const back = lab.emptySession({ title: 'Reflux', mode: 'bench' });
+for (const type of ['round-flask', 'condenser', 'heating-mantle']) lab.addVessel(back, type);
+const backFlask = back.containers.find((row) => row.type === 'round-flask');
+assert.equal(lab.refluxSetup(back, backFlask.id), null, 'loose glassware is not a reflux rig');
+assert.equal(lab.assembleReflux(back).ok, true);
+assert.ok(lab.refluxSetup(back, backFlask.id), 'flask to condenser, nothing after it');
+assert.equal(lab.distillSetup(back, backFlask.id), null, 'and it is not a still');
+
+assert.equal(lab.reflux(back, backFlask.id).reason, 'empty');
+lab.addToContainer(back, backFlask.id, 'water', 50);
+lab.addToContainer(back, backFlask.id, 'ethanol', 30);
+assert.equal(lab.reflux(back, backFlask.id).reason, 'cold');
+lab.setTemperature(back, backFlask.id, 80);
+const holding = lab.reflux(back, backFlask.id);
+assert.equal(holding.ok, true);
+assert.equal(holding.bp, 78);
+assert.equal(backFlask.volumeMl, 80, 'reflux holds the volume');
+assert.equal(holding.held, 80);
+assert.ok(backFlask.refluxMin > 0);
+assert.ok(back.observations.some((row) => /Refluxed|Refluxou/.test(row.text)));
+
+// Adding a receiver turns the same glassware back into a still, and then it
+// is a still rather than a reflux rig: the topology decides, not the parts.
+assert.equal(lab.addVessel(back, 'receiving-flask').ok, true);
+const backReceiver = back.containers.find((row) => row.type === 'receiving-flask');
+const backCondenser = back.containers.find((row) => row.type === 'condenser');
+assert.equal(lab.connectPorts(back, backCondenser.id, 'outlet', backReceiver.id, 'neck').ok, true);
+assert.equal(lab.refluxSetup(back, backFlask.id), null, 'a receiver makes it a still again');
+assert.ok(lab.distillSetup(back, backFlask.id));
+// And the still does take volume away, which is the contrast being taught.
+const beforeStill = backFlask.volumeMl;
+assert.equal(lab.distill(back, backFlask.id).ok, true);
+assert.ok(backFlask.volumeMl < beforeStill, 'distillation loses what reflux keeps');
+
+// The guided reflux walks the same board.
+const refluxGuide = lab.CREATIONS.find((row) => row.id === 'reflux');
+assert.ok(refluxGuide && refluxGuide.tutorial.length === 7);
+assert.equal(lab.stepPlan(refluxGuide, 4).needsRefluxConnect, true);
+assert.equal(lab.stepPlan(refluxGuide, 6).needsReflux, true);
+assert.equal(lab.resolveQuery('refluxo').id, 'reflux');
+const refluxWalk = lab.emptySession({ title: 'Walk', mode: 'guided', creationId: 'reflux' });
+for (const type of ['round-flask', 'condenser', 'heating-mantle']) lab.addVessel(refluxWalk, type);
+const walkPot = refluxWalk.containers.find((row) => row.type === 'round-flask');
+lab.addToContainer(refluxWalk, walkPot.id, 'water', 50);
+lab.addToContainer(refluxWalk, walkPot.id, 'ethanol', 30);
+assert.equal(lab.tutorialState(refluxWalk, refluxGuide).current, 4);
+lab.assembleReflux(refluxWalk);
+assert.equal(lab.tutorialState(refluxWalk, refluxGuide).current, 5);
+lab.setTemperature(refluxWalk, walkPot.id, 80);
+assert.equal(lab.tutorialState(refluxWalk, refluxGuide).current, 6);
+assert.equal(lab.reflux(refluxWalk, walkPot.id).ok, true);
+assert.equal(lab.tutorialState(refluxWalk, refluxGuide).complete, true);
+
+// Glassware carries its proper name, in the interface language.
+const named = lab.emptySession({ title: 'Names', mode: 'bench' });
+assert.equal(lab.labelFor(named.containers[1], 'en'), 'Erlenmeyer flask B');
+assert.equal(lab.labelFor(named.containers[1], 'pt'), 'Erlenmeyer B');
+assert.equal(lab.labelFor(named.containers[2], 'en'), 'Graduated cylinder C');
+assert.equal(lab.labelFor(named.containers[2], 'pt'), 'Proveta graduada C');
+assert.equal(lab.EQUIPMENT['test-tube-capped'].labelEn, 'Stoppered test tube');
+assert.equal(lab.EQUIPMENT.rack.labelPt, 'Estante para tubos de ensaio');
+
+// A material can be taken back out one at a time.
+const undoAdd = lab.emptySession({ title: 'Remove', mode: 'bench' });
+lab.addToContainer(undoAdd, 'beaker-a', 'water', 60);
+lab.addToContainer(undoAdd, 'beaker-a', 'nacl', 10);
+assert.equal(undoAdd.containers[0].productId, 'saline');
+assert.equal(lab.removeFromContainer(undoAdd, 'beaker-a', 'nacl').ok, true);
+assert.equal(undoAdd.containers[0].contents.length, 1);
+assert.equal(undoAdd.containers[0].productId, '', 'the product is recomputed without it');
+assert.equal(undoAdd.containers[0].volumeMl, 60, 'removing a solid leaves the liquid');
+assert.equal(lab.removeFromContainer(undoAdd, 'beaker-a', 'water').ok, true);
+assert.equal(undoAdd.containers[0].volumeMl, 0, 'removing the liquid empties the vessel');
+assert.equal(lab.removeFromContainer(undoAdd, 'beaker-a', 'nacl').reason, 'absent');
+assert.equal(lab.removeFromContainer(undoAdd, 'beaker-a', 'cocaine').reason, 'unknown');
+
+// Fermentation: the equation, and the window the yeast works in.
+const brew = lab.emptySession({ title: 'Brew', mode: 'bench' });
+lab.addToContainer(brew, 'beaker-a', 'water', 100);
+lab.addToContainer(brew, 'beaker-a', 'sucrose', 25);
+assert.equal(lab.ferment(brew, 'beaker-a').reason, 'no-yeast');
+lab.addToContainer(brew, 'beaker-a', 'yeast', 3);
+lab.setTemperature(brew, 'beaker-a', 10);
+assert.equal(lab.ferment(brew, 'beaker-a').reason, 'cold');
+lab.setTemperature(brew, 'beaker-a', 60);
+assert.equal(lab.ferment(brew, 'beaker-a').reason, 'too-hot', 'yeast does not survive a boil');
+lab.setTemperature(brew, 'beaker-a', 28);
+const brewed = lab.ferment(brew, 'beaker-a');
+assert.equal(brewed.ok, true);
+assert.ok(brewed.made > 0 && brewed.used > 0);
+const sugarLeft = brew.containers[0].contents.find((row) => row.id === 'sucrose');
+assert.ok(sugarLeft.amount < 25, 'sugar is consumed');
+assert.ok(brew.containers[0].contents.some((row) => row.id === 'ethanol'), 'ethanol appears');
+assert.equal(brew.containers[0].fizz, true, 'and CO2 with it');
+assert.ok(brew.observations.some((row) => row.text.includes('2 CO₂')));
+// The ferment result is distillable, which links the two processes.
+assert.ok(lab.volatileParts(brew.containers[0]).length >= 2);
+
+// Crystallisation needs a dissolved sugar and enough heat to boil water off.
+const pan = lab.emptySession({ title: 'Pan', mode: 'bench' });
+lab.addToContainer(pan, 'beaker-a', 'water', 80);
+assert.equal(lab.crystallise(pan, 'beaker-a').reason, 'no-sugar');
+lab.addToContainer(pan, 'beaker-a', 'sucrose', 30);
+assert.equal(lab.crystallise(pan, 'beaker-a').reason, 'cold');
+lab.setTemperature(pan, 'beaker-a', 70);
+const grown = lab.crystallise(pan, 'beaker-a');
+assert.equal(grown.ok, true);
+assert.ok(grown.evaporated > 0);
+assert.ok(pan.containers[0].volumeMl < 80, 'water boils off');
+assert.equal(pan.containers[0].crystals, true);
+
+// Both guided walks complete on the board.
+const brewGuide = lab.CREATIONS.find((row) => row.id === 'ethanol');
+assert.ok(/not a procedure/i.test(brewGuide.lede.en), 'the framing stays educational');
+const brewWalk = lab.emptySession({ title: 'Walk', mode: 'guided', creationId: 'ethanol' });
+const brewFlask = brewWalk.containers.find((row) => row.type === 'flask');
+lab.addToContainer(brewWalk, brewFlask.id, 'water', 100);
+lab.addToContainer(brewWalk, brewFlask.id, 'sucrose', 25);
+lab.addToContainer(brewWalk, brewFlask.id, 'yeast', 3);
+lab.setTemperature(brewWalk, brewFlask.id, 28);
+assert.equal(lab.tutorialState(brewWalk, brewGuide).current, 4);
+assert.equal(lab.ferment(brewWalk, brewFlask.id).ok, true);
+assert.equal(lab.tutorialState(brewWalk, brewGuide).complete, true);
+
+const sugarGuide = lab.CREATIONS.find((row) => row.id === 'sugar');
+const sugarWalk = lab.emptySession({ title: 'Sugar', mode: 'guided', creationId: 'sugar' });
+lab.addToContainer(sugarWalk, 'beaker-a', 'cane_juice', 90);
+lab.addToContainer(sugarWalk, 'beaker-a', 'fibre', 8);
+lab.addVessel(sugarWalk, 'funnel');
+assert.equal(lab.tutorialState(sugarWalk, sugarGuide).current, 2);
+const sugarFit = lab.assembleFilter(sugarWalk, 'beaker-a');
+assert.equal(sugarFit.ok, true);
+assert.equal(lab.filterThrough(sugarWalk, 'beaker-a').ok, true);
+assert.equal(lab.tutorialState(sugarWalk, sugarGuide).current, 3);
+const filtrateVessel = sugarWalk.containers.find((row) => (Number(row.volumeMl) || 0) > 0 && row.type !== 'funnel');
+lab.setTemperature(sugarWalk, filtrateVessel.id, 70);
+assert.equal(lab.tutorialState(sugarWalk, sugarGuide).current, 4);
+assert.equal(lab.crystallise(sugarWalk, filtrateVessel.id).ok, true);
+assert.equal(lab.tutorialState(sugarWalk, sugarGuide).complete, true);
+
+// New materials are catalogue entries, so the allowlist still governs.
+assert.ok(lab.SUBSTANCES.yeast && lab.SUBSTANCES.cane_juice && lab.SUBSTANCES.fibre);
+assert.equal(lab.passesFilter(lab.SUBSTANCES.fibre), false, 'fibre is what the filter catches');
+assert.equal(lab.passesFilter(lab.SUBSTANCES.cane_juice), true);
+assert.equal(lab.resolveQuery('acucar').id, 'sugar');
+assert.equal(lab.resolveQuery('levedura').id, 'yeast');
+assert.equal(lab.resolveQuery('moonshine').ok, false);
+
+// The marquee picks up anything it overlaps, in world coordinates.
+const board2 = lab.emptySession({ title: 'Marquee', mode: 'bench' });
+const beakerBox = lab.pieceBox(board2, 'beaker-a');
+assert.ok(beakerBox && beakerBox.w > 0 && beakerBox.h > 0);
+assert.deepEqual(lab.objectsInRect(board2, { x: 0, y: 0, w: 2000, h: 2000 }).sort(),
+  ['beaker-a', 'cylinder-c', 'flask-b']);
+assert.deepEqual(lab.objectsInRect(board2, { x: beakerBox.x + 4, y: beakerBox.y + 4, w: 10, h: 10 }), ['beaker-a']);
+assert.deepEqual(lab.objectsInRect(board2, { x: 4000, y: 4000, w: 100, h: 100 }), []);
+assert.deepEqual(lab.objectsInRect(board2, null), []);
+// A rectangle dragged up and to the left is the same rectangle.
+const flipped = lab.objectsInRect(board2, { x: beakerBox.x + 14, y: beakerBox.y + 14, w: -14, h: -14 });
+assert.deepEqual(flipped, ['beaker-a']);
+
+// Restacking swaps with the neighbour and stops at the ends.
+const stack = lab.emptySession({ title: 'Stack', mode: 'bench' });
+lab.ensureBoard(stack);
+const bottomId = lab.orderedObjects(stack)[0].id;
+const topId = lab.orderedObjects(stack)[stack.board.objects.length - 1].id;
+assert.equal(lab.restack(stack, topId, 1).reason, 'edge', 'the top piece cannot go higher');
+assert.equal(lab.restack(stack, bottomId, -1).reason, 'edge', 'the bottom piece cannot go lower');
+assert.equal(lab.restack(stack, bottomId, 1).ok, true);
+assert.equal(lab.orderedObjects(stack)[1].id, bottomId, 'it moved up one place');
+assert.equal(lab.restack(stack, 'not-a-piece', 1).reason, 'no-object');
+
+// Which stored session a URL reopens. Opening the bench used to mint a new
+// one every time, so a reload discarded work that was already saved.
+const stored = [
+  { id: 'guided-1', mode: 'guided', creationId: 'distillation', updatedAt: '3' },
+  { id: 'bench-1', mode: 'bench', updatedAt: '2' },
+  { id: 'bench-0', mode: 'bench', updatedAt: '1' }
+];
+assert.equal(lab.pickSession(stored, { mode: 'bench' }).session.id, 'bench-1', 'the bench resumes');
+assert.equal(lab.pickSession(stored, { mode: 'bench' }).resumed, true);
+assert.equal(lab.pickSession(stored, { sessionId: 'bench-0' }).session.id, 'bench-0');
+assert.equal(lab.pickSession(stored, { creationId: 'distillation' }).session.id, 'guided-1');
+// A creation with no session of its own starts fresh rather than hijacking one.
+const fresh = lab.pickSession(stored, { creationId: 'reflux' });
+assert.equal(fresh.session, null);
+assert.equal(fresh.start, 'guided');
+// An unknown session id falls through rather than returning nothing usable.
+assert.equal(lab.pickSession(stored, { sessionId: 'nope', mode: 'bench' }).session.id, 'bench-1');
+// A guided run left on the board is still the board.
+const onlyGuided = [{ id: 'g', mode: 'guided', creationId: 'sugar', updatedAt: '1' }];
+assert.equal(lab.pickSession(onlyGuided, { mode: 'bench' }).session.id, 'g');
+// An empty store is the only case that starts something new.
+assert.equal(lab.pickSession([], { mode: 'bench' }).start, 'bench');
+assert.equal(lab.pickSession(null, {}).start, 'bench');
+
+// A saved session round-trips the apparatus, not just the glassware.
+const rig = lab.emptySession({ title: 'Rig', mode: 'bench' });
+for (const type of ['round-flask', 'condenser', 'receiving-flask', 'heating-mantle', 'thermometer']) {
+  lab.addVessel(rig, type);
+}
+const rigFlask = rig.containers.find((row) => row.type === 'round-flask');
+lab.addToContainer(rig, rigFlask.id, 'water', 60);
+lab.addToContainer(rig, rigFlask.id, 'ethanol', 40);
+lab.assembleRig(rig);
+lab.attachTool(rig, rig.containers.find((row) => row.type === 'thermometer').id, rigFlask.id);
+lab.setTemperature(rig, rigFlask.id, 80);
+const revived = JSON.parse(JSON.stringify(lab.saveSession(rig)));
+assert.equal(revived.board.connections.length, 2, 'connections survive serialisation');
+assert.equal(revived.board.attachments.length, 1, 'so do attachments');
+assert.ok(revived.board.camera, 'and the camera');
+assert.ok(lab.distillSetup(revived, rigFlask.id), 'the revived board is still a still');
+assert.equal(lab.attachmentOf(revived, revived.board.attachments[0].toolId).kind, 'probe');
+assert.equal(lab.distill(revived, rigFlask.id).ok, true, 'and it still runs');
+
 console.log('virtual lab tests passed');

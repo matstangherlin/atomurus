@@ -269,14 +269,16 @@
 }
 .ws-content { max-width: 1180px; width: 100%; }
 
+/* One line where it fits: sections, a divider, then the tools for the section
+   the user is in. Two stacked rows of chips was most of the chrome. */
 .ws-study-nav {
   max-width: none;
   display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 8px;
-  margin: 0 0 24px;
-  padding: 0 0 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  margin: 0 0 16px;
+  padding: 0 0 8px;
   overflow: visible;
   border-bottom: 1px solid var(--lc-rule-soft);
 }
@@ -284,9 +286,29 @@
 .ws-local-nav {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 2px;
   overflow-x: auto;
   scrollbar-width: none;
+}
+.ws-local-nav {
+  position: relative;
+  padding-left: 11px;
+}
+/* The divider only makes sense when both groups share the line. */
+.ws-local-nav::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 1px;
+  height: 18px;
+  margin-top: -9px;
+  background: var(--lc-rule, #D8D2BF);
+}
+@media (max-width: 860px) {
+  .ws-study-nav { gap: 2px 8px; }
+  .ws-local-nav { padding-left: 0; width: 100%; }
+  .ws-local-nav::before { content: none; }
 }
 .ws-context-nav::-webkit-scrollbar,
 .ws-local-nav::-webkit-scrollbar { display: none; }
@@ -444,9 +466,9 @@
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  min-height: 38px;
-  padding: 0 11px;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 9px;
   border: 1px solid transparent;
   border-radius: var(--ws-radius-md);
   color: var(--lc-ink-2);
@@ -456,7 +478,11 @@
   white-space: nowrap;
   transition: color var(--ws-dur) ease, background var(--ws-dur) ease, border-color var(--ws-dur) ease;
 }
-.ws-study-nav-item svg { flex: 0 0 16px; opacity: .8; }
+.ws-study-nav-item svg { flex: 0 0 15px; opacity: .8; }
+/* Inside a section the icons repeat and carry nothing, so the tools go
+   label-only and the row halves in width. */
+.ws-local-nav .ws-study-nav-item svg { display: none; }
+.ws-local-nav .ws-study-nav-item { font-size: 12.5px; padding: 0 8px; }
 .ws-study-nav-item:hover {
   color: var(--lc-ink);
   background: color-mix(in oklab, var(--lc-green) 8%, transparent);
@@ -1833,6 +1859,33 @@ svg.lab-links {
   background: color-mix(in oklab, var(--lc-green, #1E6A50) 75%, #fff);
   box-shadow: 0 0 0 4px color-mix(in oklab, var(--lc-green, #1E6A50) 24%, transparent);
 }
+.lab-hint {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 14px;
+  max-width: min(440px, calc(100% - 300px));
+  text-align: center;
+  margin: 0;
+  z-index: 2;
+  padding: 4px 10px;
+  border-radius: 99px;
+  background: color-mix(in oklab, var(--lc-paper, #F8F5EC) 82%, transparent);
+  font-size: 11px;
+  color: var(--lc-ink-3, #8E8978);
+  pointer-events: none;
+}
+@media (max-width: 1180px) { .lab-hint { display: none; } }
+
+.lab-marquee {
+  position: absolute;
+  z-index: 6;
+  pointer-events: none;
+  border: 1px solid var(--lc-green, #1E6A50);
+  background: color-mix(in oklab, var(--lc-green, #1E6A50) 12%, transparent);
+  border-radius: 3px;
+}
+.lab-piece.is-active { outline: none; }
 svg.lab-linking {
   position: absolute;
   left: 0;
@@ -2059,6 +2112,51 @@ html[data-reduced-motion="1"] .lab-stream { animation: none; }
   color: var(--lc-ink, #1b1914);
   overflow-x: auto;
 }
+.lab-multi {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in oklab, var(--lc-green, #1E6A50) 32%, transparent);
+  background: color-mix(in oklab, var(--lc-green, #1E6A50) 7%, transparent);
+}
+.lab-multi p { margin: 4px 0 8px; font-size: 13px; }
+.lab-multi .ws-lede { font-size: 12px; margin-bottom: 0; }
+
+.lab-contents {
+  margin: 0 0 10px;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 4px;
+}
+.lab-content-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 4px 4px 6px;
+  border-radius: 8px;
+  background: color-mix(in oklab, var(--lc-ink-3, #8E8978) 8%, transparent);
+  font-size: 12.5px;
+}
+.lab-content-row span { flex: 1; min-width: 0; }
+.lab-content-row b { font-variant-numeric: tabular-nums; font-weight: 650; }
+.lab-content-drop {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--lc-ink-3, #8E8978);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+}
+.lab-content-drop:hover {
+  background: color-mix(in oklab, #c0392b 16%, transparent);
+  color: #a8321f;
+}
+.lab-kv-stack { display: block; margin-bottom: 4px; }
+
 .lab-reaction p,
 .lab-rig p { margin: 4px 0 8px; font-size: 12.5px; color: var(--lc-ink-2, #58544A); }
 .lab-rig button { margin-top: 2px; }
@@ -2087,7 +2185,9 @@ html[data-reduced-motion="1"] .lab-piece.is-boiling .lab-vessel { animation: non
 }
 
 /* ── Lab board v2: floating Miro-style dock, side tabs, action bar ───────── */
-.lab-board-bar { align-items: center; }
+.lab-board-bar { align-items: center; gap: 10px 14px; margin-bottom: 10px; }
+.lab-board-title .ws-title { font-size: clamp(22px, 3.2vw, 34px); margin: 0; }
+.lab-board-bar .lab-toolbar { gap: 6px; }
 .lab-board-title { min-width: 200px; }
 .lab-board-bar .lab-search { flex: 1 1 260px; max-width: 420px; }
 .lab-zoom { display: inline-flex; align-items: center; gap: 4px; }
@@ -2257,23 +2357,56 @@ html[data-reduced-motion="1"] .lab-piece.is-boiling .lab-vessel { animation: non
 .lab-side-body { padding: 12px 14px 16px; overflow: auto; }
 .lab-side-body .lab-measures { display: flex; flex-wrap: wrap; gap: 6px; }
 
-.lab-actionbar {
+/* Floating clusters instead of one long permanent toolbar. */
+.lab-hud,
+.lab-context {
   position: absolute;
-  left: 50%;
-  bottom: 12px;
-  z-index: 3;
-  transform: translateX(-50%);
+  z-index: 7;
   display: flex;
-  flex-wrap: nowrap;
-  justify-content: center;
-  max-width: calc(100% - 24px);
-  overflow-x: auto;
-  gap: 6px;
-  padding: 6px 8px;
-  border-radius: 99px;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  border-radius: 12px;
   border: 1px solid var(--lc-rule, #D8D2BF);
-  background: color-mix(in oklab, var(--lc-paper, #F8F5EC) 94%, #fff);
-  box-shadow: 0 6px 20px color-mix(in oklab, #000 10%, transparent);
+  background: color-mix(in oklab, var(--lc-paper, #F8F5EC) 96%, #fff);
+  box-shadow: 0 6px 20px color-mix(in oklab, #000 13%, transparent);
+}
+.lab-hud-left { left: 12px; bottom: 12px; }
+.lab-hud-right { right: 12px; bottom: 12px; }
+.lab-context { z-index: 8; }
+.lab-context[hidden] { display: none; }
+.lab-tool-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--lc-ink-2, #58544A);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+.lab-tool-btn:hover { background: color-mix(in oklab, var(--lc-green, #1E6A50) 12%, transparent); }
+.lab-tool-btn.is-on {
+  background: color-mix(in oklab, var(--lc-green, #1E6A50) 18%, transparent);
+  color: var(--lc-green, #1E6A50);
+}
+.lab-tool-btn.is-danger:hover { background: color-mix(in oklab, #c0392b 16%, transparent); color: #a8321f; }
+.lab-tool-btn .lab-dock-icon { width: 19px; height: 19px; }
+.lab-tool-wide { padding: 0 10px; font-size: 12.5px; }
+.lab-tool-sep {
+  width: 1px;
+  height: 20px;
+  margin: 0 3px;
+  background: var(--lc-rule, #D8D2BF);
+}
+@media (max-width: 900px) {
+  .lab-hud-left { left: 8px; bottom: 8px; }
+  .lab-hud-right { right: 8px; bottom: 8px; }
 }
 
 .lab-guide-now { margin: 10px 0 8px; font-size: 15px; font-weight: 650; color: var(--lc-ink, #1b1914); }

@@ -17,7 +17,7 @@ test('Free uses Study Cloud and still sees Review as Pro', async ({ page }) => {
   await expect(page.locator('#ws-study-nav')).toContainText(/Study|Estudo/);
   await expect(page.locator('#ws-study-nav')).toContainText(/Creations|Criações/);
   await page.locator('#ws-study-nav a[href="/app?section=library"]').first().click();
-  await expect(page.locator('#ws-study-nav')).toContainText(/Library|Biblioteca/);
+  await expect(page.locator('#ws-lib-list')).toBeVisible();
   await expect(page.locator('#ws-study-nav')).toContainText(/Study Sets/);
   await expect(page.locator('#ws-study-nav a[href="/app?section=review"]')).toContainText(/Review/);
   await expect(page.locator('#ws-study-nav a[href="/app?section=review"]')).toContainText(/PRO/);
@@ -466,6 +466,218 @@ test('Pro footer has Plan billing and no Upgrade', async ({ page }) => {
   await expect(page.locator('#ws-nav-foot a[data-nav="plan"]')).toHaveAttribute('href', /\/account\?tab=plan/);
 });
 
+test('Lab board and assembled apparatus survive a reload', async ({ page }) => {
+  await installApi(page, { kind: 'free' });
+  await gotoWorkspace(page, '/app?section=lab&mode=bench');
+  await page.waitForSelector('.lab-beaker');
+
+  // Build a still through the guide, with a fitted probe on the bench.
+  await page.locator('#lab-q').fill('distillation');
+  await page.locator('[data-lab-search]').evaluate((form) => form.requestSubmit());
+  await page.locator('[data-dock-close]').click();
+  for (const type of ['round-flask', 'condenser', 'receiving-flask', 'heating-mantle']) {
+    await page.locator(`[data-lab-guide] [data-add-vessel="${type}"]`).click();
+  }
+  await page.locator('[data-lab-guide] [data-step-add="water"]').click();
+  await page.locator('[data-lab-guide] [data-step-add="ethanol"]').click();
+  await page.locator('[data-lab-guide] [data-step-connect]').click();
+  await page.locator('[data-lab-guide] [data-step-heat="80"]').click();
+  await page.locator('[data-lab-save]').click();
+
+  const pieces = await page.locator('[data-lab-world] [data-vessel]').count();
+  const charge = (await page.locator('.lab-round-flask').innerText()).match(/[\d.]+ \/ \d+ mL/)[0];
+  expect(pieces).toBeGreaterThan(3);
+  await expect(page.locator('.lab-links path')).toHaveCount(2);
+
+  await gotoWorkspace(page, '/app?section=lab&mode=bench');
+  await page.waitForSelector('.lab-round-flask');
+
+  // Everything that was on the board is still on it.
+  await expect(page.locator('[data-lab-world] [data-vessel]')).toHaveCount(pieces);
+  await expect(page.locator('.lab-round-flask')).toContainText(charge);
+  await expect(page.locator('.lab-links path')).toHaveCount(2);
+
+  // And it is still an apparatus, not just the same pieces lying about.
+  await page.locator('.lab-round-flask').click();
+  await page.locator('[data-side="inspector"]').click();
+  await expect(page.locator('[data-lab-distill]')).toHaveCount(1);
+
+  // The guided run picks up where it was left.
+  await page.locator('[data-side="guide"]').click();
+  await expect(page.locator('[data-lab-guide]')).toContainText(/Step 8 of 8|Passo 8 de 8/i);
+  await page.locator('[data-lab-guide] [data-step-distill]').click();
+  await expect(page.locator('.lab-notes')).toContainText(/Distilled|Destilou/i);
+});
+
+test('Workspace nav puts sections and tools on one line', async ({ page }) => {
+  await installApi(page, { kind: 'free' });
+  await gotoWorkspace(page, '/app?section=lab&mode=bench');
+  await page.waitForSelector('.lab-beaker');
+  const sections = await page.locator('.ws-context-nav').boundingBox();
+  const tools = await page.locator('.ws-local-nav').boundingBox();
+  // Same line, not two stacked rows of chips.
+  expect(Math.abs(sections.y - tools.y)).toBeLessThan(6);
+  expect(tools.x).toBeGreaterThan(sections.x + sections.width - 2);
+  const nav = await page.locator('#ws-study-nav').boundingBox();
+  expect(nav.height).toBeLessThan(56);
+  // The repeated icons are gone from the tools group.
+  await expect(page.locator('.ws-local-nav .ws-study-nav-item svg').first()).toBeHidden();
+  await expect(page.locator('.ws-context-nav .ws-study-nav-item svg').first()).toBeVisible();
+
+  // No destination is offered twice on the same line.
+  async function navHrefs() {
+    return page.locator('#ws-study-nav .ws-study-nav-item').evaluateAll(
+      (els) => els.map((el) => el.getAttribute('href'))
+    );
+  }
+  for (const where of ['/app?section=lab&mode=bench', '/app?section=sets', '/app?section=history']) {
+    await gotoWorkspace(page, where);
+    await page.waitForSelector('.ws-local-nav .ws-study-nav-item');
+    const hrefs = await navHrefs();
+    expect(hrefs.length).toBe(new Set(hrefs).size, `duplicate nav destination at ${where}: ${hrefs.join(' ')}`);
+  }
+  await gotoWorkspace(page, '/app?section=lab&mode=bench');
+  await page.waitForSelector('.lab-beaker');
+  await expect(page.locator('.ws-local-nav .ws-study-nav-item')).toHaveCount(3);
+
+  // Narrow enough and it stacks again without overflowing the page.
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.waitForTimeout(200);
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+});
+
+test('Lab board pinch-zooms with two fingers', async ({ page }) => {
+  await installApi(page, { kind: 'free' });
+  await gotoWorkspace(page, '/app?section=lab&mode=bench');
+  await page.waitForSelector('.lab-beaker');
+  await page.locator('[data-lab-fit]').click();
+  const before = await page.locator('[data-lab-zoom-label]').innerText();
+
+  await page.locator('[data-lab-stage]').evaluate((stage) => {
+    const box = stage.getBoundingClientRect();
+    const cx = box.left + box.width / 2;
+    const cy = box.top + box.height / 2;
+    function touch(type, id, x, y) {
+      stage.dispatchEvent(new PointerEvent(type, {
+        bubbles: true, pointerId: id, pointerType: 'touch', isPrimary: id === 1,
+        clientX: x, clientY: y, button: 0
+      }));
+    }
+    touch('pointerdown', 1, cx - 40, cy);
+    touch('pointerdown', 2, cx + 40, cy);
+    for (let i = 1; i <= 8; i += 1) {
+      touch('pointermove', 1, cx - 40 - i * 10, cy);
+      touch('pointermove', 2, cx + 40 + i * 10, cy);
+    }
+    touch('pointerup', 1, cx - 120, cy);
+    touch('pointerup', 2, cx + 120, cy);
+  });
+
+  const after = await page.locator('[data-lab-zoom-label]').innerText();
+  expect(parseInt(after, 10)).toBeGreaterThan(parseInt(before, 10));
+});
+
+test('Lab board selects with a marquee, moves the group and restacks', async ({ page }) => {
+  await installApi(page, { kind: 'free' });
+  await gotoWorkspace(page, '/app?section=lab&mode=bench');
+  await page.waitForSelector('.lab-beaker');
+  await page.locator('[data-lab-fit]').click();
+
+  // Dragging empty canvas draws a selection rectangle, it does not pan.
+  const first = await page.locator('[data-vessel="beaker-a"]').boundingBox();
+  const last = await page.locator('[data-vessel="cylinder-c"]').boundingBox();
+  await page.mouse.move(first.x - 40, first.y + 20);
+  await page.mouse.down();
+  await page.mouse.move(last.x + last.width + 20, last.y + last.height + 20, { steps: 12 });
+  await expect(page.locator('.lab-marquee')).toHaveCount(1);
+  await page.mouse.up();
+  await expect(page.locator('.lab-marquee')).toHaveCount(0);
+  await expect(page.locator('.lab-piece.is-active')).toHaveCount(3);
+  await expect(page.locator('.lab-multi')).toContainText(/3 pieces|3 peças/);
+
+  // Dragging one of them carries the whole selection.
+  const beakerBefore = await page.locator('[data-vessel="beaker-a"]').evaluate((el) => el.style.left);
+  const flaskBefore = await page.locator('[data-vessel="flask-b"]').evaluate((el) => el.style.left);
+  const grab = await page.locator('[data-vessel="beaker-a"]').boundingBox();
+  await page.mouse.move(grab.x + grab.width / 2, grab.y + 30);
+  await page.mouse.down();
+  await page.mouse.move(grab.x + grab.width / 2 + 90, grab.y + 30, { steps: 10 });
+  await page.mouse.up();
+  const beakerAfter = await page.locator('[data-vessel="beaker-a"]').evaluate((el) => el.style.left);
+  const flaskAfter = await page.locator('[data-vessel="flask-b"]').evaluate((el) => el.style.left);
+  expect(parseFloat(beakerAfter)).toBeGreaterThan(parseFloat(beakerBefore));
+  expect(parseFloat(flaskAfter)).toBeGreaterThan(parseFloat(flaskBefore));
+
+  // Escape clears it, and one piece gets the stacking controls back.
+  await page.locator('[data-lab-stage]').press('Escape');
+  await expect(page.locator('.lab-multi')).toHaveCount(0);
+  await page.locator('[data-vessel="flask-b"]').click();
+  const zBefore = await page.locator('[data-vessel="flask-b"]').evaluate((el) => el.style.zIndex);
+  await page.locator('[data-lab-stack="1"]').click();
+  const zAfter = await page.locator('[data-vessel="flask-b"]').evaluate((el) => el.style.zIndex);
+  expect(Number(zAfter)).toBeGreaterThan(Number(zBefore));
+});
+
+test('Lab names glassware properly, ferments sugar and drops a material', async ({ page }) => {
+  await installApi(page, { kind: 'free' });
+  await gotoWorkspace(page, '/app?section=lab&mode=bench');
+  await page.waitForSelector('.lab-beaker');
+  // Proper names, not "Flask" and "Cylinder".
+  await expect(page.locator('[data-vessel="flask-b"] .lab-glass-name')).toHaveText('Erlenmeyer flask B');
+  await expect(page.locator('[data-vessel="cylinder-c"] .lab-glass-name')).toHaveText('Graduated cylinder C');
+
+  await page.locator('#lab-q').fill('fermentacao');
+  await page.locator('[data-lab-search]').evaluate((form) => form.requestSubmit());
+  await page.locator('[data-dock-close]').click();
+  await expect(page.locator('[data-lab-guide]')).toContainText(/of 5|de 5/i);
+  await page.locator('[data-lab-guide] [data-step-add="water"]').click();
+  await page.locator('[data-lab-guide] [data-step-add="sucrose"]').click();
+  await page.locator('[data-lab-guide] [data-step-add="yeast"]').click();
+  await page.locator('[data-lab-guide] [data-step-heat="28"]').click();
+  await page.locator('[data-lab-guide] [data-step-ferment]').click();
+  await expect(page.locator('.lab-notes')).toContainText(/2 CO₂/);
+  await expect(page.locator('[data-lab-guide]')).toContainText(/All steps done|Todos os passos/i);
+
+  // Each material can be taken back out on its own.
+  await page.locator('[data-side="inspector"]').click();
+  await expect(page.locator('.lab-content-row')).toHaveCount(4);
+  const before = await page.locator('.lab-round-flask, [data-vessel="flask-b"]').first().innerText();
+  await page.locator('.lab-content-row [data-lab-remove="yeast"]').click();
+  await expect(page.locator('.lab-content-row')).toHaveCount(3);
+  await expect(page.locator('.lab-notes')).toContainText(/Removed|Removeu/i);
+  // Taking the water out leaves only what the fermentation made.
+  await page.locator('.lab-content-row [data-lab-remove="water"]').click();
+  await expect(page.locator('.lab-content-row')).toHaveCount(2);
+  const left = await page.locator('[data-vessel="flask-b"]').innerText();
+  expect(Number(left.match(/([\d.]+) \/ 250 mL/)[1])).toBeLessThan(20);
+  expect(before).toContain('250 mL');
+});
+
+test('Lab reflux holds the volume a still would take away', async ({ page }) => {
+  await installApi(page, { kind: 'free' });
+  await gotoWorkspace(page, '/app?section=lab&mode=bench');
+  await page.waitForSelector('.lab-beaker');
+  await page.locator('#lab-q').fill('refluxo');
+  await page.locator('[data-lab-search]').evaluate((form) => form.requestSubmit());
+  await page.locator('[data-dock-close]').click();
+  await expect(page.locator('[data-lab-guide]')).toContainText(/Step 1 of 7|Passo 1 de 7/i);
+  for (const type of ['round-flask', 'condenser', 'heating-mantle']) {
+    await page.locator(`[data-lab-guide] [data-add-vessel="${type}"]`).click();
+  }
+  await page.locator('[data-lab-guide] [data-step-add="water"]').click();
+  await page.locator('[data-lab-guide] [data-step-add="ethanol"]').click();
+  await expect(page.locator('.lab-round-flask')).toContainText('80 / 250 mL');
+  await page.locator('[data-lab-guide] [data-step-reflux-connect]').click();
+  await expect(page.locator('.lab-links path')).toHaveCount(1);
+  await page.locator('[data-lab-guide] [data-step-heat="80"]').click();
+  await page.locator('[data-lab-guide] [data-step-reflux]').click();
+  await expect(page.locator('.lab-notes')).toContainText(/Refluxed|Refluxou/i);
+  // The whole point: nothing left the flask.
+  await expect(page.locator('.lab-round-flask')).toContainText('80 / 250 mL');
+  await expect(page.locator('[data-lab-guide]')).toContainText(/All steps done|Todos os passos/i);
+});
+
 test('Lab tools clip onto their hosts and ports link by dragging', async ({ page }) => {
   await installApi(page, { kind: 'free' });
   await gotoWorkspace(page, '/app?section=lab&mode=bench');
@@ -605,7 +817,7 @@ test('Workspace home is the Virtual Lab and Open Bench runs', async ({ page }) =
   await expect(page.locator('.lab-flask, .lab-cylinder')).toHaveCount(2);
   await page.locator('.lab-chip[data-add="nacl"]').click();
   await expect(page.locator('[data-vessel="beaker-a"]')).toContainText(/Saline|salina/i);
-  await page.locator('[data-lab-pour]').click();
+  await page.locator('[data-lab-context] [data-lab-pour]').click();
   await page.locator('[data-vessel="flask-b"]').click();
   await expect(page.locator('.lab-notes')).toContainText(/Poured|Transfer/i);
   await expect(page.locator('[data-lab-stage]')).toBeVisible();

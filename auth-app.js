@@ -947,24 +947,26 @@
       var labMode = '';
       try { labMode = new URLSearchParams(location.search).get('mode') || ''; } catch (_err) {}
       if (area === 'study') {
+        /* The Study section tab already lands on the library. */
         localHtml = '<div class="ws-local-nav" role="navigation" aria-label="' + escapeHtml(t('navGroupStudy')) + '">' +
-          [['library', 'library', 'studyCloud'], ['sets', 'sets', 'studySets'], ['practice', 'practiceNav'], ['review', 'reviewShort', 'smartReview', 'review'], ['insights', 'insightsNav', 'studyInsights', 'insights']].map(function (pair) {
+          [['sets', 'sets', 'studySets'], ['practice', 'practiceNav'], ['review', 'reviewShort', 'smartReview', 'review'], ['insights', 'insightsNav', 'studyInsights', 'insights']].map(function (pair) {
             var locked = pair[2] && !featureOn(user, pair[2]);
             if (!user && (pair[0] === 'library' || pair[0] === 'sets' || pair[0] === 'practice')) locked = false;
             return navItemHtml('/app?section=' + pair[0], pair[1], pair[0], current === pair[0], locked, pair[0]);
           }).join('') + '</div>';
       } else if (area === 'lab') {
+        /* Guided Creations is the Creations section tab, and Solve and Compare
+           are two of the cards the Pro Lab page itself opens with. Listing
+           them here was the same destination twice on one line. */
         localHtml = '<div class="ws-local-nav" role="navigation" aria-label="' + escapeHtml(t('navGroupLab')) + '">' +
           navItemHtml('/app?section=lab', 'virtualLab', 'lab', current === 'lab' && labMode !== 'bench', false, 'lab') +
           navItemHtml('/app?section=lab&mode=bench', 'openBench', 'lab', current === 'lab' && labMode === 'bench', false, 'lab') +
-          navItemHtml('/app?section=creations', 'guidedCreations', 'creations', current === 'creations', false, 'creations') +
-          navItemHtml('/app?section=pro-lab', 'proLab', 'pro-lab', current === 'pro-lab' && currentTool === 'home', false, 'pro-lab') +
-          navItemHtml('/app?section=pro-lab&tool=reactions', 'labNavSolve', 'pro-lab', current === 'pro-lab' && /reactions|formula|solutions|calculations/.test(currentTool), false, 'pro-lab') +
-          navItemHtml('/app?section=pro-lab&tool=elements', 'labNavCompare', 'pro-lab', current === 'pro-lab' && /elements|molecules|atomic/.test(currentTool), false, 'pro-lab') +
+          navItemHtml('/app?section=pro-lab', 'proLab', 'pro-lab', current === 'pro-lab', false, 'pro-lab') +
           '</div>';
       } else if (area === 'activity') {
+        /* The Activity section tab already lands on progress. */
         localHtml = '<div class="ws-local-nav" role="navigation" aria-label="' + escapeHtml(t('navGroupActivity')) + '">' +
-          [['history', 'history', 'studyCloud'], ['notes', 'notes', 'studyCloud'], ['progress', 'continueNav', 'studyCloud']].map(function (pair) {
+          [['history', 'history', 'studyCloud'], ['notes', 'notes', 'studyCloud']].map(function (pair) {
             var locked = pair[2] && !featureOn(user, pair[2]);
             if (!user) locked = false;
             return navItemHtml('/app?section=' + pair[0], pair[1], pair[0], current === pair[0], locked, pair[0]);
