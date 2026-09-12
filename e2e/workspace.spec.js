@@ -466,6 +466,49 @@ test('Pro footer has Plan billing and no Upgrade', async ({ page }) => {
   await expect(page.locator('#ws-nav-foot a[data-nav="plan"]')).toHaveAttribute('href', /\/account\?tab=plan/);
 });
 
+test('Lab board and assembled apparatus survive a reload', async ({ page }) => {
+  await installApi(page, { kind: 'free' });
+  await gotoWorkspace(page, '/app?section=lab&mode=bench');
+  await page.waitForSelector('.lab-beaker');
+
+  // Build a still through the guide, with a fitted probe on the bench.
+  await page.locator('#lab-q').fill('distillation');
+  await page.locator('[data-lab-search]').evaluate((form) => form.requestSubmit());
+  await page.locator('[data-dock-close]').click();
+  for (const type of ['round-flask', 'condenser', 'receiving-flask', 'heating-mantle']) {
+    await page.locator(`[data-lab-guide] [data-add-vessel="${type}"]`).click();
+  }
+  await page.locator('[data-lab-guide] [data-step-add="water"]').click();
+  await page.locator('[data-lab-guide] [data-step-add="ethanol"]').click();
+  await page.locator('[data-lab-guide] [data-step-connect]').click();
+  await page.locator('[data-lab-guide] [data-step-heat="80"]').click();
+  await page.locator('[data-lab-save]').click();
+
+  const pieces = await page.locator('[data-lab-world] [data-vessel]').count();
+  const charge = (await page.locator('.lab-round-flask').innerText()).match(/[\d.]+ \/ \d+ mL/)[0];
+  expect(pieces).toBeGreaterThan(3);
+  await expect(page.locator('.lab-links path')).toHaveCount(2);
+
+  await gotoWorkspace(page, '/app?section=lab&mode=bench');
+  await page.waitForSelector('.lab-round-flask');
+
+  // Everything that was on the board is still on it.
+  await expect(page.locator('[data-lab-world] [data-vessel]')).toHaveCount(pieces);
+  await expect(page.locator('.lab-round-flask')).toContainText(charge);
+  await expect(page.locator('.lab-links path')).toHaveCount(2);
+
+  // And it is still an apparatus, not just the same pieces lying about.
+  await page.locator('.lab-round-flask').click();
+  await page.locator('[data-side="inspector"]').click();
+  await expect(page.locator('[data-lab-distill]')).toHaveCount(1);
+
+  // The guided run picks up where it was left.
+  await page.locator('[data-side="guide"]').click();
+  await expect(page.locator('[data-lab-guide]')).toContainText(/Step 8 of 8|Passo 8 de 8/i);
+  await page.locator('[data-lab-guide] [data-step-distill]').click();
+  await expect(page.locator('.lab-notes')).toContainText(/Distilled|Destilou/i);
+});
+
 test('Workspace nav puts sections and tools on one line', async ({ page }) => {
   await installApi(page, { kind: 'free' });
   await gotoWorkspace(page, '/app?section=lab&mode=bench');

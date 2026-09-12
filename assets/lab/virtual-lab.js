@@ -1377,6 +1377,33 @@
     };
   }
 
+  /* Which stored session a URL should reopen. Opening the bench or a guided
+     creation used to start a fresh one every time, so a reload threw away work
+     that was already saved. */
+  function pickSession(sessions, opts) {
+    opts = opts || {};
+    var rows = Array.isArray(sessions) ? sessions : [];
+    if (opts.sessionId) {
+      var byId = rows.filter(function (row) { return row.id === opts.sessionId; })[0];
+      if (byId) return { session: byId, resumed: true };
+    }
+    if (opts.creationId) {
+      var byCreation = rows.filter(function (row) { return row.creationId === opts.creationId; })[0];
+      if (byCreation) return { session: byCreation, resumed: true };
+      return { session: null, resumed: false, start: 'guided' };
+    }
+    if (opts.mode === 'bench') {
+      /* The board is one thing. A guided creation is a layer on it, not a
+         separate board, so opening the bench reopens what was left there. */
+      var bench = rows.filter(function (row) { return row.mode === 'bench' && !row.creationId; })[0];
+      if (bench) return { session: bench, resumed: true };
+      if (rows.length) return { session: rows[0], resumed: true };
+      return { session: null, resumed: false, start: 'bench' };
+    }
+    if (rows.length) return { session: rows[0], resumed: true };
+    return { session: null, resumed: false, start: 'bench' };
+  }
+
   function emptySession(opts) {
     opts = opts || {};
     var session = {
@@ -2139,7 +2166,7 @@
     (session.containers || []).forEach(function (row) {
       if (!canHold(row) || !hasCap(row, 'heat')) return;
       var zone = heatZoneFor(session, row.id);
-      if (zone) ids[zone.id] = true;
+      if (zone) ids[zone.id] = row.id;
     });
     return ids;
   }
@@ -2868,23 +2895,26 @@
     try { params = new URLSearchParams(location.search); } catch (e) { params = new URLSearchParams(); }
     var creationId = params.get('creation') || opts.creationId || '';
     var mode = params.get('mode') || opts.mode || (section === 'creations' ? 'guided' : (section === 'notebook' ? 'notebook' : 'bench'));
-    var session = null;
     var sessions = listSessions();
-    var last = sessions[0];
-    if (params.get('session')) {
-      session = sessions.filter(function (row) { return row.id === params.get('session'); })[0] || null;
+    var picked = pickSession(sessions, {
+      sessionId: params.get('session') || '',
+      creationId: creationId,
+      mode: mode
+    });
+    var session = picked.session;
+    if (!session) {
+      if (picked.start === 'guided') {
+        var creation = CREATIONS.filter(function (row) { return row.id === creationId; })[0];
+        session = emptySession({
+          title: creation ? labelOf(creation, lang) : 'Guided creation',
+          mode: 'guided',
+          creationId: creationId,
+          lang: lang
+        });
+      } else {
+        session = emptySession({ title: lang === 'pt' ? 'Bancada aberta' : 'Open Bench', mode: 'bench', lang: lang });
+      }
     }
-    if (!session && creationId) {
-      var creation = CREATIONS.filter(function (row) { return row.id === creationId; })[0];
-      session = emptySession({
-        title: creation ? labelOf(creation, lang) : 'Guided creation',
-        mode: 'guided',
-        creationId: creationId,
-        lang: lang
-      });
-    }
-    if (!session && mode === 'bench') session = emptySession({ title: lang === 'pt' ? 'Bancada aberta' : 'Open Bench', mode: 'bench', lang: lang });
-    if (!session) session = last || emptySession({ title: lang === 'pt' ? 'Bancada aberta' : 'Open Bench', lang: lang });
     session.lang = lang;
     ensureWorkbench(session);
     if (!session.selectedId) session.selectedId = (session.containers[0] || {}).id;
@@ -3421,8 +3451,10 @@
       var heatCls = heatFrom === container.id ? ' is-heat-source' : '';
       var snap = heatZoneFor(session, container.id);
       if (snap && hasCap(container, 'heat')) heatCls += ' is-heat-zone';
-      var cupped = specOf(kind).heat &&
-        (renderPass ? Boolean(renderPass.cupped[container.id]) : heaterIsCupped(session, container.id));
+      var cuppedBy = specOf(kind).heat
+        ? (renderPass ? renderPass.cupped[container.id] : (heaterIsCupped(session, container.id) ? cuppedHeaterIds(session)[container.id] : ''))
+        : '';
+      var cupped = Boolean(cuppedBy);
       var fittedNow = renderPass ? (renderPass.attach[container.id] || null) : attachmentOf(session, container.id);
       var emulsion = String(container.appearance || '').indexOf('emulsion') !== -1 || container.productId === 'sunscreen';
       var warm = (Number(container.temperatureC) || 22) >= 40;
@@ -3432,6 +3464,13 @@
       var y = obj ? Number(obj.y) : Number(container.y);
       var rot = obj ? Number(obj.rotation) || 0 : 0;
       var z = obj && isFinite(Number(obj.zIndex)) ? Number(obj.zIndex) : 1;
+      /* A heater under a vessel draws behind it, or it swallows clicks meant
+         for the glassware standing on it. */
+      if (cuppedBy) {
+        var standingOn = findObject(session, cuppedBy);
+        var standingZ = standingOn && isFinite(Number(standingOn.zIndex)) ? Number(standingOn.zIndex) : 1;
+        z = Math.min(z, standingZ - 1);
+      }
       if (!isFinite(x)) x = 80;
       if (!isFinite(y)) y = 80;
       var holds = canHold(container);
@@ -5226,6 +5265,7 @@
     resolveQuery: resolveQuery,
     searchCatalog: searchCatalog,
     emptySession: emptySession,
+    pickSession: pickSession,
     listSessions: listSessions,
     saveSession: saveSession,
     addToContainer: addToContainer,

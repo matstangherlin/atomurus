@@ -586,7 +586,7 @@ while (lab.addVessel(roomy, 'test-tube').ok) seated += 1;
 assert.ok(roomy.containers.length >= 100, `the board should take 100 pieces, took ${roomy.containers.length}`);
 assert.equal(lab.addVessel(roomy, 'beaker').reason, 'limit', 'and still has a ceiling');
 
-// One pass finds every cuppedSet heater, instead of one pass per heater.
+// One pass finds every cupped heater, instead of one pass per heater.
 const heat = lab.emptySession({ title: 'Heat', mode: 'bench' });
 lab.addVessel(heat, 'round-flask');
 lab.addVessel(heat, 'heating-mantle');
@@ -599,7 +599,7 @@ const mantleObj = heat.board.objects.find((row) => row.id === mantlePiece.id);
 mantleObj.x = flaskObj.x;
 mantleObj.y = flaskObj.y + 34;
 const cuppedSet = lab.cuppedHeaterIds(heat);
-assert.equal(cuppedSet[mantlePiece.id], true, 'the mantle under the flask is cuppedSet');
+assert.equal(cuppedSet[mantlePiece.id], heatFlask.id, 'the mantle is cupped by the flask standing on it');
 assert.equal(cuppedSet[idleBurner.id], undefined, 'the idle burner is not');
 
 // Reflux is the still's glassware wired to send nothing onward.
@@ -774,5 +774,48 @@ assert.equal(lab.restack(stack, bottomId, -1).reason, 'edge', 'the bottom piece 
 assert.equal(lab.restack(stack, bottomId, 1).ok, true);
 assert.equal(lab.orderedObjects(stack)[1].id, bottomId, 'it moved up one place');
 assert.equal(lab.restack(stack, 'not-a-piece', 1).reason, 'no-object');
+
+// Which stored session a URL reopens. Opening the bench used to mint a new
+// one every time, so a reload discarded work that was already saved.
+const stored = [
+  { id: 'guided-1', mode: 'guided', creationId: 'distillation', updatedAt: '3' },
+  { id: 'bench-1', mode: 'bench', updatedAt: '2' },
+  { id: 'bench-0', mode: 'bench', updatedAt: '1' }
+];
+assert.equal(lab.pickSession(stored, { mode: 'bench' }).session.id, 'bench-1', 'the bench resumes');
+assert.equal(lab.pickSession(stored, { mode: 'bench' }).resumed, true);
+assert.equal(lab.pickSession(stored, { sessionId: 'bench-0' }).session.id, 'bench-0');
+assert.equal(lab.pickSession(stored, { creationId: 'distillation' }).session.id, 'guided-1');
+// A creation with no session of its own starts fresh rather than hijacking one.
+const fresh = lab.pickSession(stored, { creationId: 'reflux' });
+assert.equal(fresh.session, null);
+assert.equal(fresh.start, 'guided');
+// An unknown session id falls through rather than returning nothing usable.
+assert.equal(lab.pickSession(stored, { sessionId: 'nope', mode: 'bench' }).session.id, 'bench-1');
+// A guided run left on the board is still the board.
+const onlyGuided = [{ id: 'g', mode: 'guided', creationId: 'sugar', updatedAt: '1' }];
+assert.equal(lab.pickSession(onlyGuided, { mode: 'bench' }).session.id, 'g');
+// An empty store is the only case that starts something new.
+assert.equal(lab.pickSession([], { mode: 'bench' }).start, 'bench');
+assert.equal(lab.pickSession(null, {}).start, 'bench');
+
+// A saved session round-trips the apparatus, not just the glassware.
+const rig = lab.emptySession({ title: 'Rig', mode: 'bench' });
+for (const type of ['round-flask', 'condenser', 'receiving-flask', 'heating-mantle', 'thermometer']) {
+  lab.addVessel(rig, type);
+}
+const rigFlask = rig.containers.find((row) => row.type === 'round-flask');
+lab.addToContainer(rig, rigFlask.id, 'water', 60);
+lab.addToContainer(rig, rigFlask.id, 'ethanol', 40);
+lab.assembleRig(rig);
+lab.attachTool(rig, rig.containers.find((row) => row.type === 'thermometer').id, rigFlask.id);
+lab.setTemperature(rig, rigFlask.id, 80);
+const revived = JSON.parse(JSON.stringify(lab.saveSession(rig)));
+assert.equal(revived.board.connections.length, 2, 'connections survive serialisation');
+assert.equal(revived.board.attachments.length, 1, 'so do attachments');
+assert.ok(revived.board.camera, 'and the camera');
+assert.ok(lab.distillSetup(revived, rigFlask.id), 'the revived board is still a still');
+assert.equal(lab.attachmentOf(revived, revived.board.attachments[0].toolId).kind, 'probe');
+assert.equal(lab.distill(revived, rigFlask.id).ok, true, 'and it still runs');
 
 console.log('virtual lab tests passed');
