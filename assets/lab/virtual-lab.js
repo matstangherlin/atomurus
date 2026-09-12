@@ -9,6 +9,8 @@
   var MAX_VESSELS = 120;
   var SAVE_MS = 400;
   var SNAP_PX = 14;
+  /* Paper grid pitch, in world units. The stage paints it; the camera moves it. */
+  var BOARD_GRID = 22;
   var ZOOM_MIN = 0.25;
   var ZOOM_MAX = 3;
 
@@ -2927,6 +2929,7 @@
     if (zoom < ZOOM_MIN) zoom = ZOOM_MIN;
     if (zoom > ZOOM_MAX) zoom = ZOOM_MAX;
     var saveTimer = 0;
+    var focusMode = false;
     var stirTimer = 0;
     var lastStatus = '';
     var dragging = null;
@@ -2973,11 +2976,21 @@
         return canHold(row) && hasCap(row, 'contain');
       })[0] || null;
     }
+    /* The bar says whether what is on the board is written down. */
+    function showSaveState(state) {
+      var el = node.querySelector('[data-lab-saved]');
+      if (!el) return;
+      var saved = state !== 'pending';
+      el.textContent = saved ? copy('Saved', 'Salvo') : copy('Saving…', 'Salvando…');
+      el.classList.toggle('is-pending', !saved);
+    }
     function queueSave() {
       if (saveTimer) clearTimeout(saveTimer);
+      showSaveState('pending');
       saveTimer = setTimeout(function () {
         saveTimer = 0;
         saveSession(session);
+        showSaveState('saved');
       }, SAVE_MS);
     }
     function flushSave() {
@@ -2986,6 +2999,7 @@
         saveTimer = 0;
       }
       saveSession(session);
+      showSaveState('saved');
     }
 
     function statusHtml(results) {
@@ -3083,6 +3097,8 @@
         ready: '<path d="M3.5 7.5 L11 3.5 L18.5 7.5 L11 11.5 Z"/><path d="M3.5 14 L11 18 L18.5 14"/>',
         sound: '<path d="M4 8.5 h3.5 L12 4.5 v13 L7.5 13.5 H4 Z"/><path d="M15 8 q2.4 3 0 6"/><path d="M17.6 5.8 q4 5.2 0 10.4"/>',
         muted: '<path d="M4 8.5 h3.5 L12 4.5 v13 L7.5 13.5 H4 Z"/><path d="M15.5 8.5 L20 13 M20 8.5 L15.5 13"/>',
+        focus: '<path d="M3.5 8 V4.5 h3.5 M15 4.5 h3.5 V8 M18.5 14 v3.5 H15 M7 17.5 H3.5 V14"/><circle cx="11" cy="11" r="2.6"/>',
+        unfocus: '<path d="M7 3.5 V7 H3.5 M15 3.5 V7 h3.5 M18.5 15 H15 v3.5 M7 18.5 V15 H3.5"/><circle cx="11" cy="11" r="2.6"/>',
         pour: '<path d="M5 5 h7 v8 q0 3 -3.5 3 T5 13 Z"/><path d="M12 7 l4 -2"/><path d="M17 9 v3 M17 15 v2"/>',
         stir: '<path d="M4 9 q3.5 -5 7 0 t7 0"/><path d="M4 14 q3.5 -5 7 0 t7 0"/>',
         empty: '<path d="M6 4 h10 l-1.4 11 q-.3 2.5 -3.6 2.5 T7.4 15 Z"/><path d="M4 20 h14"/>',
@@ -3920,6 +3936,35 @@
       return true;
     }
 
+    /* The Workspace shell becomes an application canvas while the Lab is open:
+       the page stops scrolling and the board takes the height that is left. */
+    function markSurface(on) {
+      var root = typeof document !== 'undefined' && document.documentElement;
+      if (!root) return;
+      root.classList.toggle('is-lab-surface', Boolean(on));
+      if (!on) root.classList.remove('is-lab-focus');
+    }
+
+    /* Focus mode hides the global sidebar. The exit is the same button, which
+       stays on the bar and switches its icon, so it is never a trap. */
+    function setFocusMode(on) {
+      focusMode = Boolean(on);
+      var root = typeof document !== 'undefined' && document.documentElement;
+      if (root) root.classList.toggle('is-lab-focus', focusMode);
+      var btn = node.querySelector('[data-lab-focus]');
+      if (btn) {
+        btn.setAttribute('aria-pressed', focusMode ? 'true' : 'false');
+        btn.innerHTML = icon(focusMode ? 'unfocus' : 'focus');
+        btn.title = focusMode ? copy('Exit focus mode', 'Sair do modo foco') : copy('Focus mode', 'Modo foco');
+        btn.setAttribute('aria-label', btn.title);
+      }
+      playSound('click');
+      /* The board just changed width; re-frame it rather than leave the
+         glassware parked against an edge. */
+      if (typeof requestAnimationFrame === 'function') requestAnimationFrame(function () { fitView(); });
+      else fitView();
+    }
+
     function applyWorld() {
       ensureBoard(session);
       session.board.camera.x = panX;
@@ -3932,6 +3977,14 @@
       if (world) world.style.transform = 'translate(' + panX + 'px,' + panY + 'px) scale(' + zoom + ')';
       var zoomLabel = node.querySelector('[data-lab-zoom-label]');
       if (zoomLabel) zoomLabel.textContent = Math.round(zoom * 100) + '%';
+      /* The paper grid belongs to the world, so it travels and scales with it.
+         A fixed grid under a moving board reads as the board sliding on glass. */
+      var stage = node.querySelector('[data-lab-stage]');
+      if (stage) {
+        var step = Math.max(6, BOARD_GRID * zoom);
+        stage.style.backgroundSize = step + 'px ' + step + 'px';
+        stage.style.backgroundPosition = (panX % step) + 'px ' + (panY % step) + 'px';
+      }
       placeContextToolbar();
     }
 
@@ -4021,8 +4074,10 @@
       });
       var inspector = node.querySelector('[data-lab-inspector-pane]');
       var guide = node.querySelector('[data-lab-guide-host]');
+      var notebook = node.querySelector('[data-lab-notebook-pane]');
       if (inspector) inspector.hidden = sideTab !== 'inspector';
       if (guide) guide.hidden = sideTab !== 'guide';
+      if (notebook) notebook.hidden = sideTab !== 'notebook';
     }
 
     function syncSound() {
@@ -4041,8 +4096,10 @@
       results = results || (searchValue ? searchCatalog(searchValue) : { status: 'ok' });
       var creation = CREATIONS.filter(function (row) { return row.id === session.creationId; })[0];
       var guest = !user;
-      var notice = guest
-        ? '<p class="ws-lede">' + esc(copy('Create an account to save sessions. This demo stays on this device.', 'Crie uma conta para salvar sessões. Esta demonstração fica neste dispositivo.')) + '</p>'
+      var notice = '';
+      var guestChip = guest
+        ? '<span class="lab-bar-note" title="' + esc(copy('Create an account to save sessions. This demo stays on this device.', 'Crie uma conta para salvar sessões. Esta demonstração fica neste dispositivo.')) + '">' +
+          esc(copy('On this device', 'Neste dispositivo')) + '</span>'
         : '';
       var guided = CREATIONS.map(function (row) {
         return '<a class="ws-lab-card lab-creation-card" href="/app?section=lab&mode=guided&creation=' + esc(row.id) + '">' +
@@ -4075,6 +4132,7 @@
           notice +
           (recent ? '<section class="ws-overview-block"><h2 class="ws-h2">' + esc(copy('Recent sessions', 'Sessões recentes')) + '</h2><div class="ws-grid">' + recent + '</div></section>' : '') +
           '<section class="ws-overview-block"><h2 class="ws-h2">' + esc(copy('Observations', 'Observações')) + '</h2><ol class="lab-notes" data-lab-notes>' + notesHtml() + '</ol></section>';
+        markSurface(false);
         return;
       }
 
@@ -4091,16 +4149,25 @@
 
       node.innerHTML =
         '<div class="lab-board" data-lab-root>' +
+        /* A mini-toolbar, not a page header: history, what this board is, whether
+           it is saved, sound, and the two board-wide actions. */
         '<div class="lab-board-bar">' +
-        '<div class="lab-board-title"><p class="ws-kicker">Atomurus Lab</p>' +
-        '<h1 class="ws-title">' + esc(session.title || copy('Creation board', 'Board de criação')) + '</h1></div>' +
-        '<form class="lab-search" data-lab-search role="search">' +
+        '<div class="lab-bar-group">' +
+        '<button type="button" class="lab-tool-btn" data-lab-undo title="' + esc(copy('Undo', 'Desfazer')) + '" aria-label="' + esc(copy('Undo', 'Desfazer')) + '">' + icon('undo') + '</button>' +
+        '<button type="button" class="lab-tool-btn" data-lab-redo title="' + esc(copy('Redo', 'Refazer')) + '" aria-label="' + esc(copy('Redo', 'Refazer')) + '">' + icon('redo') + '</button>' +
+        '</div>' +
+        '<div class="lab-bar-title">' +
+        '<strong data-lab-title>' + esc(session.title || copy('Creation board', 'Board de criação')) + '</strong>' +
+        '<span class="lab-save-state" data-lab-saved>' + esc(copy('Saved', 'Salvo')) + '</span>' + guestChip +
+        '</div>' +
+        '<form class="lab-search lab-bar-search" data-lab-search role="search">' +
         '<label class="lc-sr-only" for="lab-q">' + esc(copy('What would you like to create?', 'O que você quer criar?')) + '</label>' +
         '<input id="lab-q" name="q" type="search" value="' + esc(searchValue) + '" placeholder="' + esc(copy('What would you like to create?', 'O que você quer criar?')) + '" autocomplete="off">' +
-        '<button type="submit" class="ws-btn ws-btn-secondary">' + esc(copy('Search', 'Pesquisar')) + '</button>' +
+        '<button type="submit" class="ws-btn ws-btn-sm ws-btn-secondary">' + esc(copy('Search', 'Pesquisar')) + '</button>' +
         '</form>' +
-        '<div class="lab-toolbar">' +
+        '<div class="lab-bar-group lab-toolbar">' +
         '<button type="button" class="lab-icon-btn" data-lab-sound aria-pressed="true" title="' + esc(copy('Sound on', 'Som ligado')) + '">' + icon('sound') + '</button>' +
+        '<button type="button" class="lab-icon-btn" data-lab-focus aria-pressed="false" title="' + esc(copy('Focus mode', 'Modo foco')) + '" aria-label="' + esc(copy('Focus mode', 'Modo foco')) + '">' + icon('focus') + '</button>' +
         '<button type="button" class="ws-btn ws-btn-sm" data-lab-reset>' + esc(copy('Reset', 'Reiniciar')) + '</button>' +
         '<button type="button" class="ws-btn ws-btn-sm ws-btn-primary" data-lab-save>' + esc(copy('Save', 'Salvar')) + '</button>' +
         '</div></div>' +
@@ -4117,10 +4184,6 @@
           'Arraste o canvas para selecionar · Espaço ou botão do meio para mover · Role para zoom'
         )) + '</p>' +
         contextToolbarHtml() +
-        '<div class="lab-hud lab-hud-left" role="toolbar" aria-label="' + esc(copy('History', 'Histórico')) + '">' +
-        '<button type="button" class="lab-tool-btn" data-lab-undo title="' + esc(copy('Undo', 'Desfazer')) + '" aria-label="' + esc(copy('Undo', 'Desfazer')) + '">' + icon('undo') + '</button>' +
-        '<button type="button" class="lab-tool-btn" data-lab-redo title="' + esc(copy('Redo', 'Refazer')) + '" aria-label="' + esc(copy('Redo', 'Refazer')) + '">' + icon('redo') + '</button>' +
-        '</div>' +
         '<div class="lab-hud lab-hud-right" role="toolbar" aria-label="' + esc(copy('Zoom', 'Zoom')) + '">' +
         '<button type="button" class="lab-tool-btn" data-lab-zoom="out" aria-label="' + esc(copy('Zoom out', 'Reduzir')) + '">−</button>' +
         '<span class="lab-zoom-label" data-lab-zoom-label>' + Math.round(zoom * 100) + '%</span>' +
@@ -4132,15 +4195,18 @@
         '<div class="lab-side-tabs" role="tablist">' +
         '<button type="button" role="tab" class="lab-side-tab" data-side="inspector" aria-selected="false">' + esc(copy('Inspector', 'Inspetor')) + '</button>' +
         '<button type="button" role="tab" class="lab-side-tab" data-side="guide" aria-selected="false">' + esc(copy('Step-by-step', 'Passo a passo')) + '</button>' +
+        '<button type="button" role="tab" class="lab-side-tab" data-side="notebook" aria-selected="false">' + esc(copy('Notebook', 'Caderno')) + '</button>' +
         '</div>' +
         '<div class="lab-side-body">' +
         '<div data-lab-inspector-pane hidden><div data-lab-inspector>' + inspectorHtml() + '</div></div>' +
         '<div data-lab-guide-host hidden>' + tutorialHtml() + '</div>' +
+        '<div data-lab-notebook-pane hidden><ol class="lab-notes" data-lab-notes>' + notesHtml() + '</ol></div>' +
         '</div></aside>' +
         '</div>' +
-        '<section class="ws-overview-block"><h2 class="ws-h2">' + esc(copy('Notebook', 'Caderno')) + '</h2><ol class="lab-notes" data-lab-notes>' + notesHtml() + '</ol></section>' +
         '</div>';
       bind(node);
+      markSurface(true);
+      setFocusMode(focusMode);
       syncSide();
       syncSound();
       applyWorld();
@@ -4213,7 +4279,7 @@
       rootEl.addEventListener('click', function (event) {
         try {
           var t = event.target && event.target.closest
-            ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-redo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel], [data-ready], [data-lab-zoom], [data-lab-fit], [data-lab-aspirate], [data-lab-dispense], [data-lab-drop], [data-lab-grind], [data-lab-drain], [data-lab-connect], [data-lab-duplicate], [data-lab-delete], [data-lab-rotate], [data-dock], [data-dock-close], [data-side], [data-lab-sound], [data-start-creation], [data-stop-creation], [data-step-add], [data-lab-hint], [data-step-connect], [data-step-heat], [data-step-distill], [data-lab-distill], [data-lab-filter], [data-lab-reflux], [data-step-reflux], [data-step-reflux-connect], [data-lab-remove], [data-lab-stack], [data-lab-ferment], [data-step-ferment], [data-lab-crystallise], [data-step-crystallise], [data-step-filter]')
+            ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-redo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel], [data-ready], [data-lab-zoom], [data-lab-fit], [data-lab-aspirate], [data-lab-dispense], [data-lab-drop], [data-lab-grind], [data-lab-drain], [data-lab-connect], [data-lab-duplicate], [data-lab-delete], [data-lab-rotate], [data-dock], [data-dock-close], [data-side], [data-lab-sound], [data-lab-focus], [data-start-creation], [data-stop-creation], [data-step-add], [data-lab-hint], [data-step-connect], [data-step-heat], [data-step-distill], [data-lab-distill], [data-lab-filter], [data-lab-reflux], [data-step-reflux], [data-step-reflux-connect], [data-lab-remove], [data-lab-stack], [data-lab-ferment], [data-step-ferment], [data-lab-crystallise], [data-step-crystallise], [data-step-filter]')
             : null;
           if (!t) return;
           if (t.hasAttribute('data-lab-sound')) {
@@ -4827,6 +4893,10 @@
             flushSave();
             updateLive();
             flashStatus('');
+            return;
+          }
+          if (t.hasAttribute('data-lab-focus')) {
+            setFocusMode(!focusMode);
             return;
           }
           if (t.hasAttribute('data-lab-save')) {

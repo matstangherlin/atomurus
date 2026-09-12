@@ -2005,6 +2005,9 @@
   /* Study home is the hub with the library underneath it. Library and Insights
      were two more tabs for pages that belong on this one. */
   async function renderStudyHome(node, api, user) {
+    /* The library is fetched alongside the hub, not after it: Study home is one
+       round trip wide instead of two deep. */
+    var libraryData = api.items({ exclude: 'calculator', limit: 40 }).catch(function () { return { items: [] }; });
     await renderOverview(node, api, user, { studyOnly: true });
     var hub = node.querySelector('.ws-study-hub') || node;
     var box = document.createElement('section');
@@ -2013,7 +2016,7 @@
     box.id = 'ws-study-library';
     var links = hub.querySelector('.ws-hub-links');
     if (links) hub.insertBefore(box, links); else hub.appendChild(box);
-    await renderLibrary(box, api);
+    await renderLibrary(box, api, libraryData);
     /* The hub already carries the page heading. */
     var crumb = box.querySelector('.ws-crumb');
     if (crumb) crumb.remove();
@@ -2025,9 +2028,9 @@
     }
   }
 
-  async function renderLibrary(node, api) {
+  async function renderLibrary(node, api, preloaded) {
     node.innerHTML = sectionHead(t('libraryTitle'), t('libraryLede'), true) + skeleton();
-    var library = await api.items({ exclude: 'calculator', limit: 40 });
+    var library = await (preloaded || api.items({ exclude: 'calculator', limit: 40 }));
     var items = library.items || [];
     if (!items.length) {
       node.innerHTML = sectionHead(t('libraryTitle'), t('libraryLede'), true) +
@@ -3184,6 +3187,9 @@
   }
 
   function resetStudyRoot() {
+    /* Only the Lab turns the Workspace into a full canvas; every other section
+       is an ordinary scrolling page. */
+    document.documentElement.classList.remove('is-lab-surface', 'is-lab-focus');
     var node = $('app-study');
     if (!node || !node.parentNode) return node;
     var clone = node.cloneNode(false);

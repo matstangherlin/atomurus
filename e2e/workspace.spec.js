@@ -27,7 +27,7 @@ test('Free uses Study Cloud and still sees Review as Pro', async ({ page }) => {
   await expect(page.locator('#app-study')).toContainText(/Study Sets/);
   await expect(page.locator('#ws-dialog-host')).toHaveCount(0);
 
-  await gotoWorkspace(page, '/app?section=library');
+  await gotoWorkspace(page, '/app?section=study');
   await expect(page.locator('#ws-lib-list')).toContainText('Iron');
   await expect(page.locator('[data-generate-item]')).toHaveCount(0);
 
@@ -888,4 +888,52 @@ test('Workspace home is the Virtual Lab and Open Bench runs', async ({ page }) =
   await page.locator('[data-lab-guide] [data-step-add="oil"]').click();
   await expect(page.locator('[data-lab-guide]')).toContainText(/Step 2 of 4|Passo 2 de 4/i);
   await expect(page.locator('[data-lab-guide]')).toContainText(/zinc oxide|óxido de zinco/i);
+});
+test('Lab fills the viewport as a canvas, not a card on a page', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await installApi(page, { kind: 'free' });
+  await gotoWorkspace(page, '/app');
+  await page.waitForSelector('.lab-beaker');
+
+  // None of the page chrome a board should not carry.
+  await expect(page.locator('#app-study .ws-crumb')).toHaveCount(0);
+  await expect(page.locator('#app-study h1')).toHaveCount(0);
+  await expect(page.locator('#app-study .ws-lab-hero')).toHaveCount(0);
+  await expect(page.locator('#app-study .ws-section-head')).toHaveCount(0);
+  await expect(page.locator('.ws-local-nav')).toHaveCount(0);
+
+  // The document itself does not scroll; the board took the height instead.
+  const page_scroll = await page.evaluate(() => ({
+    doc: document.documentElement.scrollHeight - document.documentElement.clientHeight,
+    stage: document.querySelector('[data-lab-stage]').getBoundingClientRect(),
+    viewport: window.innerHeight
+  }));
+  expect(page_scroll.doc).toBeLessThanOrEqual(1);
+  expect(page_scroll.stage.height).toBeGreaterThan(page_scroll.viewport * 0.6);
+  expect(page_scroll.stage.bottom).toBeLessThanOrEqual(page_scroll.viewport + 1);
+
+  // The paper grid belongs to the world: it scales with zoom.
+  const gridAt100 = await page.locator('[data-lab-stage]').evaluate((el) => getComputedStyle(el).backgroundSize);
+  await page.locator('[data-lab-zoom="in"]').click();
+  await page.locator('[data-lab-zoom="in"]').click();
+  const gridZoomed = await page.locator('[data-lab-stage]').evaluate((el) => getComputedStyle(el).backgroundSize);
+  expect(parseFloat(gridZoomed)).toBeGreaterThan(parseFloat(gridAt100));
+
+  // Notebook is a side panel tab now, not a section under the board.
+  await expect(page.locator('#app-study > .lab-board > .ws-overview-block')).toHaveCount(0);
+  await page.locator('[data-side="notebook"]').click();
+  await expect(page.locator('.lab-side-body .lab-notes')).toBeVisible();
+
+  // Focus mode hides the global sidebar and the same button brings it back.
+  await expect(page.locator('.ws-sidebar')).toBeVisible();
+  await page.locator('[data-lab-focus]').click();
+  await expect(page.locator('.ws-sidebar')).toBeHidden();
+  await expect(page.locator('[data-lab-focus]')).toHaveAttribute('aria-pressed', 'true');
+  await page.locator('[data-lab-focus]').click();
+  await expect(page.locator('.ws-sidebar')).toBeVisible();
+
+  // Leaving the Lab gives the page back its normal scrolling behaviour.
+  await gotoWorkspace(page, '/app?section=study');
+  await expect(page.locator('html')).not.toHaveClass(/is-lab-surface/);
+  await saveShot(page, 'desktop-lab-canvas');
 });

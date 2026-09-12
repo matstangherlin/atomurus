@@ -2595,3 +2595,108 @@ html[data-reduced-motion="1"] .lab-piece.is-boiling .lab-vessel { animation: non
   .ws-study-strip { align-items: flex-start; }
   .ws-study-strip-side { width: 100%; }
 }
+
+/* ============================================================
+   Lab as an application canvas (prompt 68)
+   The Workspace stops being a scrolling page while the board is
+   open: the shell keeps its own height, the board takes what is
+   left, and only the panels scroll.
+   ============================================================ */
+.is-lab-surface .ws-main {
+  overflow: hidden;
+  padding: 14px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.is-lab-surface .ws-content {
+  max-width: none;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.is-lab-surface #app-study {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.is-lab-surface .ws-study-nav { margin-bottom: 10px; }
+.is-lab-surface .lab-board {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.is-lab-surface .lab-stage-shell {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+/* The stage no longer guesses its height from the viewport: it takes what the
+   flex column has left, which is correct whether or not the nav wrapped. */
+.is-lab-surface .lab-stage-shell .lab-board-stage,
+.is-lab-surface .lab-board-stage {
+  height: auto;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+.is-lab-surface .lab-side { max-height: none; }
+.is-lab-surface .lab-side-body { flex: 1 1 auto; min-height: 0; }
+.is-lab-surface .lab-dock-panel { max-height: none; }
+
+/* Focus mode: the global sidebar steps out, the exit stays on the bar. */
+.is-lab-focus .ws-shell { grid-template-columns: 0 minmax(0, 1fr); }
+.is-lab-focus .ws-sidebar { display: none; }
+.is-lab-focus .ws-main { padding-left: 18px; }
+
+/* The mini-toolbar that replaced the page header. */
+.lab-board-bar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px 12px;
+  flex-wrap: wrap;
+  margin: 0 0 10px;
+}
+.lab-bar-group { display: flex; align-items: center; gap: 4px; }
+.lab-bar-title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+  flex: 0 1 auto;
+}
+.lab-bar-title strong {
+  font-size: 15px;
+  font-weight: 650;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.lab-save-state {
+  font-size: 11.5px;
+  color: var(--lc-ink-3, #8E8978);
+  white-space: nowrap;
+}
+.lab-save-state.is-pending { color: var(--lc-green, #1E6A50); }
+.lab-bar-search { flex: 1 1 220px; max-width: 360px; margin: 0; }
+.lab-bar-search input { height: 32px; }
+.lab-board-bar .lab-toolbar { margin-left: auto; }
+@media (max-width: 900px) {
+  .lab-bar-search { order: 9; flex-basis: 100%; max-width: none; }
+  .lab-board-bar .lab-toolbar { margin-left: 0; }
+}
+
+/* Notebook is the third side panel tab, not a section under the board. */
+.lab-side-body .lab-notes { margin: 0; padding-left: 18px; }
+.lab-bar-note {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .02em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--lc-rule, #D8D2BF);
+  color: var(--lc-ink-3, #8E8978);
+  white-space: nowrap;
+}
