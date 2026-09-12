@@ -579,6 +579,7 @@ test('Lab board pinch-zooms with two fingers', async ({ page }) => {
   await gotoWorkspace(page, '/app?section=lab&mode=bench');
   await page.waitForSelector('.lab-beaker');
   await page.locator('[data-lab-fit]').click();
+  await expect(page.locator('[data-lab-stage]')).not.toHaveAttribute('data-lab-camera', 'moving');
   const before = await page.locator('[data-lab-zoom-label]').innerText();
 
   await page.locator('[data-lab-stage]').evaluate((stage) => {
@@ -610,11 +611,18 @@ test('Lab board selects with a marquee, moves the group and restacks', async ({ 
   await gotoWorkspace(page, '/app?section=lab&mode=bench');
   await page.waitForSelector('.lab-beaker');
   await page.locator('[data-lab-fit]').click();
+  await expect(page.locator('[data-lab-stage]')).not.toHaveAttribute('data-lab-camera', 'moving');
 
   // Dragging empty canvas draws a selection rectangle, it does not pan.
+  // Start from the stage's own corner: the gap left of the first piece is only
+  // as wide as the fit padding, so measuring back from the piece can land on
+  // the dock.
+  const stage = await page.locator('[data-lab-stage]').boundingBox();
   const first = await page.locator('[data-vessel="beaker-a"]').boundingBox();
   const last = await page.locator('[data-vessel="cylinder-c"]').boundingBox();
-  await page.mouse.move(first.x - 40, first.y + 20);
+  const startX = stage.x + 4;
+  expect(startX).toBeLessThan(first.x);
+  await page.mouse.move(startX, first.y + 20);
   await page.mouse.down();
   await page.mouse.move(last.x + last.width + 20, last.y + last.height + 20, { steps: 12 });
   await expect(page.locator('.lab-marquee')).toHaveCount(1);
@@ -936,4 +944,110 @@ test('Lab fills the viewport as a canvas, not a card on a page', async ({ page }
   await gotoWorkspace(page, '/app?section=study');
   await expect(page.locator('html')).not.toHaveClass(/is-lab-surface/);
   await saveShot(page, 'desktop-lab-canvas');
+});
+
+test('Lab zoom and pan behave like a board', async ({ page }) => {
+  await installApi(page, { kind: 'free' });
+  await gotoWorkspace(page, '/app?section=lab&mode=bench');
+  await page.waitForSelector('.lab-beaker');
+  const settled = () => expect(page.locator('[data-lab-stage]')).not.toHaveAttribute('data-lab-camera', 'moving');
+  const zoomNow = async () => parseInt(await page.locator('[data-lab-zoom-label]').innerText(), 10);
+  const camera = () => page.evaluate(() => {
+    const w = document.querySelector('[data-lab-world]');
+    const m = /translate\(([-\d.]+)px,\s*([-\d.]+)px\)\s*scale\(([\d.]+)\)/.exec(w.style.transform);
+    return { x: +m[1], y: +m[2], z: +m[3] };
+  });
+
+  await page.locator('[data-lab-fit]').click();
+  await settled();
+
+  // The percentage is a menu of exact steps.
+  await page.locator('[data-lab-zoom-menu]').click();
+  await expect(page.locator('[data-lab-zoom-list]')).toBeVisible();
+  await page.locator('[data-lab-zoom-to="2"]').click();
+  await expect(page.locator('[data-lab-zoom-list]')).toBeHidden();
+  expect(await zoomNow()).toBe(200);
+
+  // Ctrl+0 is 100%, and the zoom buttons walk the same ladder.
+  await page.locator('[data-lab-stage]').click({ position: { x: 8, y: 8 } });
+  await page.keyboard.press('Control+0');
+  expect(await zoomNow()).toBe(100);
+  await page.locator('[data-lab-zoom="in"]').click();
+  expect(await zoomNow()).toBe(125);
+  await page.locator('[data-lab-zoom="out"]').click();
+  expect(await zoomNow()).toBe(100);
+
+  // Zoom happens around the pointer: the world point under it does not move.
+  const box = await page.locator('[data-lab-stage]').boundingBox();
+  const px = 120;
+  const py = 90;
+  const before = await camera();
+  const worldBefore = { x: (px - before.x) / before.z, y: (py - before.y) / before.z };
+  await page.mouse.move(box.x + px, box.y + py);
+  await page.keyboard.down('Control');
+  await page.mouse.wheel(0, -240);
+  await page.keyboard.up('Control');
+  const after = await camera();
+  expect(after.z).toBeGreaterThan(before.z);
+  const worldAfter = { x: (px - after.x) / after.z, y: (py - after.y) / after.z };
+  expect(Math.abs(worldAfter.x - worldBefore.x)).toBeLessThan(12);
+  expect(Math.abs(worldAfter.y - worldBefore.y)).toBeLessThan(12);
+
+  // A plain wheel pans instead of zooming.
+  const beforePan = await camera();
+  await page.mouse.wheel(0, 120);
+  const afterPan = await camera();
+  expect(afterPan.z).toBeCloseTo(beforePan.z, 5);
+  expect(afterPan.y).toBeLessThan(beforePan.y);
+
+  // Hand tool: the dock offers it, Space holds it, release gives Select back.
+  await expect(page.locator('[data-board-tool="select"]')).toHaveAttribute('aria-pressed', 'true');
+  await page.keyboard.down('Space');
+  await expect(page.locator('[data-lab-stage]')).toHaveClass(/is-hand/);
+  await page.keyboard.up('Space');
+  await expect(page.locator('[data-lab-stage]')).not.toHaveClass(/is-hand/);
+  await page.locator('[data-board-tool="hand"]').click();
+  await expect(page.locator('[data-lab-stage]')).toHaveClass(/is-hand/);
+
+  // With Hand on, dragging a piece moves the board, not the piece.
+  const piece = await page.locator('[data-vessel="beaker-a"]').boundingBox();
+  const camBefore = await camera();
+  await page.mouse.move(piece.x + piece.width / 2, piece.y + 40);
+  await page.mouse.down();
+  await page.mouse.move(piece.x + piece.width / 2 + 90, piece.y + 40, { steps: 8 });
+  await page.mouse.up();
+  const camAfter = await camera();
+  expect(camAfter.x - camBefore.x).toBeGreaterThan(50);
+  await page.locator('[data-board-tool="select"]').click();
+
+  // Fitting one piece goes closer than fitting the whole board.
+  await page.locator('[data-vessel="beaker-a"]').click();
+  await page.locator('[data-lab-zoom-menu]').click();
+  await expect(page.locator('[data-lab-fit-selection]')).toBeEnabled();
+  await page.locator('[data-lab-fit-selection]').click();
+  await settled();
+  const oneUp = await zoomNow();
+  await page.keyboard.press('Control+1');
+  await settled();
+  expect(await zoomNow()).toBeLessThan(oneUp);
+
+  // The camera is remembered per session.
+  await page.locator('[data-lab-zoom-menu]').click();
+  await page.locator('[data-lab-zoom-to="1.5"]').click();
+  expect(await zoomNow()).toBe(150);
+  await page.waitForTimeout(700);
+  await page.reload();
+  await page.waitForSelector('.lab-beaker');
+  expect(await zoomNow()).toBe(150);
+
+  // Clicking the board makes it the keyboard target, so select-all reaches it.
+  await page.locator('[data-vessel="beaker-a"]').click();
+  await page.keyboard.press('Control+a');
+  await expect(page.locator('.lab-piece.is-active')).toHaveCount(3);
+  await page.locator('[data-lab-delete]').click();
+  // The bench always keeps a vessel to work on, so there is always something
+  // selected and Fit selection stays live.
+  await expect(page.locator('.lab-piece')).toHaveCount(1);
+  await page.locator('[data-lab-zoom-menu]').click();
+  await expect(page.locator('[data-lab-fit-selection]')).toBeEnabled();
 });

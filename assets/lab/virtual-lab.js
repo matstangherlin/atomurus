@@ -12,7 +12,14 @@
   /* Paper grid pitch, in world units. The stage paints it; the camera moves it. */
   var BOARD_GRID = 22;
   var ZOOM_MIN = 0.25;
-  var ZOOM_MAX = 3;
+  var ZOOM_MAX = 4;
+  /* The steps the percentage menu offers, and the ceiling each Fit may reach.
+     Fit all stops at 1 so three beakers never fill a 27-inch screen; Fit
+     selection may go closer, because asking to fit one piece means look at it. */
+  var ZOOM_STEPS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 3, 4];
+  var FIT_ALL_MAX = 1;
+  var FIT_SELECTION_MAX = 2;
+  var CAM_MS = 200;
 
   var SOUND_KEY = 'atomurus-lab-sound';
   var SOUNDS = {
@@ -2930,6 +2937,9 @@
     if (zoom > ZOOM_MAX) zoom = ZOOM_MAX;
     var saveTimer = 0;
     var focusMode = false;
+    var camAnim = 0;
+    var boardTool = 'select';
+    var zoomMenuOpen = false;
     var stirTimer = 0;
     var lastStatus = '';
     var dragging = null;
@@ -2946,7 +2956,9 @@
     var fxTimer = 0;
     var heatTimer = 0;
     var dockOpen = '';
-    var autoCam = true;
+    /* A camera the user placed is reopened as they left it; only a board that
+       has never been framed by hand is auto-fitted on mount. */
+    var autoCam = !(session.board && session.board.camera && session.board.camera.manual);
     var sideTab = session.creationId ? 'guide' : 'inspector';
     var hintLevel = 0;
     var lastStepKey = '';
@@ -3098,6 +3110,8 @@
         sound: '<path d="M4 8.5 h3.5 L12 4.5 v13 L7.5 13.5 H4 Z"/><path d="M15 8 q2.4 3 0 6"/><path d="M17.6 5.8 q4 5.2 0 10.4"/>',
         muted: '<path d="M4 8.5 h3.5 L12 4.5 v13 L7.5 13.5 H4 Z"/><path d="M15.5 8.5 L20 13 M20 8.5 L15.5 13"/>',
         focus: '<path d="M3.5 8 V4.5 h3.5 M15 4.5 h3.5 V8 M18.5 14 v3.5 H15 M7 17.5 H3.5 V14"/><circle cx="11" cy="11" r="2.6"/>',
+        cursor: '<path d="M5.5 3 L15.5 11.4 L11 12 L13.2 17.4 L11 18.4 L8.8 13 L5.5 15.6 Z"/>',
+        hand: '<path d="M7 11.5 V5.8 a1.35 1.35 0 0 1 2.7 0 V10 m0 -0.6 V4.6 a1.35 1.35 0 0 1 2.7 0 V10 m0 -0.4 V5.6 a1.35 1.35 0 0 1 2.7 0 V13 m0 -3.4 a1.35 1.35 0 0 1 2.7 0 v3.9 q0 4.9 -4.9 4.9 h-1.2 q-2.5 0 -3.9 -2.3 L7 14.6 a1.4 1.4 0 0 1 2.4 -1.4"/>',
         unfocus: '<path d="M7 3.5 V7 H3.5 M15 3.5 V7 h3.5 M18.5 15 H15 v3.5 M7 18.5 V15 H3.5"/><circle cx="11" cy="11" r="2.6"/>',
         pour: '<path d="M5 5 h7 v8 q0 3 -3.5 3 T5 13 Z"/><path d="M12 7 l4 -2"/><path d="M17 9 v3 M17 15 v2"/>',
         stir: '<path d="M4 9 q3.5 -5 7 0 t7 0"/><path d="M4 14 q3.5 -5 7 0 t7 0"/>',
@@ -3190,6 +3204,13 @@
       var wanted = wantedNow();
       return '<div class="lab-dock' + (dockOpen ? ' is-open' : '') + '" data-lab-dock>' +
         '<div class="lab-dock-rail" role="toolbar" aria-label="' + esc(copy('Lab tools', 'Ferramentas do Lab')) + '">' +
+        '<button type="button" class="lab-dock-btn lab-dock-mode' + (boardTool === 'select' ? ' is-on' : '') + '" data-board-tool="select" ' +
+        'title="' + esc(copy('Select', 'Selecionar')) + ' (V)" aria-pressed="' + (boardTool === 'select' ? 'true' : 'false') + '">' +
+        icon('cursor') + '<span class="lab-dock-name">' + esc(copy('Select', 'Selecionar')) + '</span></button>' +
+        '<button type="button" class="lab-dock-btn lab-dock-mode' + (boardTool === 'hand' ? ' is-on' : '') + '" data-board-tool="hand" ' +
+        'title="' + esc(copy('Hand', 'Mão')) + ' (H · hold Space)" aria-pressed="' + (boardTool === 'hand' ? 'true' : 'false') + '">' +
+        icon('hand') + '<span class="lab-dock-name">' + esc(copy('Hand', 'Mão')) + '</span></button>' +
+        '<i class="lab-dock-rule"></i>' +
         dockGroups().map(function (group) {
           var on = dockOpen === group.key;
           var badge = group.key === 'create' && wanted.creation ? '<i class="lab-dock-dot" aria-hidden="true"></i>' : '';
@@ -3297,6 +3318,44 @@
     function toolBtn(attr, iconName, label, extra) {
       return '<button type="button" class="lab-tool-btn' + (extra || '') + '" ' + attr +
         ' title="' + esc(label) + '" aria-label="' + esc(label) + '">' + icon(iconName) + '</button>';
+    }
+
+    /* [ − ] [ 82% ] [ + ] [ Fit ], bottom right, with the percentage itself a
+       menu of exact steps. Every control carries its shortcut in the tooltip. */
+    function zoomControlHtml() {
+      var steps = ZOOM_STEPS.filter(function (step) { return step <= 2; });
+      var hasSelection = actingOn().length > 0;
+      return '<div class="lab-hud lab-hud-right" role="toolbar" aria-label="' + esc(copy('Zoom', 'Zoom')) + '">' +
+        '<button type="button" class="lab-tool-btn" data-lab-zoom="out" title="' + esc(copy('Zoom out', 'Reduzir')) + ' (Ctrl −)" aria-label="' + esc(copy('Zoom out', 'Reduzir')) + '">−</button>' +
+        '<button type="button" class="lab-zoom-label" data-lab-zoom-menu aria-haspopup="true" aria-expanded="' + (zoomMenuOpen ? 'true' : 'false') + '" ' +
+        'title="' + esc(copy('Zoom level', 'Nível de zoom')) + '" aria-label="' + esc(copy('Zoom level', 'Nível de zoom')) + '">' +
+        '<span data-lab-zoom-label>' + Math.round(zoom * 100) + '%</span></button>' +
+        '<button type="button" class="lab-tool-btn" data-lab-zoom="in" title="' + esc(copy('Zoom in', 'Ampliar')) + ' (Ctrl +)" aria-label="' + esc(copy('Zoom in', 'Ampliar')) + '">+</button>' +
+        '<i class="lab-tool-sep"></i>' +
+        '<button type="button" class="lab-tool-btn lab-tool-wide" data-lab-fit title="' + esc(copy('Fit board', 'Ajustar board')) + ' (Ctrl 1)">' + esc(copy('Fit', 'Ajustar')) + '</button>' +
+        '<div class="lab-zoom-menu" data-lab-zoom-list' + (zoomMenuOpen ? '' : ' hidden') + ' role="menu">' +
+        steps.map(function (step) {
+          var on = Math.abs(step - zoom) < 0.005;
+          return '<button type="button" role="menuitem" class="lab-zoom-item' + (on ? ' is-on' : '') + '" data-lab-zoom-to="' + step + '">' +
+            Math.round(step * 100) + '%</button>';
+        }).join('') +
+        '<i class="lab-zoom-rule"></i>' +
+        '<button type="button" role="menuitem" class="lab-zoom-item" data-lab-fit-all>' + esc(copy('Fit all', 'Ajustar tudo')) + '</button>' +
+        '<button type="button" role="menuitem" class="lab-zoom-item" data-lab-fit-selection' + (hasSelection ? '' : ' disabled') + '>' +
+        esc(copy('Fit selection', 'Ajustar seleção')) + '</button>' +
+        '</div></div>';
+    }
+
+    /* Cheap enough to run on every live update: one attribute, no re-render. */
+    function syncFitSelection() {
+      var btn = node.querySelector('[data-lab-fit-selection]');
+      if (btn) btn.disabled = actingOn().length === 0;
+    }
+
+    function syncZoomControl() {
+      var host = node.querySelector('.lab-hud-right');
+      if (!host) return;
+      host.outerHTML = zoomControlHtml();
     }
 
     function contextToolbarHtml() {
@@ -3899,12 +3958,15 @@
       };
     }
 
-    function boardBounds() {
+    /* The box a camera move should frame. With ids, only those pieces. */
+    function boardBounds(ids) {
       var minX = Infinity;
       var minY = Infinity;
       var maxX = -Infinity;
       var maxY = -Infinity;
+      var only = Array.isArray(ids) && ids.length ? ids : null;
       (session.containers || []).forEach(function (row) {
+        if (only && only.indexOf(row.id) === -1) return;
         var obj = findObject(session, row.id);
         var spec = specOf(row.type);
         var x = Number(obj ? obj.x : row.x);
@@ -3919,25 +3981,153 @@
       return { x: minX, y: minY, w: Math.max(1, maxX - minX), h: Math.max(1, maxY - minY) };
     }
 
-    function fitView() {
+    function clampZoom(value) {
+      var next = Number(value);
+      if (!isFinite(next)) return zoom;
+      return Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, next));
+    }
+
+    /* Zoom about a point of the stage, keeping the world coordinate under that
+       point exactly where it was. Zooming about the centre instead is the single
+       thing that makes a board feel wrong. */
+    function zoomAround(nextZoom, sx, sy) {
+      var next = clampZoom(nextZoom);
+      if (next === zoom) return;
+      var wx = (sx - panX) / zoom;
+      var wy = (sy - panY) / zoom;
+      zoom = next;
+      panX = sx - wx * zoom;
+      panY = sy - wy * zoom;
+      autoCam = false;
+      applyWorld();
+      queueSave();
+    }
+
+    function stageCentre() {
       var stage = node.querySelector('[data-lab-stage]');
-      var box = boardBounds();
+      if (!stage) return { x: 0, y: 0 };
+      var rect = stage.getBoundingClientRect();
+      return { x: rect.width / 2, y: rect.height / 2 };
+    }
+
+    /* Keyboard and the +/− buttons have no pointer, so they work about the
+       middle of the board, which is what the user is looking at. */
+    function zoomStep(direction) {
+      var mid = stageCentre();
+      var ordered = direction > 0 ? ZOOM_STEPS : ZOOM_STEPS.slice().reverse();
+      var next = ordered.filter(function (step) {
+        return direction > 0 ? step > zoom + 0.001 : step < zoom - 0.001;
+      })[0];
+      zoomAround(next == null ? zoom : next, mid.x, mid.y);
+    }
+
+    function setZoom(value) {
+      var mid = stageCentre();
+      zoomAround(value, mid.x, mid.y);
+    }
+
+    /* One short camera move, so Fit reads as travelling there rather than
+       cutting. Manual zoom stays instant on purpose. */
+    /* The stage says while it is travelling, so anything reading geometry can
+       wait for the camera to land instead of measuring a moving board. */
+    function markCamera(moving) {
+      var stage = node.querySelector('[data-lab-stage]');
+      if (!stage) return;
+      if (moving) stage.setAttribute('data-lab-camera', 'moving');
+      else stage.removeAttribute('data-lab-camera');
+    }
+
+    function animateCamera(toX, toY, toZoom) {
+      var fromX = panX;
+      var fromY = panY;
+      var fromZoom = zoom;
+      if (camAnim && typeof cancelAnimationFrame === 'function') cancelAnimationFrame(camAnim);
+      camAnim = 0;
+      var reduced = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduced || typeof requestAnimationFrame !== 'function') {
+        panX = toX; panY = toY; zoom = toZoom;
+        applyWorld();
+        markCamera(false);
+        return;
+      }
+      markCamera(true);
+      var started = 0;
+      var tick = function (now) {
+        if (!started) started = now;
+        var k = Math.min(1, (now - started) / CAM_MS);
+        var ease = 1 - Math.pow(1 - k, 3);
+        panX = fromX + (toX - fromX) * ease;
+        panY = fromY + (toY - fromY) * ease;
+        zoom = fromZoom + (toZoom - fromZoom) * ease;
+        applyWorld();
+        if (k < 1) { camAnim = requestAnimationFrame(tick); return; }
+        camAnim = 0;
+        markCamera(false);
+        queueSave();
+      };
+      camAnim = requestAnimationFrame(tick);
+    }
+
+    function fitBox(box, maxZoom, animate) {
+      var stage = node.querySelector('[data-lab-stage]');
       if (!stage || !box) return false;
       var rect = stage.getBoundingClientRect();
       if (!rect.width || !rect.height) return false;
       var pad = boardInsets(rect);
       var availW = Math.max(160, rect.width - pad.left - pad.right);
       var availH = Math.max(160, rect.height - pad.top - pad.bottom);
-      var next = Math.min(1, availW / box.w, availH / box.h);
-      zoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, next));
-      panX = Math.round(pad.left + (availW - box.w * zoom) / 2 - box.x * zoom);
-      panY = Math.round(pad.top + (availH - box.h * zoom) / 2 - box.y * zoom);
-      applyWorld();
+      var next = clampZoom(Math.min(maxZoom, availW / box.w, availH / box.h));
+      var toX = Math.round(pad.left + (availW - box.w * next) / 2 - box.x * next);
+      var toY = Math.round(pad.top + (availH - box.h * next) / 2 - box.y * next);
+      if (animate) animateCamera(toX, toY, next);
+      else {
+        zoom = next; panX = toX; panY = toY;
+        applyWorld();
+      }
       return true;
+    }
+
+    function fitView(animate) {
+      return fitBox(boardBounds(), FIT_ALL_MAX, animate);
+    }
+
+    /* Fit selection is disabled when nothing is selected, so it never silently
+       falls back to fitting the whole board. */
+    function selectionBounds() {
+      var ids = actingOn();
+      if (!ids.length) return null;
+      return boardBounds(ids);
+    }
+
+    function fitSelection() {
+      var box = selectionBounds();
+      if (!box) return false;
+      autoCam = false;
+      return fitBox(box, FIT_SELECTION_MAX, true);
     }
 
     /* The Workspace shell becomes an application canvas while the Lab is open:
        the page stops scrolling and the board takes the height that is left. */
+    /* Hand is on when the dock says so, or while Space is held. Releasing Space
+       always returns to whatever the dock had, never to a guess. */
+    function handOn() { return boardTool === 'hand' || spaceDown; }
+
+    function syncBoardTool() {
+      node.querySelectorAll('[data-board-tool]').forEach(function (btn) {
+        var on = btn.getAttribute('data-board-tool') === boardTool;
+        btn.classList.toggle('is-on', on);
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+      var stage = node.querySelector('[data-lab-stage]');
+      if (stage) stage.classList.toggle('is-hand', handOn());
+    }
+
+    function setBoardTool(next) {
+      boardTool = next === 'hand' ? 'hand' : 'select';
+      syncBoardTool();
+      playSound('click');
+    }
+
     function markSurface(on) {
       var root = typeof document !== 'undefined' && document.documentElement;
       if (!root) return;
@@ -3947,21 +4137,28 @@
 
     /* Focus mode hides the global sidebar. The exit is the same button, which
        stays on the bar and switches its icon, so it is never a trap. */
-    function setFocusMode(on) {
-      focusMode = Boolean(on);
+    /* Painting only restates the current mode. Re-framing and the cue belong to
+       the toggle, not to every repaint: doing them here threw away a camera the
+       user had placed, every time the board redrew. */
+    function syncFocusMode() {
       var root = typeof document !== 'undefined' && document.documentElement;
       if (root) root.classList.toggle('is-lab-focus', focusMode);
       var btn = node.querySelector('[data-lab-focus]');
-      if (btn) {
-        btn.setAttribute('aria-pressed', focusMode ? 'true' : 'false');
-        btn.innerHTML = icon(focusMode ? 'unfocus' : 'focus');
-        btn.title = focusMode ? copy('Exit focus mode', 'Sair do modo foco') : copy('Focus mode', 'Modo foco');
-        btn.setAttribute('aria-label', btn.title);
-      }
+      if (!btn) return;
+      btn.setAttribute('aria-pressed', focusMode ? 'true' : 'false');
+      btn.innerHTML = icon(focusMode ? 'unfocus' : 'focus');
+      btn.title = focusMode ? copy('Exit focus mode', 'Sair do modo foco') : copy('Focus mode', 'Modo foco');
+      btn.setAttribute('aria-label', btn.title);
+    }
+
+    function setFocusMode(on) {
+      focusMode = Boolean(on);
+      syncFocusMode();
       playSound('click');
-      /* The board just changed width; re-frame it rather than leave the
-         glassware parked against an edge. */
-      if (typeof requestAnimationFrame === 'function') requestAnimationFrame(function () { fitView(); });
+      /* The board just changed width. Re-frame it only if the camera was still
+         automatic; a zoom the user chose survives the panel moving. */
+      if (!autoCam) return;
+      if (typeof requestAnimationFrame === 'function') requestAnimationFrame(function () { if (autoCam) fitView(true); });
       else fitView();
     }
 
@@ -3970,6 +4167,7 @@
       session.board.camera.x = panX;
       session.board.camera.y = panY;
       session.board.camera.zoom = zoom;
+      session.board.camera.manual = !autoCam;
       session.panX = panX;
       session.panY = panY;
       session.zoom = zoom;
@@ -4016,7 +4214,20 @@
       var dockBody = node.querySelector('[data-dock-body]');
       var amounts = node.querySelectorAll('[data-amount]');
       announceStep();
-      if (bench && !dragging) bench.innerHTML = boardHtml();
+      syncFitSelection();
+      if (bench && !dragging) {
+        /* Re-rendering the board destroys whatever inside it had focus, which
+           left the keyboard pointing at the document body and every board
+           shortcut dead. The stage is the board's keyboard home. */
+        var hadFocus = document.activeElement && bench.contains(document.activeElement);
+        bench.innerHTML = boardHtml();
+        if (hadFocus) {
+          var stageEl = node.querySelector('[data-lab-stage]');
+          if (stageEl) {
+            try { stageEl.focus({ preventScroll: true }); } catch (eR) { try { stageEl.focus(); } catch (eR2) {} }
+          }
+        }
+      }
       if (inspector) inspector.innerHTML = inspectorHtml();
       if (notes) notes.innerHTML = notesHtml();
       if (guide) guide.innerHTML = tutorialHtml();
@@ -4180,17 +4391,12 @@
         '<div class="lab-board-world" data-lab-world data-lab-bench>' + boardHtml() + '</div>' +
         '</div>' +
         '<p class="lab-hint">' + esc(copy(
-          'Drag the canvas to select · Space or middle-drag to pan · Scroll to zoom',
-          'Arraste o canvas para selecionar · Espaço ou botão do meio para mover · Role para zoom'
+          'Drag to select · Space or H to pan · Ctrl+scroll to zoom · Ctrl+1 fits',
+          'Arraste para selecionar · Espaço ou H para mover · Ctrl+scroll para zoom · Ctrl+1 ajusta'
         )) + '</p>' +
         contextToolbarHtml() +
-        '<div class="lab-hud lab-hud-right" role="toolbar" aria-label="' + esc(copy('Zoom', 'Zoom')) + '">' +
-        '<button type="button" class="lab-tool-btn" data-lab-zoom="out" aria-label="' + esc(copy('Zoom out', 'Reduzir')) + '">−</button>' +
-        '<span class="lab-zoom-label" data-lab-zoom-label>' + Math.round(zoom * 100) + '%</span>' +
-        '<button type="button" class="lab-tool-btn" data-lab-zoom="in" aria-label="' + esc(copy('Zoom in', 'Ampliar')) + '">+</button>' +
-        '<i class="lab-tool-sep"></i>' +
-        '<button type="button" class="lab-tool-btn lab-tool-wide" data-lab-fit>' + esc(copy('Fit', 'Ajustar')) + '</button>' +
-        '</div></div>' +
+        zoomControlHtml() +
+        '</div>' +
         '<aside class="lab-side" data-lab-side>' +
         '<div class="lab-side-tabs" role="tablist">' +
         '<button type="button" role="tab" class="lab-side-tab" data-side="inspector" aria-selected="false">' + esc(copy('Inspector', 'Inspetor')) + '</button>' +
@@ -4206,7 +4412,8 @@
         '</div>';
       bind(node);
       markSurface(true);
-      setFocusMode(focusMode);
+      syncBoardTool();
+      syncFocusMode();
       syncSide();
       syncSound();
       applyWorld();
@@ -4279,7 +4486,7 @@
       rootEl.addEventListener('click', function (event) {
         try {
           var t = event.target && event.target.closest
-            ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-redo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel], [data-ready], [data-lab-zoom], [data-lab-fit], [data-lab-aspirate], [data-lab-dispense], [data-lab-drop], [data-lab-grind], [data-lab-drain], [data-lab-connect], [data-lab-duplicate], [data-lab-delete], [data-lab-rotate], [data-dock], [data-dock-close], [data-side], [data-lab-sound], [data-lab-focus], [data-start-creation], [data-stop-creation], [data-step-add], [data-lab-hint], [data-step-connect], [data-step-heat], [data-step-distill], [data-lab-distill], [data-lab-filter], [data-lab-reflux], [data-step-reflux], [data-step-reflux-connect], [data-lab-remove], [data-lab-stack], [data-lab-ferment], [data-step-ferment], [data-lab-crystallise], [data-step-crystallise], [data-step-filter]')
+            ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-redo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel], [data-ready], [data-lab-zoom], [data-lab-fit], [data-lab-fit-all], [data-lab-zoom-menu], [data-lab-zoom-to], [data-lab-fit-selection], [data-board-tool], [data-lab-aspirate], [data-lab-dispense], [data-lab-drop], [data-lab-grind], [data-lab-drain], [data-lab-connect], [data-lab-duplicate], [data-lab-delete], [data-lab-rotate], [data-dock], [data-dock-close], [data-side], [data-lab-sound], [data-lab-focus], [data-start-creation], [data-stop-creation], [data-step-add], [data-lab-hint], [data-step-connect], [data-step-heat], [data-step-distill], [data-lab-distill], [data-lab-filter], [data-lab-reflux], [data-step-reflux], [data-step-reflux-connect], [data-lab-remove], [data-lab-stack], [data-lab-ferment], [data-step-ferment], [data-lab-crystallise], [data-step-crystallise], [data-step-filter]')
             : null;
           if (!t) return;
           if (t.hasAttribute('data-lab-sound')) {
@@ -4595,16 +4802,37 @@
             }
             return;
           }
-          if (t.getAttribute('data-lab-zoom')) {
-            autoCam = false;
-            zoom = t.getAttribute('data-lab-zoom') === 'in' ? Math.min(ZOOM_MAX, zoom + 0.1) : Math.max(ZOOM_MIN, zoom - 0.1);
-            applyWorld();
-            queueSave();
+          if (t.getAttribute('data-board-tool')) {
+            setBoardTool(t.getAttribute('data-board-tool'));
             return;
           }
-          if (t.hasAttribute('data-lab-fit')) {
+          if (t.hasAttribute('data-lab-zoom-menu')) {
+            zoomMenuOpen = !zoomMenuOpen;
+            syncZoomControl();
+            return;
+          }
+          if (t.getAttribute('data-lab-zoom-to')) {
+            zoomMenuOpen = false;
+            setZoom(Number(t.getAttribute('data-lab-zoom-to')));
+            syncZoomControl();
+            return;
+          }
+          if (t.hasAttribute('data-lab-fit-selection')) {
+            zoomMenuOpen = false;
+            fitSelection();
+            syncZoomControl();
+            return;
+          }
+          if (t.getAttribute('data-lab-zoom')) {
+            zoomMenuOpen = false;
+            zoomStep(t.getAttribute('data-lab-zoom') === 'in' ? 1 : -1);
+            syncZoomControl();
+            return;
+          }
+          if (t.hasAttribute('data-lab-fit') || t.hasAttribute('data-lab-fit-all')) {
+            zoomMenuOpen = false;
             autoCam = true;
-            if (!fitView()) {
+            if (!fitView(true)) {
               panX = 24;
               panY = 24;
               zoom = 1;
@@ -4912,6 +5140,13 @@
       var stage = rootEl.querySelector('[data-lab-stage]');
       if (stage) {
         stage.addEventListener('pointerdown', function (event) {
+          /* Touching the board makes it the keyboard target. Without this the
+             pieces are plain divs, focus stays on the body, and none of the
+             board's own keys — select all, delete, the arrows, Escape — reach
+             it until the user happens to tab onto something focusable. */
+          if (stage !== document.activeElement) {
+            try { stage.focus({ preventScroll: true }); } catch (eF) { try { stage.focus(); } catch (eF2) {} }
+          }
           pointers[event.pointerId] = { x: event.clientX, y: event.clientY };
           /* Two fingers is always pinch-zoom and pan, whatever was underneath. */
           if (Object.keys(pointers).length === 2 && event.pointerType === 'touch') {
@@ -4932,7 +5167,7 @@
             event.preventDefault();
             return;
           }
-          if (event.button === 1 || spaceDown) {
+          if (event.button === 1 || handOn()) {
             panning = true;
             panStart = { x: event.pageX, y: event.pageY, panX: panX, panY: panY };
             dragMoved = false;
@@ -5196,18 +5431,25 @@
         }
         stage.addEventListener('pointerup', endPointer, opts);
         stage.addEventListener('pointercancel', endPointer, opts);
+        /* Ctrl/Cmd + wheel zooms at the pointer; a trackpad pinch arrives the
+           same way. A plain wheel pans, and Shift turns it sideways, which is
+           what a trackpad and a mouse both expect on a board. */
         stage.addEventListener('wheel', function (event) {
           event.preventDefault();
           var rect = stage.getBoundingClientRect();
-          var mx = event.clientX - rect.left;
-          var my = event.clientY - rect.top;
-          var wx = (mx - panX) / zoom;
-          var wy = (my - panY) / zoom;
+          if (event.ctrlKey || event.metaKey) {
+            var factor = Math.exp(-event.deltaY * 0.0022);
+            zoomMenuOpen = false;
+            zoomAround(zoom * factor, event.clientX - rect.left, event.clientY - rect.top);
+            syncZoomControl();
+            return;
+          }
           autoCam = false;
-          var next = zoom + (event.deltaY > 0 ? -0.08 : 0.08);
-          zoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, next));
-          panX = mx - wx * zoom;
-          panY = my - wy * zoom;
+          var dx = event.deltaX;
+          var dy = event.deltaY;
+          if (event.shiftKey && !dx) { dx = dy; dy = 0; }
+          panX -= dx;
+          panY -= dy;
           applyWorld();
           queueSave();
         }, Object.assign({ passive: false }, opts));
@@ -5216,14 +5458,50 @@
       function keyTarget(event) {
         return event.target && /INPUT|TEXTAREA|SELECT/.test(event.target.tagName);
       }
+      /* Camera shortcuts belong to the board, not to whatever happens to hold
+         focus inside it. Bound on the document and torn down with the mount. */
+      document.addEventListener('keydown', function (event) {
+        if (keyTarget(event)) return;
+        if (!document.contains(rootEl)) return;
+        if (event.code === 'Space' && !event.metaKey && !event.ctrlKey && !event.altKey) {
+          if (!spaceDown) { spaceDown = true; syncBoardTool(); }
+          event.preventDefault();
+          return;
+        }
+        if (!event.metaKey && !event.ctrlKey && !event.altKey) {
+          var letter = String(event.key || '').toLowerCase();
+          if (letter === 'v') { setBoardTool('select'); return; }
+          if (letter === 'h') { setBoardTool('hand'); return; }
+          return;
+        }
+        if (!event.metaKey && !event.ctrlKey) return;
+        var zkey = String(event.key || '');
+        if (zkey === '=' || zkey === '+') { event.preventDefault(); zoomMenuOpen = false; zoomStep(1); syncZoomControl(); return; }
+        if (zkey === '-' || zkey === '_') { event.preventDefault(); zoomMenuOpen = false; zoomStep(-1); syncZoomControl(); return; }
+        if (zkey === '0') { event.preventDefault(); zoomMenuOpen = false; autoCam = false; setZoom(1); syncZoomControl(); return; }
+        if (zkey === '1') { event.preventDefault(); zoomMenuOpen = false; autoCam = true; fitView(true); syncZoomControl(); return; }
+        if (zkey === '2') { event.preventDefault(); zoomMenuOpen = false; fitSelection(); syncZoomControl(); return; }
+      }, opts);
+
+      document.addEventListener('keyup', function (event) {
+        if (event.code !== 'Space' || !spaceDown) return;
+        spaceDown = false;
+        /* Back to whatever the dock had, not to a guess. */
+        syncBoardTool();
+      }, opts);
+
       rootEl.addEventListener('keydown', function (event) {
         if (keyTarget(event)) return;
+        if (event.key === 'Escape' && zoomMenuOpen) {
+          zoomMenuOpen = false;
+          syncZoomControl();
+          return;
+        }
         if (event.key === 'Escape' && dockOpen) {
           dockOpen = '';
           syncDock();
           return;
         }
-        if (event.code === 'Space') { spaceDown = true; event.preventDefault(); return; }
         if ((event.metaKey || event.ctrlKey) && String(event.key).toLowerCase() === 'z') {
           event.preventDefault();
           if (event.shiftKey) redoSession(session);
@@ -5277,7 +5555,11 @@
         }
       }, opts);
       rootEl.addEventListener('keyup', function (event) {
-        if (event.code === 'Space') spaceDown = false;
+        if (event.code === 'Space') {
+          spaceDown = false;
+          /* Back to whatever the dock had, not to a guess. */
+          syncBoardTool();
+        }
       }, opts);
     }
 

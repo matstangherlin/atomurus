@@ -2700,3 +2700,71 @@ html[data-reduced-motion="1"] .lab-piece.is-boiling .lab-vessel { animation: non
   color: var(--lc-ink-3, #8E8978);
   white-space: nowrap;
 }
+
+/* ---- Zoom control: [ − ] [ 82% ] [ + ] [ Fit ] with a menu of exact steps ---- */
+/* The HUD is already absolutely positioned at the stage corner, so it is its
+   own containing block. Making it position:relative stretched it to the full
+   stage height and threw the menu up under the global topbar. */
+.lab-zoom-label {
+  min-width: 52px;
+  padding: 4px 6px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  color: inherit;
+  cursor: pointer;
+}
+.lab-zoom-label:hover { background: color-mix(in oklab, var(--lc-green, #1E6A50) 10%, transparent); }
+.lab-zoom-menu {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  min-width: 152px;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  border-radius: 11px;
+  border: 1px solid var(--lc-rule, #D8D2BF);
+  background: var(--lc-paper, #F8F5EC);
+  box-shadow: 0 14px 34px rgba(15, 23, 42, .16);
+  z-index: 7;
+}
+.lab-zoom-item {
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  font: inherit;
+  font-size: 12.5px;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+}
+.lab-zoom-item:hover:not(:disabled) { background: color-mix(in oklab, var(--lc-green, #1E6A50) 12%, transparent); }
+.lab-zoom-item.is-on { font-weight: 700; color: var(--lc-green, #1E6A50); }
+.lab-zoom-item:disabled { opacity: .42; cursor: default; }
+.lab-zoom-rule {
+  height: 1px;
+  margin: 4px 2px;
+  background: var(--lc-rule, #D8D2BF);
+}
+
+/* ---- Select and Hand sit above the dock categories, as modes not drawers ---- */
+.lab-dock-mode.is-on {
+  background: color-mix(in oklab, var(--lc-green, #1E6A50) 14%, transparent);
+  color: var(--lc-green, #1E6A50);
+}
+.lab-dock-rule {
+  display: block;
+  height: 1px;
+  margin: 5px 8px;
+  background: var(--lc-rule, #D8D2BF);
+}
+.lab-board-stage.is-hand { cursor: grab; }
+.lab-board-stage.is-hand:active { cursor: grabbing; }
+.lab-board-stage.is-hand .lab-piece { cursor: grab; }
