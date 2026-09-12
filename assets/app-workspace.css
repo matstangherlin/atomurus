@@ -269,14 +269,16 @@
 }
 .ws-content { max-width: 1180px; width: 100%; }
 
+/* One line where it fits: sections, a divider, then the tools for the section
+   the user is in. Two stacked rows of chips was most of the chrome. */
 .ws-study-nav {
   max-width: none;
   display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 8px;
-  margin: 0 0 24px;
-  padding: 0 0 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  margin: 0 0 16px;
+  padding: 0 0 8px;
   overflow: visible;
   border-bottom: 1px solid var(--lc-rule-soft);
 }
@@ -284,9 +286,29 @@
 .ws-local-nav {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 2px;
   overflow-x: auto;
   scrollbar-width: none;
+}
+.ws-local-nav {
+  position: relative;
+  padding-left: 11px;
+}
+/* The divider only makes sense when both groups share the line. */
+.ws-local-nav::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 1px;
+  height: 18px;
+  margin-top: -9px;
+  background: var(--lc-rule, #D8D2BF);
+}
+@media (max-width: 860px) {
+  .ws-study-nav { gap: 2px 8px; }
+  .ws-local-nav { padding-left: 0; width: 100%; }
+  .ws-local-nav::before { content: none; }
 }
 .ws-context-nav::-webkit-scrollbar,
 .ws-local-nav::-webkit-scrollbar { display: none; }
@@ -444,9 +466,9 @@
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  min-height: 38px;
-  padding: 0 11px;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 9px;
   border: 1px solid transparent;
   border-radius: var(--ws-radius-md);
   color: var(--lc-ink-2);
@@ -456,7 +478,11 @@
   white-space: nowrap;
   transition: color var(--ws-dur) ease, background var(--ws-dur) ease, border-color var(--ws-dur) ease;
 }
-.ws-study-nav-item svg { flex: 0 0 16px; opacity: .8; }
+.ws-study-nav-item svg { flex: 0 0 15px; opacity: .8; }
+/* Inside a section the icons repeat and carry nothing, so the tools go
+   label-only and the row halves in width. */
+.ws-local-nav .ws-study-nav-item svg { display: none; }
+.ws-local-nav .ws-study-nav-item { font-size: 12.5px; padding: 0 8px; }
 .ws-study-nav-item:hover {
   color: var(--lc-ink);
   background: color-mix(in oklab, var(--lc-green) 8%, transparent);

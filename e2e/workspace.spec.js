@@ -466,6 +466,28 @@ test('Pro footer has Plan billing and no Upgrade', async ({ page }) => {
   await expect(page.locator('#ws-nav-foot a[data-nav="plan"]')).toHaveAttribute('href', /\/account\?tab=plan/);
 });
 
+test('Workspace nav puts sections and tools on one line', async ({ page }) => {
+  await installApi(page, { kind: 'free' });
+  await gotoWorkspace(page, '/app?section=lab&mode=bench');
+  await page.waitForSelector('.lab-beaker');
+  const sections = await page.locator('.ws-context-nav').boundingBox();
+  const tools = await page.locator('.ws-local-nav').boundingBox();
+  // Same line, not two stacked rows of chips.
+  expect(Math.abs(sections.y - tools.y)).toBeLessThan(6);
+  expect(tools.x).toBeGreaterThan(sections.x + sections.width - 2);
+  const nav = await page.locator('#ws-study-nav').boundingBox();
+  expect(nav.height).toBeLessThan(56);
+  // The repeated icons are gone from the tools group.
+  await expect(page.locator('.ws-local-nav .ws-study-nav-item svg').first()).toBeHidden();
+  await expect(page.locator('.ws-context-nav .ws-study-nav-item svg').first()).toBeVisible();
+
+  // Narrow enough and it stacks again without overflowing the page.
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.waitForTimeout(200);
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+});
+
 test('Lab board pinch-zooms with two fingers', async ({ page }) => {
   await installApi(page, { kind: 'free' });
   await gotoWorkspace(page, '/app?section=lab&mode=bench');
