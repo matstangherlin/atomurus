@@ -6,24 +6,43 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
 
-  var SECTIONS = ['overview', 'lab', 'creations', 'notebook', 'library', 'sets', 'practice', 'review', 'insights', 'pro-lab', 'history', 'notes', 'progress', 'account'];
+  /* Three primary areas. Everything else is a destination inside one of them,
+     reached from a panel, a dock category or a section of a page, never from a
+     second row of tabs. */
+  var AREAS = ['lab', 'study', 'work'];
+  var SECTIONS = ['lab', 'study', 'work', 'overview', 'creations', 'notebook', 'library', 'sets', 'practice', 'review', 'insights', 'pro-lab', 'history', 'notes', 'progress', 'account'];
   var ACCOUNT_TABS = ['overview', 'profile', 'security', 'plan', 'preferences', 'chemistry'];
   var AREA_BY_SECTION = {
-    overview: 'lab',
     lab: 'lab',
+    overview: 'lab',
     creations: 'lab',
-    notebook: 'lab',
+    'pro-lab': 'lab',
+    study: 'study',
     library: 'study',
     sets: 'study',
     practice: 'study',
     review: 'study',
     insights: 'study',
-    'pro-lab': 'lab',
-    history: 'activity',
-    notes: 'activity',
-    progress: 'activity',
+    work: 'work',
+    notebook: 'work',
+    history: 'work',
+    notes: 'work',
+    progress: 'work',
     account: 'account'
   };
+  /* Old deep links keep working. Each one names where its destination moved to,
+     so a bookmark lands on the thing it pointed at, not on a 404 or the Lab. */
+  var LEGACY_SECTIONS = {
+    overview: { section: 'lab' },
+    creations: { section: 'lab', params: { panel: 'create' } },
+    'pro-lab': { section: 'lab', params: { panel: 'analysis' } },
+    library: { section: 'study' },
+    notebook: { section: 'work', params: { tab: 'notebook' } },
+    notes: { section: 'work', params: { tab: 'notes' } },
+    history: { section: 'work', params: { tab: 'history' } },
+    progress: { section: 'work' }
+  };
+  var WORK_TABS = ['home', 'sessions', 'creations', 'notebook', 'notes', 'history'];
   var LAB_TOOLS = ['home', 'reactions', 'formula', 'solutions', 'calculations', 'elements', 'molecules', 'atomic', 'sessions'];
   var UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   var MS_DAY = 24 * 60 * 60 * 1000;
@@ -40,7 +59,32 @@
 
   function normalizeSection(raw) {
     var section = String(raw || '').trim().toLowerCase();
-    return SECTIONS.indexOf(section) === -1 ? 'overview' : section;
+    return SECTIONS.indexOf(section) === -1 ? 'lab' : section;
+  }
+
+  function normalizeWorkTab(raw) {
+    var tab = String(raw || '').trim().toLowerCase();
+    return WORK_TABS.indexOf(tab) === -1 ? 'home' : tab;
+  }
+
+  /* Where an old ?section= should land now, as a full URL, or '' when the URL
+     is already canonical. Pure, so every legacy link is checked without a
+     browser. Query keys the destination still needs (tool, session, set, ...)
+     are carried over untouched. */
+  function legacyWorkspaceUrl(search) {
+    var params;
+    try { params = new URLSearchParams(search || ''); } catch (_err) { return ''; }
+    var raw = String(params.get('section') || '').trim().toLowerCase();
+    var moved = LEGACY_SECTIONS[raw];
+    if (!moved) return '';
+    params.delete('section');
+    if (moved.params) {
+      Object.keys(moved.params).forEach(function (key) {
+        if (!params.get(key)) params.set(key, moved.params[key]);
+      });
+    }
+    var rest = params.toString();
+    return '/app?section=' + moved.section + (rest ? '&' + rest : '');
   }
 
   function labToolFromQuery(search) {
@@ -57,11 +101,15 @@
   }
 
   function defaultSectionForArea(area) {
-    if (area === 'study') return 'library';
-    if (area === 'lab') return 'overview';
-    if (area === 'activity') return 'progress';
+    if (area === 'study') return 'study';
+    if (area === 'work') return 'work';
     if (area === 'account') return 'account';
-    return 'overview';
+    return 'lab';
+  }
+
+  function areaHref(area) {
+    if (area === 'lab') return '/app';
+    return '/app?section=' + defaultSectionForArea(area);
   }
 
   function accountHref(tab) {
@@ -87,10 +135,12 @@
     }
   }
 
+  /* Analysis is a panel of the Lab, not a separate destination. Old
+     ?section=pro-lab links still resolve here through legacyWorkspaceUrl. */
   function labHref(tool) {
     var next = String(tool || 'home').trim().toLowerCase();
-    if (LAB_TOOLS.indexOf(next) === -1 || next === 'home') return '/app?section=pro-lab';
-    return '/app?section=pro-lab&tool=' + encodeURIComponent(next);
+    if (LAB_TOOLS.indexOf(next) === -1 || next === 'home') return '/app?section=lab&panel=analysis';
+    return '/app?section=lab&panel=analysis&tool=' + encodeURIComponent(next);
   }
 
   function isValidSetId(raw) {
@@ -422,6 +472,11 @@
 
   return {
     SECTIONS: SECTIONS,
+    AREAS: AREAS,
+    WORK_TABS: WORK_TABS,
+    legacyWorkspaceUrl: legacyWorkspaceUrl,
+    normalizeWorkTab: normalizeWorkTab,
+    areaHref: areaHref,
     ACCOUNT_TABS: ACCOUNT_TABS,
     workspaceArea: workspaceArea,
     defaultSectionForArea: defaultSectionForArea,

@@ -12,11 +12,11 @@ function saveShot(page, name) {
 
 test('Free uses Study Cloud and still sees Review as Pro', async ({ page }) => {
   await installApi(page, { kind: 'free' });
-  await gotoWorkspace(page, '/app');
+  await gotoWorkspace(page, '/app?section=study');
   await expect(page.locator('#ws-study-nav')).toContainText(/Lab/);
   await expect(page.locator('#ws-study-nav')).toContainText(/Study|Estudo/);
-  await expect(page.locator('#ws-study-nav')).toContainText(/Creations|Criações/);
-  await page.locator('#ws-study-nav a[href="/app?section=library"]').first().click();
+  await expect(page.locator('#ws-study-nav')).toContainText(/My Work|Meu trabalho/);
+  // The library is a block of Study home now, not a tab.
   await expect(page.locator('#ws-lib-list')).toBeVisible();
   await expect(page.locator('#ws-study-nav')).toContainText(/Study Sets/);
   await expect(page.locator('#ws-study-nav a[href="/app?section=review"]')).toContainText(/Review/);
@@ -27,7 +27,7 @@ test('Free uses Study Cloud and still sees Review as Pro', async ({ page }) => {
   await expect(page.locator('#app-study')).toContainText(/Study Sets/);
   await expect(page.locator('#ws-dialog-host')).toHaveCount(0);
 
-  await gotoWorkspace(page, '/app?section=library');
+  await gotoWorkspace(page, '/app?section=study');
   await expect(page.locator('#ws-lib-list')).toContainText('Iron');
   await expect(page.locator('[data-generate-item]')).toHaveCount(0);
 
@@ -202,9 +202,11 @@ test('Overview lists recent lab sessions and viewer names', async ({ page }) => 
     updatedAt: new Date().toISOString()
   }];
   await installApi(page, { kind: 'pro', store });
-  await gotoWorkspace(page, '/app');
+  // Saved sessions are My Work; the viewer links stay on Study home.
+  await gotoWorkspace(page, '/app?section=work');
   await expect(page.locator('#app-study')).toContainText(/Recent Lab Sessions|Sessões recentes/);
   await expect(page.locator('#app-study')).toContainText('Combustion of CH4');
+  await gotoWorkspace(page, '/app?section=study');
   await expect(page.locator('#app-study .ws-viz-links a[href="/viewer/atomic-models.html"]')).toContainText(/Atomic Models|Modelos atômicos/);
   await expect(page.locator('#app-study .ws-viz-links a[href="/viewer/atomic-models.html"]')).not.toContainText(/Atomic Compare|Comparar átomos/);
 });
@@ -248,9 +250,10 @@ test('mobile 390x844: bottom nav, drawer, no horizontal overflow', async ({ page
   const store = createStore();
   store.cards = [dueCard({ front: 'Fe?', back: 'Iron' })];
   await installApi(page, { kind: 'pro', store });
-  await gotoWorkspace(page, '/app');
+  await gotoWorkspace(page, '/app?section=study');
   await expect(page.locator('#ws-bottom')).toBeVisible();
-  await expect(page.locator('#ws-bottom a')).toHaveCount(5);
+  // Lab, Study, My Work. Nothing else.
+  await expect(page.locator('#ws-bottom a')).toHaveCount(3);
   const tops = await page.locator('#ws-bottom a').evaluateAll((els) => els.map((el) => el.getBoundingClientRect().top));
   expect(Math.max(...tops) - Math.min(...tops)).toBeLessThan(8);
   await expect(page.locator('#app-study')).toContainText(/1 card is due today|1 card vence hoje/);
@@ -312,7 +315,7 @@ test('desktop public screenshots', async ({ page }) => {
 
 test('Guest Study Hub is a presentation, not locked Pro cards', async ({ page }) => {
   await installApi(page, { kind: 'guest', signedIn: false });
-  await gotoWorkspace(page, '/app');
+  await gotoWorkspace(page, '/app?section=study');
   await expect(page.locator('#app-study')).toContainText(/Study with Atomurus|Estude com o Atomurus/);
   await expect(page.locator('#app-study')).toContainText(/Save chemistry resources, build sets and continue learning|Salve materiais de química/);
   await expect(page.locator('#app-study a[href*="signup"]').first()).toContainText(/Create free account|Criar conta gratuita/);
@@ -329,8 +332,8 @@ test('Guest Study Hub is a presentation, not locked Pro cards', async ({ page })
   await expect(page.locator('#app-study')).toContainText(/Estude com o Atomurus/);
   await page.locator('[data-i18n-toggle]').first().click();
 
-  await gotoWorkspace(page, '/app?section=library');
-  await expect(page.locator('#app-study')).toContainText(/Library|Biblioteca/);
+  await gotoWorkspace(page, '/app?section=study');
+  await expect(page.locator('#app-study')).toContainText(/Study with Atomurus|Estude com o Atomurus/);
   await expect(page.locator('#app-study a[href*="signup"]').first()).toContainText(/Create free account|Criar conta gratuita/);
 });
 
@@ -340,7 +343,7 @@ test('Study Hub empty account shows architecture without invented progress', asy
   store.sets = [];
   store.cards = [];
   await installApi(page, { kind: 'free', store });
-  await gotoWorkspace(page, '/app');
+  await gotoWorkspace(page, '/app?section=study');
   await expect(page.locator('[data-study-hub="account"]')).toBeVisible();
   await expect(page.locator('#app-study')).toContainText(/Continue your chemistry work|Continue seu trabalho de química/);
   await expect(page.locator('#app-study')).toContainText(/You're caught up|Você está em dia/);
@@ -355,7 +358,7 @@ test('Study Hub empty account shows architecture without invented progress', asy
 
 test('Study Hub shows saved resources from the library', async ({ page }) => {
   await installApi(page, { kind: 'free' });
-  await gotoWorkspace(page, '/app');
+  await gotoWorkspace(page, '/app?section=study');
   await expect(page.locator('[data-hub="saved"]')).toContainText('Iron');
   await expect(page.locator('[data-hub="continue"]')).toHaveCount(0);
   await saveShot(page, 'desktop-study-hub-library');
@@ -373,7 +376,7 @@ test('Study Hub summarizes study sets and due cards without Smart Review for Fre
     updatedAt: new Date().toISOString()
   }];
   await installApi(page, { kind: 'free', store });
-  await gotoWorkspace(page, '/app');
+  await gotoWorkspace(page, '/app?section=study');
   await expect(page.locator('[data-hub="sets"]')).toContainText('Organic Chemistry');
   await expect(page.locator('[data-hub="sets"]')).toContainText(/18 cards/);
   await expect(page.locator('[data-hub="sets"]')).toContainText(/6 due/);
@@ -392,7 +395,7 @@ test('Study Hub Continue Learning uses real progress titles', async ({ page }) =
     updatedAt: new Date().toISOString()
   }];
   await installApi(page, { kind: 'free', store });
-  await gotoWorkspace(page, '/app');
+  await gotoWorkspace(page, '/app?section=study');
   await expect(page.locator('[data-hub="continue"]')).toContainText('Iron');
   await expect(page.locator('[data-hub="continue"]')).toContainText(/62%/);
   await expect(page.locator('#app-study')).not.toContainText(/Nothing in progress yet|Nada em andamento/);
@@ -418,7 +421,7 @@ test('Study Hub Pro with due cards and insights stays a learning home', async ({
     studySetId: SET_ID
   })];
   await installApi(page, { kind: 'pro', store });
-  await gotoWorkspace(page, '/app');
+  await gotoWorkspace(page, '/app?section=study');
   await expect(page.locator('[data-hub="review"]')).toContainText(/Ready to study|Pronto para estudar/);
   await expect(page.locator('[data-hub="review"]').getByRole('link', { name: /Start Smart Review|Começar Smart Review/i })).toBeVisible();
   await expect(page.locator('[data-hub="insights"]')).toContainText(/Open Insights|Abrir Insights/);
@@ -509,38 +512,62 @@ test('Lab board and assembled apparatus survive a reload', async ({ page }) => {
   await expect(page.locator('.lab-notes')).toContainText(/Distilled|Destilou/i);
 });
 
-test('Workspace nav puts sections and tools on one line', async ({ page }) => {
+test('Workspace navigation is three areas and nothing else', async ({ page }) => {
   await installApi(page, { kind: 'free' });
-  await gotoWorkspace(page, '/app?section=lab&mode=bench');
+  await gotoWorkspace(page, '/app');
   await page.waitForSelector('.lab-beaker');
-  const sections = await page.locator('.ws-context-nav').boundingBox();
-  const tools = await page.locator('.ws-local-nav').boundingBox();
-  // Same line, not two stacked rows of chips.
-  expect(Math.abs(sections.y - tools.y)).toBeLessThan(6);
-  expect(tools.x).toBeGreaterThan(sections.x + sections.width - 2);
+
+  // Lab, Study, My Work. The Lab's own destinations are dock categories.
+  const areas = page.locator('.ws-context-nav .ws-study-nav-item');
+  await expect(areas).toHaveCount(3);
+  await expect(areas.nth(0)).toHaveAttribute('href', '/app');
+  await expect(areas.nth(1)).toHaveAttribute('href', '/app?section=study');
+  await expect(areas.nth(2)).toHaveAttribute('href', '/app?section=work');
+  await expect(page.locator('.ws-local-nav')).toHaveCount(0);
   const nav = await page.locator('#ws-study-nav').boundingBox();
   expect(nav.height).toBeLessThan(56);
-  // The repeated icons are gone from the tools group.
+
+  // Study is the only area that still earns a local row: three items on the
+  // same line as the areas. Its Home is the Study tab itself.
+  await gotoWorkspace(page, '/app?section=study');
+  await page.waitForSelector('.ws-local-nav .ws-study-nav-item');
+  await expect(page.locator('.ws-local-nav .ws-study-nav-item')).toHaveCount(3);
+  const sections = await page.locator('.ws-context-nav').boundingBox();
+  const tools = await page.locator('.ws-local-nav').boundingBox();
+  expect(Math.abs(sections.y - tools.y)).toBeLessThan(6);
+  expect(tools.x).toBeGreaterThan(sections.x + sections.width - 2);
   await expect(page.locator('.ws-local-nav .ws-study-nav-item svg').first()).toBeHidden();
   await expect(page.locator('.ws-context-nav .ws-study-nav-item svg').first()).toBeVisible();
 
-  // No destination is offered twice on the same line.
+  // No destination is offered twice on the same line, in any area.
   async function navHrefs() {
     return page.locator('#ws-study-nav .ws-study-nav-item').evaluateAll(
       (els) => els.map((el) => el.getAttribute('href'))
     );
   }
-  for (const where of ['/app?section=lab&mode=bench', '/app?section=sets', '/app?section=history']) {
+  for (const where of ['/app', '/app?section=study', '/app?section=sets', '/app?section=work']) {
     await gotoWorkspace(page, where);
-    await page.waitForSelector('.ws-local-nav .ws-study-nav-item');
+    await page.waitForSelector('.ws-context-nav .ws-study-nav-item');
     const hrefs = await navHrefs();
     expect(hrefs.length).toBe(new Set(hrefs).size, `duplicate nav destination at ${where}: ${hrefs.join(' ')}`);
   }
-  await gotoWorkspace(page, '/app?section=lab&mode=bench');
-  await page.waitForSelector('.lab-beaker');
-  await expect(page.locator('.ws-local-nav .ws-study-nav-item')).toHaveCount(3);
+
+  // Every removed tab keeps its bookmark.
+  for (const [from, to] of [
+    ['/app?section=overview', /section=lab$/],
+    ['/app?section=creations', /panel=create/],
+    ['/app?section=library', /section=study/],
+    ['/app?section=notebook', /section=work&tab=notebook/],
+    ['/app?section=history', /section=work&tab=history/],
+    ['/app?section=progress', /section=work/]
+  ]) {
+    await gotoWorkspace(page, from);
+    await page.waitForFunction(() => !location.search.includes('section=overview'));
+    expect(page.url()).toMatch(to);
+  }
 
   // Narrow enough and it stacks again without overflowing the page.
+  await gotoWorkspace(page, '/app?section=study');
   await page.setViewportSize({ width: 390, height: 844 });
   await page.waitForTimeout(200);
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
@@ -552,6 +579,7 @@ test('Lab board pinch-zooms with two fingers', async ({ page }) => {
   await gotoWorkspace(page, '/app?section=lab&mode=bench');
   await page.waitForSelector('.lab-beaker');
   await page.locator('[data-lab-fit]').click();
+  await expect(page.locator('[data-lab-stage]')).not.toHaveAttribute('data-lab-camera', 'moving');
   const before = await page.locator('[data-lab-zoom-label]').innerText();
 
   await page.locator('[data-lab-stage]').evaluate((stage) => {
@@ -583,11 +611,18 @@ test('Lab board selects with a marquee, moves the group and restacks', async ({ 
   await gotoWorkspace(page, '/app?section=lab&mode=bench');
   await page.waitForSelector('.lab-beaker');
   await page.locator('[data-lab-fit]').click();
+  await expect(page.locator('[data-lab-stage]')).not.toHaveAttribute('data-lab-camera', 'moving');
 
   // Dragging empty canvas draws a selection rectangle, it does not pan.
+  // Start from the stage's own corner: the gap left of the first piece is only
+  // as wide as the fit padding, so measuring back from the piece can land on
+  // the dock.
+  const stage = await page.locator('[data-lab-stage]').boundingBox();
   const first = await page.locator('[data-vessel="beaker-a"]').boundingBox();
   const last = await page.locator('[data-vessel="cylinder-c"]').boundingBox();
-  await page.mouse.move(first.x - 40, first.y + 20);
+  const startX = stage.x + 4;
+  expect(startX).toBeLessThan(first.x);
+  await page.mouse.move(startX, first.y + 20);
   await page.mouse.down();
   await page.mouse.move(last.x + last.width + 20, last.y + last.height + 20, { steps: 12 });
   await expect(page.locator('.lab-marquee')).toHaveCount(1);
@@ -802,11 +837,10 @@ test('Lab reactions fire with an equation and the still runs from the guide', as
 
 test('Workspace home is the Virtual Lab and Open Bench runs', async ({ page }) => {
   await installApi(page, { kind: 'free' });
+  // /app is the board itself now: no hero, no card, no second click.
   await gotoWorkspace(page, '/app');
-  await expect(page.locator('[data-hub="lab"]')).toContainText(/Virtual Laboratory|Laboratório virtual/);
-  await expect(page.locator('#ws-lab-q')).toBeVisible();
-  await page.locator('#ws-study-nav a[href="/app?section=lab"]').first().click();
   await expect(page.locator('.lab-beaker')).toBeVisible();
+  await expect(page.locator('[data-lab-dock]')).toBeVisible();
 
   // The dock starts compact: material chips only exist once a panel is opened.
   await expect(page.locator('.lab-chip[data-add="water"]')).toHaveCount(0);
@@ -862,4 +896,158 @@ test('Workspace home is the Virtual Lab and Open Bench runs', async ({ page }) =
   await page.locator('[data-lab-guide] [data-step-add="oil"]').click();
   await expect(page.locator('[data-lab-guide]')).toContainText(/Step 2 of 4|Passo 2 de 4/i);
   await expect(page.locator('[data-lab-guide]')).toContainText(/zinc oxide|óxido de zinco/i);
+});
+test('Lab fills the viewport as a canvas, not a card on a page', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await installApi(page, { kind: 'free' });
+  await gotoWorkspace(page, '/app');
+  await page.waitForSelector('.lab-beaker');
+
+  // None of the page chrome a board should not carry.
+  await expect(page.locator('#app-study .ws-crumb')).toHaveCount(0);
+  await expect(page.locator('#app-study h1')).toHaveCount(0);
+  await expect(page.locator('#app-study .ws-lab-hero')).toHaveCount(0);
+  await expect(page.locator('#app-study .ws-section-head')).toHaveCount(0);
+  await expect(page.locator('.ws-local-nav')).toHaveCount(0);
+
+  // The document itself does not scroll; the board took the height instead.
+  const page_scroll = await page.evaluate(() => ({
+    doc: document.documentElement.scrollHeight - document.documentElement.clientHeight,
+    stage: document.querySelector('[data-lab-stage]').getBoundingClientRect(),
+    viewport: window.innerHeight
+  }));
+  expect(page_scroll.doc).toBeLessThanOrEqual(1);
+  expect(page_scroll.stage.height).toBeGreaterThan(page_scroll.viewport * 0.6);
+  expect(page_scroll.stage.bottom).toBeLessThanOrEqual(page_scroll.viewport + 1);
+
+  // The paper grid belongs to the world: it scales with zoom.
+  const gridAt100 = await page.locator('[data-lab-stage]').evaluate((el) => getComputedStyle(el).backgroundSize);
+  await page.locator('[data-lab-zoom="in"]').click();
+  await page.locator('[data-lab-zoom="in"]').click();
+  const gridZoomed = await page.locator('[data-lab-stage]').evaluate((el) => getComputedStyle(el).backgroundSize);
+  expect(parseFloat(gridZoomed)).toBeGreaterThan(parseFloat(gridAt100));
+
+  // Notebook is a side panel tab now, not a section under the board.
+  await expect(page.locator('#app-study > .lab-board > .ws-overview-block')).toHaveCount(0);
+  await page.locator('[data-side="notebook"]').click();
+  await expect(page.locator('.lab-side-body .lab-notes')).toBeVisible();
+
+  // Focus mode hides the global sidebar and the same button brings it back.
+  await expect(page.locator('.ws-sidebar')).toBeVisible();
+  await page.locator('[data-lab-focus]').click();
+  await expect(page.locator('.ws-sidebar')).toBeHidden();
+  await expect(page.locator('[data-lab-focus]')).toHaveAttribute('aria-pressed', 'true');
+  await page.locator('[data-lab-focus]').click();
+  await expect(page.locator('.ws-sidebar')).toBeVisible();
+
+  // Leaving the Lab gives the page back its normal scrolling behaviour.
+  await gotoWorkspace(page, '/app?section=study');
+  await expect(page.locator('html')).not.toHaveClass(/is-lab-surface/);
+  await saveShot(page, 'desktop-lab-canvas');
+});
+
+test('Lab zoom and pan behave like a board', async ({ page }) => {
+  await installApi(page, { kind: 'free' });
+  await gotoWorkspace(page, '/app?section=lab&mode=bench');
+  await page.waitForSelector('.lab-beaker');
+  const settled = () => expect(page.locator('[data-lab-stage]')).not.toHaveAttribute('data-lab-camera', 'moving');
+  const zoomNow = async () => parseInt(await page.locator('[data-lab-zoom-label]').innerText(), 10);
+  const camera = () => page.evaluate(() => {
+    const w = document.querySelector('[data-lab-world]');
+    const m = /translate\(([-\d.]+)px,\s*([-\d.]+)px\)\s*scale\(([\d.]+)\)/.exec(w.style.transform);
+    return { x: +m[1], y: +m[2], z: +m[3] };
+  });
+
+  await page.locator('[data-lab-fit]').click();
+  await settled();
+
+  // The percentage is a menu of exact steps.
+  await page.locator('[data-lab-zoom-menu]').click();
+  await expect(page.locator('[data-lab-zoom-list]')).toBeVisible();
+  await page.locator('[data-lab-zoom-to="2"]').click();
+  await expect(page.locator('[data-lab-zoom-list]')).toBeHidden();
+  expect(await zoomNow()).toBe(200);
+
+  // Ctrl+0 is 100%, and the zoom buttons walk the same ladder.
+  await page.locator('[data-lab-stage]').click({ position: { x: 8, y: 8 } });
+  await page.keyboard.press('Control+0');
+  expect(await zoomNow()).toBe(100);
+  await page.locator('[data-lab-zoom="in"]').click();
+  expect(await zoomNow()).toBe(125);
+  await page.locator('[data-lab-zoom="out"]').click();
+  expect(await zoomNow()).toBe(100);
+
+  // Zoom happens around the pointer: the world point under it does not move.
+  const box = await page.locator('[data-lab-stage]').boundingBox();
+  const px = 120;
+  const py = 90;
+  const before = await camera();
+  const worldBefore = { x: (px - before.x) / before.z, y: (py - before.y) / before.z };
+  await page.mouse.move(box.x + px, box.y + py);
+  await page.keyboard.down('Control');
+  await page.mouse.wheel(0, -240);
+  await page.keyboard.up('Control');
+  const after = await camera();
+  expect(after.z).toBeGreaterThan(before.z);
+  const worldAfter = { x: (px - after.x) / after.z, y: (py - after.y) / after.z };
+  expect(Math.abs(worldAfter.x - worldBefore.x)).toBeLessThan(12);
+  expect(Math.abs(worldAfter.y - worldBefore.y)).toBeLessThan(12);
+
+  // A plain wheel pans instead of zooming.
+  const beforePan = await camera();
+  await page.mouse.wheel(0, 120);
+  const afterPan = await camera();
+  expect(afterPan.z).toBeCloseTo(beforePan.z, 5);
+  expect(afterPan.y).toBeLessThan(beforePan.y);
+
+  // Hand tool: the dock offers it, Space holds it, release gives Select back.
+  await expect(page.locator('[data-board-tool="select"]')).toHaveAttribute('aria-pressed', 'true');
+  await page.keyboard.down('Space');
+  await expect(page.locator('[data-lab-stage]')).toHaveClass(/is-hand/);
+  await page.keyboard.up('Space');
+  await expect(page.locator('[data-lab-stage]')).not.toHaveClass(/is-hand/);
+  await page.locator('[data-board-tool="hand"]').click();
+  await expect(page.locator('[data-lab-stage]')).toHaveClass(/is-hand/);
+
+  // With Hand on, dragging a piece moves the board, not the piece.
+  const piece = await page.locator('[data-vessel="beaker-a"]').boundingBox();
+  const camBefore = await camera();
+  await page.mouse.move(piece.x + piece.width / 2, piece.y + 40);
+  await page.mouse.down();
+  await page.mouse.move(piece.x + piece.width / 2 + 90, piece.y + 40, { steps: 8 });
+  await page.mouse.up();
+  const camAfter = await camera();
+  expect(camAfter.x - camBefore.x).toBeGreaterThan(50);
+  await page.locator('[data-board-tool="select"]').click();
+
+  // Fitting one piece goes closer than fitting the whole board.
+  await page.locator('[data-vessel="beaker-a"]').click();
+  await page.locator('[data-lab-zoom-menu]').click();
+  await expect(page.locator('[data-lab-fit-selection]')).toBeEnabled();
+  await page.locator('[data-lab-fit-selection]').click();
+  await settled();
+  const oneUp = await zoomNow();
+  await page.keyboard.press('Control+1');
+  await settled();
+  expect(await zoomNow()).toBeLessThan(oneUp);
+
+  // The camera is remembered per session.
+  await page.locator('[data-lab-zoom-menu]').click();
+  await page.locator('[data-lab-zoom-to="1.5"]').click();
+  expect(await zoomNow()).toBe(150);
+  await page.waitForTimeout(700);
+  await page.reload();
+  await page.waitForSelector('.lab-beaker');
+  expect(await zoomNow()).toBe(150);
+
+  // Clicking the board makes it the keyboard target, so select-all reaches it.
+  await page.locator('[data-vessel="beaker-a"]').click();
+  await page.keyboard.press('Control+a');
+  await expect(page.locator('.lab-piece.is-active')).toHaveCount(3);
+  await page.locator('[data-lab-delete]').click();
+  // The bench always keeps a vessel to work on, so there is always something
+  // selected and Fit selection stays live.
+  await expect(page.locator('.lab-piece')).toHaveCount(1);
+  await page.locator('[data-lab-zoom-menu]').click();
+  await expect(page.locator('[data-lab-fit-selection]')).toBeEnabled();
 });

@@ -50,8 +50,8 @@
     if (window.AtomurusWorkspace && window.AtomurusWorkspace.labHref) {
       return window.AtomurusWorkspace.labHref(tool);
     }
-    if (!tool || tool === 'home') return '/app?section=pro-lab';
-    return '/app?section=pro-lab&tool=' + encodeURIComponent(tool);
+    if (!tool || tool === 'home') return '/app?section=lab&panel=analysis';
+    return '/app?section=lab&panel=analysis&tool=' + encodeURIComponent(tool);
   }
 
   function sessionIdFromQuery() {

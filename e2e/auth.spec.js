@@ -10,10 +10,10 @@ test('signed-out workspace shows Pro navigation and explains locked features', a
   await expect(page.locator('#ws-nav-main a[data-nav="viewer"]')).toBeVisible();
   await expect(page.locator('#ws-userchip')).toContainText(/Create account|Criar conta/, { timeout: 15_000 });
   await expect(page).toHaveURL(/\/app/);
-  await page.locator('#ws-study-nav a[href="/app?section=library"]').first().click();
-  await expect(page).toHaveURL(/section=library/);
-  await expect(page.locator('#app-study')).toContainText(/Library|Biblioteca/);
-  await expect(page.locator('#app-study a[href*="signup"]')).toBeVisible();
+  await page.locator('#ws-study-nav a[href="/app?section=study"]').first().click();
+  await expect(page).toHaveURL(/section=study/);
+  await expect(page.locator('#app-study')).toContainText(/Study with Atomurus|Estude com o Atomurus/);
+  await expect(page.locator('#app-study a[href*="signup"]').first()).toBeVisible();
   await page.locator('#ws-study-nav a[href="/app?section=sets"]').click();
   await expect(page.locator('#app-study')).toContainText(/Study Sets/);
   await expect(page.locator('#app-study a[href*="signup"]')).toContainText(/Create free account|Criar conta gratuita/);
