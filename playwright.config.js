@@ -16,6 +16,11 @@ module.exports = defineConfig({
     locale: 'en-US',
     timezoneId: 'UTC',
     viewport: { width: 1280, height: 800 },
+    // Sandboxes that ship a different Chromium build than the pinned
+    // @playwright/test expects can point at it without `playwright install`.
+    launchOptions: process.env.PW_CHROMIUM_EXECUTABLE
+      ? { executablePath: process.env.PW_CHROMIUM_EXECUTABLE }
+      : {},
     trace: 'on-first-retry',
     screenshot: 'only-on-failure'
   },
