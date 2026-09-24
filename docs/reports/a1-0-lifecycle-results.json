@@ -1,0 +1,94 @@
+{
+  "generatedBy": "e2e/a1-lifecycle.spec.js",
+  "chromium": "headless, SwiftShader WebGL",
+  "moleculeViewerCycles": {
+    "cycles": 20,
+    "samples": [
+      {
+        "cycle": 1,
+        "heapMB": 3.08
+      },
+      {
+        "cycle": 5,
+        "heapMB": 3.31
+      },
+      {
+        "cycle": 10,
+        "heapMB": 3.54
+      },
+      {
+        "cycle": 20,
+        "heapMB": 3.6
+      }
+    ],
+    "growthMB_5_to_20": 0.29
+  },
+  "navigationStress": {
+    "rounds": 10,
+    "routesPerRound": 6,
+    "heap": [
+      {
+        "round": 2,
+        "heapMB": 3.38
+      },
+      {
+        "round": 10,
+        "heapMB": 3.8
+      }
+    ],
+    "growthMB": 0.42,
+    "msPerRoundMedian": 162
+  },
+  "authStress": {
+    "cycles": 5,
+    "logins": 5,
+    "refreshes": 5,
+    "logouts": 5,
+    "finalStats": {
+      "feature": "account",
+      "featureState": "ready",
+      "mountedFeatures": 1,
+      "shellListeners": 1,
+      "featureScope": {
+        "listeners": 4,
+        "timers": 0,
+        "intervals": 0,
+        "observers": 0,
+        "frames": 0,
+        "loops": 0,
+        "children": 0,
+        "custom": 0,
+        "total": 4,
+        "disposed": false
+      },
+      "liveScopes": 2,
+      "lifecycleSubscribers": 0,
+      "navCount": 1,
+      "navItems": 5,
+      "viewer": {
+        "renderers": 0,
+        "loops": 0
+      },
+      "toasts": 0
+    }
+  },
+  "legacyMoleculeViewer": {
+    "switches": 20,
+    "samples": [
+      {
+        "switch": 5,
+        "geometries": 2,
+        "textures": 0,
+        "calls": 2,
+        "heapMB": 3.39
+      },
+      {
+        "switch": 20,
+        "geometries": 2,
+        "textures": 0,
+        "calls": 2,
+        "heapMB": 3.42
+      }
+    ]
+  }
+}

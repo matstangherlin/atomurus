@@ -15,12 +15,14 @@ const PRETTY = {
   '/forgot-password': '/login.html',
   '/reset-password': '/login.html',
   '/contact': '/contact.html',
-  '/dev/ui': '/dev/ui.html'
+  '/dev/ui': '/dev/ui.html',
+  '/dev/app-shell': '/dev/app-shell.html'
 };
 
 const TYPES = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
+  '.mjs': 'text/javascript; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
   '.svg': 'image/svg+xml',
@@ -102,6 +104,17 @@ const server = http.createServer(async (req, res) => {
       'Cache-Control': 'no-store'
     });
     return;
+  }
+
+  // Local Three.js for the app shell and viewer tests (A1.0): the packaged
+  // app ships it from dist/app/vendor; the sandbox cannot reach a CDN.
+  if (url.pathname.startsWith('/vendor/three/')) {
+    const name = path.basename(url.pathname);
+    const vendored = path.join(ROOT, 'node_modules/three/build', name);
+    if (/^three(\.module|\.min)?\.js$/.test(name) && fs.existsSync(vendored)) {
+      send(res, 200, fs.readFileSync(vendored), { 'Content-Type': TYPES['.js'], 'Cache-Control': 'no-store' });
+      return;
+    }
   }
 
   const file = safeFile(url.pathname);

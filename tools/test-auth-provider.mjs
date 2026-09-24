@@ -178,7 +178,10 @@ assert.doesNotMatch(authApp, /startRefreshTimer\s*\(/);
 assert.match(authApp, /AtomurusStudy|api\.overview/);
 assert.match(authApp, /loadStudyCloud\(null\)/);
 
-const studyClient = readFileSync(new URL('../study-client.js', import.meta.url), 'utf8');
+// Since A1.0 study-client.js is a shim over src/features/study/study-api.js;
+// the contract is checked on both.
+const studyClient = readFileSync(new URL('../study-client.js', import.meta.url), 'utf8') +
+  readFileSync(new URL('../src/features/study/study-api.js', import.meta.url), 'utf8');
 assert.doesNotMatch(studyClient, /SERVICE_ROLE|service_role|SUPABASE_SERVICE/);
 assert.doesNotMatch(studyClient, /\/api\/auth\/me/);
 assert.doesNotMatch(studyClient, /localStorage|sessionStorage/);

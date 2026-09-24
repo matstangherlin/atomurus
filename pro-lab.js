@@ -1,8 +1,15 @@
 (function () {
   'use strict';
 
-  var SCRIPT_V = '202608282500';
+  var SCRIPT_V = '202609240000';
   var loaded = {};
+
+  /* The Pro Lab API runs on the shared core client (A1.0). app.html already
+     ships the bridge; other hosts get it on demand. */
+  function ensureCore() {
+    if (window.AtomurusCore) return Promise.resolve();
+    return loadScript('/assets/core/atomurus-core.js?v=' + SCRIPT_V);
+  }
 
   function loadScript(src) {
     if (loaded[src]) return loaded[src];
@@ -398,6 +405,7 @@
       return;
     }
 
+    await ensureCore();
     await loadScript('/pro-lab-client.js?v=' + SCRIPT_V);
     ctx.api = window.AtomurusProLabApi;
 
@@ -438,6 +446,7 @@
       renderHome(node, ctx, []);
       return;
     }
+    await ensureCore();
     await loadScript('/pro-lab-client.js?v=' + SCRIPT_V);
     ctx.api = window.AtomurusProLabApi;
     await loadScript(src);

@@ -10,7 +10,11 @@
     "build:i18n-assets": "node tools/build-i18n-assets.js",
     "build:content": "node tools/build-element-content-chunks.js",
     "build:isomerism": "node tools/generate-isomerism-pt-variants.js",
-    "build": "node tools/build-critical-css.js && node tools/build-home-preview-data.js && node tools/build-product-catalog.js && node tools/build-i18n-assets.js && node tools/build-element-content-chunks.js && node tools/generate-isomerism-pt-variants.js && node tools/patch-perf-async-css.js && node tools/inject-ui-chrome.js && node bump-version.js && node build-i18n.js",
+    "build:ui": "node tools/build-ui.mjs",
+    "build:core": "node tools/build-core-bundle.mjs",
+    "build:app-data": "node tools/build-app-data.mjs",
+    "build": "node tools/build-ui.mjs && node tools/build-core-bundle.mjs && node tools/build-app-data.mjs && node tools/build-critical-css.js && node tools/build-home-preview-data.js && node tools/build-product-catalog.js && node tools/build-i18n-assets.js && node tools/build-element-content-chunks.js && node tools/generate-isomerism-pt-variants.js && node tools/patch-perf-async-css.js && node tools/inject-ui-chrome.js && node bump-version.js && node build-i18n.js",
+    "build:app": "node tools/build-app-bundle.mjs",
     "test:plan": "node tools/test-feature-catalog.mjs && node tools/test-plan-access.mjs && node tools/test-lab-tool-access.mjs",
     "test:auth": "node tools/test-auth-provider.mjs && node tools/test-auth-flows.mjs && node tools/test-auth-rate-limit.mjs && node tools/test-auth-sync.mjs",
     "test:study": "node tools/test-study-cloud.mjs",
@@ -23,6 +27,21 @@
     "test:lab-access": "node tools/test-lab-access.mjs && node tools/test-viewer-perf.mjs",
     "test:viewer-perf": "node tools/test-viewer-perf.mjs",
     "test:ui-v2": "node tools/test-ui-v2.mjs",
+    "test:architecture-boundaries": "node tools/test-architecture-boundaries.mjs && node tools/test-core-contracts.mjs",
+    "test:api-client": "node tools/test-api-client.mjs",
+    "test:platform-adapter": "node tools/test-platform-adapter.mjs",
+    "test:auth-adapters": "node tools/test-auth-adapters.mjs && node tools/test-auth-bearer.mjs",
+    "test:feature-lifecycle": "node tools/test-feature-lifecycle.mjs",
+    "test:viewer-lifecycle": "node tools/test-viewer-lifecycle.mjs",
+    "test:app-bundle": "node tools/build-app-bundle.mjs && node tools/test-app-bundle.mjs",
+    "test:mutations": "node tools/test-a1-mutations.mjs",
+    "test:a1": "npm run test:architecture-boundaries && npm run test:api-client && npm run test:platform-adapter && npm run test:auth-adapters && npm run test:feature-lifecycle && npm run test:viewer-lifecycle && npm run test:app-bundle",
+    "test:mobile-layout": "playwright test e2e/a1-mobile.spec.js",
+    "test:safe-area": "playwright test e2e/a1-mobile.spec.js --grep \"safe area\"",
+    "test:no-horizontal-overflow": "playwright test e2e/a1-mobile.spec.js --grep \"overflow\"",
+    "test:a1-e2e": "playwright test e2e/a1-mobile.spec.js e2e/a1-lifecycle.spec.js",
+    "audit:architecture": "node tools/audit-architecture.mjs",
+    "perf:baseline": "node tools/perf-baseline.mjs",
     "capture:ui-v2": "node tools/capture-ui-v2.mjs",
     "test:e2e": "playwright test",
     "supabase:start": "supabase start",
@@ -31,12 +50,14 @@
     "validate": "node tools/validate-site.js",
     "warm:cache": "node tools/warm-edge-cache.js",
     "smoke:prod": "node tools/smoke-prod.js",
-    "ci": "npm run build && npm run test:plan && npm run test:auth && npm run test:study && npm run test:review && npm run test:insights && npm run test:billing && npm run test:ux && npm run test:pro-lab && npm run test:solver && npm run test:lab-access && npm run test:ui-v2 && npm run validate"
+    "ci": "npm run build && npm run test:plan && npm run test:auth && npm run test:study && npm run test:review && npm run test:insights && npm run test:billing && npm run test:ux && npm run test:pro-lab && npm run test:solver && npm run test:lab-access && npm run test:ui-v2 && npm run test:a1 && npm run validate"
   },
   "dependencies": {
     "stripe": "^22.3.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.55.0"
+    "@playwright/test": "^1.55.0",
+    "esbuild": "0.25.10",
+    "three": "0.128.0"
   }
 }

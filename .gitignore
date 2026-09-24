@@ -19,3 +19,6 @@ Thumbs.db
 .claude/
 *.log
 *.zip
+
+# App bundle output (tools/build-app-bundle.mjs)
+dist/

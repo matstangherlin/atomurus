@@ -1,0 +1,24 @@
+/* App bundle stylesheet entry (tools/build-app-bundle.mjs bundles the
+   @imports into one hashed file). Same tokens and components as the web —
+   one design system — minus the public-site shell layout. */
+@import "./tokens/colors.css";
+@import "./tokens/typography.css";
+@import "./tokens/spacing.css";
+@import "./tokens/radius.css";
+@import "./tokens/elevation.css";
+@import "./tokens/motion.css";
+@import "./tokens/layout.css";
+@import "./tokens/safe-area.css";
+@import "./components/typography.css";
+@import "./components/buttons.css";
+@import "./components/forms.css";
+@import "./components/cards.css";
+@import "./components/badges.css";
+@import "./components/states.css";
+@import "./components/feedback.css";
+@import "./components/navigation.css";
+@import "./components/overlays.css";
+@import "./components/toast.css";
+@import "./components/tables.css";
+@import "./components/utilities.css";
+@import "./layouts/app-shell.css";

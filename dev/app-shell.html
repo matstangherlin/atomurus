@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" class="app-root" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#F2EFE7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E0D0C" media="(prefers-color-scheme: dark)">
+<title>Atomurus App Shell (A1.0 dev)</title>
+<link rel="stylesheet" href="/assets/fonts/fonts.css">
+<link rel="stylesheet" href="/assets/ui/index.css">
+<link rel="stylesheet" href="/assets/ui/feedback.css">
+<link rel="stylesheet" href="/assets/ui/overlays.css">
+<link rel="stylesheet" href="/assets/ui/toast.css">
+<link rel="stylesheet" href="/assets/ui/app-shell.css">
+<script>
+  /* A1.0 foundation harness. Three.js is packaged locally in dist/app; on the
+     public host this dev page pulls the same pinned build from jsDelivr. */
+  window.__ATOMURUS_CONFIG__ = /(^|\.)atomurus\.com$/.test(location.hostname)
+    ? { threeModuleUrl: 'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.js' }
+    : {};
+  try { var t = localStorage.getItem('atomurus-theme'); if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+</script>
+<script type="module" src="/src/app/bootstrap/web-main.js"></script>
+</head>
+<body>
+<div id="app"></div>
+<noscript>Atomurus needs JavaScript for the app shell. The website works without it: <a href="/">atomurus.com</a>.</noscript>
+</body>
+</html>

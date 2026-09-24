@@ -1,4 +1,4 @@
-import { clearSessionCookieHeaders, readSessionTokens } from './auth-cookies.mjs';
+import { clearSessionCookieHeaders, readBearerCredential, readSessionTokens } from './auth-cookies.mjs';
 import {
   isSupabaseConfigured,
   normalizeSupabaseUser,
@@ -48,10 +48,10 @@ export async function authSession(request) {
     // refresh in another isolate, ads-config racing /me) must not
     // Set-Cookie Max-Age=0: that would wipe a sibling isolate's newly
     // rotated cookies from the shared jar.
-    return { user: null, cookieHeaders: session?.cookieHeaders || [], accessToken: null };
+    return { user: null, cookieHeaders: session?.cookieHeaders || [], accessToken: null, authMode: session?.authMode || 'cookie' };
   } catch (err) {
     if (isRejectedSession(err)) {
-      return { user: null, cookieHeaders: [], accessToken: null };
+      return { user: null, cookieHeaders: [], accessToken: null, authMode: readBearerCredential(request).present ? 'bearer' : 'cookie' };
     }
     throw err;
   }
@@ -84,6 +84,13 @@ export async function authRefresh(request) {
 }
 
 export async function authLogout(request) {
+  const bearer = readBearerCredential(request);
+  if (bearer.present) {
+    // Native sign-out revokes the token it holds and leaves the browser's
+    // cookie jar alone (a bearer request never owns those cookies).
+    await supabaseLogout(bearer.token);
+    return [];
+  }
   const { accessToken } = readSessionTokens(request);
   return supabaseLogout(accessToken);
 }

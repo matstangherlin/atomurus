@@ -1,0 +1,86 @@
+/* Atomurus UI V2 — typography
+   Instrument Serif = editorial / titles / element names.
+   Inter Tight = UI, body, labels, buttons.
+   JetBrains Mono = formulas, units, scientific metadata — not chrome. */
+
+.ui-display,
+.ui-h1,
+.ui-h2,
+.ui-title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.ui-display {
+  font-size: var(--text-display);
+  line-height: var(--leading-tight);
+}
+
+.ui-h1 {
+  font-size: var(--text-4xl);
+  line-height: var(--leading-tight);
+}
+
+.ui-h2 {
+  font-size: var(--text-3xl);
+  line-height: var(--leading-tight);
+}
+
+.ui-h3 {
+  font-family: var(--font-ui);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  line-height: var(--leading-snug);
+  margin: 0;
+}
+
+.ui-lede,
+.ui-body {
+  font-family: var(--font-ui);
+  color: var(--color-text-muted);
+  line-height: var(--leading-relaxed);
+  margin: 0;
+}
+
+.ui-lede {
+  font-size: var(--text-lg);
+  max-width: 40rem;
+}
+
+.ui-body { font-size: var(--text-base); }
+
+.ui-label {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--color-text);
+}
+
+.ui-kicker,
+.ui-meta {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-subtle);
+}
+
+.ui-kicker { color: var(--color-brand); }
+
+.ui-formula,
+.ui-num,
+.ui-mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.ui-em {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--color-brand);
+}

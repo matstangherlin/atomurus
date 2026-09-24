@@ -1,0 +1,75 @@
+/* Atomurus UI V2 — Sheet / Dialog overlays (src/ui/components/overlay.js).
+   Bottom sheet on phones, side sheet / centered dialog from tablet up.
+   Always inside the visible viewport and clear of safe areas. */
+
+.ui-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay, 90);
+  display: grid;
+  align-items: end;
+}
+
+.ui-overlay-backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--color-overlay);
+}
+
+.ui-overlay-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: calc(var(--app-vh, 100vh) - var(--app-safe-top, 0px) - var(--space-5));
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-bottom: 0;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: var(--space-2) calc(var(--gutter, 16px) + var(--app-safe-right, 0px)) calc(var(--space-4) + var(--app-safe-bottom, 0px)) calc(var(--gutter, 16px) + var(--app-safe-left, 0px));
+  outline: none;
+}
+
+.ui-overlay-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: var(--touch-comfort, 48px);
+}
+
+.ui-overlay-title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: var(--text-2xl);
+  font-weight: 400;
+}
+
+.ui-overlay-body {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  min-height: 0;
+}
+
+body.ui-overlay-open { overflow: hidden; }
+
+@media (min-width: 768px) {
+  .ui-overlay-sheet { justify-items: end; align-items: stretch; }
+  .ui-overlay-sheet .ui-overlay-panel {
+    width: min(420px, 100%);
+    max-height: none;
+    border-radius: 0;
+    border: 0;
+    border-left: 1px solid var(--color-border);
+    padding-top: calc(var(--space-3) + var(--app-safe-top, 0px));
+  }
+  .ui-overlay-dialog { place-items: center; }
+  .ui-overlay-dialog .ui-overlay-panel {
+    width: min(520px, calc(100% - 2 * var(--space-5)));
+    max-height: min(calc(var(--app-vh, 100vh) - 2 * var(--space-6)), 720px);
+    border-radius: var(--radius-lg);
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--space-5);
+  }
+}

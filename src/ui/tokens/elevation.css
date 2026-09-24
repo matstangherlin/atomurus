@@ -1,0 +1,24 @@
+/* Elevation — shadows and stacking. No huge blurred shadows on scientific
+   screens; overlays separate with the scrim, not with depth effects. */
+
+:root,
+[data-theme="light"] {
+  --shadow-sm: 0 1px 2px rgba(20, 18, 14, .04);
+  --shadow-md: 0 4px 14px rgba(20, 18, 14, .08);
+  --shadow-lg: 0 18px 48px rgba(20, 18, 14, .16);
+}
+
+[data-theme="dark"] {
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, .28);
+  --shadow-md: 0 4px 18px rgba(0, 0, 0, .38);
+  --shadow-lg: 0 18px 48px rgba(0, 0, 0, .5);
+}
+
+:root {
+  --z-base: 0;
+  --z-sticky: 20;
+  --z-nav: 40;
+  --z-banner: 50;
+  --z-overlay: 90;
+  --z-toast: 100;
+}

@@ -1,0 +1,37 @@
+/* Layout — three explicit layouts, not one layout with max-width patches.
+     mobile   < 768px    top bar + bottom navigation + sheets
+     tablet   768–1023   navigation rail
+     desktop  ≥ 1024     sidebar (desktop stays desktop)
+   Breakpoint values are documentation for JS/tests; CSS media queries use
+   the literal numbers (custom properties cannot drive @media). */
+
+:root {
+  --ui-topbar: 64px;
+  --ui-sidebar: 248px;
+  --ui-bottom: 64px;
+  --ui-rail: 80px;
+
+  --ui-bp-sm: 390px;
+  --ui-bp-md: 768px;
+  --ui-bp-chrome: 860px;
+  --ui-bp-lg: 1024px;
+  --ui-bp-xl: 1280px;
+
+  /* App chrome heights. The mobile top bar is shorter than the desktop one. */
+  --app-topbar: 56px;
+  --app-bottom-nav: 64px;
+
+  /* The visible viewport. dvh follows the browser UI and the keyboard;
+     vh is the fallback for engines without dynamic units. */
+  --app-vh: 100vh;
+  --content-max: 720px;
+  --content-wide: 1120px;
+}
+
+@supports (height: 100dvh) {
+  :root { --app-vh: 100dvh; }
+}
+
+@media (min-width: 1024px) {
+  :root { --app-topbar: var(--ui-topbar); }
+}
