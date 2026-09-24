@@ -593,7 +593,10 @@ assert.match(queueSrc, /focusReview/);
 assert.match(queueSrc, /apply_study_review|smartReview/);
 assert.doesNotMatch(queueSrc, /apply_focus_review/);
 
-const client = readFileSync(new URL('../study-client.js', import.meta.url), 'utf8');
+// Since A1.0 study-client.js is a shim over src/features/study/study-api.js;
+// the contract is checked on both.
+const client = readFileSync(new URL('../study-client.js', import.meta.url), 'utf8') +
+  readFileSync(new URL('../src/features/study/study-api.js', import.meta.url), 'utf8');
 assert.match(client, /\/api\/study\/insights/);
 assert.match(client, /reviewQueue/);
 

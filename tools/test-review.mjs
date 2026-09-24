@@ -829,7 +829,10 @@ await withEnv(async ({ store }) => {
   assert.equal(extraJson.code, 'quota_exceeded');
 });
 
-const studyClient = readFileSync(new URL('../study-client.js', import.meta.url), 'utf8');
+// Since A1.0 study-client.js is a shim over src/features/study/study-api.js;
+// the contract is checked on both.
+const studyClient = readFileSync(new URL('../study-client.js', import.meta.url), 'utf8') +
+  readFileSync(new URL('../src/features/study/study-api.js', import.meta.url), 'utf8');
 assert.doesNotMatch(studyClient, /\/api\/auth\/me/);
 assert.doesNotMatch(studyClient, /localStorage|sessionStorage|IndexedDB/);
 assert.match(studyClient, /\/api\/study\/review\/queue/);
