@@ -1,0 +1,57 @@
+/* Color — Atomurus identity: cream paper, ink, laboratory green, muted earth.
+   Semantic tokens only; components never hard-code a palette. */
+
+:root,
+[data-theme="light"] {
+  --color-bg: #F2EFE7;
+  --color-surface: #F8F5EC;
+  --color-surface-raised: #ECE7DA;
+  --color-border: #D8D2BF;
+  --color-border-strong: #C6BFA8;
+
+  --color-text: #14120E;
+  --color-text-muted: #58544A;
+  --color-text-subtle: #5F5953;
+
+  --color-brand: #1E6A50;
+  --color-brand-hover: color-mix(in oklab, #1E6A50 88%, #14120E);
+  --color-brand-soft: #DEE9DF;
+
+  --color-success: #1E6A50;
+  --color-warning: #B96B0C;
+  --color-danger: #9A4338;
+  --color-info: #58544A;
+
+  --color-overlay: color-mix(in oklab, #14120E 36%, transparent);
+  --color-on-brand: #F8F5EC;
+  --color-on-ink: #F8F5EC;
+  --color-focus: #1E6A50;
+  --color-ring: rgba(30, 106, 80, .22);
+}
+
+[data-theme="dark"] {
+  --color-bg: #0E0D0C;
+  --color-surface: #16140F;
+  --color-surface-raised: #1E1B16;
+  --color-border: #2E2A22;
+  --color-border-strong: #3D372C;
+
+  --color-text: #F2EFE7;
+  --color-text-muted: #908A7C;
+  --color-text-subtle: #B8B2AA;
+
+  --color-brand: #34A872;
+  --color-brand-hover: color-mix(in oklab, #34A872 86%, #F2EFE7);
+  --color-brand-soft: rgba(52, 168, 114, .14);
+
+  --color-success: #34A872;
+  --color-warning: #E8941C;
+  --color-danger: #E08A82;
+  --color-info: #908A7C;
+
+  --color-overlay: color-mix(in oklab, #0E0D0C 62%, transparent);
+  --color-on-brand: #0E0D0C;
+  --color-on-ink: #0E0D0C;
+  --color-focus: #34A872;
+  --color-ring: rgba(52, 168, 114, .28);
+}

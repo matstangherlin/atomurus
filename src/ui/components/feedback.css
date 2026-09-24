@@ -1,0 +1,42 @@
+/* Atomurus UI V2 — Skeleton, Loading, Empty and Error states.
+   Localized loading instead of a global spinner; every failure says what
+   happened and offers a way forward. */
+
+.ui-skeleton {
+  height: 1rem;
+  margin: var(--space-2) 0;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(90deg, var(--color-surface-raised), var(--color-surface), var(--color-surface-raised));
+  background-size: 200% 100%;
+  animation: ui-skeleton 1.2s ease-in-out infinite;
+}
+
+.ui-skeleton-title { height: 1.75rem; width: 60%; }
+.ui-skeleton-stack { display: grid; gap: var(--space-2); padding: var(--space-2) 0; }
+
+@keyframes ui-skeleton {
+  from { background-position: 100% 0; }
+  to { background-position: -100% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-skeleton { animation: none; }
+}
+
+[data-reduced-motion="1"] .ui-skeleton { animation: none; }
+
+.ui-loading-state,
+.ui-error-state {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+  padding: var(--space-5) 0;
+}
+
+.ui-error-state .ui-h3 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 400;
+}
+
+.ui-text-muted { color: var(--color-text-muted); }

@@ -1,0 +1,35 @@
+/* Typography — three voices, each with a job:
+     Instrument Serif  titles, element names, editorial emphasis, headline numbers
+     Inter Tight       interface: body, buttons, navigation, forms
+     JetBrains Mono    formulas, units, scientific data, properties, outputs */
+
+:root {
+  --font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --font-ui: 'Inter Tight', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Roles — reach for these, not the families. */
+  --font-display: var(--font-serif);
+  --font-element: var(--font-serif);
+  --font-interface: var(--font-ui);
+  --font-data: var(--font-mono);
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.9375rem;
+  --text-lg: 1.0625rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 2rem;
+  --text-4xl: 2.75rem;
+  --text-display: clamp(2.25rem, 4vw, 3.5rem);
+
+  /* Form text never below 16px on phones: smaller makes mobile browsers zoom. */
+  --text-input: max(16px, 1rem);
+
+  --leading-none: 1;
+  --leading-tight: 1.15;
+  --leading-snug: 1.35;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.65;
+}
