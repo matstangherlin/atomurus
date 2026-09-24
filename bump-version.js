@@ -18,7 +18,7 @@ function walk(dir) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
       // skip node_modules and hidden dirs
-      if (entry.name === 'node_modules' || entry.name.startsWith('.')) continue;
+      if (entry.name === 'node_modules' || entry.name === 'dist' || entry.name.startsWith('.')) continue;
       walk(full);
     } else if (entry.name.endsWith('.html')) {
       const original = fs.readFileSync(full, 'utf8');

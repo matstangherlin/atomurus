@@ -25,7 +25,7 @@ const ADSENSE_RE =
   /<script\b[^>]*\bsrc=["']https:\/\/pagead2\.googlesyndication\.com\/pagead\/js\/adsbygoogle\.js\?client=ca-pub-9495821870733084["'][^>]*>\s*<\/script>\s*/gi;
 const AUTOTAG_RE = /\baclib\.runAutoTag\s*\(/g;
 
-const SKIP_DIRS = new Set(['node_modules', '.git', 'netlify', 'tools', 'scripts', 'supabase']);
+const SKIP_DIRS = new Set(['node_modules', '.git', 'netlify', 'tools', 'scripts', 'supabase', 'src', 'dist']);
 
 function walk(dir, out) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {

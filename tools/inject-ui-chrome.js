@@ -10,7 +10,7 @@ const ROOT = path.resolve(__dirname, '..');
 const TPL = path.join(ROOT, 'templates', 'chrome');
 const SKIP_DIRS = new Set([
   'node_modules', '.git', 'netlify', 'tools', 'scripts', 'supabase',
-  'hanzi-logic', 'propostas', 'dev', 'docs', 'templates'
+  'hanzi-logic', 'propostas', 'dev', 'docs', 'templates', 'src', 'dist'
 ]);
 const SKIP_FILES = new Set(['app.html']);
 

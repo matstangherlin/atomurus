@@ -455,7 +455,7 @@ function assertUiV2() {
   }
   const SKIP_HTML_DIRS = new Set([
     'node_modules', '.git', 'netlify', 'tools', 'scripts', 'supabase',
-    'hanzi-logic', 'propostas', 'dev', 'docs', 'templates'
+    'hanzi-logic', 'propostas', 'dev', 'docs', 'templates', 'src', 'dist'
   ]);
   const HOIST_EXCEPTIONS = new Set([
     'explore/viewer/methyl-isocyanate.html',
