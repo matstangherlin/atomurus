@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import {
   clearSessionCookieHeaders,
+  readBearerCredential,
   readSessionTokens,
   sessionCookieHeaders
 } from './auth-cookies.mjs';
@@ -394,6 +395,21 @@ function readSessionTokensFromHeaders(cookieHeaders) {
 }
 
 export async function supabaseSessionFromRequest(request) {
+  // Dual auth, one identity: a bearer token and a cookie both resolve through
+  // supabaseGetUser, so web and native land on the same Supabase user.id.
+  // Bearer requests never touch cookies — no refresh from the jar, no
+  // Set-Cookie back; the native client refreshes its own tokens.
+  const bearer = readBearerCredential(request);
+  if (bearer.present) {
+    const user = bearer.token ? await supabaseGetUser(bearer.token) : null;
+    return {
+      user,
+      cookieHeaders: [],
+      accessToken: user ? bearer.token : null,
+      authMode: 'bearer'
+    };
+  }
+
   const { accessToken, refreshToken } = readSessionTokens(request);
   let user = await supabaseGetUser(accessToken);
   let cookieHeaders = [];
@@ -409,7 +425,8 @@ export async function supabaseSessionFromRequest(request) {
   return {
     user,
     cookieHeaders,
-    accessToken: user ? token : null
+    accessToken: user ? token : null,
+    authMode: 'cookie'
   };
 }
 

@@ -45,6 +45,21 @@ export function clearSessionCookieHeaders() {
   return allSessionCookieNames().map((name) => serializeCookie(name, '', 0));
 }
 
+// Native clients (Android, A1.x) authenticate with `Authorization: Bearer
+// <supabase access token>` instead of the cookie jar. `present` is true as soon
+// as the header exists, so a malformed or dead bearer is rejected outright and
+// never falls back to whatever cookies the request also carries.
+const BEARER_RE = /^Bearer\s+([A-Za-z0-9\-_.~+/]+=*)$/;
+const MAX_BEARER_LENGTH = 4096;
+
+export function readBearerCredential(request) {
+  const header = String(request?.headers?.get?.('authorization') || '').trim();
+  if (!header) return { present: false, token: null };
+  if (header.length > MAX_BEARER_LENGTH + 7) return { present: true, token: null };
+  const match = BEARER_RE.exec(header);
+  return { present: true, token: match ? match[1] : null };
+}
+
 export function readSessionTokens(request) {
   const header = request.headers.get('cookie') || '';
   const jar = {};
