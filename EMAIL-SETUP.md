@@ -18,12 +18,16 @@ No assistente do Google, quando ele perguntar o host do domínio, escolha **"Out
 | 2 | MX  | `@` | `smtp.google.com` | 1 | Receber e-mail no Gmail |
 | 3 | TXT | `@` | `v=spf1 include:_spf.google.com include:mailgun.org ~all` | — | SPF (anti-spam) |
 | 4 | TXT | `google._domainkey` | `v=DKIM1; k=rsa; p=…` (gerado no Admin) | — | DKIM (assinatura) |
-| 5 | TXT | `_dmarc` | `v=DMARC1; p=none; rua=mailto:contato@atomurus.com` | — | DMARC (relatórios) |
+| 5 | TXT | `_dmarc` | já existe — não criar outro | — | DMARC (relatórios) |
 
 Regras:
 
 - **Só um SPF por domínio.** Se já existir um TXT começando com `v=spf1`, edite esse em vez
   de criar outro. O valor acima junta Google (caixa) + Mailgun (formulário do site).
+- **Não apague os registros do Mailgun** (`email` CNAME, `k1._domainkey`, `include:mailgun.org`):
+  o formulário de contato do site envia por ele. Eles não conflitam com o Google.
+- **Não apague o `google-site-verification=YEw729…`** que já existe (é de outro serviço do
+  Google, ex.: Search Console). O do Workspace é um TXT **adicional**.
 - **Só MX do Google.** Se existirem MX antigos (ImprovMX, Zoho, etc.), apague-os.
 - Se o Google mostrar a lista antiga de 5 MX (`aspmx.l.google.com` …), pode usar ela no lugar
   do `smtp.google.com` — use **uma** das duas, não ambas.
@@ -53,10 +57,10 @@ Value `v=spf1 include:_spf.google.com include:mailgun.org ~all` → **Save**.
 3. Netlify → **Add new record** → Type `TXT`, Name `google._domainkey`, Value = o texto gerado.
 4. Espere alguns minutos e clique em **Iniciar autenticação** no Admin.
 
-## Passo 5 — DMARC (opcional, recomendado)
+## Passo 5 — DMARC
 
-Netlify → **Add new record** → Type `TXT`, Name `_dmarc`,
-Value `v=DMARC1; p=none; rua=mailto:contato@atomurus.com` → **Save**.
+O domínio **já tem** um `_dmarc` (criado na configuração do Mailgun). Só pode existir **um**
+registro DMARC: não crie outro. O existente já serve para o Google também.
 
 ## Passo 6 — Endereço `contato@`
 
