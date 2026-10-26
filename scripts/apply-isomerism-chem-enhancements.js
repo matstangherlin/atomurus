@@ -242,7 +242,7 @@ function patchHub() {
       <!-- ISO_QUIZ -->
       <section class="iso-quiz" id="iso-quiz">
         <h2 class="iso-quiz-title" data-i18n="isomerism.quiz.title">Quick check</h2>
-        <div class="iso-quiz-item" data-quiz="1" data-answer="a">
+        <div class="iso-quiz-item" data-quiz="1" data-answer="b">
           <p data-i18n="isomerism.quiz.q1">Q1</p>
           <div class="iso-quiz-options">
             <button type="button" data-opt="a" data-i18n="isomerism.quiz.q1a">A</button>
@@ -251,7 +251,7 @@ function patchHub() {
           </div>
           <p class="iso-quiz-feedback" hidden></p>
         </div>
-        <div class="iso-quiz-item" data-quiz="2" data-answer="a">
+        <div class="iso-quiz-item" data-quiz="2" data-answer="c">
           <p data-i18n="isomerism.quiz.q2">Q2</p>
           <div class="iso-quiz-options">
             <button type="button" data-opt="a" data-i18n="isomerism.quiz.q2a">A</button>

@@ -32,7 +32,7 @@ const _ELEMENT_CONTENT_PT = {
   },
   2: {
     overview:
-      'Hélio é o segundo elemento mais leve do universo e o gás nobre mais conhecido — completamente inerte, incolor, inodoro e não-tóxico. Apesar de ser o segundo mais abundante no cosmos (cerca de 24% da massa), na Terra é um recurso finito: ele escapa da atmosfera por ser tão leve. Quase todo hélio comercial vem do gás natural, onde se acumula como subproduto do decaimento radioativo do urânio e tório nas rochas há bilhões de anos.',
+      'Hélio é o segundo elemento mais leve do universo e o gás nobre mais conhecido — o menos reativo de todos: não forma compostos estáveis em condições comuns. É incolor, inodoro e não-tóxico. Apesar de ser o segundo mais abundante no cosmos (cerca de 24% da massa), na Terra é um recurso finito: ele escapa da atmosfera por ser tão leve. Quase todo hélio comercial vem do gás natural, onde se acumula como subproduto do decaimento radioativo do urânio e tório nas rochas há bilhões de anos.',
     history:
       'Detectado pela primeira vez em 1868, não na Terra mas no espectro do Sol — durante um eclipse solar total na Índia, os astrônomos Pierre Janssen e Norman Lockyer notaram uma linha amarela desconhecida que não correspondia a nenhum elemento conhecido. Lockyer batizou-o de "helium", do grego "helios" (Sol). Só em 1895 William Ramsay isolou hélio terrestre a partir do mineral cleveíta, confirmando que o elemento solar também existia aqui.',
     properties:
@@ -128,11 +128,11 @@ const _ELEMENT_CONTENT_PT = {
   },
   10: {
     overview:
-      'Neônio é um gás nobre, inerte, incolor e inodoro — o quinto mais abundante no universo, mas raríssimo na atmosfera terrestre (cerca de 18 partes por milhão). Famoso pela cor laranja-avermelhada vibrante que emite quando excitado eletricamente em tubos de vidro: as "luzes de neon" que definiram a estética urbana do século XX, das marquises da Times Square aos letreiros art déco.',
+      'Neônio é um gás nobre praticamente sem reatividade química (não se conhece composto estável do neônio), incolor e inodoro — o quinto mais abundante no universo, mas raríssimo na atmosfera terrestre (cerca de 18 partes por milhão). Famoso pela cor laranja-avermelhada vibrante que emite quando excitado eletricamente em tubos de vidro: as "luzes de neon" que definiram a estética urbana do século XX, das marquises da Times Square aos letreiros art déco.',
     history:
       'Descoberto em 1898 por William Ramsay e Morris Travers em Londres, junto com criptônio e xenônio, durante o resfriamento e destilação fracionada do ar líquido. O nome vem do grego "neos" (novo) — o filho de Ramsay sugeriu o nome quando viu o brilho do gás. Em 1910 o engenheiro francês Georges Claude criou o primeiro letreiro de neon comercial, dando início à era das luminárias urbanas elétricas.',
     properties:
-      'Gás nobre monoatômico (Ne), inerte em quase todas as condições — não forma compostos químicos estáveis em laboratório. Liquefaz a -246 °C. Quando submetido a alta voltagem em tubos de vidro, emite intensa luz laranja-avermelhada (a 632,8 nm é a linha característica). Tem a faixa de fase líquida mais estreita de todos os elementos — só 2,6 °C entre fusão e ebulição.',
+      'Gás nobre monoatômico (Ne), praticamente sem reatividade química (não se conhece composto estável do neônio). Liquefaz a -246 °C. Quando submetido a alta voltagem em tubos de vidro, emite intensa luz laranja-avermelhada (a 632,8 nm é a linha característica). Tem a faixa de fase líquida mais estreita de todos os elementos — só 2,6 °C entre fusão e ebulição.',
     applications:
       'A aplicação mais reconhecível são os letreiros de neon — embora muitas "luzes de neon" modernas na verdade contenham argônio, hélio ou outros gases para produzir cores diferentes (azul, verde, amarelo). Indicadores de alta-tensão usam tubos de neon de pequena potência. Neônio líquido é criogênico usado em laboratórios. Lasers de hélio-neônio (famosos pelo feixe vermelho) foram padrão em leitores de código de barras de supermercados.',
     curiosity:
@@ -224,11 +224,11 @@ const _ELEMENT_CONTENT_PT = {
   },
   18: {
     overview:
-      'Argônio é o terceiro gás mais abundante na atmosfera terrestre (cerca de 0,93%), maior do que todos os outros gases nobres combinados. Incolor, inodoro e quimicamente inerte — é o gás nobre mais comum no nosso entorno. Apesar de invisível, é usado industrialmente em quantidades enormes em soldagem, lâmpadas e janelas isolantes. Seu nome vem do grego "argos" (preguiçoso), refletindo sua resistência a reagir com outros elementos.',
+      'Argônio é o terceiro gás mais abundante na atmosfera terrestre (cerca de 0,93%), maior do que todos os outros gases nobres combinados. Incolor, inodoro e muito pouco reativo; usado como atmosfera protetora — é o gás nobre mais comum no nosso entorno. Apesar de invisível, é usado industrialmente em quantidades enormes em soldagem, lâmpadas e janelas isolantes. Seu nome vem do grego "argos" (preguiçoso), refletindo sua resistência a reagir com outros elementos.',
     history:
       'Descoberto em 1894 por Lord Rayleigh e William Ramsay no Reino Unido, quando perceberam que o nitrogênio extraído do ar era ligeiramente mais denso que o nitrogênio puro produzido em laboratório. Após remover oxigênio, dióxido de carbono e umidade do ar, eles isolaram um gás residual que não reagia com nada — o argônio. Esse trabalho rendeu o Nobel a Ramsay em 1904, e abriu o caminho para descobertas de neônio, criptônio e xenônio.',
     properties:
-      'Gás nobre monoatômico (Ar), incolor, inodoro e insípido. Liquefaz a -186 °C. É quase totalmente inerte — apesar de o argônio fluorohidreto (HArF) ter sido sintetizado em 2000, é estável só abaixo de -265 °C. Tem três isótopos estáveis. Cerca de 99% do argônio atmosférico é Ar-40, formado pelo decaimento radioativo de K-40 nas rochas ao longo de bilhões de anos. Apresenta cor lilás-rosada quando excitado eletricamente.',
+      'Gás nobre monoatômico (Ar), incolor, inodoro e insípido. Liquefaz a -186 °C. É muito pouco reativo — apesar de o argônio fluorohidreto (HArF) ter sido sintetizado em 2000, é estável só abaixo de -265 °C. Tem três isótopos estáveis. Cerca de 99% do argônio atmosférico é Ar-40, formado pelo decaimento radioativo de K-40 nas rochas ao longo de bilhões de anos. Apresenta cor lilás-rosada quando excitado eletricamente.',
     applications:
       'A maior aplicação é como atmosfera inerte: protege metais fundidos durante soldagem (TIG, MIG) contra oxidação, especialmente em aço inox, alumínio e titânio. Preenche lâmpadas incandescentes e fluorescentes (junto com mercúrio) para evitar oxidação do filamento. Janelas de vidro duplo selam argônio entre os painéis para isolamento térmico — uma das tecnologias mais eficientes em construção sustentável. Atmosfera protetora em museus, preservando documentos antigos.',
     curiosity:
@@ -440,11 +440,11 @@ const _ELEMENT_CONTENT_PT = {
   },
   36: {
     overview:
-      'Criptônio é um gás nobre, incolor, inodoro e quimicamente inerte — o quarto mais abundante na atmosfera terrestre entre os nobres, mas ainda raríssimo (cerca de 1 ppm). Embora seu nome remeta ao "kryptonite" da ficção de Superman, o criptônio real é totalmente benigno — apenas um gás que emite brilho azul-violeta intenso em descargas elétricas. Aplicações se concentram em iluminação e medição de tempo de alta precisão.',
+      'Criptônio é um gás nobre, incolor, inodoro e pouco reativo; forma o difluoreto de criptônio (KrF₂), instável, em condições especiais — o quarto mais abundante na atmosfera terrestre entre os nobres, mas ainda raríssimo (cerca de 1 ppm). Embora seu nome remeta ao "kryptonite" da ficção de Superman, o criptônio real é totalmente benigno — apenas um gás que emite brilho azul-violeta intenso em descargas elétricas. Aplicações se concentram em iluminação e medição de tempo de alta precisão.',
     history:
       'Descoberto em 1898 por William Ramsay e Morris Travers em Londres, durante destilação fracionada do ar líquido — no mesmo ano em que descobriram neônio e xenônio. O nome vem do grego "kryptos" (oculto), porque a substância estava "escondida" entre outros gases nobres e só foi revelada por análise espectral cuidadosa. A "kryptonite" do Superman foi nomeada em 1943 inspirada na palavra, mas é fictícia — não tem relação com o elemento real.',
     properties:
-      'Gás nobre monoatômico (Kr), incolor e inerte em condições normais, embora forme alguns compostos sob condições extremas (KrF₂ é estável a baixa temperatura). Liquefaz a -153 °C. Tem seis isótopos estáveis. Quando excitado eletricamente, emite uma luz azul-violeta brilhante com várias linhas espectrais bem definidas. A linha laranja-vermelha do Kr-86 foi usada de 1960 a 1983 para definir o metro como padrão internacional.',
+      'Gás nobre monoatômico (Kr), incolor e pouco reativo em condições comuns; forma o difluoreto de criptônio (KrF₂), instável, em condições especiais. Liquefaz a -153 °C. Tem seis isótopos estáveis. Quando excitado eletricamente, emite uma luz azul-violeta brilhante com várias linhas espectrais bem definidas. A linha laranja-vermelha do Kr-86 foi usada de 1960 a 1983 para definir o metro como padrão internacional.',
     applications:
       'Lâmpadas fluorescentes e flashes de fotografia profissional usam criptônio para aumentar luminosidade e durabilidade. Lasers de criptônio produzem luz visível em comprimentos de onda específicos para aplicações médicas e científicas. Janelas isolantes de alta performance (preenchidas com criptônio em vez de argônio) reduzem perda de calor em até 27%. Detectores de vazamentos radioativos usam Kr-85.',
     curiosity:
@@ -1451,7 +1451,7 @@ const _ELEMENT_CONTENT_EN = {
   },
   2: {
     overview:
-      'Helium is the second lightest element in the universe and the most familiar noble gas — completely inert, colorless, odorless and non-toxic. Despite being the second most abundant in the cosmos (about 24% of mass), on Earth it is a finite resource: it is so light it escapes the atmosphere. Almost all commercial helium comes from natural gas, where it accumulates as a byproduct of radioactive decay of uranium and thorium in rocks over billions of years.',
+      'Helium is the second lightest element in the universe and the most familiar noble gas — the least reactive of all: it forms no stable compounds under ordinary conditions. It is colorless, odorless and non-toxic. Despite being the second most abundant in the cosmos (about 24% of mass), on Earth it is a finite resource: it is so light it escapes the atmosphere. Almost all commercial helium comes from natural gas, where it accumulates as a byproduct of radioactive decay of uranium and thorium in rocks over billions of years.',
     history:
       'First detected in 1868 not on Earth but in the Sun\'s spectrum — during a total solar eclipse in India, astronomers Pierre Janssen and Norman Lockyer noticed an unknown yellow line that matched no known element. Lockyer named it "helium" from the Greek "helios" (Sun). Only in 1895 did William Ramsay isolate terrestrial helium from the mineral cleveite, confirming that the solar element also existed here.',
     properties:
@@ -1547,11 +1547,11 @@ const _ELEMENT_CONTENT_EN = {
   },
   10: {
     overview:
-      'Neon is a noble, inert, colorless and odorless gas — the fifth most abundant in the universe, yet extremely rare in Earth\'s atmosphere (about 18 parts per million). Famous for the vivid orange-red color it emits when electrically excited in glass tubes: the "neon lights" that defined 20th-century urban aesthetics, from Times Square marquees to Art Deco signs.',
+      'Neon is a noble gas with practically no chemical reactivity (no stable neon compound is known), colorless and odorless — the fifth most abundant in the universe, yet extremely rare in Earth\'s atmosphere (about 18 parts per million). Famous for the vivid orange-red color it emits when electrically excited in glass tubes: the "neon lights" that defined 20th-century urban aesthetics, from Times Square marquees to Art Deco signs.',
     history:
       'Discovered in 1898 by William Ramsay and Morris Travers in London, alongside krypton and xenon, during fractional distillation of liquid air. The name comes from the Greek "neos" (new) — Ramsay\'s son suggested the name when he saw the gas\'s glow. In 1910 French engineer Georges Claude created the first commercial neon sign, launching the era of electric urban illumination.',
     properties:
-      'Monoatomic noble gas (Ne), inert in almost all conditions — does not form stable chemical compounds in the laboratory. Liquefies at -246 °C. When subjected to high voltage in glass tubes, it emits intense orange-red light (at 632.8 nm is the characteristic line). It has the narrowest liquid-phase range of any element — only 2.6 °C between melting and boiling.',
+      'Monoatomic noble gas (Ne), practically without chemical reactivity (no stable neon compound is known). Liquefies at -246 °C. When subjected to high voltage in glass tubes, it emits intense orange-red light (at 632.8 nm is the characteristic line). It has the narrowest liquid-phase range of any element — only 2.6 °C between melting and boiling.',
     applications:
       'The most recognizable application is neon signage — although many modern "neon lights" actually contain argon, helium or other gases to produce different colors (blue, green, yellow). High-voltage indicators use small neon tubes. Liquid neon is a cryogenic fluid used in laboratories. Helium-neon lasers (famous for the red beam) were standard in supermarket barcode scanners.',
     curiosity:
@@ -1643,11 +1643,11 @@ const _ELEMENT_CONTENT_EN = {
   },
   18: {
     overview:
-      'Argon is the third most abundant gas in Earth\'s atmosphere (about 0.93%), more than all other noble gases combined. Colorless, odorless and chemically inert — it is the most common noble gas in our surroundings. Although invisible, it is used industrially in enormous quantities in welding, lamps and insulating windows. Its name comes from the Greek "argos" (lazy), reflecting its resistance to reacting with other elements.',
+      'Argon is the third most abundant gas in Earth\'s atmosphere (about 0.93%), more than all other noble gases combined. Colorless, odorless and very unreactive; used as a protective atmosphere — it is the most common noble gas in our surroundings. Although invisible, it is used industrially in enormous quantities in welding, lamps and insulating windows. Its name comes from the Greek "argos" (lazy), reflecting its resistance to reacting with other elements.',
     history:
       'Discovered in 1894 by Lord Rayleigh and William Ramsay in the United Kingdom, when they noticed that nitrogen extracted from air was slightly denser than nitrogen produced in the laboratory. After removing oxygen, carbon dioxide and moisture from air, they isolated a residual gas that did not react with anything — argon. This work earned Ramsay the Nobel Prize in 1904 and opened the path to discovering neon, krypton and xenon.',
     properties:
-      'Monoatomic noble gas (Ar), colorless, odorless and tasteless. Liquefies at -186 °C. It is almost completely inert — although argon fluorohydride (HArF) was synthesized in 2000, it is stable only below -265 °C. Has three stable isotopes. About 99% of atmospheric argon is Ar-40, formed by the radioactive decay of K-40 in rocks over billions of years. Shows a lilac-pink color when electrically excited.',
+      'Monoatomic noble gas (Ar), colorless, odorless and tasteless. Liquefies at -186 °C. It is very unreactive — although argon fluorohydride (HArF) was synthesized in 2000, it is stable only below -265 °C. Has three stable isotopes. About 99% of atmospheric argon is Ar-40, formed by the radioactive decay of K-40 in rocks over billions of years. Shows a lilac-pink color when electrically excited.',
     applications:
       'The largest use is as an inert atmosphere: it protects molten metals during welding (TIG, MIG) from oxidation, especially in stainless steel, aluminum and titanium. Fills incandescent and fluorescent lamps (alongside mercury) to prevent filament oxidation. Double-glazed windows seal argon between the panes for thermal insulation — one of the most efficient technologies in sustainable construction. Protective atmosphere in museums, preserving ancient documents.',
     curiosity:
@@ -1859,11 +1859,11 @@ const _ELEMENT_CONTENT_EN = {
   },
   36: {
     overview:
-      'Krypton is a noble gas, colorless, odorless and chemically inert — the fourth most abundant noble gas in Earth\'s atmosphere, yet still very rare (about 1 ppm). Although its name recalls Superman\'s fictional "kryptonite", real krypton is completely benign — just a gas that glows intense blue-violet in electric discharges. Applications concentrate on lighting and high-precision time measurement.',
+      'Krypton is a noble gas, colorless, odorless and not very reactive; it forms krypton difluoride (KrF₂), unstable and prepared only under special conditions — the fourth most abundant noble gas in Earth\'s atmosphere, yet still very rare (about 1 ppm). Although its name recalls Superman\'s fictional "kryptonite", real krypton is completely benign — just a gas that glows intense blue-violet in electric discharges. Applications concentrate on lighting and high-precision time measurement.',
     history:
       'Discovered in 1898 by William Ramsay and Morris Travers in London, during fractional distillation of liquid air — the same year they discovered neon and xenon. The name comes from the Greek "kryptos" (hidden), because the substance was "concealed" among other noble gases and only revealed through careful spectral analysis. Superman\'s "kryptonite" was named in 1943 inspired by the word, but it is fictional — unrelated to the real element.',
     properties:
-      'Monoatomic noble gas (Kr), colorless and inert under normal conditions, although it forms some compounds under extreme conditions (KrF₂ is stable at low temperature). Liquefies at -153 °C. Has six stable isotopes. When electrically excited, it emits bright blue-violet light with several well-defined spectral lines. The orange-red line of Kr-86 was used from 1960 to 1983 to define the meter as an international standard.',
+      'Monoatomic noble gas (Kr), colorless and not very reactive under ordinary conditions; it forms krypton difluoride (KrF₂), unstable and prepared only under special conditions. Liquefies at -153 °C. Has six stable isotopes. When electrically excited, it emits bright blue-violet light with several well-defined spectral lines. The orange-red line of Kr-86 was used from 1960 to 1983 to define the meter as an international standard.',
     applications:
       'Fluorescent lamps and professional photography flashes use krypton to increase brightness and durability. Krypton lasers produce visible light at specific wavelengths for medical and scientific applications. High-performance insulating windows (filled with krypton instead of argon) reduce heat loss by up to 27%. Radioactive leak detectors use Kr-85.',
     curiosity:

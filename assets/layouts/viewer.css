@@ -151,3 +151,10 @@ html body.ps-body .lab-readmore-card p {
   margin: 0;
   color: var(--color-text-muted);
 }
+.ph-note {
+  margin: 8px 0 0;
+  max-width: 68ch;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--color-text-muted, var(--lc-ink-3));
+}

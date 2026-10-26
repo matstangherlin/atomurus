@@ -6,7 +6,7 @@
 // ── ELEMENTS ────────────────────────────────────────────────────
 const ELEMENTS = [
   {z:1, sym:"H", name:"Hidrogênio", mass:"1.008", cat:"nonmetal", col:1, row:1, en:2.2, state:"Gasoso", period:1, group:1, disc:"Cavendish", year:1766, desc:"O elemento mais abundante do universo, essencial para a vida e combustível do futuro."},
-  {z:2, sym:"He", name:"Hélio", mass:"4.0026", cat:"noble", col:18, row:1, en:"—", state:"Gasoso", period:1, group:18, disc:"Lockyer / Janssen", year:1868, desc:"Gás nobre inerte, segundo elemento mais leve, usado em balões e criogenia."},
+  {z:2, sym:"He", name:"Hélio", mass:"4.0026", cat:"noble", col:18, row:1, en:"—", state:"Gasoso", period:1, group:18, disc:"Lockyer / Janssen", year:1868, desc:"Gás nobre, o menos reativo de todos, usado em balões e criogenia."},
   {z:3, sym:"Li", name:"Lítio", mass:"6.94", cat:"alkali", col:1, row:2, en:0.98, state:"Sólido", period:2, group:1, disc:"Arfwedson", year:1817, desc:"Um metal alcalino macio e de cor branca prateada, o metal mais leve e o elemento sólido menos denso."},
   {z:4, sym:"Be", name:"Berílio", mass:"9.0122", cat:"alkaline", col:2, row:2, en:1.57, state:"Sólido", period:2, group:2, disc:"Vauquelin", year:1798, desc:"Metal alcalino-terroso rígido e leve, usado em ligas aeroespaciais e janelas de raio-X."},
   {z:5, sym:"B", name:"Boro", mass:"10.81", cat:"metalloid", col:13, row:2, en:2.04, state:"Sólido", period:2, group:13, disc:"Gay-Lussac", year:1808, desc:"Metaloide com propriedades únicas, essencial em vidros borossilicatos e semicondutores."},
@@ -222,7 +222,7 @@ const EXTRA = {
   15: { econfig:"[Ne] 3s² 3p³", shells:[2,8,5], melt:"44.15°C", boil:"280.5°C", apps:["Fertilizantes","detergentes","explosivos","fósforos"] },
   16: { econfig:"[Ne] 3s² 3p⁴", shells:[2,8,6], melt:"115.21°C", boil:"444.6°C", apps:["Ácido sulfúrico","fertilizantes","borracha vulcanizada","fungicidas"] },
   17: { econfig:"[Ne] 3s² 3p⁵", shells:[2,8,7], melt:"-101.5°C", boil:"-34.04°C", apps:["Desinfetante de água","PVC","solventes","branqueadores"] },
-  18: { econfig:"[Ne] 3s² 3p⁶", shells:[2,8,8], melt:"-189.34°C", boil:"-185.848°C", apps:["Soldagem","lâmpadas incandescentes","atmosfera inerte em laboratórios"] },
+  18: { econfig:"[Ne] 3s² 3p⁶", shells:[2,8,8], melt:"-189.34°C", boil:"-185.848°C", apps:["Soldagem","lâmpadas incandescentes","atmosfera protetora pouco reativa em laboratórios"] },
   19: { econfig:"[Ar] 4s¹", shells:[2,8,8,1], melt:"63.5°C", boil:"759°C", apps:["Fertilizantes","pólvora","sal de cozinha alternativo","medicina"] },
   20: { econfig:"[Ar] 4s²", shells:[2,8,8,2], melt:"842°C", boil:"1484°C", apps:["Cimento","cal","suplementos alimentares","metalurgia"] },
   21: { econfig:"[Ar] 3d¹ 4s²", shells:[2,8,9,2], melt:"1541°C", boil:"2836°C", apps:["Ligas de alumínio-escândio para aeronaves e equipamentos esportivos","lâmpadas de iodeto"] },

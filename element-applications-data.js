@@ -50,7 +50,7 @@
     2: {
       industrial: [
         { en: 'Leak detection', pt: 'Detecção de vazamentos' },
-        { en: 'Inert shielding gas for welding', pt: 'Gás inerte de proteção para soldagem' }
+        { en: 'Low-reactivity shielding gas for welding', pt: 'Gás de proteção pouco reativo para soldagem' }
       ],
       technological: [
         { en: 'Cooling superconducting magnets (MRI)', pt: 'Resfriamento de ímãs supercondutores (RM)' },

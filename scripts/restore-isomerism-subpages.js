@@ -173,24 +173,31 @@ const OVERVIEW_HTML = extractBlock('<!-- ISO_OVERVIEW -->', '<!-- /ISO_OVERVIEW 
 const QUIZ_HTML = extractBlock('<!-- ISO_QUIZ -->', '<!-- /ISO_QUIZ -->');
 
 const QUIZ_SCRIPT = `
+<script src="../../assets/isomerism-quiz.js?v=202610262200"></script>
 <script>
 (function initIsoQuiz(){
-  function msg(ok){
-    if(!window.I18N) return ok ? 'Correct!' : 'Not quite.';
-    return I18N.t(ok ? 'isomerism.quiz.feedbackCorrect' : 'isomerism.quiz.feedbackWrong');
-  }
+  var quiz = window.AtomurusIsoQuiz;
   document.querySelectorAll('.iso-quiz-item').forEach(function(item){
+    var box = item.querySelector('.iso-quiz-options');
+    if (box && quiz) quiz.shuffleOptions(Array.prototype.slice.call(box.children), Math.random).forEach(function(btn){ box.appendChild(btn); });
     var ans=item.getAttribute('data-answer');
     var fb=item.querySelector('.iso-quiz-feedback');
+    if (fb) fb.setAttribute('aria-live','polite');
     item.querySelectorAll('button[data-opt]').forEach(function(btn){
       btn.addEventListener('click',function(){
-        var ok=btn.getAttribute('data-opt')===ans;
-        if(fb){ fb.hidden=false; fb.textContent=msg(ok); fb.className='iso-quiz-feedback '+(ok?'ok':'bad'); }
-        item.querySelectorAll('button').forEach(function(b){ b.disabled=true; });
+        var chosen=btn.getAttribute('data-opt');
+        var ok=chosen===ans;
+        var q=item.getAttribute('data-quiz');
+        function expFor(opt){
+          var key='isomerism.quiz.q'+q+opt+'Exp';
+          if(window.I18N&&I18N.t){ var v=I18N.t(key); if(v&&v!==key) return v; }
+          return '';
+        }
+        if(fb){ fb.hidden=false; fb.textContent=ok?expFor(chosen):(expFor(chosen)+' '+expFor(ans)); fb.className='iso-quiz-feedback '+(ok?'ok':'bad'); }
+        item.querySelectorAll('button').forEach(function(b){ b.disabled=true; if(b.getAttribute('data-opt')===ans) b.classList.add('is-correct'); });
       });
     });
   });
-  if(window.I18N&&I18N.onChange) I18N.onChange(function(){ document.querySelectorAll('.iso-quiz-feedback').forEach(function(f){ f.hidden=true; }); document.querySelectorAll('.iso-quiz-item button').forEach(function(b){ b.disabled=false; }); });
 })();
 </script>`;
 

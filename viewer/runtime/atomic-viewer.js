@@ -882,7 +882,7 @@
   // modelMeta is i18n-aware: name/desc come from I18N at read-time
   const modelMeta = {
     bohr:       { get name(){return _atomI18n('atomicModels.modelMeta.bohrName','Bohr Model (1913)')},       get desc(){return _atomI18n('atomicModels.modelMeta.bohrDesc','Electron orbits in discrete energy levels')} },
-    rutherford: { get name(){return _atomI18n('atomicModels.modelMeta.rutherfordName','Rutherford Model (1911)')}, get desc(){return _atomI18n('atomicModels.modelMeta.rutherfordDesc','Dense positive nucleus · electrons in 3D orbits')} },
+    rutherford: { get name(){return _atomI18n('atomicModels.modelMeta.rutherfordName','Rutherford Model (1911)')}, get desc(){return _atomI18n('atomicModels.modelMeta.rutherfordDesc','Dense positive nucleus · electrons placed around the nucleus (a historical model)')} },
     quantum:    { get name(){return _atomI18n('atomicModels.modelMeta.quantumName','Quantum Model (1926)')},    get desc(){return _atomI18n('atomicModels.modelMeta.quantumDesc','Electron probability cloud · Schrödinger')} },
     thomson:    { get name(){return _atomI18n('atomicModels.modelMeta.thomsonName','Thomson Model (1897)')},    get desc(){return _atomI18n('atomicModels.modelMeta.thomsonDesc','Diffuse positive sphere · "plum pudding"')} },
     dalton:     { get name(){return _atomI18n('atomicModels.modelMeta.daltonName','Dalton Model (1803)')},     get desc(){return _atomI18n('atomicModels.modelMeta.daltonDesc','Atom as a solid, indivisible sphere')} }
