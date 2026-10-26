@@ -68,6 +68,7 @@ test('wrong password stays on login and unsticks the submit button', async ({ pa
   await page.locator('#auth-login-submit').click();
   await expect(page.locator('#auth-login-err')).toBeVisible();
   await expect(page.locator('#auth-login-err')).toContainText(/Invalid email or password/i);
+  await expect(page.locator('#auth-resend-confirmation')).toBeHidden();
   await expect(page).toHaveURL(/\/login/);
   await expect(page.locator('#auth-login-submit')).toBeEnabled();
 });
@@ -81,6 +82,7 @@ test('unconfirmed email shows a confirm-inbox message', async ({ page }) => {
   await page.locator('#auth-login-submit').click();
   await expect(page.locator('#auth-login-err')).toBeVisible();
   await expect(page.locator('#auth-login-err')).toContainText(/Confirm your email/i);
+  await expect(page.locator('#auth-resend-confirmation')).toBeVisible();
   await expect(page).toHaveURL(/\/login/);
 });
 
@@ -114,7 +116,7 @@ test('password recovery shows the generic success copy', async ({ page }) => {
   await page.locator('#auth-reset-email').fill('pro@atomurus.test');
   await page.locator('#auth-reset-submit').click();
   await expect(page.locator('#auth-reset-ok')).toBeVisible();
-  await expect(page.locator('#auth-reset-ok')).toContainText(/recovery instructions/i);
+  await expect(page.locator('#auth-reset-ok')).toContainText(/sent a link/i);
   await page.locator('#auth-panel-recover [data-auth-route="login"]').click();
   await expect(page.locator('#auth-login-form')).toBeVisible();
 });
@@ -124,6 +126,72 @@ test('signed-in visitor on /login is sent to /app', async ({ page }) => {
   await page.goto('/login');
   await page.waitForURL(/\/app/, { timeout: 15_000 });
   await expect(page.locator('#ws-nav-main a').first()).toBeVisible({ timeout: 15_000 });
+});
+
+function watchAuthLeaks(page, secret) {
+  const logs = [];
+  const foreign = [];
+  page.on('console', (msg) => logs.push(msg.text()));
+  page.on('request', (req) => {
+    const url = req.url();
+    let host = '';
+    try { host = new URL(url).hostname; } catch (_err) { host = ''; }
+    if (host && host !== '127.0.0.1' && host !== 'localhost' && url.includes(secret)) foreign.push(url);
+  });
+  return { logs, foreign };
+}
+
+test('reset link with token_hash opens the new-password panel', async ({ page }) => {
+  const secret = 'fake-token-hash';
+  const leaks = watchAuthLeaks(page, secret);
+  await installApi(page, { kind: 'pro', signedIn: false });
+  await page.goto(`/reset-password?token_hash=${secret}&type=recovery`);
+  await expect(page.locator('#auth-password-panel')).toBeVisible();
+  await expect(page.locator('#auth-new-password')).toHaveAttribute('autocomplete', 'new-password');
+  await expect(page.locator('label[for="auth-new-password"]')).toBeVisible();
+  await expect(page.locator('#auth-new-password-confirm')).toHaveAttribute('autocomplete', 'new-password');
+  await expect(page.locator('#auth-password-err')).not.toContainText(secret);
+  expect(leaks.logs.join('\n')).not.toContain(secret);
+  expect(leaks.foreign).toEqual([]);
+});
+
+test('reset hash on /reset-password opens the new-password panel', async ({ page }) => {
+  const secret = 'fake-access-token';
+  const leaks = watchAuthLeaks(page, secret);
+  await installApi(page, { kind: 'pro', signedIn: false });
+  await page.goto(`/reset-password#access_token=${secret}&refresh_token=fake-refresh-token&type=recovery`);
+  await expect(page.locator('#auth-password-panel')).toBeVisible();
+  await expect(page.locator('#auth-password-err')).not.toContainText(secret);
+  expect(page.url()).not.toContain(secret);
+  expect(leaks.logs.join('\n')).not.toContain(secret);
+  expect(leaks.foreign).toEqual([]);
+});
+
+test('recovery hash on the home page redirects to the new-password panel', async ({ page }) => {
+  const secret = 'fake-access-token';
+  const leaks = watchAuthLeaks(page, secret);
+  await installApi(page, { kind: 'pro', signedIn: false });
+  await page.goto(`/#access_token=${secret}&refresh_token=fake-refresh-token&type=recovery`);
+  await expect(page.locator('#auth-password-panel')).toBeVisible();
+  await expect(page).toHaveURL(/\/reset-password/);
+  expect(page.url()).not.toContain(secret);
+  expect(leaks.logs.join('\n')).not.toContain(secret);
+  expect(leaks.foreign).toEqual([]);
+});
+
+test('expired auth hash on the home page opens login with a new-link button', async ({ page }) => {
+  const secret = 'otp_expired';
+  const leaks = watchAuthLeaks(page, 'fake-expired-description');
+  await installApi(page, { kind: 'pro', signedIn: false });
+  await page.goto('/#error=access_denied&error_code=otp_expired&error_description=fake-expired-description');
+  await expect(page.locator('#auth-login-form')).toBeVisible();
+  await expect(page.locator('#auth-login-err')).toContainText(/expired/i);
+  await expect(page.locator('#auth-request-new-link')).toBeVisible();
+  await page.locator('#auth-request-new-link').click();
+  await expect(page.locator('#auth-reset-form')).toBeVisible();
+  expect(page.url()).not.toContain(secret);
+  expect(leaks.logs.join('\n')).not.toContain('fake-expired-description');
+  expect(leaks.foreign).toEqual([]);
 });
 
 test('logout from the workspace stays on /app as a guest', async ({ page }) => {

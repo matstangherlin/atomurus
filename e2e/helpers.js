@@ -337,6 +337,13 @@ async function installApi(page, options = {}) {
     if (path === '/api/auth/recover' && method === 'POST') {
       return json(route, 200, { ok: true });
     }
+    if (path === '/api/auth/resend-confirmation' && method === 'POST') {
+      return json(route, 200, { ok: true });
+    }
+    if (path === '/api/auth/establish' && method === 'POST') {
+      signedIn = true;
+      return json(route, 200, { ok: true, user });
+    }
     if (path === '/api/auth/reset' && method === 'POST') {
       signedIn = true;
       return json(route, 200, { ok: true, user });

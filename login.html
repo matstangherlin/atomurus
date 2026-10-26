@@ -192,6 +192,8 @@
       </div>
       <div class="feedback ok ui-alert ui-alert-success" id="auth-login-ok" aria-live="polite" data-i18n="common.auth.confirmed">Email confirmed. You can sign in now.</div>
       <div class="feedback err ui-alert ui-alert-danger" id="auth-login-err" role="alert" aria-live="polite" data-i18n="common.auth.loginError">Invalid email or password.</div>
+      <button class="auth-subtle-btn" type="button" id="auth-resend-confirmation" hidden><span data-i18n="common.auth.resendConfirmation">Resend confirmation email</span></button>
+      <button class="auth-subtle-btn" type="button" id="auth-request-new-link" hidden><span data-i18n="common.auth.requestNewLink">Request a new link</span></button>
       </form>
     </section>
 
@@ -286,6 +288,13 @@
             <li data-req="length" data-i18n="common.auth.pwLenOk">9+ characters</li>
             <li data-req="special" data-i18n="common.auth.pwSpecialOk">Special character</li>
           </ul>
+        </div>
+        <div class="field ui-field">
+          <label class="ui-label" for="auth-new-password-confirm" data-i18n="common.auth.repeatPassword">Repeat password</label>
+          <div class="auth-password-wrap ui-input-wrap">
+            <input class="ui-input" id="auth-new-password-confirm" name="passwordConfirm" type="password" required minlength="9" autocomplete="new-password">
+            <button class="auth-toggle-password ui-password-toggle" type="button" data-password-toggle="auth-new-password-confirm" aria-pressed="false" data-i18n="common.auth.showPassword" data-i18n-attr="aria-label:common.auth.showPassword" aria-label="Show password">Show</button>
+          </div>
         </div>
         <button class="auth-primary-btn ui-btn ui-btn-primary" type="submit" id="auth-password-submit">
           <span data-i18n="common.auth.savePassword">Save password</span>
