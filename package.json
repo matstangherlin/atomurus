@@ -43,6 +43,7 @@
     "test:a1-e2e": "playwright test e2e/a1-mobile.spec.js e2e/a1-lifecycle.spec.js",
     "audit:architecture": "node tools/audit-architecture.mjs",
     "perf:baseline": "node tools/perf-baseline.mjs",
+    "perf:lighthouse": "node tools/lighthouse-baseline.mjs",
     "capture:ui-v2": "node tools/capture-ui-v2.mjs",
     "test:e2e": "playwright test",
     "supabase:start": "supabase start",
