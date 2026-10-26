@@ -1,0 +1,11 @@
+Assunto: Confirme seu e-mail na Atomurus
+
+Olá,
+
+Confirme o e-mail {{ .Email }} para concluir o cadastro na Atomurus.
+
+Confirmar e-mail: {{ .SiteURL }}/login?token_hash={{ .TokenHash }}&type=signup
+
+Se você não criou esta conta, ignore esta mensagem.
+
+Atomurus · contato@atomurus.com

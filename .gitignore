@@ -22,3 +22,4 @@ Thumbs.db
 
 # App bundle output (tools/build-app-bundle.mjs)
 dist/
+docs/perf/raw/

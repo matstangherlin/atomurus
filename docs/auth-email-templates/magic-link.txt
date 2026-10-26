@@ -1,0 +1,11 @@
+Assunto: Seu link de acesso à Atomurus
+
+Olá,
+
+Use o link abaixo para entrar na Atomurus com {{ .Email }}. O link também serve para um convite.
+
+Entrar: {{ .SiteURL }}/login?token_hash={{ .TokenHash }}&type=magiclink
+
+Se você não pediu este acesso, ignore esta mensagem.
+
+Atomurus · contato@atomurus.com

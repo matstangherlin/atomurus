@@ -1,0 +1,11 @@
+Assunto: Confirme o novo e-mail na Atomurus
+
+Olá,
+
+Confirme {{ .NewEmail }} como o novo e-mail da sua conta Atomurus.
+
+Confirmar: {{ .SiteURL }}/login?token_hash={{ .TokenHash }}&type=email_change
+
+Se você não pediu esta troca, ignore esta mensagem e escreva para contato@atomurus.com.
+
+Atomurus · contato@atomurus.com
