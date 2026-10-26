@@ -441,7 +441,7 @@
               <div class="calc-panel-h">
                 <span class="calc-panel-kicker" data-i18n="calc.m01Kicker">Massa molar</span>
                 <h2 class="calc-panel-title" data-i18n="calc.m01Title">Calcular M(X) a partir da fórmula</h2>
-                <p class="calc-panel-desc" data-i18n-html="calc.m01DescHtml">Digite qualquer fórmula química — suporta parênteses, hidratos com <code style="font-family:var(--lc-mono);">·</code> ou <code style="font-family:var(--lc-mono);">*</code>, cargas e subscritos. Pesos atômicos padrão abreviados (CIAAW).</p>
+                <p class="calc-panel-desc" data-i18n-html="calc.m01DescHtml">Digite qualquer fórmula química — suporta parênteses, hidratos com <code style="font-family:var(--lc-mono);">·</code> ou <code style="font-family:var(--lc-mono);">*</code>, cargas e subscritos. Massas atômicas padrão abreviadas (CIAAW).</p>
               </div>
               </div>
 
@@ -1325,7 +1325,7 @@
         </div>
       </div>
 
-      <p style="font-family:var(--lc-mono);font-size:10.5px;color:var(--lc-ink-3);letter-spacing:.04em;margin-top:18px;text-align:center;" data-i18n="calc.footer">pesos atômicos · pesos atômicos padrão abreviados (CIAAW) · R = 8,314 J·K⁻¹·mol⁻¹ · Kw = 1,0 × 10⁻¹⁴ (25 °C)</p>
+      <p style="font-family:var(--lc-mono);font-size:10.5px;color:var(--lc-ink-3);letter-spacing:.04em;margin-top:18px;text-align:center;" data-i18n="calc.footer">massas atômicas · massas atômicas padrão abreviadas (CIAAW) · R = 8,314 J·K⁻¹·mol⁻¹ · Kw = 1,0 × 10⁻¹⁴ (25 °C)</p>
     </div>
   </div>
 </main>
@@ -2607,7 +2607,7 @@ function runMolar() {
     const pct = total > 0 ? (r.cont/total*100) : 0;
     html += `<div class="calc-result-row">
       <span class="calc-result-k">${r.sym} × ${r.count} · A(${r.sym})=${fmt(r.mass)}</span>
-      <span class="calc-result-v">${fmt(r.cont)} g · ${pct.toFixed(1)}%</span>
+      <span class="calc-result-v">${fmt(r.cont)} g · ${calcLangIsPt() ? pct.toFixed(1).replace('.', ',') : pct.toFixed(1)}%</span>
     </div>`;
   });
 

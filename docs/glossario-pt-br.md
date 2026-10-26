@@ -7,7 +7,7 @@ Termos adotados na interface em português. Vale para o dicionário (`tools/i18n
 | beaker, becker | béquer | Vidraria. Plural: béqueres. |
 | board (laboratório) | bancada | Superfície onde o aluno monta a vidraria. |
 | board (painel) | painel | Quadro ou painel de controle, quando não for a bancada. |
-| atomic weight | massa atômica | Não usar "peso atômico" na interface. |
+| atomic weight | massa atômica | Não usar "peso atômico". No plural da calculadora: massas atômicas. |
 | queued, na fila | em breve | Recurso ainda não disponível. |
 | reaction ratios, razões de reação | proporções da reação | Descrição da calculadora de estequiometria. |
 | preset (botão de exemplo) | exemplo | Botão que carrega um caso pronto. Plural visível: Exemplos. |

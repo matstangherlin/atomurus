@@ -13,7 +13,7 @@ const pt = src.slice(ptStart);
 const BANNED = [
   { name: 'becker', re: /becker/i },
   { name: 'board', re: /\bboard\b/i },
-  { name: 'peso atômico', re: /peso at[oô]mico/i },
+  { name: 'peso atômico', re: /pesos? at[oô]micos?/i },
   { name: 'na fila', re: /na fila/i },
   { name: 'razões de reação', re: /razões de reação/i },
   { name: 'preset', re: /\bpresets?\b/i },
