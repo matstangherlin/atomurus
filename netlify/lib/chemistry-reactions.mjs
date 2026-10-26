@@ -14,7 +14,7 @@ import {
   looksIonic,
   mergeCounts,
   parseBoundedInt,
-  parseFormulaStrict
+  readFormulaStrict
 } from './chemistry-formula-strict.mjs';
 
 export const REACTION_LIMITS = Object.freeze({
@@ -95,7 +95,7 @@ function parseSpeciesToken(token) {
     formulaText = match[2].trim();
   }
   if (!formulaText || /^\d+$/.test(formulaText)) throw calcError('species is missing a formula');
-  const parsed = parseFormulaStrict(formulaText);
+  const parsed = readFormulaStrict(formulaText);
   return {
     formula: parsed.formula,
     counts: parsed.counts,
@@ -143,11 +143,11 @@ export function parseEquation(raw) {
   if (source.length > REACTION_LIMITS.chars) throw calcError('equation is too long');
   if (looksIonic(source)) throw calcError(IONIC_UNAVAILABLE, 400, 'ionic_unsupported');
 
-  const arrows = source.match(/->|→|=>|=/g) || [];
+  const arrows = source.match(/->|→|=>|⇌|=/g) || [];
   if (!arrows.length) throw calcError('equation must include reactants and products');
   if (arrows.length > 1) throw calcError('equation must contain a single arrow');
 
-  const split = source.split(/->|→|=>|=/);
+  const split = source.split(/->|→|=>|⇌|=/);
   const left = split[0] || '';
   const right = split[1] || '';
   const reactants = splitSide(left).map(parseSpeciesToken);

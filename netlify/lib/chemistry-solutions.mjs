@@ -4,7 +4,7 @@
  */
 
 import { formatSig, molarMassOf } from './chemistry-calc.mjs';
-import { parseFormulaStrict } from './chemistry-formula-strict.mjs';
+import { readFormulaStrict } from './chemistry-formula-strict.mjs';
 import {
   CONC_UNITS,
   MASS_UNITS,
@@ -22,7 +22,7 @@ export const CALCULATION_ONLY =
 /** V1 keeps concentration strictly positive; 0 mol/L is rejected as not a useful prepare/mix input. */
 
 function soluteMass(formula) {
-  parseFormulaStrict(formula);
+  readFormulaStrict(formula);
   return molarMassOf(formula);
 }
 
@@ -74,7 +74,7 @@ export function prepareFromSolid(input = {}) {
 
 export function mixSolutions(input = {}) {
   const formula = String(input.formula || input.solute || '').trim();
-  if (formula) parseFormulaStrict(formula);
+  if (formula) readFormulaStrict(formula);
   const parts = Array.isArray(input.solutions) ? input.solutions : [];
   if (parts.length < 2) throw solverError('at least two solutions are required');
   if (parts.length > 8) throw solverError('too many solutions');

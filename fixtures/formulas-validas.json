@@ -1,0 +1,325 @@
+{
+  "source": "molarMassOf before strict-parser change",
+  "formulas": [
+    {
+      "formula": "H2O",
+      "molarMass": 18.015
+    },
+    {
+      "formula": "NaCl",
+      "molarMass": 58.44
+    },
+    {
+      "formula": "Ca(OH)2",
+      "molarMass": 74.09200000000001
+    },
+    {
+      "formula": "CuSO4·5H2O",
+      "molarMass": 249.67700000000002
+    },
+    {
+      "formula": "K4[Fe(CN)6]",
+      "molarMass": 368.345
+    },
+    {
+      "formula": "Ca3(PO4)2",
+      "molarMass": 310.17400000000004
+    },
+    {
+      "formula": "Al2(SO4)3",
+      "molarMass": 342.132
+    },
+    {
+      "formula": "H2SO4",
+      "molarMass": 98.072
+    },
+    {
+      "formula": "CO2",
+      "molarMass": 44.009
+    },
+    {
+      "formula": "NH3",
+      "molarMass": 17.031
+    },
+    {
+      "formula": "CH4",
+      "molarMass": 16.043
+    },
+    {
+      "formula": "C6H12O6",
+      "molarMass": 180.156
+    },
+    {
+      "formula": "NaHCO3",
+      "molarMass": 84.006
+    },
+    {
+      "formula": "CaCO3",
+      "molarMass": 100.086
+    },
+    {
+      "formula": "Fe2O3",
+      "molarMass": 159.687
+    },
+    {
+      "formula": "AgNO3",
+      "molarMass": 169.87400000000002
+    },
+    {
+      "formula": "HCl",
+      "molarMass": 36.458000000000006
+    },
+    {
+      "formula": "HNO3",
+      "molarMass": 63.012
+    },
+    {
+      "formula": "H3PO4",
+      "molarMass": 97.994
+    },
+    {
+      "formula": "KOH",
+      "molarMass": 56.105000000000004
+    },
+    {
+      "formula": "NaOH",
+      "molarMass": 39.997
+    },
+    {
+      "formula": "Mg(OH)2",
+      "molarMass": 58.318999999999996
+    },
+    {
+      "formula": "Fe2(SO4)3",
+      "molarMass": 399.858
+    },
+    {
+      "formula": "Al2(SO4)3·18H2O",
+      "molarMass": 666.402
+    },
+    {
+      "formula": "CuSO4",
+      "molarMass": 159.602
+    },
+    {
+      "formula": "KMnO4",
+      "molarMass": 158.032
+    },
+    {
+      "formula": "K2Cr2O7",
+      "molarMass": 294.181
+    },
+    {
+      "formula": "Na2SO4",
+      "molarMass": 142.036
+    },
+    {
+      "formula": "BaCl2",
+      "molarMass": 208.23000000000002
+    },
+    {
+      "formula": "NH4Cl",
+      "molarMass": 53.489000000000004
+    },
+    {
+      "formula": "(NH4)2SO4",
+      "molarMass": 132.13400000000001
+    },
+    {
+      "formula": "CaCl2",
+      "molarMass": 110.97800000000001
+    },
+    {
+      "formula": "MgSO4",
+      "molarMass": 120.361
+    },
+    {
+      "formula": "ZnSO4",
+      "molarMass": 161.436
+    },
+    {
+      "formula": "Pb(NO3)2",
+      "molarMass": 331.20799999999997
+    },
+    {
+      "formula": "AgCl",
+      "molarMass": 143.32
+    },
+    {
+      "formula": "Na2CO3",
+      "molarMass": 105.988
+    },
+    {
+      "formula": "KCl",
+      "molarMass": 74.548
+    },
+    {
+      "formula": "Li2O",
+      "molarMass": 29.879
+    },
+    {
+      "formula": "B2O3",
+      "molarMass": 69.617
+    },
+    {
+      "formula": "SiO2",
+      "molarMass": 60.083
+    },
+    {
+      "formula": "P4O10",
+      "molarMass": 283.886
+    },
+    {
+      "formula": "SO2",
+      "molarMass": 64.058
+    },
+    {
+      "formula": "SO3",
+      "molarMass": 80.057
+    },
+    {
+      "formula": "H2O2",
+      "molarMass": 34.014
+    },
+    {
+      "formula": "C2H6",
+      "molarMass": 30.07
+    },
+    {
+      "formula": "C2H5OH",
+      "molarMass": 46.069
+    },
+    {
+      "formula": "C6H6",
+      "molarMass": 78.114
+    },
+    {
+      "formula": "CH3COOH",
+      "molarMass": 60.052
+    },
+    {
+      "formula": "HCOOH",
+      "molarMass": 46.025
+    },
+    {
+      "formula": "Na2S2O3",
+      "molarMass": 158.09699999999998
+    },
+    {
+      "formula": "Al(OH)3",
+      "molarMass": 78.003
+    },
+    {
+      "formula": "Fe(OH)3",
+      "molarMass": 106.866
+    },
+    {
+      "formula": "Cr2O3",
+      "molarMass": 151.989
+    },
+    {
+      "formula": "MnO2",
+      "molarMass": 86.936
+    },
+    {
+      "formula": "TiO2",
+      "molarMass": 79.865
+    },
+    {
+      "formula": "NiCl2",
+      "molarMass": 129.59300000000002
+    },
+    {
+      "formula": "CoCl2",
+      "molarMass": 129.833
+    },
+    {
+      "formula": "SnO2",
+      "molarMass": 150.708
+    },
+    {
+      "formula": "BaSO4",
+      "molarMass": 233.38600000000002
+    },
+    {
+      "formula": "C60",
+      "molarMass": 720.66
+    },
+    {
+      "formula": "SF6",
+      "molarMass": 146.048
+    },
+    {
+      "formula": "PCl5",
+      "molarMass": 208.224
+    },
+    {
+      "formula": "PCl3",
+      "molarMass": 137.324
+    },
+    {
+      "formula": "Na3PO4",
+      "molarMass": 163.94
+    },
+    {
+      "formula": "Al2O3",
+      "molarMass": 101.961
+    },
+    {
+      "formula": "Fe3O4",
+      "molarMass": 231.531
+    },
+    {
+      "formula": "CuO",
+      "molarMass": 79.545
+    },
+    {
+      "formula": "Cu2O",
+      "molarMass": 143.091
+    },
+    {
+      "formula": "ZnO",
+      "molarMass": 81.37899999999999
+    },
+    {
+      "formula": "HBr",
+      "molarMass": 80.91199999999999
+    },
+    {
+      "formula": "HI",
+      "molarMass": 127.908
+    },
+    {
+      "formula": "H2S",
+      "molarMass": 34.076
+    },
+    {
+      "formula": "CCl4",
+      "molarMass": 153.811
+    },
+    {
+      "formula": "CHCl3",
+      "molarMass": 119.369
+    },
+    {
+      "formula": "N2O",
+      "molarMass": 44.013
+    },
+    {
+      "formula": "NO2",
+      "molarMass": 46.005
+    },
+    {
+      "formula": "OF2",
+      "molarMass": 53.995000000000005
+    },
+    {
+      "formula": "Mg3(PO4)2",
+      "molarMass": 262.855
+    },
+    {
+      "formula": "K3[Fe(CN)6]",
+      "molarMass": 329.247
+    }
+  ]
+}

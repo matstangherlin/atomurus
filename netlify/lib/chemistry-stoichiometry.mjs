@@ -8,7 +8,7 @@
 
 import { formatSig, molarMassOf } from './chemistry-calc.mjs';
 import { balanceEquation } from './chemistry-reactions.mjs';
-import { formatFormulaDisplay, parseFormulaStrict } from './chemistry-formula-strict.mjs';
+import { formatFormulaDisplay, readFormulaStrict } from './chemistry-formula-strict.mjs';
 import {
   MASS_UNITS,
   SOLVER_ABS_ZERO,
@@ -32,7 +32,7 @@ export const STOICHIOMETRIC_MIXTURE =
   'The specified reactants are present in the balanced stoichiometric proportion.';
 
 function formulaKey(raw) {
-  return parseFormulaStrict(raw).formula;
+  return readFormulaStrict(raw).formula;
 }
 
 function displayOf(formula) {

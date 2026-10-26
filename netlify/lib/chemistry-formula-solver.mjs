@@ -3,7 +3,7 @@
  */
 
 import { ATOMIC_WEIGHTS, formatSig, molarMassOf } from './chemistry-calc.mjs';
-import { formatFormulaDisplay, parseFormulaStrict } from './chemistry-formula-strict.mjs';
+import { formatFormulaDisplay, readFormulaStrict } from './chemistry-formula-strict.mjs';
 import {
   PERCENT_TOTAL_MAX,
   PERCENT_TOTAL_MIN,
@@ -151,7 +151,7 @@ export function solveEmpiricalFormula(input = {}) {
 export function solveMolecularFormula(input = {}) {
   const empirical = String(input.empiricalFormula || input.formula || '').trim();
   if (!empirical) throw solverError('empirical formula is required');
-  parseFormulaStrict(empirical);
+  readFormulaStrict(empirical);
   const targetMass = requirePositiveNumber(input.molarMass ?? input.mass, 'molar mass');
   const emp = molarMassOf(empirical);
   const n = targetMass / emp.molarMass;
@@ -159,7 +159,7 @@ export function solveMolecularFormula(input = {}) {
   if (nearest < 1 || Math.abs(n - nearest) > MOLECULAR_INTEGER_TOLERANCE) {
     throw solverError(BAD_MOLECULAR_MULTIPLE);
   }
-  const parsed = parseFormulaStrict(empirical);
+  const parsed = readFormulaStrict(empirical);
   const counts = {};
   Object.keys(parsed.counts).forEach((el) => {
     counts[el] = parsed.counts[el] * nearest;

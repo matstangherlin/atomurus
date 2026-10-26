@@ -1341,6 +1341,7 @@
   <a href="periodic-table.html">→ periodic-table</a>
 </div>
 
+<script src="/assets/chemistry/formula-parser.js?v=202610261700"></script>
 <script>
 // ═════════════════════════════════════════
 // THEME — swaps the SVG content (sun ↔ moon) so the icon reflects the
@@ -1416,7 +1417,7 @@ function toggleNavGroup(name){
 // ATOMIC WEIGHTS — abridged standard atomic weights (CIAAW)
 // ═════════════════════════════════════════
 const AW = {
-  H:1.008,He:4.0026,Li:6.94,Be:9.0122,B:10.81,C:12.011,N:14.007,O:15.999,F:18.998,Ne:20.180,
+  H:1.008,D:2.01410,T:3.01605,He:4.0026,Li:6.94,Be:9.0122,B:10.81,C:12.011,N:14.007,O:15.999,F:18.998,Ne:20.180,
   Na:22.990,Mg:24.305,Al:26.982,Si:28.085,P:30.974,S:32.06,Cl:35.45,Ar:39.95,
   K:39.098,Ca:40.078,Sc:44.956,Ti:47.867,V:50.942,Cr:51.996,Mn:54.938,Fe:55.845,Co:58.933,Ni:58.693,
   Cu:63.546,Zn:65.38,Ga:69.723,Ge:72.630,As:74.922,Se:78.971,Br:79.904,Kr:83.798,
@@ -2499,59 +2500,19 @@ document.addEventListener('click', e => {
 
 runScientific({ record:false });
 
-function parseFormula(s) {
-  // Normalize hydrate dots (·, •, *) into +
-  s = s.replace(/\s+/g,'').replace(/[·•*]/g, '+');
-  const tokens = []; // {sym, count}
-  let i = 0;
-  const stack = [{}];
-  while (i < s.length) {
-    const ch = s[i];
-    if (ch === '(' || ch === '[') {
-      stack.push({});
-      i++;
-    } else if (ch === ')' || ch === ']') {
-      i++;
-      let mult = '';
-      while (i < s.length && /\d/.test(s[i])) { mult += s[i]; i++; }
-      const m = parseInt(mult || '1', 10);
-      const top = stack.pop();
-      const parent = stack[stack.length - 1];
-      for (const k in top) parent[k] = (parent[k]||0) + top[k]*m;
-    } else if (ch === '+') {
-      // hydrate boundary — read a leading multiplier
-      i++;
-      let pre = '';
-      while (i < s.length && /\d/.test(s[i])) { pre += s[i]; i++; }
-      const mult = parseInt(pre || '1', 10);
-      // Parse a sub-formula until end or next '+'
-      let depth = 0;
-      let j = i;
-      while (j < s.length && !(s[j] === '+' && depth === 0)) {
-        if (s[j] === '(' || s[j] === '[') depth++;
-        else if (s[j] === ')' || s[j] === ']') depth--;
-        j++;
-      }
-      const sub = parseFormula(s.slice(i, j));
-      for (const k in sub) {
-        stack[stack.length - 1][k] = (stack[stack.length - 1][k]||0) + sub[k]*mult;
-      }
-      i = j;
-    } else if (/[A-Z]/.test(ch)) {
-      let sym = ch;
-      i++;
-      while (i < s.length && /[a-z]/.test(s[i])) { sym += s[i]; i++; }
-      let count = '';
-      while (i < s.length && /\d/.test(s[i])) { count += s[i]; i++; }
-      const c = parseInt(count || '1', 10);
-      const top = stack[stack.length - 1];
-      top[sym] = (top[sym] || 0) + c;
-    } else {
-      // skip unknown chars (charge, etc)
-      i++;
-    }
+function formulaParse(s) {
+  if (!window.AtomurusFormula || typeof window.AtomurusFormula.parseFormulaStrict !== 'function') {
+    throw new Error(calcLangIsPt() ? 'Parser de fórmulas indisponível.' : 'Formula parser is unavailable.');
   }
-  return stack[0];
+  return window.AtomurusFormula.parseFormulaStrict(s);
+}
+function parseFormula(s) {
+  const parsed = formulaParse(s);
+  if (!parsed.ok) {
+    const err = parsed.error || {};
+    throw new Error(calcLangIsPt() ? (err.message_pt || err.message_en) : (err.message_en || err.message_pt));
+  }
+  return parsed.counts;
 }
 
 // ── Solver output i18n (PT/EN) ──
@@ -2578,13 +2539,15 @@ function runMolar() {
     meta.textContent = solverT('noInput');
     return;
   }
-  let counts;
-  try { counts = parseFormula(input); }
-  catch (e) {
-    body.innerHTML = '<div class="calc-result-empty" style="color:var(--lc-amber)">could not parse formula</div>';
-    meta.textContent = 'parse error';
+  const parsed = formulaParse(input);
+  if (!parsed.ok) {
+    const err = parsed.error || {};
+    const msg = calcLangIsPt() ? (err.message_pt || err.message_en) : (err.message_en || err.message_pt);
+    body.innerHTML = '<div class="calc-result-empty" style="color:var(--lc-amber)">' + escapeHtml(msg || 'could not parse formula') + '</div>';
+    meta.textContent = calcLangIsPt() ? 'erro de fórmula' : 'parse error';
     return;
   }
+  const counts = parsed.counts;
   let total = 0;
   const rows = [];
   const unknown = [];
@@ -2595,7 +2558,7 @@ function runMolar() {
     rows.push({ sym, count: counts[sym], mass: AW[sym], cont });
   }
 
-  let html = `<div class="calc-result-row"><span class="calc-result-k">Molar mass · M</span><span class="calc-result-v big">${fmt(total)} <em>g · mol⁻¹</em></span></div>`;
+  let html = `<div class="calc-result-row"><span class="calc-result-k">Molar mass · M</span><span class="calc-result-v big">${fmt(total, 5)} <em>g · mol⁻¹</em></span></div>`;
 
   // amount conversion
   const amt = parseFloat(document.getElementById('mm-amount').value);
@@ -2618,6 +2581,13 @@ function runMolar() {
       <span class="calc-result-v">${fmt(r.cont)} g · ${pct.toFixed(1)}%</span>
     </div>`;
   });
+
+  if (parsed.warnings && parsed.warnings.length) {
+    parsed.warnings.forEach(function (w) {
+      const note = calcLangIsPt() ? w.message_pt : w.message_en;
+      html += '<div class="calc-result-formula" style="color:var(--lc-amber);border-color:color-mix(in oklab, var(--lc-amber) 30%, transparent);">' + escapeHtml(note) + '</div>';
+    });
+  }
 
   // formula fragments
   let frags = '';
