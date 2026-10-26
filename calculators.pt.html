@@ -1152,19 +1152,19 @@
             <div class="calc-field">
               <label class="calc-field-l" data-i18n="calc.phInputMode">Modo de entrada</label>
               <select id="ph-mode" class="calc-select ui-select" onchange="updatePhFields()">
-                <option value="H" selected data-i18n="calc.phOptH">[H⁺] — concentração de íons hidrogênio</option>
-                <option value="OH" data-i18n="calc.phOptOH">[OH⁻] — concentração de hidroxila</option>
+                <option value="H" selected data-i18n="calc.phOptH">[H⁺] — concentração do ácido forte</option>
+                <option value="OH" data-i18n="calc.phOptOH">[OH⁻] — concentração da base forte</option>
                 <option value="pH" data-i18n="calc.phOptPH">pH diretamente</option>
                 <option value="pOH" data-i18n="calc.phOptPOH">pOH diretamente</option>
               </select>
             </div>
 
             <div class="calc-field" data-ph="H">
-              <label class="calc-field-l">[H⁺] <span class="calc-help" style="display:inline-block;margin:0;">mol/L</span></label>
+              <label class="calc-field-l" data-i18n="calc.phHLabel">Ácido forte [H⁺], mol/L</label>
               <input id="ph-H" class="calc-input ui-input" type="number" step="any" value="1e-3">
             </div>
             <div class="calc-field" data-ph="OH" style="display:none;">
-              <label class="calc-field-l">[OH⁻] <span class="calc-help" style="display:inline-block;margin:0;">mol/L</span></label>
+              <label class="calc-field-l" data-i18n="calc.phOHLabel">Base forte [OH⁻], mol/L</label>
               <input id="ph-OH" class="calc-input ui-input" type="number" step="any" value="1e-4">
             </div>
             <div class="calc-field" data-ph="pH" style="display:none;">
@@ -1261,8 +1261,14 @@
               </div>
             </div>
             <div class="calc-field">
-              <label class="calc-field-l" data-i18n="calc.thermoTemp">Temperature <span class="calc-help" style="display:inline-block;margin:0;">°C</span></label>
-              <input id="tm-t" class="calc-input ui-input" type="number" step="any" value="25">
+              <label class="calc-field-l" for="tm-t"><span data-i18n="calc.thermoTemp">Temperatura</span></label>
+              <div class="calc-row-2">
+                <input id="tm-t" class="calc-input ui-input" type="number" step="any" value="25">
+                <select id="tm-t-unit" class="calc-select ui-select" aria-label="Unidade de temperatura">
+                  <option value="C" selected data-i18n="calc.tmUnitC">°C</option>
+                  <option value="K" data-i18n="calc.tmUnitK">K</option>
+                </select>
+              </div>
             </div>
 
             <div class="calc-subhead" data-i18n="calc.thermoHeatTitle">② Troca de calor — q = m·c·ΔT</div>
@@ -1340,6 +1346,7 @@
 </div>
 
 <script src="/assets/chemistry/formula-parser.js?v=202610261700"></script>
+<script src="/assets/calc-core.js?v=202610261800"></script>
 <script>
 // ═════════════════════════════════════════
 // THEME — swaps the SVG content (sun ↔ moon) so the icon reflects the
@@ -2637,46 +2644,12 @@ function updateIdealFields() {
 }
 updateIdealFields();
 
-function toPascals(v, u) {
-  if (u === 'Pa') return v;
-  if (u === 'kPa') return v * 1000;
-  if (u === 'atm') return v * 101325;
-  if (u === 'mmHg') return v * 133.322;
-  return v;
+function calcFail(body, meta, code) {
+  body.innerHTML = '<div class="calc-result-empty" style="color:var(--lc-amber)">' + solverT(code) + '</div>';
+  meta.textContent = solverT('invalid');
 }
-function fromPascals(v, u) {
-  if (u === 'Pa') return v;
-  if (u === 'kPa') return v / 1000;
-  if (u === 'atm') return v / 101325;
-  if (u === 'mmHg') return v / 133.322;
-  return v;
-}
-function toM3(v, u) {
-  if (u === 'L') return v / 1000;
-  if (u === 'mL') return v / 1e6;
-  if (u === 'm3') return v;
-  return v;
-}
-function fromM3(v, u) {
-  if (u === 'L') return v * 1000;
-  if (u === 'mL') return v * 1e6;
-  if (u === 'm3') return v;
-  return v;
-}
-function toK(v, u) {
-  if (u === 'K') return v;
-  if (u === 'C') return v + 273.15;
-  if (u === 'F') return (v - 32) * 5/9 + 273.15;
-  return v;
-}
-function fromK(v, u) {
-  if (u === 'K') return v;
-  if (u === 'C') return v - 273.15;
-  if (u === 'F') return (v - 273.15) * 9/5 + 32;
-  return v;
-}
-
 function runIdeal() {
+  const core = window.AtomurusCalcCore;
   const solve = document.getElementById('ig-solve').value;
   const P = parseFloat(document.getElementById('ig-P').value);
   const V = parseFloat(document.getElementById('ig-V').value);
@@ -2687,35 +2660,42 @@ function runIdeal() {
   const Tu = document.getElementById('ig-T-u').value;
   const body = document.getElementById('ig-result-body');
   const meta = document.getElementById('ig-result-meta');
+  const check = core.validateIdeal({ solve: solve, P: P, V: V, n: n, T: T, Pu: Pu, Vu: Vu, Tu: Tu });
+  if (!check.ok) { calcFail(body, meta, check.code); return; }
 
-  const Ppa = toPascals(P, Pu);
-  const Vm3 = toM3(V, Vu);
-  const Tk  = toK(T, Tu);
+  const Ppa = core.toPascals(P, Pu);
+  const Vm3 = core.toM3(V, Vu);
+  const Tk  = core.toK(T, Tu);
+  if ((solve !== 'P' && Ppa == null) || (solve !== 'V' && Vm3 == null) || (solve !== 'T' && Tk == null)) {
+    calcFail(body, meta, 'igUnknownUnit');
+    return;
+  }
 
   let result, label, unit, displayValue, displayUnit;
   try {
     if (solve === 'P') {
-      if (![V,n,T].every(isFinite)) throw 1;
       result = n*R*Tk / Vm3;  // Pa
-      displayValue = fromPascals(result, Pu); displayUnit = Pu;
+      displayValue = core.fromPascals(result, Pu); displayUnit = Pu;
       label = 'P';
     } else if (solve === 'V') {
-      if (![P,n,T].every(isFinite)) throw 1;
       result = n*R*Tk / Ppa;  // m³
-      displayValue = fromM3(result, Vu); displayUnit = Vu;
+      displayValue = core.fromM3(result, Vu); displayUnit = Vu;
       label = 'V';
     } else if (solve === 'n') {
-      if (![P,V,T].every(isFinite)) throw 1;
       result = (Ppa*Vm3) / (R*Tk);
       displayValue = result; displayUnit = 'mol';
       label = 'n';
     } else if (solve === 'T') {
-      if (![P,V,n].every(isFinite)) throw 1;
       result = (Ppa*Vm3) / (n*R);  // K
-      displayValue = fromK(result, Tu); displayUnit = Tu === 'C' ? '°C' : Tu === 'F' ? '°F' : 'K';
+      const again = core.validateIdeal({ solve: solve, P: P, V: V, n: n, T: T, Pu: Pu, Vu: Vu, Tu: Tu, resultK: result });
+      if (!again.ok) throw again;
+      displayValue = core.fromK(result, Tu); displayUnit = Tu === 'C' ? '°C' : Tu === 'F' ? '°F' : 'K';
       label = 'T';
     }
+    if (displayValue == null) { calcFail(body, meta, 'igUnknownUnit'); return; }
+    if (!isFinite(displayValue)) throw 1;
   } catch (e) {
+    if (e && e.code) { calcFail(body, meta, e.code); return; }
     body.innerHTML = '<div class="calc-result-empty" style="color:var(--lc-amber)">' + solverT('fillThreeVars') + '</div>';
     meta.textContent = solverT('incomplete');
     return;
@@ -2764,6 +2744,8 @@ function runDilution() {
   const body = document.getElementById('dl-result-body');
   const meta = document.getElementById('dl-result-meta');
 
+  const gate = window.AtomurusCalcCore.validateDilution({ solve: solve, C1: C1, V1: V1, C2: C2, V2: V2 });
+  if (!gate.ok) { calcFail(body, meta, gate.code); return; }
   let val, label, unit;
   try {
     if (solve === 'C1') { if (![V1,C2,V2].every(isFinite)) throw 1; val = C2*V2/V1; label='C₁'; unit='mol/L'; }
@@ -2775,6 +2757,10 @@ function runDilution() {
     meta.textContent = solverT('incomplete');
     return;
   }
+  const solved = { C1: C1, V1: V1, C2: C2, V2: V2 };
+  solved[solve] = val;
+  const after = window.AtomurusCalcCore.validateDilution({ solve: solve, C1: solved.C1, V1: solved.V1, C2: solved.C2, V2: solved.V2, phase: 'result' });
+  if (!after.ok) { calcFail(body, meta, after.code); return; }
 
   let html = `<div class="calc-result-row">
     <span class="calc-result-k">${solverT('solvedLabel', { label: label })}</span>
@@ -2799,6 +2785,9 @@ function runDilution() {
     html += '<div class="calc-result-row"><span class="calc-result-k">' + solverT('dilutionFactor') + '</span><span class="calc-result-v">1 : ' + fmt(ratio) + '</span></div>';
   }
   html += `<div class="calc-result-formula">C₁V₁ = C₂V₂</div>`;
+  (after.warnings || []).forEach(function (key) {
+    html += '<div class="calc-result-formula" style="color:var(--lc-amber)">' + solverT(key) + '</div>';
+  });
   body.innerHTML = html;
   meta.textContent = solverT('solvedFor', { label: label });
 }
@@ -2820,42 +2809,21 @@ function runPH() {
   const mode = document.getElementById('ph-mode').value;
   const body = document.getElementById('ph-result-body');
   const meta = document.getElementById('ph-result-meta');
-  let H, OH, pH, pOH;
-  try {
-    if (mode === 'H') {
-      H = parseFloat(document.getElementById('ph-H').value);
-      if (!isFinite(H) || H <= 0) throw 1;
-      pH = -Math.log10(H);
-      pOH = 14 - pH;
-      OH = Math.pow(10, -pOH);
-    } else if (mode === 'OH') {
-      OH = parseFloat(document.getElementById('ph-OH').value);
-      if (!isFinite(OH) || OH <= 0) throw 1;
-      pOH = -Math.log10(OH);
-      pH = 14 - pOH;
-      H = Math.pow(10, -pH);
-    } else if (mode === 'pH') {
-      pH = parseFloat(document.getElementById('ph-pH').value);
-      if (!isFinite(pH)) throw 1;
-      pOH = 14 - pH;
-      H = Math.pow(10, -pH);
-      OH = Math.pow(10, -pOH);
-    } else {
-      pOH = parseFloat(document.getElementById('ph-pOH').value);
-      if (!isFinite(pOH)) throw 1;
-      pH = 14 - pOH;
-      H = Math.pow(10, -pH);
-      OH = Math.pow(10, -pOH);
-    }
-  } catch (e) {
-    body.innerHTML = '<div class="calc-result-empty" style="color:var(--lc-amber)">' + solverT('positiveNum') + '</div>';
+  const fieldId = mode === 'H' ? 'ph-H' : mode === 'OH' ? 'ph-OH' : mode === 'pH' ? 'ph-pH' : 'ph-pOH';
+  const raw = parseFloat(document.getElementById(fieldId).value);
+  const result = window.AtomurusCalcCore.computePH({ mode: mode, value: raw });
+  if (!result.ok) {
+    body.innerHTML = '<div class="calc-result-empty" style="color:var(--lc-amber)">' + solverT(result.code || 'positiveNum') + '</div>';
     meta.textContent = solverT('invalid');
     return;
   }
-  let nature, color;
-  if (pH < 6.8) { nature = solverT('acidic'); color = '#B96B0C'; }
-  else if (pH > 7.2) { nature = solverT('basic'); color = '#2A4878'; }
-  else { nature = solverT('neutral'); color = '#1E6A50'; }
+  const H = result.H;
+  const OH = result.OH;
+  const pH = result.pH;
+  const pOH = result.pOH;
+  const cls = window.AtomurusCalcCore.classifyPH(pH);
+  const nature = solverT(cls.key);
+  const color = cls.color;
 
   let html = `<div class="calc-result-row">
     <span class="calc-result-k">pH</span>
@@ -2870,6 +2838,7 @@ function runPH() {
     <div style="position:relative;height:8px;border-radius:4px;background:linear-gradient(to right,#B96B0C,#D8D2BF 50%,#2A4878);margin-top:6px;">
       <div style="position:absolute;top:-3px;left:${pct}%;transform:translateX(-50%);width:2px;height:14px;background:${color};box-shadow:0 0 0 2px var(--lc-paper);"></div>
     </div>`;
+  if (result.autoion) html += '<div class="calc-result-formula" data-ph-autoion>' + solverT('phAutoionNote') + '</div>';
   html += `<div class="calc-result-formula">at 25 °C · Kw = [H⁺][OH⁻] = 1.0 × 10⁻¹⁴ · pH + pOH = 14</div>`;
   body.innerHTML = html;
   meta.textContent = solverT('natureSolution', { nature: nature });
@@ -2882,16 +2851,8 @@ function resetPH() {
 // ════════════════════════════════════════
 // 03 · UNIT CONVERTER
 // ════════════════════════════════════════
-const UNIT_CATEGORIES = {
-  mass: { linear: true, units: { ng: 1e-9, 'µg': 1e-6, mg: 1e-3, g: 1, kg: 1e3, t: 1e6, lb: 453.59237, oz: 28.349523125 } },
-  volume: { linear: true, units: { 'µL': 1e-6, mL: 1e-3, 'cm³': 1e-3, L: 1, 'm³': 1e3, 'fl oz': 0.0295735295625, pt: 0.473176473, qt: 0.946352946, 'gal (US)': 3.785411784, 'in³': 0.016387064 } },
-  pressure: { linear: true, units: { Pa: 1, hPa: 1e2, kPa: 1e3, MPa: 1e6, bar: 1e5, atm: 101325, mmHg: 133.322387415, Torr: 133.322387415, psi: 6894.757293168 } },
-  temperature: { linear: false },
-  energy: { linear: true, units: { J: 1, kJ: 1e3, MJ: 1e6, cal: 4.184, kcal: 4184, Wh: 3600, kWh: 3.6e6, eV: 1.602176634e-19 } },
-  amount: { linear: true, units: { 'µmol': 1e-6, mmol: 1e-3, mol: 1, kmol: 1e3 } },
-  concentration: { linear: true, units: { 'µM': 1e-6, mM: 1e-3, M: 1, 'mol/L': 1 } }
-};
-const UNIT_TEMP = ['K', '°C', '°F'];
+const UNIT_CATEGORIES = window.AtomurusCalcCore.UNIT_CATEGORIES;
+const UNIT_TEMP = window.AtomurusCalcCore.UNIT_TEMP;
 
 function unitOptions(def) {
   return def.linear ? Object.keys(def.units) : UNIT_TEMP;
@@ -2929,24 +2890,18 @@ function runUnit() {
   const to = document.getElementById('uc-to').value;
   const body = document.getElementById('uc-result-body');
   const meta = document.getElementById('uc-result-meta');
-  if (!isFinite(val)) {
-    body.innerHTML = '<div class="calc-result-empty" style="color:var(--lc-amber)">' + solverT('ucInvalid') + '</div>';
-    meta.textContent = solverT('invalid');
+  const converted = window.AtomurusCalcCore.convertUnit({ cat: cat, value: val, from: from, to: to });
+  if (!converted.ok) {
+    calcFail(body, meta, converted.code);
     return;
   }
-  let out;
-  if (def.linear) {
-    out = val * def.units[from] / def.units[to];
-  } else {
-    let K = from === 'K' ? val : (from === '°C' ? val + 273.15 : (val + 459.67) * 5 / 9);
-    out = to === 'K' ? K : (to === '°C' ? K - 273.15 : K * 9 / 5 - 459.67);
-  }
+  const out = converted.value;
   let html = '<div class="calc-result-row">'
     + '<span class="calc-result-k">' + solverT('ucConverted') + '</span>'
-    + '<span class="calc-result-v big">' + fmt(out) + ' <em>' + to + '</em></span></div>';
+    + '<span class="calc-result-v big">' + window.AtomurusCalcCore.formatUnit(out) + ' <em>' + to + '</em></span></div>';
   html += '<div class="calc-result-row"><span class="calc-result-k">' + solverT('ucOriginal') + '</span><span class="calc-result-v">' + fmt(val) + ' ' + from + '</span></div>';
-  const factor = def.linear ? fmt(def.units[from] / def.units[to]) : '';
-  html += '<div class="calc-result-formula">' + (def.linear ? (fmt(val) + ' ' + from + ' × ' + factor + ' = ' + fmt(out) + ' ' + to) : (fmt(val) + ' ' + from + ' → ' + fmt(out) + ' ' + to)) + '</div>';
+  const factor = def.linear ? window.AtomurusCalcCore.formatUnit(def.units[from] / def.units[to]) : '';
+  html += '<div class="calc-result-formula">' + (def.linear ? (fmt(val) + ' ' + from + ' × ' + factor + ' = ' + window.AtomurusCalcCore.formatUnit(out) + ' ' + to) : (fmt(val) + ' ' + from + ' → ' + window.AtomurusCalcCore.formatUnit(out) + ' ' + to)) + '</div>';
   body.innerHTML = html;
   meta.textContent = solverT('ucConverted', { to: to });
 }
@@ -2979,12 +2934,16 @@ function runThermo() {
   var dh = parseFloat(document.getElementById('tm-dh').value);
   var ds = parseFloat(document.getElementById('tm-ds').value);
   var tC = parseFloat(document.getElementById('tm-t').value);
+  var tUnitEl = document.getElementById('tm-t-unit');
+  var tUnit = tUnitEl ? tUnitEl.value : 'C';
+  var thermoCheck = window.AtomurusCalcCore.validateThermo({ dh: dh, ds: ds, T: tC, TUnit: tUnit });
+  if (!thermoCheck.ok) { calcFail(body, meta, thermoCheck.code); return; }
   var subSel = document.getElementById('tm-sub');
   var sub = subSel.value;
   var mass = parseFloat(document.getElementById('tm-mass').value);
   var dt = parseFloat(document.getElementById('tm-dt').value);
   var payload = {
-    gibbs: { deltaH: dh, deltaS: ds, T: tC, TUnit: 'C' },
+    gibbs: { deltaH: dh, deltaS: ds, T: tC, TUnit: tUnit },
     heat: { substance: sub, mass: mass, deltaT: dt }
   };
   body.innerHTML = '<div class="calc-result-empty">' + solverT('awaiting') + '</div>';
@@ -3018,6 +2977,9 @@ function runThermo() {
       html += '<div class="calc-result-row"><span class="calc-result-k">' + solverT('tmHeatIn', { sub: subLabel, m: fmt(h.mass), c: fmt(h.c), dt: fmt(h.deltaT) }) + '</span></div>';
       html += '<div class="calc-result-row"><span class="calc-result-k">q</span><span class="calc-result-v big">' + (q < 0 ? '−' : '+') + fmt(Math.abs(q)) + ' J · ' + (q < 0 ? '−' : '+') + fmt(Math.abs(q) / 1000) + ' kJ</span></div>';
       if (direction) html += '<div class="calc-result-row"><span class="calc-result-k">' + direction + '</span></div>';
+      (thermoCheck.warnings || []).forEach(function (key) {
+        html += '<div class="calc-result-formula" style="color:var(--lc-amber)">' + solverT(key) + '</div>';
+      });
       body.innerHTML = html;
       meta.textContent = solverT('tmSolved', { g: fmt(g.deltaG), q: fmt(q / 1000) });
     });
