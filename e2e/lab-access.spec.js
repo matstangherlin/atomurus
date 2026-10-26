@@ -23,7 +23,7 @@ test('guest molar mass stays open and extra calculators stay public except solve
   await expect.poll(() => page.evaluate(() => Boolean(window.AtomurusLabToolGate))).toBe(true);
   await page.locator('.calc-chip[data-mm-example="H2O"]').click();
   await page.locator('.calc-btn-run').first().click();
-  await expect(page.locator('#mm-result-body')).toContainText(/18\.02/);
+  await expect(page.locator('#mm-result-body')).toContainText(/18\.015/);
   await expect(page.locator('#lab-tool-gate-molar')).toHaveCount(0);
 
   await page.locator('.calc-menu-item[data-target="dilute"]').click();
