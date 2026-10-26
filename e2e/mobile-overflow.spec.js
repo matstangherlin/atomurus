@@ -96,7 +96,12 @@ test('topnav at 360px stays one line until search is opened', async ({ browser }
   expect(closed.lines).toBeLessThanOrEqual(1);
   expect(closed.clipped).toEqual([]);
   await page.locator('.lc-topnav-search').click();
-  await expect(page.locator('#quick-search')).toBeFocused();
+  const field = page.locator('#quick-search');
+  await expect(field).toBeFocused();
+  await field.fill('Na');
+  await expect(field).toHaveValue('Na');
+  const width = await field.evaluate((el) => el.getBoundingClientRect().width);
+  expect(width).toBeGreaterThanOrEqual(120);
   const open = await fit(page);
   expect(open.sw).toBeLessThanOrEqual(open.view + 1);
   await page.emulateMedia({ colorScheme: 'dark' });
@@ -108,11 +113,19 @@ test('topnav at 360px stays one line until search is opened', async ({ browser }
 });
 
 test('element page menu opens, Escape closes, and focus returns', async ({ browser }) => {
-  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  for (const vp of [{ width: 360, height: 740 }, { width: 390, height: 844 }]) {
+  const context = await browser.newContext({ viewport: vp, isMobile: true, hasTouch: true });
   await mockApi(context);
   const page = await context.newPage();
   for (const url of ['/periodic-table/actinium.html', '/periodic-table/rutherfordium.en.html']) {
     await page.goto(url, { waitUntil: 'load' });
+    const search = page.locator('#ps-search-q');
+    await page.locator('.topbar .search-box svg').first().click();
+    await expect(search).toBeFocused();
+    await search.fill('Rf');
+    await expect(search).toHaveValue('Rf');
+    const searchWidth = await search.evaluate((el) => el.getBoundingClientRect().width);
+    expect(searchWidth).toBeGreaterThanOrEqual(120);
     const menu = page.locator('.topbar .mobile-menu-btn');
     await expect(menu).toBeVisible();
     await menu.click();
@@ -121,6 +134,9 @@ test('element page menu opens, Escape closes, and focus returns', async ({ brows
     await page.keyboard.press('Escape');
     await expect(page.locator('.ps-shell')).not.toHaveClass(/is-nav-open/);
     await expect(menu).toBeFocused();
+    await menu.click();
+    await page.locator('#ws-drawer-backdrop').click({ position: { x: 340, y: 240 } });
+    await expect(page.locator('.ps-shell')).not.toHaveClass(/is-nav-open/);
     const gap = await page.evaluate(() => {
       const host = document.querySelector('#atomurus-study-save');
       if (!host) return null;
@@ -133,4 +149,5 @@ test('element page menu opens, Escape closes, and focus returns', async ({ brows
     }
   }
   await context.close();
+  }
 });
