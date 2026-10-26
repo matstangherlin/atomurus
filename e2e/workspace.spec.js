@@ -91,9 +91,9 @@ test('Pro walkthrough: library, set, generate, review Good', async ({ page }) =>
   await gotoWorkspace(page, '/app?section=library');
   await page.locator('[data-add-to-set]').first().click();
   await page.locator('#ws-dialog-host button.ws-btn').filter({ hasText: /Metals/ }).first().click();
-  await expect(page.locator('.ws-toast, [role="status"]')).toBeVisible({ timeout: 8_000 });
+  await expect(page.locator('.ws-toast').first()).toBeVisible({ timeout: 8_000 });
   await page.locator('[data-generate-item]').first().click();
-  await expect(page.locator('.ws-toast, [role="status"]')).toBeVisible({ timeout: 8_000 });
+  await expect(page.locator('#ws-generate-status, .ws-toast').first()).toBeVisible({ timeout: 8_000 });
 
   await gotoWorkspace(page, `/app?section=sets&set=${store.sets[0] ? store.sets[0].id : SET_ID}`);
   await expect(page.locator('#ws-set-title')).toBeVisible();

@@ -157,7 +157,7 @@ assert.ok(logic.isTechnicalErrorText('feature_locked'));
 assert.ok(logic.isTechnicalErrorText('PostgREST error'));
 assert.equal(logic.generateCardsFeedback({ created: 3, skipped: 0 }).kind, 'created');
 assert.equal(logic.generateCardsFeedback({ created: 0, skipped: 4 }).kind, 'noneNeeded');
-assert.equal(logic.generateCardsFeedback({ created: 0, skipped: 0 }).kind, 'none');
+assert.equal(logic.generateCardsFeedback({ created: 0, skipped: 0 }).kind, 'needItems');
 
 const ends = new Date(Date.now() + 23 * 24 * 60 * 60 * 1000).toISOString();
 const days = logic.trialDaysLeft(ends);

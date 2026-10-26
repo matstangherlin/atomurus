@@ -39,6 +39,8 @@
       resume: 'Resume', delete: 'Delete', dueWhen: 'Due {when}',
       genCreated: '{n} flashcards created', genNone: 'No new cards were needed. These flashcards already exist in this Study Set.',
       genEmpty: 'Add an element or molecule first, then generate cards.',
+      genNeedItems: 'Add items to the set before generating cards.',
+      genTimeout: 'This took longer than expected. Try again.',
       genPickSet: 'Choose a Study Set. We’ll generate flashcards next.',
       filterEmptyTitle: 'No matching items.', filterEmptyBody: 'Try another search, type or tag.',
       exitReview: 'Exit', reviewAgain: 'Review again',
@@ -378,6 +380,8 @@
       resume: 'Retomar', delete: 'Excluir', dueWhen: 'Vence {when}',
       genCreated: '{n} flashcards criados', genNone: 'Nenhum card novo era necessário. Esses flashcards já existem neste Study Set.',
       genEmpty: 'Adicione um elemento ou molécula e depois gere os cards.',
+      genNeedItems: 'Adicione itens ao conjunto antes de gerar cartões.',
+      genTimeout: 'Demorou mais que o esperado; tente de novo.',
       genPickSet: 'Escolha um Study Set. Em seguida geramos os flashcards.',
       filterEmptyTitle: 'Nenhum item corresponde.', filterEmptyBody: 'Tente outra busca, tipo ou tag.',
       exitReview: 'Sair', reviewAgain: 'Revisar de novo',
@@ -735,10 +739,71 @@
     return type || '';
   }
 
+  function generateMessage(fb) {
+    if (!fb) return t('genTimeout');
+    if (fb.kind === 'created') return t('genCreated', '', { n: fb.created });
+    if (fb.kind === 'noneNeeded') return t('genNone');
+    if (fb.kind === 'needItems') return t('genNeedItems');
+    if (fb.kind === 'timeout') return t('genTimeout');
+    return t('genEmpty');
+  }
+
+  function showGenerateStatus(button, message) {
+    var status = document.getElementById('ws-generate-status');
+    if (!status) {
+      status = document.createElement('p');
+      status.id = 'ws-generate-status';
+      status.className = 'ws-lede';
+      status.setAttribute('role', 'status');
+      var anchor = button && button.parentElement;
+      if (anchor) anchor.insertAdjacentElement('afterend', status);
+      else {
+        var root = document.getElementById('app-study');
+        if (root) root.appendChild(status);
+      }
+    }
+    status.textContent = message || '';
+  }
+
   function toastGenerate(fb) {
-    if (fb.kind === 'created') toast(t('genCreated', '', { n: fb.created }));
-    else if (fb.kind === 'noneNeeded') toast(t('genNone'), 'info');
-    else toast(t('genEmpty'), 'info');
+    var message = generateMessage(fb);
+    var tone = fb && fb.kind === 'created' ? 'success' : 'info';
+    toast(message, tone);
+  }
+
+  function runGenerate(api, button, body, onCreated) {
+    if (button) ui().setBusy(button, true, t('generating'));
+    showGenerateStatus(button, t('generating'));
+    return logic().watchGenerate(function () {
+      return api.generateCards(body);
+    }, {
+      timeoutMs: 35000,
+      onTimeout: function () {
+        if (button) ui().setBusy(button, false);
+        var msg = t('genTimeout');
+        showGenerateStatus(button, msg);
+        toast(msg, 'danger');
+      }
+    }).then(function (outcome) {
+      if (!outcome || outcome.timedOut) return;
+      if (button) ui().setBusy(button, false);
+      if (outcome.error) {
+        var mapped = logic().uxError(outcome.error);
+        var errMsg = t(mapped.bodyKey);
+        if (logic().isTechnicalErrorText && logic().isTechnicalErrorText(errMsg)) errMsg = t('errLockedBody');
+        showGenerateStatus(button, errMsg);
+        toast(errMsg, 'danger');
+        return;
+      }
+      var fb = logic().generateCardsFeedback(outcome.value);
+      var msg = generateMessage(fb);
+      showGenerateStatus(button, msg);
+      toast(msg, fb.kind === 'created' ? 'success' : 'info');
+      if (logic().emitWorkspaceEvent) logic().emitWorkspaceEvent('flashcards_generated', { created: fb.created || 0 });
+      if (fb.kind === 'created' && onCreated) onCreated(fb);
+    }).finally(function () {
+      if (button) ui().setBusy(button, false);
+    });
   }
 
   function afterAddedToSet(api, node, itemId, setId, thenGenerate) {
@@ -746,30 +811,7 @@
     if (generate) generate.setAttribute('data-set-id', setId);
     toast(t('toastAdded'));
     if (!thenGenerate) return Promise.resolve();
-    if (generate) ui().setBusy(generate, true, t('generating'));
-    return api.generateCards({ setId: setId, itemId: itemId }).then(function (data) {
-      if (generate) ui().setBusy(generate, false);
-      toastGenerate(logic().generateCardsFeedback(data));
-    }).catch(function (err) {
-      if (generate) ui().setBusy(generate, false);
-      if (ui().toast) {
-        ui().toast(t('genPartial'), {
-          tone: 'danger',
-          ms: 8000,
-          actionLabel: t('tryGenerate'),
-          onAction: function () {
-            if (generate) generate.click();
-            else api.generateCards({ setId: setId, itemId: itemId }).then(function (data) {
-              toastGenerate(logic().generateCardsFeedback(data));
-            }).catch(function (retryErr) {
-              toast(t(logic().uxError(retryErr).bodyKey), 'danger');
-            });
-          }
-        });
-      } else {
-        toast(t('genPartial'), 'danger');
-      }
-    });
+    return runGenerate(api, generate, { setId: setId, itemId: itemId });
   }
 
   function bindCursorMore(btn, loadPage, onItems) {
@@ -1912,14 +1954,7 @@
           openAddToSetDialog(api, gid, node, { generate: true });
           return;
         }
-        ui().setBusy(genBtn, true, t('generating'));
-        api.generateCards({ setId: setId, itemId: gid }).then(function (data) {
-          ui().setBusy(genBtn, false);
-          toastGenerate(logic().generateCardsFeedback(data));
-        }).catch(function (err) {
-          ui().setBusy(genBtn, false);
-          toast(t(logic().uxError(err).bodyKey), 'danger');
-        });
+        runGenerate(api, genBtn, { setId: setId, itemId: gid });
       }
     });
     node.querySelectorAll('.ws-item-note').forEach(function (noteNode) {
@@ -2397,16 +2432,8 @@
       });
       var generateBtn = $('app-generate-set');
       if (generateBtn) generateBtn.addEventListener('click', function () {
-        ui().setBusy(generateBtn, true, t('generating'));
-        api.generateCards({ setId: set.id }).then(function (data) {
-          ui().setBusy(generateBtn, false);
-          var fb = logic().generateCardsFeedback(data);
-          toastGenerate(fb);
-          if (logic().emitWorkspaceEvent) logic().emitWorkspaceEvent('flashcards_generated', { created: fb.created || 0 });
-          if (fb.kind === 'created') void renderSetsSection(node, api);
-        }).catch(function (err) {
-          ui().setBusy(generateBtn, false);
-          toast(t(logic().uxError(err).bodyKey), 'danger');
+        runGenerate(api, generateBtn, { setId: set.id }, function () {
+          void renderSetsSection(node, api);
         });
       });
       var deleteBtn = $('app-delete-set');

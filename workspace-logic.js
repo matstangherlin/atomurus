@@ -412,9 +412,43 @@
   function generateCardsFeedback(result) {
     var created = Number(result && result.created) || 0;
     var skipped = Number(result && result.skipped) || 0;
+    var unsupported = Number(result && result.unsupported) || 0;
     if (created > 0) return { kind: 'created', created: created };
     if (skipped > 0) return { kind: 'noneNeeded' };
-    return { kind: 'none' };
+    if (unsupported > 0) return { kind: 'none' };
+    return { kind: 'needItems' };
+  }
+
+  // Settles even if `task` never does. `onTimeout` runs once, after `timeoutMs`.
+  function watchGenerate(task, options) {
+    var opts = options || {};
+    var ms = opts.timeoutMs == null ? 35000 : Number(opts.timeoutMs);
+    var schedule = opts.schedule || function (fn, delay) { return setTimeout(fn, delay); };
+    var cancel = opts.cancel || function (id) { clearTimeout(id); };
+    var settled = false;
+    var resolveOuter;
+    var outer = new Promise(function (resolve) { resolveOuter = resolve; });
+    var timer = schedule(function () {
+      if (settled) return;
+      settled = true;
+      if (typeof opts.onTimeout === 'function') opts.onTimeout();
+      resolveOuter({ timedOut: true });
+    }, ms);
+    Promise.resolve().then(function () { return task(); }).then(
+      function (value) {
+        if (settled) return;
+        settled = true;
+        cancel(timer);
+        resolveOuter({ timedOut: false, value: value });
+      },
+      function (error) {
+        if (settled) return;
+        settled = true;
+        cancel(timer);
+        resolveOuter({ timedOut: false, error: error });
+      }
+    );
+    return outer;
   }
 
   function masteredPercent(mastered, total) {
@@ -517,6 +551,7 @@
     uxError: uxError,
     isTechnicalErrorText: isTechnicalErrorText,
     generateCardsFeedback: generateCardsFeedback,
+    watchGenerate: watchGenerate,
     masteredPercent: masteredPercent,
     relativeTime: relativeTime,
     formatDate: formatDate,

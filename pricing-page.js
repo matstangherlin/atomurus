@@ -619,7 +619,16 @@
     syncToggleButtons();
   }
 
+  var checkoutInFlight = false;
+  var checkoutStartedAt = 0;
+
+  function restoreCheckoutButton() {
+    checkoutInFlight = false;
+    hydrateCopy(selectedCurrency());
+  }
+
   async function startCheckout() {
+    if (checkoutInFlight) return;
     var button = document.getElementById('pricing-pro-cta');
     var errBox = document.getElementById('pricing-checkout-err');
     if (errBox) {
@@ -635,6 +644,8 @@
       location.assign('/account?tab=plan');
       return;
     }
+    checkoutInFlight = true;
+    checkoutStartedAt = Date.now();
     if (button) {
       button.disabled = true;
       button.textContent = t('checkoutBusy');
@@ -660,6 +671,7 @@
         errBox.textContent = t('checkoutRetry');
         errBox.classList.add('show');
       }
+      checkoutInFlight = false;
       syncButtons();
     }
   }
@@ -684,6 +696,15 @@
   function boot() {
     hydrateCopy(selectedCurrency());
     bind();
+    window.addEventListener('pageshow', function () {
+      restoreCheckoutButton();
+    });
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState !== 'visible') return;
+      var button = document.getElementById('pricing-pro-cta');
+      if (!button || button.textContent !== t('checkoutBusy')) return;
+      if (Date.now() - checkoutStartedAt > 3000) restoreCheckoutButton();
+    });
     document.addEventListener('atomurus-ads-ready', function () {
       hydrateCopy(selectedCurrency());
     });

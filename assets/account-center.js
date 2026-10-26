@@ -43,16 +43,24 @@
       viewPlans: 'View plans',
       trialPlan: 'Atomurus Pro Trial',
       trialDays: '{n} days remaining',
+      autoTrialEnds: 'Your Pro trial ends on {date} ({n} days). We did not ask for a card and nothing will be charged; after that the account returns to the free plan.',
+      autoTrialNoDate: 'Your Pro trial has {n} days left. We did not ask for a card and nothing will be charged; after that the account returns to the free plan.',
       proPlan: 'Atomurus Pro',
       manage: 'Manage subscription',
+      manageOrCancel: 'Manage or cancel subscription',
+      reactivate: 'Reactivate or manage',
       manageBilling: 'Manage billing',
+      renewsOn: 'Renews on {date}.',
       paymentIssue: 'Payment issue',
       paymentIssueBody: 'Update your payment method to keep Pro active.',
       opening: 'Opening portal…',
-      noStripe: 'This account has no Stripe subscription to manage yet.',
+      noStripe: 'This account does not have a subscription to manage yet.',
+      portalError: 'The billing portal could not be opened right now. Try again.',
       workspace: 'Open Workspace',
       active: 'Active',
-      wontRenew: 'Your subscription will not renew.'
+      wontRenew: 'Your subscription will not renew.',
+      cancelUntil: 'Your subscription will not renew. Pro access until {date}.',
+      cancelNoDate: 'Your subscription will not renew.'
     },
     pt: {
       title: 'Conta',
@@ -93,16 +101,24 @@
       viewPlans: 'Ver planos',
       trialPlan: 'Atomurus Pro Trial',
       trialDays: '{n} dias restantes',
+      autoTrialEnds: 'Seu trial Pro termina em {date} ({n} dias). Não pedimos cartão e nada será cobrado; depois disso a conta volta ao plano gratuito.',
+      autoTrialNoDate: 'Seu trial Pro tem {n} dias restantes. Não pedimos cartão e nada será cobrado; depois disso a conta volta ao plano gratuito.',
       proPlan: 'Atomurus Pro',
       manage: 'Gerenciar assinatura',
+      manageOrCancel: 'Gerenciar ou cancelar assinatura',
+      reactivate: 'Reativar ou gerenciar',
       manageBilling: 'Gerenciar cobrança',
+      renewsOn: 'Renova em {date}.',
       paymentIssue: 'Problema de pagamento',
       paymentIssueBody: 'Atualize o pagamento para manter o Pro ativo.',
       opening: 'Abrindo portal…',
-      noStripe: 'Esta conta ainda não tem assinatura Stripe para gerenciar.',
+      noStripe: 'Esta conta ainda não tem assinatura para gerenciar.',
+      portalError: 'Não foi possível abrir o portal agora. Tente novamente.',
       workspace: 'Abrir Workspace',
       active: 'Ativo',
-      wontRenew: 'Sua assinatura não será renovada.'
+      wontRenew: 'Sua assinatura não será renovada.',
+      cancelUntil: 'Sua assinatura não será renovada. Acesso Pro até {date}.',
+      cancelNoDate: 'Sua assinatura não será renovada.'
     }
   };
 
@@ -116,7 +132,22 @@
     if (window.AtomurusWorkspace && typeof window.AtomurusWorkspace.interpolate === 'function') {
       return window.AtomurusWorkspace.interpolate(value, vars);
     }
-    return String(value).replace('{n}', vars && vars.n != null ? vars.n : '');
+    return String(value)
+      .replace('{n}', vars && vars.n != null ? vars.n : '')
+      .replace('{date}', vars && vars.date != null ? vars.date : '')
+      .replace('{when}', vars && vars.when != null ? vars.when : '');
+  }
+
+  function planDate(iso) {
+    if (!iso) return '';
+    var logic = window.AtomurusWorkspace;
+    if (!logic || typeof logic.formatDate !== 'function') return '';
+    var formatted = logic.formatDate(iso, lang());
+    return formatted && formatted !== '—' ? formatted : '';
+  }
+
+  function billingPortalMessage(err) {
+    return err && err.code === 'billing_customer_missing' ? t('noStripe') : t('portalError');
   }
 
   function esc(value) {
@@ -197,30 +228,50 @@
       button.disabled = false;
       button.textContent = t('manage');
       var host = document.getElementById('ac-banner');
-      if (host) host.textContent = err && err.code === 'billing_customer_missing' ? t('noStripe') : t('noStripe');
+      if (host) {
+        host.hidden = false;
+        host.textContent = billingPortalMessage(err);
+      }
     });
+  }
+
+  function portalButton(labelKey) {
+    return '<button type="button" class="ws-btn ws-btn-primary" id="ws-billing-portal">' + esc(t(labelKey)) + '</button>';
   }
 
   function planBlock(user) {
     var logic = window.AtomurusWorkspace || {};
     var state = logic.accountPlanState ? logic.accountPlanState(user) : { kind: 'free', canManage: false };
-    var days = logic.trialDaysLeft ? logic.trialDaysLeft(user.trialEndsAt) : null;
+    var days = logic.trialDaysLeft ? logic.trialDaysLeft(user && user.trialEndsAt) : null;
+    var end = planDate(user && user.currentPeriodEnd);
+    var trialEnd = planDate(user && user.trialEndsAt);
     if (state.kind === 'auto_trial') {
-      return '<h3>' + esc(t('trialPlan')) + '</h3><p>' + esc(days == null ? '' : t('trialDays', { n: days })) + '</p>' +
+      var trialText = trialEnd
+        ? t('autoTrialEnds', { date: trialEnd, n: days == null ? 0 : days })
+        : t('autoTrialNoDate', { n: days == null ? 0 : days });
+      return '<h3>' + esc(t('trialPlan')) + '</h3><p>' + esc(trialText) + '</p>' +
         '<a class="ws-btn ws-btn-primary" href="/pricing">' + esc(t('viewPlans')) + '</a>';
     }
     if (state.kind === 'payment_issue') {
       return '<h3>' + esc(t('paymentIssue')) + '</h3><p>' + esc(t('paymentIssueBody')) + '</p>' +
+        (end ? '<p>' + esc(t('renewsOn', { date: end })) + '</p>' : '') +
         (state.canManage
-          ? '<button type="button" class="ws-btn ws-btn-primary" id="ws-billing-portal">' + esc(t('manageBilling')) + '</button>'
+          ? portalButton('manageOrCancel')
           : '<a class="ws-btn ws-btn-primary" href="/pricing">' + esc(t('viewPlans')) + '</a>');
     }
-    if (state.kind === 'paid' || state.kind === 'billing_trial' || state.kind === 'cancel_scheduled') {
+    if (state.kind === 'cancel_scheduled') {
+      var cancelText = end ? t('cancelUntil', { date: end }) : t('cancelNoDate');
+      return '<h3>' + esc(t('proPlan')) + '</h3><p>' + esc(cancelText) + '</p>' +
+        (state.canManage
+          ? portalButton('reactivate')
+          : '<a class="ws-btn ws-btn-primary" href="/pricing">' + esc(t('viewPlans')) + '</a>');
+    }
+    if (state.kind === 'paid' || state.kind === 'billing_trial') {
       return '<h3>' + esc(t('proPlan')) + '</h3>' +
         '<p>' + esc(t('active')) + '</p>' +
-        (state.kind === 'cancel_scheduled' ? '<p>' + esc(t('wontRenew')) + '</p>' : '') +
+        (end ? '<p>' + esc(t('renewsOn', { date: end })) + '</p>' : '') +
         (state.canManage
-          ? '<button type="button" class="ws-btn ws-btn-primary" id="ws-billing-portal">' + esc(t('manage')) + '</button>'
+          ? portalButton('manageOrCancel')
           : '<a class="ws-btn ws-btn-primary" href="/pricing">' + esc(t('viewPlans')) + '</a>');
     }
     return '<h3>' + esc(t('freePlan')) + '</h3><p>' + esc(t('freeBody')) + '</p>' +
@@ -374,4 +425,6 @@
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
+
+  window.AtomurusAccount = { planBlock: planBlock, billingPortalMessage: billingPortalMessage };
 })();
