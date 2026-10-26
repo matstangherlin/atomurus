@@ -705,6 +705,15 @@ function assertUiV2() {
   }
 }
 
+function assertEncoding() {
+  const { spawnSync } = require('child_process');
+  const result = spawnSync(process.execPath, [path.join(__dirname, 'test-encoding.mjs')], {
+    cwd: ROOT,
+    stdio: 'inherit'
+  });
+  if (result.status !== 0) fail('tools/test-encoding.mjs failed');
+}
+
 function main() {
   assertRootNoForbiddenArchives();
   assertDeployGuards();
@@ -717,6 +726,7 @@ function main() {
   assertPerfGuards();
   assertStudyCloud();
   assertUiV2();
+  assertEncoding();
   console.log('Site validation passed');
 }
 
