@@ -64,7 +64,7 @@ const _ELEMENT_CONTENT_PT = {
     applications:
       'Componentes estruturais em telescópios espaciais (o espelho do James Webb tem 18 segmentos de berílio cobertos por uma fina camada de ouro), satélites e mísseis pela combinação rara de leveza e rigidez. Janelas de berílio em tubos de raio-X médicos e cristalógrafos. Em reatores nucleares como refletor e moderador de nêutrons. Ligas com cobre (BeCu) são molas e ferramentas não-faiscantes, usadas em refinarias e plataformas de petróleo. Esmeraldas e águas-marinhas são compostos naturais de berílio.',
     curiosity:
-      'O Telescópio Espacial James Webb, lançado em 2021, tem seu espelho primário feito de 18 segmentos hexagonais de berílio puríssimo — escolhido por ser leve (para suportar o lançamento) e dimensionalmente estável a temperaturas extremas (o espelho opera a -223 °C). Cada segmento foi polido com precisão de nanômetros e coberto com uma camada de ouro de cerca de 100 átomos de espessura. O conjunto pesa 705 kg, ridiculamente leve para um espelho de 6,5 metros.',
+      'O Telescópio Espacial James Webb, lançado em 2021, tem seu espelho primário feito de 18 segmentos hexagonais de berílio puríssimo — escolhido por ser leve (para suportar o lançamento) e dimensionalmente estável a temperaturas extremas (o espelho opera a -223 °C). Cada segmento foi polido com precisão de nanômetros e coberto com uma camada de ouro de cerca de 100 nm (cerca de 350 camadas atômicas). O conjunto pesa 705 kg, ridiculamente leve para um espelho de 6,5 metros.',
   },
   5: {
     overview:
@@ -82,7 +82,7 @@ const _ELEMENT_CONTENT_PT = {
     overview:
       'Carbono é a base da química orgânica e de toda vida conhecida — é o quarto elemento mais abundante no universo por massa, e o 15º na crosta terrestre. Sua química especial vem da capacidade única de formar quatro ligações covalentes e cadeias longas com outros átomos de carbono, criando milhões de compostos diferentes. Sem carbono não existiriam proteínas, DNA, açúcares, plásticos, combustíveis fósseis nem grafeno.',
     history:
-      'Conhecido desde a Antiguidade nas formas de carvão e fuligem, foi reconhecido como elemento químico distinto por Antoine Lavoisier em 1789, que demonstrou que o diamante e o grafite eram a mesma substância. As formas alotrópicas se sucederam ao longo dos séculos: grafite (1779), diamante (já conhecido), fulerenos C₆₀ por Kroto, Curl e Smalley em 1985 (Nobel 1996), e o grafeno isolado por Geim e Novoselov em 2004 (Nobel 2010).',
+      'Conhecido desde a Antiguidade nas formas de carvão e fuligem, foi reconhecido como elemento químico distinto por Antoine Lavoisier em 1789. Que diamante e grafite são a mesma substância foi mostrado por Smithson Tennant em 1796, ao queimar diamante e obter só CO₂. As formas alotrópicas se sucederam ao longo dos séculos: grafite (1779), diamante (já conhecido), fulerenos C₆₀ por Kroto, Curl e Smalley em 1985 (Nobel 1996), e o grafeno isolado por Geim e Novoselov em 2004 (Nobel 2010).',
     properties:
       'Existe em formas alotrópicas radicalmente diferentes: diamante (a substância natural mais dura), grafite (macio, condutor elétrico), grafeno (folha plana de um átomo de espessura), nanotubos (cilindros de grafeno), fulerenos (gaiolas esféricas) e carbono amorfo. Sua tetravalência permite cadeias lineares, ramificadas e anéis. O carbono-14, isótopo radioativo formado pela ação dos raios cósmicos na atmosfera, é a base da datação arqueológica.',
     applications:
@@ -324,11 +324,11 @@ const _ELEMENT_CONTENT_PT = {
     history:
       'Ferramentas de ferro foram usadas há cerca de 5.000 anos a partir de meteoritos caídos. Os hititas dominaram a fundição do minério de ferro por volta de 1500 a.C., dando início à Idade do Ferro — sucedendo a Idade do Bronze. O processo Bessemer, inventado em 1855, permitiu a produção em massa de aço barato e desencadeou a Segunda Revolução Industrial, com ferrovias, navios a vapor e arranha-céus.',
     properties:
-      'Cinza-prateado, fortemente magnético (junto com cobalto e níquel), maleável e dúctil. Oxida facilmente em ar úmido, formando ferrugem (óxido de ferro hidratado) que não protege contra corrosão adicional. Tem quatro formas alotrópicas que mudam de estrutura cristalina conforme a temperatura. Ponto de fusão de 1.538 °C. É o núcleo mais estável conhecido — o auge da curva de energia de ligação nuclear.',
+      'Cinza-prateado, fortemente magnético (junto com cobalto e níquel), maleável e dúctil. Oxida facilmente em ar úmido, formando ferrugem (óxido de ferro hidratado) que não protege contra corrosão adicional. Tem quatro formas alotrópicas que mudam de estrutura cristalina conforme a temperatura. Ponto de fusão de 1.538 °C. O maior valor de energia de ligação por núcleon é o do Ni-62 (8,7945 MeV); seguem o Fe-58 e o Fe-56 (8,7903 MeV). O Fe-56 é o mais estável produzido pela nucleossíntese estelar.',
     applications:
       'O aço (ferro com 0,1% a 2% de carbono) responde por cerca de 95% de toda a produção mundial de metal. Ferro fundido em motores, blocos de cilindro e tubos. Aço inoxidável (com cromo) para utensílios de cozinha, instrumentos cirúrgicos e arquitetura. Hemoglobina e mioglobina dependem do ferro para transportar oxigênio. Ímãs permanentes feitos de ligas ferromagnéticas.',
     curiosity:
-      'O ferro é o elemento mais pesado que estrelas comuns conseguem produzir por fusão em seus núcleos — fundir átomos de ferro consome energia em vez de liberar, então as estrelas param ali e colapsam em supernova. Todo átomo de ferro mais pesado no universo, incluindo o do seu sangue, foi forjado em explosões estelares cataclísmicas ou colisões de estrelas de nêutrons.',
+      'O ferro é o elemento mais pesado que estrelas comuns conseguem produzir por fusão em seus núcleos — fundir átomos de ferro consome energia em vez de liberar, então as estrelas param ali e colapsam em supernova. O Fe-56 é o núcleo mais estável dessa nucleossíntese. Átomos mais pesados que o ferro se formam em explosões estelares ou em colisões de estrelas de nêutrons.',
   },
   27: {
     overview:
@@ -430,7 +430,7 @@ const _ELEMENT_CONTENT_PT = {
     overview:
       'Bromo é o único elemento não-metal líquido em condições normais — junto com o mercúrio (metal), forma o curioso clube dos dois únicos elementos líquidos à temperatura ambiente. É um líquido marrom-avermelhado denso, com vapor laranja-amarelado tóxico e cheiro pungente. Como halogênio, é extremamente reativo e usado em retardantes de chama, agroquímicos e medicamentos.',
     history:
-      'Descoberto em 1826 pelo químico francês Antoine-Jérôme Balard a partir de algas marinhas — ele percebeu que um líquido vermelho se formava ao tratar resíduos da extração de sal com cloro. O nome vem do grego "bromos" (fedor), em referência ao odor desagradável e penetrante do gás. Foi um dos primeiros elementos a ser identificado por seu espectro óptico. Balard tinha apenas 23 anos quando fez a descoberta.',
+      'Descoberto em 1826 pelo químico francês Antoine-Jérôme Balard a partir de algas marinhas — ele percebeu que um líquido vermelho se formava ao tratar resíduos da extração de sal com cloro. O nome vem do grego "bromos" (fedor), em referência ao odor desagradável e penetrante do gás. Balard o identificou por reações químicas; a espectroscopia só nasceu em 1859–60 (césio em 1860, rubídio em 1861). Balard tinha apenas 23 anos quando fez a descoberta.',
     properties:
       'Líquido marrom-avermelhado denso (3,1 vezes a densidade da água), com vapor tóxico amarelo-alaranjado já em temperatura ambiente. Funde a -7 °C e ferve a 59 °C. É o terceiro halogênio mais reativo (depois do flúor e cloro). Forma o ânion brometo (Br⁻) em compostos iônicos. Levemente solúvel em água, mas dissolve bem em solventes orgânicos. Em sólido, forma cristais escuros quebradiços.',
     applications:
@@ -466,7 +466,7 @@ const _ELEMENT_CONTENT_PT = {
     overview:
       'Estrôncio é um metal alcalino-terroso prateado-amarelado, conhecido principalmente pela cor vermelha brilhante característica que dá aos fogos de artifício. Sua aplicação mais famosa é nessa indústria, mas também tem uso em pastas de dente para dentes sensíveis (cloreto de estrôncio), em ímãs e em datação geológica em pares com rubídio. Em forma radioativa (Sr-90) é um dos contaminantes mais perigosos de fallout nuclear.',
     history:
-      'Descoberto em 1790 por Adair Crawford e William Cruickshank em amostras do mineral estroncianita coletadas em Strontian, pequeno vilarejo na Escócia (que dá nome ao elemento). Humphry Davy isolou o metal em 1808 por eletrólise, junto com bário e cálcio na mesma série de experimentos. Strontian é o único vilarejo do mundo que dá nome a um elemento químico — fato que turistas locais usam orgulhosamente em placas e camisetas.',
+      'Descoberto em 1790 por Adair Crawford e William Cruickshank em amostras do mineral estroncianita coletadas em Strontian, pequeno vilarejo na Escócia (que dá nome ao elemento). Humphry Davy isolou o metal em 1808 por eletrólise, junto com bário e cálcio na mesma série de experimentos. Strontian dá nome ao estrôncio, mas não é o único vilarejo nessa situação: Ytterby, na Suécia, deu nome a quatro elementos (ítrio, itérbio, térbio e érbio).',
     properties:
       'Metal prateado-amarelado macio, mais reativo que cálcio mas menos que bário. Funde a 777 °C. Densidade 2,64 g/cm³. Em chamas emite cor vermelho-carmesim intensa — a cor "vermelho de bombeiro" dos fogos de artifício. Quimicamente similar ao cálcio (substitui-o em ossos quando absorvido). Tem quatro isótopos estáveis naturais e vários radioativos. O Sr-90, subproduto de fissão nuclear, tem meia-vida de 28,9 anos e é particularmente perigoso por se acumular em ossos.',
     applications:
@@ -544,7 +544,7 @@ const _ELEMENT_CONTENT_PT = {
     applications:
       'Catalisadores em produção de amônia (alternativa ao ferro do processo Haber), em síntese de hidrocarbonetos (Fischer-Tropsch) e em células a combustível. Coberturas de gravação em discos rígidos magnéticos modernos — densidade de dados depende de filmes ultrafinos de rutênio. Eletrodos resistentes em microeletrônica. Ligas de platina (95% Pt + 5% Ru) em joalheria e contatos elétricos. Em pesquisa, complexos de rutênio são pigmentos sensíveis à luz para células solares experimentais.',
     curiosity:
-      'A presença de rutênio na atmosfera europeia em outubro de 2017 alarmou cientistas — concentrações até 1000 vezes acima do normal foram detectadas em dezenas de países. Investigações rastrearam a fonte até uma planta nuclear na Rússia (Mayak), provavelmente um acidente em produção de cério-144 para satélites. Apesar do volume incomum, os níveis eram baixos demais para causar dano à saúde pública. Foi o maior "vazamento de rutênio radioativo" sem origem oficialmente reconhecida.',
+      'A presença de rutênio na atmosfera europeia em outubro de 2017 alarmou cientistas — concentrações até 1000 vezes acima do normal foram detectadas em dezenas de países. Investigações rastrearam a fonte até uma planta nuclear na Rússia (Mayak), a hipótese do IRSN era uma fonte de cério-144 para o experimento de neutrinos SOX/Borexino, na Itália. Apesar do volume incomum, os níveis eram baixos demais para causar dano à saúde pública. Foi o maior "vazamento de rutênio radioativo" sem origem oficialmente reconhecida.',
   },
   45: {
     overview:
@@ -622,7 +622,7 @@ const _ELEMENT_CONTENT_PT = {
     overview:
       'Antimônio é um metaloide cinza-prateado brilhante, conhecido desde a Antiguidade — usado em delineadores egípcios (kohl) e em medicamentos medievais frequentemente fatais. Hoje, sua aplicação dominante é como retardante de chama em plásticos, têxteis e produtos eletrônicos: cerca de metade da produção mundial entra em fórmulas para impedir incêndios. É frágil, tóxico em compostos solúveis e quimicamente semelhante ao arsênio.',
     history:
-      'Conhecido há mais de 5.000 anos em compostos — o sulfeto de antimônio (estibinita) era usado como pigmento e maquiagem dos olhos no Egito antigo. O nome "antimônio" vem do grego/latim "antimonium" (origem disputada), e o símbolo Sb deriva de "stibium". O alquimista alemão Basílio Valentino o descreveu metalicamente no século XV. Foi um dos sete metais conhecidos pela alquimia medieval, ao lado de ouro, prata, mercúrio, cobre, ferro e chumbo.',
+      'Conhecido há mais de 5.000 anos em compostos — o sulfeto de antimônio (estibinita) era usado como pigmento e maquiagem dos olhos no Egito antigo. O nome "antimônio" vem do grego/latim "antimonium" (origem disputada), e o símbolo Sb deriva de "stibium". O alquimista alemão Basílio Valentino o descreveu metalicamente no século XV. Não faz parte dos sete metais da alquimia clássica: ouro, prata, mercúrio, cobre, ferro, chumbo e estanho.',
     properties:
       'Metaloide cinza-prateado lustroso, frágil — pode ser cortado mas se quebra ao ser deformado. Funde a 631 °C. Tem propriedade rara entre metais: expande ao solidificar (como bismuto e água). Quimicamente parecido com arsênio e bismuto (família 15). Forma sulfetos e óxidos coloridos, e compostos com hidrogênio (estibina, gás tóxico). Tem dois isótopos estáveis (Sb-121 e Sb-123).',
     applications:
@@ -994,7 +994,7 @@ const _ELEMENT_CONTENT_PT = {
     overview:
       'Chumbo é um metal pesado, macio e azul-acinzentado que foi um dos primeiros metais trabalhados pela humanidade. Encanamentos romanos, balas de armas, soldas, baterias de carros, tinta e cosméticos — sua versatilidade impulsionou civilizações inteiras antes de descobrirmos que é um veneno cumulativo que afeta o sistema nervoso, especialmente em crianças.',
     history:
-      'Usado há mais de 8.000 anos. Os romanos o produziam em larga escala — encanamentos, telhados, recipientes para vinho. A palavra "encanamento" em inglês ("plumbing") vem de "plumbum", o nome latino do chumbo. A queda de Roma já foi atribuída em parte ao envenenamento crônico por chumbo da elite. Sua toxicidade só foi reconhecida cientificamente no século XX, levando à proibição em gasolina (1970-2000) e tintas residenciais.',
+      'Usado há mais de 8.000 anos. Os romanos o produziam em larga escala — encanamentos, telhados, recipientes para vinho. A palavra "encanamento" em inglês ("plumbing") vem de "plumbum", o nome latino do chumbo. A queda de Roma já foi atribuída em parte ao envenenamento crônico por chumbo da elite. A toxicidade já era descrita por Nicandro (séc. II a.C.), Vitrúvio e Paulo de Égina, e o saturnismo está documentado nos séculos XVII e XVIII; no século XX isso levou à proibição em gasolina (1970-2000) e tintas residenciais.',
     properties:
       'Denso (11,3 vezes mais que a água), macio o suficiente para ser cortado com faca, com baixo ponto de fusão (327 °C). Resistente à corrosão por ácidos comuns — daí seu uso em encanamentos e baterias de chumbo-ácido. Bloqueia radiação ionizante eficientemente, sendo o material padrão em aventais de raio-X e revestimentos de reatores nucleares. Quimicamente versátil: pode formar compostos com chumbo nos estados de oxidação +2 e +4.',
     applications:
@@ -1006,13 +1006,13 @@ const _ELEMENT_CONTENT_PT = {
     overview:
       'Bismuto é um metal pós-transição cinza-prateado com tons rosados, conhecido pela toxicidade muito baixa apesar de estar próximo ao chumbo na tabela periódica. Forma cristais em escada com cores iridescentes vibrantes — uma das estruturas cristalinas mais bonitas entre os metais. É usado em medicamentos gástricos (Pepto-Bismol), cosméticos, soldas e como substituto seguro do chumbo em vários produtos.',
     history:
-      'Compostos de bismuto foram usados desde a Antiguidade (em maquiagens egípcias), mas só foi reconhecido como elemento distinto no século XV — antes era confundido com chumbo ou estanho. O metalúrgico alemão Georgius Agricola descreveu-o em 1546. O nome provavelmente vem do alemão "wismut" (massa branca). Curiosamente, por séculos foi considerado o elemento estável mais pesado, até que medições precisas em 2003 mostraram que o Bi-209 decai com meia-vida de 10¹⁹ anos — bilhões de bilhões de vezes a idade do universo.',
+      'Compostos de bismuto foram usados desde a Antiguidade (em maquiagens egípcias), mas só foi reconhecido como elemento distinto no século XVI — antes era confundido com chumbo ou estanho. O metalúrgico alemão Georgius Agricola descreveu-o em 1546. O nome provavelmente vem do alemão "wismut" (massa branca). Curiosamente, por séculos foi considerado o elemento estável mais pesado, até que medições precisas em 2003 mostraram que o Bi-209 decai com meia-vida de 1,9×10¹⁹ anos — cerca de um bilhão de vezes a idade do universo.',
     properties:
       'Metal cinza-prateado com tom rosado, frágil e cristalino. Funde a 271 °C (baixo para metal). Densidade 9,78 g/cm³. Tem propriedade rara entre metais: expande ao solidificar (como a água). É o elemento mais diamagnético conhecido (repele campos magnéticos). Quando oxidado em cristais formados controladamente, exibe cores iridescentes do arco-íris pelo "filme fino" de óxido na superfície.',
     applications:
       'Subsalicilato de bismuto (Pepto-Bismol) trata distúrbios gástricos como diarreia e indigestão — combina antibactericida com revestimento gástrico. Cosméticos: oxicloreto de bismuto (perolizante em sombras, batons e esmaltes). Soldas e ligas de baixo ponto de fusão (substituindo chumbo). Em produção de cristais decorativos para colecionadores (Bi-cristals). Carregadores de calor em reatores nucleares experimentais. Em catalisadores químicos.',
     curiosity:
-      'Durante décadas, livros didáticos diziam que o bismuto-209 era o elemento estável mais pesado — o último isótopo natural não-radioativo. Em 2003, cientistas franceses descobriram que ele na verdade decai, com meia-vida de 1,9 × 10¹⁹ anos — cerca de 1 bilhão de bilhão de vezes a idade do universo. Tecnicamente é radioativo, mas se você esperar 100 universos consecutivos morrerem, apenas uma fração mínima dos átomos terá decaído. É a "estabilidade que não é estável".',
+      'Durante décadas, livros didáticos diziam que o bismuto-209 era o elemento estável mais pesado — o último isótopo natural não-radioativo. Em 2003, cientistas franceses descobriram que ele na verdade decai, com meia-vida de 1,9 × 10¹⁹ anos — cerca de um bilhão de vezes a idade do universo. Tecnicamente é radioativo, mas essa meia-vida ainda é enorme perto da idade do universo.',
   },
   84: {
     overview:
@@ -1180,7 +1180,7 @@ const _ELEMENT_CONTENT_PT = {
     applications:
       'Praticamente nenhuma aplicação prática fora da pesquisa: produção tão limitada e custo tão alto que só faz sentido como alvo para síntese de elementos mais pesados. O Bk-249 foi crucial na descoberta do tennessínio (Z 117) em 2010, em colaboração entre Oak Ridge (EUA) e Dubna (Rússia): 22 mg de berquélio foram enviados aos russos para serem bombardeados com íons de cálcio-48. O envio internacional de material radioativo restrito por décadas envolveu logística diplomática complexa.',
     curiosity:
-      'A produção anual mundial de berquélio é de aproximadamente 1 grama, vinda exclusivamente do reator HFIR em Oak Ridge, Tennessee, EUA. Para criar os 22 miligramas usados na descoberta do tennessínio, foram necessários cerca de dois anos de operação contínua do reator. Esse pequeno lote viajou de avião comercial dos EUA para a Rússia em meados dos anos 2000, embalado em containers blindados — talvez a viagem mais cara já feita por um pouco mais de meia colher de chá de qualquer substância na história da química.',
+      'A produção anual mundial de berquélio é de aproximadamente 1 grama, vinda exclusivamente do reator HFIR em Oak Ridge, Tennessee, EUA. Para criar os 22 miligramas usados na descoberta do tennessínio, foram necessários cerca de dois anos de operação contínua do reator. Esse pequeno lote viajou de avião comercial dos EUA para a Rússia em 2009, embalado em containers blindados. Esses 22 mg ocupam cerca de 1,6 mm³, o volume de um grão de areia.',
   },
   98: {
     overview:
@@ -1198,7 +1198,7 @@ const _ELEMENT_CONTENT_PT = {
     overview:
       'Einstênio é um actinídeo sintético descoberto em circunstâncias dramáticas: foi encontrado nos detritos da primeira detonação de bomba de hidrogênio, "Ivy Mike", no Atol de Enewetak em 1952. O teste de termofusão produziu condições tão extremas que átomos de urânio capturaram dezenas de nêutrons em frações de segundo, criando elementos transurânicos pesados inéditos. Foi batizado em homenagem a Albert Einstein, falecido apenas um mês antes do anúncio público da descoberta em 1955.',
     history:
-      'Identificado em 1952 por Albert Ghiorso e colaboradores no Lawrence Livermore Laboratory, ao analisar corais e poeira coletados dos detritos da explosão de Ivy Mike — primeiro teste termonuclear da história. A descoberta foi mantida em segredo militar durante três anos. Apenas em 1955 o trabalho foi publicado, com o nome em homenagem a Einstein. Curiosamente, métodos posteriores em reatores conseguiram reproduzir a síntese do einstênio em quantidades um pouco maiores, mas sempre na faixa de nanogramas a microgramas.',
+      'Identificado em 1952 por Albert Ghiorso e colaboradores no Radiation Laboratory de Berkeley, ao analisar corais e poeira coletados dos detritos da explosão de Ivy Mike — primeiro teste termonuclear da história. A descoberta foi mantida em segredo militar durante três anos. Apenas em 1955 o trabalho foi publicado, com o nome em homenagem a Einstein. Curiosamente, métodos posteriores em reatores conseguiram reproduzir a síntese do einstênio em quantidades um pouco maiores, mas sempre na faixa de nanogramas a microgramas.',
     properties:
       'Metal prateado-prateado presumido (algumas propriedades extrapoladas), denso (8,84 g/cm³), funde a 860 °C. Todos os 19 isótopos conhecidos são radioativos. O Es-252 é o mais estável (meia-vida 471,7 dias) — incomum entre os actinídeos pesados, onde meia-vidas mais longas costumam ser raras. Emite radiação alfa intensa: amostras macroscópicas seriam autoaquecidas a centenas de graus e brilhariam por radioluminescência.',
     applications:
@@ -1246,7 +1246,7 @@ const _ELEMENT_CONTENT_PT = {
     overview:
       'Laurêncio é o último elemento da série dos actinídeos e o último da tabela periódica antes do início da série dos transactinídeos (superpesados). Recebeu o nome em homenagem a Ernest Lawrence, físico americano inventor do cíclotron — a máquina que tornou possível a síntese de praticamente todos os transurânicos. Marca, simbolicamente, o fim da era dos actinídeos e o começo da exploração de elementos com configurações eletrônicas inéditas.',
     history:
-      'Sintetizado em 1961 por Albert Ghiorso e colaboradores em Berkeley, bombardeando um alvo de californio com íons de boro em um cíclotron pesado. Os pesquisadores propuseram o nome "lawrencium" em homenagem a Ernest Lawrence, fundador do laboratório de Berkeley e morto cinco anos antes. O grupo de Dubna, em 1965, contestou a precedência e propôs o nome "rutherfordium". A IUPAC decidiu em 1997: laurêncio para Z 103, rutherfórdio para Z 104 — solomônica solução para a Transfermium War.',
+      'Sintetizado em 1961 por Albert Ghiorso e colaboradores em Berkeley, bombardeando um alvo de californio com íons de boro em um cíclotron pesado. Os pesquisadores propuseram o nome "lawrencium" em homenagem a Ernest Lawrence, fundador do laboratório de Berkeley, morto três anos antes (agosto de 1958). Rutherfordium foi a proposta de Berkeley para o elemento 104; Dubna propôs kurchatovium. A IUPAC decidiu em 1997: laurêncio para Z 103, rutherfórdio para Z 104 — solomônica solução para a Transfermium War.',
     properties:
       'Não observado em quantidade macroscópica. Estima-se densidade em torno de 15,6 g/cm³, ponto de fusão de 1.627 °C. Todos os 13 isótopos conhecidos são radioativos. O Lr-266 é o mais estável (meia-vida cerca de 11 horas). É o elemento que fecha a configuração eletrônica 5f¹⁴ típica dos actinídeos — daí o consenso de que pertence à série, apesar de algumas propriedades químicas o aproximarem mais do grupo 3 (escândio, ítrio, lutécio).',
     applications:
@@ -1288,7 +1288,7 @@ const _ELEMENT_CONTENT_PT = {
     applications:
       'Nenhuma aplicação prática. Pesquisa em química de elementos superpesados e estudo de efeitos relativísticos no comportamento periódico. Os experimentos químicos com seabórgio foram um marco metodológico: demonstraram que era possível fazer "química" com elementos cuja meia-vida é de poucos minutos e quantidade total é de alguns átomos.',
     curiosity:
-      'Glenn Seaborg foi um dos cientistas mais condecorados do século XX: Prêmio Nobel de Química em 1951, dirigiu a Comissão de Energia Atômica dos EUA sob 10 presidentes, e supervisionou a descoberta de plutônio, amerício, cúrio, berquélio, califórnio, einstênio, férmio, mendelévio e nobélio. Quando o seabórgio recebeu seu nome em 1997, Seaborg brincou: "agora posso dizer que tem cinco elementos da tabela periódica em meu endereço residencial — vivo na Berkeley (Bk), Califórnia (Cf), na América (Am), perto do oceano (Pacífico, com európio Eu por engano), e meu nome é Seaborg (Sg)". Morreu dois anos depois, em 1999.',
+      'Glenn Seaborg foi um dos cientistas mais condecorados do século XX: Prêmio Nobel de Química em 1951, presidiu a Comissão de Energia Atômica dos EUA de 1961 a 1971, sob Kennedy, Johnson e Nixon, e aconselhou dez presidentes, e supervisionou a descoberta de plutônio, amerício, cúrio, berquélio, califórnio, einstênio, férmio, mendelévio e nobélio. Quando o seabórgio recebeu seu nome em 1997, Seaborg brincou: "agora posso dizer que tem cinco elementos da tabela periódica em meu endereço residencial — vivo na Berkeley (Bk), Califórnia (Cf), na América (Am), perto do oceano (Pacífico, com európio Eu por engano), e meu nome é Seaborg (Sg)". Morreu dois anos depois, em 1999.',
   },
   107: {
     overview:
@@ -1420,7 +1420,7 @@ const _ELEMENT_CONTENT_PT = {
     applications:
       'Nenhuma aplicação prática.',
     curiosity:
-      'A síntese do tennessínio é um dos exemplos mais notáveis de cooperação científica internacional em meio a tensões geopolíticas. Em 2009, no auge das sanções entre EUA e Rússia, Oak Ridge produziu 22 mg de Bk-249 — quantidade que custou US$ 3,5 milhões e exigiu dois anos de operação contínua do reator HFIR. O material foi enviado para Dubna em embalagens nucleares certificadas, atravessando o Atlântico em voo comercial. Os russos bombardearam o alvo de berquélio por 150 dias, observando seis átomos do novo elemento. Cada átomo do tennessínio detectado custou, somando tudo, cerca de US$ 600 mil — entre as descobertas científicas mais caras já feitas por unidade de massa observada.',
+      'A síntese do tennessínio é um dos exemplos mais notáveis de cooperação científica internacional em meio a tensões geopolíticas. Em 2009, Oak Ridge produziu 22 mg de Bk-249 — quantidade que custou US$ 3,5 milhões e exigiu dois anos de operação contínua do reator HFIR. O material foi enviado para Dubna em embalagens nucleares certificadas, atravessando o Atlântico em voo comercial. Os russos bombardearam o alvo de berquélio por 150 dias, observando seis átomos do novo elemento. Cada átomo do tennessínio detectado custou, somando tudo, cerca de US$ 600 mil — entre as descobertas científicas mais caras já feitas por unidade de massa observada.',
   },
   118: {
     overview:
@@ -1432,7 +1432,7 @@ const _ELEMENT_CONTENT_PT = {
     applications:
       'Nenhuma aplicação prática. Toda relevância é em pesquisa fundamental sobre os limites da tabela periódica e a possibilidade de elementos ainda mais pesados (Z=119, 120 e além).',
     curiosity:
-      'Yuri Oganessian é uma figura singular: nascido em 1933 em Rostov-no-Don, sob a União Soviética, formou-se em física nuclear em Moscou, ingressou no Instituto de Dubna em 1956 e nunca saiu — passou 70 anos na mesma instituição. Sob sua liderança, Dubna sintetizou seis elementos (Z 113, 114, 115, 116, 117, 118), número sem paralelo na história da tabela periódica. Em 2016, com 83 anos, viu seu nome eternizado no elemento mais pesado já criado pelos humanos. Como Glenn Seaborg antes dele, é um dos raríssimos cientistas a presenciar o próprio nome se transformar em parte permanente da química. Em 2024, aos 91 anos, ainda trabalha ativamente em Dubna, planejando experimentos para sintetizar o elemento 119 e ultrapassar a sétima fileira da tabela.',
+      'Yuri Oganessian é uma figura singular: nascido em 1933 em Rostov-no-Don, sob a União Soviética, formou-se em física nuclear em Moscou, ingressou no Instituto de Dubna em 1956 e nunca saiu — passou 70 anos na mesma instituição. Sob sua liderança, Dubna sintetizou os elementos de Z 114 a 118 (115 e 117 em co-crédito). O 113, o nihônio, é crédito do RIKEN. Em 2016, com 83 anos, viu seu nome eternizado no elemento mais pesado já criado pelos humanos. Como Glenn Seaborg antes dele, é um dos raríssimos cientistas a presenciar o próprio nome se transformar em parte permanente da química. Em 2024, aos 91 anos, ainda trabalha ativamente em Dubna, planejando experimentos para sintetizar o elemento 119 e ultrapassar a sétima fileira da tabela.',
   },
 };
 
@@ -1483,7 +1483,7 @@ const _ELEMENT_CONTENT_EN = {
     applications:
       'Structural components in space telescopes (the James Webb mirror has 18 beryllium segments coated with a thin layer of gold), satellites and missiles due to its rare combination of lightness and rigidity. Beryllium windows in medical X-ray tubes and crystallography. In nuclear reactors as a neutron reflector and moderator. Copper-beryllium alloys (BeCu) are non-sparking springs and tools, used in oil refineries and platforms. Emeralds and aquamarines are natural beryllium compounds.',
     curiosity:
-      'The James Webb Space Telescope, launched in 2021, has its primary mirror made of 18 hexagonal segments of ultra-pure beryllium — chosen for its lightness (to survive the launch) and dimensional stability at extreme temperatures (the mirror operates at -223 °C). Each segment was polished with nanometer precision and coated with a gold layer about 100 atoms thick. The set weighs 705 kg, ridiculously light for a 6.5-meter mirror.',
+      'The James Webb Space Telescope, launched in 2021, has its primary mirror made of 18 hexagonal segments of ultra-pure beryllium — chosen for its lightness (to survive the launch) and dimensional stability at extreme temperatures (the mirror operates at -223 °C). Each segment was polished with nanometer precision and coated with a gold layer about 100 nm thick (about 350 atomic layers). The set weighs 705 kg, ridiculously light for a 6.5-meter mirror.',
   },
   5: {
     overview:
@@ -1501,7 +1501,7 @@ const _ELEMENT_CONTENT_EN = {
     overview:
       'Carbon is the foundation of organic chemistry and all known life — the fourth most abundant element in the universe by mass, and 15th in Earth\'s crust. Its special chemistry comes from a unique ability to form four covalent bonds and long chains with other carbon atoms, creating millions of different compounds. Without carbon there would be no proteins, DNA, sugars, plastics, fossil fuels or graphene.',
     history:
-      'Known since antiquity as charcoal and soot, it was recognized as a distinct chemical element by Antoine Lavoisier in 1789, who showed that diamond and graphite were the same substance. The allotropes followed over centuries: graphite (1779), diamond (already known), C₆₀ fullerenes by Kroto, Curl and Smalley in 1985 (Nobel 1996), and graphene isolated by Geim and Novoselov in 2004 (Nobel 2010).',
+      'Known since antiquity as charcoal and soot, it was recognized as a distinct chemical element by Antoine Lavoisier in 1789. That diamond and graphite are the same substance was shown by Smithson Tennant in 1796, who burned diamond and obtained only CO₂. The allotropes followed over centuries: graphite (1779), diamond (already known), C₆₀ fullerenes by Kroto, Curl and Smalley in 1985 (Nobel 1996), and graphene isolated by Geim and Novoselov in 2004 (Nobel 2010).',
     properties:
       'It exists in radically different allotropic forms: diamond (the hardest natural substance), graphite (soft, electrically conductive), graphene (a flat one-atom-thick sheet), nanotubes (rolled-up graphene), fullerenes (spherical cages) and amorphous carbon. Its tetravalence allows linear chains, branched chains and rings. Carbon-14, the radioactive isotope formed by cosmic rays in the atmosphere, is the basis of archaeological dating.',
     applications:
@@ -1743,11 +1743,11 @@ const _ELEMENT_CONTENT_EN = {
     history:
       'Iron tools were used about 5,000 years ago from fallen meteorites. The Hittites mastered iron-ore smelting around 1500 BCE, beginning the Iron Age that succeeded the Bronze Age. The Bessemer process, invented in 1855, enabled mass production of cheap steel and triggered the Second Industrial Revolution — railroads, steamships and skyscrapers.',
     properties:
-      'Silvery gray, strongly magnetic (alongside cobalt and nickel), malleable and ductile. It oxidizes easily in moist air, forming rust (hydrated iron oxide) that does not protect against further corrosion. It has four allotropic forms that change crystal structure with temperature. Melting point: 1,538 °C. It is the most stable known nucleus — the peak of the nuclear binding-energy curve.',
+      'Silvery gray, strongly magnetic (alongside cobalt and nickel), malleable and ductile. It oxidizes easily in moist air, forming rust (hydrated iron oxide) that does not protect against further corrosion. It has four allotropic forms that change crystal structure with temperature. Melting point: 1,538 °C. The highest binding energy per nucleon is Ni-62 (8.7945 MeV), then Fe-58 and Fe-56 (8.7903 MeV). Fe-56 is the most stable nucleus produced by stellar nucleosynthesis.',
     applications:
       'Steel (iron with 0.1%-2% carbon) accounts for about 95% of all global metal production. Cast iron for engines, cylinder blocks and pipes. Stainless steel (with chromium) for kitchenware, surgical instruments and architecture. Hemoglobin and myoglobin depend on iron to carry oxygen. Permanent magnets made from ferromagnetic alloys.',
     curiosity:
-      'Iron is the heaviest element ordinary stars can produce by fusion in their cores — fusing iron consumes energy instead of releasing it, so stars stall there and collapse into supernova. Every iron atom heavier in the universe, including the one in your blood, was forged in cataclysmic stellar explosions or neutron-star collisions.',
+      'Iron is the heaviest element ordinary stars can produce by fusion in their cores — fusing iron consumes energy instead of releasing it, so stars stall there and collapse into supernova. Fe-56 is the most stable nucleus from that nucleosynthesis. Atoms heavier than iron form in stellar explosions or in neutron-star collisions.',
   },
   27: {
     overview:
@@ -1849,7 +1849,7 @@ const _ELEMENT_CONTENT_EN = {
     overview:
       'Bromine is the only non-metal element liquid under normal conditions — along with mercury (a metal), it forms the curious club of only two elements liquid at room temperature. It is a dense reddish-brown liquid with toxic orange-yellow vapor and a pungent odor. As a halogen it is extremely reactive and used in flame retardants, agrochemicals and medicines.',
     history:
-      'Discovered in 1826 by French chemist Antoine-Jérôme Balard from seaweed — he noticed a red liquid forming when treating salt-extraction residues with chlorine. The name comes from the Greek "bromos" (stench), referring to the unpleasant and penetrating odor of the gas. It was one of the first elements identified by its optical spectrum. Balard was just 23 years old when he made the discovery.',
+      'Discovered in 1826 by French chemist Antoine-Jérôme Balard from seaweed — he noticed a red liquid forming when treating salt-extraction residues with chlorine. The name comes from the Greek "bromos" (stench), referring to the unpleasant and penetrating odor of the gas. Balard identified it by chemical reactions; spectroscopy only began in 1859–60 (cesium in 1860, rubidium in 1861). Balard was just 23 years old when he made the discovery.',
     properties:
       'Dense reddish-brown liquid (3.1 times the density of water), with toxic orange-yellow vapor already at room temperature. Melts at -7 °C and boils at 59 °C. It is the third most reactive halogen (after fluorine and chlorine). Forms the bromide anion (Br⁻) in ionic compounds. Slightly soluble in water but dissolves well in organic solvents. As a solid, it forms dark brittle crystals.',
     applications:
@@ -1885,7 +1885,7 @@ const _ELEMENT_CONTENT_EN = {
     overview:
       'Strontium is a yellowish-silvery alkaline-earth metal, mainly known for the brilliant red color it gives to fireworks. Its most famous application is in that industry, but it is also used in toothpaste for sensitive teeth (strontium chloride), in magnets, and in geological dating paired with rubidium. In radioactive form (Sr-90) it is one of the most dangerous contaminants in nuclear fallout.',
     history:
-      'Discovered in 1790 by Adair Crawford and William Cruickshank in samples of the mineral strontianite collected at Strontian, a small village in Scotland (which gives the element its name). Humphry Davy isolated the metal in 1808 by electrolysis, alongside barium and calcium in the same series of experiments. Strontian is the only village in the world to give its name to a chemical element — a fact local tourists proudly display on signs and t-shirts.',
+      'Discovered in 1790 by Adair Crawford and William Cruickshank in samples of the mineral strontianite collected at Strontian, a small village in Scotland (which gives the element its name). Humphry Davy isolated the metal in 1808 by electrolysis, alongside barium and calcium in the same series of experiments. Strontian gives its name to strontium, but it is not the only village to do so: Ytterby, in Sweden, gave its name to four elements (yttrium, ytterbium, terbium and erbium).',
     properties:
       'Yellowish-silvery soft metal, more reactive than calcium but less than barium. Melts at 777 °C. Density 2.64 g/cm³. In flames it emits an intense crimson-red color — the "fire-engine red" of fireworks. Chemically similar to calcium (it replaces calcium in bones when absorbed). Has four natural stable isotopes and several radioactive ones. Sr-90, a byproduct of nuclear fission, has a half-life of 28.9 years and is particularly dangerous because it accumulates in bones.',
     applications:
@@ -1963,7 +1963,7 @@ const _ELEMENT_CONTENT_EN = {
     applications:
       'Catalysts in ammonia production (alternative to iron in the Haber process), in hydrocarbon synthesis (Fischer-Tropsch) and in fuel cells. Recording coatings on modern magnetic hard disks — data density depends on ultra-thin ruthenium films. Resistant electrodes in microelectronics. Platinum alloys (95% Pt + 5% Ru) in jewelry and electrical contacts. In research, ruthenium complexes are light-sensitive dyes for experimental solar cells.',
     curiosity:
-      'The presence of ruthenium in European air in October 2017 alarmed scientists — concentrations up to 1,000 times above normal were detected in dozens of countries. Investigations traced the source to a nuclear plant in Russia (Mayak), probably an accident during production of cerium-144 for satellites. Despite the unusual volume, levels were too low to cause public health harm. It was the largest "radioactive ruthenium leak" without an officially acknowledged origin.',
+      'The presence of ruthenium in European air in October 2017 alarmed scientists — concentrations up to 1,000 times above normal were detected in dozens of countries. Investigations traced the source to a nuclear plant in Russia (Mayak), the IRSN hypothesis was a cerium-144 source for the SOX/Borexino neutrino experiment in Italy. Despite the unusual volume, levels were too low to cause public health harm. It was the largest "radioactive ruthenium leak" without an officially acknowledged origin.',
   },
   45: {
     overview:
@@ -2041,7 +2041,7 @@ const _ELEMENT_CONTENT_EN = {
     overview:
       'Antimony is a lustrous silvery-gray metalloid, known since antiquity — used in Egyptian eyeliner (kohl) and in often-fatal medieval medicines. Today its dominant application is as a flame retardant in plastics, textiles and electronic products: about half of global production goes into formulas that prevent fires. It is brittle, toxic in soluble compounds, and chemically similar to arsenic.',
     history:
-      'Known for over 5,000 years in compounds — antimony sulfide (stibnite) was used as eye pigment and makeup in ancient Egypt. The name "antimony" comes from Greek/Latin "antimonium" (disputed origin), and the symbol Sb derives from "stibium". German alchemist Basil Valentine described it in metallic form in the 15th century. It was one of the seven metals known to medieval alchemy, alongside gold, silver, mercury, copper, iron and lead.',
+      'Known for over 5,000 years in compounds — antimony sulfide (stibnite) was used as eye pigment and makeup in ancient Egypt. The name "antimony" comes from Greek/Latin "antimonium" (disputed origin), and the symbol Sb derives from "stibium". German alchemist Basil Valentine described it in metallic form in the 15th century. It is not one of the seven metals of classical alchemy: gold, silver, mercury, copper, iron, lead and tin.',
     properties:
       'Lustrous silvery-gray metalloid, brittle — it can be cut but shatters when deformed. Melts at 631 °C. Has a rare property among metals: it expands on solidifying (like bismuth and water). Chemically similar to arsenic and bismuth (group 15). Forms colored sulfides and oxides, and compounds with hydrogen (stibine, a toxic gas). Has two stable isotopes (Sb-121 and Sb-123).',
     applications:
@@ -2413,7 +2413,7 @@ const _ELEMENT_CONTENT_EN = {
     overview:
       'Lead is a heavy, soft, blue-gray metal that was one of the first metals worked by humanity. Roman plumbing, gun bullets, solders, car batteries, paint and cosmetics — its versatility powered entire civilizations before we discovered it is a cumulative poison affecting the nervous system, especially in children.',
     history:
-      'Used for over 8,000 years. The Romans produced it on a large scale — plumbing, roofs, wine containers. The English word "plumbing" comes from "plumbum", the Latin name for lead. The fall of Rome has been partly attributed to chronic lead poisoning of the elite. Its toxicity was only scientifically recognized in the 20th century, leading to bans in gasoline (1970-2000) and residential paints.',
+      'Used for over 8,000 years. The Romans produced it on a large scale — plumbing, roofs, wine containers. The English word "plumbing" comes from "plumbum", the Latin name for lead. The fall of Rome has been partly attributed to chronic lead poisoning of the elite. Its toxicity was already described by Nicander (2nd century BCE), Vitruvius and Paul of Aegina, and lead poisoning is documented in the 17th and 18th centuries; in the 20th century that led to bans in gasoline (1970-2000) and residential paints.',
     properties:
       'Dense (11.3 times that of water), soft enough to be cut with a knife, with a low melting point (327 °C). Resistant to corrosion by common acids — hence its use in plumbing and lead-acid batteries. It efficiently blocks ionizing radiation, being the standard material in X-ray aprons and nuclear reactor shielding. Chemically versatile: it forms compounds in both +2 and +4 oxidation states.',
     applications:
@@ -2425,13 +2425,13 @@ const _ELEMENT_CONTENT_EN = {
     overview:
       'Bismuth is a silvery-gray post-transition metal with pinkish tones, known for very low toxicity despite being close to lead in the periodic table. It forms stair-step crystals with vibrant iridescent colors — one of the most beautiful crystal structures among metals. It is used in gastric medications (Pepto-Bismol), cosmetics, solders and as a safe substitute for lead in various products.',
     history:
-      'Bismuth compounds have been used since antiquity (in Egyptian makeup), but it was only recognized as a distinct element in the 15th century — before that it was confused with lead or tin. German metallurgist Georgius Agricola described it in 1546. The name probably comes from German "wismut" (white mass). Curiously, for centuries it was considered the heaviest stable element, until precise measurements in 2003 showed that Bi-209 decays with a half-life of 10¹⁹ years — billions of billions of times the age of the universe.',
+      'Bismuth compounds have been used since antiquity (in Egyptian makeup), but it was only recognized as a distinct element in the 16th century — before that it was confused with lead or tin. German metallurgist Georgius Agricola described it in 1546. The name probably comes from German "wismut" (white mass). Curiously, for centuries it was considered the heaviest stable element, until precise measurements in 2003 showed that Bi-209 decays with a half-life of 1.9×10¹⁹ years — about one billion times the age of the universe.',
     properties:
       'A silvery-gray metal with pinkish tones, brittle and crystalline. Melts at 271 °C (low for a metal). Density 9.78 g/cm³. Has a rare property among metals: it expands on solidifying (like water). It is the most diamagnetic known element (repels magnetic fields). When oxidized in controlled crystals, it exhibits iridescent rainbow colors due to the "thin film" of oxide on the surface.',
     applications:
       'Bismuth subsalicylate (Pepto-Bismol) treats gastric problems like diarrhea and indigestion — it combines antibacterial action with gastric coating. Cosmetics: bismuth oxychloride (pearlescent in eyeshadows, lipsticks and nail polishes). Low melting point solders and alloys (replacing lead). In production of decorative crystals for collectors (Bi-crystals). Heat carriers in experimental nuclear reactors. In chemical catalysts.',
     curiosity:
-      'For decades, textbooks said bismuth-209 was the heaviest stable element — the last non-radioactive natural isotope. In 2003, French scientists discovered that it actually decays, with a half-life of 1.9 × 10¹⁹ years — about 1 billion billion times the age of the universe. Technically it is radioactive, but if you waited for 100 consecutive universes to die, only a tiny fraction of atoms would have decayed. It is "stability that is not stable".',
+      'For decades, textbooks said bismuth-209 was the heaviest stable element — the last non-radioactive natural isotope. In 2003, French scientists discovered that it actually decays, with a half-life of 1.9 × 10¹⁹ years — about one billion times the age of the universe. Technically it is radioactive, but that half-life is still enormous next to the age of the universe.',
   },
   84: {
     overview:
@@ -2599,7 +2599,7 @@ const _ELEMENT_CONTENT_EN = {
     applications:
       'Practically no practical applications outside research: production is so limited and cost so high that it only makes sense as a target for synthesizing heavier elements. Bk-249 was crucial in the discovery of tennessine (Z 117) in 2010, in a collaboration between Oak Ridge (USA) and Dubna (Russia): 22 mg of berkelium were sent to the Russians to be bombarded with calcium-48 ions. The decades-restricted international shipment of radioactive material required complex diplomatic logistics.',
     curiosity:
-      'Worldwide annual berkelium production is approximately 1 gram, coming exclusively from the HFIR reactor at Oak Ridge, Tennessee, USA. To create the 22 milligrams used in the discovery of tennessine, about two years of continuous reactor operation were needed. This small batch traveled by commercial plane from the USA to Russia in the mid-2000s, packed in shielded containers — perhaps the most expensive trip ever made by a little more than half a teaspoon of any substance in the history of chemistry.',
+      'Worldwide annual berkelium production is approximately 1 gram, coming exclusively from the HFIR reactor at Oak Ridge, Tennessee, USA. To create the 22 milligrams used in the discovery of tennessine, about two years of continuous reactor operation were needed. This small batch traveled by commercial plane from the USA to Russia in 2009, packed in shielded containers. Those 22 mg occupy about 1.6 mm³, the volume of a grain of sand.',
   },
   98: {
     overview:
@@ -2617,7 +2617,7 @@ const _ELEMENT_CONTENT_EN = {
     overview:
       'Einsteinium is a synthetic actinide discovered in dramatic circumstances: it was found in the debris of the first hydrogen bomb detonation, "Ivy Mike", at Enewetak Atoll in 1952. The thermonuclear test produced conditions so extreme that uranium atoms captured dozens of neutrons in fractions of a second, creating heavy transuranic elements never before seen. It was named in honor of Albert Einstein, who had died just a month before the public announcement of the discovery in 1955.',
     history:
-      'Identified in 1952 by Albert Ghiorso and colleagues at the Lawrence Livermore Laboratory, by analyzing corals and dust collected from the debris of the Ivy Mike explosion — the first thermonuclear test in history. The discovery was kept under military secrecy for three years. Only in 1955 was the work published, with the name in honor of Einstein. Curiously, later reactor methods managed to reproduce einsteinium synthesis in slightly larger quantities, but always in the nanogram to microgram range.',
+      'Identified in 1952 by Albert Ghiorso and colleagues at the Berkeley Radiation Laboratory, by analyzing corals and dust collected from the debris of the Ivy Mike explosion — the first thermonuclear test in history. The discovery was kept under military secrecy for three years. Only in 1955 was the work published, with the name in honor of Einstein. Curiously, later reactor methods managed to reproduce einsteinium synthesis in slightly larger quantities, but always in the nanogram to microgram range.',
     properties:
       'Presumed silvery metal (some properties extrapolated), dense (8.84 g/cm³), melts at 860 °C. All 19 known isotopes are radioactive. Es-252 is the most stable (half-life 471.7 days) — unusual among heavy actinides, where longer half-lives are typically rare. Emits intense alpha radiation: macroscopic samples would self-heat to hundreds of degrees and glow by radioluminescence.',
     applications:
@@ -2665,7 +2665,7 @@ const _ELEMENT_CONTENT_EN = {
     overview:
       'Lawrencium is the last element of the actinide series and the last on the periodic table before the beginning of the transactinide (superheavy) series. It was named in honor of Ernest Lawrence, an American physicist who invented the cyclotron — the machine that made the synthesis of practically all transuranics possible. It symbolically marks the end of the actinide era and the beginning of the exploration of elements with unprecedented electronic configurations.',
     history:
-      'Synthesized in 1961 by Albert Ghiorso and colleagues at Berkeley, bombarding a californium target with boron ions in a heavy cyclotron. The researchers proposed the name "lawrencium" in honor of Ernest Lawrence, founder of the Berkeley lab and dead five years earlier. The Dubna group, in 1965, contested precedence and proposed the name "rutherfordium". The IUPAC decided in 1997: lawrencium for Z 103, rutherfordium for Z 104 — a Solomonic solution to the Transfermium War.',
+      'Synthesized in 1961 by Albert Ghiorso and colleagues at Berkeley, bombarding a californium target with boron ions in a heavy cyclotron. The researchers proposed the name "lawrencium" in honor of Ernest Lawrence, founder of the Berkeley lab, who had died three years earlier (August 1958). Rutherfordium was the Berkeley proposal for element 104; Dubna proposed kurchatovium. The IUPAC decided in 1997: lawrencium for Z 103, rutherfordium for Z 104 — a Solomonic solution to the Transfermium War.',
     properties:
       'Not observed in macroscopic quantity. Estimated density around 15.6 g/cm³, melting point 1,627 °C. All 13 known isotopes are radioactive. Lr-266 is the most stable (half-life about 11 hours). It is the element that closes the 5f¹⁴ electronic configuration typical of actinides — hence the consensus that it belongs to the series, despite some chemical properties bringing it closer to group 3 (scandium, yttrium, lutetium).',
     applications:
@@ -2707,7 +2707,7 @@ const _ELEMENT_CONTENT_EN = {
     applications:
       'No practical applications. Research in superheavy element chemistry and the study of relativistic effects on periodic behavior. The chemical experiments with seaborgium were a methodological milestone: they demonstrated that "chemistry" was possible with elements whose half-life is a few minutes and whose total quantity is just a handful of atoms.',
     curiosity:
-      'Glenn Seaborg was one of the most decorated scientists of the 20th century: Nobel Prize in Chemistry 1951, director of the U.S. Atomic Energy Commission under 10 presidents, and oversaw the discovery of plutonium, americium, curium, berkelium, californium, einsteinium, fermium, mendelevium and nobelium. When seaborgium received his name in 1997, Seaborg joked: "now I can say there are five elements from the periodic table at my home address — I live in Berkeley (Bk), California (Cf), in America (Am), near the (Pacific) ocean, and my name is Seaborg (Sg)." He died two years later, in 1999.',
+      'Glenn Seaborg was one of the most decorated scientists of the 20th century: Nobel Prize in Chemistry 1951, chaired the U.S. Atomic Energy Commission from 1961 to 1971 under Kennedy, Johnson and Nixon, and advised ten presidents, and oversaw the discovery of plutonium, americium, curium, berkelium, californium, einsteinium, fermium, mendelevium and nobelium. When seaborgium received his name in 1997, Seaborg joked: "now I can say there are five elements from the periodic table at my home address — I live in Berkeley (Bk), California (Cf), in America (Am), near the (Pacific) ocean, and my name is Seaborg (Sg)." He died two years later, in 1999.',
   },
   107: {
     overview:
@@ -2839,7 +2839,7 @@ const _ELEMENT_CONTENT_EN = {
     applications:
       'No practical applications.',
     curiosity:
-      'The synthesis of tennessine is one of the most notable examples of international scientific cooperation amid geopolitical tensions. In 2009, at the height of sanctions between the U.S. and Russia, Oak Ridge produced 22 mg of Bk-249 — a quantity that cost US$ 3.5 million and required two years of continuous HFIR reactor operation. The material was shipped to Dubna in certified nuclear packaging, crossing the Atlantic on a commercial flight. The Russians bombarded the berkelium target for 150 days, observing six atoms of the new element. Each tennessine atom detected cost, adding everything up, about US$ 600,000 — one of the most expensive scientific discoveries ever made per unit of observed mass.',
+      'The synthesis of tennessine is one of the most notable examples of international scientific cooperation amid geopolitical tensions. In 2009, Oak Ridge produced 22 mg of Bk-249 — a quantity that cost US$ 3.5 million and required two years of continuous HFIR reactor operation. The material was shipped to Dubna in certified nuclear packaging, crossing the Atlantic on a commercial flight. The Russians bombarded the berkelium target for 150 days, observing six atoms of the new element. Each tennessine atom detected cost, adding everything up, about US$ 600,000 — one of the most expensive scientific discoveries ever made per unit of observed mass.',
   },
   118: {
     overview:
@@ -2851,7 +2851,7 @@ const _ELEMENT_CONTENT_EN = {
     applications:
       'No practical applications. All relevance is in fundamental research on the limits of the periodic table and the possibility of even heavier elements (Z=119, 120 and beyond).',
     curiosity:
-      'Yuri Oganessian is a singular figure: born in 1933 in Rostov-on-Don, under the Soviet Union, he was trained in nuclear physics in Moscow, joined the Dubna Institute in 1956 and never left — he spent 70 years at the same institution. Under his leadership, Dubna synthesized six elements (Z 113, 114, 115, 116, 117, 118), a number without parallel in the history of the periodic table. In 2016, at 83, he saw his name eternalized in the heaviest element ever created by humans. Like Glenn Seaborg before him, he is one of the very few scientists to witness his own name turn into a permanent part of chemistry. In 2024, at 91, he is still actively working at Dubna, planning experiments to synthesize element 119 and to push beyond the seventh row of the table.',
+      'Yuri Oganessian is a singular figure: born in 1933 in Rostov-on-Don, under the Soviet Union, he was trained in nuclear physics in Moscow, joined the Dubna Institute in 1956 and never left — he spent 70 years at the same institution. Under his leadership, Dubna synthesized the elements from Z 114 to 118 (115 and 117 as co-credit). Element 113, nihonium, is credited to RIKEN. In 2016, at 83, he saw his name eternalized in the heaviest element ever created by humans. Like Glenn Seaborg before him, he is one of the very few scientists to witness his own name turn into a permanent part of chemistry. In 2024, at 91, he is still actively working at Dubna, planning experiments to synthesize element 119 and to push beyond the seventh row of the table.',
   },
 };
 
