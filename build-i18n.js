@@ -245,6 +245,13 @@ function buildVariant(srcAbs, dstAbs, lang, dict) {
 
   out = bakeDataI18nText(out, lang, dict);
 
+  // index.html owns the recovery redirect. The PT page must keep ?lang=pt-BR
+  // inside that script; otherwise npm run build copies lang='' from the EN source
+  // and tools/test-auth-recovery.mjs fails.
+  if (lang === 'pt') {
+    out = out.replace("sp,lang=''", "sp,lang='?lang=pt-BR'");
+  }
+
   // og:url and canonical — point variant at its language-specific URL so
   // each variant is self-canonical. EN keeps clean URLs (x-default).
   if (lang !== 'en') {
