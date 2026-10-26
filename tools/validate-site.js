@@ -170,6 +170,19 @@ function assertPerfGuards() {
   if (!index.includes('ads-gate.js')) {
     fail('index.html is missing ads-gate.js');
   }
+  if (!index.includes('consent.js')) {
+    fail('index.html is missing consent.js');
+  }
+  if (index.indexOf('consent.js') > index.indexOf('ads-gate.js')) {
+    fail('consent.js must be included before ads-gate.js');
+  }
+  const gateTag = index.match(/<script[^>]*ads-gate\.js[^>]*>/);
+  if (!gateTag || !/\sdefer[\s>]/.test(gateTag[0])) {
+    fail('ads-gate.js must load with defer');
+  }
+  if (!read('ads-gate.js').includes('ADS_FAIL_OPEN = false')) {
+    fail('ads-gate.js must fail closed');
+  }
   if (!fs.existsSync(path.join(ROOT, 'viewer', 'load-three.js'))) {
     fail('viewer/load-three.js is missing');
   }

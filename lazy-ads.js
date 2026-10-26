@@ -1,64 +1,98 @@
-// ───────────────────────────────────────────────────────────────────
-// Atomurus — Lazy loader for Google Analytics
-// ───────────────────────────────────────────────────────────────────
-// AdSense (adsbygoogle.js) lives directly in <head> with async +
-// fetchpriority="low" — that's required for AdSense's snippet detection
-// AND for Auto Ads to scan pages. Putting it in head with fetchpriority
-// "low" gives Google what it needs without competing with critical CSS
-// or hero images for the LCP.
-//
-// Analytics (gtag.js) stays here, deferred until the user shows real
-// intent (any interaction) or 5s of idle. Most people who close the
-// tab in <5s aren't worth a GA hit anyway, and this trims ~150 KiB
-// off the first-load chain.
-//
-// Triggers (whichever fires first):
-//   • scroll · click · touchstart · keydown · mousemove
-//   • 5 s of idle
-//   • visibility hidden (fire before unload so bounce gets counted)
-// ───────────────────────────────────────────────────────────────────
-
+// Google Analytics loads only after measurement consent.
+// Consent Mode v2 stays denied until that choice. Revoking consent
+// deletes _ga cookies and stops further hits. The script tag is not
+// requested before consent, so a new visitor makes no analytics call.
 (function () {
   'use strict';
 
-  var GA_ID         = 'G-Q3ME3FMB8X';
-  var IDLE_DELAY_MS = 5000;
+  var GA_ID = 'G-Q3ME3FMB8X';
+  var loaded = false;
 
-  // Bootstrap gtag's dataLayer/queue immediately so gtag() calls work
-  // even before the real script loads.
   window.dataLayer = window.dataLayer || [];
   window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
-  window.gtag('js', new Date());
-  window.gtag('config', GA_ID);
+  window.gtag('consent', 'default', {
+    ad_storage: 'denied',
+    analytics_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    wait_for_update: 500
+  });
 
-  var loaded = false;
+  function config() {
+    return window.ATOMURUS_CONSENT_CONFIG || { enforce: true };
+  }
+
+  function consent() {
+    if (window.atomurusConsent && typeof window.atomurusConsent.get === 'function') {
+      return window.atomurusConsent.get();
+    }
+    return { decided: false, analytics: false, ads: false };
+  }
+
+  function analyticsAllowed() {
+    if (config().enforce === false) return true;
+    var state = consent();
+    return !!(state.decided && state.analytics);
+  }
+
+  function adsAllowed() {
+    if (config().enforce === false) return true;
+    var state = consent();
+    return !!(state.decided && state.ads);
+  }
+
+  function updateConsentMode() {
+    window.gtag('consent', 'update', {
+      analytics_storage: analyticsAllowed() ? 'granted' : 'denied',
+      ad_storage: adsAllowed() ? 'granted' : 'denied',
+      ad_user_data: adsAllowed() ? 'granted' : 'denied',
+      ad_personalization: adsAllowed() ? 'granted' : 'denied'
+    });
+  }
+
+  function cookieDomains() {
+    var host = location.hostname || '';
+    var domains = ['', host, '.' + host];
+    var parts = host.split('.');
+    if (parts.length > 1) domains.push('.' + parts.slice(-2).join('.'));
+    return domains;
+  }
+
+  function eraseGaCookies() {
+    var names = (document.cookie || '').split(';').map(function (part) {
+      return part.split('=')[0].replace(/^\s+/, '');
+    }).filter(function (name) {
+      return name === '_ga' || name.indexOf('_ga_') === 0;
+    });
+    names.forEach(function (name) {
+      cookieDomains().forEach(function (domain) {
+        var suffix = '; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+        document.cookie = name + '=' + suffix + (domain ? '; domain=' + domain : '');
+      });
+    });
+  }
+
   function loadAnalytics() {
+    if (!analyticsAllowed()) return;
+    updateConsentMode();
     if (loaded) return;
     loaded = true;
-
+    window.gtag('js', new Date());
+    window.gtag('config', GA_ID);
     var ga = document.createElement('script');
     ga.async = true;
     ga.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
     document.head.appendChild(ga);
   }
 
-  // Interaction triggers
-  var events = ['scroll', 'click', 'touchstart', 'keydown', 'mousemove'];
-  function trigger() {
-    events.forEach(function (evt) {
-      window.removeEventListener(evt, trigger);
-    });
-    loadAnalytics();
+  function onConsent() {
+    if (analyticsAllowed()) loadAnalytics();
+    else {
+      updateConsentMode();
+      eraseGaCookies();
+    }
   }
-  events.forEach(function (evt) {
-    window.addEventListener(evt, trigger, { once: true, passive: true });
-  });
 
-  // Idle timeout
-  setTimeout(loadAnalytics, IDLE_DELAY_MS);
-
-  // Page hidden — make sure analytics fires before unload
-  document.addEventListener('visibilitychange', function () {
-    if (document.visibilityState === 'hidden') loadAnalytics();
-  });
+  window.addEventListener('atomurus:consent', onConsent);
+  onConsent();
 })();
