@@ -1,0 +1,11 @@
+Assunto: Redefinir a senha da Atomurus
+
+Olá,
+
+Recebemos um pedido para redefinir a senha da conta {{ .Email }} na Atomurus.
+
+Redefinir senha: {{ .SiteURL }}/reset-password?token_hash={{ .TokenHash }}&type=recovery
+
+Se você não pediu isso, ignore esta mensagem. A senha atual continua valendo.
+
+Atomurus · contato@atomurus.com
