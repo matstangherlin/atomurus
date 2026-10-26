@@ -280,7 +280,7 @@ const _ELEMENT_CONTENT_PT = {
     applications:
       'Componentes estruturais em aeronaves, foguetes e submarinos — onde resistência por unidade de peso importa muito. Implantes médicos (próteses de quadril, parafusos ortopédicos, implantes dentários) por sua biocompatibilidade. Dióxido de titânio (TiO₂) é o pigmento branco mais usado do mundo — em tintas, cosméticos, plásticos e pasta de dente. Quadros de bicicleta, raquetes e tacos de golfe de alta gama usam ligas de titânio.',
     curiosity:
-      'O SR-71 Blackbird, o avião tripulado mais rápido já construído (mais de Mach 3), era feito em 85% de titânio. O paradoxo: os EUA precisavam de titânio puro mas as melhores reservas estavam na União Soviética. Durante a Guerra Fria, a CIA criou empresas-fantasma em outros países para comprar o titânio soviético — efetivamente usando o metal do inimigo para construir aviões espiões que sobrevoavam o próprio inimigo.',
+      'O SR-71 Blackbird, o jato a ar mais rápido (Mach 3,3; o X-15, um foguete, chegou a Mach 6,7), era feito em 85% de titânio. O paradoxo: os EUA precisavam de titânio puro mas as melhores reservas estavam na União Soviética. Durante a Guerra Fria, a CIA criou empresas-fantasma em outros países para comprar o titânio soviético — efetivamente usando o metal do inimigo para construir aviões espiões que sobrevoavam o próprio inimigo.',
   },
   23: {
     overview:
@@ -634,7 +634,7 @@ const _ELEMENT_CONTENT_PT = {
     overview:
       'Telúrio é um metaloide prateado-branco, raro na crosta terrestre mas com aplicações cada vez mais estratégicas: painéis solares de alta eficiência (CdTe) representam cerca de 5% do mercado fotovoltaico mundial. É um elemento "tímido" — quimicamente parecido com enxofre e selênio mas muito menos conhecido. Quando absorvido pelo corpo, dá um odor de alho característico que pode persistir por semanas.',
     history:
-      'Descoberto em 1782 por Franz Joseph Müller von Reichenstein nos Alpes (na atual Romênia), em minérios de ouro estranhos que ele não conseguia identificar. O nome veio em 1798 do químico alemão Martin Heinrich Klaproth, derivado do latim "tellus" (Terra) — um nome telúrico complementar ao selênio (Lua) que Berzelius nomeou décadas depois. É um dos elementos mais raros na crosta terrestre, mais raro até que platina ou ouro.',
+      'Descoberto em 1782 por Franz Joseph Müller von Reichenstein em Zlatna, na Transilvânia (Montes Apuseni), em minérios de ouro estranhos que ele não conseguia identificar. O nome veio em 1798 do químico alemão Martin Heinrich Klaproth, derivado do latim "tellus" (Terra) — um nome telúrico complementar ao selênio (Lua) que Berzelius nomeou décadas depois. É um dos elementos mais raros na crosta terrestre, mais raro até que platina ou ouro.',
     properties:
       'Metaloide prateado-branco com brilho metálico, frágil. Funde a 450 °C. É um semicondutor que se comporta como metal em algumas direções cristalinas. Quimicamente parecido com enxofre e selênio (família 16). Forma sulfeto de telúrio (TeS₂) e óxidos. Quando absorvido pelo corpo em pequenas doses, é metabolizado em dimetiltelureto, que dá um odor persistente de alho — sintoma marcante de exposição.',
     applications:
@@ -1000,7 +1000,7 @@ const _ELEMENT_CONTENT_PT = {
     applications:
       'Baterias de chumbo-ácido em automóveis ainda são o maior uso global — cerca de 80% da produção. Munições, contrapesos para barcos e mergulho, e revestimento de cabos submarinos. Em medicina nuclear e radiologia, blindagem contra radiação. Cristal de chumbo (vidro com óxido de chumbo) tem brilho excepcional pela alta refração. Ligas com estanho formam soldas — mas soldas com chumbo foram proibidas em eletrônicos de consumo.',
     curiosity:
-      'O chumbo é tão eficaz em bloquear radiação que detetives forenses analisam ossos antigos pela quantidade de chumbo absorvido em vida. A elite romana tinha níveis tão altos no esqueleto que isso tem sido proposto como causa parcial de demência e infertilidade entre patrícios. Inversamente, em ossos de pessoas comuns os níveis eram muito menores — uma das primeiras evidências de "desigualdade tóxica" da história.',
+      '',
   },
   83: {
     overview:
@@ -1048,7 +1048,7 @@ const _ELEMENT_CONTENT_PT = {
     applications:
       'Praticamente nenhuma aplicação industrial — é raro, caro e perigoso demais. Em alguns países era usado em fontes radioativas para radioterapia, hoje substituído por aceleradores e isótopos mais seguros. Estudos geológicos usam medições de radônio para detectar falhas tectônicas e prever erupções vulcânicas — picos de radônio no solo precedem alguns terremotos. Detecção de radônio é um pequeno mercado de equipamentos para inspeções imobiliárias.',
     curiosity:
-      'Em 1985, Stanley Watras, engenheiro nuclear, acionou os detectores de radioatividade na usina nuclear onde trabalhava — porém ele estava CHEGANDO ao trabalho, não saindo. Ele estava contaminado por radônio da sua própria casa na Pensilvânia, onde os níveis eram 700 vezes acima do limite recomendado. Após esse caso, a EPA passou a recomendar testes de radônio em todas as casas dos EUA. Estima-se que radônio cause 21.000 mortes por câncer de pulmão por ano só nos EUA.',
+      'Em dezembro de 1984, Stanley Watras, engenheiro de construção da usina de Limerick, fez disparar o alarme de radiação da usina ao chegar ao trabalho, não ao sair. Ele estava contaminado por radônio da sua própria casa na Pensilvânia, onde os níveis eram 700 vezes acima do limite recomendado. Após esse caso, a EPA passou a recomendar testes de radônio em todas as casas dos EUA. Estima-se que radônio cause 21.000 mortes por câncer de pulmão por ano só nos EUA.',
   },
   87: {
     overview:
@@ -1276,7 +1276,7 @@ const _ELEMENT_CONTENT_PT = {
     applications:
       'Nenhuma aplicação prática. Pesquisa exclusiva em química de transactinídeos. O Instituto de Dubna mantém produção regular do elemento para experimentos comparativos com nióbio e tântalo, testando se as tendências periódicas se mantêm em massas tão grandes.',
     curiosity:
-      'O laboratório de Dubna, fundado em 1956 sob direção soviética, foi por décadas o principal rival de Berkeley na corrida pelos transurânicos. Sob liderança de Georgy Flerov e depois Yuri Oganessian, o instituto descobriu ou co-descobriu nada menos que 9 dos 15 elementos superpesados (Z 104–118). Em 2017, Oganessian se tornou apenas a segunda pessoa viva a ter um elemento (Z 118) batizado em sua honra — depois apenas de Seaborg. A "Dubna soviética" foi, sem competição, o laboratório mais produtivo da história em descoberta de elementos novos.',
+      'O laboratório de Dubna, fundado em 1956 sob direção soviética, foi por décadas o principal rival de Berkeley na corrida pelos transurânicos. Sob liderança de Georgy Flerov e depois Yuri Oganessian, o instituto descobriu ou co-descobriu nada menos que 9 dos 15 elementos superpesados (Z 104–118). Em novembro de 2016 a IUPAC aprovou o nome oganesson para o Z 118 — a segunda vez que uma pessoa viva teve um elemento batizado em sua honra, depois de Seaborg. A "Dubna soviética" foi, sem competição, o laboratório mais produtivo da história em descoberta de elementos novos.',
   },
   106: {
     overview:
@@ -1324,7 +1324,7 @@ const _ELEMENT_CONTENT_PT = {
     applications:
       'Nenhuma aplicação prática. Pesquisa fundamental sobre estabilidade nuclear de elementos superpesados.',
     curiosity:
-      'Lise Meitner foi uma das primeiras mulheres a obter doutorado em física na Áustria (1906) e a primeira professora plena de física na Alemanha (1926). Em 1938, calculou junto com Otto Frisch que o núcleo de urânio bombardeado por nêutrons se fragmentava — interpretação que ela batizou de "fissão". Quando o Nobel foi concedido em 1944 apenas a Otto Hahn (seu colega de laboratório que tinha conduzido o experimento), o erro chocou a comunidade científica e nunca foi corrigido. Meitner morreu em 1968 sem o prêmio. O elemento meitnerium, batizado em 1997, é uma homenagem incômoda, lembrança permanente de que o Nobel também erra.',
+      'Lise Meitner foi uma das primeiras mulheres a obter doutorado em física na Áustria (1906) e a primeira professora plena de física na Alemanha (1926). Em 1938, calculou junto com Otto Frisch que o núcleo de urânio bombardeado por nêutrons se fragmentava — interpretação para a qual Frisch cunhou o termo "fissão". Quando o Nobel foi concedido em 1944 apenas a Otto Hahn (seu colega de laboratório que tinha conduzido o experimento), o erro chocou a comunidade científica e nunca foi corrigido. Meitner morreu em 1968 sem o prêmio. O elemento meitnerium, batizado em 1997, é uma homenagem incômoda, lembrança permanente de que o Nobel também erra.',
   },
   110: {
     overview:
@@ -1402,7 +1402,7 @@ const _ELEMENT_CONTENT_PT = {
     overview:
       'Livermório é um superpesado sintético batizado em homenagem ao Laboratório Nacional Lawrence Livermore, na Califórnia — instituição de pesquisa nuclear fundada em 1952 que, junto com o Instituto de Dubna na Rússia, lidera as descobertas de elementos superpesados desde os anos 1990. É o segundo elemento da tabela com nome ligado a Livermore, após o californio (Z 98) — embora este último homenageie o estado, não o laboratório.',
     history:
-      'Sintetizado em 2000 por Yuri Oganessian em Dubna, em colaboração com Ken Moody no Lawrence Livermore National Laboratory, ao bombardear cúrio-248 com íons de cálcio-48. Apenas um único átomo foi observado no experimento original — confirmado posteriormente por outros experimentos. A IUPAC ratificou o nome "livermorium" em 2012, em reconhecimento à colaboração USA-Rússia que produziu quatro novos elementos (114, 115, 116 e 118) na primeira década do século XXI.',
+      'Sintetizado em 2000 por Yuri Oganessian em Dubna, em colaboração com Ken Moody no Lawrence Livermore National Laboratory, ao bombardear cúrio-248 com íons de cálcio-48. Apenas um único átomo foi observado no experimento original — confirmado posteriormente por outros experimentos. A IUPAC ratificou o nome "livermorium" em 2012, em reconhecimento à colaboração USA-Rússia que produziu cinco novos elementos (114, 115, 116, 117 e 118) na primeira década do século XXI.',
     properties:
       'Sem observação macroscópica. Densidade estimada em 12,9 g/cm³, ponto de fusão talvez em torno de 380 °C. Todos os 4 isótopos conhecidos são radioativos. O Lv-293 é o mais estável (meia-vida cerca de 57 milissegundos). Por analogia com o polônio (grupo 16), espera-se comportamento de metalóide, mas previsões teóricas sugerem que livermório possa ser ainda mais metálico — comportamento alterado por efeitos relativísticos pesados.',
     applications:
@@ -1699,7 +1699,7 @@ const _ELEMENT_CONTENT_EN = {
     applications:
       'Structural components in aircraft, rockets and submarines — anywhere strength-to-weight ratio is critical. Medical implants (hip prostheses, orthopedic screws, dental implants) thanks to biocompatibility. Titanium dioxide (TiO₂) is the most-used white pigment in the world — in paints, cosmetics, plastics and toothpaste. Bicycle frames, rackets and high-end golf clubs use titanium alloys.',
     curiosity:
-      'The SR-71 Blackbird, the fastest crewed aircraft ever built (over Mach 3), was 85% titanium. The paradox: the U.S. needed pure titanium but the best reserves were in the Soviet Union. During the Cold War, the CIA set up shell companies in other countries to buy Soviet titanium — effectively using the enemy\'s metal to build spy planes that flew over that very enemy.',
+      'The SR-71 Blackbird, the fastest air-breathing jet (Mach 3.3; the rocket-powered X-15 reached Mach 6.7), was 85% titanium. The paradox: the U.S. needed pure titanium but the best reserves were in the Soviet Union. During the Cold War, the CIA set up shell companies in other countries to buy Soviet titanium — effectively using the enemy\'s metal to build spy planes that flew over that very enemy.',
   },
   23: {
     overview:
@@ -2053,7 +2053,7 @@ const _ELEMENT_CONTENT_EN = {
     overview:
       'Tellurium is a silvery-white metalloid, rare in Earth\'s crust but with increasingly strategic applications: high-efficiency solar panels (CdTe) represent about 5% of the global photovoltaic market. It is a "shy" element — chemically similar to sulfur and selenium but much less familiar. When absorbed by the body, it gives off a characteristic garlic odor that can persist for weeks.',
     history:
-      'Discovered in 1782 by Franz Joseph Müller von Reichenstein in the Alps (in modern-day Romania), in strange gold ores he could not identify. The name came in 1798 from German chemist Martin Heinrich Klaproth, from the Latin "tellus" (Earth) — a name complementary to selenium ("moon") which Berzelius later named. It is one of the rarest elements in Earth\'s crust, even rarer than platinum or gold.',
+      'Discovered in 1782 by Franz Joseph Müller von Reichenstein at Zlatna, in Transylvania (Apuseni Mountains), in strange gold ores he could not identify. The name came in 1798 from German chemist Martin Heinrich Klaproth, from the Latin "tellus" (Earth) — a name complementary to selenium ("moon") which Berzelius later named. It is one of the rarest elements in Earth\'s crust, even rarer than platinum or gold.',
     properties:
       'Silvery-white metalloid with metallic luster, brittle. Melts at 450 °C. A semiconductor that behaves like a metal in certain crystalline directions. Chemically similar to sulfur and selenium (group 16). Forms tellurium sulfide (TeS₂) and oxides. When absorbed by the body in small doses, it is metabolized into dimethyl telluride, which gives a persistent garlic odor — a telling symptom of exposure.',
     applications:
@@ -2419,7 +2419,7 @@ const _ELEMENT_CONTENT_EN = {
     applications:
       'Lead-acid batteries in cars still represent the biggest global use — about 80% of production. Ammunition, counterweights for boats and diving, and submarine cable sheathing. In nuclear medicine and radiology, radiation shielding. Lead crystal (glass with lead oxide) has exceptional brilliance due to high refraction. Alloys with tin form solders — but lead solders have been banned in consumer electronics.',
     curiosity:
-      'Lead is so effective at blocking radiation that forensic detectives analyze ancient bones by the amount of lead absorbed during life. The Roman elite had such high skeletal levels that this has been proposed as a partial cause of dementia and infertility among patricians. Conversely, in commoner bones the levels were much lower — one of the earliest examples of "toxic inequality" in history.',
+      '',
   },
   83: {
     overview:
@@ -2467,7 +2467,7 @@ const _ELEMENT_CONTENT_EN = {
     applications:
       'Practically no industrial applications — it is rare, expensive and too dangerous. In some countries it was used in radioactive sources for radiotherapy, now replaced by accelerators and safer isotopes. Geological studies use radon measurements to detect tectonic faults and predict volcanic eruptions — radon spikes in soil precede some earthquakes. Radon detection is a small equipment market for real-estate inspections.',
     curiosity:
-      'In 1985, Stanley Watras, a nuclear engineer, set off the radioactivity detectors at the nuclear plant where he worked — but he was ARRIVING at work, not leaving. He was contaminated by radon from his own home in Pennsylvania, where levels were 700 times above the recommended limit. After this case, the EPA started recommending radon testing in all U.S. homes. It is estimated that radon causes 21,000 lung cancer deaths per year in the U.S. alone.',
+      'In December 1984, Stanley Watras, a construction engineer at the Limerick plant, set off the plant radiation alarm on arriving at work, not on leaving. He was contaminated by radon from his own home in Pennsylvania, where levels were 700 times above the recommended limit. After this case, the EPA started recommending radon testing in all U.S. homes. It is estimated that radon causes 21,000 lung cancer deaths per year in the U.S. alone.',
   },
   87: {
     overview:
@@ -2695,7 +2695,7 @@ const _ELEMENT_CONTENT_EN = {
     applications:
       'No practical applications. Exclusive use in transactinide chemistry research. The Dubna Institute maintains regular production of the element for comparative experiments with niobium and tantalum, testing whether periodic trends hold at such large masses.',
     curiosity:
-      'The Dubna laboratory, founded in 1956 under Soviet direction, was for decades Berkeley\'s main rival in the race for transuranics. Under the leadership of Georgy Flerov and later Yuri Oganessian, the institute discovered or co-discovered no fewer than 9 of the 15 superheavy elements (Z 104–118). In 2017, Oganessian became only the second living person to have an element (Z 118) named in his honor — after only Seaborg. "Soviet Dubna" was, without competition, the most productive laboratory in history for discovering new elements.',
+      'The Dubna laboratory, founded in 1956 under Soviet direction, was for decades Berkeley\'s main rival in the race for transuranics. Under the leadership of Georgy Flerov and later Yuri Oganessian, the institute discovered or co-discovered no fewer than 9 of the 15 superheavy elements (Z 104–118). In November 2016 the IUPAC approved the name oganesson for Z 118 — the second time a living person had an element named in his honor, after Seaborg. "Soviet Dubna" was, without competition, the most productive laboratory in history for discovering new elements.',
   },
   106: {
     overview:
@@ -2743,7 +2743,7 @@ const _ELEMENT_CONTENT_EN = {
     applications:
       'No practical applications. Fundamental research on nuclear stability of superheavy elements.',
     curiosity:
-      'Lise Meitner was one of the first women to earn a doctorate in physics in Austria (1906) and the first female full professor of physics in Germany (1926). In 1938, she calculated together with Otto Frisch that the uranium nucleus bombarded with neutrons was fragmenting — an interpretation she named "fission". When the Nobel was granted in 1944 only to Otto Hahn (her lab colleague who had conducted the experiment), the error shocked the scientific community and was never corrected. Meitner died in 1968 without the prize. The element meitnerium, named in 1997, is an uncomfortable tribute, a permanent reminder that the Nobel also gets it wrong.',
+      'Lise Meitner was one of the first women to earn a doctorate in physics in Austria (1906) and the first female full professor of physics in Germany (1926). In 1938, she calculated together with Otto Frisch that the uranium nucleus bombarded with neutrons was fragmenting — an interpretation for which Frisch coined the term "fission". When the Nobel was granted in 1944 only to Otto Hahn (her lab colleague who had conducted the experiment), the error shocked the scientific community and was never corrected. Meitner died in 1968 without the prize. The element meitnerium, named in 1997, is an uncomfortable tribute, a permanent reminder that the Nobel also gets it wrong.',
   },
   110: {
     overview:
@@ -2821,7 +2821,7 @@ const _ELEMENT_CONTENT_EN = {
     overview:
       'Livermorium is a synthetic superheavy element named after the Lawrence Livermore National Laboratory, in California — a nuclear research institution founded in 1952 that, together with the Dubna Institute in Russia, has led superheavy element discoveries since the 1990s. It is the second element in the table with a name linked to Livermore, after californium (Z 98) — although the latter honors the state, not the laboratory.',
     history:
-      'Synthesized in 2000 by Yuri Oganessian at Dubna, in collaboration with Ken Moody at Lawrence Livermore National Laboratory, by bombarding curium-248 with calcium-48 ions. Only a single atom was observed in the original experiment — later confirmed by other experiments. The IUPAC ratified the name "livermorium" in 2012, in recognition of the U.S.-Russia collaboration that produced four new elements (114, 115, 116 and 118) in the first decade of the 21st century.',
+      'Synthesized in 2000 by Yuri Oganessian at Dubna, in collaboration with Ken Moody at Lawrence Livermore National Laboratory, by bombarding curium-248 with calcium-48 ions. Only a single atom was observed in the original experiment — later confirmed by other experiments. The IUPAC ratified the name "livermorium" in 2012, in recognition of the U.S.-Russia collaboration that produced five new elements (114, 115, 116, 117 and 118) in the first decade of the 21st century.',
     properties:
       'No macroscopic observation. Estimated density 12.9 g/cm³, melting point perhaps around 380 °C. All 4 known isotopes are radioactive. Lv-293 is the most stable (half-life about 57 milliseconds). By analogy with polonium (group 16), metalloid behavior is expected, but theoretical predictions suggest livermorium might be even more metallic — behavior altered by heavy relativistic effects.',
     applications:
