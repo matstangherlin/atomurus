@@ -106,7 +106,7 @@ test('public table, calculators, login and pricing share the new chrome', async 
   await expect(page.locator('#mm-result-body')).not.toContainText('Â');
   await page.locator('.calc-chip[data-mm-example="H2O"]').click();
   await page.locator('.calc-btn-run').first().click();
-  await expect(page.locator('#mm-result-body')).toContainText(/18\.02/);
+  await expect(page.locator('#mm-result-body')).toContainText(/18\.015/);
   await expect(page.locator('#mm-result-body')).toContainText(/g\s*·\s*mol/);
   const resultHeadBg = await page.locator('#mm-result .calc-result-head').evaluate((el) => getComputedStyle(el).backgroundColor);
   expect(resultHeadBg).not.toBe('rgb(20, 18, 14)');

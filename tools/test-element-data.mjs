@@ -90,7 +90,7 @@ test('Zr standard atomic weight is 91.222 in the four live copies', () => {
   assert.equal(zr.mass, '91.222');
   assert.equal(ATOMIC_WEIGHTS.Zr, 91.222);
 
-  const calcSrc = readFileSync(path.join(ROOT, 'netlify/lib/chemistry-calc.mjs'), 'utf8');
+  const calcSrc = readFileSync(path.join(ROOT, 'netlify/lib/chemistry-base.mjs'), 'utf8');
   assert.match(calcSrc, /Zr:\s*91\.222\b/);
   assert.doesNotMatch(calcSrc, /91\.224/);
 

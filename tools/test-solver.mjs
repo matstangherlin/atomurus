@@ -38,15 +38,20 @@ assert.deepEqual(parseFormulaStrict('Al2(SO4)3').counts, { Al: 2, S: 3, O: 12 })
 assert.deepEqual(parseFormulaStrict('K4[Fe(CN)6]').counts, { K: 4, Fe: 1, C: 6, N: 6 });
 assert.deepEqual(parseFormulaStrict('CuSO4·5H2O').counts, { Cu: 1, S: 1, O: 9, H: 10 });
 
-assert.throws(() => parseFormulaStrict('H2O???'), /unexpected character/);
-assert.throws(() => parseFormulaStrict('NaCl<script>'), /unexpected/);
-assert.throws(() => parseFormulaStrict('Fe@@O'), /unexpected/);
-assert.throws(() => parseFormulaStrict('Fe3+'), (err) => err.code === 'ionic_unsupported' || /Ionic/.test(err.message));
-assert.throws(() => parseFormulaStrict('SO4^2-'), (err) => err.code === 'ionic_unsupported');
+assert.equal(parseFormulaStrict('H2O???').ok, false);
+assert.match(parseFormulaStrict('H2O???').error.message_en, /invalid character/i);
+assert.equal(parseFormulaStrict('NaCl<script>').ok, false);
+assert.equal(parseFormulaStrict('Fe@@O').ok, false);
+const ironIon = parseFormulaStrict('Fe3+');
+assert.equal(ironIon.ok, true);
+assert.equal(ironIon.charge, 3);
+assert.deepEqual(ironIon.counts, { Fe: 1 });
+const sulfateIon = parseFormulaStrict('SO4^2-');
+assert.equal(sulfateIon.ok, true);
+assert.equal(sulfateIon.charge, -2);
 assert.doesNotMatch(IONIC_UNAVAILABLE, /not yet/i);
 
-const lenient = parseFormula('H2O???');
-assert.ok(lenient.H);
+assert.throws(() => parseFormula('H2O???'), /invalid character/i);
 
 expectBalance('H2 + O2 -> H2O', '2 H2 + O2 -> 2 H2O');
 expectBalance('2 H2 + O2 -> 2 H2O', '2 H2 + O2 -> 2 H2O');
@@ -63,7 +68,7 @@ assert.throws(() => balanceEquation('C + O2 -> CO + CO2'), /multiple independent
 assert.throws(() => balanceEquation('H2 + O2'), /reactants and products|arrow/);
 assert.throws(() => balanceEquation('H2 ->'), /products/);
 assert.throws(() => balanceEquation('Xx + O2 -> XxO'), /unknown element/);
-assert.throws(() => parseEquation('H2O??? + O2 -> H2O'), /unexpected/);
+assert.throws(() => parseEquation('H2O??? + O2 -> H2O'), /unexpected|invalid character/i);
 assert.throws(() => balanceEquation('Fe3+ + e- -> Fe'), /Ionic equation balancing is not available/);
 
 const oversized = Array.from({ length: 13 }, (_, i) => `C${i + 1}`).join(' + ') + ' -> CO2';
@@ -235,9 +240,10 @@ assert.doesNotMatch(formatFormulaDisplay('CuSO4·5H2O'), /·₅/);
 assert.deepEqual(parseFormulaStrict('Mg(OH)2').counts, { Mg: 1, O: 2, H: 2 });
 assert.deepEqual(parseFormulaStrict('Fe2(SO4)3').counts, { Fe: 2, S: 3, O: 12 });
 assert.deepEqual(parseFormulaStrict('Al2(SO4)3·18H2O').counts, { Al: 2, S: 3, O: 30, H: 36 });
-assert.throws(() => parseFormulaStrict('Mg(OH'), /unbalanced/);
-assert.throws(() => parseFormulaStrict('C999999999999999999999999999'), /atom count|too large|invalid/);
-assert.throws(() => parseFormulaStrict('CuSO4·999999999999999999999H2O'), /hydrate|too large|invalid/);
+assert.equal(parseFormulaStrict('Mg(OH').ok, false);
+assert.match(parseFormulaStrict('Mg(OH').error.message_en, /unbalanced/i);
+assert.equal(parseFormulaStrict('C999999999999999999999999999').ok, false);
+assert.equal(parseFormulaStrict('CuSO4·999999999999999999999H2O').ok, false);
 assert.ok(MAX_ATOM_COUNT <= 100000);
 assert.ok(MAX_HYDRATE_MULTIPLIER <= 100000);
 

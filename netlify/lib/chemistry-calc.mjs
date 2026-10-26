@@ -2,34 +2,16 @@
  * Canonical calculation logic shared by the public calculators and Pro Lab.
  * Formulas match calculators.html (abridged standard atomic weights, CIAAW, C1V1=C2V2,
  * PV=nRT with R=8.314 J·mol⁻¹·K⁻¹, Kw=1e-14 at 25 °C).
- * Never uses eval or new Function.
+ * Weights live in chemistry-base.mjs (Zr: 91.222). Never uses eval or new Function.
  */
 
-export const ATOMIC_WEIGHTS = Object.freeze({
-  H: 1.008, He: 4.0026, Li: 6.94, Be: 9.0122, B: 10.81, C: 12.011, N: 14.007, O: 15.999, F: 18.998, Ne: 20.180,
-  Na: 22.990, Mg: 24.305, Al: 26.982, Si: 28.085, P: 30.974, S: 32.06, Cl: 35.45, Ar: 39.95,
-  K: 39.098, Ca: 40.078, Sc: 44.956, Ti: 47.867, V: 50.942, Cr: 51.996, Mn: 54.938, Fe: 55.845, Co: 58.933, Ni: 58.693,
-  Cu: 63.546, Zn: 65.38, Ga: 69.723, Ge: 72.630, As: 74.922, Se: 78.971, Br: 79.904, Kr: 83.798,
-  Rb: 85.468, Sr: 87.62, Y: 88.906, Zr: 91.222, Nb: 92.906, Mo: 95.95, Tc: 98, Ru: 101.07, Rh: 102.91, Pd: 106.42,
-  Ag: 107.87, Cd: 112.41, In: 114.82, Sn: 118.71, Sb: 121.76, Te: 127.60, I: 126.90, Xe: 131.29,
-  Cs: 132.91, Ba: 137.33, La: 138.91, Ce: 140.12, Pr: 140.91, Nd: 144.24, Pm: 145, Sm: 150.36, Eu: 151.96, Gd: 157.25,
-  Tb: 158.93, Dy: 162.50, Ho: 164.93, Er: 167.26, Tm: 168.93, Yb: 173.05, Lu: 174.97, Hf: 178.49, Ta: 180.95, W: 183.84,
-  Re: 186.21, Os: 190.23, Ir: 192.22, Pt: 195.08, Au: 196.97, Hg: 200.59, Tl: 204.38, Pb: 207.2, Bi: 208.98, Po: 209,
-  At: 210, Rn: 222, Fr: 223, Ra: 226, Ac: 227, Th: 232.04, Pa: 231.04, U: 238.03, Np: 237, Pu: 244,
-  Am: 243, Cm: 247, Bk: 247, Cf: 251, Es: 252, Fm: 257, Md: 258, No: 259, Lr: 262,
-  Rf: 267, Db: 268, Sg: 269, Bh: 270, Hs: 270, Mt: 278, Ds: 281, Rg: 281, Cn: 285,
-  Nh: 286, Fl: 289, Mc: 289, Lv: 293, Ts: 294, Og: 294
-});
+import { ATOMIC_WEIGHTS, calcError } from './chemistry-base.mjs';
+import { readFormulaStrict } from './chemistry-formula-strict.mjs';
+
+export { ATOMIC_WEIGHTS, calcError };
 
 export const GAS_R = 8.314;
 export const KW_25C = 1e-14;
-
-export function calcError(message, status = 400, code = 'invalid_request') {
-  const err = new Error(message);
-  err.status = status;
-  err.code = code;
-  return err;
-}
 
 export function formatSig(n, sig = 4) {
   if (!Number.isFinite(n)) return null;
@@ -40,77 +22,7 @@ export function formatSig(n, sig = 4) {
 }
 
 export function parseFormula(raw) {
-  const source = String(raw == null ? '' : raw).trim();
-  if (!source) throw calcError('formula is required');
-  if (source.length > 200) throw calcError('formula is too long');
-  const s = source.replace(/\s+/g, '').replace(/[·•*]/g, '+');
-  const stack = [{}];
-  let i = 0;
-  while (i < s.length) {
-    const ch = s[i];
-    if (ch === '(' || ch === '[') {
-      stack.push({});
-      i += 1;
-    } else if (ch === ')' || ch === ']') {
-      i += 1;
-      let mult = '';
-      while (i < s.length && /\d/.test(s[i])) {
-        mult += s[i];
-        i += 1;
-      }
-      const m = parseInt(mult || '1', 10);
-      if (!Number.isFinite(m) || m < 1) throw calcError('invalid formula multiplier');
-      if (stack.length < 2) throw calcError('unbalanced parentheses');
-      const top = stack.pop();
-      const parent = stack[stack.length - 1];
-      for (const key of Object.keys(top)) {
-        parent[key] = (parent[key] || 0) + top[key] * m;
-      }
-    } else if (ch === '+') {
-      i += 1;
-      let pre = '';
-      while (i < s.length && /\d/.test(s[i])) {
-        pre += s[i];
-        i += 1;
-      }
-      const mult = parseInt(pre || '1', 10);
-      let depth = 0;
-      let j = i;
-      while (j < s.length && !(s[j] === '+' && depth === 0)) {
-        if (s[j] === '(' || s[j] === '[') depth += 1;
-        else if (s[j] === ')' || s[j] === ']') depth -= 1;
-        j += 1;
-      }
-      const sub = parseFormula(s.slice(i, j));
-      const parent = stack[stack.length - 1];
-      for (const key of Object.keys(sub)) {
-        parent[key] = (parent[key] || 0) + sub[key] * mult;
-      }
-      i = j;
-    } else if (/[A-Z]/.test(ch)) {
-      let sym = ch;
-      i += 1;
-      while (i < s.length && /[a-z]/.test(s[i])) {
-        sym += s[i];
-        i += 1;
-      }
-      let count = '';
-      while (i < s.length && /\d/.test(s[i])) {
-        count += s[i];
-        i += 1;
-      }
-      const c = parseInt(count || '1', 10);
-      if (!Number.isFinite(c) || c < 1) throw calcError('invalid atom count');
-      const top = stack[stack.length - 1];
-      top[sym] = (top[sym] || 0) + c;
-    } else {
-      i += 1;
-    }
-  }
-  if (stack.length !== 1) throw calcError('unbalanced parentheses');
-  const counts = stack[0];
-  if (!Object.keys(counts).length) throw calcError('could not parse formula');
-  return counts;
+  return readFormulaStrict(raw).counts;
 }
 
 export function molarMassFromCounts(counts) {
