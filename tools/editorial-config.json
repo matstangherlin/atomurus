@@ -1,0 +1,75 @@
+{
+  "reviewerName": null,
+  "reviewedAt": null,
+  "levels": {
+    "beginner": { "en": "Beginner", "pt": "Iniciante" },
+    "intermediate": { "en": "Intermediate", "pt": "Intermediário" },
+    "advanced": { "en": "Advanced", "pt": "Avançado" }
+  },
+  "learnTitle": { "en": "You will learn", "pt": "Você vai aprender" },
+  "articles": {
+    "explore/what-is-an-atom.html": {
+      "level": "beginner",
+      "learn": {
+        "en": ["Explain what an atom is", "Distinguish proton, neutron and electron", "Read atomic number and mass number"],
+        "pt": ["Explicar o que é um átomo", "Distinguir próton, nêutron e elétron", "Ler número atômico e número de massa"]
+      }
+    },
+    "explore/what-is-the-periodic-table.html": {
+      "level": "beginner",
+      "learn": {
+        "en": ["Explain what the periodic table is", "Read periods, groups and the s, p, d and f blocks", "Name the main families of elements"],
+        "pt": ["Explicar o que é a tabela periódica", "Ler períodos, grupos e os blocos s, p, d e f", "Nomear as principais famílias de elementos"]
+      }
+    },
+    "explore/what-are-isotopes.html": {
+      "level": "intermediate",
+      "learn": {
+        "en": ["Define what isotopes are", "Tell stable isotopes from radioactive ones", "Relate isotopes to atomic mass"],
+        "pt": ["Definir o que são isótopos", "Distinguir isótopos estáveis de radioativos", "Relacionar isótopos e massa atômica"]
+      }
+    },
+    "explore/what-is-chemical-bonding.html": {
+      "level": "intermediate",
+      "learn": {
+        "en": ["Explain what a chemical bond is", "Compare ionic, covalent and metallic bonds", "Relate polarity to electronegativity"],
+        "pt": ["Explicar o que é uma ligação química", "Comparar ligações iônica, covalente e metálica", "Relacionar polaridade e eletronegatividade"]
+      }
+    },
+    "explore/what-is-isomerism.html": {
+      "level": "advanced",
+      "learn": {
+        "en": ["Define isomerism", "Separate constitutional isomerism from stereoisomerism", "Tell enantiomers, diastereomers and meso compounds apart"],
+        "pt": ["Definir isomeria", "Separar isomeria constitucional de estereoisomeria", "Distinguir enantiômeros, diastereoisômeros e compostos meso"]
+      }
+    },
+    "explore/what-is-radioactivity.html": {
+      "level": "intermediate",
+      "learn": {
+        "en": ["Explain what radioactivity is", "Compare alpha, beta and gamma radiation", "Use half-life to describe radioactive decay"],
+        "pt": ["Explicar o que é radioatividade", "Comparar radiação alfa, beta e gama", "Usar a meia-vida para descrever o decaimento"]
+      }
+    },
+    "explore/bhopal-disaster.html": {
+      "level": "beginner",
+      "learn": {
+        "en": ["Say what the Bhopal disaster was", "Identify methyl isocyanate", "Explain why the plant’s safety failed"],
+        "pt": ["Dizer o que foi o desastre de Bhopal", "Identificar o isocianato de metila", "Explicar por que a segurança da fábrica falhou"]
+      }
+    },
+    "explore/chernobyl-disaster.html": {
+      "level": "beginner",
+      "learn": {
+        "en": ["Say what the Chernobyl disaster was", "Describe the RBMK design flaw", "Outline the radioactive contamination"],
+        "pt": ["Dizer o que foi o desastre de Chernobyl", "Descrever a falha de projeto do RBMK", "Resumir a contaminação radioativa"]
+      }
+    },
+    "explore/viewer/methyl-isocyanate.html": {
+      "level": "intermediate",
+      "learn": {
+        "en": ["Recognize methyl isocyanate as the Bhopal gas", "See the linear N=C=O group in the model", "Notice the methyl carbon that reacts with water"],
+        "pt": ["Reconhecer o isocianato de metila como o gás de Bhopal", "Ver o grupo linear N=C=O no modelo", "Notar o carbono da metila que reage com a água"]
+      }
+    }
+  }
+}

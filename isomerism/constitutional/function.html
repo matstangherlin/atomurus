@@ -521,33 +521,33 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg-gradient);color:var(--
         <p class="iso-mol3d-link"><a href="../../molecules.html" data-i18n="isomerism.funcao.mol3d">View ethanol in 3D →</a></p>
 
 <section class="iso-quiz" id="iso-quiz">
-        <h2 class="iso-quiz-title" data-i18n="isomerism.quiz.title">Quick check</h2>
-        <div class="iso-quiz-item" data-quiz="1" data-answer="a">
-          <p data-i18n="isomerism.quiz.q1">Q1</p>
+        <h2 class="iso-quiz-title" data-i18n="isomerism.quiz.title">Quick check: classify the isomerism</h2>
+        <div class="iso-quiz-item" data-quiz="1" data-answer="b">
+          <p data-i18n="isomerism.quiz.q1">C₂H₆O: ethanol vs dimethyl ether</p>
           <div class="iso-quiz-options">
-            <button type="button" data-opt="a" data-i18n="isomerism.quiz.q1a">A</button>
-            <button type="button" data-opt="b" data-i18n="isomerism.quiz.q1b">B</button>
-            <button type="button" data-opt="c" data-i18n="isomerism.quiz.q1c">C</button>
+            <button type="button" data-opt="a" data-i18n="isomerism.quiz.q1a">Chain</button>
+            <button type="button" data-opt="b" data-i18n="isomerism.quiz.q1b">Function</button>
+            <button type="button" data-opt="c" data-i18n="isomerism.quiz.q1c">Metamerism</button>
           </div>
-          <p class="iso-quiz-feedback" hidden></p>
+          <p class="iso-quiz-feedback" aria-live="polite" hidden></p>
         </div>
-        <div class="iso-quiz-item" data-quiz="2" data-answer="a">
-          <p data-i18n="isomerism.quiz.q2">Q2</p>
+        <div class="iso-quiz-item" data-quiz="2" data-answer="c">
+          <p data-i18n="isomerism.quiz.q2">C₄H₁₀: n-butane vs isobutane</p>
           <div class="iso-quiz-options">
-            <button type="button" data-opt="a" data-i18n="isomerism.quiz.q2a">A</button>
-            <button type="button" data-opt="b" data-i18n="isomerism.quiz.q2b">B</button>
-            <button type="button" data-opt="c" data-i18n="isomerism.quiz.q2c">C</button>
+            <button type="button" data-opt="a" data-i18n="isomerism.quiz.q2a">Position</button>
+            <button type="button" data-opt="b" data-i18n="isomerism.quiz.q2b">Geometric</button>
+            <button type="button" data-opt="c" data-i18n="isomerism.quiz.q2c">Chain</button>
           </div>
-          <p class="iso-quiz-feedback" hidden></p>
+          <p class="iso-quiz-feedback" aria-live="polite" hidden></p>
         </div>
         <div class="iso-quiz-item" data-quiz="3" data-answer="a">
-          <p data-i18n="isomerism.quiz.q3">Q3</p>
+          <p data-i18n="isomerism.quiz.q3">cis- vs trans-2-butene</p>
           <div class="iso-quiz-options">
-            <button type="button" data-opt="a" data-i18n="isomerism.quiz.q3a">A</button>
-            <button type="button" data-opt="b" data-i18n="isomerism.quiz.q3b">B</button>
-            <button type="button" data-opt="c" data-i18n="isomerism.quiz.q3c">C</button>
+            <button type="button" data-opt="a" data-i18n="isomerism.quiz.q3a">Geometric</button>
+            <button type="button" data-opt="b" data-i18n="isomerism.quiz.q3b">Position</button>
+            <button type="button" data-opt="c" data-i18n="isomerism.quiz.q3c">Optical</button>
           </div>
-          <p class="iso-quiz-feedback" hidden></p>
+          <p class="iso-quiz-feedback" aria-live="polite" hidden></p>
         </div>
       </section>
 
@@ -555,24 +555,44 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg-gradient);color:var(--
   </div>
 </main>
 </div>
+<script src="../../assets/isomerism-quiz.js?v=202610262200"></script>
 <script>
 (function initIsoQuiz(){
-  function msg(ok){
-    if(!window.I18N) return ok ? 'Correct!' : 'Not quite.';
-    return I18N.t(ok ? 'isomerism.quiz.feedbackCorrect' : 'isomerism.quiz.feedbackWrong');
+  var quiz = window.AtomurusIsoQuiz;
+  document.querySelectorAll('.iso-quiz-item').forEach(function(item){
+    var box = item.querySelector('.iso-quiz-options');
+    if (box && quiz) quiz.shuffleOptions(Array.prototype.slice.call(box.children), Math.random).forEach(function(btn){ box.appendChild(btn); });
+  });
+  function expFor(optKey){
+    var key = 'isomerism.quiz.' + optKey;
+    if (window.I18N && I18N.t) {
+      var v = I18N.t(key);
+      if (v && v !== key) return v;
+    }
+    return '';
   }
   document.querySelectorAll('.iso-quiz-item').forEach(function(item){
     var ans=item.getAttribute('data-answer');
     var fb=item.querySelector('.iso-quiz-feedback');
     item.querySelectorAll('button[data-opt]').forEach(function(btn){
       btn.addEventListener('click',function(){
-        var ok=btn.getAttribute('data-opt')===ans;
-        if(fb){ fb.hidden=false; fb.textContent=msg(ok); fb.className='iso-quiz-feedback '+(ok?'ok':'bad'); }
-        item.querySelectorAll('button').forEach(function(b){ b.disabled=true; });
+        var chosen=btn.getAttribute('data-opt');
+        var ok=chosen===ans;
+        var q = item.getAttribute('data-quiz');
+        var chosenExp = expFor('q' + q + chosen + 'Exp');
+        var correctExp = expFor('q' + q + ans + 'Exp');
+        if(fb){
+          fb.hidden=false;
+          fb.textContent = ok ? chosenExp : (chosenExp + ' ' + correctExp);
+          fb.className='iso-quiz-feedback '+(ok?'ok':'bad');
+        }
+        item.querySelectorAll('button').forEach(function(b){
+          b.disabled=true;
+          if (b.getAttribute('data-opt')===ans) b.classList.add('is-correct');
+        });
       });
     });
   });
-  if(window.I18N&&I18N.onChange) I18N.onChange(function(){ document.querySelectorAll('.iso-quiz-feedback').forEach(function(f){ f.hidden=true; }); document.querySelectorAll('.iso-quiz-item button').forEach(function(b){ b.disabled=false; }); });
 })();
 </script>
 <script>
