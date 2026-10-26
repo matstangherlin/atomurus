@@ -76,4 +76,49 @@ assert.equal(loginIdentifierLimiter.keys().some((key) => /secret\.user@|@atomuru
 assert.equal(refreshIpLimiter.limit, 60);
 assert.equal(refreshIpLimiter.windowMs, 15 * 60 * 1000);
 
+resetAuthRateLimiters();
+const { default: resendHandler } = await import('../netlify/functions/auth-resend-confirmation.mjs');
+const originalFetch = globalThis.fetch;
+process.env.SUPABASE_URL = 'https://demo.supabase.co';
+process.env.SUPABASE_ANON_KEY = 'anon-key';
+process.env.AUTH_SITE_URL = 'https://atomurus.com';
+globalThis.fetch = async () => ({
+  ok: true,
+  status: 200,
+  headers: new Headers({ 'content-type': 'application/json' }),
+  text: async () => '{}',
+  json: async () => ({})
+});
+
+function resendRequest(email, ip) {
+  return new Request('https://atomurus.com/api/auth/resend-confirmation', {
+    method: 'POST',
+    headers: {
+      origin: 'https://atomurus.com',
+      'content-type': 'application/json',
+      'x-forwarded-for': ip
+    },
+    body: JSON.stringify({ email })
+  });
+}
+
+const known = await resendHandler(resendRequest('known@atomurus.com', '203.0.113.10'));
+const unknown = await resendHandler(resendRequest('unknown@atomurus.com', '203.0.113.11'));
+const knownBody = JSON.parse(await known.text());
+const unknownBody = JSON.parse(await unknown.text());
+assert.equal(known.status, 200);
+assert.equal(unknown.status, 200);
+assert.deepEqual(knownBody, unknownBody);
+assert.deepEqual(knownBody, { ok: true });
+
+let blocked = null;
+for (let i = 0; i < 12; i += 1) {
+  blocked = await resendHandler(resendRequest(`spray${i}@atomurus.com`, '203.0.113.12'));
+}
+assert.equal(blocked.status, 429);
+const blockedBody = JSON.parse(await blocked.text());
+assert.equal(blockedBody.ok, false);
+assert.doesNotMatch(JSON.stringify(blockedBody), /spray|@atomurus/);
+
+globalThis.fetch = originalFetch;
 console.log('test-auth-rate-limit: ok');

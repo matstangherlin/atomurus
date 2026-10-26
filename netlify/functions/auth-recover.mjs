@@ -1,4 +1,5 @@
 import { authRecover } from '../lib/auth-provider.mjs';
+import { EMAIL_SEND_FAILED_MESSAGE, isEmailSendFailure } from '../lib/auth-email-errors.mjs';
 import { logAuthEvent } from '../lib/auth-log.mjs';
 import {
   consumeAuthLimits,
@@ -65,6 +66,19 @@ export default async function handler(request) {
       ip
     });
   } catch (err) {
+    if (isEmailSendFailure(err)) {
+      logAuthEvent('auth-recover', {
+        ok: false,
+        errorType: 'email_send_failed',
+        ip,
+        level: 'warn'
+      });
+      return json(503, {
+        ok: false,
+        code: 'email_send_failed',
+        error: EMAIL_SEND_FAILED_MESSAGE
+      });
+    }
     logAuthEvent('auth-recover', { ok: false, errorType: 'provider_error', ip, level: 'warn' });
   }
 

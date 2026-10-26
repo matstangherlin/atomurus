@@ -294,12 +294,34 @@ export async function supabaseLogout(accessToken) {
 
 export async function supabaseRecover(email) {
   const redirectTo = String(process.env.AUTH_PASSWORD_REDIRECT || `${redirectBase()}/reset-password`).replace(/\/$/, '');
-  const res = await upstreamFetch(authUrl('/recover'), {
-    method: 'POST',
-    headers: anonHeaders(),
-    body: JSON.stringify({ email, redirect_to: redirectTo })
-  });
-  await parseSupabaseResponse(res);
+  try {
+    const res = await upstreamFetch(authUrl('/recover'), {
+      method: 'POST',
+      headers: anonHeaders(),
+      body: JSON.stringify({ email, redirect_to: redirectTo })
+    });
+    await parseSupabaseResponse(res);
+  } catch (err) {
+    throw classifySupabaseAuthError(err);
+  }
+}
+
+export async function supabaseResendConfirmation(email) {
+  const redirectTo = `${redirectBase()}/login`;
+  try {
+    const res = await upstreamFetch(authUrl('/resend'), {
+      method: 'POST',
+      headers: anonHeaders(),
+      body: JSON.stringify({
+        type: 'signup',
+        email,
+        options: { email_redirect_to: redirectTo }
+      })
+    });
+    await parseSupabaseResponse(res);
+  } catch (err) {
+    throw classifySupabaseAuthError(err);
+  }
 }
 
 export async function supabaseEstablishSession(accessToken, refreshToken) {
