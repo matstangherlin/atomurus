@@ -91,7 +91,7 @@
   }
 
   var css = ''
-    + '#aco-cookie-banner{position:fixed;left:12px;right:12px;bottom:12px;max-width:520px;margin:0 auto;box-sizing:border-box;max-height:25vh;overflow:auto;padding:10px 12px;border-radius:14px;background:var(--lc-paper,var(--surface,#F8F5EC));color:var(--lc-ink,var(--text-1,#14120E));border:1px solid var(--lc-rule,var(--border,#D8D2BF));box-shadow:0 8px 24px rgba(0,0,0,.16);font-family:"Inter Tight",system-ui,sans-serif;line-height:1.4;z-index:9999}'
+    + '#aco-cookie-banner{position:fixed;left:12px;right:12px;bottom:12px;max-width:520px;margin:0 auto;box-sizing:border-box;max-height:20vh;overflow:auto;padding:10px 12px;border-radius:14px;background:var(--lc-paper,var(--surface,#F8F5EC));color:var(--lc-ink,var(--text-1,#14120E));border:1px solid var(--lc-rule,var(--border,#D8D2BF));box-shadow:0 8px 24px rgba(0,0,0,.16);font-family:"Inter Tight",system-ui,sans-serif;line-height:1.4;z-index:450}'
     + '#aco-cookie-banner .aco-title{font-family:"Instrument Serif",Georgia,serif;font-size:18px;margin:0 0 4px}'
     + '#aco-cookie-banner .aco-body{font-size:12.5px;margin:0 0 8px}'
     + '#aco-cookie-banner a{color:var(--accent,#1E6A50)}'

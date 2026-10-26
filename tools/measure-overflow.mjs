@@ -157,7 +157,7 @@ function measure() {
       clipped: kids.filter((kid) => kid.right > view + 1).map((kid) => kid.tag)
     };
   }
-  const banner = document.querySelector('#aco-banner, .aco-banner, [data-consent-root], .consent-banner, #cookie-banner');
+  const banner = document.querySelector('#aco-cookie-banner');
   const bannerBox = banner ? banner.getBoundingClientRect() : null;
   const menu = document.querySelector('.lc-mobile-hamb, #ws-menu-btn, .mobile-menu-btn');
   return {
