@@ -5,7 +5,8 @@
 <script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var KEY='atomurus-lang';var p=new URLSearchParams(location.search).get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem(KEY);if(l!=='pt'&&l!=='en'){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}try{localStorage.setItem(KEY,l);}catch(e){}if(l==='pt'){document.documentElement.lang='pt-BR';}else{document.documentElement.lang='en-US';}}catch(e){}})();</script>
 <script>(function(){var h=location.hash||'',q=location.search||'',hp,sp,lang='?lang=pt-BR';try{hp=new URLSearchParams(h.length>1?h.slice(1):'');}catch(e){hp=new URLSearchParams();}try{sp=new URLSearchParams(q.length>1?q.slice(1):'');}catch(e){sp=new URLSearchParams();}function pick(n){return hp.get(n)||sp.get(n)||'';}var type=(pick('type')||'').toLowerCase();if((pick('error_code')||'').toLowerCase()==='otp_expired'){location.replace('/login'+lang+h);return;}if(pick('access_token')&&pick('refresh_token')&&type==='recovery'){location.replace('/reset-password'+lang+h);return;}if(/^#(confirmation_token|recovery_token)=/.test(h)){location.replace('/login'+lang+h);return;}if(/[?&]token_hash=/.test(q)){location.replace('/login'+(lang?lang+'&'+q.slice(1):q));}})();</script>
 <meta name="google-adsense-account" content="ca-pub-9495821870733084">
-<script src="ads-gate.js?v=202608041630"></script>
+<script src="consent.js?v=202608041630" defer></script>
+<script defer src="ads-gate.js?v=202608041630"></script>
 <script src="cookie-consent.js?v=202608041630" defer></script>
 <meta charset="UTF-8">
 <link rel="manifest" href="/manifest.json">
@@ -559,7 +560,7 @@
       <a href="https://www.nist.gov/" target="_blank" rel="noopener">NIST</a>
     </div>
   </div>
-  <div class="lc-footer-bottom">
+  <div class="lc-footer-bottom"><button type="button" class="aco-manage-cookies" data-consent-manage data-i18n="common.consent.manage">Gerenciar cookies</button>
     <span><span class="lc-st-dot" style="width:6px;height:6px;border-radius:50%;background:#1E6A50;display:inline-block"></span> <span data-i18n="common.footer.systemNominal">sistema nominal</span></span>
     <span data-i18n="common.footer.copy">© 2026 Atomurus</span>
   </div>

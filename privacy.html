@@ -4,7 +4,8 @@
 <style>html[data-theme="dark"] #icon-theme-light,html[data-theme="light"] #icon-theme-dark{display:none!important}html[data-theme="dark"] #icon-theme-dark,html[data-theme="light"] #icon-theme-light{display:block!important}</style>
 <script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var KEY='atomurus-lang';var p=new URLSearchParams(location.search).get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem(KEY);if(l!=='pt'&&l!=='en'){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}try{localStorage.setItem(KEY,l);}catch(e){}if(l==='pt'){document.documentElement.lang='pt-BR';}else{document.documentElement.lang='en-US';}}catch(e){}})();</script>
 <meta name="google-adsense-account" content="ca-pub-9495821870733084">
-<script src="ads-gate.js?v=202608041630"></script>
+<script src="consent.js?v=202608041630" defer></script>
+<script defer src="ads-gate.js?v=202608041630"></script>
 
 <script src="cookie-consent.js?v=202608041630" defer></script>
 <meta charset="UTF-8">
@@ -269,10 +270,10 @@
       <li data-i18n="privacy.li_4_3">Approximate geographic location (country/region level)</li>
       <li data-i18n="privacy.li_4_4">Pages viewed and time on site</li>
     </ul>
-    <p data-i18n-html="privacy.p_4bHtml">We do not link this data to any individual identity. You can opt out of Google Analytics globally by installing the <a href="https://tools.google.com/dlpage/gaoptout" rel="nofollow noopener" target="_blank">Google Analytics Opt-out Browser Add-on</a>.</p>
+    <p data-i18n-html="privacy.p_4bHtml">We do not link this data to any individual identity. Google Analytics loads only after you allow measurement. You can withdraw that choice with Manage cookies, or opt out globally with the <a href="https://tools.google.com/dlpage/gaoptout" rel="nofollow noopener" target="_blank">Google Analytics Opt-out Browser Add-on</a>.</p>
 
-    <h2 id="ads"><span class="h-no">§ 05</span> <span data-i18n="privacy.h2_5">Advertising — Google AdSense</span></h2>
-    <p data-i18n-html="privacy.p_5Html">Atomurus displays advertisements served by <strong>Google AdSense</strong>. Google and its third-party vendors may use cookies and identifiers to:</p>
+    <h2 id="ads"><span class="h-no">§ 05</span> <span data-i18n="privacy.h2_5">Advertising — Google AdSense and AdCash</span></h2>
+    <p data-i18n-html="privacy.p_5Html">When you allow advertising, Atomurus may load advertisements from <strong>Google AdSense</strong> and <strong>AdCash</strong>. Those providers and their partners may use cookies and identifiers to:</p>
     <ul>
       <li data-i18n="privacy.li_5_1">Serve ads based on prior visits to this and other websites</li>
       <li data-i18n="privacy.li_5_2">Measure ad performance</li>
@@ -281,10 +282,10 @@
     <p data-i18n-html="privacy.p_5bHtml">You can review and control how Google uses data when you use our partners' sites or apps at <a href="https://policies.google.com/technologies/partner-sites" rel="nofollow noopener" target="_blank">policies.google.com/technologies/partner-sites</a>. You can opt out of personalized advertising at <a href="https://www.google.com/settings/ads" rel="nofollow noopener" target="_blank">google.com/settings/ads</a> or via the <a href="https://www.aboutads.info" rel="nofollow noopener" target="_blank">Digital Advertising Alliance</a>.</p>
 
     <h2 id="recaptcha"><span class="h-no">§ 06</span> <span data-i18n="privacy.h2_6">Anti-spam — Google reCAPTCHA v3</span></h2>
-    <p data-i18n-html="privacy.p_6Html">Atomurus uses <strong>Google reCAPTCHA v3</strong> to protect the site from automated abuse. reCAPTCHA runs invisibly in the background and collects hardware and software information (such as device and application data) and sends it to Google for analysis. Use of reCAPTCHA is subject to the Google <a href="https://policies.google.com/privacy" rel="nofollow noopener" target="_blank">Privacy Policy</a> and <a href="https://policies.google.com/terms" rel="nofollow noopener" target="_blank">Terms of Service</a>.</p>
+    <p data-i18n-html="privacy.p_6Html">Pages that contain a form load <strong>Google reCAPTCHA v3</strong> to protect the site from automated abuse. reCAPTCHA runs in the background and collects hardware and software information (such as device and application data) and sends it to Google for analysis. It can set the <code>_GRECAPTCHA</code> cookie. Use of reCAPTCHA is subject to the Google <a href="https://policies.google.com/privacy" rel="nofollow noopener" target="_blank">Privacy Policy</a> and <a href="https://policies.google.com/terms" rel="nofollow noopener" target="_blank">Terms of Service</a>.</p>
 
     <h2 id="cookies"><span class="h-no">§ 07</span> <span data-i18n="privacy.h2_7">Cookies</span></h2>
-    <p data-i18n="privacy.p_7">The cookies set on Atomurus come from third parties (Google Analytics, Google AdSense, Google reCAPTCHA). We do not set first-party cookies for tracking. By using the site you consent to the use of these third-party cookies; you can disable cookies in your browser at any time, though some advertising or anti-spam features may behave differently.</p>
+    <p data-i18n="privacy.p_7">Cookies are grouped in three categories. Necessary cookies keep the site working and remember this choice. Measurement cookies (_ga and _ga_*) are set by Google Analytics only after you allow measurement. Advertising cookies, including IDE, are set by Google AdSense and AdCash only after you allow advertising. The _GRECAPTCHA cookie is set on pages with a form. Use Manage cookies in the page footer to change or withdraw measurement and advertising. Ads already drawn on the page disappear on the next load.</p>
 
     <h2 id="children"><span class="h-no">§ 08</span> <span data-i18n="privacy.h2_8">Children's privacy</span></h2>
     <p data-i18n="privacy.p_8">Atomurus is intended for a general audience including secondary-school students. We do not knowingly collect personal information from children under 13. Since the site requires no registration, no personal data is submitted to us in any case. If you are a parent or guardian and have concerns, please consult our Terms of Use.</p>
@@ -366,7 +367,7 @@
       <a href="https://www.nist.gov/" target="_blank" rel="noopener">NIST</a>
     </div>
   </div>
-  <div class="lc-footer-bottom">
+  <div class="lc-footer-bottom"><button type="button" class="aco-manage-cookies" data-consent-manage data-i18n="common.consent.manage">Manage cookies</button>
     <span><span class="lc-st-dot" style="width:6px;height:6px;border-radius:50%;background:#1E6A50;display:inline-block"></span> <span data-i18n="common.footer.systemNominal">system nominal</span></span>
     <span data-i18n="common.footer.copy">© 2026 Atomurus · v1.11</span>
   </div>

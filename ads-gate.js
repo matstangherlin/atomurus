@@ -17,6 +17,10 @@
 (function () {
   'use strict';
 
+  // Fail closed. A broken /api/ads-config must not turn ads on.
+  // Set true only if the owner explicitly wants the previous fail-open behavior.
+  var ADS_FAIL_OPEN = false;
+
   var ADCASH_SRC = 'https://acscdn.com/script/aclib.js';
   var ADSENSE_SRC =
     'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9495821870733084';
@@ -25,7 +29,7 @@
 
   var state = {
     ready: false,
-    adsEnabled: true,
+    adsEnabled: false,
     signedIn: false,
     isPro: false,
     plan: 'free',
@@ -84,8 +88,31 @@
     });
   }
 
+  function consentConfig() {
+    return window.ATOMURUS_CONSENT_CONFIG || { enforce: true, adcashDisabledPathPrefixes: [], adcashDisabledForMinors: false };
+  }
+
+  function adsConsentGranted() {
+    if (consentConfig().enforce === false) return true;
+    if (!window.atomurusConsent || typeof window.atomurusConsent.get !== 'function') return false;
+    var choice = window.atomurusConsent.get();
+    return !!(choice && choice.decided && choice.ads);
+  }
+
+  function adcashAllowed() {
+    if (!adsConsentGranted()) return false;
+    var cfg = consentConfig();
+    if (cfg.adcashDisabledForMinors) return false;
+    var prefixes = cfg.adcashDisabledPathPrefixes || [];
+    var path = location.pathname || '/';
+    for (var i = 0; i < prefixes.length; i += 1) {
+      if (prefixes[i] && path.indexOf(prefixes[i]) === 0) return false;
+    }
+    return true;
+  }
+
   function loadAdSenseIfNeeded() {
-    if (!state.adsEnabled) return;
+    if (!state.adsEnabled || !adsConsentGranted()) return;
     if (document.querySelector('script[src*="adsbygoogle.js"]')) return;
     if (window.__ATOMURUS_ADSENSE_LOADER__) return;
     window.__ATOMURUS_ADSENSE_LOADER__ = true;
@@ -98,7 +125,7 @@
   }
 
   function ensureAclib() {
-    if (!state.adsEnabled) {
+    if (!state.adsEnabled || !adcashAllowed()) {
       return Promise.resolve(null);
     }
     if (window.aclib && typeof window.aclib.runAutoTag === 'function' && !window.aclib.__atomurusStub) {
@@ -146,7 +173,7 @@
   }
 
   function scheduleAclibLoad() {
-    if (!state.adsEnabled || aclibLoadScheduled) return;
+    if (!state.adsEnabled || !adcashAllowed() || aclibLoadScheduled) return;
     aclibLoadScheduled = true;
 
     var fired = false;
@@ -206,7 +233,7 @@
       });
       var data = await res.json().catch(function () { return {}; });
       if (data && data.ok) {
-        state.adsEnabled = data.adsEnabled !== false;
+        state.adsEnabled = data.adsEnabled === true;
         state.signedIn = Boolean(data.signedIn);
         state.user = data.user || null;
         state.features = data.features || (data.user && data.user.features) || {};
@@ -225,22 +252,35 @@
           };
           document.dispatchEvent(new CustomEvent('atomurus-auth-change', { detail: window.__ATOMURUS_AUTH__ }));
         }
+      } else {
+        state.adsEnabled = ADS_FAIL_OPEN;
       }
     } catch (_err) {
-      // Network/function failure → keep ads (don't accidentally wipe revenue).
-      state.adsEnabled = true;
+      state.adsEnabled = ADS_FAIL_OPEN;
     }
 
-    if (!state.adsEnabled) {
-      autoTagQueue.length = 0;
-      neutralizeThirdPartyAds();
-    } else {
-      loadAdSenseIfNeeded();
-      // AdCash stays deferred until interaction / idle — never on the critical path.
-      scheduleAclibLoad();
-    }
+    applyAdLoaders();
     notify();
   }
+
+  function applyAdLoaders() {
+    if (!state.adsEnabled || !adsConsentGranted()) {
+      autoTagQueue.length = 0;
+      neutralizeThirdPartyAds();
+      return;
+    }
+    loadAdSenseIfNeeded();
+    if (adcashAllowed()) {
+      ensureAclib();
+      flushAutoTagQueue();
+    }
+  }
+
+  window.addEventListener('atomurus:consent', function () {
+    if (!state.ready) return;
+    aclibLoadScheduled = false;
+    applyAdLoaders();
+  });
 
   window.setTimeout(function () {
     if (!state.ready) notify();
