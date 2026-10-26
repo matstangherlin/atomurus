@@ -1,6 +1,6 @@
 /**
  * Canonical calculation logic shared by the public calculators and Pro Lab.
- * Formulas match calculators.html (IUPAC 2024 atomic weights, C1V1=C2V2,
+ * Formulas match calculators.html (abridged standard atomic weights, CIAAW, C1V1=C2V2,
  * PV=nRT with R=8.314 J·mol⁻¹·K⁻¹, Kw=1e-14 at 25 °C).
  * Never uses eval or new Function.
  */
@@ -10,7 +10,7 @@ export const ATOMIC_WEIGHTS = Object.freeze({
   Na: 22.990, Mg: 24.305, Al: 26.982, Si: 28.085, P: 30.974, S: 32.06, Cl: 35.45, Ar: 39.95,
   K: 39.098, Ca: 40.078, Sc: 44.956, Ti: 47.867, V: 50.942, Cr: 51.996, Mn: 54.938, Fe: 55.845, Co: 58.933, Ni: 58.693,
   Cu: 63.546, Zn: 65.38, Ga: 69.723, Ge: 72.630, As: 74.922, Se: 78.971, Br: 79.904, Kr: 83.798,
-  Rb: 85.468, Sr: 87.62, Y: 88.906, Zr: 91.224, Nb: 92.906, Mo: 95.95, Tc: 98, Ru: 101.07, Rh: 102.91, Pd: 106.42,
+  Rb: 85.468, Sr: 87.62, Y: 88.906, Zr: 91.222, Nb: 92.906, Mo: 95.95, Tc: 98, Ru: 101.07, Rh: 102.91, Pd: 106.42,
   Ag: 107.87, Cd: 112.41, In: 114.82, Sn: 118.71, Sb: 121.76, Te: 127.60, I: 126.90, Xe: 131.29,
   Cs: 132.91, Ba: 137.33, La: 138.91, Ce: 140.12, Pr: 140.91, Nd: 144.24, Pm: 145, Sm: 150.36, Eu: 151.96, Gd: 157.25,
   Tb: 158.93, Dy: 162.50, Ho: 164.93, Er: 167.26, Tm: 168.93, Yb: 173.05, Lu: 174.97, Hf: 178.49, Ta: 180.95, W: 183.84,

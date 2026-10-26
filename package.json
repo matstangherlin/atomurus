@@ -22,6 +22,7 @@
     "test:insights": "node tools/test-insights.mjs",
     "test:billing": "node tools/test-billing-geo.mjs && node tools/test-billing-lifecycle.mjs",
     "test:ux": "node tools/test-workspace-ux.mjs && node tools/test-study-hub.mjs && node tools/test-viz-prototype.mjs && node tools/test-virtual-lab.mjs && node tools/test-account-nav.mjs",
+    "test:data": "node tools/test-element-data.mjs",
     "test:pro-lab": "node tools/test-pro-lab.mjs",
     "test:solver": "node tools/test-solver.mjs",
     "test:lab-access": "node tools/test-lab-access.mjs && node tools/test-viewer-perf.mjs",
@@ -50,7 +51,7 @@
     "validate": "node tools/validate-site.js",
     "warm:cache": "node tools/warm-edge-cache.js",
     "smoke:prod": "node tools/smoke-prod.js",
-    "ci": "npm run build && npm run test:plan && npm run test:auth && npm run test:study && npm run test:review && npm run test:insights && npm run test:billing && npm run test:ux && npm run test:pro-lab && npm run test:solver && npm run test:lab-access && npm run test:ui-v2 && npm run test:a1 && npm run validate"
+    "ci": "npm run build && npm run test:plan && npm run test:auth && npm run test:study && npm run test:review && npm run test:insights && npm run test:billing && npm run test:ux && npm run test:data && npm run test:pro-lab && npm run test:solver && npm run test:lab-access && npm run test:ui-v2 && npm run test:a1 && npm run validate"
   },
   "dependencies": {
     "stripe": "^22.3.0"
