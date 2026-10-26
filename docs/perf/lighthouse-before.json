@@ -1,0 +1,562 @@
+{
+  "label": "before",
+  "measuredAt": "2026-10-26T15:20:11.499Z",
+  "measuredAtSaoPaulo": "26/10/2026 12:20:11 (America/Sao_Paulo)",
+  "finishedAt": "2026-10-26T15:23:15.598Z",
+  "finishedAtSaoPaulo": "26/10/2026 12:23:15 (America/Sao_Paulo)",
+  "lighthouseVersion": "12.8.2",
+  "node": "v22.23.4",
+  "commit": "805adc8c9378",
+  "cpu": "Intel(R) Xeon(R) Processor × 4",
+  "root": "/tmp/atomurus-baseline",
+  "port": 4310,
+  "runs": 3,
+  "thirdPartiesBlocked": true,
+  "blockedUrlPatterns": [
+    "*acscdn.com*",
+    "*adcash.com*",
+    "*adtrafficquality.google*",
+    "*api.eu.mailgun.net*",
+    "*api.mailgun.net*",
+    "*atomurus.com*",
+    "*cdn.jsdelivr.net*",
+    "*cdnjs.cloudflare.com*",
+    "*cloudflare.com*",
+    "*developers.google.com*",
+    "*doubleclick.net*",
+    "*ep1.adtrafficquality.google*",
+    "*ep2.adtrafficquality.google*",
+    "*fonts.googleapis.com*",
+    "*fonts.gstatic.com*",
+    "*google-analytics.com*",
+    "*google.com*",
+    "*googleads.g.doubleclick.net*",
+    "*googleadservices.com*",
+    "*googleapis.com*",
+    "*googlesyndication.com*",
+    "*googletagmanager.com*",
+    "*googletagservices.com*",
+    "*gstatic.com*",
+    "*jsdelivr.net*",
+    "*pagead2.googlesyndication.com*",
+    "*recaptcha.net*",
+    "*stats.g.doubleclick.net*",
+    "*stripe.com*",
+    "*supabase.co*",
+    "*tpc.googlesyndication.com*",
+    "*www.atomurus.com*",
+    "*www.google-analytics.com*",
+    "*www.google.com*",
+    "*www.googletagmanager.com*",
+    "*www.googletagservices.com*",
+    "*www.gstatic.com*",
+    "*www.youtube.com*",
+    "*youtube.com*",
+    "*ytimg.com*"
+  ],
+  "thirdPartyCompleted": 0,
+  "profile": {
+    "lighthouseVersion": "12.8.2",
+    "formFactor": "mobile",
+    "throttlingMethod": "simulate",
+    "screenEmulation": {
+      "mobile": true,
+      "width": 412,
+      "height": 823,
+      "deviceScaleFactor": 1.75,
+      "disabled": false
+    },
+    "emulatedUserAgent": "Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Mobile Safari/537.36"
+  },
+  "pages": [
+    {
+      "id": "home",
+      "path": "/",
+      "finalUrl": "http://127.0.0.1:4310/",
+      "runs": [
+        {
+          "performance": 66,
+          "accessibility": 100,
+          "bestPractices": 82,
+          "seo": 100,
+          "lcpMs": 6605,
+          "tbtMs": 0,
+          "cls": 0.016992278741166742,
+          "fcpMs": 4579,
+          "speedIndexMs": 4579,
+          "totalKiB": 950,
+          "requests": 59,
+          "unusedJsKiB": 31,
+          "thirdPartyCompleted": 0,
+          "thirdPartyBlockedOrFailed": 2,
+          "thirdPartyHosts": [
+            "acscdn.com",
+            "pagead2.googlesyndication.com"
+          ]
+        },
+        {
+          "performance": 66,
+          "accessibility": 100,
+          "bestPractices": 82,
+          "seo": 100,
+          "lcpMs": 6309,
+          "tbtMs": 0,
+          "cls": 0.016992278741166742,
+          "fcpMs": 4582,
+          "speedIndexMs": 4582,
+          "totalKiB": 950,
+          "requests": 59,
+          "unusedJsKiB": 31,
+          "thirdPartyCompleted": 0,
+          "thirdPartyBlockedOrFailed": 2,
+          "thirdPartyHosts": [
+            "acscdn.com",
+            "pagead2.googlesyndication.com"
+          ]
+        },
+        {
+          "performance": 66,
+          "accessibility": 100,
+          "bestPractices": 82,
+          "seo": 100,
+          "lcpMs": 6305,
+          "tbtMs": 0,
+          "cls": 0.016992278741166742,
+          "fcpMs": 4580,
+          "speedIndexMs": 4580,
+          "totalKiB": 950,
+          "requests": 59,
+          "unusedJsKiB": 31,
+          "thirdPartyCompleted": 0,
+          "thirdPartyBlockedOrFailed": 2,
+          "thirdPartyHosts": [
+            "acscdn.com",
+            "pagead2.googlesyndication.com"
+          ]
+        }
+      ],
+      "performance": 66,
+      "accessibility": 100,
+      "bestPractices": 82,
+      "seo": 100,
+      "lcpMs": 6309,
+      "tbtMs": 0,
+      "cls": 0.017,
+      "fcpMs": 4580,
+      "speedIndexMs": 4580,
+      "totalKiB": 950,
+      "requests": 59,
+      "unusedJsKiB": 31,
+      "benchmarkIndex": 3690.5,
+      "variation": {
+        "performance": {
+          "min": 66,
+          "max": 66
+        },
+        "lcpMs": {
+          "min": 6305,
+          "max": 6605
+        }
+      },
+      "thirdPartyCompleted": 0,
+      "thirdPartyBlockedOrFailed": 6,
+      "thirdPartyHosts": [
+        "acscdn.com",
+        "pagead2.googlesyndication.com"
+      ],
+      "thirdPartyCompletedUrls": []
+    },
+    {
+      "id": "periodic-table",
+      "path": "/periodic-table",
+      "finalUrl": "http://127.0.0.1:4310/periodic-table",
+      "runs": [
+        {
+          "performance": 60,
+          "accessibility": 92,
+          "bestPractices": 79,
+          "seo": 100,
+          "lcpMs": 10131,
+          "tbtMs": 25,
+          "cls": 0.0002697058765392969,
+          "fcpMs": 6304,
+          "speedIndexMs": 6304,
+          "totalKiB": 1572,
+          "requests": 63,
+          "unusedJsKiB": 280,
+          "thirdPartyCompleted": 0,
+          "thirdPartyBlockedOrFailed": 2,
+          "thirdPartyHosts": [
+            "acscdn.com",
+            "pagead2.googlesyndication.com"
+          ]
+        },
+        {
+          "performance": 60,
+          "accessibility": 92,
+          "bestPractices": 79,
+          "seo": 100,
+          "lcpMs": 10126,
+          "tbtMs": 18,
+          "cls": 0.0002697058765392969,
+          "fcpMs": 6228,
+          "speedIndexMs": 6228,
+          "totalKiB": 1572,
+          "requests": 63,
+          "unusedJsKiB": 280,
+          "thirdPartyCompleted": 0,
+          "thirdPartyBlockedOrFailed": 2,
+          "thirdPartyHosts": [
+            "acscdn.com",
+            "pagead2.googlesyndication.com"
+          ]
+        },
+        {
+          "performance": 60,
+          "accessibility": 92,
+          "bestPractices": 79,
+          "seo": 100,
+          "lcpMs": 9975,
+          "tbtMs": 28,
+          "cls": 0.0002697058765392969,
+          "fcpMs": 6306,
+          "speedIndexMs": 6306,
+          "totalKiB": 1572,
+          "requests": 63,
+          "unusedJsKiB": 280,
+          "thirdPartyCompleted": 0,
+          "thirdPartyBlockedOrFailed": 2,
+          "thirdPartyHosts": [
+            "acscdn.com",
+            "pagead2.googlesyndication.com"
+          ]
+        }
+      ],
+      "performance": 60,
+      "accessibility": 92,
+      "bestPractices": 79,
+      "seo": 100,
+      "lcpMs": 10126,
+      "tbtMs": 25,
+      "cls": 0,
+      "fcpMs": 6304,
+      "speedIndexMs": 6304,
+      "totalKiB": 1572,
+      "requests": 63,
+      "unusedJsKiB": 280,
+      "benchmarkIndex": 3678.5,
+      "variation": {
+        "performance": {
+          "min": 60,
+          "max": 60
+        },
+        "lcpMs": {
+          "min": 9975,
+          "max": 10131
+        }
+      },
+      "thirdPartyCompleted": 0,
+      "thirdPartyBlockedOrFailed": 6,
+      "thirdPartyHosts": [
+        "acscdn.com",
+        "pagead2.googlesyndication.com"
+      ],
+      "thirdPartyCompletedUrls": []
+    },
+    {
+      "id": "calculators",
+      "path": "/calculators",
+      "finalUrl": "http://127.0.0.1:4310/calculators",
+      "runs": [
+        {
+          "performance": 59,
+          "accessibility": 92,
+          "bestPractices": 82,
+          "seo": 100,
+          "lcpMs": 7055,
+          "tbtMs": 24,
+          "cls": 0.12209437105516993,
+          "fcpMs": 5179,
+          "speedIndexMs": 5179,
+          "totalKiB": 1126,
+          "requests": 61,
+          "unusedJsKiB": 48,
+          "thirdPartyCompleted": 0,
+          "thirdPartyBlockedOrFailed": 3,
+          "thirdPartyHosts": [
+            "acscdn.com",
+            "pagead2.googlesyndication.com",
+            "www.google.com"
+          ]
+        },
+        {
+          "performance": 58,
+          "accessibility": 92,
+          "bestPractices": 82,
+          "seo": 100,
+          "lcpMs": 7354,
+          "tbtMs": 9,
+          "cls": 0.12209437105516993,
+          "fcpMs": 5554,
+          "speedIndexMs": 5554,
+          "totalKiB": 1126,
+          "requests": 61,
+          "unusedJsKiB": 48,
+          "thirdPartyCompleted": 0,
+          "thirdPartyBlockedOrFailed": 3,
+          "thirdPartyHosts": [
+            "acscdn.com",
+            "pagead2.googlesyndication.com",
+            "www.google.com"
+          ]
+        },
+        {
+          "performance": 58,
+          "accessibility": 92,
+          "bestPractices": 82,
+          "seo": 100,
+          "lcpMs": 7354,
+          "tbtMs": 9,
+          "cls": 0.12209437105516993,
+          "fcpMs": 5553,
+          "speedIndexMs": 5553,
+          "totalKiB": 1126,
+          "requests": 61,
+          "unusedJsKiB": 48,
+          "thirdPartyCompleted": 0,
+          "thirdPartyBlockedOrFailed": 3,
+          "thirdPartyHosts": [
+            "acscdn.com",
+            "pagead2.googlesyndication.com",
+            "www.google.com"
+          ]
+        }
+      ],
+      "performance": 58,
+      "accessibility": 92,
+      "bestPractices": 82,
+      "seo": 100,
+      "lcpMs": 7354,
+      "tbtMs": 9,
+      "cls": 0.122,
+      "fcpMs": 5553,
+      "speedIndexMs": 5553,
+      "totalKiB": 1126,
+      "requests": 61,
+      "unusedJsKiB": 48,
+      "benchmarkIndex": 3657,
+      "variation": {
+        "performance": {
+          "min": 58,
+          "max": 59
+        },
+        "lcpMs": {
+          "min": 7055,
+          "max": 7354
+        }
+      },
+      "thirdPartyCompleted": 0,
+      "thirdPartyBlockedOrFailed": 9,
+      "thirdPartyHosts": [
+        "acscdn.com",
+        "pagead2.googlesyndication.com",
+        "www.google.com"
+      ],
+      "thirdPartyCompletedUrls": []
+    },
+    {
+      "id": "pricing",
+      "path": "/pricing",
+      "finalUrl": "http://127.0.0.1:4310/pricing",
+      "runs": [
+        {
+          "performance": 66,
+          "accessibility": 100,
+          "bestPractices": 82,
+          "seo": 100,
+          "lcpMs": 6456,
+          "tbtMs": 0,
+          "cls": 0.006568042602864103,
+          "fcpMs": 4430,
+          "speedIndexMs": 4430,
+          "totalKiB": 851,
+          "requests": 48,
+          "unusedJsKiB": 0,
+          "thirdPartyCompleted": 0,
+          "thirdPartyBlockedOrFailed": 2,
+          "thirdPartyHosts": [
+            "acscdn.com",
+            "pagead2.googlesyndication.com"
+          ]
+        },
+        {
+          "performance": 66,
+          "accessibility": 100,
+          "bestPractices": 82,
+          "seo": 100,
+          "lcpMs": 6464,
+          "tbtMs": 0,
+          "cls": 0.006568042602864103,
+          "fcpMs": 4509,
+          "speedIndexMs": 4509,
+          "totalKiB": 851,
+          "requests": 48,
+          "unusedJsKiB": 0,
+          "thirdPartyCompleted": 0,
+          "thirdPartyBlockedOrFailed": 2,
+          "thirdPartyHosts": [
+            "acscdn.com",
+            "pagead2.googlesyndication.com"
+          ]
+        },
+        {
+          "performance": 65,
+          "accessibility": 100,
+          "bestPractices": 82,
+          "seo": 100,
+          "lcpMs": 6455,
+          "tbtMs": 26,
+          "cls": 0.0020268375658660494,
+          "fcpMs": 4879,
+          "speedIndexMs": 4879,
+          "totalKiB": 851,
+          "requests": 48,
+          "unusedJsKiB": 0,
+          "thirdPartyCompleted": 0,
+          "thirdPartyBlockedOrFailed": 2,
+          "thirdPartyHosts": [
+            "acscdn.com",
+            "pagead2.googlesyndication.com"
+          ]
+        }
+      ],
+      "performance": 66,
+      "accessibility": 100,
+      "bestPractices": 82,
+      "seo": 100,
+      "lcpMs": 6456,
+      "tbtMs": 0,
+      "cls": 0.007,
+      "fcpMs": 4509,
+      "speedIndexMs": 4509,
+      "totalKiB": 851,
+      "requests": 48,
+      "unusedJsKiB": 0,
+      "benchmarkIndex": 3695.5,
+      "variation": {
+        "performance": {
+          "min": 65,
+          "max": 66
+        },
+        "lcpMs": {
+          "min": 6455,
+          "max": 6464
+        }
+      },
+      "thirdPartyCompleted": 0,
+      "thirdPartyBlockedOrFailed": 6,
+      "thirdPartyHosts": [
+        "acscdn.com",
+        "pagead2.googlesyndication.com"
+      ],
+      "thirdPartyCompletedUrls": []
+    },
+    {
+      "id": "login",
+      "path": "/login",
+      "finalUrl": "http://127.0.0.1:4310/login",
+      "runs": [
+        {
+          "performance": 69,
+          "accessibility": 98,
+          "bestPractices": 79,
+          "seo": 66,
+          "lcpMs": 5553,
+          "tbtMs": 0,
+          "cls": 0.01677183788744616,
+          "fcpMs": 4278,
+          "speedIndexMs": 4278,
+          "totalKiB": 657,
+          "requests": 47,
+          "unusedJsKiB": 0,
+          "thirdPartyCompleted": 0,
+          "thirdPartyBlockedOrFailed": 2,
+          "thirdPartyHosts": [
+            "acscdn.com",
+            "pagead2.googlesyndication.com"
+          ]
+        },
+        {
+          "performance": 68,
+          "accessibility": 98,
+          "bestPractices": 79,
+          "seo": 66,
+          "lcpMs": 5705,
+          "tbtMs": 0,
+          "cls": 0.026001786812182466,
+          "fcpMs": 4278,
+          "speedIndexMs": 4278,
+          "totalKiB": 657,
+          "requests": 47,
+          "unusedJsKiB": 0,
+          "thirdPartyCompleted": 0,
+          "thirdPartyBlockedOrFailed": 2,
+          "thirdPartyHosts": [
+            "acscdn.com",
+            "pagead2.googlesyndication.com"
+          ]
+        },
+        {
+          "performance": 68,
+          "accessibility": 98,
+          "bestPractices": 79,
+          "seo": 66,
+          "lcpMs": 5703,
+          "tbtMs": 15,
+          "cls": 0.01677183788744616,
+          "fcpMs": 4278,
+          "speedIndexMs": 4278,
+          "totalKiB": 657,
+          "requests": 47,
+          "unusedJsKiB": 0,
+          "thirdPartyCompleted": 0,
+          "thirdPartyBlockedOrFailed": 2,
+          "thirdPartyHosts": [
+            "acscdn.com",
+            "pagead2.googlesyndication.com"
+          ]
+        }
+      ],
+      "performance": 68,
+      "accessibility": 98,
+      "bestPractices": 79,
+      "seo": 66,
+      "lcpMs": 5703,
+      "tbtMs": 0,
+      "cls": 0.017,
+      "fcpMs": 4278,
+      "speedIndexMs": 4278,
+      "totalKiB": 657,
+      "requests": 47,
+      "unusedJsKiB": 0,
+      "benchmarkIndex": 3715.5,
+      "variation": {
+        "performance": {
+          "min": 68,
+          "max": 69
+        },
+        "lcpMs": {
+          "min": 5553,
+          "max": 5705
+        }
+      },
+      "thirdPartyCompleted": 0,
+      "thirdPartyBlockedOrFailed": 6,
+      "thirdPartyHosts": [
+        "acscdn.com",
+        "pagead2.googlesyndication.com"
+      ],
+      "thirdPartyCompletedUrls": []
+    }
+  ]
+}
