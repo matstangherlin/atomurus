@@ -544,7 +544,7 @@ const _ELEMENT_CONTENT_PT = {
     applications:
       'Catalisadores em produção de amônia (alternativa ao ferro do processo Haber), em síntese de hidrocarbonetos (Fischer-Tropsch) e em células a combustível. Coberturas de gravação em discos rígidos magnéticos modernos — densidade de dados depende de filmes ultrafinos de rutênio. Eletrodos resistentes em microeletrônica. Ligas de platina (95% Pt + 5% Ru) em joalheria e contatos elétricos. Em pesquisa, complexos de rutênio são pigmentos sensíveis à luz para células solares experimentais.',
     curiosity:
-      'A presença de rutênio na atmosfera europeia em outubro de 2017 alarmou cientistas — concentrações até 1000 vezes acima do normal foram detectadas em dezenas de países. Investigações rastrearam a fonte até uma planta nuclear na Rússia (Mayak), a hipótese do IRSN era uma fonte de cério-144 para o experimento de neutrinos SOX/Borexino, na Itália. Apesar do volume incomum, os níveis eram baixos demais para causar dano à saúde pública. Foi o maior "vazamento de rutênio radioativo" sem origem oficialmente reconhecida.',
+      'A presença de rutênio na atmosfera europeia em outubro de 2017 alarmou cientistas — concentrações até 1000 vezes acima do normal foram detectadas em dezenas de países. A hipótese do IRSN era uma fonte de cério-144 para o experimento de neutrinos SOX/Borexino, na Itália. Apesar do volume incomum, os níveis eram baixos demais para causar dano à saúde pública. Foi o maior "vazamento de rutênio radioativo" sem origem oficialmente reconhecida.',
   },
   45: {
     overview:
@@ -988,7 +988,7 @@ const _ELEMENT_CONTENT_PT = {
     applications:
       'Tl-201 em medicina nuclear para cintilografia de perfusão miocárdica — detecta áreas do coração com fluxo sanguíneo reduzido em pacientes cardíacos. Cristais de iodeto de sódio dopados com tálio em detectores de cintilação para raios gama (usados em câmeras gama hospitalares e em detecção de materiais nucleares). Vidros ópticos de alto índice de refração com Tl₂O. Historicamente, em raticidas e inseticidas — banidos na maioria dos países desde os anos 1970 por causa de envenenamentos acidentais e criminais.',
     curiosity:
-      'Em 1961, Agatha Christie publicou "O Cavalo Amarelo" descrevendo em detalhes os sintomas do envenenamento por tálio — perda de cabelo, dores nas pernas, falência neurológica progressiva. Quase duas décadas depois, um médico em Londres reconheceu esses mesmos sintomas em uma criança e salvou sua vida por ter lido o romance. Mais sombrio: Saddam Hussein supostamente usou tálio para envenenar dissidentes nos anos 1980, Em setembro de 2004, no voo para Beslan, Anna Politkovskaya passou mal; a toxina nunca foi identificada e não há evidência de tálio. Ela foi assassinada em outubro de 2006. A literatura, no caso desse elemento, virou diagnóstico clínico.',
+      'Em 1961, Agatha Christie publicou "O Cavalo Amarelo" descrevendo em detalhes os sintomas do envenenamento por tálio — perda de cabelo, dores nas pernas, falência neurológica progressiva. Quase duas décadas depois, um médico em Londres reconheceu esses mesmos sintomas em uma criança e salvou sua vida por ter lido o romance. Mais sombrio: Saddam Hussein supostamente usou tálio para envenenar dissidentes nos anos 1980. Em setembro de 2004, no voo para Beslan, Anna Politkovskaya passou mal; a toxina nunca foi identificada e não há evidência de tálio. Ela foi assassinada em outubro de 2006. A literatura, no caso desse elemento, virou diagnóstico clínico.',
   },
   82: {
     overview:
@@ -1963,7 +1963,7 @@ const _ELEMENT_CONTENT_EN = {
     applications:
       'Catalysts in ammonia production (alternative to iron in the Haber process), in hydrocarbon synthesis (Fischer-Tropsch) and in fuel cells. Recording coatings on modern magnetic hard disks — data density depends on ultra-thin ruthenium films. Resistant electrodes in microelectronics. Platinum alloys (95% Pt + 5% Ru) in jewelry and electrical contacts. In research, ruthenium complexes are light-sensitive dyes for experimental solar cells.',
     curiosity:
-      'The presence of ruthenium in European air in October 2017 alarmed scientists — concentrations up to 1,000 times above normal were detected in dozens of countries. Investigations traced the source to a nuclear plant in Russia (Mayak), the IRSN hypothesis was a cerium-144 source for the SOX/Borexino neutrino experiment in Italy. Despite the unusual volume, levels were too low to cause public health harm. It was the largest "radioactive ruthenium leak" without an officially acknowledged origin.',
+      'The presence of ruthenium in European air in October 2017 alarmed scientists — concentrations up to 1,000 times above normal were detected in dozens of countries. The IRSN hypothesis was a cerium-144 source for the SOX/Borexino neutrino experiment in Italy. Despite the unusual volume, levels were too low to cause public health harm. It was the largest "radioactive ruthenium leak" without an officially acknowledged origin.',
   },
   45: {
     overview:
@@ -2407,7 +2407,7 @@ const _ELEMENT_CONTENT_EN = {
     applications:
       'Tl-201 in nuclear medicine for myocardial perfusion scintigraphy — detects areas of the heart with reduced blood flow in cardiac patients. Sodium iodide crystals doped with thallium in scintillation detectors for gamma rays (used in hospital gamma cameras and in nuclear material detection). High-refractive-index optical glasses with Tl₂O. Historically, in rat poisons and insecticides — banned in most countries since the 1970s because of accidental and criminal poisonings.',
     curiosity:
-      'In 1961, Agatha Christie published "The Pale Horse" describing in detail the symptoms of thallium poisoning — hair loss, leg pain, progressive neurological failure. Almost two decades later, a doctor in London recognized these same symptoms in a child and saved her life thanks to having read the novel. Darker still: Saddam Hussein reportedly used thallium to poison dissidents in the 1980s, In September 2004, on a flight to Beslan, Anna Politkovskaya fell ill; the toxin was never identified and there is no evidence of thallium. She was assassinated in October 2006. Literature, in the case of this element, became clinical diagnosis.',
+      'In 1961, Agatha Christie published "The Pale Horse" describing in detail the symptoms of thallium poisoning — hair loss, leg pain, progressive neurological failure. Almost two decades later, a doctor in London recognized these same symptoms in a child and saved her life thanks to having read the novel. Darker still: Saddam Hussein reportedly used thallium to poison dissidents in the 1980s. In September 2004, on a flight to Beslan, Anna Politkovskaya fell ill; the toxin was never identified and there is no evidence of thallium. She was assassinated in October 2006. Literature, in the case of this element, became clinical diagnosis.',
   },
   82: {
     overview:
