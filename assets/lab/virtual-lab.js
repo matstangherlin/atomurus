@@ -21,6 +21,21 @@
   var FIT_SELECTION_MAX = 2;
   var CAM_MS = 200;
 
+  /* Ideal aqueous equilibria at 25 °C (Kw = 1.0×10⁻¹⁴), no activity coefficients.
+     The reading is marked as an estimate when total solute exceeds 1 mol/L.
+     Citric acid + NaHCO₃ is an open vessel: each proton taken by HCO₃⁻ leaves
+     as CO₂. Leftover NaHCO₃ is an ampholyte (pH ≈ 8.3), never a strong base.
+     pH 7 is not the equivalence point — Na₃Cit is a weak base (pH ≈ 9.8). */
+  var PH_KW = 1e-14;
+  var PH_IDEAL_MOLARITY = 1;
+  var PH_CHALLENGE = {
+    waterMl: 50,
+    citricG: 6,
+    bicarbonateG: 7.3,
+    phMin: 6.5,
+    phMax: 7.5
+  };
+
   var SOUND_KEY = 'atomurus-lab-sound';
   var SOUNDS = {
     place: { wave: 'triangle', from: 300, to: 186, dur: 0.11, gain: 0.11 },
@@ -120,13 +135,15 @@
   }
 
   var SUBSTANCES = {
-    water: { id: 'water', name: 'Water', formula: 'H₂O', category: 'solvent', color: '#7EB6D9', state: 'liquid', ph: 7, bp: 100, allowed: true },
-    nacl: { id: 'nacl', name: 'Sodium chloride', formula: 'NaCl', category: 'salt', color: '#F4F1E4', state: 'solid', allowed: true },
-    sucrose: { id: 'sucrose', name: 'Sucrose', formula: 'C₁₂H₂₂O₁₁', category: 'sugar', color: '#F7E7C6', state: 'solid', allowed: true },
-    citric_acid: { id: 'citric_acid', name: 'Citric acid', formula: 'C₆H₈O₇', category: 'acid', color: '#F3E27A', state: 'solid', ph: 2.2, allowed: true },
-    bicarbonate: { id: 'bicarbonate', name: 'Sodium bicarbonate', formula: 'NaHCO₃', category: 'base', color: '#EEEAE0', state: 'solid', ph: 8.3, allowed: true },
+    water: { id: 'water', name: 'Water', formula: 'H₂O', category: 'solvent', color: '#7EB6D9', state: 'liquid', ph: 7, bp: 100, allowed: true, chem: { kind: 'solvent' } },
+    nacl: { id: 'nacl', name: 'Sodium chloride', formula: 'NaCl', category: 'salt', color: '#F4F1E4', state: 'solid', allowed: true, chem: { kind: 'neutral', molarMass: 58.44 } },
+    sucrose: { id: 'sucrose', name: 'Sucrose', formula: 'C₁₂H₂₂O₁₁', category: 'sugar', color: '#F7E7C6', state: 'solid', allowed: true, chem: { kind: 'neutral', molarMass: 342.30 } },
+    citric_acid: { id: 'citric_acid', name: 'Citric acid', formula: 'C₆H₈O₇', category: 'acid', color: '#F3E27A', state: 'solid', ph: 2.2, allowed: true, chem: { kind: 'weak-acid', molarMass: 192.12, pKa: [3.13, 4.76, 6.40], nH: 3 } },
+    bicarbonate: { id: 'bicarbonate', name: 'Sodium bicarbonate', formula: 'NaHCO₃', category: 'base', color: '#EEEAE0', state: 'solid', ph: 8.3, allowed: true, chem: { kind: 'bicarbonate', molarMass: 84.007, pKa: [6.35, 10.33] } },
     indicator: { id: 'indicator', name: 'Virtual pH indicator', formula: 'In', category: 'indicator', color: '#D9A7C7', state: 'liquid', allowed: true },
-    cusulfate: { id: 'cusulfate', name: 'Copper sulfate', formula: 'CuSO₄', category: 'salt', color: '#3F8CDA', state: 'solid', allowed: true },
+    /* Anhydrous CuSO₄ is white. The blue colour is the hexaaqua ion once it dissolves.
+       TODO química: no pKa for Cu²⁺ hydrolysis is cited here, so the salt stays neutral. */
+    cusulfate: { id: 'cusulfate', name: 'Copper sulfate', formula: 'CuSO₄', category: 'salt', color: '#D9DCE0', solutionColor: '#3F8CDA', state: 'solid', allowed: true, chem: { kind: 'neutral', molarMass: 159.61 } },
     fe: { id: 'fe', name: 'Iron', formula: 'Fe', category: 'element', color: '#8A8680', state: 'solid', allowed: true },
     cu: { id: 'cu', name: 'Copper', formula: 'Cu', category: 'element', color: '#C47A4A', state: 'solid', allowed: true },
     zn: { id: 'zn', name: 'Zinc', formula: 'Zn', category: 'element', color: '#C5CBD1', state: 'solid', allowed: true },
@@ -145,7 +162,8 @@
     frac_heavy: { id: 'frac_heavy', name: 'Virtual heavy fraction', formula: 'C₁₇+', category: 'fraction', color: '#A88B4E', state: 'liquid', bp: 330, allowed: true },
     yeast: { id: 'yeast', name: 'Virtual yeast', formula: 'S. cerevisiae', category: 'culture', color: '#D8C79A', state: 'solid', allowed: true },
     cane_juice: { id: 'cane_juice', name: 'Virtual cane juice', formula: 'sucrose + water', category: 'solution', color: '#C9B074', state: 'liquid', bp: 100, allowed: true },
-    fibre: { id: 'fibre', name: 'Virtual plant fibre', formula: 'cellulose', category: 'mineral', color: '#9A8B63', state: 'solid', allowed: true }
+    /* Cellulose is not a mineral. sugar would pass the filter; no other category fits. */
+    fibre: { id: 'fibre', name: 'Virtual plant fibre', formula: 'cellulose', category: 'biomass', color: '#9A8B63', state: 'solid', allowed: true }
   };
 
   function eq(id, category, en, pt, o) {
@@ -801,14 +819,15 @@
       var model = REACTIONS[REACTION_ORDER[i]];
       if (model.needsLiquid && !wet) continue;
       var matched = model.reactants.every(function (id) { return has[id]; });
+      if (matched && model.id === 'acid-base' && !citricBicarbExcess(container)) continue;
       if (matched) return model;
     }
     return null;
   }
 
   var READY = [
-    { id: 'saline_ready', labelEn: 'Saline (ready)', labelPt: 'Soro (pronto)', parts: [{ id: 'water', amount: 40 }, { id: 'nacl', amount: 8 }] },
-    { id: 'cu_ready', labelEn: 'Copper sulfate solution', labelPt: 'Sulfato de cobre (pronto)', parts: [{ id: 'water', amount: 40 }, { id: 'cusulfate', amount: 8 }] },
+    { id: 'saline_ready', labelEn: 'Saline 0.9% (ready)', labelPt: 'Soro fisiológico 0,9% (pronto)', parts: [{ id: 'water', amount: 40 }, { id: 'nacl', amount: 0.36 }] },
+    { id: 'cu_ready', labelEn: 'CuSO₄ solution, near saturation (20 g/100 mL)', labelPt: 'Solução de CuSO₄, perto da saturação (20 g/100 mL)', parts: [{ id: 'water', amount: 40 }, { id: 'cusulfate', amount: 8 }] },
     { id: 'sugar_ready', labelEn: 'Sugar solution', labelPt: 'Solução de açúcar', parts: [{ id: 'water', amount: 40 }, { id: 'sucrose', amount: 10 }] },
     { id: 'sunscreen_ready', labelEn: 'Mineral lotion (ready)', labelPt: 'Loção mineral (pronta)', parts: [{ id: 'water', amount: 20 }, { id: 'oil', amount: 15 }, { id: 'zno', amount: 8 }] },
     { id: 'crude_ready', labelEn: 'Virtual crude blend', labelPt: 'Blend bruto virtual', parts: [{ id: 'frac_light', amount: 25 }, { id: 'frac_mid', amount: 25 }, { id: 'frac_heavy', amount: 15 }] },
@@ -1088,15 +1107,15 @@
       access: 'account',
       demo: true,
       lede: {
-        en: 'Mix approved acidic and basic materials and measure a virtual pH.',
-        pt: 'Misture materiais ácidos e básicos aprovados e meça um pH virtual.'
+        en: 'Mix approved acidic and basic materials and measure a virtual pH. Open system: CO₂ from the acid and bicarbonate leaves the vessel. pH 7 is not the equivalence point.',
+        pt: 'Misture materiais ácidos e básicos aprovados e meça um pH virtual. Sistema aberto: o CO₂ do ácido com bicarbonato sai do recipiente. pH 7 não é o ponto de equivalência.'
       },
       stages: ['mix', 'measure', 'neutral'],
       safetyClass: 'educational',
       version: 2,
       tutorial: [
         { id: 'acid', action: 'addMaterial', need: { water: true, citric_acid: true }, amounts: { water: 50, citric_acid: 6 }, needEquipment: ['beaker'], en: 'Add water, then 6 g of citric acid.', pt: 'Adicione água e depois 6 g de ácido cítrico.', why: { en: 'The acid needs water before a virtual pH can be read.', pt: 'O ácido precisa de água antes de um pH virtual ser lido.' } },
-        { id: 'base', action: 'addMaterial', need: { bicarbonate: true }, amounts: { bicarbonate: 6 }, en: 'Add 6 g of bicarbonate. The mixture may fizz.', pt: 'Adicione 6 g de bicarbonato. A mistura pode efervescer.', why: { en: 'A base neutralises the acid and moves the virtual pH.', pt: 'Uma base neutraliza o ácido e move o pH virtual.' } },
+        { id: 'base', action: 'addMaterial', need: { bicarbonate: true }, amounts: { bicarbonate: PH_CHALLENGE.bicarbonateG }, checkPh: { min: PH_CHALLENGE.phMin, max: PH_CHALLENGE.phMax }, en: 'Add ' + PH_CHALLENGE.bicarbonateG + ' g of bicarbonate. The mixture may fizz.', pt: 'Adicione ' + String(PH_CHALLENGE.bicarbonateG).replace('.', ',') + ' g de bicarbonato. A mistura pode efervescer.', why: { en: 'pH 7 is not the equivalence point: trisodium citrate is a weak base, so the reading reaches 7 a little before 7.87 g of NaHCO₃. In this open vessel the CO₂ leaves.', pt: 'pH 7 não é o ponto de equivalência: o citrato trissódico é base fraca, então a leitura chega a 7 um pouco antes de 7,87 g de NaHCO₃. Neste recipiente aberto o CO₂ sai.' } },
         { id: 'measure', action: 'measure', en: 'Measure virtual pH from the inspector.', pt: 'Meça o pH virtual no inspetor.' }
       ]
     },
@@ -1582,6 +1601,12 @@
       if (ph < 10) return '#5B8FD9';
       return '#8A6BBF';
     }
+    var dissolvedCopper = (Number(container.volumeMl) || 0) > 0 && contents.some(function (row) {
+      return row.id === 'cusulfate' && (Number(row.amount) || 0) > 0;
+    });
+    if (dissolvedCopper && SUBSTANCES.cusulfate && SUBSTANCES.cusulfate.solutionColor) {
+      return SUBSTANCES.cusulfate.solutionColor;
+    }
     var r = 0;
     var g = 0;
     var b = 0;
@@ -1590,7 +1615,9 @@
       var spec = SUBSTANCES[row.id];
       if (!spec) return;
       var amt = Number(row.amount) || 1;
-      var rgb = hexRgb(spec.color);
+      var swatch = spec.color;
+      if (spec.id === 'cusulfate' && (Number(container.volumeMl) || 0) > 0 && spec.solutionColor) swatch = spec.solutionColor;
+      var rgb = hexRgb(swatch);
       r += rgb.r * amt;
       g += rgb.g * amt;
       b += rgb.b * amt;
@@ -1598,6 +1625,162 @@
     });
     if (!w) return 'transparent';
     return 'rgb(' + Math.round(r / w) + ',' + Math.round(g / w) + ',' + Math.round(b / w) + ')';
+  }
+
+  function positiveMoles(value) {
+    var n = Number(value);
+    if (!isFinite(n) || n < 0) return 0;
+    return n;
+  }
+
+  function speciesMoles(row) {
+    if (!row) return 0;
+    if (row.grams != null && row.molarMass) return positiveMoles(Number(row.grams) / Number(row.molarMass));
+    return positiveMoles(row.moles);
+  }
+
+  /* Charge on the conjugate bases of one analytical mole, from the fully protonated acid. */
+  function anionChargePerMole(h, pKas) {
+    var terms = [1];
+    var i;
+    if (!(h > 0) || !pKas || !pKas.length) return 0;
+    for (i = 0; i < pKas.length; i += 1) terms.push(terms[i] * Math.pow(10, -pKas[i]) / h);
+    var denom = 0;
+    for (i = 0; i < terms.length; i += 1) denom += terms[i];
+    if (!denom) return 0;
+    var charge = 0;
+    for (i = 1; i < terms.length; i += 1) charge += i * terms[i] / denom;
+    return charge;
+  }
+
+  function phSpeciesFrom(container) {
+    var out = [];
+    (container.contents || []).forEach(function (row) {
+      var spec = SUBSTANCES[row.id];
+      var chem = spec && spec.chem;
+      if (!chem || chem.kind === 'solvent' || spec.state === 'liquid') return;
+      var grams = Number(row.amount) || 0;
+      if (grams < 0) grams = 0;
+      out.push({
+        kind: chem.kind,
+        grams: grams,
+        molarMass: chem.molarMass,
+        pKa: chem.pKa,
+        pKb: chem.pKb,
+        nH: chem.nH
+      });
+    });
+    return out;
+  }
+
+  function molesIn(container, id) {
+    var spec = SUBSTANCES[id];
+    var chem = spec && spec.chem;
+    if (!chem || !chem.molarMass) return 0;
+    var row = (container.contents || []).filter(function (item) { return item.id === id; })[0];
+    var grams = row ? Number(row.amount) || 0 : 0;
+    if (grams < 0) grams = 0;
+    return grams / chem.molarMass;
+  }
+
+  /* CO₂ leaves only while citric acid can still protonate bicarbonate. */
+  function citricBicarbExcess(container) {
+    if ((Number(container.volumeMl) || 0) <= 0) return false;
+    var nCit = molesIn(container, 'citric_acid');
+    var nBic = molesIn(container, 'bicarbonate');
+    return nCit > 0 && nBic > 0 && (3 * nCit) > nBic + 1e-12;
+  }
+
+  /* Open beaker: protons consumed by HCO₃⁻ leave as CO₂. Residual NaHCO₃ stays an ampholyte. */
+  function assessPH(input) {
+    var volumeL = Number(input && input.volumeL);
+    if (!isFinite(volumeL) || volumeL < 0) volumeL = 0;
+    var species = (input && input.species) || [];
+    var weakAcids = [];
+    var weakBases = [];
+    var bicarbMoles = 0;
+    var bicarbPka = [6.35, 10.33];
+    var strongAcid = 0;
+    var strongBase = 0;
+    var soluteMoles = 0;
+    species.forEach(function (row) {
+      if (!row || row.kind === 'solvent') return;
+      var moles = speciesMoles(row);
+      if (moles > 0) soluteMoles += moles;
+      if (row.kind === 'weak-acid') {
+        weakAcids.push({ moles: moles, pKa: row.pKa || [], nH: row.nH || (row.pKa || []).length || 1 });
+      } else if (row.kind === 'bicarbonate') {
+        bicarbMoles += moles;
+        if (row.pKa && row.pKa.length) bicarbPka = row.pKa;
+      } else if (row.kind === 'strong-acid') {
+        strongAcid += moles * (row.nH || 1);
+      } else if (row.kind === 'strong-base') {
+        strongBase += moles * (row.nH || 1);
+      } else if (row.kind === 'weak-base') {
+        weakBases.push({ moles: moles, pKb: row.pKb });
+      }
+    });
+    var slots = 0;
+    weakAcids.forEach(function (acid) { slots += acid.moles * (acid.nH || 1); });
+    var transferred = Math.min(bicarbMoles, slots);
+    var residualBicarb = Math.max(0, bicarbMoles - transferred);
+    var sodiumMoles = bicarbMoles + strongBase;
+    var molarity = volumeL > 0 ? soluteMoles / volumeL : 0;
+    if (!(volumeL > 0)) return { ph: 7, molarity: 0, estimated: false };
+    if (soluteMoles === 0 && strongAcid === 0 && strongBase === 0 && bicarbMoles === 0) {
+      return { ph: 7, molarity: 0, estimated: false };
+    }
+
+    function residual(h) {
+      var oh = PH_KW / h;
+      var neg = oh + strongAcid / volumeL;
+      weakAcids.forEach(function (acid) {
+        if (acid.moles > 0 && acid.pKa.length) neg += (acid.moles / volumeL) * anionChargePerMole(h, acid.pKa);
+      });
+      if (residualBicarb > 0) neg += (residualBicarb / volumeL) * anionChargePerMole(h, bicarbPka);
+      var pos = h + sodiumMoles / volumeL;
+      weakBases.forEach(function (base) {
+        if (!(base.moles > 0) || !(base.pKb > 0)) return;
+        var ka = PH_KW / Math.pow(10, -base.pKb);
+        pos += (base.moles / volumeL) * h / (h + ka);
+      });
+      return pos - neg;
+    }
+
+    var lo = -2;
+    var hi = 16;
+    var i;
+    for (i = 0; i < 80; i += 1) {
+      var mid = (lo + hi) / 2;
+      if (residual(Math.pow(10, -mid)) > 0) lo = mid;
+      else hi = mid;
+    }
+    var ph = (lo + hi) / 2;
+    if (!isFinite(ph)) ph = 7;
+    return { ph: ph, molarity: molarity, estimated: molarity > PH_IDEAL_MOLARITY };
+  }
+
+  function computePH(input) {
+    return assessPH(input).ph;
+  }
+
+  function formatQty(value) {
+    var n = Number(value) || 0;
+    var tenth = Math.round(n * 10) / 10;
+    if (Math.abs(n - tenth) < 0.001) return String(tenth);
+    return String(Math.round(n * 100) / 100);
+  }
+
+  function openCarbonate(container) {
+    if (!container || (Number(container.volumeMl) || 0) <= 0) return false;
+    var hasCit = false;
+    var hasBic = false;
+    (container.contents || []).forEach(function (row) {
+      if ((Number(row.amount) || 0) <= 0) return;
+      if (row.id === 'citric_acid') hasCit = true;
+      if (row.id === 'bicarbonate') hasBic = true;
+    });
+    return hasCit && hasBic;
   }
 
   function mixContainer(container) {
@@ -1625,18 +1808,16 @@
       if (spec.category === 'element') elements += amt;
       if (spec.note) notes[spec.note] += amt;
     });
-    fizz = acids > 0 && bases > 0 && volume > 0;
-    var ph = 7;
-    if (acids || bases) {
-      var net = bases - acids;
-      ph = Math.max(1, Math.min(13, 7 + net * 0.08));
-    }
+    fizz = citricBicarbExcess(container);
+    var phDetail = assessPH({ volumeL: volume / 1000, species: phSpeciesFrom(container) });
+    var ph = volume > 0 ? Math.max(0, Math.min(14, phDetail.ph)) : 7;
     var appearance = 'clear';
     if (!contents.length) appearance = 'empty';
     else if (minerals && (oilAmt || volume)) appearance = 'mineral emulsion';
     else if (oilAmt && volume) appearance = 'emulsion';
     else if (notes.top + notes.heart + notes.base > 0) appearance = 'fragrance accord';
     else if (copper && volume) appearance = 'blue solution';
+    else if (copper) appearance = 'white powder';
     else if (fizz) appearance = 'effervescent mixture';
     else if (salts && volume) appearance = 'saline solution';
     else if (acids && bases) appearance = 'neutralized mixture';
@@ -1646,6 +1827,7 @@
     else if (elements && (Number(container.temperatureC) || 22) >= 40) appearance = 'warm suspension';
     else if (elements) appearance = 'suspension';
     container.ph = Math.round(ph * 10) / 10;
+    container.phEstimated = Boolean(volume > 0 && phDetail.estimated);
     container.appearance = appearance;
     container.color = mixColor(container);
     container.fizz = fizz;
@@ -1706,7 +1888,10 @@
       return { id: 'emulsion', en: 'Virtual emulsion', pt: 'Emulsão virtual' };
     }
     if (has.citric_acid && has.bicarbonate && wet) {
-      return { id: 'fizz', en: 'Effervescent mixture', pt: 'Mistura efervescente' };
+      if (citricBicarbExcess(container)) {
+        return { id: 'fizz', en: 'Effervescent mixture', pt: 'Mistura efervescente' };
+      }
+      return { id: 'citrate', en: 'Sodium citrate solution', pt: 'Solução de citrato de sódio' };
     }
     if (has.indicator && wet) {
       return { id: 'indicator-mix', en: 'pH indicator mixture', pt: 'Mistura com indicador de pH' };
@@ -2689,6 +2874,10 @@
       if (ok && step.need) {
         Object.keys(step.need).forEach(function (id) { if (!pool[id]) ok = false; });
       }
+      if (ok && step.checkPh) {
+        var reading = Number(container.ph);
+        if (!(reading >= step.checkPh.min && reading <= step.checkPh.max)) ok = false;
+      }
       if (ok && step.needAny) ok = step.needAny.some(function (id) { return pool[id]; });
       if (ok && step.stir && !session.stirred) ok = false;
       if (ok && step.product && container.productId !== step.product) ok = false;
@@ -3614,7 +3803,7 @@
         return '<li class="lab-content-row">' +
           '<i class="lab-chip-swatch" style="background:' + esc((spec && spec.color) || '#ccc') + '"></i>' +
           '<span>' + esc((spec && spec.name) || row.id) + '</span>' +
-          '<b>' + esc(Math.round((Number(row.amount) || 0) * 10) / 10) + (row.unit ? ' ' + esc(row.unit) : '') + '</b>' +
+          '<b>' + esc(formatQty(row.amount)) + (row.unit ? ' ' + esc(row.unit) : '') + '</b>' +
           '<button type="button" class="lab-content-drop" data-lab-remove="' + esc(row.id) + '" aria-label="' +
           esc(copy('Remove ', 'Remover ') + ((spec && spec.name) || row.id)) + '" title="' +
           esc(copy('Remove', 'Remover')) + '">×</button></li>';
@@ -3666,6 +3855,14 @@
         '<div class="lab-kv"><span>' + esc(copy('Mass', 'Massa')) + '</span><strong>' + esc(Math.round(containerMass(container) * 10) / 10) + ' g</strong></div>' +
         '<div class="lab-kv"><span>' + esc(copy('Temperature', 'Temperatura')) + '</span><strong>' + esc(container.temperatureC) + ' °C</strong></div>' +
         '<div class="lab-kv"><span>pH</span><strong>' + esc(container.ph == null ? '—' : container.ph) + '</strong></div>' +
+        (container.phEstimated ? '<p class="ws-lede">' + esc(copy(
+          'Estimated by the ideal model: total solute is above 1 mol/L.',
+          'Valor estimado pelo modelo ideal: o soluto total passa de 1 mol/L.'
+        )) + '</p>' : '') +
+        (openCarbonate(container) ? '<p class="ws-lede">' + esc(copy(
+          'Open system: CO₂ from the acid and bicarbonate leaves the vessel. Extra bicarbonate is a weak base, not a strong one.',
+          'Sistema aberto: o CO₂ do ácido com bicarbonato sai do recipiente. O bicarbonato que sobra é base fraca, não base forte.'
+        )) + '</p>' : '') +
         '<div class="lab-kv"><span>' + esc(copy('Appearance', 'Aparência')) + '</span><strong>' + esc(container.appearance) + '</strong></div>' +
         (container.product ? '<div class="lab-kv lab-kv-product"><span>' + esc(copy('Created', 'Criado')) + '</span><strong>' + esc(lang === 'pt' ? (container.productPt || container.product) : container.product) + '</strong></div>' : '') +
         (pourFrom ? '<p class="lab-pour-hint">' + esc(copy('Pouring: click another vessel to transfer.', 'Transferindo: clique em outro vidro para despejar.')) + '</p>' : '') +
@@ -5661,7 +5858,10 @@
     pour: pour,
     setTemperature: setTemperature,
     measure: measure,
-    mount: mount
+    mount: mount,
+    computePH: computePH,
+    assessPH: assessPH,
+    PH_CHALLENGE: PH_CHALLENGE
   };
 
   if (typeof module === 'object' && module.exports) module.exports = root.AtomurusLab;
