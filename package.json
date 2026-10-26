@@ -21,7 +21,7 @@
     "test:review": "node tools/test-review.mjs",
     "test:insights": "node tools/test-insights.mjs",
     "test:billing": "node tools/test-billing-geo.mjs && node tools/test-billing-lifecycle.mjs",
-    "test:ux": "node tools/test-workspace-ux.mjs && node tools/test-study-hub.mjs && node tools/test-viz-prototype.mjs && node tools/test-virtual-lab.mjs && node tools/test-lab-ph.mjs && node tools/test-account-nav.mjs",
+    "test:ux": "node tools/test-workspace-ux.mjs && node tools/test-study-hub.mjs && node tools/test-viz-prototype.mjs && node tools/test-virtual-lab.mjs && node tools/test-lab-ph.mjs && node tools/test-account-nav.mjs && node tools/test-periodic-search.mjs",
     "test:consent": "node tools/test-consent.mjs",
     "test:content": "node tools/test-content-facts.mjs",
     "test:data": "node tools/test-element-data.mjs",

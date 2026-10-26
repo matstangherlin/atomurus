@@ -430,6 +430,17 @@ function drawAtomicModel(z, a, canvasId) {
   drawNucleusAt(ctx, cx, cy, nucleusBound, z, a, isDark);
 }
 
+function formatElementGroup(el) {
+  if (!el) return '\u2014';
+  // IUPAC group is null for the whole f-block. `col` is only the drawing slot.
+  if (el.cat === 'lanthanide' || el.cat === 'actinide') {
+    const lang = (document.documentElement.lang || '').toLowerCase();
+    return _T('ptable.fBlockGroup', lang.indexOf('pt') === 0 ? 'bloco f' : 'f-block');
+  }
+  if (el.group == null || el.group === '') return '\u2014';
+  return String(el.group);
+}
+
 function setElementCardMeta(card, el) {
   const extra = getExtra(el.z);
   const extra2 = getExtra2(el.z);
@@ -438,7 +449,7 @@ function setElementCardMeta(card, el) {
   const rows = [
     [_T('ptable.mState', 'Physical State'), stateName(el.state)],
     [_T('ptable.mPeriod', 'Period'), el.period || '—'],
-    [_T('ptable.mGroup', 'Group'), el.group || '—'],
+    [_T('ptable.mGroup', 'Group'), formatElementGroup(el)],
     [_T('ptable.mEn', 'Electronegativity'), el.en || '—'],
     [_T('ptable.mRadius', 'Atomic Radius'), extra2.radius || '—'],
     [_T('ptable.mEconfig', 'Electron Configuration'), extra.econfig || '—']
@@ -726,7 +737,7 @@ function openModal(el) {
   document.getElementById('m-en').textContent   = el.en;
   document.getElementById('m-state').textContent  = stateName(el.state);
   document.getElementById('m-period').textContent = el.period;
-  document.getElementById('m-group').textContent  = el.group;
+  document.getElementById('m-group').textContent  = formatElementGroup(el);
 
   const extra  = getExtra(el.z);
   const extra2 = getExtra2(el.z);
@@ -1081,7 +1092,7 @@ function renderElementCard(el) {
     [_T('ptable.mEn',     'Eletronegatividade'), el.en],
     [_T('ptable.mState',  'Estado físico'),      stateName(el.state)],
     [_T('ptable.mPeriod', 'Período'),            el.period],
-    [_T('ptable.mGroup',  'Grupo'),              el.group],
+    [_T('ptable.mGroup',  'Grupo'),              formatElementGroup(el)],
     [_T('ptable.mMelt',   'Ponto de fusão'),     extra.melt],
     [_T('ptable.mBoil',   'Ponto de ebulição'),  extra.boil],
     [_T('ptable.mDensity','Densidade'),          extra2.density],
@@ -1491,9 +1502,9 @@ function downloadTablePDF() {
   const ph7Left = colX(3);
   const ph7Bot  = rowY(7, mainBaseY) + CS;
 
-  const laLeft  = colX(4);
+  const laLeft  = colX(3);
   const laY     = fBlockBaseY + CS / 2;
-  const acLeft  = colX(4);
+  const acLeft  = colX(3);
   const acY     = actBaseY   + CS / 2;
 
   const col2Right = colX(2) + CS;
@@ -1789,49 +1800,80 @@ function getAliasMatcher(nq) {
   const groupMatch = nq.match(/^(g|grupo|group)\s*(\d{1,2})$/);
   if (groupMatch) {
     const group = Number(groupMatch[2]);
-    return { label: 'Group ' + group, test: e => Number(e.group) === group };
+    return { label: 'Group ' + group, test: e => e.group != null && Number(e.group) === group };
   }
   const periodMatch = nq.match(/^(p|periodo|period|periodo)\s*(\d)$/);
   if (periodMatch) {
     const period = Number(periodMatch[2]);
     return { label: 'Period ' + period, test: e => Number(e.period) === period };
   }
-  return SEARCH_ALIASES.find(alias => alias.terms.some(t => nq === t || t.startsWith(nq) || nq.startsWith(t)));
+  // Category aliases only for a query of 3+ letters that equals the term
+  // or is a prefix of it. Never the other way: "na" must not hit "nao metal".
+  if (nq.length < 3) return undefined;
+  return SEARCH_ALIASES.find(alias => alias.terms.some(t => t === nq || t.startsWith(nq)));
+}
+
+function elementSearchNames(el) {
+  const names = [];
+  if (el.name) names.push(normSearch(el.name));
+  if (typeof _elNamesEN !== 'undefined' && _elNamesEN[el.z - 1]) names.push(normSearch(_elNamesEN[el.z - 1]));
+  if (typeof elName === 'function') {
+    const current = normSearch(elName(el));
+    if (current) names.push(current);
+  }
+  return names;
+}
+
+// Lower rank wins. null means the element is not a hit.
+// 0 symbol, 1 atomic number, 2 exact name (PT and EN), 3 name prefix,
+// 4 category alias, 5 substring fallback.
+function searchRank(el, nq) {
+  if (!nq) return 0;
+  const sym = normSearch(el.sym);
+  const names = elementSearchNames(el);
+  let rank = null;
+  if (sym === nq) rank = 0;
+  else if (String(el.z) === nq) rank = 1;
+  else if (names.some(n => n === nq)) rank = 2;
+  else if (nq.length >= 2 && names.some(n => n.startsWith(nq))) rank = 3;
+
+  const alias = getAliasMatcher(nq);
+  if (alias) {
+    // A category or group query is that set. Substring fallback stays off
+    // so "alkali" does not also swallow "alkaline".
+    if (alias.test(el)) rank = rank == null ? 4 : Math.min(rank, 4);
+    return rank;
+  }
+
+  if (rank == null && nq.length >= 3) {
+    const hay = normSearch([
+      el.name,
+      (typeof _elNamesEN !== 'undefined' && _elNamesEN[el.z - 1]) || '',
+      (typeof elName === 'function' ? elName(el) : ''),
+      el.cat,
+      (typeof catName === 'function' ? catName(el) : ''),
+      el.state,
+      (typeof stateName === 'function' ? stateName(el.state) : '')
+    ].join(' '));
+    if (hay.includes(nq)) rank = 5;
+  }
+  return rank;
 }
 
 function elementMatchesSearch(el, nq) {
   if (!nq) return true;
-  const alias = getAliasMatcher(nq);
-  if (alias) return alias.test(el);
-  const haystack = normSearch([
-    el.name,
-    elName(el),
-    el.sym,
-    el.z,
-    el.cat,
-    catName(el),
-    el.state,
-    stateName(el.state),
-    'grupo ' + el.group,
-    'group ' + el.group,
-    'periodo ' + el.period,
-    'period ' + el.period
-  ].join(' '));
-  return haystack.includes(nq);
+  return searchRank(el, nq) != null;
 }
 
 function getSearchResults(q, limit) {
   const nq = normSearch(q);
   if (!nq) return [];
   return ELEMENTS
-    .filter(el => elementMatchesSearch(el, nq))
-    .sort((a, b) => {
-      const aExact = normSearch(a.sym) === nq || String(a.z) === nq || normSearch(elName(a)) === nq;
-      const bExact = normSearch(b.sym) === nq || String(b.z) === nq || normSearch(elName(b)) === nq;
-      if (aExact !== bExact) return aExact ? -1 : 1;
-      return a.z - b.z;
-    })
-    .slice(0, limit || 8);
+    .map(el => ({ el, rank: searchRank(el, nq) }))
+    .filter(item => item.rank != null)
+    .sort((a, b) => (a.rank - b.rank) || (a.el.z - b.el.z))
+    .slice(0, limit || 8)
+    .map(item => item.el);
 }
 
 function handleSearchInput(val) {
@@ -1850,19 +1892,21 @@ function _doSearchNow(val) {
   });
   if (!q) return;
 
-  let first = true;
+  const ranked = [];
   document.querySelectorAll('.el').forEach(card => {
     const z    = card.dataset.z;
     const elem = ELEMENTS.find(e => String(e.z) === z);
     if (!elem) return;
-    const hit = elementMatchesSearch(elem, q);
-    if (hit) {
-      card.classList.add('shine');
-      if (first) { card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); first = false; }
-    } else {
+    const rank = searchRank(elem, q);
+    if (rank == null) {
       card.classList.add('dim');
+      return;
     }
+    card.classList.add('shine');
+    ranked.push({ card, rank, z: elem.z });
   });
+  ranked.sort((a, b) => a.rank - b.rank || a.z - b.z);
+  if (ranked[0]) ranked[0].card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 function updateSearchSuggestions(val) {
@@ -2000,41 +2044,152 @@ function switchTab(tab, el) {
 }
 
 // ─── HEATMAP LOGIC ───
+// Numeric value for a heatmap property, or null when the element has no datum.
+// atomic_radius is the settings-panel name for the same scale as radius.
+function heatmapPropValue(z, prop) {
+  const el = ELEMENTS.find(e => e.z === z);
+  if (!el) return null;
+  const key = prop === 'atomic_radius' ? 'radius' : prop;
+  if (key === 'state' || key === 'category') return null;
+  const ex = (typeof getExtra === 'function' ? getExtra(z) : {}) || {};
+  const ex2 = (typeof getExtra2 === 'function' ? getExtra2(z) : {}) || {};
+  let val = NaN;
+  if (key === 'electronegativity') val = parseFloat(el.en);
+  else if (key === 'radius') val = parseFloat(ex2.radius);
+  else if (key === 'melt') val = parseFloat(ex.melt);
+  else if (key === 'boil') val = parseFloat(ex.boil);
+  else if (key === 'density') val = parseFloat(ex2.density);
+  else if (key === 'mass') val = parseFloat(String(el.mass).replace(/[^0-9.]/g, ''));
+  else if (key === 'ionization') {
+    const raw = (typeof getIonization === 'function') ? getIonization(z) : undefined;
+    val = typeof raw === 'number' ? raw : NaN;
+  }
+  return Number.isFinite(val) ? val : null;
+}
+
+// Physical state at 25 °C. Categorical — not a continuous scale.
+function heatmapStateKey(el) {
+  const s = normSearch(el && el.state);
+  if (!s) return 'unknown';
+  if (s.indexOf('solido') !== -1 || s === 'solid') return 'solid';
+  if (s.indexOf('liquido') !== -1 || s === 'liquid') return 'liquid';
+  if (s.indexOf('gas') !== -1) return 'gas';
+  return 'unknown';
+}
+
+const HM_STATE_COLORS = {
+  solid: '#8C6A3D',
+  liquid: '#2F6FDB',
+  gas: '#C45A28',
+  unknown: ''
+};
+
+function heatmapStateLabel(key) {
+  const table = {
+    solid: ['ptable.hmStateSolid', 'Solid', 'Sólido'],
+    liquid: ['ptable.hmStateLiquid', 'Liquid', 'Líquido'],
+    gas: ['ptable.hmStateGas', 'Gas', 'Gás'],
+    unknown: ['ptable.hmStateUnknown', 'Unknown', 'Desconhecido']
+  };
+  const row = table[key] || table.unknown;
+  const lang = (document.documentElement.lang || '').toLowerCase();
+  return _T(row[0], lang.indexOf('pt') === 0 ? row[2] : row[1]);
+}
+
+function paintHeatmapMissing(card) {
+  card.style.background = 'var(--surface)';
+  card.style.color = 'var(--text-3)';
+  card.style.borderColor = 'var(--border)';
+  card.removeAttribute('data-state');
+}
+
+function syncHeatmapLegend(prop) {
+  document.querySelectorAll('.heatmap-legend').forEach(legend => {
+    if (legend.classList.contains('hm-settings-legend')) legend.hidden = false;
+    const scale = legend.querySelector('.heatmap-scale');
+    if (!scale) return;
+    let stateBox = legend.querySelector('.hm-state-legend');
+    if (prop === 'state') {
+      scale.hidden = true;
+      if (!stateBox) {
+        stateBox = document.createElement('div');
+        stateBox.className = 'hm-state-legend';
+        stateBox.setAttribute('role', 'list');
+        scale.insertAdjacentElement('afterend', stateBox);
+      }
+      stateBox.hidden = false;
+      stateBox.textContent = '';
+      ['solid', 'liquid', 'gas', 'unknown'].forEach(key => {
+        const item = document.createElement('span');
+        item.className = 'hm-state-item';
+        item.setAttribute('role', 'listitem');
+        const sw = document.createElement('span');
+        sw.className = 'hm-state-swatch';
+        sw.dataset.state = key;
+        if (HM_STATE_COLORS[key]) sw.style.background = HM_STATE_COLORS[key];
+        const label = document.createElement('span');
+        label.textContent = heatmapStateLabel(key);
+        item.appendChild(sw);
+        item.appendChild(label);
+        stateBox.appendChild(item);
+      });
+      return;
+    }
+    scale.hidden = false;
+    if (stateBox) stateBox.hidden = true;
+    let unit = scale.querySelector('.hm-unit');
+    if (!unit) {
+      unit = document.createElement('span');
+      unit.className = 'hm-unit';
+      scale.appendChild(unit);
+    }
+    unit.textContent = prop === 'ionization' ? _T('ptable.hmUnitKj', 'kJ/mol') : '';
+  });
+}
+
 function applyHeatmap(prop) {
   const cards = document.querySelectorAll('.el:not(.el-ph)');
+  syncHeatmapLegend(prop);
+
+  if (prop === 'state') {
+    cards.forEach(card => {
+      const z = parseInt(card.dataset.z, 10);
+      if (!z) return;
+      const el = ELEMENTS.find(e => e.z === z);
+      const key = heatmapStateKey(el);
+      if (!HM_STATE_COLORS[key]) {
+        paintHeatmapMissing(card);
+        card.dataset.state = 'unknown';
+        return;
+      }
+      card.dataset.state = key;
+      card.style.background = HM_STATE_COLORS[key];
+      card.style.color = '#fff';
+      card.style.borderColor = HM_STATE_COLORS[key];
+    });
+    return;
+  }
+
   let min = Infinity, max = -Infinity;
   const values = {};
-
   cards.forEach(card => {
-    const z = parseInt(card.dataset.z);
+    const z = parseInt(card.dataset.z, 10);
     if (!z) return;
-    const el = ELEMENTS.find(e => e.z === z);
-    const ex = getExtra(z);
-    const ex2 = getExtra2(z);
-    let val = NaN;
-
-    if (prop === 'electronegativity') val = parseFloat(el.en);
-    if (prop === 'radius') val = parseFloat(ex2.radius);
-    if (prop === 'melt') val = parseFloat(ex.melt);
-    if (prop === 'boil') val = parseFloat(ex.boil);
-    if (prop === 'density') val = parseFloat(ex2.density);
-    if (prop === 'mass') val = parseFloat(el.mass.replace(/[^0-9.]/g,''));
-
+    const val = heatmapPropValue(z, prop);
     values[z] = val;
-    if (!isNaN(val)) {
+    if (val != null) {
       if (val < min) min = val;
       if (val > max) max = val;
     }
   });
 
   cards.forEach(card => {
-    const z = parseInt(card.dataset.z);
+    const z = parseInt(card.dataset.z, 10);
     if (!z) return;
     const val = values[z];
-    if (isNaN(val)) {
-      card.style.background = 'var(--surface)';
-      card.style.color = 'var(--text-3)';
-      card.style.borderColor = 'var(--border)';
+    card.removeAttribute('data-state');
+    if (val == null) {
+      paintHeatmapMissing(card);
     } else {
       let pct = (val - min) / (max - min);
       if (max === min) pct = 0.5;
@@ -2051,7 +2206,17 @@ function removeHeatmap() {
     card.style.background = '';
     card.style.color = '';
     card.style.borderColor = '';
+    card.removeAttribute('data-state');
   });
+  document.querySelectorAll('.heatmap-legend').forEach(legend => {
+    const scale = legend.querySelector('.heatmap-scale');
+    const stateBox = legend.querySelector('.hm-state-legend');
+    const unit = legend.querySelector('.hm-unit');
+    if (scale) scale.hidden = false;
+    if (stateBox) stateBox.hidden = true;
+    if (unit) unit.textContent = '';
+  });
+  document.querySelectorAll('.hm-settings-legend').forEach(legend => { legend.hidden = true; });
 }
 
 // ─── COMPARAR LOGIC ───
@@ -3649,9 +3814,8 @@ function buildTrendCard(el, prop) {
   const esc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
   let meta = `<span>${T.z}</span><b>${el.z}</b>`;
   if (Number.isFinite(+el.period)) meta += `<span>${T.period}</span><b>${esc(el.period)}</b>`;
-  // f-block elements carry a column-index group in the dataset, not a real IUPAC
-  // group (3–12); omit it so the card never shows a misleading "Group 4" for a
-  // lanthanide. Period + the Lanthanide/Actinide category already place them.
+  // f-block group is null (the drawing column is `col`, not an IUPAC group).
+  // Omit it here; the category already says lanthanide or actinide.
   const isFBlock = el.cat === 'lanthanide' || el.cat === 'actinide';
   if (!isFBlock && el.group != null && el.group !== '' && Number.isFinite(+el.group)) meta += `<span>${T.group}</span><b>${esc(el.group)}</b>`;
   const cat = trendChemicalFamilyLabel(el);
@@ -3719,11 +3883,10 @@ function trendFilterElements(filterValue) {
   return ELEMENTS.slice();
 }
 
-// The dataset assigns f-block elements a column-index "group" (Ce→4 … Lu→17),
-// which leaks lanthanides/actinides into the d/p-block group filters (e.g. Ce in
-// "Group 4", Lu/Lr in "Group 17"). Groups 4–18 are exclusively d/p-block, so we
-// drop the f-block there; group 3 keeps La/Ac (a legitimate boundary). The
-// f-block stays fully reachable via the dedicated Lanthanides/Actinides filters.
+// f-block elements keep group: null, so a numeric group filter does not include
+// them. This guard still drops an f-block element if one is ever given a group
+// above 3. Group 3 stays Sc and Y until the owner chooses Lu/Lr or La/Ac.
+// The f-block stays fully reachable via the dedicated Lanthanides/Actinides filters.
 function trendGroupKeepsFBlock(g, e) {
   return g <= 3 || (e.cat !== 'lanthanide' && e.cat !== 'actinide');
 }
@@ -6561,10 +6724,14 @@ function setElSize(size) {
 function setHeatmap(prop) {
   localStorage.setItem('atomurus-heatmap', prop);
   const tabSel = document.getElementById('hm-select');
-  if (tabSel) tabSel.value = prop === 'category' ? tabSel.value : prop;
+  if (tabSel) {
+    const mapped = prop === 'atomic_radius' ? 'radius' : prop;
+    const has = Array.prototype.some.call(tabSel.options, o => o.value === mapped);
+    if (has) tabSel.value = mapped;
+  }
   if (prop === 'category') {
     removeHeatmap();
-  } else {
+  } else if (document.getElementById('ptable')) {
     applyHeatmap(prop);
   }
 }
@@ -6603,11 +6770,13 @@ function setFblock(show, btn) {
   const sz = localStorage.getItem('atomurus-elsize') || 'md';
   setElSize(sz);
 
-  // Restore heatmap select (settings panel) — don't auto-apply since
-  // applyHeatmap only supports a subset of props
+  // Restore the settings-panel heatmap and paint it when the table is on the page.
   const hm = localStorage.getItem('atomurus-heatmap');
   const hmSettings = document.getElementById('heatmap-select');
-  if (hmSettings && hm) hmSettings.value = hm;
+  if (hmSettings && hm && Array.prototype.some.call(hmSettings.options, o => o.value === hm)) {
+    hmSettings.value = hm;
+  }
+  if (hm && hm !== 'category' && document.getElementById('ptable')) applyHeatmap(hm);
 
   const fblock = localStorage.getItem('atomurus-fblock');
   const fblockBtn = document.getElementById('toggle-fblock');
