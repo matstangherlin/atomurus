@@ -130,5 +130,40 @@ for (let i = 0; i < 2000; i += 1) {
   assert.ok(cls.key);
 }
 
+function extractFunction(html, name) {
+  const start = html.indexOf('function ' + name + '(');
+  assert.ok(start >= 0, name);
+  let depth = 0;
+  let opened = false;
+  for (let i = start; i < html.length; i += 1) {
+    if (html[i] === '{') {
+      depth += 1;
+      opened = true;
+    } else if (html[i] === '}') {
+      depth -= 1;
+      if (opened && depth === 0) return html.slice(start, i + 1);
+    }
+  }
+  throw new Error('unclosed ' + name);
+}
+
+const calcEn = readFileSync(new URL('../calculators.html', import.meta.url), 'utf8');
+const calcPt = readFileSync(new URL('../calculators.pt.html', import.meta.url), 'utf8');
+const formatEn = extractFunction(calcEn, 'formatNumber');
+const formatPt = extractFunction(calcPt, 'formatNumber');
+assert.equal(formatEn, formatPt);
+const vm = await import('node:vm');
+const sandbox = { Intl, Number, Math, isFinite, String };
+vm.createContext(sandbox);
+vm.runInContext(formatEn + '\nthis.formatNumber = formatNumber;', sandbox);
+assert.equal(sandbox.formatNumber(98.0678, { sig: 4, lang: 'pt' }), '98,07');
+assert.equal(sandbox.formatNumber(98.0678, { sig: 4, lang: 'en' }), '98.07');
+assert.equal(sandbox.formatNumber(0.0821, { sig: 4, lang: 'pt' }), '0,0821');
+assert.equal(sandbox.formatNumber(101325, { sig: 4, lang: 'pt' }), '1,013×10⁵');
+assert.equal(sandbox.formatNumber(101325, { sig: 4, lang: 'en' }), '1.013e+5');
+assert.equal(sandbox.formatNumber(12345, { sig: 5, lang: 'pt' }), '12.345');
+assert.equal(sandbox.formatNumber(12345, { sig: 5, lang: 'en' }), '12345');
+assert.equal(sandbox.formatNumber(-0.0001234, { sig: 4, lang: 'pt' }), '-1,234×10⁻⁴');
+
 console.log('test-calc-validation: ok');
 console.log('H 1e-8', dilute.pH.toFixed(4), 'OH 1e-8', base.pH.toFixed(4), 'P atm', pAtm.toFixed(4));

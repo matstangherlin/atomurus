@@ -335,7 +335,7 @@
     <div class="content-inner">
       <div class="ph-kicker" data-i18n="calc.kicker">calculadoras</div>
       <h1 class="ph-title" data-i18n="calc.title">Calculadoras</h1>
-      <p class="ph-desc" data-i18n="calc.desc">Uma suíte compacta de computação química para massa de fórmula, expressões científicas, leis dos gases, diluições e diagnósticos ácido-base. Escolha um instrumento, carregue um preset, confira a fórmula e copie um resultado limpo.</p>
+      <p class="ph-desc" data-i18n="calc.desc">Um conjunto de calculadoras de química para massa de fórmula, expressões científicas, leis dos gases, diluições e diagnósticos ácido-base. Escolha um instrumento, carregue um exemplo, confira a fórmula e copie um resultado limpo.</p>
       <div data-pro-lab-tool="calculations"></div>
       <aside class="solver-discover" id="solver-discover">
         <span class="solver-discover-badge ui-badge ui-badge-pro">PRO</span>
@@ -399,13 +399,13 @@
               <span class="calc-menu-num">07</span>
               <span class="calc-menu-copy">
                 <span class="calc-menu-title" data-i18n="calc.tabStoich">Estequiometria</span>
-                <span class="calc-menu-sub" data-i18n="calc.navStoichDesc">razões de reação</span>
+                <span class="calc-menu-sub" data-i18n="calc.navStoichDesc">proporções da reação</span>
               </span>
             </button>
           </div>
 
           <div class="calc-menu-section">
-            <div class="calc-menu-label" data-i18n="calc.menuAdvanced">Avançadas / fila</div>
+            <div class="calc-menu-label" data-i18n="calc.menuAdvanced">Avançadas / em breve</div>
             <button class="calc-menu-item" data-target="thermo" role="tab">
               <span class="calc-menu-num">08</span>
               <span class="calc-menu-copy">
@@ -419,7 +419,7 @@
                 <span class="calc-menu-title" data-i18n="calc.tabEquilibrium">Equilíbrio</span>
                 <span class="calc-menu-sub" data-i18n="calc.navEquilibriumDesc">K, Q, tabelas ICE</span>
               </span>
-              <span class="calc-menu-badge" data-i18n="calc.navQueued">Na fila</span>
+              <span class="calc-menu-badge" data-i18n="calc.navQueued">Em breve</span>
             </button>
             <button class="calc-menu-item" disabled>
               <span class="calc-menu-num">10</span>
@@ -427,7 +427,7 @@
                 <span class="calc-menu-title" data-i18n="calc.tabElectro">Eletroquímica</span>
                 <span class="calc-menu-sub" data-i18n="calc.navElectroDesc">células e potenciais</span>
               </span>
-              <span class="calc-menu-badge" data-i18n="calc.navQueued">Na fila</span>
+              <span class="calc-menu-badge" data-i18n="calc.navQueued">Em breve</span>
             </button>
           </div>
         </div>
@@ -441,7 +441,7 @@
               <div class="calc-panel-h">
                 <span class="calc-panel-kicker" data-i18n="calc.m01Kicker">Massa molar</span>
                 <h2 class="calc-panel-title" data-i18n="calc.m01Title">Calcular M(X) a partir da fórmula</h2>
-                <p class="calc-panel-desc" data-i18n-html="calc.m01DescHtml">Digite qualquer fórmula química — suporta parênteses, hidratos com <code style="font-family:var(--lc-mono);">·</code> ou <code style="font-family:var(--lc-mono);">*</code>, cargas e subscritos. Pesos atômicos padrão abreviados (CIAAW).</p>
+                <p class="calc-panel-desc" data-i18n-html="calc.m01DescHtml">Digite qualquer fórmula química — suporta parênteses, hidratos com <code style="font-family:var(--lc-mono);">·</code> ou <code style="font-family:var(--lc-mono);">*</code>, cargas e subscritos. Massas atômicas padrão abreviadas (CIAAW).</p>
               </div>
               </div>
 
@@ -477,7 +477,7 @@
               </div>
             </div>
 
-            <div class="calc-chip-row" aria-label="Molar mass examples">
+            <div class="calc-chip-row" aria-label="Exemplos de massa molar">
               <span class="calc-chip-label" data-i18n="calc.examples">Exemplos</span>
               <button class="calc-chip" type="button" data-mm-example="H2O">H2O</button>
               <button class="calc-chip" type="button" data-mm-example="C6H12O6">C6H12O6</button>
@@ -496,7 +496,7 @@
             <details class="calc-how">
               <summary data-i18n="calc.howTitle">Como funciona</summary>
               <div class="calc-how-body" data-i18n-html="calc.molarHowHtml">
-                The parser expands groups and hydrates, counts each element, then sums <code>count × atomic weight</code>. Optional amount conversion uses <code>n = m / M</code>.
+                O parser expande grupos e hidratos, conta cada elemento e soma <code>quantidade × massa atômica</code>. A conversão opcional de amostra usa <code>n = m / M</code>.
               </div>
             </details>
 
@@ -925,8 +925,8 @@
               <select id="uc-to" class="calc-select ui-select" onchange="runUnit()"></select>
             </div>
 
-            <div class="calc-chip-row" aria-label="Unit converter presets">
-              <span class="calc-chip-label" data-i18n="calc.presets">Presets</span>
+            <div class="calc-chip-row" aria-label="Exemplos do conversor de unidades">
+              <span class="calc-chip-label" data-i18n="calc.presets">Exemplos</span>
               <button class="calc-chip" type="button" data-uc-preset='{"cat":"mass","value":"250","from":"mg","to":"g"}'>250 mg → g</button>
               <button class="calc-chip" type="button" data-uc-preset='{"cat":"pressure","value":"1","from":"atm","to":"kPa"}'>1 atm → kPa</button>
               <button class="calc-chip" type="button" data-uc-preset='{"cat":"temperature","value":"25","from":"°C","to":"°F"}'>25 °C → °F</button>
@@ -1025,8 +1025,8 @@
               </div>
             </div>
 
-            <div class="calc-chip-row" aria-label="Ideal gas presets">
-              <span class="calc-chip-label" data-i18n="calc.presets">Presets</span>
+            <div class="calc-chip-row" aria-label="Exemplos de gás ideal">
+              <span class="calc-chip-label" data-i18n="calc.presets">Exemplos</span>
               <button class="calc-chip" type="button" data-ig-solve="V" data-ig-p="101325" data-ig-pu="Pa" data-ig-n="1" data-ig-t="0" data-ig-tu="C">STP · 1 mol</button>
               <button class="calc-chip" type="button" data-ig-solve="P" data-ig-v="2" data-ig-vu="L" data-ig-n="0.08" data-ig-t="25" data-ig-tu="C">Lab flask</button>
               <button class="calc-chip" type="button" data-ig-solve="n" data-ig-p="1" data-ig-pu="atm" data-ig-v="5" data-ig-vu="L" data-ig-t="20" data-ig-tu="C">Gas sample</button>
@@ -1100,8 +1100,8 @@
               <input id="dl-V2" class="calc-input ui-input" type="number" step="any" value="">
             </div>
 
-            <div class="calc-chip-row" aria-label="Dilution presets">
-              <span class="calc-chip-label" data-i18n="calc.presets">Presets</span>
+            <div class="calc-chip-row" aria-label="Exemplos de diluição">
+              <span class="calc-chip-label" data-i18n="calc.presets">Exemplos</span>
               <button class="calc-chip" type="button" data-dl-solve="V2" data-dl-c1="1" data-dl-v1="10" data-dl-c2="0.1">10× dilution</button>
               <button class="calc-chip" type="button" data-dl-solve="C2" data-dl-c1="0.5" data-dl-v1="20" data-dl-v2="100">Final molarity</button>
               <button class="calc-chip" type="button" data-dl-solve="V1" data-dl-c1="2" data-dl-c2="0.25" data-dl-v2="250">Stock volume</button>
@@ -1175,8 +1175,8 @@
               <input id="ph-pOH" class="calc-input ui-input" type="number" step="any" value="6.6">
             </div>
 
-            <div class="calc-chip-row" aria-label="pH presets">
-              <span class="calc-chip-label" data-i18n="calc.presets">Presets</span>
+            <div class="calc-chip-row" aria-label="Exemplos de pH">
+              <span class="calc-chip-label" data-i18n="calc.presets">Exemplos</span>
               <button class="calc-chip" type="button" data-ph-mode="H" data-ph-value="1e-3">Acid · 10⁻³ M H⁺</button>
               <button class="calc-chip" type="button" data-ph-mode="pH" data-ph-value="7">Neutral pH 7</button>
               <button class="calc-chip" type="button" data-ph-mode="OH" data-ph-value="1e-2">Base · 10⁻² M OH⁻</button>
@@ -1292,8 +1292,8 @@
               <input id="tm-dt" class="calc-input ui-input" type="number" step="any" value="20">
             </div>
 
-            <div class="calc-chip-row" aria-label="Thermodynamics presets">
-              <span class="calc-chip-label" data-i18n="calc.presets">Presets</span>
+            <div class="calc-chip-row" aria-label="Exemplos de termodinâmica">
+              <span class="calc-chip-label" data-i18n="calc.presets">Exemplos</span>
               <button class="calc-chip" type="button" data-tm-preset='{"dh":"6.01","ds":"22.0","t":"25","sub":"water","mass":"100","dt":"20"}'>H₂O melting</button>
               <button class="calc-chip" type="button" data-tm-preset='{"dh":"-92.2","ds":"-198.7","t":"25","sub":"iron","mass":"50","dt":"30"}'>Haber NH₃</button>
               <button class="calc-chip" type="button" data-tm-preset='{"dh":"178","ds":"160","t":"25","sub":"copper","mass":"80","dt":"40"}'>CaCO₃</button>
@@ -1325,7 +1325,7 @@
         </div>
       </div>
 
-      <p style="font-family:var(--lc-mono);font-size:10.5px;color:var(--lc-ink-3);letter-spacing:.04em;margin-top:18px;text-align:center;" data-i18n="calc.footer">pesos atômicos · pesos atômicos padrão abreviados (CIAAW) · R = 8,314 J·K⁻¹·mol⁻¹ · Kw = 1,0 × 10⁻¹⁴ (25 °C)</p>
+      <p style="font-family:var(--lc-mono);font-size:10.5px;color:var(--lc-ink-3);letter-spacing:.04em;margin-top:18px;text-align:center;" data-i18n="calc.footer">massas atômicas · massas atômicas padrão abreviadas (CIAAW) · R = 8,314 J·K⁻¹·mol⁻¹ · Kw = 1,0 × 10⁻¹⁴ (25 °C)</p>
     </div>
   </div>
 </main>
@@ -1476,12 +1476,37 @@ window.addEventListener('keydown', e => {
 // ═════════════════════════════════════════
 // FORMATTING
 // ═════════════════════════════════════════
-function fmt(n, sig = 4) {
+function formatNumber(n, opts) {
+  const sig = opts && opts.sig != null ? opts.sig : 4;
+  const lang = (opts && opts.lang) || (calcLangIsPt() ? 'pt' : 'en');
+  const pt = String(lang).toLowerCase().indexOf('pt') === 0;
+  const locale = pt ? 'pt-BR' : 'en-US';
   if (!isFinite(n)) return '∞';
   if (n === 0) return '0';
   const abs = Math.abs(n);
-  if (abs >= 1e5 || abs < 1e-3) return n.toExponential(sig-1);
-  return Number(n.toPrecision(sig)).toString();
+  if (abs >= 1e5 || abs < 1e-3) {
+    const exp = n.toExponential(Math.max(0, sig - 1));
+    if (!pt) return exp;
+    const m = /^(-?)(\d+(?:\.\d+)?)e([+-])(\d+)$/i.exec(exp);
+    if (!m) return exp.replace('.', ',');
+    const mantissa = m[2].replace('.', ',');
+    const supDigits = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+    let sup = m[3] === '-' ? '⁻' : '';
+    const digits = String(Number(m[4]));
+    for (let i = 0; i < digits.length; i++) sup += supDigits[digits[i]];
+    return m[1] + mantissa + '×10' + sup;
+  }
+  const plain = Number(n.toPrecision(sig)).toString();
+  const frac = (plain.split('.')[1] || '').length;
+  const value = Number(plain);
+  return new Intl.NumberFormat(locale, {
+    useGrouping: pt && Math.abs(value) >= 10000,
+    minimumFractionDigits: frac,
+    maximumFractionDigits: frac
+  }).format(value);
+}
+function fmt(n, sig = 4) {
+  return formatNumber(n, { sig: sig });
 }
 
 function calcLangIsPt() {
@@ -2582,7 +2607,7 @@ function runMolar() {
     const pct = total > 0 ? (r.cont/total*100) : 0;
     html += `<div class="calc-result-row">
       <span class="calc-result-k">${r.sym} × ${r.count} · A(${r.sym})=${fmt(r.mass)}</span>
-      <span class="calc-result-v">${fmt(r.cont)} g · ${pct.toFixed(1)}%</span>
+      <span class="calc-result-v">${fmt(r.cont)} g · ${calcLangIsPt() ? pct.toFixed(1).replace('.', ',') : pct.toFixed(1)}%</span>
     </div>`;
   });
 

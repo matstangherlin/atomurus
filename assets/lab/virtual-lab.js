@@ -188,7 +188,7 @@
   }
 
   var EQUIPMENT = {
-    beaker: eq('beaker', 'glassware', 'Beaker', 'Becker', {
+    beaker: eq('beaker', 'glassware', 'Beaker', 'Béquer', {
       capacityMl: 250, cap: ['contain', 'mix', 'heat', 'pour', 'measure_volume'],
       ports: [{ id: 'mouth', type: 'fluid' }]
     }),
@@ -1042,11 +1042,11 @@
       version: 2,
       learningObjectives: {
         en: 'Mass, volume and virtual concentration on the free board.',
-        pt: 'Massa, volume e concentração virtual no board livre.'
+        pt: 'Massa, volume e concentração virtual na bancada livre.'
       },
       tutorial: [
-        { id: 'eq', action: 'addEquipment', needEquipment: ['beaker'], en: 'Place a beaker on the board.', pt: 'Coloque um becker no board.', why: { en: 'A beaker holds an approximate volume.', pt: 'O becker contém um volume aproximado.' } },
-        { id: 'water', action: 'addMaterial', need: { water: true }, amounts: { water: 60 }, en: 'Add 60 mL of virtual water to the beaker.', pt: 'Adicione 60 mL de água virtual ao becker.', why: { en: 'The solvent goes in first so the solute has somewhere to dissolve.', pt: 'O solvente entra primeiro para o soluto ter onde dissolver.' } },
+        { id: 'eq', action: 'addEquipment', needEquipment: ['beaker'], en: 'Place a beaker on the board.', pt: 'Coloque um béquer na bancada.', why: { en: 'A beaker holds an approximate volume.', pt: 'O béquer contém um volume aproximado.' } },
+        { id: 'water', action: 'addMaterial', need: { water: true }, amounts: { water: 60 }, en: 'Add 60 mL of virtual water to the beaker.', pt: 'Adicione 60 mL de água virtual ao béquer.', why: { en: 'The solvent goes in first so the solute has somewhere to dissolve.', pt: 'O solvente entra primeiro para o soluto ter onde dissolver.' } },
         { id: 'salt', action: 'addMaterial', need: { nacl: true }, amounts: { nacl: 10 }, en: 'Add 10 g of sodium chloride and stir.', pt: 'Adicione 10 g de cloreto de sódio e agite.', stir: true, why: { en: 'Stirring spreads the solute through the solvent.', pt: 'Agitar espalha o soluto pelo solvente.' } },
         { id: 'read', action: 'inspect', product: 'saline', en: 'Measure volume and read the named product.', pt: 'Meça o volume e leia o produto nomeado.' }
       ]
@@ -1094,7 +1094,7 @@
       safetyClass: 'conceptual',
       version: 2,
       tutorial: [
-        { id: 'carbon', action: 'addMaterial', needAny: ['c', 'carbon'], amounts: { c: 10 }, needEquipment: ['beaker'], en: 'Place 10 g of virtual carbon in a beaker.', pt: 'Coloque 10 g de carbono virtual em um becker.', why: { en: 'Graphite and diamond are both carbon in different lattices.', pt: 'Grafite e diamante são carbono em redes diferentes.' } },
+        { id: 'carbon', action: 'addMaterial', needAny: ['c', 'carbon'], amounts: { c: 10 }, needEquipment: ['beaker'], en: 'Place 10 g of virtual carbon in a beaker.', pt: 'Coloque 10 g de carbono virtual em um béquer.', why: { en: 'Graphite and diamond are both carbon in different lattices.', pt: 'Grafite e diamante são carbono em redes diferentes.' } },
         { id: 'inspect', action: 'inspect', en: 'Open Allotropes to compare graphite and diamond conceptually.', pt: 'Abra Alótropos para comparar grafite e diamante de forma conceitual.' }
       ]
     },
@@ -1155,7 +1155,7 @@
       },
       stages: ['choose', 'disperse', 'emulsify', 'observe'],
       tutorial: [
-        { id: 'base', action: 'addMaterial', need: { water: true, oil: true }, amounts: { water: 20, oil: 15 }, needEquipment: ['beaker'], en: 'Add 20 mL of water and 15 mL of virtual carrier oil to a beaker.', pt: 'Coloque 20 mL de água e 15 mL de óleo virtual em um becker.', why: { en: 'Aqueous and oil phases must meet before a mineral filter can disperse.', pt: 'As fases aquosa e oleosa precisam se encontrar antes de dispersar o filtro mineral.' } },
+        { id: 'base', action: 'addMaterial', need: { water: true, oil: true }, amounts: { water: 20, oil: 15 }, needEquipment: ['beaker'], en: 'Add 20 mL of water and 15 mL of virtual carrier oil to a beaker.', pt: 'Coloque 20 mL de água e 15 mL de óleo virtual em um béquer.', why: { en: 'Aqueous and oil phases must meet before a mineral filter can disperse.', pt: 'As fases aquosa e oleosa precisam se encontrar antes de dispersar o filtro mineral.' } },
         { id: 'filter', action: 'addMaterial', needAny: ['zno', 'tio2'], amounts: { zno: 8, tio2: 8 }, en: 'Disperse 8 g of zinc oxide or titanium dioxide into the base.', pt: 'Dispersar óxido de zinco ou dióxido de titânio na base.', why: { en: 'These are modeled as mineral UV-filter roles, not a certified SPF.', pt: 'Isto modela o papel de filtro UV mineral, não um FPS certificado.' } },
         { id: 'stir', action: 'mix', stir: true, en: 'Stir to form a virtual emulsion.', pt: 'Agite para formar uma emulsão virtual.' },
         { id: 'observe', action: 'inspect', product: 'sunscreen', en: 'Read the inspector. This models a mineral UV filter, not a real SPF.', pt: 'Leia o inspetor. Isto modela um filtro UV mineral, não um FPS real.' }
@@ -3013,14 +3013,14 @@
         : { en: verb.en + ' to move this step forward.', pt: verb.pt + ' para avançar neste passo.' },
       names.length
         ? { en: 'You need: ' + names.join(', ') + '.', pt: 'Você precisa de: ' + names.join(', ') + '.' }
-        : { en: 'Use the board actions under the canvas.', pt: 'Use as ações do board abaixo do canvas.' },
+        : { en: 'Use the board actions under the canvas.', pt: 'Use as ações da bancada abaixo do canvas.' },
       {
         en: equipment.length || materials.length || options.length
           ? 'Open the Tools dock and click the highlighted item in this step.'
           : 'Select a vessel, then use the action bar below the board.',
         pt: equipment.length || materials.length || options.length
           ? 'Abra o dock de ferramentas e clique no item destacado deste passo.'
-          : 'Selecione um vidro e use a barra de ações abaixo do board.'
+          : 'Selecione um vidro e use a barra de ações abaixo da bancada.'
       }
     ];
     return {
@@ -3386,7 +3386,7 @@
       }
       var ids = EQUIPMENT_GROUPS[key] || [];
       return equipmentChips(ids, wanted.equipment) +
-        '<p class="lab-dock-note">' + esc(copy('Click to drop it on the board, then drag it anywhere.', 'Clique para soltar no board e depois arraste para onde quiser.')) + '</p>';
+        '<p class="lab-dock-note">' + esc(copy('Click to drop it on the board, then drag it anywhere.', 'Clique para soltar na bancada e depois arraste para onde quiser.')) + '</p>';
     }
 
     function dockHtml(results) {
@@ -3521,7 +3521,7 @@
         '<span data-lab-zoom-label>' + Math.round(zoom * 100) + '%</span></button>' +
         '<button type="button" class="lab-tool-btn" data-lab-zoom="in" title="' + esc(copy('Zoom in', 'Ampliar')) + ' (Ctrl +)" aria-label="' + esc(copy('Zoom in', 'Ampliar')) + '">+</button>' +
         '<i class="lab-tool-sep"></i>' +
-        '<button type="button" class="lab-tool-btn lab-tool-wide" data-lab-fit title="' + esc(copy('Fit board', 'Ajustar board')) + ' (Ctrl 1)">' + esc(copy('Fit', 'Ajustar')) + '</button>' +
+        '<button type="button" class="lab-tool-btn lab-tool-wide" data-lab-fit title="' + esc(copy('Fit board', 'Ajustar bancada')) + ' (Ctrl 1)">' + esc(copy('Fit', 'Ajustar')) + '</button>' +
         '<div class="lab-zoom-menu" data-lab-zoom-list' + (zoomMenuOpen ? '' : ' hidden') + ' role="menu">' +
         steps.map(function (step) {
           var on = Math.abs(step - zoom) < 0.005;
@@ -4565,7 +4565,7 @@
         '<button type="button" class="lab-tool-btn" data-lab-redo title="' + esc(copy('Redo', 'Refazer')) + '" aria-label="' + esc(copy('Redo', 'Refazer')) + '">' + icon('redo') + '</button>' +
         '</div>' +
         '<div class="lab-bar-title">' +
-        '<strong data-lab-title>' + esc(session.title || copy('Creation board', 'Board de criação')) + '</strong>' +
+        '<strong data-lab-title>' + esc(session.title || copy('Creation board', 'Bancada de criação')) + '</strong>' +
         '<span class="lab-save-state" data-lab-saved>' + esc(copy('Saved', 'Salvo')) + '</span>' + guestChip +
         '</div>' +
         '<form class="lab-search lab-bar-search" data-lab-search role="search">' +
@@ -4765,7 +4765,7 @@
             var stepAmount = Number(t.getAttribute('data-step-amount')) || amount;
             var target = preferredVessel(t.getAttribute('data-step-into') || '');
             if (!target) {
-              flashStatus('<div class="lab-msg" role="status">' + esc(copy('Add a beaker to the board first.', 'Adicione um becker ao board primeiro.')) + '</div>');
+              flashStatus('<div class="lab-msg" role="status">' + esc(copy('Add a beaker to the board first.', 'Adicione um béquer à bancada primeiro.')) + '</div>');
               playSound('deny');
               return;
             }
@@ -4951,7 +4951,7 @@
               playSound('deny');
               flashStatus('<div class="lab-msg" role="status">' + esc(copy('That vessel is full. Empty it or pour into another glass.', 'Esse vidro está cheio. Esvazie ou transfira para outro.')) + '</div>');
             } else if (added.reason === 'tool') {
-              flashStatus('<div class="lab-msg" role="status">' + esc(copy('That tool does not hold a mixture. Select a beaker or flask.', 'Essa ferramenta não retém mistura. Selecione um becker ou erlenmeyer.')) + '</div>');
+              flashStatus('<div class="lab-msg" role="status">' + esc(copy('That tool does not hold a mixture. Select a beaker or flask.', 'Essa ferramenta não retém mistura. Selecione um béquer ou erlenmeyer.')) + '</div>');
               playSound('deny');
             } else {
               playSound('deny');
