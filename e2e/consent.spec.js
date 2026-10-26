@@ -39,6 +39,25 @@ function measureHits(hits) {
   return hits.filter((url) => /googletagmanager|google-analytics|googlesyndication|doubleclick|acscdn/.test(url));
 }
 
+const AD_WARMUP_HOST = /googletagmanager|google-analytics|googlesyndication|doubleclick|acscdn|adtrafficquality|googleadservices/;
+
+function warmupLinks(page) {
+  return page.locator('link[rel="preconnect"], link[rel="dns-prefetch"]').evaluateAll((els) => els.map((el) => el.href));
+}
+
+test('a new visitor has no ad or analytics preconnect until ads are accepted', async ({ page }) => {
+  await arm(page);
+  await page.goto('/');
+  const before = await warmupLinks(page);
+  expect(before.filter((href) => AD_WARMUP_HOST.test(href))).toEqual([]);
+
+  await page.locator('#aco-cc-accept').click();
+  await expect.poll(async () => {
+    const after = await warmupLinks(page);
+    return after.some((href) => /pagead2\.googlesyndication\.com/.test(href));
+  }).toBe(true);
+});
+
 test('a new visitor triggers no analytics or ad host for 6 seconds', async ({ page }) => {
   const hits = await arm(page);
   await page.goto('/');
@@ -88,6 +107,8 @@ test('configure stores one category and keeps it after reload', async ({ page })
   expect(state.analytics).toBe(true);
   expect(state.ads).toBe(false);
   await expect(page.locator('#aco-cookie-banner')).toBeHidden();
+  const links = await warmupLinks(page);
+  expect(links.filter((href) => AD_WARMUP_HOST.test(href))).toEqual([]);
 });
 
 test('ads-config failure loads no ad script after accept', async ({ page }) => {
