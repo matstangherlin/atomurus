@@ -352,7 +352,7 @@ const _ELEMENT_CONTENT_PT = {
     applications:
       'Cerca de 70% do níquel é usado em aços inoxidáveis (especialmente o "304" — 18% Cr, 8% Ni). Moedas em vários países contêm níquel (níquel puro ou cuproníquel). Baterias de íon-lítio NMC (níquel-manganês-cobalto) são padrão em carros elétricos. Superligas de níquel resistem a temperaturas extremas em turbinas de jatos e foguetes. Eletrodeposição: revestimento de outros metais com níquel para proteção contra corrosão.',
     curiosity:
-      'A região de Sudbury, no Canadá, é uma das maiores fontes de níquel do mundo — e a razão é um meteorito. Há cerca de 1,85 bilhão de anos, um asteroide de aproximadamente 10 km bateu na atual Ontário, criando uma cratera de 200 km de diâmetro. O impacto trouxe ou concentrou níquel, cobre e platinoides em quantidades enormes. Hoje, a "Sudbury Basin" produz cerca de 20% do níquel global — meteorito virou fortuna mineira.',
+      'A região de Sudbury, no Canadá, é uma das maiores fontes de níquel do mundo — e a razão é um meteorito. Há cerca de 1,85 bilhão de anos, um asteroide de aproximadamente 10 km bateu na atual Ontário, criando uma cratera de 200 km de diâmetro. O impacto trouxe ou concentrou níquel, cobre e platinoides em quantidades enormes. Hoje, a "Sudbury Basin" produz cerca de 2% do níquel global — meteorito virou fortuna mineira.',
   },
   29: {
     overview:
@@ -460,7 +460,7 @@ const _ELEMENT_CONTENT_PT = {
     applications:
       'Relógios atômicos de rubídio são alternativa mais barata aos de césio em GPS, sincronia de redes celulares e timing científico — menos precisos que césio mas suficientes para muitas aplicações. Em vidros especiais e cerâmicas para reduzir condutividade térmica. Células fotoelétricas em sensores de luz. Em condensados de Bose-Einstein (Nobel 2001) que estudam fenômenos quânticos a temperaturas próximas do zero absoluto. Datação Rb-Sr é padrão para rochas com mais de 100 milhões de anos.',
     curiosity:
-      'A datação Rb-Sr (rubídio-estrôncio) é uma das técnicas mais precisas para datar rochas antigas — incluindo amostras lunares trazidas pelas missões Apollo e rochas marcianas em meteoritos. O Rb-87 decai em Sr-87 com meia-vida tão longa que ainda é detectável em rochas formadas pouco depois do Big Bang. Foi essa técnica que confirmou que a Terra tem 4,54 bilhões de anos — um número derivado diretamente da química do rubídio.',
+      'A datação Rb-Sr (rubídio-estrôncio) serve para rochas antigas — inclusive amostras lunares das missões Apollo e meteoritos marcianos. A idade de 4,54 bilhões de anos da Terra vem de datações Pb-Pb e U-Pb (Patterson, 1956), não do Rb-Sr. As rochas mais antigas conhecidas têm cerca de 4,0 a 4,4 bilhões de anos: não há rochas de pouco depois do Big Bang.',
   },
   38: {
     overview:
@@ -988,7 +988,7 @@ const _ELEMENT_CONTENT_PT = {
     applications:
       'Tl-201 em medicina nuclear para cintilografia de perfusão miocárdica — detecta áreas do coração com fluxo sanguíneo reduzido em pacientes cardíacos. Cristais de iodeto de sódio dopados com tálio em detectores de cintilação para raios gama (usados em câmeras gama hospitalares e em detecção de materiais nucleares). Vidros ópticos de alto índice de refração com Tl₂O. Historicamente, em raticidas e inseticidas — banidos na maioria dos países desde os anos 1970 por causa de envenenamentos acidentais e criminais.',
     curiosity:
-      'Em 1961, Agatha Christie publicou "O Cavalo Amarelo" descrevendo em detalhes os sintomas do envenenamento por tálio — perda de cabelo, dores nas pernas, falência neurológica progressiva. Quase duas décadas depois, um médico em Londres reconheceu esses mesmos sintomas em uma criança e salvou sua vida por ter lido o romance. Mais sombrio: Saddam Hussein supostamente usou tálio para envenenar dissidentes nos anos 1980, e em 2006 a russa Anna Politkovskaya foi tratada para suspeita de envenenamento por tálio antes de ser assassinada. A literatura, no caso desse elemento, virou diagnóstico clínico.',
+      'Em 1961, Agatha Christie publicou "O Cavalo Amarelo" descrevendo em detalhes os sintomas do envenenamento por tálio — perda de cabelo, dores nas pernas, falência neurológica progressiva. Quase duas décadas depois, um médico em Londres reconheceu esses mesmos sintomas em uma criança e salvou sua vida por ter lido o romance. Mais sombrio: Saddam Hussein supostamente usou tálio para envenenar dissidentes nos anos 1980, Em setembro de 2004, no voo para Beslan, Anna Politkovskaya passou mal; a toxina nunca foi identificada e não há evidência de tálio. Ela foi assassinada em outubro de 2006. A literatura, no caso desse elemento, virou diagnóstico clínico.',
   },
   82: {
     overview:
@@ -1084,7 +1084,7 @@ const _ELEMENT_CONTENT_PT = {
     applications:
       'Terapia alfa direcionada com Ac-225 é a aplicação mais promissora: ligado a anticorpos ou peptídeos, leva partículas alfa de altíssima energia (curto alcance, cerca de 50 micrômetros) diretamente a células tumorais, destruindo-as sem afetar tecidos vizinhos. Ensaios clínicos em leucemia, próstata metastático e glioma têm mostrado resultados notáveis. Pequenas quantidades de Ac-227 servem como fonte de nêutrons em laboratórios de pesquisa (Ac-Be). Praticamente nenhum uso industrial.',
     curiosity:
-      'A produção mundial de Ac-225 é uma das mais limitadas da medicina: cerca de 1,7 grama por ano em 2024, vinda principalmente do decaimento de tório-229 estocado nos EUA e Rússia desde a Guerra Fria. A demanda médica supera em muito a oferta — um ensaio clínico para câncer de próstata pode consumir miligramas, e cada paciente recebe quantidades em microgramas. Esforços para produzir Ac-225 em aceleradores comerciais estão crescendo, mas o gargalo é tão sério que oncologistas chamam o isótopo de "o ouro da medicina nuclear".',
+      'A produção mundial de Ac-225 é uma das mais limitadas da medicina: cerca de 1,7 Ci por ano em 2024 (≈ 29 µg), vinda principalmente do decaimento de tório-229 estocado nos EUA e Rússia desde a Guerra Fria. A demanda médica supera em muito a oferta, e cada paciente recebe quantidades em nanogramas. Esforços para produzir Ac-225 em aceleradores comerciais estão crescendo, mas o gargalo é tão sério que oncologistas chamam o isótopo de "o ouro da medicina nuclear".',
   },
   90: {
     overview:
@@ -1112,7 +1112,7 @@ const _ELEMENT_CONTENT_PT = {
   },
   92: {
     overview:
-      'Urânio é o elemento natural mais pesado da Terra, prateado e fracamente radioativo. É a base da energia nuclear, das armas atômicas e da datação geológica. Apesar de associado a tragédias do século XX (Hiroshima, Chernobyl, Fukushima), também é a fonte de energia mais densa que humanos conseguem usar — um grama de urânio enriquecido contém a energia de uma tonelada de carvão.',
+      'Urânio é o elemento natural mais pesado da Terra, prateado e fracamente radioativo. É a base da energia nuclear, das armas atômicas e da datação geológica. Apesar de associado a tragédias do século XX (Hiroshima, Chernobyl, Fukushima), também é a fonte de energia mais densa que humanos conseguem usar — a comparação de uma tonelada de carvão vale para uma pastilha de combustível (~7 g), não para um grama de urânio enriquecido.',
     history:
       'Descoberto em 1789 pelo químico alemão Martin Heinrich Klaproth, que o batizou em homenagem ao planeta Urano, descoberto oito anos antes. A radioatividade do urânio foi descoberta por acidente em 1896 por Henri Becquerel, abrindo o caminho para a física nuclear. A primeira reação em cadeia controlada aconteceu em Chicago em 1942 (Projeto Manhattan), levando às bombas de Hiroshima e Nagasaki e à era nuclear.',
     properties:
@@ -1156,7 +1156,7 @@ const _ELEMENT_CONTENT_PT = {
     applications:
       'Detectores de fumaça residenciais por ionização: cerca de 0,2 microgramas de Am-241 por unidade — bilhões de detectores no mundo todo. Fontes para perfilagem geofísica em poços de petróleo e gás (medem densidade e umidade de rochas). Em medidores de espessura industriais (papel, plástico, metal). Pesquisa em transmutação de resíduos nucleares. Considerado como combustível alternativo para baterias de espaçonaves profundas, como substituto parcial do escasso Pu-238.',
     curiosity:
-      'Em 2010, o adolescente sueco Hannes Vagn-Bonde de 31 anos tentou construir um reator nuclear caseiro em sua cozinha em Ängelholm, extraindo amerício de detectores de fumaça e rádio de relógios antigos. Quando a vizinhança notou material radioativo, a Polícia chamou a Autoridade Nuclear Sueca. Felizmente, ele não chegou nem perto da massa crítica, mas tornou-se um dos casos mais famosos de "experimentação nuclear amadora" — ressaltando, de modo perigoso, o quão acessível o amerício se tornou, e os limites éticos de DIY científico.',
+      'Em 2011, um amador na Suécia tentou construir um reator nuclear caseiro com amerício de detectores de fumaça.',
   },
   96: {
     overview:
@@ -1168,7 +1168,7 @@ const _ELEMENT_CONTENT_PT = {
     applications:
       'Cm-244 em espectrômetros APXS (Alpha Particle X-ray Spectrometer) embarcados nos rovers marcianos Sojourner, Spirit, Opportunity, Curiosity e Perseverance — bombardeia rochas com partículas alfa e mede raios-X de retorno para identificar elementos. Fontes de calor compactas para missões espaciais de longa duração. Pequenas quantidades em produção de outros transurânicos pesados em reatores. Pesquisa fundamental em química e física dos actinídeos.',
     curiosity:
-      'O espectrômetro APXS, do tamanho de uma lata de refrigerante, contém apenas alguns gramas de Cm-244 — mas é a "ferramenta de laboratório" que permitiu identificar minerais como hematita, jarosita e argilas em Marte, ajudando a confirmar que a superfície marciana já teve água líquida em abundância. Cada análise leva poucas horas, e o rover encosta o instrumento contra a rocha como um geólogo encostando uma lupa. Sem cúrio, grande parte do que sabemos sobre a geoquímica de Marte teria ficado fora de alcance.',
+      'O espectrômetro APXS, do tamanho de uma lata de refrigerante, leva cerca de 0,4–0,6 mg de Cm-244 (30–50 mCi) — mas é a "ferramenta de laboratório" que permitiu identificar minerais como hematita, jarosita e argilas em Marte, ajudando a confirmar que a superfície marciana já teve água líquida em abundância. Cada análise leva poucas horas, e o rover encosta o instrumento contra a rocha como um geólogo encostando uma lupa. Sem cúrio, grande parte do que sabemos sobre a geoquímica de Marte teria ficado fora de alcance.',
   },
   97: {
     overview:
@@ -1396,7 +1396,7 @@ const _ELEMENT_CONTENT_PT = {
     applications:
       'Nenhuma aplicação prática.',
     curiosity:
-      'Em 2013, um ex-cientista militar canadense chamado Bob Lazar afirmou em entrevista de TV que o "elemento 115" era o combustível dos discos voadores supostamente recuperados em Roswell, Novo México. A história virou meme da cultura pop conspiratória — e a IUPAC decidiu não evitar a coincidência de nome ao ratificar "moscovium" como Z 115 em 2016. Hoje, vídeos pseudocientíficos sobre "Element 115 antigravity engines" coexistem na internet com publicações científicas sérias sobre as propriedades nucleares de Mc-290. Foi talvez o único elemento da tabela cuja descoberta científica precedeu — e contradisse, sem querer — uma teoria da conspiração popular pré-existente.',
+      'Em 1989, o americano Bob Lazar afirmou, em entrevista à KLAS-TV, que o "elemento 115" seria o combustível de discos voadores no S-4, na Área 51. A história virou meme da cultura pop conspiratória — e a IUPAC decidiu não evitar a coincidência de nome ao ratificar "moscovium" como Z 115 em 2016. Hoje, vídeos pseudocientíficos sobre "Element 115 antigravity engines" coexistem na internet com publicações científicas sérias sobre as propriedades nucleares de Mc-290. Foi talvez o único elemento da tabela cuja descoberta científica precedeu — e contradisse, sem querer — uma teoria da conspiração popular pré-existente.',
   },
   116: {
     overview:
@@ -1771,7 +1771,7 @@ const _ELEMENT_CONTENT_EN = {
     applications:
       'About 70% of nickel is used in stainless steels (especially "304" — 18% Cr, 8% Ni). Coins in several countries contain nickel (pure nickel or cupronickel). Lithium-ion NMC batteries (nickel-manganese-cobalt) are standard in electric cars. Nickel superalloys withstand extreme temperatures in jet turbines and rockets. Electroplating: coating other metals with nickel for corrosion protection.',
     curiosity:
-      'The Sudbury region in Canada is one of the world\'s largest nickel sources — and the reason is a meteorite. About 1.85 billion years ago, an asteroid roughly 10 km wide hit what is now Ontario, creating a 200 km diameter crater. The impact brought or concentrated nickel, copper and platinum-group metals in enormous quantities. Today the "Sudbury Basin" produces about 20% of global nickel — meteorite turned into mining fortune.',
+      'The Sudbury region in Canada is one of the world\'s largest nickel sources — and the reason is a meteorite. About 1.85 billion years ago, an asteroid roughly 10 km wide hit what is now Ontario, creating a 200 km diameter crater. The impact brought or concentrated nickel, copper and platinum-group metals in enormous quantities. Today the "Sudbury Basin" produces about 2% of global nickel — meteorite turned into mining fortune.',
   },
   29: {
     overview:
@@ -1879,7 +1879,7 @@ const _ELEMENT_CONTENT_EN = {
     applications:
       'Rubidium atomic clocks are a cheaper alternative to cesium ones in GPS, cellular network synchronization, and scientific timing — less precise than cesium but enough for many applications. In specialty glasses and ceramics to reduce thermal conductivity. Photoelectric cells in light sensors. In Bose-Einstein condensates (Nobel 2001) that study quantum phenomena at temperatures near absolute zero. Rb-Sr dating is standard for rocks older than 100 million years.',
     curiosity:
-      'Rb-Sr (rubidium-strontium) dating is one of the most accurate techniques for dating ancient rocks — including lunar samples brought by the Apollo missions and Martian rocks in meteorites. Rb-87 decays into Sr-87 with such a long half-life that it is still detectable in rocks formed shortly after the Big Bang. It was this technique that confirmed Earth is 4.54 billion years old — a figure derived directly from rubidium chemistry.',
+      'Rb-Sr (rubidium-strontium) dating is used for ancient rocks — including lunar samples from the Apollo missions and Martian meteorites. Earth\'s age of 4.54 billion years comes from Pb-Pb and U-Pb dating (Patterson, 1956), not from Rb-Sr. The oldest known rocks are about 4.0 to 4.4 billion years old: there are no rocks from shortly after the Big Bang.',
   },
   38: {
     overview:
@@ -2407,7 +2407,7 @@ const _ELEMENT_CONTENT_EN = {
     applications:
       'Tl-201 in nuclear medicine for myocardial perfusion scintigraphy — detects areas of the heart with reduced blood flow in cardiac patients. Sodium iodide crystals doped with thallium in scintillation detectors for gamma rays (used in hospital gamma cameras and in nuclear material detection). High-refractive-index optical glasses with Tl₂O. Historically, in rat poisons and insecticides — banned in most countries since the 1970s because of accidental and criminal poisonings.',
     curiosity:
-      'In 1961, Agatha Christie published "The Pale Horse" describing in detail the symptoms of thallium poisoning — hair loss, leg pain, progressive neurological failure. Almost two decades later, a doctor in London recognized these same symptoms in a child and saved her life thanks to having read the novel. Darker still: Saddam Hussein reportedly used thallium to poison dissidents in the 1980s, and in 2006 Russian journalist Anna Politkovskaya was treated for suspected thallium poisoning before being assassinated. Literature, in the case of this element, became clinical diagnosis.',
+      'In 1961, Agatha Christie published "The Pale Horse" describing in detail the symptoms of thallium poisoning — hair loss, leg pain, progressive neurological failure. Almost two decades later, a doctor in London recognized these same symptoms in a child and saved her life thanks to having read the novel. Darker still: Saddam Hussein reportedly used thallium to poison dissidents in the 1980s, In September 2004, on a flight to Beslan, Anna Politkovskaya fell ill; the toxin was never identified and there is no evidence of thallium. She was assassinated in October 2006. Literature, in the case of this element, became clinical diagnosis.',
   },
   82: {
     overview:
@@ -2503,7 +2503,7 @@ const _ELEMENT_CONTENT_EN = {
     applications:
       'Targeted alpha therapy with Ac-225 is the most promising application: bound to antibodies or peptides, it carries very-high-energy alpha particles (short range, about 50 micrometers) directly to tumor cells, destroying them without affecting nearby tissues. Clinical trials in leukemia, metastatic prostate cancer and glioma have shown remarkable results. Small amounts of Ac-227 serve as a neutron source in research laboratories (Ac-Be). Practically no industrial use.',
     curiosity:
-      'Global production of Ac-225 is among the most limited in medicine: about 1.7 grams per year in 2024, coming mainly from the decay of thorium-229 stockpiled in the U.S. and Russia since the Cold War. Medical demand far outstrips supply — a clinical trial for prostate cancer can consume milligrams, and each patient receives doses in micrograms. Efforts to produce Ac-225 in commercial accelerators are growing, but the bottleneck is so severe that oncologists call the isotope "the gold of nuclear medicine".',
+      'Global production of Ac-225 is among the most limited in medicine: about 1.7 Ci per year in 2024 (≈ 29 µg), coming mainly from the decay of thorium-229 stockpiled in the U.S. and Russia since the Cold War. Medical demand far outstrips supply, and each patient receives doses in nanograms. Efforts to produce Ac-225 in commercial accelerators are growing, but the bottleneck is so severe that oncologists call the isotope "the gold of nuclear medicine".',
   },
   90: {
     overview:
@@ -2531,7 +2531,7 @@ const _ELEMENT_CONTENT_EN = {
   },
   92: {
     overview:
-      'Uranium is the heaviest natural element on Earth, silvery and weakly radioactive. It is the basis of nuclear power, atomic weapons, and geological dating. Although associated with 20th-century tragedies (Hiroshima, Chernobyl, Fukushima), it is also the most energy-dense fuel humans can use — one gram of enriched uranium contains the energy of a ton of coal.',
+      'Uranium is the heaviest natural element on Earth, silvery and weakly radioactive. It is the basis of nuclear power, atomic weapons, and geological dating. Although associated with 20th-century tragedies (Hiroshima, Chernobyl, Fukushima), it is also the most energy-dense fuel humans can use — the one-tonne-of-coal comparison belongs to a fuel pellet (~7 g), not to one gram of enriched uranium.',
     history:
       'Discovered in 1789 by German chemist Martin Heinrich Klaproth, who named it after the planet Uranus, discovered eight years earlier. Uranium\'s radioactivity was discovered by accident in 1896 by Henri Becquerel, opening the path to nuclear physics. The first controlled chain reaction took place in Chicago in 1942 (Manhattan Project), leading to the Hiroshima and Nagasaki bombs and the nuclear era.',
     properties:
@@ -2575,7 +2575,7 @@ const _ELEMENT_CONTENT_EN = {
     applications:
       'Residential ionization smoke detectors: about 0.2 micrograms of Am-241 per unit — billions of detectors worldwide. Sources for geophysical logging in oil and gas wells (measure rock density and humidity). In industrial thickness gauges (paper, plastic, metal). Research into transmutation of nuclear waste. Considered as an alternative fuel for deep-space probe batteries, as a partial substitute for the scarce Pu-238.',
     curiosity:
-      'In 2010, the 31-year-old Swede Hannes Vagn-Bonde tried to build a homemade nuclear reactor in his kitchen in Ängelholm, extracting americium from smoke detectors and radium from old watches. When neighbors noticed radioactive material, police called the Swedish Nuclear Authority. Luckily, he never came close to critical mass, but he became one of the most famous cases of "amateur nuclear experimentation" — highlighting, in dangerous fashion, just how accessible americium has become, and the ethical limits of scientific DIY.',
+      'In 2011, an amateur in Sweden tried to build a homemade nuclear reactor with americium from smoke detectors.',
   },
   96: {
     overview:
@@ -2587,7 +2587,7 @@ const _ELEMENT_CONTENT_EN = {
     applications:
       'Cm-244 in APXS (Alpha Particle X-ray Spectrometer) instruments on the Mars rovers Sojourner, Spirit, Opportunity, Curiosity and Perseverance — bombards rocks with alpha particles and measures returning X-rays to identify elements. Compact heat sources for long-duration space missions. Small amounts in production of other heavy transuranics in reactors. Fundamental research in actinide chemistry and physics.',
     curiosity:
-      'The APXS spectrometer, the size of a soda can, contains just a few grams of Cm-244 — but it is the "lab tool" that has identified minerals such as hematite, jarosite and clays on Mars, helping confirm that the Martian surface once had abundant liquid water. Each analysis takes a few hours, and the rover presses the instrument against the rock like a geologist pressing a magnifying glass. Without curium, much of what we know about Mars geochemistry would have been out of reach.',
+      'The APXS spectrometer, the size of a soda can, carries about 0.4–0.6 mg of Cm-244 (30–50 mCi) — but it is the "lab tool" that has identified minerals such as hematite, jarosite and clays on Mars, helping confirm that the Martian surface once had abundant liquid water. Each analysis takes a few hours, and the rover presses the instrument against the rock like a geologist pressing a magnifying glass. Without curium, much of what we know about Mars geochemistry would have been out of reach.',
   },
   97: {
     overview:
@@ -2815,7 +2815,7 @@ const _ELEMENT_CONTENT_EN = {
     applications:
       'No practical applications.',
     curiosity:
-      'In 2013, a former Canadian military scientist named Bob Lazar claimed in a TV interview that "element 115" was the fuel for the flying saucers allegedly recovered at Roswell, New Mexico. The story became a conspiracy pop-culture meme — and the IUPAC chose not to avoid the name coincidence when ratifying "moscovium" as Z 115 in 2016. Today, pseudoscientific videos about "Element 115 antigravity engines" coexist on the internet with serious scientific publications about the nuclear properties of Mc-290. It was perhaps the only element in the table whose scientific discovery preceded — and inadvertently contradicted — a pre-existing popular conspiracy theory.',
+      'In 1989, the American Bob Lazar claimed, in a KLAS-TV interview, that "element 115" was the fuel for flying saucers at S-4, in Area 51. The story became a conspiracy pop-culture meme — and the IUPAC chose not to avoid the name coincidence when ratifying "moscovium" as Z 115 in 2016. Today, pseudoscientific videos about "Element 115 antigravity engines" coexist on the internet with serious scientific publications about the nuclear properties of Mc-290. It was perhaps the only element in the table whose scientific discovery preceded — and inadvertently contradicted — a pre-existing popular conspiracy theory.',
   },
   116: {
     overview:
