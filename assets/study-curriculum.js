@@ -38,9 +38,10 @@
       id: 'periodic-table',
       status: 'live',
       href: '/periodic-table.html',
+      hrefPt: '/periodic-table.pt.html',
       title: { en: 'Periodic Table', pt: 'Tabela periódica' },
       pages: [
-        { href: '/periodic-table.html' },
+        { href: '/periodic-table.html', hrefPt: '/periodic-table.pt.html' },
         { href: '/explore/what-is-the-periodic-table.html', hrefPt: '/explore/what-is-the-periodic-table.pt.html' }
       ]
     },
@@ -97,7 +98,7 @@
       title: { en: 'Organic Chemistry Fundamentals', pt: 'Fundamentos de química orgânica' },
       pages: [
         { href: '/explore/what-is-isomerism.html', hrefPt: '/explore/what-is-isomerism.pt.html' },
-        { href: '/viewer/isomerism.html' }
+        { href: '/viewer/isomerism.html', hrefPt: '/viewer/isomerism.pt.html' }
       ]
     }
   ];

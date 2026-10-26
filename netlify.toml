@@ -303,6 +303,13 @@
 
 [[redirects]]
   from   = "/pricing"
+  to     = "/pricing.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/pricing"
   to     = "/pricing.html"
   status = 200
 
@@ -574,13 +581,6 @@
   query  = { lang = "pt-BR" }
 
 [[redirects]]
-  from   = "/pricing"
-  to     = "/pricing.pt.html"
-  status = 200
-  force  = true
-  query  = { lang = "pt-BR" }
-
-[[redirects]]
   from   = "/contact"
   to     = "/contact.pt.html"
   status = 200
@@ -694,9 +694,8 @@
   force  = true
   query  = { lang = "pt-BR" }
 
-# Isomerism hub — PT variant. Only the hub: the isomerism SUBPAGES have no
-# usable .pt.html (their .pt.html files are broken redirect stubs) and are
-# translated client-side via ?lang=pt-BR, so no rewrite for them.
+# Isomerism hub — PT variant. Subpages whose .pt.html is a real page (not a
+# refresh stub) also rewrite; stubs must not.
 [[redirects]]
   from   = "/viewer/isomerism"
   to     = "/viewer/isomerism.pt.html"
@@ -787,6 +786,41 @@
 [[redirects]]
   from   = "/explore/viewer/methyl-isocyanate"
   to     = "/explore/viewer/methyl-isocyanate.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/explore/what-is-an-atom"
+  to     = "/explore/what-is-an-atom.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/explore/what-are-isotopes"
+  to     = "/explore/what-are-isotopes.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/explore/what-is-radioactivity"
+  to     = "/explore/what-is-radioactivity.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/explore/what-is-chemical-bonding"
+  to     = "/explore/what-is-chemical-bonding.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/explore/chernobyl-disaster"
+  to     = "/explore/chernobyl-disaster.pt.html"
   status = 200
   force  = true
   query  = { lang = "pt-BR" }

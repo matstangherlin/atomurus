@@ -1478,12 +1478,37 @@ window.addEventListener('keydown', e => {
 // ═════════════════════════════════════════
 // FORMATTING
 // ═════════════════════════════════════════
-function fmt(n, sig = 4) {
+function formatNumber(n, opts) {
+  const sig = opts && opts.sig != null ? opts.sig : 4;
+  const lang = (opts && opts.lang) || (calcLangIsPt() ? 'pt' : 'en');
+  const pt = String(lang).toLowerCase().indexOf('pt') === 0;
+  const locale = pt ? 'pt-BR' : 'en-US';
   if (!isFinite(n)) return '∞';
   if (n === 0) return '0';
   const abs = Math.abs(n);
-  if (abs >= 1e5 || abs < 1e-3) return n.toExponential(sig-1);
-  return Number(n.toPrecision(sig)).toString();
+  if (abs >= 1e5 || abs < 1e-3) {
+    const exp = n.toExponential(Math.max(0, sig - 1));
+    if (!pt) return exp;
+    const m = /^(-?)(\d+(?:\.\d+)?)e([+-])(\d+)$/i.exec(exp);
+    if (!m) return exp.replace('.', ',');
+    const mantissa = m[2].replace('.', ',');
+    const supDigits = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+    let sup = m[3] === '-' ? '⁻' : '';
+    const digits = String(Number(m[4]));
+    for (let i = 0; i < digits.length; i++) sup += supDigits[digits[i]];
+    return m[1] + mantissa + '×10' + sup;
+  }
+  const plain = Number(n.toPrecision(sig)).toString();
+  const frac = (plain.split('.')[1] || '').length;
+  const value = Number(plain);
+  return new Intl.NumberFormat(locale, {
+    useGrouping: pt && Math.abs(value) >= 10000,
+    minimumFractionDigits: frac,
+    maximumFractionDigits: frac
+  }).format(value);
+}
+function fmt(n, sig = 4) {
+  return formatNumber(n, { sig: sig });
 }
 
 function calcLangIsPt() {
