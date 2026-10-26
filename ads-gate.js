@@ -111,8 +111,25 @@
     return true;
   }
 
+  function ensureAdPreconnect() {
+    // The HTML head must not preconnect to the ad host before consent.
+    // Open the connection only when this visitor allowed ads.
+    var choice = window.atomurusConsent && typeof window.atomurusConsent.get === 'function'
+      ? window.atomurusConsent.get()
+      : null;
+    if (!choice || choice.ads !== true) return;
+    if (document.querySelector('link[data-atomurus-ad-preconnect]')) return;
+    var link = document.createElement('link');
+    link.rel = 'preconnect';
+    link.href = 'https://pagead2.googlesyndication.com';
+    link.crossOrigin = 'anonymous';
+    link.setAttribute('data-atomurus-ad-preconnect', '1');
+    document.head.appendChild(link);
+  }
+
   function loadAdSenseIfNeeded() {
     if (!state.adsEnabled || !adsConsentGranted()) return;
+    ensureAdPreconnect();
     if (document.querySelector('script[src*="adsbygoogle.js"]')) return;
     if (window.__ATOMURUS_ADSENSE_LOADER__) return;
     window.__ATOMURUS_ADSENSE_LOADER__ = true;
