@@ -8,6 +8,7 @@ import {
   supabaseLogout,
   supabaseRecover,
   supabaseRefresh,
+  supabaseResendConfirmation,
   supabaseResetPassword,
   supabaseSessionFromRequest,
   supabaseSignup,
@@ -97,6 +98,10 @@ export async function authLogout(request) {
 
 export async function authRecover(email) {
   await supabaseRecover(email);
+}
+
+export async function authResendConfirmation(email) {
+  await supabaseResendConfirmation(email);
 }
 
 export async function authConfirm(token, type = 'signup') {

@@ -344,6 +344,14 @@
     });
   }
 
+  async function resendConfirmation(email) {
+    return request('/api/auth/resend-confirmation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email })
+    });
+  }
+
   async function resetPassword(payload) {
     var data = await request('/api/auth/reset', {
       method: 'POST',
@@ -453,6 +461,7 @@
     getCurrentUser: getCurrentUser,
     refreshSession: refreshSession,
     recoverPassword: recoverPassword,
+    resendConfirmation: resendConfirmation,
     resetPassword: resetPassword,
     confirmEmail: confirmEmail,
     establishSession: establishSession,

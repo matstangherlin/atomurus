@@ -8,6 +8,7 @@ import meHandler from '../netlify/functions/auth-me.mjs';
 import logoutHandler from '../netlify/functions/auth-logout.mjs';
 import refreshHandler from '../netlify/functions/auth-refresh.mjs';
 import recoverHandler from '../netlify/functions/auth-recover.mjs';
+import resendHandler from '../netlify/functions/auth-resend-confirmation.mjs';
 import signupHandler from '../netlify/functions/auth-signup.mjs';
 import confirmHandler from '../netlify/functions/auth-confirm.mjs';
 import resetHandler from '../netlify/functions/auth-reset.mjs';
@@ -653,6 +654,51 @@ await withAuthEnv(async () => {
   assert.equal(known.status, 200);
   assert.equal(unknown.status, 200);
   assert.deepEqual(knownJson, unknownJson);
+});
+
+await withAuthEnv(async () => {
+  resetAuthRateLimiters();
+  installSupabaseMock([{
+    match: (url, method) => method === 'POST' && url.endsWith('/recover'),
+    respond: async () => jsonRes(500, { msg: 'smtp relay down at mailgun' })
+  }]);
+  const failed = await recoverHandler(cookieRequest('https://atomurus.com/api/auth/recover', {
+    method: 'POST',
+    headers: { 'x-forwarded-for': '198.51.100.77' },
+    body: { email: 'alice@atomurus.com' }
+  }));
+  const failedJson = await readJson(failed);
+  assert.equal(failed.status, 503);
+  assert.equal(failedJson.code, 'email_send_failed');
+  assert.doesNotMatch(JSON.stringify(failedJson), /mailgun|smtp/i);
+});
+
+await withAuthEnv(async () => {
+  resetAuthRateLimiters();
+  installSupabaseMock([{
+    match: (url, method) => method === 'POST' && url.endsWith('/resend'),
+    respond: async (_url, _method, options) => {
+      const body = JSON.parse(options.body);
+      if (body.email === 'missing@atomurus.com') return jsonRes(400, { error: 'user_not_found', msg: 'User not found' });
+      return jsonRes(200, {});
+    }
+  }]);
+  const known = await resendHandler(cookieRequest('https://atomurus.com/api/auth/resend-confirmation', {
+    method: 'POST',
+    headers: { 'x-forwarded-for': '198.51.100.50' },
+    body: { email: 'alice@atomurus.com' }
+  }));
+  const unknown = await resendHandler(cookieRequest('https://atomurus.com/api/auth/resend-confirmation', {
+    method: 'POST',
+    headers: { 'x-forwarded-for': '198.51.100.51' },
+    body: { email: 'missing@atomurus.com' }
+  }));
+  const knownJson = await readJson(known);
+  const unknownJson = await readJson(unknown);
+  assert.equal(known.status, 200);
+  assert.equal(unknown.status, 200);
+  assert.deepEqual(knownJson, unknownJson);
+  assert.deepEqual(knownJson, { ok: true });
 });
 
 await withAuthEnv(async () => {

@@ -89,12 +89,34 @@
     return '';
   }
 
+  function setAuthAux(which) {
+    [
+      ['auth-resend-confirmation', 'resend'],
+      ['auth-request-new-link', 'renew']
+    ].forEach(function (pair) {
+      var node = $(pair[0]);
+      if (!node) return;
+      var on = which === pair[1];
+      node.hidden = !on;
+      node.style.display = on ? '' : 'none';
+    });
+  }
+
+  function showExpiredLink() {
+    setMode('login', { skipHistory: true });
+    hide($('auth-login-ok'));
+    setAuthAux('renew');
+    show($('auth-login-err'), t('common.auth.linkExpired', 'This link expired. Request another one.'));
+  }
+
   function friendlyLoginError(err) {
     var status = err && err.status;
     var code = err && err.code;
     if (code === 'email_not_confirmed') {
+      setAuthAux('resend');
       return t('common.auth.emailNotConfirmed', 'Confirm your email before signing in. Check your inbox for the confirmation link.');
     }
+    setAuthAux('');
     if (code === 'network' || status === 0) {
       return t('common.auth.networkError', 'Network problem. Check your connection and try again.');
     }
@@ -219,6 +241,12 @@
       setTimeout(function () { clearSignupDraft({ hintsOnly: true }); clearFounderLoginHint(); }, 80);
       setTimeout(function () { clearSignupDraft({ hintsOnly: true }); clearFounderLoginHint(); }, 400);
     }
+    if (mode === 'reset') {
+      setTimeout(function () {
+        var input = $('auth-new-password');
+        if (input && typeof input.focus === 'function') input.focus();
+      }, 0);
+    }
     if (!options.skipHistory && history && history.replaceState) {
       history.replaceState(null, document.title, authScreenPath(mode));
     }
@@ -279,9 +307,16 @@
     var accessToken = pickParam('access_token');
     var refreshToken = pickParam('refresh_token');
     var tokenHash = pickParam('token_hash');
-    var callbackType = pickParam('type');
-    var confirmationToken = pickParam('confirmation_token') || (tokenHash && callbackType === 'signup' ? tokenHash : '');
+    var callbackType = (pickParam('type') || '').toLowerCase();
+    var errorCode = (pickParam('error_code') || '').toLowerCase();
+    var confirmTypes = { signup: 1, magiclink: 1, email_change: 1 };
+    var confirmationToken = pickParam('confirmation_token') || (tokenHash && confirmTypes[callbackType] ? tokenHash : '');
     var recoveryToken = pickParam('recovery_token') || (tokenHash && (callbackType === 'recovery' || callbackType === 'invite') ? tokenHash : '');
+    if (errorCode === 'otp_expired') {
+      showExpiredLink();
+      stripSensitiveAuthParams();
+      return true;
+    }
     var loginOk = $('auth-login-ok');
     var loginErr = $('auth-login-err');
 
@@ -303,6 +338,10 @@
         return true;
       } catch (_err) {
         stripSensitiveAuthParams();
+        if (callbackType === 'recovery') {
+          showExpiredLink();
+          return true;
+        }
         show(loginErr, t('common.auth.confirmError', 'Email confirmation link is invalid or expired.'));
         return true;
       }
@@ -349,6 +388,7 @@
     if (button && button.disabled) return;
     hide(errBox);
     hide(okBox);
+    setAuthAux('');
 
     var identifier = ($('auth-email').value || '').trim();
     var password = $('auth-password').value || '';
@@ -432,7 +472,13 @@
         t('common.auth.signupOk', 'Account created. Check your email if confirmation is required, then sign in.')
       );
     } catch (err) {
-      show(errBox, friendlySignupError(err && err.message ? err.message : t('common.auth.signupError', 'Could not create this account. Try signing in or use another email.')));
+      if (err && err.code === 'user_exists') {
+        show(errBox, t('common.auth.emailTaken', 'This email already has an account. Sign in or reset your password.'));
+      } else if (err && err.code === 'email_send_failed') {
+        show(errBox, t('common.auth.emailSendFailed', 'We could not send the email right now. Try again in a few minutes.'));
+      } else {
+        show(errBox, friendlySignupError(err && err.message ? err.message : t('common.auth.signupError', 'Could not create this account. Try signing in or use another email.')));
+      }
     } finally {
       setBusy(button, false);
       setFormBusy(form, false);
@@ -450,9 +496,14 @@
     var token = panel.dataset.recoveryToken || '';
     var recoveryType = panel.dataset.recoveryType || 'recovery';
     var password = $('auth-new-password').value || '';
+    var passwordConfirm = ($('auth-new-password-confirm') && $('auth-new-password-confirm').value) || '';
     var passwordError = passwordPolicyError(password);
     if (passwordError) {
       show(errBox, passwordError);
+      return;
+    }
+    if (password !== passwordConfirm) {
+      show(errBox, t('common.auth.passwordMismatch', 'Password confirmation does not match.'));
       return;
     }
     setBusy(button, true, t('common.auth.saving', 'Saving...'));
@@ -484,10 +535,12 @@
       await auth().recoverPassword(email);
       show(okBox, t('common.auth.recoverOk', 'If this email has access, we sent recovery instructions.'));
     } catch (err) {
-      if (err && (err.code === 'network' || err.status === 0)) {
+      if (err && (err.code === 'email_send_failed' || err.status === 429)) {
+        show(errBox, t('common.auth.emailSendFailed', 'We could not send the email right now. Try again in a few minutes.'));
+      } else if (err && (err.code === 'network' || err.status === 0)) {
         show(errBox, t('common.auth.networkError', 'Network problem. Check your connection and try again.'));
       } else {
-        show(errBox, t('common.auth.recoverError', 'Could not send right now. Please try again later.'));
+        show(okBox, t('common.auth.recoverOk', 'If this email exists, we sent a link.'));
       }
     } finally {
       setBusy(button, false);
@@ -505,11 +558,53 @@
     });
   }
 
+  function bindAuthButton(id, handler) {
+    var button = $(id);
+    if (!button || button.dataset.authBound === '1') return;
+    button.dataset.authBound = '1';
+    button.addEventListener('click', function () {
+      void handler();
+    });
+  }
+
+  async function handleResendConfirmation() {
+    var email = ($('auth-email').value || '').trim();
+    var errBox = $('auth-login-err');
+    var okBox = $('auth-login-ok');
+    var button = $('auth-resend-confirmation');
+    hide(errBox);
+    hide(okBox);
+    setBusy(button, true, t('common.auth.sending', 'Sending…'));
+    try {
+      await auth().resendConfirmation(email);
+      setAuthAux('');
+      show(okBox, t('common.auth.resendOk', 'If this email needs confirmation, we sent another message.'));
+    } catch (err) {
+      setAuthAux('resend');
+      if (err && (err.code === 'email_send_failed' || err.status === 429)) {
+        show(errBox, t('common.auth.emailSendFailed', 'We could not send the email right now. Try again in a few minutes.'));
+      } else if (err && (err.code === 'network' || err.status === 0)) {
+        show(errBox, t('common.auth.networkError', 'Network problem. Check your connection and try again.'));
+      } else {
+        show(okBox, t('common.auth.resendOk', 'If this email needs confirmation, we sent another message.'));
+      }
+    } finally {
+      setBusy(button, false);
+    }
+  }
+
   function bindAuthForms() {
     bindAuthForm('auth-login-form', handleLoginSubmit);
     bindAuthForm('auth-signup-form', handleSignupSubmit);
     bindAuthForm('auth-password-form', handlePasswordResetSubmit);
     bindAuthForm('auth-reset-form', handleRecoverySubmit);
+    bindAuthButton('auth-resend-confirmation', handleResendConfirmation);
+    bindAuthButton('auth-request-new-link', function () {
+      setAuthAux('');
+      setMode('recover');
+      var email = $('auth-reset-email');
+      if (email && typeof email.focus === 'function') email.focus();
+    });
   }
 
   var authPageBound = false;

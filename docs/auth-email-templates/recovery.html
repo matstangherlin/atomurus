@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>Redefinir a senha da Atomurus</title>
+</head>
+<body>
+  <p>Olá,</p>
+  <p>Recebemos um pedido para redefinir a senha da conta {{ .Email }} na Atomurus.</p>
+  <p><a href="{{ .SiteURL }}/reset-password?token_hash={{ .TokenHash }}&amp;type=recovery">Redefinir senha</a></p>
+  <p>Se você não pediu isso, ignore esta mensagem. A senha atual continua valendo.</p>
+  <p>Atomurus · <a href="mailto:contato@atomurus.com">contato@atomurus.com</a></p>
+</body>
+</html>
