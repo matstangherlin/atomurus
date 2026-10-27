@@ -3415,6 +3415,19 @@
     return session.guide;
   }
 
+  /* A later step already done while this one is not: the order matters
+     (heating before the still is sealed, salt before the water). Placing
+     equipment early is not a skip. */
+  function skippedAhead(session, steps, index, guide) {
+    for (var j = index + 1; j < steps.length; j += 1) {
+      if (steps[j].action === 'addEquipment') continue;
+      if (judgeStep(session, steps[j], guide).ok) {
+        return { en: 'This step comes first: ' + steps[index].en, pt: 'Este passo vem primeiro: ' + steps[index].pt };
+      }
+    }
+    return null;
+  }
+
   /* A step only moves on when its check passes; «Practice complete» means
      every step passed, not that enough steps were clicked. */
   function tutorialState(session, creation) {
@@ -3434,7 +3447,7 @@
       }
       var verdict = judgeStep(session, step, guide);
       if (!verdict.ok) {
-        feedback = verdict.feedback || null;
+        feedback = verdict.feedback || skippedAhead(session, steps, i, guide);
         break;
       }
       /* An automatic process (a distillation) shows its result; the step is

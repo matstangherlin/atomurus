@@ -224,6 +224,24 @@ function sloppySolution() {
   assert.match(state.feedback.en, /wrong vessel: this step uses the round-bottom flask/);
 }
 
+// Doing a later step first is named, too.
+{
+  const stillGuide = byId('distillation');
+  const session = lab.emptySession({ title: 'Skip', mode: 'bench' });
+  lab.startGuide(session, 'distillation');
+  for (const type of ['round-flask', 'condenser', 'receiving-flask', 'heating-mantle']) lab.addVessel(session, type);
+  const pot = lab.firstOfType(session, 'round-flask');
+  lab.addToContainer(session, pot.id, 'water', 60);
+  lab.addToContainer(session, pot.id, 'ethanol', 40);
+  lab.setTemperature(session, pot.id, 80);
+  const state = lab.tutorialState(session, stillGuide);
+  assert.equal(state.current, 5, 'heating does not count before the still is connected');
+  assert.match(state.feedback.en, /^This step comes first: Connect flask to condenser/);
+  assert.match(state.feedback.pt, /^Este passo vem primeiro: Conecte o balão/);
+  lab.assembleRig(session);
+  assert.equal(lab.tutorialState(session, stillGuide).current, 7, 'once connected, the heat already applied counts');
+}
+
 // ── Automatic processes wait for «I observed it» ────────────────────────────
 {
   const diamond = byId('diamond');
