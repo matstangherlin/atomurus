@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
+import { readImageSize } from './optimize-images.mjs';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const SKIP_HTML_DIRS = new Set([
@@ -59,5 +61,29 @@ for (const name of fs.readdirSync(ogDir)) {
     assert.equal(buf.readUInt32BE(20), 630);
   }
 }
+
+const png1x1 = Buffer.from(
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
+  'base64'
+);
+assert.deepEqual(readImageSize(png1x1), { type: 'png', width: 1, height: 1 });
+
+const jpeg2x3 = Buffer.from([
+  0xff, 0xd8,
+  0xff, 0xc0, 0x00, 0x0b, 0x08, 0x00, 0x02, 0x00, 0x03, 0x01, 0x01, 0x11, 0x00,
+  0xff, 0xd9
+]);
+assert.deepEqual(readImageSize(jpeg2x3), { type: 'jpeg', width: 3, height: 2 });
+assert.equal(readImageSize(Buffer.from('not an image')), null);
+
+const dry = spawnSync(process.execPath, ['tools/optimize-images.mjs', '--dir', 'assets/concepts'], {
+  cwd: ROOT,
+  encoding: 'utf8'
+});
+assert.equal(dry.status, 0, dry.stderr);
+assert.match(dry.stdout, /dry-run/);
+assert.match(dry.stdout, /editorial-bismuth-480\.webp/);
+assert.match(dry.stdout, /future-orbital-1600\.webp/);
+assert.equal(fs.readdirSync(path.join(ROOT, 'assets', 'concepts'), { recursive: true }).some((name) => String(name).endsWith('.webp')), false);
 
 console.log('test-image-publish-guards: ok');

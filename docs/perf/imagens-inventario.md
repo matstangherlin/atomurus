@@ -37,6 +37,8 @@ Fora de `propostas/` e `docs/` há 10 tags `<img>`. Todas têm `width`, `height`
 
 `assets/og-cover.png` não tem referência no repositório. Permanece: o prompt não autoriza apagar imagem.
 
+O script opcional `tools/optimize-images.mjs` não grava derivado nenhum por padrão e não muda estes totais. Uso futuro: `docs/perf/imagens.md`.
+
 ## Tabela
 
 | Arquivo | KiB | Dimensão | Publicado | Referências | Ação |
