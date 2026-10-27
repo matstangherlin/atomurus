@@ -82,6 +82,14 @@
 
   function polishCopy() {
     stripKickerMarks(document);
+    var pt = (document.documentElement.lang || '').toLowerCase().indexOf('pt') === 0;
+    document.querySelectorAll('label.lc-sr-only[for="ps-search-q"], label.lc-sr-only[for="quick-search"]').forEach(function (label) {
+      if (!label.getAttribute('data-i18n')) label.setAttribute('data-i18n', 'common.searchAria');
+      var current = (label.textContent || '').trim();
+      if (!current || current === 'Search element' || current === 'Buscar elemento') {
+        label.textContent = pt ? 'Buscar elemento' : 'Search element';
+      }
+    });
     var brand = document.querySelector('.scc-brand');
     if (brand && /^ATOMURUS$/i.test((brand.textContent || '').trim())) {
       brand.textContent = 'Atomurus';
@@ -96,7 +104,9 @@
     form.action = p + 'periodic-table.html';
     form.method = 'get';
     form.innerHTML =
-      '<label class="lc-sr-only" for="ps-search-q">Search element</label>' +
+      '<label class="lc-sr-only" for="ps-search-q" data-i18n="common.searchAria">' +
+      ((document.documentElement.lang || '').toLowerCase().indexOf('pt') === 0 ? 'Buscar elemento' : 'Search element') +
+      '</label>' +
       '<svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">' +
       '<circle cx="5.5" cy="5.5" r="4" stroke="currentColor" stroke-width="1.4"/>' +
       '<line x1="8.7" y1="8.7" x2="11.5" y2="11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>' +

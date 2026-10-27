@@ -264,10 +264,48 @@
     document.head.appendChild(script);
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', render);
-  } else {
+  function ensureElementMenu() {
+    var topbar = document.querySelector('.ps-shell > .topbar');
+    var sidebar = document.getElementById('ws-sidebar') || document.querySelector('[data-atomurus-sidebar]');
+    if (!topbar || !sidebar) return;
+    if (document.querySelector('.lc-mobile-hamb, #ws-menu-btn, .mobile-menu-btn')) return;
+    if (!sidebar.id) sidebar.id = 'ws-sidebar';
+    var btn = document.createElement('button');
+    btn.className = 'mobile-menu-btn';
+    btn.type = 'button';
+    btn.setAttribute('aria-label', 'Open menu');
+    btn.setAttribute('aria-expanded', 'false');
+    btn.setAttribute('aria-controls', sidebar.id);
+    btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">' +
+      '<line x1="2.5" y1="5" x2="15.5" y2="5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
+      '<line x1="2.5" y1="9" x2="15.5" y2="9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
+      '<line x1="2.5" y1="13" x2="15.5" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
+      '</svg>';
+    btn.addEventListener('click', function () {
+      if (typeof window.toggleMobileSidebar === 'function') window.toggleMobileSidebar();
+      else if (window.AtomurusNav && window.AtomurusNav.toggleDrawer) window.AtomurusNav.toggleDrawer();
+      var shell = document.querySelector('.ps-shell');
+      var open = !!(shell && shell.classList.contains('is-nav-open'));
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    document.addEventListener('keydown', function (event) {
+      if (event.key !== 'Escape') return;
+      var shell = document.querySelector('.ps-shell');
+      if (!shell || !shell.classList.contains('is-nav-open')) return;
+      window.setTimeout(function () { btn.focus(); }, 0);
+    }, true);
+    topbar.insertBefore(btn, topbar.firstChild);
+  }
+
+  function boot() {
+    ensureElementMenu();
     render();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
   }
   loadStudyCloud();
   if (window.I18N && I18N.onChange) {

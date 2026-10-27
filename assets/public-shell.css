@@ -975,6 +975,25 @@ html body.ps-body .ps-shell .calc-shell {
   .ps-shell > #ws-sidebar.mobile-open {
     transform: translateX(0) !important;
   }
+  #ws-drawer-backdrop,
+  .ws-drawer-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: color-mix(in oklab, #14120E 42%, transparent);
+    z-index: 450;
+    opacity: 0;
+    pointer-events: none;
+  }
+  #ws-drawer-backdrop[hidden] {
+    display: none !important;
+  }
+  .ps-shell.is-nav-open #ws-drawer-backdrop,
+  .ps-shell.is-nav-open .ws-drawer-backdrop,
+  #ws-drawer-backdrop.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
   .ps-shell > .topbar .logo-wrap,
   .ps-shell > .topbar .ps-brand {
     display: none !important;
@@ -1911,6 +1930,160 @@ html body .lc-form label {
   color: var(--lc-green, #1E6A50);
 }
 .solver-discover p { margin: 6px 0 10px; color: var(--lc-ink-2, #58544A); font-size: 14px; }
+/* Phones ≤ 480px: one row of 44px actions. Search is an icon until it is focused. */
+@media (max-width: 480px) {
+  .lc-topnav,
+  .ps-shell > .topbar,
+  .ps-shell > .lc-topnav {
+    flex-wrap: nowrap !important;
+    height: var(--ps-topbar) !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    gap: 4px !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    box-sizing: border-box;
+  }
+  .lc-topnav-tag,
+  .logo-tag { display: none !important; }
+  .lc-topnav-name,
+  .logo-text {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    overflow: hidden !important;
+    clip: rect(0 0 0 0) !important;
+  }
+  .lc-topnav .ps-account,
+  .topbar .ps-account {
+    min-width: 44px !important;
+    width: 44px !important;
+    margin-left: 0 !important;
+    flex: 0 0 44px !important;
+  }
+  .lc-topnav-search,
+  .ps-shell > .topbar .search-box,
+  .ps-shell > .topbar .ps-search,
+  .ps-shell > .lc-topnav .lc-topnav-search {
+    position: relative;
+    flex: 0 0 44px !important;
+    width: 44px !important;
+    min-width: 44px !important;
+    max-width: 44px !important;
+    height: 44px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden;
+    justify-content: center;
+  }
+  .lc-topnav-search .lc-sr-only,
+  .search-box .lc-sr-only,
+  .ps-search .lc-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .lc-topnav-search input,
+  .lc-topnav-search .lc-kbd,
+  .search-box input,
+  .ps-search input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .lc-topnav.is-search-open,
+  .ps-shell > .topbar.is-search-open {
+    flex-wrap: wrap !important;
+    height: auto !important;
+    row-gap: 6px;
+  }
+  .lc-topnav.is-search-open .lc-topnav-search,
+  .ps-shell > .topbar.is-search-open .search-box,
+  .ps-shell > .topbar.is-search-open .ps-search,
+  .ps-shell > .lc-topnav.is-search-open .lc-topnav-search,
+  .lc-topnav-search:focus-within,
+  .search-box:focus-within,
+  .ps-search:focus-within {
+    flex: 1 0 100% !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    order: 8;
+    padding: 0 12px !important;
+    overflow: visible;
+  }
+  .lc-topnav.is-search-open .lc-topnav-search input,
+  .lc-topnav-search:focus-within input,
+  .search-box:focus-within input,
+  .ps-search:focus-within input,
+  .ps-shell > .topbar.is-search-open .search-box input,
+  #quick-search:focus,
+  #ps-search-q:focus {
+    position: static;
+    width: auto;
+    height: 36px;
+    opacity: 1;
+    pointer-events: auto;
+    flex: 1 1 120px;
+    min-width: 120px;
+  }
+  .lc-topnav .ps-userchip > span,
+  .topbar .ps-userchip > span,
+  .lc-topnav a.lc-topnav-cta > span,
+  .topbar a.lc-topnav-cta > span {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    clip: rect(0 0 0 0) !important;
+  }
+  .lc-topnav .ps-userchip,
+  .topbar .ps-userchip,
+  .lc-topnav a.lc-topnav-cta,
+  .topbar a.lc-topnav-cta,
+  .share-host-topbar,
+  .share-host-compact {
+    min-width: 44px !important;
+    width: 44px !important;
+    min-height: 44px !important;
+    height: 44px !important;
+    padding: 0 !important;
+    flex: 0 0 44px;
+    justify-content: center;
+  }
+  .theme-btn,
+  .lc-topnav-btn,
+  .mobile-menu-btn,
+  .lc-mobile-hamb,
+  .auth-primary-btn,
+  .ui-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .theme-btn,
+  .lc-topnav-btn,
+  .mobile-menu-btn,
+  .lc-mobile-hamb {
+    width: 44px !important;
+    height: 44px !important;
+    flex: 0 0 44px;
+  }
+  #atomurus-study-save {
+    margin-left: 12px !important;
+    margin-right: 12px !important;
+    max-width: calc(100% - 24px) !important;
+  }
+  #atomurus-study-save .study-save-row { max-width: 100%; }
+  #atomurus-study-save button { min-height: 44px; min-width: 44px; }
+}
 .solver-discover-cta {
   font: inherit;
   text-decoration: none;

@@ -283,6 +283,30 @@
     setDrawer(open);
   }
 
+  function bindMobileSearch() {
+    var boxes = document.querySelectorAll('.lc-topnav-search, .ps-shell > .topbar .search-box, .ps-shell > .topbar .ps-search');
+    boxes.forEach(function (box) {
+      if (box.dataset.searchBound === '1') return;
+      box.dataset.searchBound = '1';
+      var input = box.querySelector('input');
+      box.addEventListener('click', function (event) {
+        if (!window.matchMedia('(max-width: 480px)').matches || !input) return;
+        if (event.target === input) return;
+        var host = box.closest('.lc-topnav, .topbar');
+        var open = host && host.classList.contains('is-search-open');
+        if (open) return;
+        event.preventDefault();
+        if (host) host.classList.add('is-search-open');
+        input.focus();
+      });
+      if (!input) return;
+      input.addEventListener('blur', function () {
+        var host = box.closest('.lc-topnav, .topbar');
+        if (host && !input.value) host.classList.remove('is-search-open');
+      });
+    });
+  }
+
   function bindDrawer() {
     if (document.documentElement.dataset.atomurusDrawer === '1') return;
     document.documentElement.dataset.atomurusDrawer = '1';
@@ -315,6 +339,7 @@
     root.toggleMobileSidebar = function () {
       toggleDrawer();
     };
+    bindMobileSearch();
   }
 
   function enhance() {
