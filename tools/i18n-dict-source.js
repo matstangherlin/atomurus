@@ -510,6 +510,7 @@ const DICT = {
         noteHtml:  'By submitting, you agree to our <a href="privacy.html">Privacy Policy</a> and <a href="terms.html">Terms of Use</a>. We do not share your email with third parties.',
         ok:        '✓ Message sent. We’ll reply soon.',
         errHtml:   'Could not send. Please try again or write directly to <a href="mailto:contato@atomurus.com">contato@atomurus.com</a>.',
+        rateLimitHtml: 'Too many attempts. Try again in a few minutes.',
         notConfigHtml: 'The contact form is temporarily unavailable. Please write directly to <a href="mailto:contato@atomurus.com">contato@atomurus.com</a>.',
         alt: {
           bugLabel:     'Bug reports',
@@ -2733,6 +2734,7 @@ const DICT = {
         noteHtml:  'Ao enviar, você concorda com nossa <a href="privacy.html">Política de Privacidade</a> e <a href="terms.html">Termos de Uso</a>. Não compartilhamos seu e-mail com terceiros.',
         ok:        '✓ Mensagem enviada. Responderemos em breve.',
         errHtml:   'Não foi possível enviar. Tente novamente ou escreva direto para <a href="mailto:contato@atomurus.com">contato@atomurus.com</a>.',
+        rateLimitHtml: 'Muitas tentativas. Tente de novo em alguns minutos.',
         notConfigHtml: 'O formulário de contato está temporariamente indisponível. Escreva diretamente para <a href="mailto:contato@atomurus.com">contato@atomurus.com</a>.',
         alt: {
           bugLabel:     'Reportes de bug',

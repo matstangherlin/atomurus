@@ -527,6 +527,54 @@
   status = 404
   force  = true
 
+[[redirects]]
+  from   = "/dev/*"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/e2e/*"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/src/*"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/playwright.config.js"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/build-i18n.js"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/bump-version.js"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/bump-version.ps1"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
+[[redirects]]
+  from   = "/assets/concepts/*"
+  to     = "/404.html"
+  status = 404
+  force  = true
+
 # Legacy element URLs (/elements/<latin>) → new home (/periodic-table/<latin>).
 # Permanent 301 so Google transfers any ranking earned by the old paths.
 [[redirects]]
