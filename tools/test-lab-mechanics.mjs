@@ -318,4 +318,46 @@ for (const creation of lab.CREATIONS) {
   assert.equal(lab.duplicateObject(session, 'beaker-a').ok, true, 'duplicating a chosen piece is already a decision');
 }
 
+// ── Density and volume ──────────────────────────────────────────────────────
+{
+  const S = lab.SUBSTANCES;
+  assert.equal(S.water.density, 1.00);
+  assert.equal(S.ethanol.density, 0.789);
+  assert.equal(S.oil.density, 0.91);
+  assert.equal(S.limonene.state, 'liquid');
+  assert.equal(S.limonene.densityEstimate, true, 'fragrance densities are marked as estimates');
+  assert.equal(S.vanillin.state, 'solid', 'vanillin is a solid at room temperature');
+  assert.equal(S.sucrose.density, undefined, 'solid sugar does not count as liquid volume');
+
+  // Citrus accord: 18 g of material is no longer 0 mL.
+  const accord = lab.emptySession({ title: 'Accord', mode: 'bench' });
+  assert.equal(lab.addReady(accord, 'accord_ready', 'beaker-a').ok, true);
+  const glass = vessel(accord, 'beaker-a');
+  assert.ok(glass.volumeMl > 15 && glass.volumeMl < 18, `accord volume from density, got ${glass.volumeMl} mL`);
+  assert.equal(glass.contents.find((row) => row.id === 'limonene').unit, 'mL');
+  const mass = lab.measure(accord, 'beaker-a', 'mass').row.value;
+  assert.ok(Math.abs(mass - 18) < 0.2, `accord mass stays 18 g, got ${mass}`);
+  assert.equal(glass.productId, 'accord');
+  assert.ok(accord.observations.some((row) => /estimated from typical densities/.test(row.text)));
+
+  // Oil is not 1 g/mL any more: 20 mL water + 15 mL oil + 8 g ZnO.
+  const lotion = lab.emptySession({ title: 'Lotion', mode: 'bench' });
+  lab.addReady(lotion, 'sunscreen_ready', 'beaker-a');
+  const lotionMass = lab.measure(lotion, 'beaker-a', 'mass').row.value;
+  assert.ok(Math.abs(lotionMass - (20 + 15 * 0.91 + 8)) < 0.1, `got ${lotionMass} g`);
+  assert.equal(vessel(lotion, 'beaker-a').volumeMl, 35);
+
+  // A saved row from before the change (fragrance weighed in g) keeps its mass.
+  const legacy = lab.emptySession({ title: 'Legacy', mode: 'bench' });
+  vessel(legacy, 'beaker-a').contents.push({ id: 'limonene', amount: 8, unit: 'g' });
+  assert.equal(lab.measure(legacy, 'beaker-a', 'mass').row.value, 8);
+
+  // The fragrance guide asks for the solid note in grams.
+  const fragrance = byId('fragrance');
+  const base = lab.stepPlan(fragrance, 2);
+  assert.equal(base.materials[0].unit, 'g');
+  assert.match(fragrance.tutorial[2].en, /4 g/);
+  assert.match(fragrance.tutorial[0].pt, /8 mL/, 'the Portuguese step names the amount too');
+}
+
 console.log('test-lab-mechanics: ok');

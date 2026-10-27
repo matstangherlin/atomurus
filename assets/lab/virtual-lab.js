@@ -137,13 +137,18 @@
     }
   }
 
+  /* density: g/mL near 20 °C, only where a value is documented. Water 1.00
+     (0.998), ethanol 0.789 (CRC Handbook), vegetable oil ≈ 0.91 (typical
+     0.91–0.93). Limonene and linalool are estimates from supplier sheets
+     (0.84–0.87), flagged densityEstimate. A liquid without a density counts as
+     1 g/mL. Solids never add liquid volume. */
   var SUBSTANCES = {
-    water: { id: 'water', name: 'Water', formula: 'H₂O', category: 'solvent', color: '#7EB6D9', state: 'liquid', ph: 7, bp: 100, allowed: true, chem: { kind: 'solvent' } },
+    water: { id: 'water', name: 'Water', formula: 'H₂O', category: 'solvent', color: '#7EB6D9', state: 'liquid', density: 1.00, ph: 7, bp: 100, allowed: true, chem: { kind: 'solvent' } },
     nacl: { id: 'nacl', name: 'Sodium chloride', formula: 'NaCl', category: 'salt', color: '#F4F1E4', state: 'solid', allowed: true, chem: { kind: 'neutral', molarMass: 58.44 } },
     sucrose: { id: 'sucrose', name: 'Sucrose', formula: 'C₁₂H₂₂O₁₁', category: 'sugar', color: '#F7E7C6', state: 'solid', allowed: true, chem: { kind: 'neutral', molarMass: 342.30 } },
     citric_acid: { id: 'citric_acid', name: 'Citric acid', formula: 'C₆H₈O₇', category: 'acid', color: '#F3E27A', state: 'solid', ph: 2.2, allowed: true, chem: { kind: 'weak-acid', molarMass: 192.12, pKa: [3.13, 4.76, 6.40], nH: 3 } },
     bicarbonate: { id: 'bicarbonate', name: 'Sodium bicarbonate', formula: 'NaHCO₃', category: 'base', color: '#EEEAE0', state: 'solid', ph: 8.3, allowed: true, chem: { kind: 'bicarbonate', molarMass: 84.007, pKa: [6.35, 10.33] } },
-    indicator: { id: 'indicator', name: 'Virtual pH indicator', formula: 'In', category: 'indicator', color: '#D9A7C7', state: 'liquid', allowed: true },
+    indicator: { id: 'indicator', name: 'Virtual pH indicator', formula: 'In', category: 'indicator', color: '#D9A7C7', state: 'liquid', allowed: true }, // densidade não verificada (1 g/mL)
     /* Anhydrous CuSO₄ is white. The blue colour is the hexaaqua ion once it dissolves.
        TODO química: no pKa for Cu²⁺ hydrolysis is cited here, so the salt stays neutral. */
     cusulfate: { id: 'cusulfate', name: 'Copper sulfate', formula: 'CuSO₄', category: 'salt', color: '#D9DCE0', solutionColor: '#3F8CDA', state: 'solid', allowed: true, chem: { kind: 'neutral', molarMass: 159.61 } },
@@ -152,19 +157,20 @@
     zn: { id: 'zn', name: 'Zinc', formula: 'Zn', category: 'element', color: '#C5CBD1', state: 'solid', allowed: true },
     s: { id: 's', name: 'Sulfur', formula: 'S', category: 'element', color: '#E3C95A', state: 'solid', allowed: true },
     c: { id: 'c', name: 'Carbon', formula: 'C', category: 'element', color: '#3A3732', state: 'solid', allowed: true },
-    limonene: { id: 'limonene', name: 'Limonene', formula: 'C₁₀H₁₆', category: 'fragrance', color: '#E8C15A', family: 'citrus', note: 'top', allowed: true },
-    linalool: { id: 'linalool', name: 'Linalool', formula: 'C₁₀H₁₈O', category: 'fragrance', color: '#C9D48A', family: 'floral', note: 'heart', allowed: true },
-    vanillin: { id: 'vanillin', name: 'Vanillin', formula: 'C₈H₈O₃', category: 'fragrance', color: '#E6C39A', family: 'gourmand', note: 'base', allowed: true },
+    limonene: { id: 'limonene', name: 'Limonene', formula: 'C₁₀H₁₆', category: 'fragrance', color: '#E8C15A', family: 'citrus', note: 'top', state: 'liquid', density: 0.84, densityEstimate: true, allowed: true },
+    linalool: { id: 'linalool', name: 'Linalool', formula: 'C₁₀H₁₈O', category: 'fragrance', color: '#C9D48A', family: 'floral', note: 'heart', state: 'liquid', density: 0.86, densityEstimate: true, allowed: true },
+    /* Vanillin is a solid at room temperature (it melts at about 81 °C). */
+    vanillin: { id: 'vanillin', name: 'Vanillin', formula: 'C₈H₈O₃', category: 'fragrance', color: '#E6C39A', family: 'gourmand', note: 'base', state: 'solid', allowed: true },
     carbon: { id: 'carbon', name: 'Carbon (graphite)', formula: 'C', category: 'allotrope', color: '#3A3732', state: 'solid', allowed: true, inventory: false },
     zno: { id: 'zno', name: 'Zinc oxide', formula: 'ZnO', category: 'mineral', color: '#F4F1EA', state: 'solid', allowed: true },
     tio2: { id: 'tio2', name: 'Titanium dioxide', formula: 'TiO₂', category: 'mineral', color: '#E8EEF2', state: 'solid', allowed: true },
-    oil: { id: 'oil', name: 'Virtual carrier oil', formula: 'oil', category: 'solvent', color: '#E6D5A2', state: 'liquid', bp: 300, allowed: true },
-    ethanol: { id: 'ethanol', name: 'Ethanol', formula: 'C₂H₅OH', category: 'solvent', color: '#E8E2CE', state: 'liquid', bp: 78, allowed: true },
-    frac_light: { id: 'frac_light', name: 'Virtual light fraction', formula: 'C₅–C₈', category: 'fraction', color: '#F2E3B0', state: 'liquid', bp: 65, allowed: true },
-    frac_mid: { id: 'frac_mid', name: 'Virtual mid fraction', formula: 'C₉–C₁₆', category: 'fraction', color: '#DCC07C', state: 'liquid', bp: 175, allowed: true },
-    frac_heavy: { id: 'frac_heavy', name: 'Virtual heavy fraction', formula: 'C₁₇+', category: 'fraction', color: '#A88B4E', state: 'liquid', bp: 330, allowed: true },
+    oil: { id: 'oil', name: 'Virtual carrier oil', formula: 'oil', category: 'solvent', color: '#E6D5A2', state: 'liquid', density: 0.91, bp: 300, allowed: true },
+    ethanol: { id: 'ethanol', name: 'Ethanol', formula: 'C₂H₅OH', category: 'solvent', color: '#E8E2CE', state: 'liquid', density: 0.789, bp: 78, allowed: true },
+    frac_light: { id: 'frac_light', name: 'Virtual light fraction', formula: 'C₅–C₈', category: 'fraction', color: '#F2E3B0', state: 'liquid', bp: 65, allowed: true }, // densidade não verificada (1 g/mL)
+    frac_mid: { id: 'frac_mid', name: 'Virtual mid fraction', formula: 'C₉–C₁₆', category: 'fraction', color: '#DCC07C', state: 'liquid', bp: 175, allowed: true }, // densidade não verificada (1 g/mL)
+    frac_heavy: { id: 'frac_heavy', name: 'Virtual heavy fraction', formula: 'C₁₇+', category: 'fraction', color: '#A88B4E', state: 'liquid', bp: 330, allowed: true }, // densidade não verificada (1 g/mL)
     yeast: { id: 'yeast', name: 'Virtual yeast', formula: 'S. cerevisiae', category: 'culture', color: '#D8C79A', state: 'solid', allowed: true },
-    cane_juice: { id: 'cane_juice', name: 'Virtual cane juice', formula: 'sucrose + water', category: 'solution', color: '#C9B074', state: 'liquid', bp: 100, allowed: true },
+    cane_juice: { id: 'cane_juice', name: 'Virtual cane juice', formula: 'sucrose + water', category: 'solution', color: '#C9B074', state: 'liquid', bp: 100, allowed: true }, // densidade não verificada (1 g/mL)
     /* Cellulose is not a mineral. sugar would pass the filter; no other category fits. */
     fibre: { id: 'fibre', name: 'Virtual plant fibre', formula: 'cellulose', category: 'biomass', color: '#9A8B63', state: 'solid', allowed: true }
   };
@@ -834,7 +840,9 @@
     { id: 'sugar_ready', labelEn: 'Sugar solution', labelPt: 'Solução de açúcar', parts: [{ id: 'water', amount: 40 }, { id: 'sucrose', amount: 10 }] },
     { id: 'sunscreen_ready', labelEn: 'Mineral lotion (ready)', labelPt: 'Loção mineral (pronta)', parts: [{ id: 'water', amount: 20 }, { id: 'oil', amount: 15 }, { id: 'zno', amount: 8 }] },
     { id: 'crude_ready', labelEn: 'Virtual crude blend', labelPt: 'Blend bruto virtual', parts: [{ id: 'frac_light', amount: 25 }, { id: 'frac_mid', amount: 25 }, { id: 'frac_heavy', amount: 15 }] },
-    { id: 'accord_ready', labelEn: 'Citrus accord (ready)', labelPt: 'Acorde cítrico (pronto)', parts: [{ id: 'limonene', amount: 8 }, { id: 'linalool', amount: 6 }, { id: 'vanillin', amount: 4 }] }
+    /* Weighed in grams, the way an accord is written; the liquids become mL
+       through their (estimated) densities. */
+    { id: 'accord_ready', labelEn: 'Citrus accord (ready)', labelPt: 'Acorde cítrico (pronto)', estimate: true, parts: [{ id: 'limonene', grams: 8 }, { id: 'linalool', grams: 6 }, { id: 'vanillin', amount: 4 }] }
   ];
 
   var DENIED = {
@@ -1270,9 +1278,9 @@
         pt: 'Notas de topo, coração e fundo. Não é fórmula segura para pele.'
       },
       tutorial: [
-        { id: 'top', action: 'addMaterial', need: { limonene: true }, amounts: { limonene: 8 }, needEquipment: ['beaker'], check: [CHECKS.volumeBetween(7, 9, 'limonene')], en: 'Add 8 mL of a top note (limonene) to a beaker.', pt: 'Adicione uma nota de topo (limoneno).', why: { en: 'Top notes evaporate first.', pt: 'Notas de topo evaporam primeiro.' } },
+        { id: 'top', action: 'addMaterial', need: { limonene: true }, amounts: { limonene: 8 }, needEquipment: ['beaker'], check: [CHECKS.volumeBetween(7, 9, 'limonene')], en: 'Add 8 mL of a top note (limonene) to a beaker.', pt: 'Adicione 8 mL de uma nota de topo (limoneno) a um béquer.', why: { en: 'Top notes evaporate first.', pt: 'Notas de topo evaporam primeiro.' } },
         { id: 'heart', action: 'addMaterial', need: { linalool: true }, amounts: { linalool: 6 }, check: [CHECKS.volumeBetween(5, 7, 'linalool')], en: 'Add 6 mL of a heart note (linalool).', pt: 'Adicione 6 mL de uma nota de coração (linalol).', why: { en: 'Heart notes carry the accord after the top fades.', pt: 'As notas de coração sustentam o acorde depois que o topo evapora.' } },
-        { id: 'base', action: 'addMaterial', need: { vanillin: true }, amounts: { vanillin: 4 }, check: [CHECKS.massEquals('vanillin', 4, 0.5)], en: 'Add 4 mL of a base note (vanillin).', pt: 'Adicione 4 mL de uma nota de fundo (vanilina).', why: { en: 'Base notes are the least volatile and stay longest.', pt: 'As notas de fundo são as menos voláteis e permanecem mais tempo.' } },
+        { id: 'base', action: 'addMaterial', need: { vanillin: true }, amounts: { vanillin: 4 }, check: [CHECKS.massEquals('vanillin', 4, 0.5)], en: 'Add 4 g of a base note (vanillin).', pt: 'Adicione 4 g de uma nota de fundo (vanilina).', why: { en: 'Base notes are the least volatile and stay longest. Vanillin is a solid that dissolves in the other notes.', pt: 'As notas de fundo são as menos voláteis e permanecem mais tempo. A vanilina é um sólido que se dissolve nas outras notas.' } },
         { id: 'read', action: 'inspect', product: 'accord', en: 'Read the virtual family. This is not a wearable perfume.', pt: 'Leia a família virtual. Isto não é um perfume para a pele.', why: { en: 'An accord is named after the notes that dominate it; here the citrus top note leads.', pt: 'Um acorde leva o nome das notas que dominam; aqui lidera a nota cítrica de topo.' } }
       ]
     },
@@ -1778,10 +1786,23 @@
     return (session.containers || []).filter(function (row) { return row.id === id; })[0];
   }
 
+  /* Liquid rows are in mL, so their mass goes through the density. */
   function containerMass(container) {
     return (container.contents || []).reduce(function (sum, row) {
-      return sum + (Number(row.amount) || 0);
+      var spec = SUBSTANCES[row.id];
+      var perUnit = row.unit === 'mL' && spec ? (Number(spec.density) || 1) : 1;
+      return sum + (Number(row.amount) || 0) * perUnit;
     }, 0);
+  }
+
+  /* A kit part is written either as an amount (mL for liquids, g for solids)
+     or as grams of a liquid, which the density turns into mL. */
+  function kitPartAmount(part) {
+    var spec = SUBSTANCES[part.id];
+    if (part.grams != null && spec && spec.state === 'liquid') {
+      return Math.round((Number(part.grams) / (Number(spec.density) || 1)) * 10) / 10;
+    }
+    return Math.max(0.1, Number(part.amount) || 1);
   }
 
   function hexRgb(hex) {
@@ -3091,7 +3112,7 @@
     /* A ready mix goes in whole or not at all: half a recipe is another mix. */
     var need = kit.parts.reduce(function (sum, part) {
       var spec = SUBSTANCES[part.id];
-      return spec && spec.state === 'liquid' ? sum + (Number(part.amount) || 0) : sum;
+      return spec && spec.state === 'liquid' ? sum + kitPartAmount(part) : sum;
     }, 0);
     var free = Math.round(((Number(container.capacityMl) || 0) - (Number(container.volumeMl) || 0)) * 10) / 10;
     if (need > free + 0.05) return { ok: false, reason: 'full', need: need, room: Math.max(0, free) };
@@ -3101,7 +3122,7 @@
     kit.parts.forEach(function (part) {
       var spec = SUBSTANCES[part.id];
       if (!spec || !spec.allowed) return;
-      var qty = Math.max(0.1, Number(part.amount) || 1);
+      var qty = kitPartAmount(part);
       var existing = (container.contents || []).filter(function (row) { return row.id === spec.id; })[0];
       if (existing) existing.amount += qty;
       else container.contents.push({ id: spec.id, amount: qty, unit: spec.state === 'liquid' ? 'mL' : 'g' });
@@ -3115,6 +3136,13 @@
       'Added ready mixture (' + (kit.labelEn || kit.id) + ') to ' + (container.label || container.id) + '.',
       'Adicionou mistura pronta (' + (kit.labelPt || kit.labelEn || kit.id) + ') em ' + (container.label || container.id) + '.'
     ));
+    if (kit.estimate) {
+      observe(session, line(
+        session,
+        'Volume estimated from typical densities (about 0.84–0.86 g/mL for these notes).',
+        'Volume estimado por densidades típicas (cerca de 0,84–0,86 g/mL para estas notas).'
+      ));
+    }
     noteProduct(session, container, beforeProduct);
     var fired = noteReaction(session, container, beforeReaction);
     return { ok: true, container: container, reaction: fired };
