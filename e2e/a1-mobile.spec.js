@@ -386,6 +386,7 @@ test.describe('A1.0 lazy loading', () => {
     await page.waitForTimeout(1500);
     expect(three, 'Study').toEqual([]);
     await page.goto('/viewer/molecules.html', { waitUntil: 'load' });
+    await page.locator('#viewer3d').scrollIntoViewIfNeeded();
     await page.waitForFunction(() => Boolean(window.THREE), null, { timeout: 15000 });
     expect(three.length).toBeGreaterThan(0);
     await context.close();
