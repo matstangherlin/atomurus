@@ -7,6 +7,9 @@
   var MAX_SESSIONS = 24;
   var HISTORY_CAP = 80;
   var MAX_VESSELS = 120;
+  /* Past this many of one piece, adding another asks first. MAX_VESSELS stays
+     the hard ceiling. */
+  var SOFT_VESSEL_LIMIT = 6;
   var SAVE_MS = 400;
   var SNAP_PX = 14;
   /* Paper grid pitch, in world units. The stage paints it; the camera moves it. */
@@ -2230,11 +2233,19 @@
       return { ok: false, reason: 'tool' };
     }
     var qty = Math.max(0.1, Number(amount) || 1);
-    var nextVol = Number(container.volumeMl) || 0;
-    if (spec.state === 'liquid') nextVol += qty;
-    if (nextVol > container.capacityMl + 0.05) {
-      observe(session, line(session, (container.label || container.id) + ' is full.', (container.label || container.id) + ' está cheio.'));
-      return { ok: false, reason: 'full' };
+    var capacity = Number(container.capacityMl) || 0;
+    var capped = false;
+    /* A liquid fills the vessel up to its capacity and no further. */
+    if (spec.state === 'liquid' && capacity > 0) {
+      var room = Math.round((capacity - (Number(container.volumeMl) || 0)) * 10) / 10;
+      if (room <= 0.05) {
+        observe(session, line(session, (container.label || container.id) + ' is full (' + capacity + ' mL).', (container.label || container.id) + ' está cheio (' + capacity + ' mL).'));
+        return { ok: false, reason: 'full', capacityMl: capacity };
+      }
+      if (qty > room) {
+        qty = room;
+        capped = true;
+      }
     }
     pushHistory(session);
     var beforeProduct = container.productId || '';
@@ -2242,16 +2253,26 @@
     var existing = (container.contents || []).filter(function (row) { return row.id === spec.id; })[0];
     if (existing) existing.amount += qty;
     else container.contents.push({ id: spec.id, amount: qty, unit: unit || (spec.state === 'liquid' ? 'mL' : 'g') });
-    if (spec.state === 'liquid') container.volumeMl = Math.min(container.capacityMl, (Number(container.volumeMl) || 0) + qty);
+    if (spec.state === 'liquid') {
+      container.volumeMl = Math.round(Math.min(capacity || Infinity, (Number(container.volumeMl) || 0) + qty) * 10) / 10;
+    }
     mixContainer(container);
     observe(session, line(
       session,
       'Added virtual ' + spec.name + ' (' + spec.formula + ') to ' + (container.label || container.id) + '.',
       'Adicionou ' + spec.name + ' (' + spec.formula + ') virtual em ' + (container.label || container.id) + '.'
     ));
+    if (capped) {
+      observe(session, line(
+        session,
+        (container.label || container.id) + ' is full (' + capacity + ' mL): only ' + formatQty(qty) + ' mL went in.',
+        (container.label || container.id) + ' está cheio (' + capacity + ' mL): só entraram ' + fmtNum(qty, 'pt') + ' mL.'
+      ));
+    }
     noteProduct(session, container, beforeProduct);
     var fired = noteReaction(session, container, beforeReaction);
-    return { ok: true, container: container, reaction: fired };
+    var full = spec.state === 'liquid' && capacity > 0 && (Number(container.volumeMl) || 0) >= capacity - 0.05;
+    return { ok: true, container: container, reaction: fired, added: qty, capped: capped, full: full, capacityMl: capacity };
   }
 
   /* Take one material back out, instead of emptying the whole vessel. */
@@ -2325,9 +2346,13 @@
     return { ok: true, amount: qty, reaction: fired };
   }
 
-  function addVessel(session, type) {
+  function addVessel(session, type, opts) {
     var spec = EQUIPMENT[type] || EQUIPMENT.beaker;
     if ((session.containers || []).length >= MAX_VESSELS) return { ok: false, reason: 'limit' };
+    var same = (session.containers || []).filter(function (row) { return row.type === spec.type; }).length;
+    if (same >= SOFT_VESSEL_LIMIT && !(opts && opts.confirmed)) {
+      return { ok: false, reason: 'confirm', type: spec.type, count: same, limit: SOFT_VESSEL_LIMIT };
+    }
     pushHistory(session);
     var vessel = makeVessel(spec.type, session.containers.length);
     vessel.id = spec.type + '-' + uid().slice(-5);
@@ -2365,7 +2390,7 @@
     var container = findContainer(session, id);
     var obj = findObject(session, id);
     if (!container) return { ok: false, reason: 'no-container' };
-    var added = addVessel(session, container.type);
+    var added = addVessel(session, container.type, { confirmed: true });
     if (!added.ok) return added;
     var copy = added.container;
     var dest = findObject(session, copy.id);
@@ -3063,6 +3088,13 @@
     if (!kit) return { ok: false, reason: 'unknown' };
     var container = findContainer(session, containerId);
     if (!canHold(container)) return { ok: false, reason: 'no-container' };
+    /* A ready mix goes in whole or not at all: half a recipe is another mix. */
+    var need = kit.parts.reduce(function (sum, part) {
+      var spec = SUBSTANCES[part.id];
+      return spec && spec.state === 'liquid' ? sum + (Number(part.amount) || 0) : sum;
+    }, 0);
+    var free = Math.round(((Number(container.capacityMl) || 0) - (Number(container.volumeMl) || 0)) * 10) / 10;
+    if (need > free + 0.05) return { ok: false, reason: 'full', need: need, room: Math.max(0, free) };
     pushHistory(session);
     var beforeProduct = container.productId || '';
     var beforeReaction = container.reactionId || '';
@@ -4040,6 +4072,16 @@
         '<p>' + esc(copy('Look at the result on the bench and in the notebook before moving on.', 'Observe o resultado na bancada e no caderno antes de seguir.')) + '</p>' +
         '<button type="button" class="ws-btn ws-btn-sm ws-btn-primary" data-step-observed>' + esc(copy('I observed it', 'Observei')) + '</button>' +
         '</div>';
+    }
+
+    /* Said once the vessel is full, or when it only took part of what was asked. */
+    function capacityNote(result) {
+      if (!result || !result.capacityMl) return '';
+      var head = copy('Vessel full (' + result.capacityMl + ' mL)', 'Recipiente cheio (' + result.capacityMl + ' mL)');
+      var tail = result.capped
+        ? copy(': only ' + formatQty(result.added) + ' mL went in.', ': só entraram ' + fmtNum(result.added, 'pt') + ' mL.')
+        : '.';
+      return '<div class="lab-msg" role="status">' + esc(head + tail) + '</div>';
     }
 
     function stepWhy(step) {
@@ -5227,10 +5269,13 @@
             updateLive();
             if (stepAdded.ok) animateRise(target.id, stepWasAt);
             if (stepAdded.ok) {
-              flashStatus('');
+              flashStatus(stepAdded.capped || stepAdded.full ? capacityNote(stepAdded) : '');
               pulseLiquid();
               if (stepAdded.reaction) playReactionFx(target.id, stepAdded.reaction);
               else playSound('material');
+            } else if (stepAdded.reason === 'full') {
+              flashStatus(capacityNote(stepAdded));
+              playSound('deny');
             } else {
               flashStatus('<div class="lab-msg" role="status">' + esc(copy('That vessel cannot take this material right now.', 'Esse vidro não pode receber este material agora.')) + '</div>');
               playSound('deny');
@@ -5394,13 +5439,16 @@
             updateLive();
             if (added.ok) animateRise(intoId, wasAt);
             if (added.ok) {
-              flashStatus('');
+              flashStatus(added.capped || added.full ? capacityNote(added) : '');
               pulseLiquid();
               if (added.reaction) playReactionFx(selected().id, added.reaction);
               else playSound('material');
             } else if (added.reason === 'full') {
               playSound('deny');
-              flashStatus('<div class="lab-msg" role="status">' + esc(copy('That vessel is full. Empty it or pour into another glass.', 'Esse vidro está cheio. Esvazie ou transfira para outro.')) + '</div>');
+              flashStatus('<div class="lab-msg" role="status">' + esc(copy(
+                'Vessel full (' + added.capacityMl + ' mL). Empty it or pour into another glass.',
+                'Recipiente cheio (' + added.capacityMl + ' mL). Esvazie ou transfira para outro.'
+              )) + '</div>');
             } else if (added.reason === 'tool') {
               flashStatus('<div class="lab-msg" role="status">' + esc(copy('That tool does not hold a mixture. Select a beaker or flask.', 'Essa ferramenta não retém mistura. Selecione um béquer ou erlenmeyer.')) + '</div>');
               playSound('deny');
@@ -5427,7 +5475,18 @@
             return;
           }
           if (t.getAttribute('data-add-vessel')) {
-            var placed = addVessel(session, t.getAttribute('data-add-vessel'));
+            var placed = addVessel(session, t.getAttribute('data-add-vessel'), { confirmed: t.hasAttribute('data-vessel-confirmed') });
+            if (placed.reason === 'confirm') {
+              var piece = EQUIPMENT[placed.type];
+              flashStatus('<div class="lab-msg" role="status">' + esc(copy(
+                piece.labelEn + ': there are already ' + placed.count + ' on the bench. Add another anyway?',
+                piece.labelPt + ': já há ' + placed.count + ' na bancada. Quer adicionar mesmo assim?'
+              )) + ' <button type="button" class="ws-btn ws-btn-sm" data-add-vessel="' + esc(placed.type) + '" data-vessel-confirmed>' +
+                esc(copy('Add', 'Adicionar')) + '</button></div>');
+              playSound('deny');
+              return;
+            }
+            if (placed.ok) flashStatus('');
             queueSave();
             updateLive();
             playSound(placed && placed.ok === false ? 'deny' : 'place');
@@ -5444,6 +5503,12 @@
               flashStatus('');
               pulseLiquid();
               playSound('pour');
+            } else if (kit.reason === 'full') {
+              playSound('deny');
+              flashStatus('<div class="lab-msg" role="status">' + esc(copy(
+                'Not enough room: this mix needs ' + formatQty(kit.need) + ' mL and the vessel has ' + formatQty(kit.room) + ' mL free.',
+                'Não cabe: esta mistura precisa de ' + fmtNum(kit.need, 'pt') + ' mL e o recipiente tem ' + fmtNum(kit.room, 'pt') + ' mL livres.'
+              )) + '</div>');
             } else {
               playSound('deny');
               flashStatus('<div class="lab-msg" role="status">' + esc(copy('Select a vessel that can hold a mixture first.', 'Selecione um vidro que possa reter a mistura.')) + '</div>');
@@ -6270,6 +6335,7 @@
     saveSession: saveSession,
     addToContainer: addToContainer,
     addVessel: addVessel,
+    SOFT_VESSEL_LIMIT: SOFT_VESSEL_LIMIT,
     addReady: addReady,
     emptyContainer: emptyContainer,
     removeFromContainer: removeFromContainer,

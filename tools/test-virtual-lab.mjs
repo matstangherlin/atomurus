@@ -586,7 +586,8 @@ assert.equal(tight.containers[0].volumeMl, 200, 'a refused filter changes nothin
 // The board holds a full bench, not an arbitrary handful.
 const roomy = lab.emptySession({ title: 'Roomy', mode: 'bench' });
 let seated = 0;
-while (lab.addVessel(roomy, 'test-tube').ok) seated += 1;
+// Past SOFT_VESSEL_LIMIT of one piece the Lab asks; a confirmed add goes on to the hard ceiling.
+while (lab.addVessel(roomy, 'test-tube', { confirmed: true }).ok) seated += 1;
 assert.ok(roomy.containers.length >= 100, `the board should take 100 pieces, took ${roomy.containers.length}`);
 assert.equal(lab.addVessel(roomy, 'beaker').reason, 'limit', 'and still has a ceiling');
 

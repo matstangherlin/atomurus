@@ -255,4 +255,67 @@ for (const creation of lab.CREATIONS) {
   });
 }
 
+// ── Capacity: liquids fill up to capacityMl and stop ────────────────────────
+{
+  const session = lab.emptySession({ title: 'Capacity', mode: 'bench' });
+  const beaker = vessel(session, 'beaker-a');
+  assert.equal(beaker.capacityMl, lab.EQUIPMENT.beaker.capacityMl);
+  const clicks = [];
+  for (let i = 0; i < 6; i += 1) clicks.push(lab.addToContainer(session, 'beaker-a', 'water', 50));
+  assert.ok(clicks.slice(0, 5).every((row) => row.ok), 'five 50 mL additions fit a 250 mL beaker');
+  assert.equal(clicks[4].full, true, 'the fifth one fills it, and says so');
+  assert.equal(clicks[5].ok, false);
+  assert.equal(clicks[5].reason, 'full');
+  assert.equal(clicks[5].capacityMl, 250);
+  assert.equal(beaker.volumeMl, 250, 'nothing passes capacityMl');
+
+  const partial = lab.emptySession({ title: 'Partial', mode: 'bench' });
+  lab.addToContainer(partial, 'beaker-a', 'water', 230);
+  const topUp = lab.addToContainer(partial, 'beaker-a', 'water', 50);
+  assert.equal(topUp.ok, true, 'a 50 mL chip on 230 mL fills to the limit instead of being refused');
+  assert.equal(topUp.capped, true);
+  assert.equal(topUp.added, 20);
+  assert.equal(vessel(partial, 'beaker-a').volumeMl, 250);
+  assert.equal(vessel(partial, 'beaker-a').contents.find((row) => row.id === 'water').amount, 250);
+  assert.ok(partial.observations.some((row) => /full \(250 mL\): only 20 mL went in/.test(row.text)));
+  partial.lang = 'pt';
+  lab.emptyContainer(partial, 'beaker-a');
+  lab.addToContainer(partial, 'beaker-a', 'water', 240);
+  lab.addToContainer(partial, 'beaker-a', 'water', 12.5);
+  assert.ok(partial.observations.some((row) => /cheio \(250 mL\): só entraram 10 mL/.test(row.text)));
+
+  // Solids do not take liquid volume, and a small vessel keeps its own limit.
+  const tube = lab.emptySession({ title: 'Tube', mode: 'bench' });
+  lab.addVessel(tube, 'test-tube');
+  const tubeId = tube.containers.find((row) => row.type === 'test-tube').id;
+  assert.equal(lab.addToContainer(tube, tubeId, 'water', 50).added, 20);
+  assert.equal(lab.addToContainer(tube, tubeId, 'nacl', 5).ok, true);
+
+  // A ready mix goes in whole or not at all.
+  const ready = lab.emptySession({ title: 'Ready', mode: 'bench' });
+  lab.addToContainer(ready, 'beaker-a', 'water', 230);
+  const kit = lab.addReady(ready, 'saline_ready', 'beaker-a');
+  assert.equal(kit.ok, false);
+  assert.equal(kit.reason, 'full');
+  assert.equal(vessel(ready, 'beaker-a').volumeMl, 230, 'and a refused kit changes nothing');
+}
+
+// ── Soft limit on one piece of glassware ────────────────────────────────────
+{
+  assert.equal(lab.SOFT_VESSEL_LIMIT, 6);
+  const session = lab.emptySession({ title: 'Beakers', mode: 'bench' });
+  const results = [];
+  for (let i = 0; i < 8; i += 1) results.push(lab.addVessel(session, 'beaker'));
+  const beakers = () => session.containers.filter((row) => row.type === 'beaker').length;
+  assert.equal(results.filter((row) => row.ok).length, 5, 'one beaker comes with the board, five more go in without asking');
+  assert.equal(beakers(), 6);
+  assert.equal(results[5].reason, 'confirm', 'the 7th asks first');
+  assert.equal(results[5].count, 6);
+  assert.equal(lab.addVessel(session, 'beaker', { confirmed: true }).ok, true, 'and goes in once confirmed');
+  assert.equal(beakers(), 7);
+  assert.equal(lab.addVessel(session, 'flask').ok, true, 'the limit counts one piece at a time');
+  assert.equal(lab.MAX_VESSELS, 120, 'the hard ceiling does not move');
+  assert.equal(lab.duplicateObject(session, 'beaker-a').ok, true, 'duplicating a chosen piece is already a decision');
+}
+
 console.log('test-lab-mechanics: ok');
