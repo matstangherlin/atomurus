@@ -702,7 +702,8 @@ const sugarLeft = brew.containers[0].contents.find((row) => row.id === 'sucrose'
 assert.ok(sugarLeft.amount < 25, 'sugar is consumed');
 assert.ok(brew.containers[0].contents.some((row) => row.id === 'ethanol'), 'ethanol appears');
 assert.equal(brew.containers[0].fizz, true, 'and CO2 with it');
-assert.ok(brew.observations.some((row) => row.text.includes('2 CO₂')));
+// Sucrose, not glucose: hydrolysis first, then 4 ethanol and 4 CO₂ per sucrose.
+assert.ok(brew.observations.some((row) => row.text.includes('C₁₂H₂₂O₁₁ + H₂O → 2 C₆H₁₂O₆ → 4 C₂H₅OH + 4 CO₂')));
 // The ferment result is distillable, which links the two processes.
 assert.ok(lab.volatileParts(brew.containers[0]).length >= 2);
 

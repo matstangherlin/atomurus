@@ -1975,6 +1975,14 @@ svg.lab-linking path {
 }
 .lab-guide-observe { margin: 10px 0; display: grid; gap: 8px; justify-items: start; }
 .lab-guide-observe p { margin: 0; font-size: 13px; color: var(--lc-ink-2, #58544A); }
+.lab-guide-safety { font-size: 13px; color: var(--lc-ink-2, #58544A); }
+.lab-profile { margin: 0; }
+.lab-profile svg { display: block; width: 100%; max-width: 260px; height: auto; }
+.lab-profile-axis { fill: none; stroke: var(--lc-rule, #D8D2BF); stroke-width: 1.2; }
+.lab-profile-line { fill: none; stroke: var(--lc-green, #1E6A50); stroke-width: 2.2; stroke-linejoin: round; }
+.lab-profile-line.is-after { stroke-dasharray: 4 4; opacity: .7; }
+.lab-profile text { font-size: 10px; fill: var(--lc-ink-2, #58544A); }
+.lab-profile figcaption { font-size: 12px; color: var(--lc-ink-3, #8E8978); }
 @keyframes lab-wave {
   0%, 100% { transform: translateX(0); }
   50% { transform: translateX(7%); }

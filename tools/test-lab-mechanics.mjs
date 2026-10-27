@@ -360,4 +360,105 @@ for (const creation of lab.CREATIONS) {
   assert.match(fragrance.tutorial[0].pt, /8 mL/, 'the Portuguese step names the amount too');
 }
 
+// ── Guides that taught something wrong ──────────────────────────────────────
+{
+  // Fermentation: sucrose equation, and the yield computed from it.
+  // 15 g / 342.30 g/mol = 0.04382 mol; × 4 × 46.07 = 8.08 g of ethanol ≈ 10.2 mL;
+  // × 4 × 44.01 = 7.71 g of CO₂; water used by the hydrolysis 0.79 g.
+  const brew = lab.emptySession({ title: 'Yield', mode: 'bench' });
+  lab.addToContainer(brew, 'flask-b', 'water', 100);
+  lab.addToContainer(brew, 'flask-b', 'sucrose', 25);
+  lab.addToContainer(brew, 'flask-b', 'yeast', 3);
+  lab.setTemperature(brew, 'flask-b', 28);
+  const run = lab.ferment(brew, 'flask-b');
+  assert.equal(run.used, 15);
+  assert.equal(run.ethanolG, 8.1);
+  assert.equal(run.made, 10.2, 'mL of ethanol, through 0.789 g/mL');
+  assert.equal(run.co2G, 7.7);
+  const flask = vessel(brew, 'flask-b');
+  assert.equal(flask.contents.find((row) => row.id === 'water').amount, 99.2, 'the hydrolysis uses 0.8 mL of water');
+  assert.equal(flask.volumeMl, 109.4);
+  assert.ok(brew.observations.some((row) => /Theoretical yield: 8\.1 g of virtual ethanol \(≈ 10\.2 mL\) and 7\.7 g of CO₂/.test(row.text)));
+  const brewPt = lab.emptySession({ title: 'Rendimento', mode: 'bench', lang: 'pt' });
+  lab.addToContainer(brewPt, 'flask-b', 'water', 100);
+  lab.addToContainer(brewPt, 'flask-b', 'sucrose', 25);
+  lab.addToContainer(brewPt, 'flask-b', 'yeast', 3);
+  lab.setTemperature(brewPt, 'flask-b', 28);
+  lab.ferment(brewPt, 'flask-b');
+  assert.ok(brewPt.observations.some((row) => /Rendimento teórico: 8,1 g de etanol virtual \(≈ 10,2 mL\)/.test(row.text)));
+  assert.match(byId('ethanol').learningObjectives.en, /C₁₂H₂₂O₁₁ \+ H₂O → 2 C₆H₁₂O₆ → 4 C₂H₅OH \+ 4 CO₂/);
+
+  // Crystals: 20 g in 60 mL is concentrated, not saturated (≈ 200 g per 100 mL at 20 °C).
+  const crystal = byId('crystal');
+  assert.match(crystal.tutorial[0].why.en, /not a saturated one/);
+  assert.match(crystal.tutorial[0].why.pt, /não saturada/);
+  assert.match(crystal.tutorial[0].why.en, /about 120 g/);
+  const pan = lab.emptySession({ title: 'Pan', mode: 'bench' });
+  lab.addToContainer(pan, 'beaker-a', 'water', 60);
+  lab.addToContainer(pan, 'beaker-a', 'sucrose', 20);
+  lab.setTemperature(pan, 'beaker-a', 70);
+  const boiled = lab.crystallise(pan, 'beaker-a');
+  assert.equal(boiled.ok, true);
+  const left = vessel(pan, 'beaker-a').contents.find((row) => row.id === 'water').amount;
+  assert.ok(20 / left > 2.0, `crystals only once past saturation: 20 g in ${left} mL`);
+  assert.ok(pan.observations.some((row) => /past the ≈ 200 g per 100 mL/.test(row.text)));
+
+  // Sunscreen: no emulsifier, said plainly.
+  const sunscreen = byId('sunscreen');
+  const stir = sunscreen.tutorial.find((row) => row.id === 'stir');
+  assert.match(stir.en, /no emulsifier/);
+  assert.match(stir.pt, /Sem emulsificante/);
+  assert.match(stir.why.en, /emulsifier/);
+
+  // Distillation: realistic purity, the azeotrope in % by mass, a temperature profile.
+  const still = lab.emptySession({ title: 'Still', mode: 'bench' });
+  for (const type of ['round-flask', 'condenser', 'receiving-flask', 'heating-mantle']) lab.addVessel(still, type);
+  const pot = lab.firstOfType(still, 'round-flask');
+  lab.addToContainer(still, pot.id, 'water', 60);
+  lab.addToContainer(still, pot.id, 'ethanol', 40);
+  lab.assembleRig(still);
+  lab.setTemperature(still, pot.id, 80);
+  const distilled = lab.distill(still, pot.id);
+  assert.equal(distilled.ok, true);
+  assert.ok(distilled.purity >= 90 && distilled.purity <= 93, `simple distillation ≈ 90–93%, got ${distilled.purity}`);
+  assert.deepEqual(distilled.profile.map((row) => row.c), [22, 78, 78, 100]);
+  assert.ok(still.observations.some((row) => /95\.6% ethanol by mass/.test(row.text)));
+  assert.ok(lab.firstOfType(still, 'round-flask').distillProfile);
+}
+
+// ── Dilute HCl: a prepared solution with a safety note, never the concentrate ─
+{
+  for (const query of ['HCl 1 mol/L 100 mL', 'HCl 1 mol/L', 'HCl diluído', 'ácido clorídrico', 'hydrochloric acid']) {
+    const hit = lab.resolveQuery(query);
+    assert.equal(hit.ok, true, query);
+    assert.equal(hit.id, 'hcl_dilute', query);
+  }
+  assert.equal(lab.searchCatalog('HCl 1 mol/L 100 mL').status, 'ok');
+  assert.equal(lab.resolveQuery('HCl concentrado').ok, false, 'the concentrated acid is not offered');
+  assert.equal(lab.resolveQuery('ácido clorídrico concentrado').ok, false);
+  assert.equal(lab.resolveQuery('cocaine').reason, 'unavailable', 'the deny list is untouched');
+  const acid = lab.SUBSTANCES.hcl_dilute;
+  assert.equal(acid.prepared, true);
+  assert.equal(acid.chem.molarity, 1);
+  assert.ok(acid.safety.en.includes('acid to water') && acid.safety.pt.includes('ácido à água'));
+
+  const session = lab.emptySession({ title: 'HCl', mode: 'bench' });
+  const added = lab.addToContainer(session, 'beaker-a', 'hcl_dilute', 10);
+  assert.equal(added.ok, true);
+  assert.ok(added.safety, 'adding it returns the safety line');
+  assert.ok(session.observations.some((row) => /acid to water/.test(row.text)));
+  assert.equal(vessel(session, 'beaker-a').ph, 0, '1 mol/L strong acid reads pH 0');
+  lab.addToContainer(session, 'beaker-a', 'water', 90);
+  assert.equal(vessel(session, 'beaker-a').ph, 1, 'diluted tenfold, pH 1');
+}
+
+// ── Objectives and safety on every guide that needs them ────────────────────
+for (const creation of lab.CREATIONS) {
+  assert.ok(creation.learningObjectives && creation.learningObjectives.en && creation.learningObjectives.pt, `${creation.id} has learning objectives`);
+}
+for (const id of ['solution', 'ph']) {
+  const creation = byId(id);
+  assert.ok(creation.safety && creation.safety.en && creation.safety.pt, `${id} carries a safety note`);
+}
+
 console.log('test-lab-mechanics: ok');

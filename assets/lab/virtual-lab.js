@@ -171,6 +171,14 @@
     frac_heavy: { id: 'frac_heavy', name: 'Virtual heavy fraction', formula: 'C₁₇+', category: 'fraction', color: '#A88B4E', state: 'liquid', bp: 330, allowed: true }, // densidade não verificada (1 g/mL)
     yeast: { id: 'yeast', name: 'Virtual yeast', formula: 'S. cerevisiae', category: 'culture', color: '#D8C79A', state: 'solid', allowed: true },
     cane_juice: { id: 'cane_juice', name: 'Virtual cane juice', formula: 'sucrose + water', category: 'solution', color: '#C9B074', state: 'liquid', bp: 100, allowed: true }, // densidade não verificada (1 g/mL)
+    /* A prepared solution, never the concentrated acid: 1 mol/L HCl is about
+       3.6% by mass, density ≈ 1.016 g/mL at 20 °C (CRC Handbook). Its pH comes
+       from moles = litres × 1 mol/L in the existing strong-acid branch. */
+    hcl_dilute: { id: 'hcl_dilute', name: 'Dilute hydrochloric acid (1 mol/L)', formula: 'HCl(aq)', category: 'acid', color: '#E4ECEF', state: 'liquid', density: 1.016, allowed: true, prepared: true, chem: { kind: 'strong-acid', molarity: 1, nH: 1 },
+      safety: {
+        en: 'Dilute acid (virtual). In a real lab it is prepared from stock acid by adding acid to water, never water to acid, with goggles and gloves.',
+        pt: 'Ácido diluído (virtual). No laboratório real, ele é preparado a partir do ácido de estoque adicionando o ácido à água, nunca a água ao ácido, com óculos e luvas.'
+      } },
     /* Cellulose is not a mineral. sugar would pass the filter; no other category fits. */
     fibre: { id: 'fibre', name: 'Virtual plant fibre', formula: 'cellulose', category: 'biomass', color: '#9A8B63', state: 'solid', allowed: true }
   };
@@ -877,7 +885,13 @@
     crystallisation: 'guided:sugar', cristalizacao: 'guided:sugar',
     petroleum: 'guided:petroleum', petroleo: 'guided:petroleum', 'petróleo': 'guided:petroleum',
     refinery: 'guided:petroleum', refino: 'guided:petroleum', gasoline: 'guided:petroleum',
-    gasolina: 'guided:petroleum', 'fractional distillation': 'guided:petroleum'
+    gasolina: 'guided:petroleum', 'fractional distillation': 'guided:petroleum',
+    /* Only the prepared dilute solution answers to HCl; a concentrated acid is
+       not in the catalogue, so «HCl concentrado» stays unknown. */
+    hcl: 'hcl_dilute', 'hcl 1 mol/l': 'hcl_dilute', 'hcl 1m': 'hcl_dilute', 'hcl 1 m': 'hcl_dilute',
+    'hcl diluido': 'hcl_dilute', 'hcl(aq)': 'hcl_dilute', 'dilute hcl': 'hcl_dilute',
+    'hydrochloric acid': 'hcl_dilute', 'dilute hydrochloric acid': 'hcl_dilute',
+    'acido cloridrico': 'hcl_dilute', 'acido cloridrico diluido': 'hcl_dilute', 'acido cloridrico 1 mol/l': 'hcl_dilute'
   };
 
   /* Portuguese names for the sentences a guide writes about a material. */
@@ -888,7 +902,8 @@
     linalool: 'linalol', vanillin: 'vanilina', carbon: 'carbono (grafite)', zno: 'óxido de zinco',
     tio2: 'dióxido de titânio', oil: 'óleo carreador virtual', ethanol: 'etanol',
     frac_light: 'fração leve virtual', frac_mid: 'fração média virtual', frac_heavy: 'fração pesada virtual',
-    yeast: 'levedura virtual', cane_juice: 'caldo de cana virtual', fibre: 'fibra vegetal virtual'
+    yeast: 'levedura virtual', cane_juice: 'caldo de cana virtual', fibre: 'fibra vegetal virtual',
+    hcl_dilute: 'ácido clorídrico diluído (1 mol/L)'
   };
 
   function substanceName(id, lang) {
@@ -1105,7 +1120,7 @@
         { id: 'charge', action: 'addMaterial', need: { water: true, ethanol: true }, amounts: { water: 60, ethanol: 40 }, into: 'round-flask', check: [CHECKS.volumeBetween(55, 65, 'water'), CHECKS.volumeBetween(35, 45, 'ethanol')], en: 'Charge the flask with 60 mL of water and 40 mL of ethanol.', pt: 'Carregue o balão com 60 mL de água e 40 mL de etanol.', why: { en: 'Ethanol boils at 78 °C and water at 100 °C, so they can be separated.', pt: 'O etanol ferve a 78 °C e a água a 100 °C, por isso podem ser separados.' } },
         { id: 'rig', action: 'connect', needConnections: 2, into: 'round-flask', check: [CHECKS.stillAssembled()], en: 'Connect flask to condenser and condenser to receiver.', pt: 'Conecte o balão ao condensador e o condensador ao coletor.', why: { en: 'The train only works if the vapour has a sealed path.', pt: 'A aparelhagem só funciona se o vapor tiver um caminho fechado.' } },
         { id: 'heat', action: 'heat', heatTo: 80, needTemp: 76, into: 'round-flask', check: [CHECKS.temperatureBetween(76, 92)], feedback: { en: 'Just above 78 °C mostly ethanol boils; closer to 100 °C the water boils too.', pt: 'Pouco acima de 78 °C ferve sobretudo o etanol; perto de 100 °C a água também ferve.' }, en: 'Heat the flask to about 80 °C.', pt: 'Aqueça o balão até cerca de 80 °C.', why: { en: 'Just above the ethanol boiling point, so mostly ethanol vaporises.', pt: 'Logo acima do ponto de ebulição do etanol, então vaporiza sobretudo etanol.' } },
-        { id: 'run', action: 'distill', needIn: { type: 'receiving-flask', id: 'ethanol' }, observe: true, en: 'Distil, and read the purity in the notebook.', pt: 'Destile e leia a pureza no caderno.', why: { en: 'Ethanol and water form an azeotrope near 95%, so simple distillation cannot go further.', pt: 'Etanol e água formam um azeótropo perto de 95%, então a destilação simples não passa disso.' } }
+        { id: 'run', action: 'distill', needIn: { type: 'receiving-flask', id: 'ethanol' }, observe: true, en: 'Distil, and read the purity in the notebook.', pt: 'Destile e leia a pureza no caderno.', why: { en: 'Ethanol and water form an azeotrope at about 95.6% ethanol by mass, so no distillation gets past it; one simple distillation stops well short of that.', pt: 'Etanol e água formam um azeótropo em cerca de 95,6% de etanol em massa, então nenhuma destilação passa disso; uma destilação simples fica bem abaixo.' } }
       ]
     },
     {
@@ -1125,8 +1140,8 @@
       safetyClass: 'educational',
       version: 1,
       learningObjectives: {
-        en: 'C₆H₁₂O₆ → 2 C₂H₅OH + 2 CO₂, and why yeast stops working when it gets too hot.',
-        pt: 'C₆H₁₂O₆ → 2 C₂H₅OH + 2 CO₂, e por que a levedura para de trabalhar quando esquenta demais.'
+        en: 'C₁₂H₂₂O₁₁ + H₂O → 2 C₆H₁₂O₆ → 4 C₂H₅OH + 4 CO₂: sucrose splits into glucose and fructose, yeast ferments them, and it stops working when it gets too hot.',
+        pt: 'C₁₂H₂₂O₁₁ + H₂O → 2 C₆H₁₂O₆ → 4 C₂H₅OH + 4 CO₂: a sacarose se divide em glicose e frutose, a levedura as fermenta e para de trabalhar quando esquenta demais.'
       },
       tutorial: [
         { id: 'vessel', action: 'addEquipment', needEquipment: ['flask'], en: 'Place an Erlenmeyer flask: its narrow neck keeps air out.', pt: 'Coloque um erlenmeyer: o gargalo estreito dificulta a entrada de ar.', why: { en: 'Fermentation works without oxygen.', pt: 'A fermentação ocorre sem oxigênio.' } },
@@ -1251,6 +1266,10 @@
         en: 'Mass, volume and virtual concentration on the free board.',
         pt: 'Massa, volume e concentração virtual na bancada livre.'
       },
+      safety: {
+        en: 'In a real lab: wear goggles, label every container and never taste a solution. Sodium chloride is low hazard; the habits are what carry over.',
+        pt: 'No laboratório real: use óculos de proteção, rotule cada recipiente e nunca prove uma solução. O cloreto de sódio é de baixo risco; o que vale é o hábito.'
+      },
       tutorial: [
         { id: 'eq', action: 'addEquipment', needEquipment: ['beaker'], en: 'Place a beaker on the board.', pt: 'Coloque um béquer na bancada.', why: { en: 'A beaker holds an approximate volume.', pt: 'O béquer contém um volume aproximado.' } },
         { id: 'water', action: 'addMaterial', need: { water: true }, amounts: { water: 60 }, check: [CHECKS.volumeBetween(55, 65, 'water')], en: 'Add 60 mL of virtual water to the beaker.', pt: 'Adicione 60 mL de água virtual ao béquer.', why: { en: 'The solvent goes in first so the solute has somewhere to dissolve.', pt: 'O solvente entra primeiro para o soluto ter onde dissolver.' } },
@@ -1300,6 +1319,10 @@
       stages: ['structure', 'conditions', 'result'],
       safetyClass: 'conceptual',
       version: 2,
+      learningObjectives: {
+        en: 'Graphite and diamond are both pure carbon: what differs is the bonding (flat sp² sheets against an sp³ network) and the pressure and temperature that favour each.',
+        pt: 'Grafite e diamante são ambos carbono puro: o que muda é a ligação (folhas planas sp² contra uma rede sp³) e a pressão e a temperatura que favorecem cada um.'
+      },
       tutorial: [
         { id: 'carbon', action: 'addMaterial', needAny: ['c', 'carbon'], amounts: { c: 10 }, needEquipment: ['beaker'], check: [CHECKS.massEquals(['c', 'carbon'], 10, 1)], en: 'Place 10 g of virtual carbon in a beaker.', pt: 'Coloque 10 g de carbono virtual em um béquer.', why: { en: 'Graphite and diamond are both carbon in different lattices.', pt: 'Grafite e diamante são carbono em redes diferentes.' } },
         { id: 'inspect', action: 'inspect', observe: true, en: 'Open Allotropes to compare graphite and diamond conceptually.', pt: 'Abra Alótropos para comparar grafite e diamante de forma conceitual.', why: { en: 'In graphite each carbon bonds to three others in flat sheets; in diamond to four, in a rigid 3D network. Same atoms, different structure.', pt: 'No grafite, cada carbono se liga a três outros em folhas planas; no diamante, a quatro, numa rede 3D rígida. Mesmos átomos, estrutura diferente.' } }
@@ -1320,6 +1343,14 @@
       stages: ['mix', 'measure', 'neutral'],
       safetyClass: 'educational',
       version: 2,
+      learningObjectives: {
+        en: 'pH as a logarithmic scale, neutralising citric acid with bicarbonate in an open vessel, and why pH 7 is not the equivalence point.',
+        pt: 'pH como escala logarítmica, a neutralização do ácido cítrico com bicarbonato em recipiente aberto e por que pH 7 não é o ponto de equivalência.'
+      },
+      safety: {
+        en: 'In a real lab: goggles and gloves. Citric acid and bicarbonate are mild, but with any acid the rule is the same: add acid to water, never water to acid.',
+        pt: 'No laboratório real: óculos e luvas. Ácido cítrico e bicarbonato são brandos, mas com qualquer ácido a regra é a mesma: adicione o ácido à água, nunca a água ao ácido.'
+      },
       tutorial: [
         { id: 'acid', action: 'addMaterial', need: { water: true, citric_acid: true }, amounts: { water: 50, citric_acid: 6 }, needEquipment: ['beaker'], check: [CHECKS.volumeBetween(45, 55, 'water'), CHECKS.massEquals('citric_acid', 6, 0.3)], en: 'Add water, then 6 g of citric acid.', pt: 'Adicione água e depois 6 g de ácido cítrico.', why: { en: 'The acid needs water before a virtual pH can be read.', pt: 'O ácido precisa de água antes de um pH virtual ser lido.' } },
         { id: 'base', action: 'addMaterial', need: { bicarbonate: true }, amounts: { bicarbonate: PH_CHALLENGE.bicarbonateG }, checkPh: { min: PH_CHALLENGE.phMin, max: PH_CHALLENGE.phMax }, errors: [{ when: CHECKS.massAbove('bicarbonate', 7.9), feedback: { en: 'Past 7.87 g every proton of the 6 g of citric acid is already used. The extra bicarbonate stays as HCO₃⁻ and pulls the pH towards 8.3. Undo the last addition and add less.', pt: 'Depois de 7,87 g todos os prótons dos 6 g de ácido cítrico já foram usados. O bicarbonato extra fica como HCO₃⁻ e puxa o pH para perto de 8,3. Desfaça a última adição e coloque menos.' } }], en: 'Add ' + PH_CHALLENGE.bicarbonateG + ' g of bicarbonate. The mixture may fizz.', pt: 'Adicione ' + String(PH_CHALLENGE.bicarbonateG).replace('.', ',') + ' g de bicarbonato. A mistura pode efervescer.', why: { en: 'pH 7 is not the equivalence point: trisodium citrate is a weak base, so the reading reaches 7 a little before 7.87 g of NaHCO₃. In this open vessel the CO₂ leaves.', pt: 'pH 7 não é o ponto de equivalência: o citrato trissódico é base fraca, então a leitura chega a 7 um pouco antes de 7,87 g de NaHCO₃. Neste recipiente aberto o CO₂ sai.' } },
@@ -1341,8 +1372,12 @@
       stages: ['dissolve', 'evaporate', 'observe'],
       safetyClass: 'educational',
       version: 2,
+      learningObjectives: {
+        en: 'Concentrated is not saturated: how much sucrose water holds at 20 °C (about 200 g per 100 mL), and why crystals need a supersaturated solution.',
+        pt: 'Concentrada não é saturada: quanto de sacarose a água segura a 20 °C (cerca de 200 g por 100 mL) e por que cristais precisam de uma solução supersaturada.'
+      },
       tutorial: [
-        { id: 'dissolve', action: 'addMaterial', need: { water: true, sucrose: true }, amounts: { water: 60, sucrose: 20 }, needEquipment: ['beaker'], into: 'beaker', check: [CHECKS.volumeBetween(55, 65, 'water'), CHECKS.massEquals('sucrose', 20, 1)], en: 'Dissolve 20 g of sucrose in 60 mL of water.', pt: 'Dissolva 20 g de sacarose em 60 mL de água.', why: { en: 'Crystals only grow from a concentrated solution.', pt: 'Cristais só crescem a partir de uma solução concentrada.' } },
+        { id: 'dissolve', action: 'addMaterial', need: { water: true, sucrose: true }, amounts: { water: 60, sucrose: 20 }, needEquipment: ['beaker'], into: 'beaker', check: [CHECKS.volumeBetween(55, 65, 'water'), CHECKS.massEquals('sucrose', 20, 1)], en: 'Dissolve 20 g of sucrose in 60 mL of water.', pt: 'Dissolva 20 g de sacarose em 60 mL de água.', why: { en: 'This makes a concentrated solution, not a saturated one: 60 mL of water at 20 °C hold about 120 g of sucrose (≈ 200 g per 100 mL).', pt: 'Isto faz uma solução concentrada, não saturada: 60 mL de água a 20 °C dissolvem cerca de 120 g de sacarose (≈ 200 g por 100 mL).' } },
         { id: 'heat', action: 'heat', into: 'beaker', check: [CHECKS.temperatureAtLeast(40)], en: 'Warm the vessel with a Bunsen or heat control (virtual).', pt: 'Aqueça o vidro com Bunsen ou o controle de calor (virtual).', why: { en: 'Warm water dissolves sugar faster and loses water to evaporation faster.', pt: 'A água morna dissolve o açúcar mais rápido e perde água por evaporação mais rápido.' } },
         { id: 'observe', action: 'inspect', product: 'sugar-sol', observe: true, en: 'Observe the modeled solution. This is not a crystal-growing recipe.', pt: 'Observe a solução modelada. Não é uma receita de cristalização.', why: { en: 'No crystals yet: 20 g in 60 mL is far below saturation (about 120 g would dissolve at 20 °C). Most of the water would have to evaporate first.', pt: 'Ainda não há cristais: 20 g em 60 mL estão muito abaixo da saturação (cerca de 120 g dissolveriam a 20 °C). A maior parte da água teria de evaporar antes.' } }
       ]
@@ -1361,10 +1396,14 @@
         pt: 'Emulsão mineral conceitual com óxido de zinco. Não é receita de fabricação nem alegação de FPS.'
       },
       stages: ['choose', 'disperse', 'emulsify', 'observe'],
+      learningObjectives: {
+        en: 'Oil and water need an emulsifier to stay mixed; zinc oxide and titanium dioxide act as mineral UV filters. Not an SPF claim.',
+        pt: 'Óleo e água precisam de um emulsificante para continuar misturados; óxido de zinco e dióxido de titânio agem como filtros UV minerais. Não é alegação de FPS.'
+      },
       tutorial: [
         { id: 'base', action: 'addMaterial', need: { water: true, oil: true }, amounts: { water: 20, oil: 15 }, needEquipment: ['beaker'], check: [CHECKS.volumeBetween(18, 22, 'water'), CHECKS.volumeBetween(13, 17, 'oil')], en: 'Add 20 mL of water and 15 mL of virtual carrier oil to a beaker.', pt: 'Coloque 20 mL de água e 15 mL de óleo virtual em um béquer.', why: { en: 'Aqueous and oil phases must meet before a mineral filter can disperse.', pt: 'As fases aquosa e oleosa precisam se encontrar antes de dispersar o filtro mineral.' } },
         { id: 'filter', action: 'addMaterial', needAny: ['zno', 'tio2'], amounts: { zno: 8, tio2: 8 }, check: [CHECKS.massEquals(['zno', 'tio2'], 8, 1)], en: 'Disperse 8 g of zinc oxide or titanium dioxide into the base.', pt: 'Dispersar óxido de zinco ou dióxido de titânio na base.', why: { en: 'These are modeled as mineral UV-filter roles, not a certified SPF.', pt: 'Isto modela o papel de filtro UV mineral, não um FPS certificado.' } },
-        { id: 'stir', action: 'mix', stir: true, en: 'Stir to form a virtual emulsion.', pt: 'Agite para formar uma emulsão virtual.', why: { en: 'Stirring breaks the oil into droplets spread through the water.', pt: 'Agitar quebra o óleo em gotas espalhadas pela água.' } },
+        { id: 'stir', action: 'mix', stir: true, en: 'Stir to form a virtual emulsion. With no emulsifier it separates again on standing.', pt: 'Agite para formar uma emulsão virtual. Sem emulsificante, ela se separa de novo em repouso.', why: { en: 'Stirring only breaks the oil into droplets. A real lotion adds an emulsifier, a molecule with a water-loving end and an oil-loving end, so the droplets stay apart; this catalogue has none, so the mixture will separate.', pt: 'Agitar só quebra o óleo em gotas. Uma loção real leva um emulsificante, uma molécula com uma ponta que gosta de água e outra que gosta de óleo, para as gotas continuarem separadas; este catálogo não tem nenhum, então a mistura vai se separar.' } },
         { id: 'observe', action: 'inspect', product: 'sunscreen', en: 'Read the inspector. This models a mineral UV filter, not a real SPF.', pt: 'Leia o inspetor. Isto modela um filtro UV mineral, não um FPS real.', why: { en: 'Zinc oxide and titanium dioxide scatter and absorb UV. A real SPF is measured on people, never computed.', pt: 'Óxido de zinco e dióxido de titânio espalham e absorvem UV. Um FPS real é medido em pessoas, nunca calculado.' } }
       ]
     }
@@ -1395,6 +1434,9 @@
       logDeny('denied', q);
       return { ok: false, reason: 'unavailable', educational: '/explore.html' };
     }
+    /* «HCl 1 mol/L 100 mL» asks for a material; the amount is not part of its name. */
+    var bare = q.replace(/\b\d+(?:[.,]\d+)?\s*(?:ml|l|g|mg|kg)\b/g, ' ').replace(/\s+/g, ' ').trim();
+    if (bare && bare !== q && !ALIASES[q] && ALIASES[bare] && String(ALIASES[bare]).indexOf('guided:') !== 0) q = bare;
     if (ALIASES[q] && String(ALIASES[q]).indexOf('guided:') === 0) {
       return { ok: true, kind: 'creation', id: ALIASES[q].slice(7) };
     }
@@ -1882,7 +1924,14 @@
     (container.contents || []).forEach(function (row) {
       var spec = SUBSTANCES[row.id];
       var chem = spec && spec.chem;
-      if (!chem || chem.kind === 'solvent' || spec.state === 'liquid') return;
+      if (!chem || chem.kind === 'solvent') return;
+      if (spec.state === 'liquid') {
+        /* A prepared solution brings its concentration: moles = litres × mol/L. */
+        if (chem.molarity && row.unit === 'mL') {
+          out.push({ kind: chem.kind, moles: ((Number(row.amount) || 0) / 1000) * chem.molarity, nH: chem.nH });
+        }
+        return;
+      }
       var grams = Number(row.amount) || 0;
       if (grams < 0) grams = 0;
       out.push({
@@ -2290,10 +2339,11 @@
         (container.label || container.id) + ' está cheio (' + capacity + ' mL): só entraram ' + fmtNum(qty, 'pt') + ' mL.'
       ));
     }
+    if (spec.safety) observe(session, line(session, spec.safety.en, spec.safety.pt));
     noteProduct(session, container, beforeProduct);
     var fired = noteReaction(session, container, beforeReaction);
     var full = spec.state === 'liquid' && capacity > 0 && (Number(container.volumeMl) || 0) >= capacity - 0.05;
-    return { ok: true, container: container, reaction: fired, added: qty, capped: capped, full: full, capacityMl: capacity };
+    return { ok: true, container: container, reaction: fired, added: qty, capped: capped, full: full, capacityMl: capacity, safety: spec.safety || null };
   }
 
   /* Take one material back out, instead of emptying the whole vessel. */
@@ -2816,6 +2866,13 @@
     return attachTool(session, funnel.id, host.id);
   }
 
+  /* Sucrose is split first (hydrolysis into glucose and fructose), then each
+     hexose gives two ethanol and two CO₂. Per gram of sucrose (342.30 g/mol):
+     4 × 46.07 / 342.30 = 0.538 g of ethanol and 4 × 44.01 / 342.30 = 0.514 g of
+     CO₂, using 18.02 / 342.30 = 0.053 g of water. Theoretical yield only. */
+  var FERMENT_EQ = 'C₁₂H₂₂O₁₁ + H₂O → 2 C₆H₁₂O₆ → 4 C₂H₅OH + 4 CO₂';
+  var FERMENT_MOLAR = { sucrose: 342.30, ethanol: 46.07, co2: 44.01, water: 18.02 };
+
   /* Fermentation: yeast turns sugar into ethanol and carbon dioxide. This is
      the textbook reaction, modelled for teaching. It is not a procedure for
      producing a drinkable product. */
@@ -2838,8 +2895,20 @@
     pushHistory(session);
     var beforeProduct = container.productId || '';
     var used = Math.round(Math.min(Number(sugar.amount), Math.max(2, Number(sugar.amount) * 0.6)) * 10) / 10;
-    var made = Math.round(used * 0.51 * 10) / 10;
+    /* Cane juice has no sugar content cited here, so its grams are read as
+       sucrose (conceptual). */
+    var mol = used / FERMENT_MOLAR.sucrose;
+    var ethanolG = mol * 4 * FERMENT_MOLAR.ethanol;
+    var co2G = mol * 4 * FERMENT_MOLAR.co2;
+    var made = Math.round((ethanolG / SUBSTANCES.ethanol.density) * 10) / 10;
+    var hydrolysed = Math.round(mol * FERMENT_MOLAR.water * 10) / 10;
     sugar.amount = Math.round((Number(sugar.amount) - used) * 10) / 10;
+    var waterRow = (container.contents || []).filter(function (row) { return row.id === 'water'; })[0];
+    if (waterRow && hydrolysed > 0) {
+      hydrolysed = Math.min(hydrolysed, Number(waterRow.amount) || 0);
+      waterRow.amount = Math.round((Number(waterRow.amount) - hydrolysed) * 10) / 10;
+      container.volumeMl = Math.round(Math.max(0, (Number(container.volumeMl) || 0) - hydrolysed) * 10) / 10;
+    }
     container.contents = (container.contents || []).filter(function (row) { return (Number(row.amount) || 0) > 0.05; });
     var spirit = (container.contents || []).filter(function (row) { return row.id === 'ethanol'; })[0];
     if (spirit) spirit.amount = Math.round((Number(spirit.amount) + made) * 10) / 10;
@@ -2850,13 +2919,19 @@
     mixContainer(container);
     container.fizz = true;
     noteProduct(session, container, beforeProduct);
+    var ethanolShown = Math.round(ethanolG * 10) / 10;
+    var co2Shown = Math.round(co2G * 10) / 10;
     observe(session, line(
       session,
-      'Fermented ' + used + ' g of sugar into ' + made + ' mL of virtual ethanol and CO₂. C₆H₁₂O₆ → 2 C₂H₅OH + 2 CO₂',
-      'Fermentou ' + used + ' g de açúcar em ' + made + ' mL de etanol virtual e CO₂. C₆H₁₂O₆ → 2 C₂H₅OH + 2 CO₂'
+      'Fermented ' + formatQty(used) + ' g of sucrose: ' + FERMENT_EQ + '. Theoretical yield: ' + formatQty(ethanolShown) + ' g of virtual ethanol (≈ ' + formatQty(made) + ' mL) and ' + formatQty(co2Shown) + ' g of CO₂, which bubbles away.',
+      'Fermentou ' + fmtNum(used, 'pt') + ' g de sacarose: ' + FERMENT_EQ + '. Rendimento teórico: ' + fmtNum(ethanolShown, 'pt') + ' g de etanol virtual (≈ ' + fmtNum(made, 'pt') + ' mL) e ' + fmtNum(co2Shown, 'pt') + ' g de CO₂, que sai em bolhas.'
     ));
-    return { ok: true, container: container, used: used, made: made };
+    return { ok: true, container: container, used: used, made: made, ethanolG: ethanolShown, co2G: co2Shown };
   }
+
+  /* About 200 g of sucrose dissolve in 100 mL of water at 20 °C (CRC Handbook:
+     203.9 g per 100 g of water), so 60 mL hold about 120 g. */
+  var SUCROSE_G_PER_ML = 2.0;
 
   /* Boil a sugar solution down until it is supersaturated and crystals form. */
   function crystallise(session, containerId) {
@@ -2874,6 +2949,14 @@
 
     pushHistory(session);
     var lost = Math.round(Math.max(1, volume * 0.45) * 10) / 10;
+    var counted = sugar.id === 'sucrose' && water && (Number(water.amount) || 0) > 0;
+    if (counted) {
+      /* Boil down to a little less water than would just dissolve this sugar
+         at 20 °C, so it comes out as the syrup cools. */
+      var keep = Math.round((Number(sugar.amount) / SUCROSE_G_PER_ML) * 0.9 * 10) / 10;
+      lost = Math.round(Math.max(1, Number(water.amount) - keep) * 10) / 10;
+      lost = Math.min(lost, Math.max(0, Math.round((Number(water.amount) - 0.5) * 10) / 10));
+    }
     container.volumeMl = Math.round(Math.max(0, volume - lost) * 10) / 10;
     if (water) {
       water.amount = Math.round(Math.max(0, Number(water.amount) - lost) * 10) / 10;
@@ -2887,11 +2970,20 @@
     container.crystals = true;
     container.particleSize = 'crystalline';
     mixContainer(container);
-    observe(session, line(
-      session,
-      'Boiled off ' + lost + ' mL: the solution is supersaturated and sugar crystals are forming.',
-      'Evaporou ' + lost + ' mL: a solução ficou supersaturada e cristais de açúcar estão se formando.'
-    ));
+    if (counted) {
+      var left = water ? Math.round((Number(water.amount) || 0) * 10) / 10 : 0;
+      observe(session, line(
+        session,
+        'Boiled off ' + formatQty(lost) + ' mL: ' + formatQty(sugar.amount) + ' g of sucrose in ' + formatQty(left) + ' mL of water is past the ≈ 200 g per 100 mL that dissolves at 20 °C, so crystals form as it cools.',
+        'Evaporou ' + fmtNum(lost, 'pt') + ' mL: ' + fmtNum(sugar.amount, 'pt') + ' g de sacarose em ' + fmtNum(left, 'pt') + ' mL de água passam dos ≈ 200 g por 100 mL que dissolvem a 20 °C, então cristais se formam ao esfriar.'
+      ));
+    } else {
+      observe(session, line(
+        session,
+        'Boiled off ' + formatQty(lost) + ' mL: the syrup concentrates and sugar crystallises as it cools (conceptual: the sugar content of the juice is not modelled).',
+        'Evaporou ' + fmtNum(lost, 'pt') + ' mL: o xarope se concentra e o açúcar cristaliza ao esfriar (conceitual: o teor de açúcar do caldo não é modelado).'
+      ));
+    }
     return { ok: true, container: container, evaporated: lost };
   }
 
@@ -3037,12 +3129,14 @@
     move = Math.round(move * 0.6 * 10) / 10;
     if (move <= 0.1) return { ok: false, reason: 'empty' };
 
-    /* Ethanol and water form an azeotrope at about 95%, so simple distillation
-       always carries some water across. That ceiling is the teaching point. */
+    /* Ethanol and water form an azeotrope at about 95.6% ethanol by mass, and
+       one simple distillation stops well short of it: the model carries 8 mL
+       of water per 92 mL of ethanol (≈ 92% by volume). A teaching value,
+       pending a teacher's review. */
     var carry = 0;
     var water = parts.filter(function (row) { return row.id === 'water'; })[0];
     if (light.id === 'ethanol' && water) {
-      carry = Math.round(Math.min(Number(water.amount) || 0, move * (5 / 95)) * 10) / 10;
+      carry = Math.round(Math.min(Number(water.amount) || 0, move * (8 / 92)) * 10) / 10;
     }
     if (move + carry > room) {
       carry = Math.max(0, room - move);
@@ -3072,6 +3166,16 @@
     noteReaction(session, rig.receiver, beforeReaction);
 
     var purity = move + carry > 0 ? Math.round((move / (move + carry)) * 1000) / 10 : 100;
+    /* Still-head temperature through the run: up to the lighter boiling point,
+       a plateau while it comes over, then the climb towards the next one once
+       it runs out. A sketch for reading, not a measured curve. */
+    var profile = [
+      { step: 0, c: 22, phase: 'start' },
+      { step: 1, c: lightSpec.bp, phase: 'heat' },
+      { step: 3, c: lightSpec.bp, phase: 'plateau' },
+      { step: 4, c: heavySpec.bp, phase: 'after' }
+    ];
+    rig.source.distillProfile = profile;
     observe(session, line(
       session,
       'Distilled ' + move + ' mL of ' + lightSpec.name + ' at ' + Math.round(needed) + ' °C into ' + (rig.receiver.label || rig.receiver.id) + ' (virtual, ' + purity + '%).',
@@ -3080,11 +3184,11 @@
     if (carry > 0) {
       observe(session, line(
         session,
-        'Water came across with it: an ethanol-water azeotrope caps simple distillation near 95%.',
-        'Veio água junto: o azeótropo etanol-água limita a destilação simples perto de 95%.'
+        'Water came across with it: ethanol and water form an azeotrope at about 95.6% ethanol by mass, so no distillation passes it, and one simple distillation stops well short (about ' + purity + '% by volume here).',
+        'Veio água junto: etanol e água formam um azeótropo em cerca de 95,6% de etanol em massa, então nenhuma destilação passa disso, e uma destilação simples fica bem abaixo (cerca de ' + fmtNum(purity, 'pt') + '% em volume aqui).'
       ));
     }
-    return { ok: true, rig: rig, moved: move, carry: carry, purity: purity, bp: lightSpec.bp, substance: lightSpec };
+    return { ok: true, rig: rig, moved: move, carry: carry, purity: purity, bp: lightSpec.bp, substance: lightSpec, profile: profile };
   }
 
   function measure(session, containerId, kind) {
@@ -3660,7 +3764,7 @@
       var groups = [
         { title: copy('Liquids', 'Líquidos'), ids: ['water', 'ethanol', 'oil'] },
         { title: copy('Salts & sugars', 'Sais e açúcares'), ids: ['nacl', 'sucrose', 'cusulfate'] },
-        { title: copy('Acids & bases', 'Ácidos e bases'), ids: ['citric_acid', 'bicarbonate', 'indicator'] },
+        { title: copy('Acids & bases', 'Ácidos e bases'), ids: ['citric_acid', 'bicarbonate', 'hcl_dilute', 'indicator'] },
         { title: copy('Elements', 'Elementos'), ids: ['fe', 'cu', 'zn', 's', 'c'] },
         { title: copy('Minerals', 'Minerais'), ids: ['zno', 'tio2'] },
         { title: copy('Fragrance notes', 'Notas de fragrância'), ids: ['limonene', 'linalool', 'vanillin'] },
@@ -4087,6 +4191,7 @@
         (state.awaitingObserve ? observeHtml(creation, plan) : stepChips(plan)) +
         (state.feedback ? '<p class="lab-guide-feedback" role="status">' + esc(lang === 'pt' ? state.feedback.pt : state.feedback.en) + '</p>' : '') +
         (plan.why ? '<p class="lab-guide-why"><strong>' + esc(copy('Why?', 'Por quê?')) + '</strong> ' + esc(stepWhy(plan)) + '</p>' : '') +
+        safetyHtml(creation) +
         hintsHtml(plan) +
         '<details class="lab-guide-all"><summary>' + esc(copy('All steps', 'Todos os passos')) + '</summary><ol>' + stepList + '</ol></details>' +
         fractionsHtml(creation) +
@@ -4094,10 +4199,45 @@
         '</section>';
     }
 
+    /* The still-head temperature the last distillation recorded, as a line. */
+    function profileHtml() {
+      var pot = (session.containers || []).filter(function (row) {
+        return Array.isArray(row.distillProfile) && row.distillProfile.length > 1;
+      })[0];
+      if (!pot) return '';
+      var points = pot.distillProfile;
+      var w = 220;
+      var h = 90;
+      var pad = 22;
+      var maxStep = points[points.length - 1].step || 1;
+      var maxC = Math.max.apply(null, points.map(function (row) { return row.c; })) + 10;
+      var x = function (step) { return pad + (step / maxStep) * (w - pad * 2); };
+      var y = function (c) { return h - pad - (c / maxC) * (h - pad * 2); };
+      var solid = points.filter(function (row) { return row.phase !== 'after'; });
+      var after = points.slice(-2);
+      var light = points[1].c;
+      var heavy = points[points.length - 1].c;
+      var said = copy(
+        'Still head: from 22 °C up to ' + light + ' °C, flat at ' + light + ' °C while it comes over, then up towards ' + heavy + ' °C once it runs out.',
+        'Cabeça da destilação: de 22 °C até ' + light + ' °C, estável em ' + light + ' °C enquanto passa, depois sobe para ' + heavy + ' °C quando acaba.'
+      );
+      return '<figure class="lab-profile">' +
+        '<svg viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + esc(said) + '">' +
+        '<path class="lab-profile-axis" d="M' + pad + ' ' + (h - pad) + ' H' + (w - pad) + ' M' + pad + ' ' + (h - pad) + ' V' + (pad / 2) + '"/>' +
+        '<polyline class="lab-profile-line" points="' + solid.map(function (row) { return r1(x(row.step)) + ',' + r1(y(row.c)); }).join(' ') + '"/>' +
+        '<polyline class="lab-profile-line is-after" points="' + after.map(function (row) { return r1(x(row.step)) + ',' + r1(y(row.c)); }).join(' ') + '"/>' +
+        '<text x="' + r1(x(2)) + '" y="' + r1(y(light) - 5) + '" text-anchor="middle">' + esc(light + ' °C') + '</text>' +
+        '<text x="' + r1(x(maxStep)) + '" y="' + r1(y(heavy) - 5) + '" text-anchor="end">' + esc(heavy + ' °C') + '</text>' +
+        '<text x="' + r1(w / 2) + '" y="' + (h - 6) + '" text-anchor="middle">' + esc(copy('time', 'tempo')) + '</text>' +
+        '</svg>' +
+        '<figcaption>' + esc(said) + '</figcaption></figure>';
+    }
+
     /* The process already ran: the step waits for the user to look at it. */
     function observeHtml(creation, plan) {
       return '<div class="lab-guide-observe" role="status">' +
         '<p>' + esc(copy('Look at the result on the bench and in the notebook before moving on.', 'Observe o resultado na bancada e no caderno antes de seguir.')) + '</p>' +
+        (plan.needsDistill ? profileHtml() : '') +
         '<button type="button" class="ws-btn ws-btn-sm ws-btn-primary" data-step-observed>' + esc(copy('I observed it', 'Observei')) + '</button>' +
         '</div>';
     }
@@ -4110,6 +4250,12 @@
         ? copy(': only ' + formatQty(result.added) + ' mL went in.', ': só entraram ' + fmtNum(result.added, 'pt') + ' mL.')
         : '.';
       return '<div class="lab-msg" role="status">' + esc(head + tail) + '</div>';
+    }
+
+    function safetyHtml(creation) {
+      if (!creation || !creation.safety) return '';
+      return '<p class="lab-guide-safety"><strong>' + esc(copy('Safety', 'Segurança')) + '</strong> ' +
+        esc(lang === 'pt' ? creation.safety.pt : creation.safety.en) + '</p>';
     }
 
     function stepWhy(step) {
@@ -4301,7 +4447,7 @@
       var canBrew = canHold(container) && (container.contents || []).some(function (row) { return row.id === 'yeast'; });
       var brewBlock = canBrew
         ? '<div class="lab-rig"><span class="lab-reaction-tag">' + esc(copy('Fermentation', 'Fermentação')) + '</span>' +
-          '<code class="lab-reaction-eq">C₆H₁₂O₆ → 2 C₂H₅OH + 2 CO₂</code>' +
+          '<code class="lab-reaction-eq">' + esc(FERMENT_EQ) + '</code>' +
           '<button type="button" class="ws-btn ws-btn-sm ws-btn-primary" data-lab-ferment>' + esc(copy('Ferment', 'Fermentar')) + '</button></div>'
         : '';
       var canGrow = canHold(container) && (Number(container.volumeMl) || 0) > 0 &&
@@ -5180,6 +5326,7 @@
           queueSave();
           dockOpen = 'create';
           paint(found);
+          if (hit.ok && hit.safety) flashStatus('<div class="lab-msg" role="status">' + esc(lang === 'pt' ? hit.safety.pt : hit.safety.en) + '</div>');
           if (hit.ok) {
             pulseLiquid();
             playSound('material');
@@ -5467,7 +5614,9 @@
             updateLive();
             if (added.ok) animateRise(intoId, wasAt);
             if (added.ok) {
-              flashStatus(added.capped || added.full ? capacityNote(added) : '');
+              flashStatus(added.safety
+                ? '<div class="lab-msg" role="status">' + esc(lang === 'pt' ? added.safety.pt : added.safety.en) + '</div>'
+                : (added.capped || added.full ? capacityNote(added) : ''));
               pulseLiquid();
               if (added.reaction) playReactionFx(selected().id, added.reaction);
               else playSound('material');
