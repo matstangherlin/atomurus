@@ -256,6 +256,47 @@ function assertPerfGuards() {
   if (/elements-data-en\.js/.test(ptable) && !/ensure-elements-en\.js/.test(ptable)) {
     fail('periodic-table.html still loads elements-data-en.js eagerly');
   }
+
+  const skipHtml = new Set([
+    'node_modules', '.git', 'netlify', 'tools', 'scripts', 'supabase',
+    'hanzi-logic', 'propostas', 'dev', 'docs', 'templates', 'src', 'dist'
+  ]);
+  const adHost = /pagead2|googlesyndication|doubleclick|acscdn|googletagmanager|google-analytics|adtrafficquality|googleadservices/i;
+  function walkPublished(dir, out = []) {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (entry.name.startsWith('.')) continue;
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        if (skipHtml.has(entry.name)) continue;
+        walkPublished(full, out);
+      } else if (entry.name.endsWith('.html')) out.push(full);
+    }
+    return out;
+  }
+  for (const file of walkPublished(ROOT)) {
+    const rel = path.relative(ROOT, file).replace(/\\/g, '/');
+    const html = fs.readFileSync(file, 'utf8');
+    const linkRe = /<link\b[^>]*>/gi;
+    let link;
+    while ((link = linkRe.exec(html))) {
+      const tag = link[0];
+      const relAttr = (tag.match(/\brel=["']([^"']+)["']/i) || [])[1] || '';
+      if (/preconnect|dns-prefetch/i.test(relAttr) && adHost.test(tag)) {
+        fail(`${rel} must not preconnect or dns-prefetch an ad or measurement host`);
+      }
+    }
+    const scriptRe = /<script\b[^>]*>/gi;
+    let script;
+    while ((script = scriptRe.exec(html))) {
+      const tag = script[0];
+      const src = (tag.match(/\bsrc=["']([^"']+)["']/i) || [])[1] || '';
+      const external = /^https?:\/\//i.test(src) || src.startsWith('//');
+      if (!external) continue;
+      if (/\b(?:async|defer)\b/i.test(tag)) continue;
+      if (/google\.com\/recaptcha\/api\.js/i.test(src)) continue;
+      fail(`${rel} has a synchronous third-party script (${src.split('/')[2] || 'external'})`);
+    }
+  }
 }
 
 function assertStudyCloud() {

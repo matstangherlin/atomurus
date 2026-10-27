@@ -1,0 +1,1730 @@
+{
+  "label": "before",
+  "waitMs": 8000,
+  "rows": [
+    {
+      "url": "/",
+      "phase": "A",
+      "status": 200,
+      "choice": "none",
+      "beforeScroll": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "index.html"
+    },
+    {
+      "url": "/",
+      "phase": "B",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "index.html"
+    },
+    {
+      "url": "/",
+      "phase": "C",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [
+          "acscdn.com",
+          "pagead2.googlesyndication.com",
+          "www.googletagmanager.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "index.html"
+    },
+    {
+      "url": "/index.pt.html",
+      "phase": "A",
+      "status": 200,
+      "choice": "none",
+      "beforeScroll": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "index.pt.html"
+    },
+    {
+      "url": "/index.pt.html",
+      "phase": "B",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "index.pt.html"
+    },
+    {
+      "url": "/index.pt.html",
+      "phase": "C",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [
+          "acscdn.com",
+          "pagead2.googlesyndication.com",
+          "www.googletagmanager.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "index.pt.html"
+    },
+    {
+      "url": "/periodic-table.html",
+      "phase": "A",
+      "status": 200,
+      "choice": "none",
+      "beforeScroll": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "periodic-table.html"
+    },
+    {
+      "url": "/periodic-table.html",
+      "phase": "B",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "periodic-table.html"
+    },
+    {
+      "url": "/periodic-table.html",
+      "phase": "C",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [
+          "acscdn.com",
+          "pagead2.googlesyndication.com",
+          "www.googletagmanager.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "periodic-table.html"
+    },
+    {
+      "url": "/periodic-table.pt.html",
+      "phase": "A",
+      "status": 200,
+      "choice": "none",
+      "beforeScroll": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "periodic-table.pt.html"
+    },
+    {
+      "url": "/periodic-table.pt.html",
+      "phase": "B",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "periodic-table.pt.html"
+    },
+    {
+      "url": "/periodic-table.pt.html",
+      "phase": "C",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [
+          "acscdn.com",
+          "pagead2.googlesyndication.com",
+          "www.googletagmanager.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "periodic-table.pt.html"
+    },
+    {
+      "url": "/periodic-table/actinium.html",
+      "phase": "A",
+      "status": 200,
+      "choice": "none",
+      "beforeScroll": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "periodic-table/actinium.html"
+    },
+    {
+      "url": "/periodic-table/actinium.html",
+      "phase": "B",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "periodic-table/actinium.html"
+    },
+    {
+      "url": "/periodic-table/actinium.html",
+      "phase": "C",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [
+          "acscdn.com",
+          "pagead2.googlesyndication.com",
+          "www.googletagmanager.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "periodic-table/actinium.html"
+    },
+    {
+      "url": "/periodic-table/trends.html",
+      "phase": "A",
+      "status": 200,
+      "choice": "none",
+      "beforeScroll": {
+        "hosts": [
+          "cdn.jsdelivr.net"
+        ],
+        "three": false,
+        "hammer": true,
+        "chart": true,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [
+          "cdn.jsdelivr.net"
+        ],
+        "three": false,
+        "hammer": true,
+        "chart": true,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "periodic-table/trends.html"
+    },
+    {
+      "url": "/periodic-table/trends.html",
+      "phase": "B",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [
+          "cdn.jsdelivr.net"
+        ],
+        "three": false,
+        "hammer": true,
+        "chart": true,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [
+          "cdn.jsdelivr.net"
+        ],
+        "three": false,
+        "hammer": true,
+        "chart": true,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "periodic-table/trends.html"
+    },
+    {
+      "url": "/periodic-table/trends.html",
+      "phase": "C",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [
+          "cdn.jsdelivr.net"
+        ],
+        "three": false,
+        "hammer": true,
+        "chart": true,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [
+          "acscdn.com",
+          "cdn.jsdelivr.net",
+          "pagead2.googlesyndication.com",
+          "www.googletagmanager.com"
+        ],
+        "three": false,
+        "hammer": true,
+        "chart": true,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "periodic-table/trends.html"
+    },
+    {
+      "url": "/periodic-table/trends.pt.html",
+      "phase": "A",
+      "status": 200,
+      "choice": "none",
+      "beforeScroll": {
+        "hosts": [
+          "cdn.jsdelivr.net"
+        ],
+        "three": false,
+        "hammer": true,
+        "chart": true,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [
+          "cdn.jsdelivr.net"
+        ],
+        "three": false,
+        "hammer": true,
+        "chart": true,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "periodic-table/trends.pt.html"
+    },
+    {
+      "url": "/periodic-table/trends.pt.html",
+      "phase": "B",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [
+          "cdn.jsdelivr.net"
+        ],
+        "three": false,
+        "hammer": true,
+        "chart": true,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [
+          "cdn.jsdelivr.net"
+        ],
+        "three": false,
+        "hammer": true,
+        "chart": true,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "periodic-table/trends.pt.html"
+    },
+    {
+      "url": "/periodic-table/trends.pt.html",
+      "phase": "C",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [
+          "cdn.jsdelivr.net"
+        ],
+        "three": false,
+        "hammer": true,
+        "chart": true,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [
+          "acscdn.com",
+          "cdn.jsdelivr.net",
+          "pagead2.googlesyndication.com",
+          "www.googletagmanager.com"
+        ],
+        "three": false,
+        "hammer": true,
+        "chart": true,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "periodic-table/trends.pt.html"
+    },
+    {
+      "url": "/calculators.html",
+      "phase": "A",
+      "status": 200,
+      "choice": "none",
+      "beforeScroll": {
+        "hosts": [
+          "www.google.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "after": {
+        "hosts": [
+          "www.google.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "error": "",
+      "file": "calculators.html"
+    },
+    {
+      "url": "/calculators.html",
+      "phase": "B",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [
+          "www.google.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "after": {
+        "hosts": [
+          "www.google.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "error": "",
+      "file": "calculators.html"
+    },
+    {
+      "url": "/calculators.html",
+      "phase": "C",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [
+          "www.google.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "after": {
+        "hosts": [
+          "acscdn.com",
+          "pagead2.googlesyndication.com",
+          "www.google.com",
+          "www.googletagmanager.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "error": "",
+      "file": "calculators.html"
+    },
+    {
+      "url": "/calculators.pt.html",
+      "phase": "A",
+      "status": 200,
+      "choice": "none",
+      "beforeScroll": {
+        "hosts": [
+          "www.google.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "after": {
+        "hosts": [
+          "www.google.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "error": "",
+      "file": "calculators.pt.html"
+    },
+    {
+      "url": "/calculators.pt.html",
+      "phase": "B",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [
+          "www.google.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "after": {
+        "hosts": [
+          "www.google.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "error": "",
+      "file": "calculators.pt.html"
+    },
+    {
+      "url": "/calculators.pt.html",
+      "phase": "C",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [
+          "www.google.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "after": {
+        "hosts": [
+          "acscdn.com",
+          "pagead2.googlesyndication.com",
+          "www.google.com",
+          "www.googletagmanager.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "error": "",
+      "file": "calculators.pt.html"
+    },
+    {
+      "url": "/explore.html",
+      "phase": "A",
+      "status": 200,
+      "choice": "none",
+      "beforeScroll": {
+        "hosts": [
+          "www.google.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "after": {
+        "hosts": [
+          "www.google.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "error": "",
+      "file": "explore.html"
+    },
+    {
+      "url": "/explore.html",
+      "phase": "B",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [
+          "www.google.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "after": {
+        "hosts": [
+          "www.google.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "error": "",
+      "file": "explore.html"
+    },
+    {
+      "url": "/explore.html",
+      "phase": "C",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [
+          "www.google.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "after": {
+        "hosts": [
+          "acscdn.com",
+          "pagead2.googlesyndication.com",
+          "www.google.com",
+          "www.googletagmanager.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "error": "",
+      "file": "explore.html"
+    },
+    {
+      "url": "/explore.pt.html",
+      "phase": "A",
+      "status": 200,
+      "choice": "none",
+      "beforeScroll": {
+        "hosts": [
+          "www.google.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "after": {
+        "hosts": [
+          "www.google.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "error": "",
+      "file": "explore.pt.html"
+    },
+    {
+      "url": "/explore.pt.html",
+      "phase": "B",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [
+          "www.google.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "after": {
+        "hosts": [
+          "www.google.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "error": "",
+      "file": "explore.pt.html"
+    },
+    {
+      "url": "/explore.pt.html",
+      "phase": "C",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [
+          "www.google.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "after": {
+        "hosts": [
+          "acscdn.com",
+          "pagead2.googlesyndication.com",
+          "www.google.com",
+          "www.googletagmanager.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "error": "",
+      "file": "explore.pt.html"
+    },
+    {
+      "url": "/explore/what-is-an-atom.html",
+      "phase": "A",
+      "status": 200,
+      "choice": "none",
+      "beforeScroll": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "explore/what-is-an-atom.html"
+    },
+    {
+      "url": "/explore/what-is-an-atom.html",
+      "phase": "B",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "explore/what-is-an-atom.html"
+    },
+    {
+      "url": "/explore/what-is-an-atom.html",
+      "phase": "C",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [
+          "acscdn.com",
+          "pagead2.googlesyndication.com",
+          "www.googletagmanager.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "explore/what-is-an-atom.html"
+    },
+    {
+      "url": "/explore/what-is-an-atom.pt.html",
+      "phase": "A",
+      "status": 200,
+      "choice": "none",
+      "beforeScroll": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "explore/what-is-an-atom.pt.html"
+    },
+    {
+      "url": "/explore/what-is-an-atom.pt.html",
+      "phase": "B",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "explore/what-is-an-atom.pt.html"
+    },
+    {
+      "url": "/explore/what-is-an-atom.pt.html",
+      "phase": "C",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [
+          "acscdn.com",
+          "pagead2.googlesyndication.com",
+          "www.googletagmanager.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "explore/what-is-an-atom.pt.html"
+    },
+    {
+      "url": "/viewer/molecules.html",
+      "phase": "A",
+      "status": 200,
+      "choice": "none",
+      "beforeScroll": {
+        "hosts": [
+          "cdnjs.cloudflare.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [
+          "cdnjs.cloudflare.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "viewer/molecules.html"
+    },
+    {
+      "url": "/viewer/molecules.html",
+      "phase": "B",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [
+          "cdnjs.cloudflare.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [
+          "cdnjs.cloudflare.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "viewer/molecules.html"
+    },
+    {
+      "url": "/viewer/molecules.html",
+      "phase": "C",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [
+          "cdnjs.cloudflare.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [
+          "acscdn.com",
+          "cdnjs.cloudflare.com",
+          "pagead2.googlesyndication.com",
+          "www.googletagmanager.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "viewer/molecules.html"
+    },
+    {
+      "url": "/viewer/molecules.pt.html",
+      "phase": "A",
+      "status": 200,
+      "choice": "none",
+      "beforeScroll": {
+        "hosts": [
+          "cdnjs.cloudflare.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [
+          "cdnjs.cloudflare.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "viewer/molecules.pt.html"
+    },
+    {
+      "url": "/viewer/molecules.pt.html",
+      "phase": "B",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [
+          "cdnjs.cloudflare.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [
+          "cdnjs.cloudflare.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "viewer/molecules.pt.html"
+    },
+    {
+      "url": "/viewer/molecules.pt.html",
+      "phase": "C",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [
+          "cdnjs.cloudflare.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [
+          "acscdn.com",
+          "cdnjs.cloudflare.com",
+          "pagead2.googlesyndication.com",
+          "www.googletagmanager.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "viewer/molecules.pt.html"
+    },
+    {
+      "url": "/viewer/atomic-models.html",
+      "phase": "A",
+      "status": 200,
+      "choice": "none",
+      "beforeScroll": {
+        "hosts": [
+          "cdnjs.cloudflare.com",
+          "www.google.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "after": {
+        "hosts": [
+          "cdnjs.cloudflare.com",
+          "www.google.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "error": "",
+      "file": "viewer/atomic-models.html"
+    },
+    {
+      "url": "/viewer/atomic-models.html",
+      "phase": "B",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [
+          "cdnjs.cloudflare.com",
+          "www.google.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "after": {
+        "hosts": [
+          "cdnjs.cloudflare.com",
+          "www.google.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "error": "",
+      "file": "viewer/atomic-models.html"
+    },
+    {
+      "url": "/viewer/atomic-models.html",
+      "phase": "C",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [
+          "cdnjs.cloudflare.com",
+          "www.google.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "after": {
+        "hosts": [
+          "acscdn.com",
+          "cdnjs.cloudflare.com",
+          "pagead2.googlesyndication.com",
+          "www.google.com",
+          "www.googletagmanager.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "error": "",
+      "file": "viewer/atomic-models.html"
+    },
+    {
+      "url": "/viewer/atomic-models.pt.html",
+      "phase": "A",
+      "status": 200,
+      "choice": "none",
+      "beforeScroll": {
+        "hosts": [
+          "cdnjs.cloudflare.com",
+          "www.google.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "after": {
+        "hosts": [
+          "cdnjs.cloudflare.com",
+          "www.google.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "error": "",
+      "file": "viewer/atomic-models.pt.html"
+    },
+    {
+      "url": "/viewer/atomic-models.pt.html",
+      "phase": "B",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [
+          "cdnjs.cloudflare.com",
+          "www.google.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "after": {
+        "hosts": [
+          "cdnjs.cloudflare.com",
+          "www.google.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "error": "",
+      "file": "viewer/atomic-models.pt.html"
+    },
+    {
+      "url": "/viewer/atomic-models.pt.html",
+      "phase": "C",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [
+          "cdnjs.cloudflare.com",
+          "www.google.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "after": {
+        "hosts": [
+          "acscdn.com",
+          "cdnjs.cloudflare.com",
+          "pagead2.googlesyndication.com",
+          "www.google.com",
+          "www.googletagmanager.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "error": "",
+      "file": "viewer/atomic-models.pt.html"
+    },
+    {
+      "url": "/viewer/isomerism/constitutional/function.html",
+      "phase": "A",
+      "status": 200,
+      "choice": "none",
+      "beforeScroll": {
+        "hosts": [
+          "cdnjs.cloudflare.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [
+          "cdnjs.cloudflare.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "viewer/isomerism/constitutional/function.html"
+    },
+    {
+      "url": "/viewer/isomerism/constitutional/function.html",
+      "phase": "B",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [
+          "cdnjs.cloudflare.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [
+          "cdnjs.cloudflare.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "viewer/isomerism/constitutional/function.html"
+    },
+    {
+      "url": "/viewer/isomerism/constitutional/function.html",
+      "phase": "C",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [
+          "cdnjs.cloudflare.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [
+          "acscdn.com",
+          "cdnjs.cloudflare.com",
+          "pagead2.googlesyndication.com",
+          "www.googletagmanager.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "viewer/isomerism/constitutional/function.html"
+    },
+    {
+      "url": "/viewer/isomerism/constitutional/function.pt.html",
+      "phase": "A",
+      "status": 200,
+      "choice": "none",
+      "beforeScroll": {
+        "hosts": [
+          "cdnjs.cloudflare.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [
+          "cdnjs.cloudflare.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "viewer/isomerism/constitutional/function.pt.html"
+    },
+    {
+      "url": "/viewer/isomerism/constitutional/function.pt.html",
+      "phase": "B",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [
+          "cdnjs.cloudflare.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [
+          "cdnjs.cloudflare.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "viewer/isomerism/constitutional/function.pt.html"
+    },
+    {
+      "url": "/viewer/isomerism/constitutional/function.pt.html",
+      "phase": "C",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [
+          "cdnjs.cloudflare.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [
+          "acscdn.com",
+          "cdnjs.cloudflare.com",
+          "pagead2.googlesyndication.com",
+          "www.googletagmanager.com"
+        ],
+        "three": true,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "viewer/isomerism/constitutional/function.pt.html"
+    },
+    {
+      "url": "/pricing",
+      "phase": "A",
+      "status": 200,
+      "choice": "none",
+      "beforeScroll": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "pricing.html"
+    },
+    {
+      "url": "/pricing",
+      "phase": "B",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "pricing.html"
+    },
+    {
+      "url": "/pricing",
+      "phase": "C",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [
+          "acscdn.com",
+          "pagead2.googlesyndication.com",
+          "www.googletagmanager.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "pricing.html"
+    },
+    {
+      "url": "/pricing.pt.html",
+      "phase": "A",
+      "status": 200,
+      "choice": "none",
+      "beforeScroll": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "pricing.pt.html"
+    },
+    {
+      "url": "/pricing.pt.html",
+      "phase": "B",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "pricing.pt.html"
+    },
+    {
+      "url": "/pricing.pt.html",
+      "phase": "C",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [
+          "acscdn.com",
+          "pagead2.googlesyndication.com",
+          "www.googletagmanager.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "pricing.pt.html"
+    },
+    {
+      "url": "/login",
+      "phase": "A",
+      "status": 200,
+      "choice": "none",
+      "beforeScroll": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "login.html"
+    },
+    {
+      "url": "/login",
+      "phase": "B",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "login.html"
+    },
+    {
+      "url": "/login",
+      "phase": "C",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "after": {
+        "hosts": [
+          "acscdn.com",
+          "pagead2.googlesyndication.com",
+          "www.googletagmanager.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": false
+      },
+      "error": "",
+      "file": "login.html"
+    },
+    {
+      "url": "/contact.html",
+      "phase": "A",
+      "status": 200,
+      "choice": "none",
+      "beforeScroll": {
+        "hosts": [
+          "www.google.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "after": {
+        "hosts": [
+          "www.google.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "error": "",
+      "file": "contact.html"
+    },
+    {
+      "url": "/contact.html",
+      "phase": "B",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [
+          "www.google.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "after": {
+        "hosts": [
+          "www.google.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "error": "",
+      "file": "contact.html"
+    },
+    {
+      "url": "/contact.html",
+      "phase": "C",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [
+          "www.google.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "after": {
+        "hosts": [
+          "acscdn.com",
+          "pagead2.googlesyndication.com",
+          "www.google.com",
+          "www.googletagmanager.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "error": "",
+      "file": "contact.html"
+    },
+    {
+      "url": "/contact.pt.html",
+      "phase": "A",
+      "status": 200,
+      "choice": "none",
+      "beforeScroll": {
+        "hosts": [
+          "www.google.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "after": {
+        "hosts": [
+          "www.google.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "error": "",
+      "file": "contact.pt.html"
+    },
+    {
+      "url": "/contact.pt.html",
+      "phase": "B",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [
+          "www.google.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "after": {
+        "hosts": [
+          "www.google.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "error": "",
+      "file": "contact.pt.html"
+    },
+    {
+      "url": "/contact.pt.html",
+      "phase": "C",
+      "status": 200,
+      "choice": "click",
+      "beforeScroll": {
+        "hosts": [
+          "www.google.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "after": {
+        "hosts": [
+          "acscdn.com",
+          "pagead2.googlesyndication.com",
+          "www.google.com",
+          "www.googletagmanager.com"
+        ],
+        "three": false,
+        "hammer": false,
+        "recaptcha": true
+      },
+      "error": "",
+      "file": "contact.pt.html"
+    }
+  ],
+  "scripts": [
+    {
+      "file": "periodic-table/trends.html",
+      "host": "cdn.jsdelivr.net"
+    },
+    {
+      "file": "periodic-table/trends.pt.html",
+      "host": "cdn.jsdelivr.net"
+    }
+  ]
+}
