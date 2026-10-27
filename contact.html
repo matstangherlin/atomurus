@@ -450,8 +450,11 @@
       });
     }).then(function(r){
       return r.json().catch(function(){ return {}; }).then(function(data){
-        if (r.ok && data && data.ok) { ok.classList.add('show'); form.reset(); }
-        else { err.classList.add('show'); }
+        if (r.ok && data && data.ok) { ok.classList.add('show'); form.reset(); return; }
+        if (r.status === 429) err.innerHTML = t('contact.rateLimitHtml', 'Too many attempts. Try again in a few minutes.');
+        else if (r.status === 503) err.innerHTML = t('contact.notConfigHtml', 'The contact form is temporarily unavailable.');
+        else err.innerHTML = t('contact.errHtml', 'Could not send. Please try again.');
+        err.classList.add('show');
       });
     }).catch(function(){ err.classList.add('show'); })
       .finally(function(){
