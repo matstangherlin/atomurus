@@ -20,10 +20,12 @@ Nada foi apagado. A ação de `concepts` é tirá-las do publish, no padrão de 
 |---|---:|---:|
 | Publicado hoje (30 arquivos fora de `docs/`) | 14 540,2 | 14 889 171 |
 | `assets/concepts` (sai do publish) | 13 080,1 | 13 394 020 |
-| Publicado depois de tirar `concepts` | 1 460,1 | 1 495 151 |
-| `og-bhopal-disaster.png` hoje | 675,7 | 691 901 |
+| Publicado depois de tirar `concepts`, antes do OG | 1 460,1 | 1 495 151 |
+| `og-bhopal-disaster.png` antes | 675,7 | 691 901 |
+| `og-bhopal-disaster.png` depois | 174,7 | 178 904 |
+| Publicado depois (`concepts` fora + OG) | 959,1 | 982 154 |
 
-A compressão do cartão OG de Bhopal entra no passo seguinte. As outras 13 `og-*.png` já estão entre 26 e 38 KiB. As três fotos JPG do artigo (113, 77 e 52 KiB) ficam como estão.
+O cartão OG de Bhopal foi regravado no mesmo caminho, ainda PNG 1200×630. Ferramenta: `sharp`  (API `png({ palette: true, colors: 256, quality: 90, dither: 0.8, compressionLevel: 9, effort: 10 })`), instalada só em `/tmp/sharp-run` com `npm install sharp`. O `npx sharp-cli --palette --colors` não mudou o tamanho (ficou em 272 KiB), então a paleta foi aplicada pela API do mesmo pacote, sem entrada em `package.json`. Comparação: `docs/perf/og-bhopal-antes-depois.png`. As outras 13 `og-*.png` já estão entre 26 e 38 KiB. As três fotos JPG do artigo (113, 77 e 52 KiB) ficam como estão.
 
 ## Onde `assets/concepts` aparece
 
@@ -45,7 +47,7 @@ Fora de `propostas/` e `docs/` há 10 tags `<img>`. Todas têm `width`, `height`
 | `assets/concepts/atomurus-observatorio-silencioso.png` | 2020.0 | 1586×992 | sim hoje; não depois | `propostas/minimalistas-galeria.html` | fora do publish; fica no Git |
 | `assets/concepts/atomurus-instrumento-humano.png` | 1896.6 | 1586×992 | sim hoje; não depois | `propostas/minimalistas-galeria.html` | fora do publish; fica no Git |
 | `assets/concepts/futures/future-orbital.png` | 1847.8 | 1672×941 | sim hoje; não depois | `propostas/index.html` | fora do publish; fica no Git |
-| `assets/og-bhopal-disaster.png` | 675.7 | 1200×630 | sim | `explore/bhopal-disaster.html`, `explore/bhopal-disaster.pt.html` (+1) | comprimir para ≤ 200 KiB, mesmo nome |
+| `assets/og-bhopal-disaster.png` | 174.7 | 1200×630 | sim | `explore/bhopal-disaster.html`, `explore/bhopal-disaster.pt.html` (+1) | comprimido (era 675,7 KiB); nome e metas iguais |
 | `assets/bhopal-union-carbide-factory.jpg` | 113.4 | 900×551 | sim | `explore/bhopal-disaster.html`, `explore/bhopal-disaster.pt.html` | já pequena; não mexer |
 | `assets/bhopal-memorial-statue.jpg` | 77.4 | 620×864 | sim | `explore/bhopal-disaster.html`, `explore/bhopal-disaster.pt.html` | já pequena; não mexer |
 | `assets/mother-teresa-india-1988.jpg` | 52.0 | 560×779 | sim | `explore/bhopal-disaster.html`, `explore/bhopal-disaster.pt.html` | já pequena; não mexer |

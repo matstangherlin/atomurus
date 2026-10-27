@@ -46,12 +46,18 @@ for (const file of walkHtml(ROOT)) {
 assert.deepEqual(offenders, [], 'published HTML must not reference assets/concepts');
 
 const PNG = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+const OG_MAX_BYTES = 200 * 1024;
 const ogDir = path.join(ROOT, 'assets');
 for (const name of fs.readdirSync(ogDir)) {
   if (!/^og-.*\.png$/i.test(name)) continue;
   const buf = fs.readFileSync(path.join(ogDir, name));
   assert.ok(buf.subarray(0, 8).equals(PNG), `${name} must be a PNG`);
   assert.equal(buf.toString('ascii', 12, 16), 'IHDR', `${name} must have an IHDR chunk`);
+  assert.ok(buf.length <= OG_MAX_BYTES, `${name} is ${buf.length} bytes; limit is ${OG_MAX_BYTES}`);
+  if (name === 'og-bhopal-disaster.png') {
+    assert.equal(buf.readUInt32BE(16), 1200);
+    assert.equal(buf.readUInt32BE(20), 630);
+  }
 }
 
 console.log('test-image-publish-guards: ok');
