@@ -424,6 +424,10 @@ assert.equal(lab.tutorialState(walk, stillGuide).current, 6);
 lab.setTemperature(walk, walkFlask.id, 80);
 assert.equal(lab.tutorialState(walk, stillGuide).current, 7);
 assert.equal(lab.distill(walk, walkFlask.id).ok, true);
+// Distillation runs by itself, so the step waits until the result was looked at.
+assert.equal(lab.tutorialState(walk, stillGuide).complete, false);
+assert.equal(lab.tutorialState(walk, stillGuide).awaitingObserve, true);
+assert.equal(lab.confirmObserved(walk, stillGuide).ok, true);
 assert.equal(lab.tutorialState(walk, stillGuide).complete, true);
 
 // Petroleum stays a conceptual separation, and gasoline resolves to it.

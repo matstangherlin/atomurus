@@ -869,6 +869,202 @@
     gasolina: 'guided:petroleum', 'fractional distillation': 'guided:petroleum'
   };
 
+  /* Portuguese names for the sentences a guide writes about a material. */
+  var SUBSTANCE_PT = {
+    water: 'água', nacl: 'cloreto de sódio', sucrose: 'sacarose', citric_acid: 'ácido cítrico',
+    bicarbonate: 'bicarbonato de sódio', indicator: 'indicador de pH virtual', cusulfate: 'sulfato de cobre',
+    fe: 'ferro', cu: 'cobre', zn: 'zinco', s: 'enxofre', c: 'carbono', limonene: 'limoneno',
+    linalool: 'linalol', vanillin: 'vanilina', carbon: 'carbono (grafite)', zno: 'óxido de zinco',
+    tio2: 'dióxido de titânio', oil: 'óleo carreador virtual', ethanol: 'etanol',
+    frac_light: 'fração leve virtual', frac_mid: 'fração média virtual', frac_heavy: 'fração pesada virtual',
+    yeast: 'levedura virtual', cane_juice: 'caldo de cana virtual', fibre: 'fibra vegetal virtual'
+  };
+
+  function substanceName(id, lang) {
+    if (lang === 'pt' && SUBSTANCE_PT[id]) return SUBSTANCE_PT[id];
+    var spec = SUBSTANCES[id];
+    var name = spec ? spec.name : String(id);
+    return name.charAt(0).toLowerCase() + name.slice(1);
+  }
+
+  function fmtNum(value, lang) {
+    var text = formatQty(value);
+    return lang === 'pt' ? text.replace('.', ',') : text;
+  }
+
+  function amountOf(container, ids) {
+    var list = [].concat(ids);
+    return ((container && container.contents) || []).reduce(function (sum, row) {
+      return list.indexOf(row.id) !== -1 ? sum + (Number(row.amount) || 0) : sum;
+    }, 0);
+  }
+
+  function verifier(test, explain) {
+    test.explain = explain;
+    return test;
+  }
+
+  function bilingual(write) {
+    return { en: write('en'), pt: write('pt') };
+  }
+
+  function tempOf(container) {
+    return Number(container && container.temperatureC) || 22;
+  }
+
+  /* Step verifiers. Each factory returns a pure test over { session, container,
+     guide } with an `explain` that says, in both languages, what the step
+     expected and what the vessel holds. A guide step lists them in `check`. */
+  var CHECKS = {
+    massEquals: function (ids, grams, tol) {
+      var slack = tol != null ? tol : Math.max(0.2, grams * 0.05);
+      var first = [].concat(ids)[0];
+      return verifier(function (ctx) {
+        return Math.abs(amountOf(ctx.container, ids) - grams) <= slack;
+      }, function (ctx) {
+        var have = amountOf(ctx.container, ids);
+        return bilingual(function (lang) {
+          return lang === 'pt'
+            ? 'Esperado: ' + fmtNum(grams, lang) + ' g de ' + substanceName(first, lang) + '; este recipiente tem ' + fmtNum(have, lang) + ' g.'
+            : 'Expected ' + fmtNum(grams, lang) + ' g of ' + substanceName(first, lang) + '; this vessel has ' + fmtNum(have, lang) + ' g.';
+        });
+      });
+    },
+    massAbove: function (ids, grams) {
+      var first = [].concat(ids)[0];
+      return verifier(function (ctx) {
+        return amountOf(ctx.container, ids) > grams;
+      }, function (ctx) {
+        var have = amountOf(ctx.container, ids);
+        return bilingual(function (lang) {
+          return lang === 'pt'
+            ? 'Há ' + fmtNum(have, lang) + ' g de ' + substanceName(first, lang) + ', mais que ' + fmtNum(grams, lang) + ' g.'
+            : 'There are ' + fmtNum(have, lang) + ' g of ' + substanceName(first, lang) + ', more than ' + fmtNum(grams, lang) + ' g.';
+        });
+      });
+    },
+    volumeBetween: function (min, max, id) {
+      function have(container) {
+        return id ? amountOf(container, id) : (Number(container && container.volumeMl) || 0);
+      }
+      return verifier(function (ctx) {
+        var value = have(ctx.container);
+        return value >= min && value <= max;
+      }, function (ctx) {
+        var value = have(ctx.container);
+        return bilingual(function (lang) {
+          var what = id ? substanceName(id, lang) : (lang === 'pt' ? 'líquido' : 'liquid');
+          return lang === 'pt'
+            ? 'Esperado: ' + fmtNum(min, lang) + '–' + fmtNum(max, lang) + ' mL de ' + what + '; este recipiente tem ' + fmtNum(value, lang) + ' mL.'
+            : 'Expected ' + fmtNum(min, lang) + '–' + fmtNum(max, lang) + ' mL of ' + what + '; this vessel has ' + fmtNum(value, lang) + ' mL.';
+        });
+      });
+    },
+    phBetween: function (min, max) {
+      return verifier(function (ctx) {
+        var container = ctx.container;
+        if (!container || !((Number(container.volumeMl) || 0) > 0)) return false;
+        var reading = Number(container.ph);
+        return reading >= min && reading <= max;
+      }, function (ctx) {
+        var container = ctx.container;
+        var wet = container && (Number(container.volumeMl) || 0) > 0;
+        return bilingual(function (lang) {
+          if (!wet) return lang === 'pt' ? 'Não há líquido para medir o pH.' : 'There is no liquid to read a pH from.';
+          return lang === 'pt'
+            ? 'Busque pH entre ' + fmtNum(min, lang) + ' e ' + fmtNum(max, lang) + '; este recipiente marca pH ' + fmtNum(container.ph, lang) + '.'
+            : 'Aim for a pH between ' + fmtNum(min, lang) + ' and ' + fmtNum(max, lang) + '; this vessel reads pH ' + fmtNum(container.ph, lang) + '.';
+        });
+      });
+    },
+    hasEquipment: function (types) {
+      var list = [].concat(types);
+      return verifier(function (ctx) {
+        return list.every(function (type) { return !!firstOfType(ctx.session, type); });
+      }, function () {
+        return bilingual(function (lang) {
+          var names = list.map(function (type) {
+            var spec = EQUIPMENT[type];
+            return spec ? (lang === 'pt' ? spec.labelPt : spec.labelEn) : type;
+          }).join(', ');
+          return lang === 'pt' ? 'Coloque na bancada: ' + names + '.' : 'Place on the bench: ' + names + '.';
+        });
+      });
+    },
+    temperatureAtLeast: function (minC) {
+      return verifier(function (ctx) {
+        return tempOf(ctx.container) >= minC;
+      }, function (ctx) {
+        var now = tempOf(ctx.container);
+        return bilingual(function (lang) {
+          return lang === 'pt'
+            ? 'Aqueça até pelo menos ' + fmtNum(minC, lang) + ' °C; está a ' + fmtNum(now, lang) + ' °C.'
+            : 'Heat it to at least ' + fmtNum(minC, lang) + ' °C; it is at ' + fmtNum(now, lang) + ' °C.';
+        });
+      });
+    },
+    temperatureAbove: function (limitC) {
+      return verifier(function (ctx) {
+        return tempOf(ctx.container) > limitC;
+      }, function (ctx) {
+        var now = tempOf(ctx.container);
+        return bilingual(function (lang) {
+          return lang === 'pt'
+            ? 'Está a ' + fmtNum(now, lang) + ' °C, acima de ' + fmtNum(limitC, lang) + ' °C.'
+            : 'It is at ' + fmtNum(now, lang) + ' °C, above ' + fmtNum(limitC, lang) + ' °C.';
+        });
+      });
+    },
+    temperatureBetween: function (minC, maxC) {
+      return verifier(function (ctx) {
+        var now = tempOf(ctx.container);
+        return now >= minC && now <= maxC;
+      }, function (ctx) {
+        var now = tempOf(ctx.container);
+        return bilingual(function (lang) {
+          return lang === 'pt'
+            ? 'Mantenha entre ' + fmtNum(minC, lang) + ' e ' + fmtNum(maxC, lang) + ' °C; está a ' + fmtNum(now, lang) + ' °C.'
+            : 'Keep it between ' + fmtNum(minC, lang) + ' and ' + fmtNum(maxC, lang) + ' °C; it is at ' + fmtNum(now, lang) + ' °C.';
+        });
+      });
+    },
+    /* A reading of this vessel, taken after the guide started. Readings are
+       counted, not timed: two can share a millisecond. */
+    measured: function (kind) {
+      return verifier(function (ctx) {
+        if (!ctx.container) return false;
+        var from = ctx.guide ? Number(ctx.guide.measureFrom) || 0 : 0;
+        return (ctx.session.measurements || []).some(function (row, i) {
+          return i >= from && row.kind === kind && row.containerId === ctx.container.id;
+        });
+      }, function () {
+        return kind === 'ph'
+          ? { en: 'Take a pH reading of this vessel (Measure pH).', pt: 'Meça o pH deste recipiente (Medir pH).' }
+          : { en: 'Measure the ' + kind + ' of this vessel.', pt: 'Meça ' + (kind === 'volume' ? 'o volume' : kind) + ' deste recipiente.' };
+      });
+    },
+    stillAssembled: function () {
+      return verifier(function (ctx) {
+        return Boolean(ctx.container && distillSetup(ctx.session, ctx.container.id));
+      }, function () {
+        return {
+          en: 'Connect this flask to the condenser, and the condenser to the receiving flask.',
+          pt: 'Conecte este balão ao condensador e o condensador ao balão coletor.'
+        };
+      });
+    },
+    refluxAssembled: function () {
+      return verifier(function (ctx) {
+        return Boolean(ctx.container && refluxSetup(ctx.session, ctx.container.id));
+      }, function () {
+        return {
+          en: 'Stand the condenser on this flask, with nothing after it.',
+          pt: 'Monte o condensador sobre este balão, sem nada depois dele.'
+        };
+      });
+    }
+  };
+
   var CREATIONS = [
     {
       id: 'distillation',
@@ -893,12 +1089,12 @@
       tutorial: [
         { id: 'flask', action: 'addEquipment', needEquipment: ['round-flask'], en: 'Place a round-bottom flask: it heats evenly.', pt: 'Coloque um balão de fundo redondo: ele aquece por igual.', why: { en: 'A round bottom spreads heat without hot spots.', pt: 'O fundo redondo espalha o calor sem pontos quentes.' } },
         { id: 'cond', action: 'addEquipment', needEquipment: ['condenser'], en: 'Add a Liebig condenser.', pt: 'Adicione um condensador de Liebig.', why: { en: 'Vapour has to cool back to liquid somewhere.', pt: 'O vapor precisa voltar a líquido em algum lugar.' } },
-        { id: 'recv', action: 'addEquipment', needEquipment: ['receiving-flask'], en: 'Add a receiving flask for the distillate.', pt: 'Adicione um balão coletor para o destilado.' },
+        { id: 'recv', action: 'addEquipment', needEquipment: ['receiving-flask'], en: 'Add a receiving flask for the distillate.', pt: 'Adicione um balão coletor para o destilado.', why: { en: 'What comes over needs its own clean vessel, apart from the pot.', pt: 'O que passa precisa de um recipiente limpo próprio, separado do balão.' } },
         { id: 'heater', action: 'addEquipment', needEquipment: ['heating-mantle'], en: 'Add a heating mantle under the flask.', pt: 'Adicione uma manta de aquecimento sob o balão.', why: { en: 'A mantle reaches distillation temperatures; a warm hand does not.', pt: 'A manta atinge temperaturas de destilação; a mão morna não.' } },
-        { id: 'charge', action: 'addMaterial', need: { water: true, ethanol: true }, amounts: { water: 60, ethanol: 40 }, into: 'round-flask', en: 'Charge the flask with 60 mL of water and 40 mL of ethanol.', pt: 'Carregue o balão com 60 mL de água e 40 mL de etanol.', why: { en: 'Ethanol boils at 78 °C and water at 100 °C, so they can be separated.', pt: 'O etanol ferve a 78 °C e a água a 100 °C, por isso podem ser separados.' } },
-        { id: 'rig', action: 'connect', needConnections: 2, en: 'Connect flask to condenser and condenser to receiver.', pt: 'Conecte o balão ao condensador e o condensador ao coletor.', why: { en: 'The train only works if the vapour has a sealed path.', pt: 'A aparelhagem só funciona se o vapor tiver um caminho fechado.' } },
-        { id: 'heat', action: 'heat', heatTo: 80, needTemp: 76, en: 'Heat the flask to about 80 °C.', pt: 'Aqueça o balão até cerca de 80 °C.', why: { en: 'Just above the ethanol boiling point, so mostly ethanol vaporises.', pt: 'Logo acima do ponto de ebulição do etanol, então vaporiza sobretudo etanol.' } },
-        { id: 'run', action: 'distill', needIn: { type: 'receiving-flask', id: 'ethanol' }, en: 'Distil, and read the purity in the notebook.', pt: 'Destile e leia a pureza no caderno.', why: { en: 'Ethanol and water form an azeotrope near 95%, so simple distillation cannot go further.', pt: 'Etanol e água formam um azeótropo perto de 95%, então a destilação simples não passa disso.' } }
+        { id: 'charge', action: 'addMaterial', need: { water: true, ethanol: true }, amounts: { water: 60, ethanol: 40 }, into: 'round-flask', check: [CHECKS.volumeBetween(55, 65, 'water'), CHECKS.volumeBetween(35, 45, 'ethanol')], en: 'Charge the flask with 60 mL of water and 40 mL of ethanol.', pt: 'Carregue o balão com 60 mL de água e 40 mL de etanol.', why: { en: 'Ethanol boils at 78 °C and water at 100 °C, so they can be separated.', pt: 'O etanol ferve a 78 °C e a água a 100 °C, por isso podem ser separados.' } },
+        { id: 'rig', action: 'connect', needConnections: 2, into: 'round-flask', check: [CHECKS.stillAssembled()], en: 'Connect flask to condenser and condenser to receiver.', pt: 'Conecte o balão ao condensador e o condensador ao coletor.', why: { en: 'The train only works if the vapour has a sealed path.', pt: 'A aparelhagem só funciona se o vapor tiver um caminho fechado.' } },
+        { id: 'heat', action: 'heat', heatTo: 80, needTemp: 76, into: 'round-flask', check: [CHECKS.temperatureBetween(76, 92)], feedback: { en: 'Just above 78 °C mostly ethanol boils; closer to 100 °C the water boils too.', pt: 'Pouco acima de 78 °C ferve sobretudo o etanol; perto de 100 °C a água também ferve.' }, en: 'Heat the flask to about 80 °C.', pt: 'Aqueça o balão até cerca de 80 °C.', why: { en: 'Just above the ethanol boiling point, so mostly ethanol vaporises.', pt: 'Logo acima do ponto de ebulição do etanol, então vaporiza sobretudo etanol.' } },
+        { id: 'run', action: 'distill', needIn: { type: 'receiving-flask', id: 'ethanol' }, observe: true, en: 'Distil, and read the purity in the notebook.', pt: 'Destile e leia a pureza no caderno.', why: { en: 'Ethanol and water form an azeotrope near 95%, so simple distillation cannot go further.', pt: 'Etanol e água formam um azeótropo perto de 95%, então a destilação simples não passa disso.' } }
       ]
     },
     {
@@ -923,9 +1119,9 @@
       },
       tutorial: [
         { id: 'vessel', action: 'addEquipment', needEquipment: ['flask'], en: 'Place an Erlenmeyer flask: its narrow neck keeps air out.', pt: 'Coloque um erlenmeyer: o gargalo estreito dificulta a entrada de ar.', why: { en: 'Fermentation works without oxygen.', pt: 'A fermentação ocorre sem oxigênio.' } },
-        { id: 'sugar', action: 'addMaterial', need: { water: true, sucrose: true }, amounts: { water: 100, sucrose: 25 }, into: 'flask', en: 'Add 100 mL of water and 25 g of sucrose.', pt: 'Adicione 100 mL de água e 25 g de sacarose.' },
-        { id: 'yeast', action: 'addMaterial', need: { yeast: true }, amounts: { yeast: 3 }, into: 'flask', en: 'Add the virtual yeast.', pt: 'Adicione a levedura virtual.', why: { en: 'The yeast carries the enzymes that do the work.', pt: 'A levedura carrega as enzimas que fazem o trabalho.' } },
-        { id: 'warm', action: 'heat', heatTo: 28, needTemp: 24, en: 'Warm it to about 28 °C.', pt: 'Aqueça até cerca de 28 °C.', why: { en: 'Yeast works between roughly 18 and 40 °C, and stops above that.', pt: 'A levedura trabalha entre cerca de 18 e 40 °C e para acima disso.' } },
+        { id: 'sugar', action: 'addMaterial', need: { water: true, sucrose: true }, amounts: { water: 100, sucrose: 25 }, into: 'flask', check: [CHECKS.volumeBetween(90, 110, 'water'), CHECKS.massEquals('sucrose', 25, 1)], en: 'Add 100 mL of water and 25 g of sucrose.', pt: 'Adicione 100 mL de água e 25 g de sacarose.', why: { en: 'Yeast takes its sugar from the water around it, so the sugar has to be dissolved.', pt: 'A levedura tira o açúcar da água ao redor, então o açúcar precisa estar dissolvido.' } },
+        { id: 'yeast', action: 'addMaterial', need: { yeast: true }, amounts: { yeast: 3 }, into: 'flask', check: [CHECKS.massEquals('yeast', 3, 0.5)], en: 'Add the virtual yeast.', pt: 'Adicione a levedura virtual.', why: { en: 'The yeast carries the enzymes that do the work.', pt: 'A levedura carrega as enzimas que fazem o trabalho.' } },
+        { id: 'warm', action: 'heat', heatTo: 28, needTemp: 24, into: 'flask', check: [CHECKS.temperatureBetween(24, 40)], errors: [{ when: CHECKS.temperatureAbove(40), feedback: { en: 'Too hot for yeast: above about 40 °C its enzymes lose their shape and stop working. Cool it back to about 28 °C.', pt: 'Quente demais para a levedura: acima de cerca de 40 °C as enzimas perdem a forma e param de funcionar. Esfrie de volta para cerca de 28 °C.' } }], en: 'Warm it to about 28 °C.', pt: 'Aqueça até cerca de 28 °C.', why: { en: 'Yeast works between roughly 18 and 40 °C, and stops above that.', pt: 'A levedura trabalha entre cerca de 18 e 40 °C e para acima disso.' } },
         { id: 'brew', action: 'ferment', needFermented: true, en: 'Let it ferment, then read the equation in the notebook.', pt: 'Deixe fermentar e leia a equação no caderno.', why: { en: 'The bubbles are the carbon dioxide half of the reaction.', pt: 'As bolhas são a metade de gás carbônico da reação.' } }
       ]
     },
@@ -949,10 +1145,10 @@
         pt: 'A filtração remove o que não dissolve; a evaporação faz voltar o que dissolveu.'
       },
       tutorial: [
-        { id: 'juice', action: 'addMaterial', need: { cane_juice: true, fibre: true }, anywhere: true, amounts: { cane_juice: 90, fibre: 8 }, into: 'beaker', en: 'Add virtual cane juice and the fibre that comes with it.', pt: 'Adicione caldo de cana virtual e a fibra que vem junto.' },
-        { id: 'funnel', action: 'addEquipment', needEquipment: ['funnel'], en: 'Add a funnel.', pt: 'Adicione um funil.' },
+        { id: 'juice', action: 'addMaterial', need: { cane_juice: true, fibre: true }, anywhere: true, amounts: { cane_juice: 90, fibre: 8 }, into: 'beaker', check: [CHECKS.volumeBetween(80, 100, 'cane_juice'), CHECKS.massEquals('fibre', 8, 1)], en: 'Add virtual cane juice and the fibre that comes with it.', pt: 'Adicione caldo de cana virtual e a fibra que vem junto.', why: { en: 'Cane juice is sucrose dissolved in water, carrying plant fibre that never dissolved.', pt: 'O caldo de cana é sacarose dissolvida em água, com fibra vegetal que nunca dissolveu.' } },
+        { id: 'funnel', action: 'addEquipment', needEquipment: ['funnel'], en: 'Add a funnel.', pt: 'Adicione um funil.', why: { en: 'A funnel with filter paper holds solids back and lets the liquid through.', pt: 'Um funil com papel de filtro retém os sólidos e deixa o líquido passar.' } },
         { id: 'fit', action: 'filter', needFiltered: true, en: 'Fit the funnel over an empty vessel and filter the juice.', pt: 'Encaixe o funil sobre um vidro vazio e filtre o caldo.', why: { en: 'Fibre does not dissolve, so it stays on the filter while the sugar runs through.', pt: 'A fibra não dissolve, então fica no filtro enquanto o açúcar passa.' } },
-        { id: 'boil', action: 'heat', heatTo: 70, needTemp: 62, en: 'Heat the filtrate to about 70 °C.', pt: 'Aqueça o filtrado até cerca de 70 °C.' },
+        { id: 'boil', action: 'heat', heatTo: 70, needTemp: 62, check: [CHECKS.temperatureAtLeast(62)], en: 'Heat the filtrate to about 70 °C.', pt: 'Aqueça o filtrado até cerca de 70 °C.', why: { en: 'Heat makes the water evaporate much faster than at room temperature.', pt: 'O calor faz a água evaporar muito mais rápido do que à temperatura ambiente.' } },
         { id: 'grow', action: 'crystallise', needCrystals: true, en: 'Boil it down until crystals form.', pt: 'Evapore até formar cristais.', why: { en: 'Removing water makes the solution supersaturated and the sugar comes out of it.', pt: 'Tirar água deixa a solução supersaturada e o açúcar sai dela.' } }
       ]
     },
@@ -977,12 +1173,12 @@
         pt: 'Por que um condensador de refluxo mantém o volume que a destilação retira.'
       },
       tutorial: [
-        { id: 'flask', action: 'addEquipment', needEquipment: ['round-flask'], en: 'Place a round-bottom flask.', pt: 'Coloque um balão de fundo redondo.' },
+        { id: 'flask', action: 'addEquipment', needEquipment: ['round-flask'], en: 'Place a round-bottom flask.', pt: 'Coloque um balão de fundo redondo.', why: { en: 'A round bottom heats evenly and carries the condenser on its neck.', pt: 'O fundo redondo aquece por igual e sustenta o condensador no gargalo.' } },
         { id: 'cond', action: 'addEquipment', needEquipment: ['condenser'], en: 'Add a condenser: this time it stands upright over the flask.', pt: 'Adicione um condensador: desta vez ele fica na vertical sobre o balão.', why: { en: 'Upright, the condensate falls straight back into the pot.', pt: 'Na vertical, o condensado cai de volta no balão.' } },
-        { id: 'heater', action: 'addEquipment', needEquipment: ['heating-mantle'], en: 'Add a heating mantle under the flask.', pt: 'Adicione uma manta de aquecimento sob o balão.' },
-        { id: 'charge', action: 'addMaterial', need: { water: true, ethanol: true }, amounts: { water: 50, ethanol: 30 }, into: 'round-flask', en: 'Charge the flask with 50 mL of water and 30 mL of ethanol.', pt: 'Carregue o balão com 50 mL de água e 30 mL de etanol.' },
-        { id: 'rig', action: 'reflux-connect', needConnections: 1, en: 'Stand the condenser over the flask and connect it. Note there is no receiver.', pt: 'Monte o condensador sobre o balão e conecte. Note que não há coletor.', why: { en: 'A receiver is what turns this into a still.', pt: 'É o coletor que transforma isto em uma destilação.' } },
-        { id: 'heat', action: 'heat', heatTo: 80, needTemp: 76, en: 'Heat the flask to about 80 °C.', pt: 'Aqueça o balão até cerca de 80 °C.' },
+        { id: 'heater', action: 'addEquipment', needEquipment: ['heating-mantle'], en: 'Add a heating mantle under the flask.', pt: 'Adicione uma manta de aquecimento sob o balão.', why: { en: 'The mantle wraps the flask, so it reaches the boiling point without an open flame.', pt: 'A manta envolve o balão, que chega à fervura sem chama aberta.' } },
+        { id: 'charge', action: 'addMaterial', need: { water: true, ethanol: true }, amounts: { water: 50, ethanol: 30 }, into: 'round-flask', check: [CHECKS.volumeBetween(45, 55, 'water'), CHECKS.volumeBetween(25, 35, 'ethanol')], en: 'Charge the flask with 50 mL of water and 30 mL of ethanol.', pt: 'Carregue o balão com 50 mL de água e 30 mL de etanol.', why: { en: 'A known volume now is what you compare against after the reflux.', pt: 'Um volume conhecido agora é o que você compara depois do refluxo.' } },
+        { id: 'rig', action: 'reflux-connect', needConnections: 1, into: 'round-flask', check: [CHECKS.refluxAssembled()], en: 'Stand the condenser over the flask and connect it. Note there is no receiver.', pt: 'Monte o condensador sobre o balão e conecte. Note que não há coletor.', why: { en: 'A receiver is what turns this into a still.', pt: 'É o coletor que transforma isto em uma destilação.' } },
+        { id: 'heat', action: 'heat', heatTo: 80, needTemp: 76, into: 'round-flask', check: [CHECKS.temperatureBetween(76, 92)], en: 'Heat the flask to about 80 °C.', pt: 'Aqueça o balão até cerca de 80 °C.', why: { en: 'Reflux only does something while the mixture boils, and ethanol boils at 78 °C.', pt: 'O refluxo só faz efeito enquanto a mistura ferve, e o etanol ferve a 78 °C.' } },
         { id: 'hold', action: 'reflux', needReflux: true, en: 'Reflux, then compare the volume with the distillation run.', pt: 'Refluxe e compare o volume com a destilação.', why: { en: 'Distillation moved the ethanol out; reflux holds everything and only keeps it boiling.', pt: 'A destilação levou o etanol embora; o refluxo mantém tudo e só o conserva fervendo.' } }
       ]
     },
@@ -1017,11 +1213,11 @@
         { id: 'gas', bpFrom: -160, en: 'Refinery gas', pt: 'Gás' }
       ],
       tutorial: [
-        { id: 'rigup', action: 'addEquipment', needEquipment: ['round-flask', 'condenser', 'receiving-flask', 'heating-mantle'], en: 'Place the flask, condenser, receiver and mantle.', pt: 'Coloque o balão, o condensador, o coletor e a manta.' },
-        { id: 'charge', action: 'addMaterial', need: { frac_light: true, frac_mid: true }, amounts: { frac_light: 30, frac_mid: 30 }, into: 'round-flask', en: 'Charge the flask with the virtual light and mid fractions.', pt: 'Carregue o balão com as frações virtuais leve e média.', why: { en: 'Crude oil is a mixture of hydrocarbons with different chain lengths.', pt: 'O petróleo é uma mistura de hidrocarbonetos com cadeias de tamanhos diferentes.' } },
-        { id: 'rig', action: 'connect', needConnections: 2, en: 'Connect the train.', pt: 'Conecte a aparelhagem.' },
-        { id: 'heat', action: 'heat', heatTo: 70, needTemp: 63, en: 'Heat to about 70 °C to take the lightest fraction first.', pt: 'Aqueça até cerca de 70 °C para tirar primeiro a fração mais leve.', why: { en: 'A refinery heats crude in a furnace and feeds it to the bottom of the tower. The lightest fractions rise highest before they condense.', pt: 'Uma refinaria aquece o petróleo numa fornalha e o injeta na base da torre. As frações mais leves sobem mais alto antes de condensar.' } },
-        { id: 'run', action: 'distill', needIn: { type: 'receiving-flask', id: 'frac_light' }, en: 'Distil the light fraction over, then read the tower order.', pt: 'Destile a fração leve e leia a ordem da torre.', why: { en: 'Top to bottom a real tower gives refinery gas, gasoline, kerosene, fuel oil, lubricating oil and finally residue: paraffin wax and asphalt.', pt: 'Do topo para a base, uma torre real dá gás, gasolina, querosene, óleo combustível, óleo lubrificante e, no fundo, resíduos: parafina e asfalto.' } }
+        { id: 'rigup', action: 'addEquipment', needEquipment: ['round-flask', 'condenser', 'receiving-flask', 'heating-mantle'], en: 'Place the flask, condenser, receiver and mantle.', pt: 'Coloque o balão, o condensador, o coletor e a manta.', why: { en: 'A refinery column is a taller version of this same train: heat, vapour, condensation.', pt: 'Uma coluna de refino é uma versão mais alta desta mesma montagem: calor, vapor, condensação.' } },
+        { id: 'charge', action: 'addMaterial', need: { frac_light: true, frac_mid: true }, amounts: { frac_light: 30, frac_mid: 30 }, into: 'round-flask', check: [CHECKS.volumeBetween(25, 35, 'frac_light'), CHECKS.volumeBetween(25, 35, 'frac_mid')], en: 'Charge the flask with the virtual light and mid fractions.', pt: 'Carregue o balão com as frações virtuais leve e média.', why: { en: 'Crude oil is a mixture of hydrocarbons with different chain lengths.', pt: 'O petróleo é uma mistura de hidrocarbonetos com cadeias de tamanhos diferentes.' } },
+        { id: 'rig', action: 'connect', needConnections: 2, into: 'round-flask', check: [CHECKS.stillAssembled()], en: 'Connect the train.', pt: 'Conecte a aparelhagem.', why: { en: 'The vapour has to reach the condenser without escaping on the way.', pt: 'O vapor precisa chegar ao condensador sem escapar no caminho.' } },
+        { id: 'heat', action: 'heat', heatTo: 70, needTemp: 63, into: 'round-flask', check: [CHECKS.temperatureBetween(63, 120)], feedback: { en: 'Stay well below the mid fraction (about 175 °C) so only the light one comes over.', pt: 'Fique bem abaixo da fração média (cerca de 175 °C) para só a leve passar.' }, en: 'Heat to about 70 °C to take the lightest fraction first.', pt: 'Aqueça até cerca de 70 °C para tirar primeiro a fração mais leve.', why: { en: 'A refinery heats crude in a furnace and feeds it to the bottom of the tower. The lightest fractions rise highest before they condense.', pt: 'Uma refinaria aquece o petróleo numa fornalha e o injeta na base da torre. As frações mais leves sobem mais alto antes de condensar.' } },
+        { id: 'run', action: 'distill', needIn: { type: 'receiving-flask', id: 'frac_light' }, observe: true, en: 'Distil the light fraction over, then read the tower order.', pt: 'Destile a fração leve e leia a ordem da torre.', why: { en: 'Top to bottom a real tower gives refinery gas, gasoline, kerosene, fuel oil, lubricating oil and finally residue: paraffin wax and asphalt.', pt: 'Do topo para a base, uma torre real dá gás, gasolina, querosene, óleo combustível, óleo lubrificante e, no fundo, resíduos: parafina e asfalto.' } }
       ]
     },
 
@@ -1046,9 +1242,9 @@
       },
       tutorial: [
         { id: 'eq', action: 'addEquipment', needEquipment: ['beaker'], en: 'Place a beaker on the board.', pt: 'Coloque um béquer na bancada.', why: { en: 'A beaker holds an approximate volume.', pt: 'O béquer contém um volume aproximado.' } },
-        { id: 'water', action: 'addMaterial', need: { water: true }, amounts: { water: 60 }, en: 'Add 60 mL of virtual water to the beaker.', pt: 'Adicione 60 mL de água virtual ao béquer.', why: { en: 'The solvent goes in first so the solute has somewhere to dissolve.', pt: 'O solvente entra primeiro para o soluto ter onde dissolver.' } },
-        { id: 'salt', action: 'addMaterial', need: { nacl: true }, amounts: { nacl: 10 }, en: 'Add 10 g of sodium chloride and stir.', pt: 'Adicione 10 g de cloreto de sódio e agite.', stir: true, why: { en: 'Stirring spreads the solute through the solvent.', pt: 'Agitar espalha o soluto pelo solvente.' } },
-        { id: 'read', action: 'inspect', product: 'saline', en: 'Measure volume and read the named product.', pt: 'Meça o volume e leia o produto nomeado.' }
+        { id: 'water', action: 'addMaterial', need: { water: true }, amounts: { water: 60 }, check: [CHECKS.volumeBetween(55, 65, 'water')], en: 'Add 60 mL of virtual water to the beaker.', pt: 'Adicione 60 mL de água virtual ao béquer.', why: { en: 'The solvent goes in first so the solute has somewhere to dissolve.', pt: 'O solvente entra primeiro para o soluto ter onde dissolver.' } },
+        { id: 'salt', action: 'addMaterial', need: { nacl: true }, amounts: { nacl: 10 }, check: [CHECKS.massEquals('nacl', 10, 0.5)], en: 'Add 10 g of sodium chloride and stir.', pt: 'Adicione 10 g de cloreto de sódio e agite.', stir: true, why: { en: 'Stirring spreads the solute through the solvent.', pt: 'Agitar espalha o soluto pelo solvente.' } },
+        { id: 'read', action: 'inspect', product: 'saline', check: [CHECKS.measured('volume')], en: 'Measure volume and read the named product.', pt: 'Meça o volume e leia o produto nomeado.', why: { en: 'The product is named from what is really in the vessel: water with a dissolved salt is a saline solution.', pt: 'O produto é nomeado pelo que realmente está no recipiente: água com um sal dissolvido é uma solução salina.' } }
       ]
     },
     {
@@ -1071,10 +1267,10 @@
         pt: 'Notas de topo, coração e fundo. Não é fórmula segura para pele.'
       },
       tutorial: [
-        { id: 'top', action: 'addMaterial', need: { limonene: true }, amounts: { limonene: 8 }, needEquipment: ['beaker'], en: 'Add 8 mL of a top note (limonene) to a beaker.', pt: 'Adicione uma nota de topo (limoneno).', why: { en: 'Top notes evaporate first.', pt: 'Notas de topo evaporam primeiro.' } },
-        { id: 'heart', action: 'addMaterial', need: { linalool: true }, amounts: { linalool: 6 }, en: 'Add 6 mL of a heart note (linalool).', pt: 'Adicione 6 mL de uma nota de coração (linalol).', why: { en: 'Heart notes carry the accord after the top fades.', pt: 'As notas de coração sustentam o acorde depois que o topo evapora.' } },
-        { id: 'base', action: 'addMaterial', need: { vanillin: true }, amounts: { vanillin: 4 }, en: 'Add 4 mL of a base note (vanillin).', pt: 'Adicione 4 mL de uma nota de fundo (vanilina).', why: { en: 'Base notes are the least volatile and stay longest.', pt: 'As notas de fundo são as menos voláteis e permanecem mais tempo.' } },
-        { id: 'read', action: 'inspect', product: 'accord', en: 'Read the virtual family. This is not a wearable perfume.', pt: 'Leia a família virtual. Isto não é um perfume para a pele.' }
+        { id: 'top', action: 'addMaterial', need: { limonene: true }, amounts: { limonene: 8 }, needEquipment: ['beaker'], check: [CHECKS.volumeBetween(7, 9, 'limonene')], en: 'Add 8 mL of a top note (limonene) to a beaker.', pt: 'Adicione uma nota de topo (limoneno).', why: { en: 'Top notes evaporate first.', pt: 'Notas de topo evaporam primeiro.' } },
+        { id: 'heart', action: 'addMaterial', need: { linalool: true }, amounts: { linalool: 6 }, check: [CHECKS.volumeBetween(5, 7, 'linalool')], en: 'Add 6 mL of a heart note (linalool).', pt: 'Adicione 6 mL de uma nota de coração (linalol).', why: { en: 'Heart notes carry the accord after the top fades.', pt: 'As notas de coração sustentam o acorde depois que o topo evapora.' } },
+        { id: 'base', action: 'addMaterial', need: { vanillin: true }, amounts: { vanillin: 4 }, check: [CHECKS.massEquals('vanillin', 4, 0.5)], en: 'Add 4 mL of a base note (vanillin).', pt: 'Adicione 4 mL de uma nota de fundo (vanilina).', why: { en: 'Base notes are the least volatile and stay longest.', pt: 'As notas de fundo são as menos voláteis e permanecem mais tempo.' } },
+        { id: 'read', action: 'inspect', product: 'accord', en: 'Read the virtual family. This is not a wearable perfume.', pt: 'Leia a família virtual. Isto não é um perfume para a pele.', why: { en: 'An accord is named after the notes that dominate it; here the citrus top note leads.', pt: 'Um acorde leva o nome das notas que dominam; aqui lidera a nota cítrica de topo.' } }
       ]
     },
     {
@@ -1094,8 +1290,8 @@
       safetyClass: 'conceptual',
       version: 2,
       tutorial: [
-        { id: 'carbon', action: 'addMaterial', needAny: ['c', 'carbon'], amounts: { c: 10 }, needEquipment: ['beaker'], en: 'Place 10 g of virtual carbon in a beaker.', pt: 'Coloque 10 g de carbono virtual em um béquer.', why: { en: 'Graphite and diamond are both carbon in different lattices.', pt: 'Grafite e diamante são carbono em redes diferentes.' } },
-        { id: 'inspect', action: 'inspect', en: 'Open Allotropes to compare graphite and diamond conceptually.', pt: 'Abra Alótropos para comparar grafite e diamante de forma conceitual.' }
+        { id: 'carbon', action: 'addMaterial', needAny: ['c', 'carbon'], amounts: { c: 10 }, needEquipment: ['beaker'], check: [CHECKS.massEquals(['c', 'carbon'], 10, 1)], en: 'Place 10 g of virtual carbon in a beaker.', pt: 'Coloque 10 g de carbono virtual em um béquer.', why: { en: 'Graphite and diamond are both carbon in different lattices.', pt: 'Grafite e diamante são carbono em redes diferentes.' } },
+        { id: 'inspect', action: 'inspect', observe: true, en: 'Open Allotropes to compare graphite and diamond conceptually.', pt: 'Abra Alótropos para comparar grafite e diamante de forma conceitual.', why: { en: 'In graphite each carbon bonds to three others in flat sheets; in diamond to four, in a rigid 3D network. Same atoms, different structure.', pt: 'No grafite, cada carbono se liga a três outros em folhas planas; no diamante, a quatro, numa rede 3D rígida. Mesmos átomos, estrutura diferente.' } }
       ]
     },
     {
@@ -1114,9 +1310,9 @@
       safetyClass: 'educational',
       version: 2,
       tutorial: [
-        { id: 'acid', action: 'addMaterial', need: { water: true, citric_acid: true }, amounts: { water: 50, citric_acid: 6 }, needEquipment: ['beaker'], en: 'Add water, then 6 g of citric acid.', pt: 'Adicione água e depois 6 g de ácido cítrico.', why: { en: 'The acid needs water before a virtual pH can be read.', pt: 'O ácido precisa de água antes de um pH virtual ser lido.' } },
-        { id: 'base', action: 'addMaterial', need: { bicarbonate: true }, amounts: { bicarbonate: PH_CHALLENGE.bicarbonateG }, checkPh: { min: PH_CHALLENGE.phMin, max: PH_CHALLENGE.phMax }, en: 'Add ' + PH_CHALLENGE.bicarbonateG + ' g of bicarbonate. The mixture may fizz.', pt: 'Adicione ' + String(PH_CHALLENGE.bicarbonateG).replace('.', ',') + ' g de bicarbonato. A mistura pode efervescer.', why: { en: 'pH 7 is not the equivalence point: trisodium citrate is a weak base, so the reading reaches 7 a little before 7.87 g of NaHCO₃. In this open vessel the CO₂ leaves.', pt: 'pH 7 não é o ponto de equivalência: o citrato trissódico é base fraca, então a leitura chega a 7 um pouco antes de 7,87 g de NaHCO₃. Neste recipiente aberto o CO₂ sai.' } },
-        { id: 'measure', action: 'measure', en: 'Measure virtual pH from the inspector.', pt: 'Meça o pH virtual no inspetor.' }
+        { id: 'acid', action: 'addMaterial', need: { water: true, citric_acid: true }, amounts: { water: 50, citric_acid: 6 }, needEquipment: ['beaker'], check: [CHECKS.volumeBetween(45, 55, 'water'), CHECKS.massEquals('citric_acid', 6, 0.3)], en: 'Add water, then 6 g of citric acid.', pt: 'Adicione água e depois 6 g de ácido cítrico.', why: { en: 'The acid needs water before a virtual pH can be read.', pt: 'O ácido precisa de água antes de um pH virtual ser lido.' } },
+        { id: 'base', action: 'addMaterial', need: { bicarbonate: true }, amounts: { bicarbonate: PH_CHALLENGE.bicarbonateG }, checkPh: { min: PH_CHALLENGE.phMin, max: PH_CHALLENGE.phMax }, errors: [{ when: CHECKS.massAbove('bicarbonate', 7.9), feedback: { en: 'Past 7.87 g every proton of the 6 g of citric acid is already used. The extra bicarbonate stays as HCO₃⁻ and pulls the pH towards 8.3. Undo the last addition and add less.', pt: 'Depois de 7,87 g todos os prótons dos 6 g de ácido cítrico já foram usados. O bicarbonato extra fica como HCO₃⁻ e puxa o pH para perto de 8,3. Desfaça a última adição e coloque menos.' } }], en: 'Add ' + PH_CHALLENGE.bicarbonateG + ' g of bicarbonate. The mixture may fizz.', pt: 'Adicione ' + String(PH_CHALLENGE.bicarbonateG).replace('.', ',') + ' g de bicarbonato. A mistura pode efervescer.', why: { en: 'pH 7 is not the equivalence point: trisodium citrate is a weak base, so the reading reaches 7 a little before 7.87 g of NaHCO₃. In this open vessel the CO₂ leaves.', pt: 'pH 7 não é o ponto de equivalência: o citrato trissódico é base fraca, então a leitura chega a 7 um pouco antes de 7,87 g de NaHCO₃. Neste recipiente aberto o CO₂ sai.' } },
+        { id: 'measure', action: 'measure', check: [CHECKS.measured('ph'), CHECKS.phBetween(PH_CHALLENGE.phMin, PH_CHALLENGE.phMax)], en: 'Measure virtual pH from the inspector.', pt: 'Meça o pH virtual no inspetor.', why: { en: 'A reading turns the mixture into a number; each pH unit is a tenfold change in H⁺ concentration.', pt: 'A leitura transforma a mistura em um número; cada unidade de pH é uma mudança de dez vezes na concentração de H⁺.' } }
       ]
     },
     {
@@ -1135,9 +1331,9 @@
       safetyClass: 'educational',
       version: 2,
       tutorial: [
-        { id: 'dissolve', action: 'addMaterial', need: { water: true, sucrose: true }, amounts: { water: 60, sucrose: 20 }, needEquipment: ['beaker'], en: 'Dissolve 20 g of sucrose in 60 mL of water.', pt: 'Dissolva 20 g de sacarose em 60 mL de água.', why: { en: 'Crystals only grow from a concentrated solution.', pt: 'Cristais só crescem a partir de uma solução concentrada.' } },
-        { id: 'heat', action: 'heat', en: 'Warm the vessel with a Bunsen or heat control (virtual).', pt: 'Aqueça o vidro com Bunsen ou o controle de calor (virtual).' },
-        { id: 'observe', action: 'inspect', product: 'sugar-sol', en: 'Observe the modeled solution. This is not a crystal-growing recipe.', pt: 'Observe a solução modelada. Não é uma receita de cristalização.' }
+        { id: 'dissolve', action: 'addMaterial', need: { water: true, sucrose: true }, amounts: { water: 60, sucrose: 20 }, needEquipment: ['beaker'], into: 'beaker', check: [CHECKS.volumeBetween(55, 65, 'water'), CHECKS.massEquals('sucrose', 20, 1)], en: 'Dissolve 20 g of sucrose in 60 mL of water.', pt: 'Dissolva 20 g de sacarose em 60 mL de água.', why: { en: 'Crystals only grow from a concentrated solution.', pt: 'Cristais só crescem a partir de uma solução concentrada.' } },
+        { id: 'heat', action: 'heat', into: 'beaker', check: [CHECKS.temperatureAtLeast(40)], en: 'Warm the vessel with a Bunsen or heat control (virtual).', pt: 'Aqueça o vidro com Bunsen ou o controle de calor (virtual).', why: { en: 'Warm water dissolves sugar faster and loses water to evaporation faster.', pt: 'A água morna dissolve o açúcar mais rápido e perde água por evaporação mais rápido.' } },
+        { id: 'observe', action: 'inspect', product: 'sugar-sol', observe: true, en: 'Observe the modeled solution. This is not a crystal-growing recipe.', pt: 'Observe a solução modelada. Não é uma receita de cristalização.', why: { en: 'No crystals yet: 20 g in 60 mL is far below saturation (about 120 g would dissolve at 20 °C). Most of the water would have to evaporate first.', pt: 'Ainda não há cristais: 20 g em 60 mL estão muito abaixo da saturação (cerca de 120 g dissolveriam a 20 °C). A maior parte da água teria de evaporar antes.' } }
       ]
     },
     {
@@ -1155,10 +1351,10 @@
       },
       stages: ['choose', 'disperse', 'emulsify', 'observe'],
       tutorial: [
-        { id: 'base', action: 'addMaterial', need: { water: true, oil: true }, amounts: { water: 20, oil: 15 }, needEquipment: ['beaker'], en: 'Add 20 mL of water and 15 mL of virtual carrier oil to a beaker.', pt: 'Coloque 20 mL de água e 15 mL de óleo virtual em um béquer.', why: { en: 'Aqueous and oil phases must meet before a mineral filter can disperse.', pt: 'As fases aquosa e oleosa precisam se encontrar antes de dispersar o filtro mineral.' } },
-        { id: 'filter', action: 'addMaterial', needAny: ['zno', 'tio2'], amounts: { zno: 8, tio2: 8 }, en: 'Disperse 8 g of zinc oxide or titanium dioxide into the base.', pt: 'Dispersar óxido de zinco ou dióxido de titânio na base.', why: { en: 'These are modeled as mineral UV-filter roles, not a certified SPF.', pt: 'Isto modela o papel de filtro UV mineral, não um FPS certificado.' } },
-        { id: 'stir', action: 'mix', stir: true, en: 'Stir to form a virtual emulsion.', pt: 'Agite para formar uma emulsão virtual.' },
-        { id: 'observe', action: 'inspect', product: 'sunscreen', en: 'Read the inspector. This models a mineral UV filter, not a real SPF.', pt: 'Leia o inspetor. Isto modela um filtro UV mineral, não um FPS real.' }
+        { id: 'base', action: 'addMaterial', need: { water: true, oil: true }, amounts: { water: 20, oil: 15 }, needEquipment: ['beaker'], check: [CHECKS.volumeBetween(18, 22, 'water'), CHECKS.volumeBetween(13, 17, 'oil')], en: 'Add 20 mL of water and 15 mL of virtual carrier oil to a beaker.', pt: 'Coloque 20 mL de água e 15 mL de óleo virtual em um béquer.', why: { en: 'Aqueous and oil phases must meet before a mineral filter can disperse.', pt: 'As fases aquosa e oleosa precisam se encontrar antes de dispersar o filtro mineral.' } },
+        { id: 'filter', action: 'addMaterial', needAny: ['zno', 'tio2'], amounts: { zno: 8, tio2: 8 }, check: [CHECKS.massEquals(['zno', 'tio2'], 8, 1)], en: 'Disperse 8 g of zinc oxide or titanium dioxide into the base.', pt: 'Dispersar óxido de zinco ou dióxido de titânio na base.', why: { en: 'These are modeled as mineral UV-filter roles, not a certified SPF.', pt: 'Isto modela o papel de filtro UV mineral, não um FPS certificado.' } },
+        { id: 'stir', action: 'mix', stir: true, en: 'Stir to form a virtual emulsion.', pt: 'Agite para formar uma emulsão virtual.', why: { en: 'Stirring breaks the oil into droplets spread through the water.', pt: 'Agitar quebra o óleo em gotas espalhadas pela água.' } },
+        { id: 'observe', action: 'inspect', product: 'sunscreen', en: 'Read the inspector. This models a mineral UV filter, not a real SPF.', pt: 'Leia o inspetor. Isto modela um filtro UV mineral, não um FPS real.', why: { en: 'Zinc oxide and titanium dioxide scatter and absorb UV. A real SPF is measured on people, never computed.', pt: 'Óxido de zinco e dióxido de titânio espalham e absorvem UV. Um FPS real é medido em pessoas, nunca calculado.' } }
       ]
     }
   ];
@@ -1514,7 +1710,8 @@
       stage: session.stage,
       selectedId: session.selectedId,
       board: session.board,
-      stirred: session.stirred
+      stirred: session.stirred,
+      guide: session.guide
     })]);
     if (session.history.length > HISTORY_CAP) session.history = session.history.slice(-HISTORY_CAP);
     session.redo = [];
@@ -1528,6 +1725,7 @@
     session.selectedId = slice.selectedId || (session.containers[0] || {}).id;
     session.board = slice.board || session.board;
     session.stirred = slice.stirred;
+    if (Object.prototype.hasOwnProperty.call(slice, 'guide')) session.guide = slice.guide;
     ensureBoard(session);
     return session;
   }
@@ -1541,7 +1739,8 @@
       stage: session.stage,
       selectedId: session.selectedId,
       board: session.board,
-      stirred: session.stirred
+      stirred: session.stirred,
+      guide: session.guide
     })]);
     restoreSlice(session, prev);
     return { ok: true };
@@ -1556,7 +1755,8 @@
       stage: session.stage,
       selectedId: session.selectedId,
       board: session.board,
-      stirred: session.stirred
+      stirred: session.stirred,
+      guide: session.guide
     })]);
     restoreSlice(session, next);
     return { ok: true };
@@ -2005,7 +2205,14 @@
     if (dirty && !keep) cleanBench(session);
     session.creationId = creation.id;
     session.mode = 'guided';
-    session.guide = { creationId: creation.id, startedAt: nowIso(), usedBench: keep, passed: [], observed: [] };
+    session.guide = {
+      creationId: creation.id,
+      startedAt: nowIso(),
+      usedBench: keep,
+      measureFrom: (session.measurements || []).length,
+      passed: [],
+      observed: []
+    };
     observe(session, line(session, 'Started a guided creation.', 'Iniciou uma criação guiada.'));
     return { ok: true, cleaned: dirty && !keep, usedBench: keep };
   }
@@ -2881,107 +3088,222 @@
     return { ok: true, container: container, reaction: fired };
   }
 
-  function tutorialProgressFor(session, creation, container) {
-    if (!container) {
-      return { current: 0, done: creation.tutorial.map(function () { return false; }) };
-    }
-    mixContainer(container);
+  /* What a step needs regardless of amounts: the material is there, the
+     equipment is on the bench, the process ran. Amounts and readings are the
+     step's `check`, judged afterwards. */
+  function stepBasics(session, step, container) {
     var has = {};
-    (container.contents || []).forEach(function (row) {
-      if ((Number(row.amount) || 0) > 0.05) has[row.id] = true;
-    });
+    if (container) {
+      mixContainer(container);
+      (container.contents || []).forEach(function (row) {
+        if ((Number(row.amount) || 0) > 0.05) has[row.id] = true;
+      });
+    }
     /* A step marked `anywhere` survives the material being moved on: filtering
        or distilling deliberately empties the vessel it started in. */
-    var anywhere = {};
-    (session.containers || []).forEach(function (vessel) {
-      (vessel.contents || []).forEach(function (row) {
-        if ((Number(row.amount) || 0) > 0.05) anywhere[row.id] = true;
+    var pool = has;
+    if (step.anywhere) {
+      pool = {};
+      (session.containers || []).forEach(function (vessel) {
+        (vessel.contents || []).forEach(function (row) {
+          if ((Number(row.amount) || 0) > 0.05) pool[row.id] = true;
+        });
       });
-    });
-    var done = [];
-    var current = 0;
-    var unlocked = true;
-    creation.tutorial.forEach(function (step, i) {
-      var ok = unlocked;
-      if (ok && step.needEquipment) {
-        var types = {};
-        (session.containers || []).forEach(function (row) { types[row.type] = true; });
-        step.needEquipment.forEach(function (id) { if (!types[id]) ok = false; });
-      }
-      var pool = step.anywhere ? anywhere : has;
-      if (ok && step.need) {
-        Object.keys(step.need).forEach(function (id) { if (!pool[id]) ok = false; });
-      }
-      if (ok && step.checkPh) {
-        var reading = Number(container.ph);
-        if (!(reading >= step.checkPh.min && reading <= step.checkPh.max)) ok = false;
-      }
-      if (ok && step.needAny) ok = step.needAny.some(function (id) { return pool[id]; });
-      if (ok && step.stir && !session.stirred) ok = false;
-      if (ok && step.product && container.productId !== step.product) ok = false;
-      if (ok && step.action === 'heat' && !step.needTemp) {
-        var warm = (session.containers || []).some(function (row) { return (Number(row.temperatureC) || 22) >= 40; });
-        if (!warm) ok = false;
-      }
-      if (ok && step.action === 'measure') {
-        if (!(session.measurements || []).length) ok = false;
-      }
-      if (ok && step.needConnections) {
-        var wired = ((session.board && session.board.connections) || []).length;
-        if (wired < step.needConnections) ok = false;
-      }
-      if (ok && step.needTemp) {
-        var hot = (session.containers || []).some(function (row) {
-          return (Number(row.temperatureC) || 22) >= step.needTemp;
-        });
-        if (!hot) ok = false;
-      }
-      if (ok && step.needFermented) {
-        var brewed = (session.containers || []).some(function (row) { return (Number(row.fermented) || 0) > 0; });
-        if (!brewed) ok = false;
-      }
-      if (ok && step.needCrystals) {
-        var grown = (session.containers || []).some(function (row) { return row.crystals; });
-        if (!grown) ok = false;
-      }
-      if (ok && step.needFiltered) {
-        var sieved = (session.containers || []).some(function (row) { return row.type === 'funnel' && row.residue; });
-        if (!sieved) ok = false;
-      }
-      if (ok && step.needReflux) {
-        var held = (session.containers || []).some(function (row) { return (Number(row.refluxMin) || 0) > 0; });
-        if (!held) ok = false;
-      }
-      if (ok && step.needIn) {
-        var host = firstOfType(session, step.needIn.type);
-        var landed = host && (host.contents || []).some(function (row) {
-          return row.id === step.needIn.id && (Number(row.amount) || 0) > 0.05;
-        });
-        if (!landed) ok = false;
-      }
-      done[i] = ok;
-      if (ok) current = i + 1;
-      else unlocked = false;
-    });
-    return { current: current, done: done };
+    }
+    var ok = true;
+    if (step.needEquipment) {
+      var types = {};
+      (session.containers || []).forEach(function (row) { types[row.type] = true; });
+      step.needEquipment.forEach(function (id) { if (!types[id]) ok = false; });
+    }
+    if (ok && step.need) {
+      Object.keys(step.need).forEach(function (id) { if (!pool[id]) ok = false; });
+    }
+    if (ok && step.needAny) ok = step.needAny.some(function (id) { return pool[id]; });
+    if (ok && step.stir && !session.stirred) ok = false;
+    if (ok && step.product && (!container || container.productId !== step.product)) ok = false;
+    if (ok && step.action === 'heat' && !step.needTemp) {
+      var warm = (session.containers || []).some(function (row) { return (Number(row.temperatureC) || 22) >= 40; });
+      if (!warm) ok = false;
+    }
+    if (ok && step.action === 'measure') {
+      if (!(session.measurements || []).length) ok = false;
+    }
+    if (ok && step.needConnections) {
+      var wired = ((session.board && session.board.connections) || []).length;
+      if (wired < step.needConnections) ok = false;
+    }
+    if (ok && step.needTemp) {
+      var hot = (session.containers || []).some(function (row) {
+        return (Number(row.temperatureC) || 22) >= step.needTemp;
+      });
+      if (!hot) ok = false;
+    }
+    if (ok && step.needFermented) {
+      var brewed = (session.containers || []).some(function (row) { return (Number(row.fermented) || 0) > 0; });
+      if (!brewed) ok = false;
+    }
+    if (ok && step.needCrystals) {
+      var grown = (session.containers || []).some(function (row) { return row.crystals; });
+      if (!grown) ok = false;
+    }
+    if (ok && step.needFiltered) {
+      var sieved = (session.containers || []).some(function (row) { return row.type === 'funnel' && row.residue; });
+      if (!sieved) ok = false;
+    }
+    if (ok && step.needReflux) {
+      var held = (session.containers || []).some(function (row) { return (Number(row.refluxMin) || 0) > 0; });
+      if (!held) ok = false;
+    }
+    if (ok && step.needIn) {
+      var host = firstOfType(session, step.needIn.type);
+      var landed = host && (host.contents || []).some(function (row) {
+        return row.id === step.needIn.id && (Number(row.amount) || 0) > 0.05;
+      });
+      if (!landed) ok = false;
+    }
+    return ok;
   }
 
+  function joinFeedback(lead, detail) {
+    if (!lead) return detail || null;
+    if (!detail) return lead;
+    return { en: lead.en + ' ' + detail.en, pt: lead.pt + ' ' + detail.pt };
+  }
+
+  /* One step on one vessel: a known mistake, the basics, then every check. */
+  function evaluateStep(session, step, container, guide) {
+    var ctx = { session: session, container: container, guide: guide };
+    var error = null;
+    if (container) {
+      (step.errors || []).some(function (row) {
+        if (row.when(ctx)) {
+          error = row.feedback;
+          return true;
+        }
+        return false;
+      });
+    }
+    var basic = stepBasics(session, step, container);
+    if (error) return { ok: false, basic: basic, rank: 3, feedback: error };
+    if (!basic) return { ok: false, basic: false, rank: 0, feedback: null };
+    var checks = [].concat(step.check || []);
+    if (step.checkPh) checks.unshift(CHECKS.phBetween(step.checkPh.min, step.checkPh.max));
+    for (var i = 0; i < checks.length; i += 1) {
+      if (!checks[i](ctx)) {
+        var detail = typeof checks[i].explain === 'function' ? checks[i].explain(ctx) : null;
+        return { ok: false, basic: true, rank: 2, feedback: joinFeedback(step.feedback, detail) };
+      }
+    }
+    return { ok: true, basic: true, rank: 1 };
+  }
+
+  /* The vessels a step is judged on, the selected one first. A step that names
+     its vessel type is judged on that type only. */
+  function stepCandidates(session, step) {
+    var rows = (session.containers || []).filter(function (row) { return canHold(row); });
+    if (step.into && !step.anywhere) {
+      rows = rows.filter(function (row) { return row.type === step.into; });
+    }
+    var sel = session.selectedId;
+    return rows.slice().sort(function (a, b) {
+      return (a.id === sel ? 0 : 1) - (b.id === sel ? 0 : 1);
+    });
+  }
+
+  function judgeStep(session, step, guide) {
+    var pool = stepCandidates(session, step);
+    if (!pool.length) pool = [null];
+    var best = null;
+    for (var i = 0; i < pool.length; i += 1) {
+      var verdict = evaluateStep(session, step, pool[i], guide);
+      if (verdict.ok) return verdict;
+      if (!best || verdict.rank > best.rank) best = verdict;
+    }
+    if (step.into && !step.anywhere && !(best && best.feedback)) {
+      var elsewhere = (session.containers || []).some(function (row) {
+        return canHold(row) && row.type !== step.into && evaluateStep(session, step, row, guide).ok;
+      });
+      var host = EQUIPMENT[step.into];
+      if (elsewhere && host) {
+        return {
+          ok: false,
+          feedback: {
+            en: 'Right material, wrong vessel: this step uses the ' + host.labelEn.toLowerCase() + '.',
+            pt: 'Material certo, recipiente errado: este passo usa o ' + host.labelPt.toLowerCase() + '.'
+          }
+        };
+      }
+    }
+    return { ok: false, feedback: best ? best.feedback : null };
+  }
+
+  /* The guide being followed keeps a record of the steps it has seen pass, so
+     using up a material later (fermenting the sugar, distilling the ethanol)
+     does not undo a step that was done right. */
+  function activeGuide(session, creation) {
+    if (!session || !creation || session.creationId !== creation.id) return null;
+    if (!session.guide || session.guide.creationId !== creation.id) {
+      session.guide = { creationId: creation.id, startedAt: '', usedBench: false, measureFrom: 0, passed: [], observed: [] };
+    }
+    if (!Array.isArray(session.guide.passed)) session.guide.passed = [];
+    if (!Array.isArray(session.guide.observed)) session.guide.observed = [];
+    return session.guide;
+  }
+
+  /* A step only moves on when its check passes; «Practice complete» means
+     every step passed, not that enough steps were clicked. */
   function tutorialState(session, creation) {
     if (!creation || !Array.isArray(creation.tutorial) || !creation.tutorial.length) return null;
-    var containers = session.containers || [];
-    var selected = findContainer(session, session.selectedId);
-    var best = tutorialProgressFor(session, creation, selected || containers[0]);
-    containers.forEach(function (container) {
-      if (selected && container.id === selected.id) return;
-      var next = tutorialProgressFor(session, creation, container);
-      if (next.current > best.current) best = next;
-    });
+    var guide = activeGuide(session, creation);
+    var steps = creation.tutorial;
+    var done = steps.map(function () { return false; });
+    var current = 0;
+    var feedback = null;
+    var awaiting = false;
+    for (var i = 0; i < steps.length; i += 1) {
+      var step = steps[i];
+      if (guide && guide.passed.indexOf(step.id) !== -1) {
+        done[i] = true;
+        current = i + 1;
+        continue;
+      }
+      var verdict = judgeStep(session, step, guide);
+      if (!verdict.ok) {
+        feedback = verdict.feedback || null;
+        break;
+      }
+      /* An automatic process (a distillation) shows its result; the step is
+         done once the user says they looked at it. */
+      if (step.observe && !(guide && guide.observed.indexOf(step.id) !== -1)) {
+        awaiting = true;
+        break;
+      }
+      done[i] = true;
+      current = i + 1;
+      if (guide) guide.passed.push(step.id);
+    }
     return {
-      current: best.current,
-      steps: creation.tutorial,
-      done: best.done,
-      complete: best.current >= creation.tutorial.length
+      current: current,
+      steps: steps,
+      done: done,
+      complete: current >= steps.length,
+      feedback: feedback,
+      awaitingObserve: awaiting,
+      usedBench: Boolean(guide && guide.usedBench)
     };
+  }
+
+  function confirmObserved(session, creation) {
+    var guide = activeGuide(session, creation);
+    if (!guide) return { ok: false, reason: 'inactive' };
+    var state = tutorialState(session, creation);
+    if (!state || !state.awaitingObserve) return { ok: false, reason: 'nothing' };
+    var step = creation.tutorial[state.current];
+    pushHistory(session);
+    guide.observed.push(step.id);
+    observe(session, line(session, 'Observed: ' + step.en, 'Observou: ' + step.pt));
+    return { ok: true, step: step.id };
   }
 
   function defaultAmountFor(id) {
@@ -3083,6 +3405,7 @@
       needsStir: !!step.stir || step.action === 'mix',
       needsHeat: step.action === 'heat',
       needsMeasure: step.action === 'measure',
+      observe: !!step.observe,
       product: step.product || '',
       hints: hints
     };
@@ -3455,6 +3778,12 @@
         '</div></div>';
     }
 
+    function chipName(row) {
+      if (lang !== 'pt' || !SUBSTANCE_PT[row.id]) return row.name;
+      var name = SUBSTANCE_PT[row.id];
+      return name.charAt(0).toUpperCase() + name.slice(1);
+    }
+
     function stepChips(plan) {
       var out = [];
       plan.equipment.forEach(function (row) {
@@ -3465,14 +3794,14 @@
       plan.materials.forEach(function (row) {
         out.push('<button type="button" class="lab-do-chip" data-step-add="' + esc(row.id) + '" data-step-amount="' + esc(row.amount) + '"' + into + '>' +
           '<i class="lab-chip-swatch" style="background:' + esc(row.color) + '"></i>+ ' +
-          esc(row.name) + ' ' + esc(row.amount) + ' ' + esc(row.unit) + '</button>');
+          esc(chipName(row)) + ' ' + esc(row.amount) + ' ' + esc(row.unit) + '</button>');
       });
       if (plan.options.length) {
         out.push('<span class="lab-do-or">' + esc(copy('either', 'ou')) + '</span>');
         plan.options.forEach(function (row) {
           out.push('<button type="button" class="lab-do-chip" data-step-add="' + esc(row.id) + '" data-step-amount="' + esc(row.amount) + '"' + into + '>' +
             '<i class="lab-chip-swatch" style="background:' + esc(row.color) + '"></i>+ ' +
-            esc(row.name) + ' ' + esc(row.amount) + ' ' + esc(row.unit) + '</button>');
+            esc(chipName(row)) + ' ' + esc(row.amount) + ' ' + esc(row.unit) + '</button>');
         });
       }
       if (plan.needsStir) {
@@ -3497,7 +3826,7 @@
         out.push('<button type="button" class="lab-do-chip" data-step-filter>' + esc(copy('Fit funnel and filter', 'Encaixar funil e filtrar')) + '</button>');
       }
       if (plan.heatTo) {
-        out.push('<button type="button" class="lab-do-chip" data-step-heat="' + esc(plan.heatTo) + '">' +
+        out.push('<button type="button" class="lab-do-chip" data-step-heat="' + esc(plan.heatTo) + '"' + into + '>' +
           esc(copy('Heat to ' + plan.heatTo + ' °C', 'Aquecer até ' + plan.heatTo + ' °C')) + '</button>');
       } else if (plan.needsHeat) {
         out.push('<button type="button" class="lab-do-chip" data-heat="20">' + esc(copy('Warm +20 °C', 'Aquecer +20 °C')) + '</button>');
@@ -3695,13 +4024,22 @@
         usedNote +
         '<div class="lab-guide-bar"><i style="width:' + pct + '%"></i></div>' +
         '<p class="lab-guide-now">' + esc(lang === 'pt' ? plan.text.pt : plan.text.en) + '</p>' +
-        stepChips(plan) +
+        (state.awaitingObserve ? observeHtml(creation, plan) : stepChips(plan)) +
+        (state.feedback ? '<p class="lab-guide-feedback" role="status">' + esc(lang === 'pt' ? state.feedback.pt : state.feedback.en) + '</p>' : '') +
         (plan.why ? '<p class="lab-guide-why"><strong>' + esc(copy('Why?', 'Por quê?')) + '</strong> ' + esc(stepWhy(plan)) + '</p>' : '') +
         hintsHtml(plan) +
         '<details class="lab-guide-all"><summary>' + esc(copy('All steps', 'Todos os passos')) + '</summary><ol>' + stepList + '</ol></details>' +
         fractionsHtml(creation) +
         '<button type="button" class="ws-btn ws-btn-sm" data-stop-creation>' + esc(copy('Leave guide', 'Sair do guia')) + '</button>' +
         '</section>';
+    }
+
+    /* The process already ran: the step waits for the user to look at it. */
+    function observeHtml(creation, plan) {
+      return '<div class="lab-guide-observe" role="status">' +
+        '<p>' + esc(copy('Look at the result on the bench and in the notebook before moving on.', 'Observe o resultado na bancada e no caderno antes de seguir.')) + '</p>' +
+        '<button type="button" class="ws-btn ws-btn-sm ws-btn-primary" data-step-observed>' + esc(copy('I observed it', 'Observei')) + '</button>' +
+        '</div>';
     }
 
     function stepWhy(step) {
@@ -4786,7 +5124,7 @@
       rootEl.addEventListener('click', function (event) {
         try {
           var t = event.target && event.target.closest
-            ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-redo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel], [data-ready], [data-lab-zoom], [data-lab-fit], [data-lab-fit-all], [data-lab-zoom-menu], [data-lab-zoom-to], [data-lab-fit-selection], [data-board-tool], [data-lab-aspirate], [data-lab-dispense], [data-lab-drop], [data-lab-grind], [data-lab-drain], [data-lab-connect], [data-lab-duplicate], [data-lab-delete], [data-lab-rotate], [data-dock], [data-dock-close], [data-side], [data-lab-sound], [data-lab-focus], [data-start-creation], [data-stop-creation], [data-guide-clean], [data-guide-keep], [data-guide-cancel], [data-step-add], [data-lab-hint], [data-step-connect], [data-step-heat], [data-step-distill], [data-lab-distill], [data-lab-filter], [data-lab-reflux], [data-step-reflux], [data-step-reflux-connect], [data-lab-remove], [data-lab-stack], [data-lab-ferment], [data-step-ferment], [data-lab-crystallise], [data-step-crystallise], [data-step-filter]')
+            ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-redo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel], [data-ready], [data-lab-zoom], [data-lab-fit], [data-lab-fit-all], [data-lab-zoom-menu], [data-lab-zoom-to], [data-lab-fit-selection], [data-board-tool], [data-lab-aspirate], [data-lab-dispense], [data-lab-drop], [data-lab-grind], [data-lab-drain], [data-lab-connect], [data-lab-duplicate], [data-lab-delete], [data-lab-rotate], [data-dock], [data-dock-close], [data-side], [data-lab-sound], [data-lab-focus], [data-start-creation], [data-stop-creation], [data-guide-clean], [data-guide-keep], [data-guide-cancel], [data-step-observed], [data-step-add], [data-lab-hint], [data-step-connect], [data-step-heat], [data-step-distill], [data-lab-distill], [data-lab-filter], [data-lab-reflux], [data-step-reflux], [data-step-reflux-connect], [data-lab-remove], [data-lab-stack], [data-lab-ferment], [data-step-ferment], [data-lab-crystallise], [data-step-crystallise], [data-step-filter]')
             : null;
           if (!t) return;
           if (t.hasAttribute('data-lab-sound')) {
@@ -4822,6 +5160,14 @@
           if (t.getAttribute('data-guide-clean') || t.getAttribute('data-guide-keep')) {
             var keepBench = Boolean(t.getAttribute('data-guide-keep'));
             launchGuide(t.getAttribute('data-guide-clean') || t.getAttribute('data-guide-keep'), keepBench);
+            return;
+          }
+          if (t.hasAttribute('data-step-observed')) {
+            var watching = CREATIONS.filter(function (row) { return row.id === session.creationId; })[0];
+            if (watching && confirmObserved(session, watching).ok) {
+              queueSave();
+              updateLive();
+            }
             return;
           }
           if (t.hasAttribute('data-guide-cancel')) {
@@ -4907,7 +5253,7 @@
           }
           if (t.getAttribute('data-step-heat')) {
             var wantC = Number(t.getAttribute('data-step-heat')) || 0;
-            var heatTarget = preferredVessel('round-flask') || selected();
+            var heatTarget = preferredVessel(t.getAttribute('data-step-into') || 'round-flask') || selected();
             if (!heatTarget) return;
             var warmed = setTemperature(session, heatTarget.id, wantC);
             session.selectedId = heatTarget.id;
@@ -5930,6 +6276,8 @@
     identifyProduct: identifyProduct,
     visualFillPct: visualFillPct,
     tutorialState: tutorialState,
+    confirmObserved: confirmObserved,
+    CHECKS: CHECKS,
     benchIsDirty: benchIsDirty,
     cleanBench: cleanBench,
     startGuide: startGuide,

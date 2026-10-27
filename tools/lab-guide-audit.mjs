@@ -2,7 +2,10 @@
 // (no DOM) and prints a Markdown table: does «Practice complete» appear when
 // the objective is not met, and does a used bench leak into the guide?
 //
-//   node tools/lab-guide-audit.mjs            → table on stdout
+//   node tools/lab-guide-audit.mjs                     → table on stdout
+//   node tools/lab-guide-audit.mjs --engine <file.js>  → same, for another copy
+//                                                         of the engine (e.g. the
+//                                                         one from main)
 //
 // Three walks per guide:
 //   correct — every step done as the plan says (amounts from the step).
@@ -12,10 +15,12 @@
 //             of an earlier practice.
 // The script feature-detects the newer engine API (startGuide,
 // confirmObserved) so the same file measures the before and the after.
+import path from 'node:path';
 import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
-const lab = require('../assets/lab/virtual-lab.js');
+const engineAt = process.argv.indexOf('--engine');
+const lab = require(engineAt !== -1 ? path.resolve(process.argv[engineAt + 1]) : '../assets/lab/virtual-lab.js');
 
 function holdable(session) {
   return (session.containers || []).filter((row) => lab.canHold(row) && lab.hasCap(row, 'contain'));
@@ -110,6 +115,13 @@ function doStep(session, creation, step, mode, memo) {
     const host = wetVessel(session, memo);
     session.selectedId = host.id;
     lab.measure(session, host.id, mode === 'sloppy' ? 'volume' : 'ph');
+    return;
+  }
+  if (step.action === 'inspect') {
+    // The panel's only button on a reading step is «Read the vessel» (volume).
+    const host = wetVessel(session, memo);
+    session.selectedId = host.id;
+    lab.measure(session, host.id, 'volume');
   }
 }
 
@@ -122,9 +134,9 @@ function confirm(session, creation) {
   }
 }
 
-function start(session, creationId) {
+function start(session, creationId, keepBench) {
   if (typeof lab.startGuide === 'function') {
-    lab.startGuide(session, creationId);
+    lab.startGuide(session, creationId, { keepBench: Boolean(keepBench) });
   } else {
     session.creationId = creationId;
     session.mode = 'guided';
@@ -152,7 +164,10 @@ function dirty(creation) {
   lab.addToContainer(session, 'flask-b', 'bicarbonate', 7.3);
   lab.measure(session, 'flask-b', 'ph');
   session.stirred = true;
-  const before = lab.tutorialState(session, creation);
+  // «Continue anyway» on a used bench (before the fix: the only way there was).
+  const kept = JSON.parse(JSON.stringify(session));
+  start(kept, creation.id, true);
+  const before = lab.tutorialState(kept, creation);
   const opensAt = before ? before.current : 0;
   start(session, creation.id);
   const after = lab.tutorialState(session, creation);
@@ -181,7 +196,7 @@ const rows = lab.CREATIONS.map((creation) => {
 });
 
 const yes = (value) => (value ? 'sim' : 'não');
-console.log('| Guia | Passos | Correto conclui? | Sem cumprir o objetivo conclui? | Para no passo | Bancada usada: abre no passo (sem limpar) | Ao iniciar o guia: abre no passo | Resíduo fica na bancada? | `learningObjectives` | Passos sem `why` |');
+console.log('| Guia | Passos | Correto conclui? | Sem cumprir o objetivo conclui? | Para no passo | Bancada usada, sem limpar: abre no passo | Bancada usada, opção padrão: abre no passo | Resíduo fica na bancada? | `learningObjectives` | Passos sem `why` |');
 console.log('|---|---|---|---|---|---|---|---|---|---|');
 rows.forEach((row) => {
   console.log(`| ${row.id} | ${row.steps} | ${yes(row.correct)} | ${yes(row.sloppy)} | ${row.sloppy ? '—' : row.sloppyAt + 1} | ${row.opensAtWithoutCleaning + 1} | ${row.opensAt + 1} | ${yes(row.residue)} | ${yes(row.objectives)} | ${row.missingWhy} |`);

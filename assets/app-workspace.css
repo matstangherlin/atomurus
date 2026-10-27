@@ -1964,6 +1964,17 @@ svg.lab-linking path {
 .lab-guide-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
 .lab-guide-confirm { padding: 12px 14px; border: 1px solid var(--lc-rule, #D8D2BF); border-radius: 12px; }
 .lab-guide-note { font-size: 13px; color: var(--lc-ink-2, #58544A); font-style: italic; }
+.lab-guide-feedback {
+  margin: 10px 0;
+  padding: 8px 12px;
+  border-left: 3px solid var(--lc-amber, #B7791F);
+  background: color-mix(in oklab, var(--lc-amber, #B7791F) 9%, transparent);
+  border-radius: 0 8px 8px 0;
+  font-size: 13px;
+  color: var(--lc-ink, #1b1914);
+}
+.lab-guide-observe { margin: 10px 0; display: grid; gap: 8px; justify-items: start; }
+.lab-guide-observe p { margin: 0; font-size: 13px; color: var(--lc-ink-2, #58544A); }
 @keyframes lab-wave {
   0%, 100% { transform: translateX(0); }
   50% { transform: translateX(7%); }
