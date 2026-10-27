@@ -27,4 +27,6 @@ Funções leem `elements-data.js` e `assets/i18n/molecules.json` (`netlify.toml`
 
 ## Build no worktree
 
-O resultado do `npm run build && npm run validate && node tools/scrub-publish-tree.js` no worktree descartável entra aqui depois da execução.
+`/atomurus-build` não pôde ser criado (permissão). O mesmo comando rodou em `/tmp/atomurus-build`, a partir do commit `19fa70af`, e terminou com sucesso: `npm ci`, `npm run build` (343 arquivos tocados pelo bump de versão), `npm run validate` (`Site validation passed`) e o scrub (33 caminhos, inclusive `dev`, `e2e`, `src`, os scripts de manutenção e `assets/concepts`).
+
+Depois do scrub ainda estavam no disco `elements-data.js`, `assets/i18n/molecules.json` e `netlify/functions/`. `dev/`, `playwright.config.js` e `assets/concepts/` não. O worktree foi removido. O checkout de trabalho não foi scrubbed.
