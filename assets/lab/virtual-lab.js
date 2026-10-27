@@ -1972,6 +1972,44 @@
     return session;
   }
 
+  /* A guide reads what is in the vessels, so leftovers from earlier work would
+     count as steps already done. Empty glassware is not a leftover. */
+  function benchIsDirty(session) {
+    return (session.containers || []).some(function (row) {
+      return (row.contents || []).length > 0 || (Number(row.volumeMl) || 0) > 0;
+    });
+  }
+
+  /* Back to the three empty pieces a new board starts with. Only the Lab
+     session changes; the notebook keeps its lines and Undo brings the bench back. */
+  function cleanBench(session) {
+    pushHistory(session);
+    var fresh = emptySession({ lang: session.lang });
+    session.containers = fresh.containers;
+    session.board = fresh.board;
+    session.measurements = [];
+    session.stirred = false;
+    session.selectedId = fresh.selectedId;
+    ensureBoard(session);
+    observe(session, line(session, 'Cleared the bench for the guide. Undo brings it back.', 'Limpou a bancada para o guia. Desfazer traz de volta.'));
+    return { ok: true };
+  }
+
+  /* Starting a guide cleans a used bench unless the user chose to keep it. */
+  function startGuide(session, creationId, opts) {
+    opts = opts || {};
+    var creation = CREATIONS.filter(function (row) { return row.id === creationId; })[0];
+    if (!creation) return { ok: false, reason: 'unknown' };
+    var dirty = benchIsDirty(session);
+    var keep = dirty && opts.keepBench === true;
+    if (dirty && !keep) cleanBench(session);
+    session.creationId = creation.id;
+    session.mode = 'guided';
+    session.guide = { creationId: creation.id, startedAt: nowIso(), usedBench: keep, passed: [], observed: [] };
+    observe(session, line(session, 'Started a guided creation.', 'Iniciou uma criação guiada.'));
+    return { ok: true, cleaned: dirty && !keep, usedBench: keep };
+  }
+
   function addToContainer(session, containerId, substanceId, amount, unit) {
     var resolved = resolveQuery(substanceId);
     if (!resolved.ok || resolved.kind !== 'substance') {
@@ -3151,6 +3189,8 @@
     var sideTab = session.creationId ? 'guide' : 'inspector';
     var hintLevel = 0;
     var lastStepKey = '';
+    /* A guide asked for on a used bench waits here until the user picks. */
+    var pendingGuide = '';
     var motionObserver = null;
     var linking = null;
     var marquee = null;
@@ -3593,7 +3633,26 @@
       bar.style.top = Math.round(Math.max(6, Math.min(rect.height - 48, top))) + 'px';
     }
 
+    function guideConfirmHtml(id) {
+      var row = CREATIONS.filter(function (item) { return item.id === id; })[0];
+      if (!row) return '';
+      return '<section class="lab-guide lab-guide-confirm" data-lab-guide aria-labelledby="lab-guide-confirm-title">' +
+        '<h2 id="lab-guide-confirm-title">' + esc(labelOf(row, lang)) + '</h2>' +
+        '<p>' + esc(copy(
+          'The bench still has material from earlier work. The guide checks what is in each vessel, so leftovers would count as steps you did not take.',
+          'A bancada ainda tem material de antes. O guia confere o que há em cada recipiente, então as sobras contariam como passos que você não fez.'
+        )) + '</p>' +
+        '<div class="lab-guide-actions">' +
+        '<button type="button" class="ws-btn ws-btn-sm ws-btn-primary" data-guide-clean="' + esc(row.id) + '">' + esc(copy('Start with a clean bench', 'Começar com bancada limpa')) + '</button>' +
+        '<button type="button" class="ws-btn ws-btn-sm" data-guide-keep="' + esc(row.id) + '">' + esc(copy('Continue anyway', 'Continuar mesmo assim')) + '</button>' +
+        '<button type="button" class="ws-btn ws-btn-sm" data-guide-cancel>' + esc(copy('Cancel', 'Cancelar')) + '</button>' +
+        '</div>' +
+        '<p class="ws-lede">' + esc(copy('A clean bench only resets this Lab board. Undo brings it back.', 'A bancada limpa só reinicia esta bancada do Lab. Desfazer traz tudo de volta.')) + '</p>' +
+        '</section>';
+    }
+
     function tutorialHtml() {
+      if (pendingGuide) return guideConfirmHtml(pendingGuide);
       var wanted = wantedNow();
       var creation = wanted.creation;
       if (!creation || !wanted.state || !wanted.plan) {
@@ -3606,6 +3665,12 @@
       var state = wanted.state;
       var total = creation.tutorial.length;
       var plan = wanted.plan;
+      var usedNote = session.guide && session.guide.usedBench
+        ? '<p class="lab-guide-note">' + esc(copy(
+          'Started on a used bench: material from earlier work may count towards these steps.',
+          'Iniciado numa bancada usada: material de antes pode contar para estes passos.'
+        )) + '</p>'
+        : '';
       var pct = Math.max(4, Math.round((state.current / total) * 100));
       var stepList = state.steps.map(function (step, i) {
         var mark = state.done[i] ? ' is-done' : (i === state.current ? ' is-now' : '');
@@ -3615,6 +3680,7 @@
         return '<section class="lab-guide is-complete" data-lab-guide>' +
           '<h2>' + esc(labelOf(creation, lang)) + '</h2>' +
           '<p class="lab-guide-progress">' + esc(copy('All steps done', 'Todos os passos concluídos')) + ' · ' + total + '/' + total + '</p>' +
+          usedNote +
           '<div class="lab-guide-bar"><i style="width:100%"></i></div>' +
           '<p class="lab-guide-done">' + esc(copy('Practice complete (virtual).', 'Prática concluída (virtual).')) + '</p>' +
           '<p class="ws-lede">' + esc(lang === 'pt' ? creation.lede.pt : creation.lede.en) + '</p>' +
@@ -3626,6 +3692,7 @@
       return '<section class="lab-guide" data-lab-guide>' +
         '<h2>' + esc(labelOf(creation, lang)) + '</h2>' +
         '<p class="lab-guide-progress">' + esc(copy('Step', 'Passo')) + ' ' + Math.min(state.current + 1, total) + ' ' + esc(copy('of', 'de')) + ' ' + total + '</p>' +
+        usedNote +
         '<div class="lab-guide-bar"><i style="width:' + pct + '%"></i></div>' +
         '<p class="lab-guide-now">' + esc(lang === 'pt' ? plan.text.pt : plan.text.en) + '</p>' +
         stepChips(plan) +
@@ -4383,6 +4450,50 @@
       placeContextToolbar();
     }
 
+    /* A used bench asks first; a clean one starts the guide straight away. */
+    function beginGuide(id, results) {
+      if (benchIsDirty(session)) {
+        pendingGuide = id;
+        sideTab = 'guide';
+        if (results) paint(results);
+        else {
+          syncDock();
+          syncSide();
+          updateLive();
+        }
+        var first = node.querySelector('[data-guide-clean]');
+        if (first) {
+          try { first.focus({ preventScroll: true }); } catch (eF) { try { first.focus(); } catch (eF2) {} }
+        }
+        playSound('select');
+        return;
+      }
+      launchGuide(id, false, results);
+    }
+
+    function launchGuide(id, keepBench, results) {
+      pendingGuide = '';
+      var started = startGuide(session, id, { keepBench: keepBench });
+      if (!started.ok) return;
+      hintLevel = 0;
+      lastStepKey = '';
+      sideTab = 'guide';
+      flushSave();
+      if (results) paint(results);
+      else {
+        syncDock();
+        syncSide();
+        updateLive();
+      }
+      if (started.cleaned) {
+        flashStatus('<div class="lab-msg" role="status">' + esc(copy(
+          'Bench cleared for the guide. Undo brings your earlier work back.',
+          'Bancada limpa para o guia. Desfazer traz de volta o que você tinha feito.'
+        )) + '</div>');
+      }
+      playSound('step');
+    }
+
     /* Guided progress is derived, so the cue fires only when the step really moves. */
     function announceStep() {
       var wanted = wantedNow();
@@ -4649,16 +4760,8 @@
           return;
         }
         if (found.resolved && found.resolved.kind === 'creation') {
-          session.creationId = found.resolved.id;
-          session.mode = 'guided';
-          hintLevel = 0;
-          lastStepKey = '';
-          sideTab = 'guide';
           dockOpen = 'create';
-          observe(session, copy('Started a guided creation.', 'Iniciou uma criação guiada.'));
-          flushSave();
-          paint(found);
-          playSound('step');
+          beginGuide(found.resolved.id, found);
           return;
         }
         if (found.resolved && found.resolved.kind === 'substance') {
@@ -4683,7 +4786,7 @@
       rootEl.addEventListener('click', function (event) {
         try {
           var t = event.target && event.target.closest
-            ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-redo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel], [data-ready], [data-lab-zoom], [data-lab-fit], [data-lab-fit-all], [data-lab-zoom-menu], [data-lab-zoom-to], [data-lab-fit-selection], [data-board-tool], [data-lab-aspirate], [data-lab-dispense], [data-lab-drop], [data-lab-grind], [data-lab-drain], [data-lab-connect], [data-lab-duplicate], [data-lab-delete], [data-lab-rotate], [data-dock], [data-dock-close], [data-side], [data-lab-sound], [data-lab-focus], [data-start-creation], [data-stop-creation], [data-step-add], [data-lab-hint], [data-step-connect], [data-step-heat], [data-step-distill], [data-lab-distill], [data-lab-filter], [data-lab-reflux], [data-step-reflux], [data-step-reflux-connect], [data-lab-remove], [data-lab-stack], [data-lab-ferment], [data-step-ferment], [data-lab-crystallise], [data-step-crystallise], [data-step-filter]')
+            ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-redo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel], [data-ready], [data-lab-zoom], [data-lab-fit], [data-lab-fit-all], [data-lab-zoom-menu], [data-lab-zoom-to], [data-lab-fit-selection], [data-board-tool], [data-lab-aspirate], [data-lab-dispense], [data-lab-drop], [data-lab-grind], [data-lab-drain], [data-lab-connect], [data-lab-duplicate], [data-lab-delete], [data-lab-rotate], [data-dock], [data-dock-close], [data-side], [data-lab-sound], [data-lab-focus], [data-start-creation], [data-stop-creation], [data-guide-clean], [data-guide-keep], [data-guide-cancel], [data-step-add], [data-lab-hint], [data-step-connect], [data-step-heat], [data-step-distill], [data-lab-distill], [data-lab-filter], [data-lab-reflux], [data-step-reflux], [data-step-reflux-connect], [data-lab-remove], [data-lab-stack], [data-lab-ferment], [data-step-ferment], [data-lab-crystallise], [data-step-crystallise], [data-step-filter]')
             : null;
           if (!t) return;
           if (t.hasAttribute('data-lab-sound')) {
@@ -4712,23 +4815,25 @@
           if (t.getAttribute('data-start-creation')) {
             var startId = t.getAttribute('data-start-creation');
             if (!CREATIONS.some(function (row) { return row.id === startId; })) return;
-            session.creationId = startId;
-            session.mode = 'guided';
-            hintLevel = 0;
-            lastStepKey = '';
-            sideTab = 'guide';
             dockOpen = '';
-            observe(session, copy('Started a guided creation.', 'Iniciou uma criação guiada.'));
-            flushSave();
-            syncDock();
-            syncSide();
+            beginGuide(startId);
+            return;
+          }
+          if (t.getAttribute('data-guide-clean') || t.getAttribute('data-guide-keep')) {
+            var keepBench = Boolean(t.getAttribute('data-guide-keep'));
+            launchGuide(t.getAttribute('data-guide-clean') || t.getAttribute('data-guide-keep'), keepBench);
+            return;
+          }
+          if (t.hasAttribute('data-guide-cancel')) {
+            pendingGuide = '';
             updateLive();
-            playSound('step');
             return;
           }
           if (t.hasAttribute('data-stop-creation')) {
             session.creationId = '';
             session.mode = 'bench';
+            session.guide = null;
+            pendingGuide = '';
             hintLevel = 0;
             lastStepKey = '';
             flushSave();
@@ -5825,6 +5930,9 @@
     identifyProduct: identifyProduct,
     visualFillPct: visualFillPct,
     tutorialState: tutorialState,
+    benchIsDirty: benchIsDirty,
+    cleanBench: cleanBench,
+    startGuide: startGuide,
     VESSEL_ART: VESSEL_ART,
     vesselArt: vesselArt,
     labelFor: labelFor,

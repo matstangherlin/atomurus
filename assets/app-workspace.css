@@ -1961,6 +1961,9 @@ svg.lab-linking path {
 .lab-guide-step.is-done { color: var(--lc-green, #1E6A50); text-decoration: line-through; }
 .lab-guide-step.is-now { color: var(--lc-ink, #1b1914); font-weight: 650; }
 .lab-guide-done { color: var(--lc-green, #1E6A50); font-weight: 650; }
+.lab-guide-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+.lab-guide-confirm { padding: 12px 14px; border: 1px solid var(--lc-rule, #D8D2BF); border-radius: 12px; }
+.lab-guide-note { font-size: 13px; color: var(--lc-ink-2, #58544A); font-style: italic; }
 @keyframes lab-wave {
   0%, 100% { transform: translateX(0); }
   50% { transform: translateX(7%); }
