@@ -91,6 +91,7 @@ export function zmatrixToCartesian(entries) {
     const theta = (e.ang * Math.PI) / 180;
     const A = p[e.bond];
     const B = p[e.angle];
+    if (!A || !B) throw new Error(`z-matrix entry ${i} references a missing atom`);
     if (e.dihedral == null) {
       const u = normalize(sub(B, A));
       const tmp = Math.abs(u[0]) < 0.9 ? [1, 0, 0] : [0, 1, 0];
@@ -101,6 +102,7 @@ export function zmatrixToCartesian(entries) {
     }
     const phi = (e.dih * Math.PI) / 180;
     const C = p[e.dihedral];
+    if (!C) throw new Error(`z-matrix entry ${i} references a missing dihedral atom`);
     const ab = normalize(sub(A, B));
     const bc = normalize(sub(B, C));
     let n = cross(ab, bc);
