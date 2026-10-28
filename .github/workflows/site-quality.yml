@@ -26,7 +26,7 @@ jobs:
         run: npm run build
 
       - name: Run unit tests
-        run: npm run test:plan && npm run test:auth && npm run test:study && npm run test:review && npm run test:insights && npm run test:billing && npm run test:ux && npm run test:lang && npm run test:editorial && npm run test:consent && npm run test:content && npm run test:data && npm run test:pro-lab && npm run test:solver && npm run test:calc && npm run test:lab-access && npm run test:publish && npm run test:contact && npm run test:rate-store && npm run test:third-party && npm run test:images && node tools/test-periodic-search.mjs
+        run: npm run test:plan && npm run test:auth && npm run test:study && npm run test:review && npm run test:insights && npm run test:billing && npm run test:ux && npm run test:lang && npm run test:editorial && npm run test:consent && npm run test:content && npm run test:data && npm run test:pro-lab && npm run test:solver && npm run test:calc && npm run test:lab-access && npm run test:molecules && npm run test:publish && npm run test:contact && npm run test:rate-store && npm run test:third-party && npm run test:images && node tools/test-periodic-search.mjs
 
       - name: Validate site
         run: npm run validate

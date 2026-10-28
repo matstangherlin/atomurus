@@ -30,6 +30,7 @@
     "test:pro-lab": "node tools/test-pro-lab.mjs",
     "test:solver": "node tools/test-solver.mjs && node tools/test-formula-parser.mjs",
     "test:calc": "node tools/test-calc-validation.mjs",
+    "test:molecules": "node tools/test-molecule-geometry.mjs",
     "test:lab-access": "node tools/test-lab-access.mjs && node tools/test-viewer-perf.mjs",
     "test:images": "node tools/test-image-publish-guards.mjs",
     "test:third-party": "node tools/test-patch-ads-preconnect.mjs",
@@ -62,7 +63,7 @@
     "validate": "node tools/validate-site.js",
     "warm:cache": "node tools/warm-edge-cache.js",
     "smoke:prod": "node tools/smoke-prod.js",
-    "ci": "npm run build && npm run test:plan && npm run test:auth && npm run test:study && npm run test:review && npm run test:insights && npm run test:billing && npm run test:ux && npm run test:lang && npm run test:editorial && npm run test:consent && npm run test:content && npm run test:data && npm run test:pro-lab && npm run test:solver && npm run test:calc && npm run test:lab-access && npm run test:publish && npm run test:contact && npm run test:rate-store && npm run test:third-party && npm run test:images && npm run test:ui-v2 && npm run test:a1 && npm run validate"
+    "ci": "npm run build && npm run test:plan && npm run test:auth && npm run test:study && npm run test:review && npm run test:insights && npm run test:billing && npm run test:ux && npm run test:lang && npm run test:editorial && npm run test:consent && npm run test:content && npm run test:data && npm run test:pro-lab && npm run test:solver && npm run test:calc && npm run test:molecules && npm run test:lab-access && npm run test:publish && npm run test:contact && npm run test:rate-store && npm run test:third-party && npm run test:images && npm run test:ui-v2 && npm run test:a1 && npm run validate"
   },
   "dependencies": {
     "stripe": "^22.3.0"
