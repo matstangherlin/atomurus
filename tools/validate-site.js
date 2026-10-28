@@ -141,6 +141,24 @@ function assertPtModules() {
   });
 }
 
+// Prompt 26: /element/N short URLs live in a generated block of netlify.toml;
+// it must exist, be current, and point only at element pages that exist.
+function assertElementRedirects() {
+  const toml = read('netlify.toml');
+  const begin = toml.indexOf('# BEGIN element-redirects');
+  const end = toml.indexOf('# END element-redirects');
+  if (begin === -1 || end === -1) return fail('netlify.toml: the element-redirects block is missing (node tools/build-element-redirects.mjs)');
+  const block = toml.slice(begin, end);
+  [...block.matchAll(/to\s*=\s*"([^"]+)"/g)].forEach((m) => {
+    const [pathname, query] = m[1].split('?');
+    const file = pathname.replace(/^\//, '') + (query === 'lang=en' ? '.en.html' : '.html');
+    if (!fs.existsSync(path.join(ROOT, file))) fail(`netlify.toml element redirect → ${m[1]}: ${file} does not exist`);
+  });
+  if (/from\s*=\s*"\/element\/\*"/.test(toml)) fail('netlify.toml: no /element/* catch-all (it would hide real 404s)');
+  const check = require('child_process').spawnSync(process.execPath, [path.join(ROOT, 'tools', 'build-element-redirects.mjs'), '--check'], { encoding: 'utf8' });
+  if (check.status !== 0) fail('netlify.toml: ' + (check.stderr || check.stdout).trim());
+}
+
 function assertIsomerismVariants() {
   REQUIRED_VARIANTS.forEach((relPath) => {
     if (!fs.existsSync(path.join(ROOT, relPath))) {
@@ -897,6 +915,7 @@ function main() {
   assertElementContentLoader();
   assertIsomerismVariants();
   assertPtModules();
+  assertElementRedirects();
   assertReadme();
   assertHomePreviewPayload();
   assertI18nNamespaceAssets();

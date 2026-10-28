@@ -111,3 +111,41 @@ for (const target of PRINT_TARGETS) {
     }
   });
 }
+
+// ── B03: the 404 page at any depth, in the visitor's language ───────────────
+const fs = require('fs');
+const path = require('path');
+const NOT_FOUND = fs.readFileSync(path.join(__dirname, '..', '404.html'), 'utf8');
+
+for (const [lang, visible, hidden] of [['pt', 'Esta página saiu', 'This page drifted'], ['en', 'This page drifted', 'Esta página saiu']]) {
+  test(`404 served at /element/999 is styled and in ${lang.toUpperCase()}`, async ({ context, page }) => {
+    await isolate(context, lang);
+    // Netlify serves 404.html for an unknown path, keeping the URL.
+    await context.route(/\/(element\/999|qualquer\/coisa)$/, (route) => route.fulfill({ status: 404, contentType: 'text/html; charset=utf-8', body: NOT_FOUND }));
+    const failed = [];
+    page.on('response', (res) => { if (res.status() >= 400 && !/\/element\/999$|\/api\//.test(res.url())) failed.push(res.status() + ' ' + res.url()); });
+    const ads = [];
+    page.on('request', (req) => { if (/googlesyndication|doubleclick|googletagmanager/.test(req.url())) ads.push(req.url()); });
+    await page.goto('/element/999');
+    await page.waitForLoadState('load');
+    expect(failed).toEqual([]);
+    await expect(page.locator('h1', { hasText: visible })).toBeVisible();
+    await expect(page.locator('h1', { hasText: hidden })).toBeHidden();
+    // Styled: the stylesheets resolved from the root, so the doc layout applies.
+    const styled = await page.evaluate(() => [...document.styleSheets].filter((s) => s.href && /docs\.css|public-shell\.css|critical-lab\.css/.test(s.href)).length);
+    expect(styled).toBe(3);
+    expect(await page.locator('.lc-doc-title').first().evaluate((el) => getComputedStyle(el).fontSize)).not.toBe('32px');
+    await expect(page.locator(`.nf-lang[data-nf-lang="${lang}"] a`, { hasText: lang === 'pt' ? 'Tabela periódica' : 'Periodic Table' }).first()).toHaveAttribute('href', /\/periodic-table/);
+    expect(ads, 'no ad requests without consent').toEqual([]);
+  });
+}
+
+test('404 without JavaScript shows both languages', async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  await context.route(/\/qualquer\/coisa$/, (route) => route.fulfill({ status: 404, contentType: 'text/html; charset=utf-8', body: NOT_FOUND }));
+  const page = await context.newPage();
+  await page.goto('/qualquer/coisa');
+  await expect(page.locator('h1', { hasText: 'Esta página saiu' })).toBeVisible();
+  await expect(page.locator('h1', { hasText: 'This page drifted' })).toBeVisible();
+  await context.close();
+});

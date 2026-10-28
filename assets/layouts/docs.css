@@ -165,3 +165,12 @@ html body .lc-doc-prose .lc-form button.ui-btn-primary[type=submit] {
 .lc-form .feedback.err.show {
   display: grid;
 }
+
+/* 404 page (prompt 26): without JS <html lang="mul"> shows both languages
+   (side by side on wide screens); with JS the head script sets the visitor's
+   language and only that block shows. */
+html[lang^="pt"] .nf-lang[data-nf-lang="en"],
+html[lang^="en"] .nf-lang[data-nf-lang="pt"] { display: none; }
+@media (min-width: 1100px) {
+  html[lang="mul"] .nf-langs { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+}
