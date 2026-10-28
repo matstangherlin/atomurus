@@ -1,0 +1,64 @@
+{
+  "id": "F2",
+  "status": "draft",
+  "reviewedBy": null,
+  "minutes": 50,
+  "level": { "pt": "Ensino médio — 1ª série", "en": "High school — first year" },
+  "title": { "pt": "Mol e massa molar", "en": "Moles and molar mass" },
+  "summary": {
+    "pt": "Calcular massas molares a partir da fórmula e converter entre massa e quantidade de matéria (mol), conferindo na calculadora de massa molar.",
+    "en": "Work out molar masses from the formula and convert between mass and amount of substance (moles), checking with the molar mass calculator."
+  },
+  "tool": {
+    "href": { "pt": "/calculators.pt.html?formula=H2SO4", "en": "/calculators.html?formula=H2SO4" },
+    "label": { "pt": "Abrir a calculadora de massa molar", "en": "Open the molar mass calculator" }
+  },
+  "objectives": {
+    "pt": [
+      "Calcular a massa molar de uma substância a partir da fórmula e das massas atômicas.",
+      "Converter massa em quantidade de matéria e vice-versa: n = m / M.",
+      "Conferir o cálculo feito à mão com a calculadora."
+    ],
+    "en": [
+      "Work out the molar mass of a substance from its formula and the atomic masses.",
+      "Convert mass into amount of substance and back: n = m / M.",
+      "Check the hand calculation with the calculator."
+    ]
+  },
+  "materials": {
+    "pt": ["Tabela periódica (do site ou impressa)", "Calculadora de massa molar do Atomurus", "Calculadora comum"],
+    "en": ["A periodic table (the site's or a printed one)", "The Atomurus molar mass calculator", "An ordinary calculator"]
+  },
+  "steps": [
+    { "minutes": 10, "pt": "Revise massa atômica, índice da fórmula e o que é 1 mol.", "en": "Review atomic mass, formula subscripts and what one mole is." },
+    { "minutes": 20, "pt": "Questões 1 a 5: calcular à mão e conferir na calculadora.", "en": "Questions 1 to 5: work them out by hand, then check with the calculator." },
+    { "minutes": 15, "pt": "Questões 6 e 7: conversões entre massa e mol.", "en": "Questions 6 and 7: converting between mass and moles." },
+    { "minutes": 5, "pt": "Correção com o gabarito.", "en": "Go through the answer key." }
+  ],
+  "questions": [
+    { "id": "q1", "kind": "numeric", "points": 1, "lines": 1, "prompt": { "pt": "Massa molar da água, H₂O (g/mol):", "en": "Molar mass of water, H₂O (g/mol):" }, "answer": { "kind": "computed", "engine": "formula.molarMass", "input": "H2O", "decimals": 2 } },
+    { "id": "q2", "kind": "numeric", "points": 1, "lines": 1, "prompt": { "pt": "Massa molar do gás carbônico, CO₂ (g/mol):", "en": "Molar mass of carbon dioxide, CO₂ (g/mol):" }, "answer": { "kind": "computed", "engine": "formula.molarMass", "input": "CO2", "decimals": 2 } },
+    { "id": "q3", "kind": "numeric", "points": 1, "lines": 1, "prompt": { "pt": "Massa molar do cloreto de sódio, NaCl (g/mol):", "en": "Molar mass of sodium chloride, NaCl (g/mol):" }, "answer": { "kind": "computed", "engine": "formula.molarMass", "input": "NaCl", "decimals": 2 } },
+    { "id": "q4", "kind": "numeric", "points": 1, "lines": 1, "prompt": { "pt": "Massa molar do ácido sulfúrico, H₂SO₄ (g/mol):", "en": "Molar mass of sulfuric acid, H₂SO₄ (g/mol):" }, "answer": { "kind": "computed", "engine": "formula.molarMass", "input": "H2SO4", "decimals": 2 } },
+    { "id": "q5", "kind": "numeric", "points": 1, "lines": 1, "prompt": { "pt": "Massa molar da glicose, C₆H₁₂O₆ (g/mol):", "en": "Molar mass of glucose, C₆H₁₂O₆ (g/mol):" }, "answer": { "kind": "computed", "engine": "formula.molarMass", "input": "C6H12O6", "decimals": 2 } },
+    {
+      "id": "q6", "kind": "numeric", "points": 2, "lines": 2,
+      "prompt": { "pt": "Quantos mols há em 117 g de cloreto de sódio (NaCl)?", "en": "How many moles are there in 117 g of sodium chloride (NaCl)?" },
+      "answer": { "kind": "computed", "engine": "formula.moles", "input": { "formula": "NaCl", "grams": 117 }, "decimals": 2 }
+    },
+    {
+      "id": "q7", "kind": "numeric", "points": 2, "lines": 2,
+      "prompt": { "pt": "Qual é a massa de 0,5 mol de ácido sulfúrico (H₂SO₄)?", "en": "What is the mass of 0.5 mol of sulfuric acid (H₂SO₄)?" },
+      "answer": { "kind": "computed", "engine": "formula.mass", "input": { "formula": "H2SO4", "moles": 0.5 }, "decimals": 2 }
+    }
+  ],
+  "teacherNotes": {
+    "pt": "O gabarito é calculado com o mesmo analisador de fórmulas e as mesmas massas atômicas da calculadora do site. Aceite diferenças na última casa decimal quando o aluno usar massas atômicas arredondadas.",
+    "en": "The key is computed with the same formula parser and atomic masses as the site's calculator. Accept a difference in the last decimal place when a student uses rounded atomic masses."
+  },
+  "commonErrors": [
+    { "pt": "Esquecer de multiplicar a massa atômica pelo índice (em H₂SO₄ o oxigênio conta 4 vezes).", "en": "Forgetting to multiply the atomic mass by the subscript (in H₂SO₄ oxygen counts 4 times)." },
+    { "pt": "Inverter a conta: dividir a massa molar pela massa em vez de n = m / M.", "en": "Doing the division the wrong way round instead of n = m / M." },
+    { "pt": "Esquecer a unidade (g/mol, mol, g) na resposta.", "en": "Leaving the unit (g/mol, mol, g) out of the answer." }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "id": "F3",
+  "status": "draft",
+  "reviewedBy": null,
+  "minutes": 50,
+  "level": { "pt": "Ensino médio — 2ª série", "en": "High school — second year" },
+  "title": { "pt": "pH do cotidiano", "en": "Everyday pH" },
+  "summary": {
+    "pt": "Relacionar a concentração de H⁺ e de OH⁻ com o pH em soluções de ácido forte e de base forte, e prever o pH no Desafio de pH do Lab.",
+    "en": "Link the H⁺ and OH⁻ concentrations to the pH of strong acid and strong base solutions, and predict the pH in the Lab's pH Challenge."
+  },
+  "tool": {
+    "href": { "pt": "/calculators.pt.html#ph", "en": "/calculators.html#ph" },
+    "label": { "pt": "Abrir a calculadora de pH", "en": "Open the pH calculator" }
+  },
+  "tool2": {
+    "href": { "pt": "/app?section=lab&mode=guided&creation=ph", "en": "/app?section=lab&mode=guided&creation=ph" },
+    "label": { "pt": "Abrir o Desafio de pH no Lab", "en": "Open the pH Challenge in the Lab" }
+  },
+  "objectives": {
+    "pt": [
+      "Calcular o pH de soluções de ácido forte e de base forte: pH = −log[H⁺] e, a 25 °C, pH = 14 − pOH.",
+      "Explicar por que cada unidade de pH corresponde a um fator 10 na concentração de H⁺.",
+      "Prever e depois observar o que acontece com o pH ao neutralizar um ácido."
+    ],
+    "en": [
+      "Work out the pH of strong acid and strong base solutions: pH = −log[H⁺] and, at 25 °C, pH = 14 − pOH.",
+      "Explain why each pH unit is a factor of 10 in the H⁺ concentration.",
+      "Predict, then observe, what happens to the pH when an acid is neutralised."
+    ]
+  },
+  "materials": {
+    "pt": ["Calculadora de pH do Atomurus", "Lab virtual do Atomurus (Desafio de pH)", "Calculadora científica"],
+    "en": ["The Atomurus pH calculator", "The Atomurus virtual Lab (pH Challenge)", "A scientific calculator"]
+  },
+  "steps": [
+    { "minutes": 10, "pt": "Revise pH = −log[H⁺], pOH e a relação pH + pOH = 14 a 25 °C.", "en": "Review pH = −log[H⁺], pOH and pH + pOH = 14 at 25 °C." },
+    { "minutes": 20, "pt": "Questões 1 a 6, conferindo na calculadora de pH.", "en": "Questions 1 to 6, checking with the pH calculator." },
+    { "minutes": 15, "pt": "Questão 7 no Lab: prever, observar e explicar.", "en": "Question 7 in the Lab: predict, observe, explain." },
+    { "minutes": 5, "pt": "Correção com o gabarito.", "en": "Go through the answer key." }
+  ],
+  "questions": [
+    { "id": "q1", "kind": "numeric", "points": 1, "lines": 1, "prompt": { "pt": "pH de uma solução de HCl 0,01 mol/L (ácido forte):", "en": "pH of a 0.01 mol/L HCl solution (strong acid):" }, "answer": { "kind": "computed", "engine": "calc.pH", "input": { "mode": "H", "value": 0.01 }, "decimals": 2 } },
+    { "id": "q2", "kind": "numeric", "points": 1, "lines": 1, "prompt": { "pt": "pH de uma solução de HCl 0,001 mol/L:", "en": "pH of a 0.001 mol/L HCl solution:" }, "answer": { "kind": "computed", "engine": "calc.pH", "input": { "mode": "H", "value": 0.001 }, "decimals": 2 } },
+    { "id": "q3", "kind": "numeric", "points": 1, "lines": 1, "prompt": { "pt": "pH de uma solução de NaOH 0,01 mol/L (base forte):", "en": "pH of a 0.01 mol/L NaOH solution (strong base):" }, "answer": { "kind": "computed", "engine": "calc.pH", "input": { "mode": "OH", "value": 0.01 }, "decimals": 2 } },
+    { "id": "q4", "kind": "numeric", "points": 1, "lines": 1, "prompt": { "pt": "pH de uma solução de NaOH 0,0001 mol/L:", "en": "pH of a 0.0001 mol/L NaOH solution:" }, "answer": { "kind": "computed", "engine": "calc.pH", "input": { "mode": "OH", "value": 0.0001 }, "decimals": 2 } },
+    { "id": "q5", "kind": "numeric", "points": 1, "lines": 1, "prompt": { "pt": "Concentração de H⁺ numa solução de pH 4:", "en": "H⁺ concentration in a solution at pH 4:" }, "answer": { "kind": "computed", "engine": "calc.H", "input": { "pH": 4 } } },
+    {
+      "id": "q6", "kind": "numeric", "points": 2, "lines": 2,
+      "prompt": { "pt": "Quantas vezes maior é a concentração de H⁺ em pH 3 do que em pH 5?", "en": "How many times higher is the H⁺ concentration at pH 3 than at pH 5?" },
+      "answer": { "kind": "computed", "engine": "calc.ratioH", "input": { "from": 3, "to": 5 } }
+    },
+    {
+      "id": "q7", "kind": "open", "points": 3, "lines": 3,
+      "prompt": {
+        "pt": "No Lab, Desafio de pH: antes de adicionar o bicarbonato à solução de ácido cítrico, escreva o que você espera que aconteça com o pH. Depois, meça o pH e explique o resultado.",
+        "en": "In the Lab, pH Challenge: before adding the bicarbonate to the citric acid solution, write what you expect to happen to the pH. Then measure the pH and explain the result."
+      },
+      "answer": { "kind": "computed", "engine": "lab.phChallenge" },
+      "comment": {
+        "pt": "A previsão não vale nota: o que conta é comparar com o resultado e explicar. O bicarbonato é uma base e consome os íons H⁺ do ácido; as bolhas são o CO₂ que sai.",
+        "en": "The prediction is not graded: what counts is comparing it with the result and explaining it. Bicarbonate is a base and uses up the acid's H⁺ ions; the bubbles are CO₂ leaving."
+      }
+    }
+  ],
+  "teacherNotes": {
+    "pt": "As questões 1 a 6 são calculadas pelo mesmo motor da calculadora de pH do site, que inclui a autoionização da água; nessas concentrações o resultado coincide com −log c. A questão 7 usa a simulação do Lab: o valor anotado muda um pouco se o aluno colocar outra quantidade de bicarbonato.",
+    "en": "Questions 1 to 6 are computed by the same engine as the site's pH calculator, which includes the self-ionisation of water; at these concentrations the result matches −log c. Question 7 uses the Lab simulation: the reading changes a little if the student adds a different amount of bicarbonate."
+  },
+  "commonErrors": [
+    { "pt": "Calcular −log[OH⁻] para a base e chamar isso de pH (isso é o pOH).", "en": "Taking −log[OH⁻] for the base and calling it the pH (that is the pOH)." },
+    { "pt": "Achar que pH 3 é «um pouco» mais ácido que pH 5: são 100 vezes mais H⁺.", "en": "Thinking pH 3 is «a bit» more acidic than pH 5: it is 100 times more H⁺." },
+    { "pt": "Esquecer o sinal: log 0,01 = −2, então o pH é 2.", "en": "Dropping the sign: log 0.01 = −2, so the pH is 2." }
+  ]
+}
