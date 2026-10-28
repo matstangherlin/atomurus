@@ -968,11 +968,27 @@
 [[headers]]
   for = "/*"
   [headers.values]
-    # CSP — allow our own assets + Google services we explicitly use.
-    # 'unsafe-inline' on script-src is required because the site uses
-    # inline <script> for theme/lang bootstrapping and gtag init.
-    # AdCash (acscdn.com) loads lazily via ads-gate.js — must be allowed here or Pro-monetization breaks for free users.
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com https://www.googletagmanager.com https://www.googletagservices.com https://www.google-analytics.com https://www.google.com https://www.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://acscdn.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://www.google-analytics.com https://pagead2.googlesyndication.com https://acscdn.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://googleads.g.doubleclick.net https://stats.g.doubleclick.net; frame-src 'self' https://www.google.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://www.youtube.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"
+    # CSP, stage 1 (applied). Built by `node tools/audit-csp.mjs --emit-policy`;
+    # tools/test-audit-csp.mjs fails if this line and the script drift.
+    # 'unsafe-inline' stays on script-src for now: 171 distinct inline scripts
+    # (theme/lang bootstrap, loading class, page code) and 1,490 on*= handlers.
+    # docs/security/csp-plano.md is the way out; stage 3 is the owner's call.
+    # Origins, by purpose (nothing is requested before consent, prompt 04):
+    #   GA4, after measurement consent (lazy-ads.js): script *.googletagmanager.com;
+    #     connect *.google-analytics.com, *.analytics.google.com, *.googletagmanager.com
+    #     (g/collect goes to the regional hosts; the old list only had www.google-analytics.com).
+    #   reCAPTCHA on /contact (recaptcha.js): script www.google.com + www.gstatic.com;
+    #     connect www.google.com/recaptcha/ (api2/clr was blocked); frame www.google.com +
+    #     recaptcha.google.com/recaptcha/.
+    #   Ads, after ads consent and only for plans with ads (ads-gate.js): AdSense
+    #     (pagead2/tpc.googlesyndication, googletagservices, doubleclick, adtrafficquality)
+    #     and AdCash (acscdn.com). If the owner turns ads off, these can go.
+    #   Libraries: cdn.jsdelivr.net (Chart.js on the trends pages), cdnjs.cloudflare.com
+    #     (Three.js r128, html2canvas, jsPDF).
+    # Removed: fonts.googleapis.com / fonts.gstatic.com and www.youtube.com, which no
+    # published page loads, and www.google-analytics.com in script-src (GA4 has no
+    # script there).
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://*.googletagmanager.com https://www.google.com https://www.gstatic.com https://pagead2.googlesyndication.com https://www.googletagservices.com https://acscdn.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: https:; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://www.google.com/recaptcha/ https://pagead2.googlesyndication.com https://acscdn.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://googleads.g.doubleclick.net https://stats.g.doubleclick.net; frame-src 'self' https://www.google.com https://recaptcha.google.com/recaptcha/ https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"
     # Clickjacking — only this origin can frame us (matches CSP frame-ancestors)
     X-Frame-Options = "SAMEORIGIN"
     # Disable MIME-sniffing
