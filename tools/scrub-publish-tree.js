@@ -23,6 +23,7 @@ const REMOVE_PATHS = [
   'package-lock.json',
   'supabase',
   'propostas',
+  'assets/concepts',
   'docs',
   // The packaged app bundle (A1.0) is a separate artifact, never part of the site.
   'dist',

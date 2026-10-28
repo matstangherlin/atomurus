@@ -57,6 +57,36 @@ function assertDeployGuards() {
   if (!netlify.includes('scrub-publish-tree.js')) {
     fail('netlify.toml build command must scrub internal files before publish');
   }
+  if (!ignore.includes('assets/concepts/')) {
+    fail('Missing .netlifyignore guard: assets/concepts/');
+  }
+  const scrub = read('tools/scrub-publish-tree.js');
+  if (!scrub.includes("'assets/concepts'")) {
+    fail("Missing scrub-publish-tree.js REMOVE_PATHS entry: 'assets/concepts'");
+  }
+  if (!/from\s*=\s*"\/assets\/concepts\/\*"[\s\S]*?status\s*=\s*404[\s\S]*?force\s*=\s*true/.test(netlify)) {
+    fail('Missing netlify.toml block redirect: /assets/concepts/* (404, force)');
+  }
+  const skipHtml = new Set([
+    'node_modules', '.git', 'netlify', 'tools', 'scripts', 'supabase',
+    'hanzi-logic', 'propostas', 'dev', 'docs', 'templates', 'src', 'dist'
+  ]);
+  function walkPublishedHtml(dir, out = []) {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (entry.name.startsWith('.')) continue;
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        if (skipHtml.has(entry.name)) continue;
+        walkPublishedHtml(full, out);
+      } else if (entry.name.endsWith('.html')) out.push(full);
+    }
+    return out;
+  }
+  for (const file of walkPublishedHtml(ROOT)) {
+    if (fs.readFileSync(file, 'utf8').includes('assets/concepts')) {
+      fail(`Published HTML references assets/concepts: ${path.relative(ROOT, file)}`);
+    }
+  }
 }
 
 function assertElementContentLoader() {
