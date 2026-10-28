@@ -824,4 +824,138 @@ assert.ok(lab.distillSetup(revived, rigFlask.id), 'the revived board is still a 
 assert.equal(lab.attachmentOf(revived, revived.board.attachments[0].toolId).kind, 'probe');
 assert.equal(lab.distill(revived, rigFlask.id).ok, true, 'and it still runs');
 
+// ── POE: predict, observe, explain (prompt 27) ──────────────────────────────
+{
+  const { doStep, confirm } = await import('./lab-guide-audit.mjs');
+  const walkSteps = (creation, hook) => {
+    const s = lab.emptySession({ title: 'POE', mode: 'bench' });
+    lab.startGuide(s, creation.id);
+    const memo = { last: '' };
+    const trail = [];
+    creation.tutorial.forEach((step, i) => {
+      if (hook) hook(s, step, i);
+      doStep(s, creation, step, 'correct', memo);
+      confirm(s, creation);
+      const st = lab.tutorialState(s, creation);
+      trail.push(st.current + (st.complete ? '!' : ''));
+    });
+    return { session: s, trail };
+  };
+
+  // A guide without `poe` has no POE state and walks exactly as before; a
+  // guide with one walks the same steps whatever the student does with it.
+  for (const creation of lab.CREATIONS) {
+    const plain = { ...creation, poe: undefined };
+    const reference = walkSteps(plain).trail;
+    assert.equal(lab.poeState(walkSteps(plain).session, plain), null, `${creation.id}: no poe, no state`);
+    assert.equal(reference[reference.length - 1].endsWith('!'), true, `${creation.id}: the guide still completes`);
+    if (!creation.poe) continue;
+    for (const choice of ['predict', 'skip', 'ignore']) {
+      const run = walkSteps(creation, (s) => {
+        const all = lab.poeState(s, creation);
+        const open = all && all.open;
+        if (!open) return;
+        if (open.stage === 'predict' && choice === 'predict') assert.equal(lab.poePredict(s, creation, open.poe.id, open.poe.options[0].id).ok, true);
+        if (open.stage === 'predict' && choice === 'skip') assert.equal(lab.poeSkip(s, creation, open.poe.id).ok, true);
+        if (open.stage === 'explain') assert.equal(lab.poeDismiss(s, creation, open.poe.id).ok, true);
+      });
+      assert.deepEqual(run.trail, reference, `${creation.id}: ${choice} does not change the steps`);
+    }
+  }
+
+  // The mechanism, on a synthetic exercise attached to a copy of «Prepare a solution».
+  const base = lab.CREATIONS.find((row) => row.id === 'solution');
+  const beakerProduct = (s) => {
+    const beaker = s.containers.find((row) => row.type === 'beaker' && (Number(row.volumeMl) || 0) > 0);
+    return beaker ? { product: beaker.productId || '', ml: beaker.volumeMl } : { product: '', ml: 0 };
+  };
+  const poe = {
+    id: 'test-salt',
+    beforeStep: 'salt',
+    predict: { en: 'What will the salt do?', pt: 'O que o sal vai fazer?' },
+    options: [
+      { id: 'dissolve', en: 'Dissolve', pt: 'Dissolver' },
+      { id: 'sink', en: 'Sink and stay', pt: 'Afundar e ficar' },
+      { id: lab.POE_UNSURE, en: 'Not sure', pt: 'Não tenho certeza' }
+    ],
+    measure: beakerProduct,
+    expected: (after) => (after && after.product === 'saline' ? 'dissolve' : 'sink'),
+    reading: (after, before) => ({ en: `${before.product || 'water'} → ${after.product}`, pt: `${before.product || 'água'} → ${after.product}` }),
+    observe: { en: 'Watch the beaker.', pt: 'Observe o béquer.' },
+    explain: { en: 'Salt dissolves in water.', pt: 'O sal se dissolve na água.' },
+    keyIdea: { en: 'Dissolving is mixing at the particle level.', pt: 'Dissolver é misturar no nível das partículas.' }
+  };
+  const guide = { ...base, poe };
+  const s = lab.emptySession({ title: 'POE mechanism', mode: 'bench' });
+  lab.startGuide(s, 'solution');
+  assert.deepEqual(s.poe, {}, 'a guide starts with no predictions');
+  assert.equal(lab.poeState(s, guide).items[0].stage, 'pending', 'not yet at the step');
+  assert.equal(lab.poePredict(s, guide, 'test-salt', 'dissolve').reason, 'not-now');
+  const beaker = s.containers.find((row) => row.type === 'beaker');
+  lab.addToContainer(s, beaker.id, 'water', 60);
+  let all = lab.poeState(s, guide);
+  assert.equal(all.open.stage, 'predict', 'the card opens at the step');
+  assert.equal(lab.poePredict(s, guide, 'test-salt', 'boil').reason, 'option', 'only listed options');
+  assert.equal(lab.poeDismiss(s, guide, 'test-salt').reason, 'not-now');
+  assert.equal(lab.poePredict(s, guide, 'test-salt', 'dissolve').ok, true);
+  assert.equal(s.poe['test-salt'].picked, 'dissolve');
+  assert.deepEqual(s.poe['test-salt'].before, { product: '', ml: 60 }, 'the first reading is taken at the prediction');
+  assert.equal(lab.poeState(s, guide).open.stage, 'observe');
+  lab.addToContainer(s, beaker.id, 'nacl', 10);
+  s.stirred = true; // the step says «and stir»
+  all = lab.poeState(s, guide);
+  assert.equal(all.open.stage, 'explain', 'the comparison opens once the step passed');
+  assert.equal(all.open.record.actual, 'dissolve', 'the answer comes from the simulation');
+  assert.equal(all.open.record.correct, true);
+  assert.deepEqual(all.open.record.after, { product: 'saline', ml: 60 });
+  assert.equal(all.answered, 1);
+  assert.equal(all.matched, 1);
+  const shownAt = all.open.record.revealedAt;
+  lab.addToContainer(s, beaker.id, 'water', 20);
+  assert.equal(lab.poeState(s, guide).open.record.revealedAt, shownAt, 'revealed once');
+  assert.deepEqual(lab.poeState(s, guide).open.record.after, { product: 'saline', ml: 60 }, 'later steps do not rewrite what was shown');
+  // Plain data: the record survives the save, the functions stay in the guide.
+  const revivedPoe = JSON.parse(JSON.stringify(s));
+  assert.equal(lab.poeState(revivedPoe, guide).open.stage, 'explain');
+  assert.equal(lab.poeDismiss(s, guide, 'test-salt').ok, true);
+  assert.equal(lab.poeState(s, guide).items[0].stage, 'done');
+  assert.equal(lab.poeState(s, guide).open, null);
+  lab.startGuide(s, 'solution');
+  assert.deepEqual(s.poe, {}, 'starting again clears the predictions');
+
+  // Skip: the step goes on, nothing is compared.
+  const skipped = lab.emptySession({ title: 'POE skip', mode: 'bench' });
+  lab.startGuide(skipped, 'solution');
+  lab.addToContainer(skipped, skipped.containers.find((row) => row.type === 'beaker').id, 'water', 60);
+  assert.equal(lab.poeSkip(skipped, guide, 'test-salt').ok, true);
+  assert.equal(lab.poeState(skipped, guide).items[0].stage, 'skipped');
+  assert.equal(lab.poePredict(skipped, guide, 'test-salt', 'dissolve').reason, 'not-now', 'a skipped card stays closed');
+  lab.addToContainer(skipped, skipped.containers.find((row) => row.type === 'beaker').id, 'nacl', 10);
+  skipped.stirred = true;
+  assert.equal(lab.poeState(skipped, guide).items[0].stage, 'skipped');
+  assert.equal(lab.poeState(skipped, guide).answered, 0);
+
+  // Done without predicting: missed, never asked after the fact.
+  const missed = lab.emptySession({ title: 'POE missed', mode: 'bench' });
+  lab.startGuide(missed, 'solution');
+  const missedBeaker = missed.containers.find((row) => row.type === 'beaker');
+  lab.addToContainer(missed, missedBeaker.id, 'water', 60);
+  lab.addToContainer(missed, missedBeaker.id, 'nacl', 10);
+  missed.stirred = true;
+  assert.equal(lab.poeState(missed, guide).items[0].stage, 'missed');
+  assert.equal(lab.poePredict(missed, guide, 'test-salt', 'dissolve').reason, 'not-now');
+
+  // «Not sure» is never counted as a match.
+  const unsure = lab.emptySession({ title: 'POE unsure', mode: 'bench' });
+  lab.startGuide(unsure, 'solution');
+  const unsureBeaker = unsure.containers.find((row) => row.type === 'beaker');
+  lab.addToContainer(unsure, unsureBeaker.id, 'water', 60);
+  assert.equal(lab.poePredict(unsure, guide, 'test-salt', lab.POE_UNSURE).ok, true);
+  lab.addToContainer(unsure, unsureBeaker.id, 'nacl', 10);
+  unsure.stirred = true;
+  assert.equal(lab.poeState(unsure, guide).open.record.correct, false);
+  assert.equal(lab.poeState(unsure, guide).matched, 0);
+  assert.equal(lab.POE_EXPLAIN_ON_CORRECT, true, 'owner decision: explain also on a right prediction');
+}
+
 console.log('virtual lab tests passed');

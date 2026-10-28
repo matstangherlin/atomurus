@@ -2286,6 +2286,7 @@
       passed: [],
       observed: []
     };
+    session.poe = {};
     observe(session, line(session, 'Started a guided creation.', 'Iniciou uma criação guiada.'));
     return { ok: true, cleaned: dirty && !keep, usedBench: keep };
   }
@@ -3486,6 +3487,129 @@
     return { ok: true, step: step.id };
   }
 
+  /* POE — Predict · Observe · Explain. A guide may carry `poe` (one exercise
+     or a list). At `beforeStep` the student picks what they expect; once
+     `revealAfter` (default: that same step) has passed, the Lab sets the pick
+     against what the simulation did. The answer is computed, never stored:
+     `measure(session)` reads the vessel when the pick is made and again at the
+     reveal, and `expected(after, before)` turns the readings into an option id.
+     Optional and never graded; kept in session.poe, which stays on this device
+     with the rest of the board and is cleared when a guide starts. */
+  var POE_UNSURE = 'unsure';
+  /* Owner decision (prompt 27): the short explanation also shows when the
+     prediction was right. */
+  var POE_EXPLAIN_ON_CORRECT = true;
+
+  function poeList(creation) {
+    if (!creation || !creation.poe) return [];
+    return [].concat(creation.poe).filter(function (row) { return row && row.id && row.beforeStep; });
+  }
+
+  function stepIndexOf(creation, id) {
+    var steps = (creation && creation.tutorial) || [];
+    for (var i = 0; i < steps.length; i += 1) if (steps[i].id === id) return i;
+    return -1;
+  }
+
+  function poeRecords(session) {
+    if (!session.poe || typeof session.poe !== 'object' || Array.isArray(session.poe)) session.poe = {};
+    return session.poe;
+  }
+
+  function poeReading(poe, session) {
+    if (typeof poe.measure !== 'function') return null;
+    try { return poe.measure(session); } catch (e) { return null; }
+  }
+
+  function poeOption(poe, id) {
+    return (poe.options || []).filter(function (row) { return row.id === id; })[0] || null;
+  }
+
+  /* Where each exercise of the guide stands. Revealing records the second
+     reading once, so later steps (distilling more, fermenting again) do not
+     rewrite what the student was shown. */
+  function poeState(session, creation) {
+    var list = poeList(creation);
+    if (!list.length) return null;
+    var guide = activeGuide(session, creation);
+    var state = guide && tutorialState(session, creation);
+    if (!state) return null;
+    var records = poeRecords(session);
+    var items = list.map(function (poe) {
+      var at = stepIndexOf(creation, poe.beforeStep);
+      var revealAt = stepIndexOf(creation, poe.revealAfter || poe.beforeStep);
+      if (at === -1 || revealAt < at) return { poe: poe, stage: 'off' };
+      var rec = records[poe.id];
+      if (rec && rec.skipped) return { poe: poe, stage: 'skipped', record: rec };
+      if (!rec || !rec.picked) {
+        var due = state.current === at && !state.done[at] && !state.awaitingObserve;
+        var gone = state.current > at || (state.current === at && state.awaitingObserve);
+        return { poe: poe, stage: due ? 'predict' : (gone ? 'missed' : 'pending') };
+      }
+      if (!state.done[revealAt]) return { poe: poe, stage: 'observe', record: rec };
+      if (!rec.revealedAt) {
+        rec.after = poeReading(poe, session);
+        var actual = '';
+        try { actual = typeof poe.expected === 'function' ? poe.expected(rec.after, rec.before) : poe.expected; } catch (e) { actual = ''; }
+        rec.actual = String(actual || '');
+        rec.correct = rec.picked !== POE_UNSURE && rec.picked === rec.actual;
+        rec.revealedAt = nowIso();
+      }
+      return { poe: poe, stage: rec.dismissed ? 'done' : 'explain', record: rec };
+    });
+    var open = items.filter(function (row) { return row.stage === 'predict' || row.stage === 'explain'; })[0] ||
+      items.filter(function (row) { return row.stage === 'observe'; })[0] || null;
+    var answered = items.filter(function (row) { return row.record && row.record.revealedAt; });
+    return {
+      items: items,
+      open: open,
+      answered: answered.length,
+      matched: answered.filter(function (row) { return row.record.correct; }).length
+    };
+  }
+
+  function poeFind(session, creation, poeId, stage) {
+    var all = poeState(session, creation);
+    if (!all) return null;
+    return all.items.filter(function (row) { return row.poe.id === poeId && (!stage || row.stage === stage); })[0] || null;
+  }
+
+  function poePredict(session, creation, poeId, optionId) {
+    var item = poeFind(session, creation, poeId, 'predict');
+    if (!item) return { ok: false, reason: 'not-now' };
+    if (!poeOption(item.poe, optionId)) return { ok: false, reason: 'option' };
+    poeRecords(session)[poeId] = { picked: optionId, at: nowIso(), before: poeReading(item.poe, session) };
+    return { ok: true };
+  }
+
+  function poeSkip(session, creation, poeId) {
+    var item = poeFind(session, creation, poeId, 'predict');
+    if (!item) return { ok: false, reason: 'not-now' };
+    poeRecords(session)[poeId] = { skipped: true, at: nowIso() };
+    return { ok: true };
+  }
+
+  function poeDismiss(session, creation, poeId) {
+    var item = poeFind(session, creation, poeId, 'explain');
+    if (!item) return { ok: false, reason: 'not-now' };
+    item.record.dismissed = true;
+    return { ok: true };
+  }
+
+  /* What actually happened, as a short phrase with the simulated numbers. */
+  function poeReadingText(poe, record, lang) {
+    if (!record || typeof poe.reading !== 'function') return '';
+    try {
+      var text = poe.reading(record.after, record.before, lang);
+      return text && typeof text === 'object' ? (lang === 'pt' ? text.pt : text.en) || '' : String(text || '');
+    } catch (e) { return ''; }
+  }
+
+  function pickLabel(poe, id, lang) {
+    var row = poeOption(poe, id);
+    return row ? (lang === 'pt' ? row.pt : row.en) : '';
+  }
+
   function defaultAmountFor(id) {
     var spec = SUBSTANCES[id];
     if (!spec) return 25;
@@ -4170,10 +4294,193 @@
         '</section>';
     }
 
+    /* POE (prompt 27). The prediction card comes before the step's actions,
+       which stay usable: acting first just leaves the exercise unanswered.
+       The comparison opens on top of the next step and never blocks it. The
+       option picked on the card lives here until it is confirmed, so a
+       re-render keeps it. */
+    var poeChoice = {};
+    var poeSpoken = '';
+    var poeShown = '';
+    var poeLast = null;
+    var poeFocusStep = false;
+
+    function poeText(row) {
+      return row ? (lang === 'pt' ? (row.pt || row.en) : (row.en || row.pt)) : '';
+    }
+
+    function poeKicker() {
+      return '<p class="lab-poe-kicker">' + esc(copy('Predict · Observe · Explain', 'Predizer · Observar · Explicar')) + '</p>';
+    }
+
+    function poePredictHtml(item) {
+      var poe = item.poe;
+      var picked = poeChoice[poe.id] || '';
+      var tabStop = picked || (poe.options[0] && poe.options[0].id);
+      var qid = 'lab-poe-q-' + poe.id;
+      var options = poe.options.map(function (opt) {
+        var on = opt.id === picked;
+        return '<button type="button" class="lab-poe-opt' + (on ? ' is-on' : '') + '" role="radio" aria-checked="' + (on ? 'true' : 'false') + '"' +
+          ' tabindex="' + (opt.id === tabStop ? '0' : '-1') + '" data-poe-option="' + esc(opt.id) + '" data-poe-for="' + esc(poe.id) + '">' + esc(poeText(opt)) + '</button>';
+      }).join('');
+      return '<section class="lab-poe" data-poe="' + esc(poe.id) + '" aria-labelledby="' + esc(qid) + '" tabindex="-1">' +
+        poeKicker() +
+        '<h3 class="lab-poe-q" id="' + esc(qid) + '">' + esc(poeText(poe.predict)) + '</h3>' +
+        '<div class="lab-poe-options" role="radiogroup" aria-labelledby="' + esc(qid) + '">' + options + '</div>' +
+        '<div class="lab-guide-actions">' +
+        '<button type="button" class="ws-btn ws-btn-sm ws-btn-primary" data-poe-confirm="' + esc(poe.id) + '"' + (picked ? '' : ' disabled') + '>' + esc(copy('Confirm prediction', 'Confirmar previsão')) + '</button>' +
+        '<button type="button" class="ws-btn ws-btn-sm" data-poe-skip="' + esc(poe.id) + '">' + esc(copy('Skip', 'Pular')) + '</button>' +
+        '</div>' +
+        '<p class="lab-poe-hint">' + esc(copy('No score: it is only for you to compare afterwards.', 'Sem nota: é só para você comparar depois.')) + '</p>' +
+        '</section>';
+    }
+
+    function poeObserveHtml(item) {
+      return '<p class="lab-poe-note">' + esc(copy('Your prediction: ', 'Sua previsão: ')) + '<strong>' + esc(pickLabel(item.poe, item.record.picked, lang)) + '</strong>. ' +
+        esc(poeText(item.poe.observe)) + '</p>';
+    }
+
+    function poeCompareText(item) {
+      var reading = poeReadingText(item.poe, item.record, lang);
+      return copy('You predicted: ', 'Você previu: ') + pickLabel(item.poe, item.record.picked, lang) + ' · ' +
+        copy('Happened: ', 'Aconteceu: ') + (pickLabel(item.poe, item.record.actual, lang) || '—') + (reading ? ' (' + reading + ')' : '');
+    }
+
+    function poeVerdict(item) {
+      if (item.record.picked === POE_UNSURE) {
+        return { cls: 'is-unsure', text: copy('You were not sure: this is what the simulation did.', 'Você não tinha certeza: veja o que a simulação fez.') };
+      }
+      return item.record.correct
+        ? { cls: 'is-match', text: copy('Your prediction matches the simulation.', 'Sua previsão bate com a simulação.') }
+        : { cls: 'is-miss', text: copy('Not what happened. Worth thinking again about why.', 'Não foi o que aconteceu. Vale pensar de novo no porquê.') };
+    }
+
+    function poeExplainHtml(item) {
+      var poe = item.poe;
+      var verdict = poeVerdict(item);
+      var showWhy = !item.record.correct || POE_EXPLAIN_ON_CORRECT;
+      var rid = 'lab-poe-r-' + poe.id;
+      return '<section class="lab-poe is-explain" data-poe="' + esc(poe.id) + '" aria-labelledby="' + esc(rid) + '" tabindex="-1">' +
+        poeKicker() +
+        '<h3 class="lab-poe-q" id="' + esc(rid) + '">' + esc(poeText(poe.predict)) + '</h3>' +
+        '<p class="lab-poe-compare">' + esc(poeCompareText(item)) + '</p>' +
+        '<p class="lab-poe-verdict ' + verdict.cls + '">' + esc(verdict.text) + '</p>' +
+        (showWhy ? '<p class="lab-poe-explain">' + esc(poeText(poe.explain)) + '</p>' : '') +
+        (showWhy && poe.keyIdea ? '<p class="lab-poe-key"><strong>' + esc(copy('Key idea:', 'Ideia-chave:')) + '</strong> ' + esc(poeText(poe.keyIdea)) + '</p>' : '') +
+        (showWhy && poe.misconception ? '<p class="lab-poe-misc"><strong>' + esc(copy('Common mix-up:', 'Equívoco comum:')) + '</strong> ' + esc(poeText(poe.misconception)) + '</p>' : '') +
+        '<button type="button" class="ws-btn ws-btn-sm" data-poe-dismiss="' + esc(poe.id) + '">' + esc(copy('Continue', 'Continuar')) + '</button>' +
+        '</section>';
+    }
+
+    /* The comparison is said once, through a live region that outlives the
+       guide's re-renders. */
+    function poeAnnounce(all) {
+      var live = node.querySelector('[data-lab-poe-live]');
+      if (!live) return;
+      var item = all && all.open && all.open.stage === 'explain' ? all.open : null;
+      var key = item ? item.poe.id + ':' + item.record.revealedAt : '';
+      if (!key || key === poeSpoken) return;
+      poeSpoken = key;
+      live.textContent = poeCompareText(item) + '. ' + poeVerdict(item).text;
+    }
+
+    function focusQuietly(el) {
+      if (!el) return;
+      try { el.focus({ preventScroll: true }); } catch (eF) { try { el.focus(); } catch (eF2) {} }
+    }
+
+    /* After the guide re-renders: keep the focused option, move focus to a
+       card that just opened (unless the keyboard is busy on the board), or to
+       the step's first action once a prediction was confirmed or skipped. */
+    function poeAfterRender(host, keepSel) {
+      poeAnnounce(poeLast);
+      if (keepSel) {
+        var kept = host.querySelector(keepSel);
+        if (kept) { focusQuietly(kept); return; }
+      }
+      var open = poeLast && poeLast.open;
+      var key = open && (open.stage === 'predict' || open.stage === 'explain') ? open.poe.id + ':' + open.stage : '';
+      var idle = !document.activeElement || document.activeElement === document.body || host.contains(document.activeElement);
+      if (key && key !== poeShown && !host.hidden && idle) {
+        poeShown = key;
+        focusQuietly(host.querySelector('[data-poe="' + open.poe.id + '"]'));
+        poeFocusStep = false;
+        return;
+      }
+      if (poeFocusStep) {
+        poeFocusStep = false;
+        var now = host.querySelector('.lab-guide-now');
+        var buttons = host.querySelectorAll('[data-lab-guide] button');
+        for (var i = 0; i < buttons.length; i += 1) {
+          if (now && (now.compareDocumentPosition(buttons[i]) & 4)) { focusQuietly(buttons[i]); return; }
+        }
+      }
+    }
+
+    /* Arrows move the choice, Space picks, Enter confirms. Keys inside the card
+       never reach the board shortcuts (arrows move glassware, Delete removes
+       it, Space pans). */
+    function poeSelect(card, opt) {
+      var poeId = opt.getAttribute('data-poe-for');
+      poeChoice[poeId] = opt.getAttribute('data-poe-option');
+      card.querySelectorAll('[data-poe-option]').forEach(function (el) {
+        var on = el === opt;
+        el.classList.toggle('is-on', on);
+        el.setAttribute('aria-checked', on ? 'true' : 'false');
+        el.setAttribute('tabindex', on ? '0' : '-1');
+      });
+      var go = card.querySelector('[data-poe-confirm]');
+      if (go) go.disabled = false;
+    }
+
+    function poeConfirm(poeId) {
+      var creation = CREATIONS.filter(function (row) { return row.id === session.creationId; })[0];
+      var pick = poeChoice[poeId];
+      if (!creation || !pick) return;
+      if (poePredict(session, creation, poeId, pick).ok) {
+        delete poeChoice[poeId];
+        poeFocusStep = true;
+        queueSave();
+        updateLive();
+      }
+    }
+
+    function poeKeydown(event) {
+      var card = event.target && event.target.closest && event.target.closest('[data-poe]');
+      if (!card) return false;
+      if (event.key === 'Tab' || event.key === 'Escape') return false;
+      event.stopPropagation();
+      var opt = event.target.closest('[data-poe-option]');
+      if (!opt) return true;
+      var all = Array.prototype.slice.call(card.querySelectorAll('[data-poe-option]'));
+      var at = all.indexOf(opt);
+      var move = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[event.key];
+      if (move) {
+        event.preventDefault();
+        var next = all[(at + move + all.length) % all.length];
+        poeSelect(card, next);
+        focusQuietly(next);
+        return true;
+      }
+      if (event.key === ' ' || event.key === 'Spacebar') {
+        event.preventDefault();
+        poeSelect(card, opt);
+        return true;
+      }
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        if (!poeChoice[opt.getAttribute('data-poe-for')]) poeSelect(card, opt);
+        poeConfirm(opt.getAttribute('data-poe-for'));
+        return true;
+      }
+      return true;
+    }
+
     function tutorialHtml() {
       if (pendingGuide) return guideConfirmHtml(pendingGuide);
       var wanted = wantedNow();
       var creation = wanted.creation;
+      poeLast = null;
       if (!creation || !wanted.state || !wanted.plan) {
         return '<div class="lab-guide lab-guide-empty" data-lab-guide>' +
           '<h2>' + esc(copy('Step-by-step', 'Passo a passo')) + '</h2>' +
@@ -4184,6 +4491,9 @@
       var state = wanted.state;
       var total = creation.tutorial.length;
       var plan = wanted.plan;
+      poeLast = poeState(session, creation);
+      var poeOpen = poeLast && poeLast.open;
+      var poeStage = poeOpen ? poeOpen.stage : '';
       var usedNote = session.guide && session.guide.usedBench
         ? '<p class="lab-guide-note">' + esc(copy(
           'Started on a used bench: material from earlier work may count towards these steps.',
@@ -4201,6 +4511,7 @@
           '<p class="lab-guide-progress">' + esc(copy('All steps done', 'Todos os passos concluídos')) + ' · ' + total + '/' + total + '</p>' +
           usedNote +
           '<div class="lab-guide-bar"><i style="width:100%"></i></div>' +
+          (poeStage === 'explain' ? poeExplainHtml(poeOpen) : '') +
           '<p class="lab-guide-done">' + esc(copy('Practice complete (virtual).', 'Prática concluída (virtual).')) + '</p>' +
           '<p class="ws-lede">' + esc(lang === 'pt' ? creation.lede.pt : creation.lede.en) + '</p>' +
           '<ol>' + stepList + '</ol>' +
@@ -4213,8 +4524,11 @@
         '<p class="lab-guide-progress">' + esc(copy('Step', 'Passo')) + ' ' + Math.min(state.current + 1, total) + ' ' + esc(copy('of', 'de')) + ' ' + total + '</p>' +
         usedNote +
         '<div class="lab-guide-bar"><i style="width:' + pct + '%"></i></div>' +
+        (poeStage === 'explain' ? poeExplainHtml(poeOpen) : '') +
         '<p class="lab-guide-now">' + esc(lang === 'pt' ? plan.text.pt : plan.text.en) + '</p>' +
+        (poeStage === 'predict' ? poePredictHtml(poeOpen) : '') +
         (state.awaitingObserve ? observeHtml(creation, plan) : stepChips(plan)) +
+        (poeStage === 'observe' ? poeObserveHtml(poeOpen) : '') +
         (state.feedback ? '<p class="lab-guide-feedback" role="status">' + esc(lang === 'pt' ? state.feedback.pt : state.feedback.en) + '</p>' : '') +
         (plan.why ? '<p class="lab-guide-why"><strong>' + esc(copy('Why?', 'Por quê?')) + '</strong> ' + esc(stepWhy(plan)) + '</p>' : '') +
         safetyHtml(creation) +
@@ -5118,7 +5432,13 @@
       }
       if (inspector) inspector.innerHTML = inspectorHtml();
       if (notes) notes.innerHTML = notesHtml();
-      if (guide) guide.innerHTML = tutorialHtml();
+      if (guide) {
+        var poeHeld = document.activeElement && guide.contains(document.activeElement) && document.activeElement.getAttribute('data-poe-option')
+          ? '[data-poe-option="' + document.activeElement.getAttribute('data-poe-option') + '"][data-poe-for="' + document.activeElement.getAttribute('data-poe-for') + '"]'
+          : '';
+        guide.innerHTML = tutorialHtml();
+        poeAfterRender(guide, poeHeld);
+      }
       if (dockBody && dockOpen) {
         var keepTop = dockBody.scrollTop;
         dockBody.innerHTML = dockBodyHtml(dockOpen);
@@ -5294,6 +5614,7 @@
         '<div class="lab-side-body">' +
         '<div data-lab-inspector-pane hidden><div data-lab-inspector>' + inspectorHtml() + '</div></div>' +
         '<div data-lab-guide-host hidden>' + tutorialHtml() + '</div>' +
+        '<div class="lc-sr-only" data-lab-poe-live aria-live="polite"></div>' +
         '<div data-lab-notebook-pane hidden><ol class="lab-notes" data-lab-notes>' + notesHtml() + '</ol></div>' +
         '</div></aside>' +
         '</div>' +
@@ -5367,7 +5688,7 @@
       rootEl.addEventListener('click', function (event) {
         try {
           var t = event.target && event.target.closest
-            ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-redo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel], [data-ready], [data-lab-zoom], [data-lab-fit], [data-lab-fit-all], [data-lab-zoom-menu], [data-lab-zoom-to], [data-lab-fit-selection], [data-board-tool], [data-lab-aspirate], [data-lab-dispense], [data-lab-drop], [data-lab-grind], [data-lab-drain], [data-lab-connect], [data-lab-duplicate], [data-lab-delete], [data-lab-rotate], [data-dock], [data-dock-close], [data-side], [data-lab-sound], [data-lab-focus], [data-start-creation], [data-stop-creation], [data-guide-clean], [data-guide-keep], [data-guide-cancel], [data-step-observed], [data-step-add], [data-lab-hint], [data-step-connect], [data-step-heat], [data-step-distill], [data-lab-distill], [data-lab-filter], [data-lab-reflux], [data-step-reflux], [data-step-reflux-connect], [data-lab-remove], [data-lab-stack], [data-lab-ferment], [data-step-ferment], [data-lab-crystallise], [data-step-crystallise], [data-step-filter]')
+            ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-redo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel], [data-ready], [data-lab-zoom], [data-lab-fit], [data-lab-fit-all], [data-lab-zoom-menu], [data-lab-zoom-to], [data-lab-fit-selection], [data-board-tool], [data-lab-aspirate], [data-lab-dispense], [data-lab-drop], [data-lab-grind], [data-lab-drain], [data-lab-connect], [data-lab-duplicate], [data-lab-delete], [data-lab-rotate], [data-dock], [data-dock-close], [data-side], [data-lab-sound], [data-lab-focus], [data-start-creation], [data-stop-creation], [data-guide-clean], [data-guide-keep], [data-guide-cancel], [data-step-observed], [data-step-add], [data-lab-hint], [data-step-connect], [data-step-heat], [data-step-distill], [data-lab-distill], [data-lab-filter], [data-lab-reflux], [data-step-reflux], [data-step-reflux-connect], [data-lab-remove], [data-lab-stack], [data-lab-ferment], [data-step-ferment], [data-lab-crystallise], [data-step-crystallise], [data-step-filter], [data-poe-option], [data-poe-confirm], [data-poe-skip], [data-poe-dismiss]')
             : null;
           if (!t) return;
           if (t.hasAttribute('data-lab-sound')) {
@@ -5413,6 +5734,28 @@
             }
             return;
           }
+          if (t.getAttribute('data-poe-option')) {
+            var poeCard = t.closest('[data-poe]');
+            if (poeCard) poeSelect(poeCard, t);
+            focusQuietly(t);
+            return;
+          }
+          if (t.getAttribute('data-poe-confirm')) {
+            poeConfirm(t.getAttribute('data-poe-confirm'));
+            return;
+          }
+          if (t.getAttribute('data-poe-skip') || t.getAttribute('data-poe-dismiss')) {
+            var poeHere = CREATIONS.filter(function (row) { return row.id === session.creationId; })[0];
+            var poeDone = t.getAttribute('data-poe-skip')
+              ? poeSkip(session, poeHere, t.getAttribute('data-poe-skip'))
+              : poeDismiss(session, poeHere, t.getAttribute('data-poe-dismiss'));
+            if (poeDone.ok) {
+              poeFocusStep = true;
+              queueSave();
+              updateLive();
+            }
+            return;
+          }
           if (t.hasAttribute('data-guide-cancel')) {
             pendingGuide = '';
             updateLive();
@@ -5422,6 +5765,7 @@
             session.creationId = '';
             session.mode = 'bench';
             session.guide = null;
+            session.poe = null;
             pendingGuide = '';
             hintLevel = 0;
             lastStepKey = '';
@@ -6414,6 +6758,7 @@
       }, opts);
 
       rootEl.addEventListener('keydown', function (event) {
+        if (poeKeydown(event)) return;
         if (keyTarget(event)) return;
         if (event.key === 'Escape' && zoomMenuOpen) {
           zoomMenuOpen = false;
@@ -6553,6 +6898,12 @@
     visualFillPct: visualFillPct,
     tutorialState: tutorialState,
     confirmObserved: confirmObserved,
+    poeState: poeState,
+    poePredict: poePredict,
+    poeSkip: poeSkip,
+    poeDismiss: poeDismiss,
+    POE_UNSURE: POE_UNSURE,
+    POE_EXPLAIN_ON_CORRECT: POE_EXPLAIN_ON_CORRECT,
     CHECKS: CHECKS,
     benchIsDirty: benchIsDirty,
     cleanBench: cleanBench,
