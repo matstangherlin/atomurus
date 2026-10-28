@@ -235,6 +235,141 @@
     return { ok: true, pH: pH, pOH: pOH, H: H, OH: OH, autoion: autoion };
   }
 
+  /* Acid–base constants at 25 °C for the weak-acid, weak-base and buffer modes.
+     Only values checked against a source are listed: CRC Handbook of Chemistry
+     and Physics, 84th ed. (2004), as tabulated in OpenStax «Introductory
+     Chemistry», Appendix B (acids) and the matching table of weak bases;
+     the bases also agree with McQuarrie, Appendix E (CRC, 87th ed.). Left out
+     until a teacher confirms them: lactic acid (3.85 or 3.86 by edition),
+     hypochlorous acid (7.40 or 7.53 by edition), phosphoric pKa3. */
+  var ACID_BASE_SOURCE = 'CRC Handbook of Chemistry and Physics, 84th ed. (2004), via OpenStax Introductory Chemistry, Appendix B';
+  var ACID_BASE_CONSTANTS = [
+    { id: 'acetic', kind: 'acid', name: { pt: 'Ácido acético', en: 'Acetic acid' }, formula: 'CH₃COOH', pKa: [4.756], T: 25, conjugate: { pt: 'acetato', en: 'acetate' }, source: ACID_BASE_SOURCE },
+    { id: 'formic', kind: 'acid', name: { pt: 'Ácido fórmico', en: 'Formic acid' }, formula: 'HCOOH', pKa: [3.75], T: 25, conjugate: { pt: 'formiato', en: 'formate' }, source: ACID_BASE_SOURCE },
+    { id: 'benzoic', kind: 'acid', name: { pt: 'Ácido benzoico', en: 'Benzoic acid' }, formula: 'C₆H₅COOH', pKa: [4.204], T: 25, conjugate: { pt: 'benzoato', en: 'benzoate' }, source: ACID_BASE_SOURCE },
+    { id: 'hydrofluoric', kind: 'acid', name: { pt: 'Ácido fluorídrico', en: 'Hydrofluoric acid' }, formula: 'HF', pKa: [3.20], T: 25, conjugate: { pt: 'fluoreto', en: 'fluoride' }, source: ACID_BASE_SOURCE },
+    { id: 'carbonic', kind: 'acid', name: { pt: 'Ácido carbônico', en: 'Carbonic acid' }, formula: 'H₂CO₃', pKa: [6.35, 10.33], T: 25, conjugate: { pt: 'bicarbonato', en: 'bicarbonate' }, source: ACID_BASE_SOURCE },
+    { id: 'phosphoric', kind: 'acid', name: { pt: 'Ácido fosfórico', en: 'Phosphoric acid' }, formula: 'H₃PO₄', pKa: [2.16, 7.21], T: 25, conjugate: { pt: 'di-hidrogenofosfato', en: 'dihydrogen phosphate' }, source: ACID_BASE_SOURCE },
+    { id: 'ammonia', kind: 'base', name: { pt: 'Amônia', en: 'Ammonia' }, formula: 'NH₃', pKb: 4.75, T: 25, conjugate: { pt: 'amônio', en: 'ammonium' }, source: 'CRC Handbook, 84th ed. (2004), via OpenStax; McQuarrie, Appendix E (CRC, 87th ed.)' },
+    { id: 'methylamine', kind: 'base', name: { pt: 'Metilamina', en: 'Methylamine' }, formula: 'CH₃NH₂', pKb: 3.34, T: 25, conjugate: { pt: 'metilamônio', en: 'methylammonium' }, source: 'CRC Handbook, 84th ed. (2004), via OpenStax; McQuarrie, Appendix E (CRC, 87th ed.)' },
+    { id: 'pyridine', kind: 'base', name: { pt: 'Piridina', en: 'Pyridine' }, formula: 'C₅H₅N', pKb: 8.77, T: 25, conjugate: { pt: 'piridínio', en: 'pyridinium' }, source: 'McQuarrie, Appendix E (CRC, 87th ed.)' }
+  ];
+  var WEAK_C_MAX = 20;
+  var BUFFER_RATIO_MIN = 0.1;
+  var BUFFER_RATIO_MAX = 10;
+  var BUFFER_C_MIN = 1e-3;
+
+  /* f(h) is increasing in h; solve it on a log scale by bisection. */
+  function solveLog(f) {
+    var lo = -20;
+    var hi = 2;
+    for (var i = 0; i < 200; i += 1) {
+      var mid = (lo + hi) / 2;
+      if (f(Math.pow(10, mid)) > 0) hi = mid;
+      else lo = mid;
+    }
+    return Math.pow(10, (lo + hi) / 2);
+  }
+
+  function constantFrom(input, name) {
+    var K = input[name];
+    var pK = input['p' + name];
+    if (typeof K === 'number' && Number.isFinite(K) && K > 0) return K;
+    if (typeof pK === 'number' && Number.isFinite(pK) && pK > -2 && pK < 16) return Math.pow(10, -pK);
+    return null;
+  }
+
+  function phResult(H, extra) {
+    var OH = KW / H;
+    var out = { ok: true, pH: -Math.log10(H), pOH: -Math.log10(OH), H: H, OH: OH };
+    Object.keys(extra || {}).forEach(function (k) { out[k] = extra[k]; });
+    return out;
+  }
+
+  /* Weak monoprotic acid HA at C mol/L, from the full charge balance
+     [H⁺] = [A⁻] + [OH⁻] with [A⁻] = C·Ka/(Ka + [H⁺]): water's autoionization
+     is included, nothing is approximated. The textbook shortcut √(Ka·C) is
+     reported next to it, with how far it is off. */
+  function computeWeakAcidPH(input) {
+    input = input || {};
+    var C = input.C;
+    var Ka = constantFrom(input, 'Ka');
+    if (!positiveBounded(C) || C > WEAK_C_MAX) return { ok: false, code: 'positiveNum', field: 'C' };
+    if (Ka == null) return { ok: false, code: 'positiveNum', field: 'Ka' };
+    var H = solveLog(function (h) { return h - C * Ka / (Ka + h) - KW / h; });
+    var shortcut = Math.sqrt(Ka * C);
+    var warnings = [];
+    if (C < 1e-5) warnings.push('autoion');
+    if (input.polyprotic) warnings.push('polyproticApprox');
+    return phResult(H, {
+      Ka: Ka,
+      pKa: -Math.log10(Ka),
+      C: C,
+      alpha: (C * Ka / (Ka + H)) / C,
+      shortcutPH: -Math.log10(shortcut),
+      shortcutOff: Math.abs(-Math.log10(shortcut) + Math.log10(H)),
+      warnings: warnings
+    });
+  }
+
+  /* Weak base B at C mol/L: [OH⁻] = [BH⁺] + [H⁺], [BH⁺] = C·Kb/(Kb + [OH⁻]). */
+  function computeWeakBasePH(input) {
+    input = input || {};
+    var C = input.C;
+    var Kb = constantFrom(input, 'Kb');
+    if (!positiveBounded(C) || C > WEAK_C_MAX) return { ok: false, code: 'positiveNum', field: 'C' };
+    if (Kb == null) return { ok: false, code: 'positiveNum', field: 'Kb' };
+    var OH = solveLog(function (oh) { return oh - C * Kb / (Kb + oh) - KW / oh; });
+    var shortcut = Math.sqrt(Kb * C);
+    var warnings = [];
+    if (C < 1e-5) warnings.push('autoion');
+    return phResult(KW / OH, {
+      Kb: Kb,
+      pKb: -Math.log10(Kb),
+      C: C,
+      alpha: (C * Kb / (Kb + OH)) / C,
+      shortcutPH: 14 + Math.log10(shortcut),
+      shortcutOff: Math.abs(14 + Math.log10(shortcut) - (14 + Math.log10(OH))),
+      warnings: warnings
+    });
+  }
+
+  /* Buffer of a weak acid (Ca) and its conjugate base as the sodium salt (Cb).
+     Henderson–Hasselbalch, pH = pKa + log(Cb/Ca), is the answer shown; the
+     exact charge balance [H⁺] + [Na⁺] = [A⁻] + [OH⁻] is solved too, and a
+     warning appears when they part (ratio outside 0.1–10, very dilute). */
+  function computeBufferPH(input) {
+    input = input || {};
+    var Ca = input.acid;
+    var Cb = input.base;
+    var Ka = constantFrom(input, 'Ka');
+    if (!positiveBounded(Ca) || Ca > WEAK_C_MAX) return { ok: false, code: 'positiveNum', field: 'acid' };
+    if (!positiveBounded(Cb) || Cb > WEAK_C_MAX) return { ok: false, code: 'positiveNum', field: 'base' };
+    if (Ka == null) return { ok: false, code: 'positiveNum', field: 'Ka' };
+    var pKa = -Math.log10(Ka);
+    var ratio = Cb / Ca;
+    var hh = pKa + Math.log10(ratio);
+    var total = Ca + Cb;
+    var H = solveLog(function (h) { return h + Cb - total * Ka / (Ka + h) - KW / h; });
+    var exact = -Math.log10(H);
+    var warnings = [];
+    if (ratio < BUFFER_RATIO_MIN || ratio > BUFFER_RATIO_MAX) warnings.push('bufferRange');
+    if (Ca < BUFFER_C_MIN || Cb < BUFFER_C_MIN) warnings.push('bufferDilute');
+    if (Math.abs(hh - exact) > 0.02) warnings.push('bufferApprox');
+    if (input.polyprotic) warnings.push('polyproticApprox');
+    /* Buffer capacity β = 2.303 (Kw/[H⁺] + [H⁺] + C·Ka·[H⁺]/(Ka + [H⁺])²), mol/(L·pH). */
+    var beta = 2.303 * (KW / H + H + total * Ka * H / Math.pow(Ka + H, 2));
+    var out = phResult(Math.pow(10, -hh), {
+      Ka: Ka,
+      pKa: pKa,
+      ratio: ratio,
+      exactPH: exact,
+      beta: beta,
+      warnings: warnings
+    });
+    return out;
+  }
+
   function classifyPH(pH) {
     var acidic = '#B96B0C';
     var basic = '#2A4878';
@@ -277,6 +412,13 @@
     formatUnit: formatUnit,
     validateThermo: validateThermo,
     computePH: computePH,
+    ACID_BASE_CONSTANTS: ACID_BASE_CONSTANTS,
+    ACID_BASE_SOURCE: ACID_BASE_SOURCE,
+    BUFFER_RATIO_MIN: BUFFER_RATIO_MIN,
+    BUFFER_RATIO_MAX: BUFFER_RATIO_MAX,
+    computeWeakAcidPH: computeWeakAcidPH,
+    computeWeakBasePH: computeWeakBasePH,
+    computeBufferPH: computeBufferPH,
     classifyPH: classifyPH
   };
 });

@@ -165,5 +165,57 @@ assert.equal(sandbox.formatNumber(12345, { sig: 5, lang: 'pt' }), '12.345');
 assert.equal(sandbox.formatNumber(12345, { sig: 5, lang: 'en' }), '12345');
 assert.equal(sandbox.formatNumber(-0.0001234, { sig: 4, lang: 'pt' }), '-1,234×10⁻⁴');
 
+// ── Weak acids, weak bases and buffers (M06) ──────────────────────────────
+{
+  const near = (got, want, tol, label) => assert.ok(Math.abs(got - want) <= tol, `${label}: ${got} vs ${want} ± ${tol}`);
+  const acetic = core.ACID_BASE_CONSTANTS.find((row) => row.id === 'acetic');
+  const ammonia = core.ACID_BASE_CONSTANTS.find((row) => row.id === 'ammonia');
+  assert.ok(acetic && ammonia);
+  core.ACID_BASE_CONSTANTS.forEach((row) => {
+    assert.ok(row.source && row.T === 25 && row.name.pt && row.name.en, row.id + ' carries a source, 25 °C and both names');
+    assert.ok(row.kind === 'acid' ? row.pKa.length >= 1 : typeof row.pKb === 'number', row.id);
+  });
+  assert.ok(core.ACID_BASE_CONSTANTS.length <= 15);
+
+  const weakAcid = core.computeWeakAcidPH({ C: 0.100, pKa: acetic.pKa[0] });
+  near(weakAcid.pH, 2.88, 0.01, 'acetic acid 0.100 mol/L');
+  near(core.computeWeakAcidPH({ C: 0.100, Ka: 1.8e-5 }).pH, 2.88, 0.01, 'acetic acid with Ka 1.8e-5');
+  assert.ok(weakAcid.alpha > 0.01 && weakAcid.alpha < 0.02, 'about 1.3% dissociated');
+  assert.ok(weakAcid.shortcutOff < 0.01, 'the √(Ka·C) shortcut is close here, and reported');
+
+  const weakBase = core.computeWeakBasePH({ C: 0.100, pKb: ammonia.pKb });
+  near(weakBase.pH, 11.13, 0.01, 'ammonia 0.100 mol/L');
+  near(core.computeWeakBasePH({ C: 0.100, Kb: 1.8e-5 }).pH, 11.13, 0.01, 'ammonia with Kb 1.8e-5');
+
+  const buffer = core.computeBufferPH({ acid: 0.10, base: 0.10, pKa: acetic.pKa[0] });
+  near(buffer.pH, acetic.pKa[0], 0.02, 'acetic/acetate 0.10/0.10');
+  assert.deepEqual(buffer.warnings, []);
+  near(buffer.exactPH, buffer.pH, 0.02, 'the charge balance agrees');
+  assert.ok(buffer.beta > 0.1 && buffer.beta < 0.13, 'buffer capacity β ≈ 0.115 mol/(L·pH)');
+  assert.ok(core.computeBufferPH({ acid: 0.10, base: 2.0, pKa: 4.756 }).warnings.includes('bufferRange'), 'ratio 20 is outside 0.1–10');
+  assert.ok(core.computeBufferPH({ acid: 0.10, base: 0.005, pKa: 4.756 }).warnings.includes('bufferRange'), 'ratio 0.05 is outside 0.1–10');
+  const thin = core.computeBufferPH({ acid: 1e-5, base: 1e-5, pKa: 4.756 });
+  assert.ok(thin.warnings.includes('bufferDilute') && thin.warnings.includes('bufferApprox'), 'a very dilute buffer is flagged');
+  assert.ok(thin.exactPH > thin.pH + 0.3, 'and the exact pH says why');
+
+  // Very dilute weak acid: water's own H⁺ matters, so the pH is below 7 but not 7.
+  const dilute = core.computeWeakAcidPH({ C: 1e-7, pKa: 4.756 });
+  assert.ok(dilute.pH > 6.5 && dilute.pH < 7, `1e-7 mol/L acetic acid: pH ${dilute.pH}`);
+  near(dilute.pH, 6.79, 0.01, '1e-7 mol/L acetic acid');
+  assert.ok(dilute.warnings.includes('autoion'));
+
+  // Polyprotic acids use only the first pKa here, and say so.
+  assert.ok(core.computeWeakAcidPH({ C: 0.1, pKa: 2.16, polyprotic: true }).warnings.includes('polyproticApprox'));
+
+  // Validation.
+  assert.equal(core.computeWeakAcidPH({ C: 0, pKa: 4.76 }).ok, false);
+  assert.equal(core.computeWeakAcidPH({ C: -1, pKa: 4.76 }).field, 'C');
+  assert.equal(core.computeWeakAcidPH({ C: 0.1 }).field, 'Ka');
+  assert.equal(core.computeWeakAcidPH({ C: 0.1, Ka: -1 }).field, 'Ka');
+  assert.equal(core.computeWeakBasePH({ C: 0.1, Kb: 0 }).ok, false);
+  assert.equal(core.computeBufferPH({ acid: 0.1, base: 0, pKa: 4.76 }).field, 'base');
+  assert.equal(core.computeBufferPH({ acid: 0.1, base: 0.1 }).field, 'Ka');
+}
+
 console.log('test-calc-validation: ok');
 console.log('H 1e-8', dilute.pH.toFixed(4), 'OH 1e-8', base.pH.toFixed(4), 'P atm', pAtm.toFixed(4));
