@@ -105,6 +105,16 @@ const header = (name) => {
   return m ? m[1] : null;
 };
 assert.equal(header('Content-Security-Policy'), applied, 'applied CSP in netlify.toml = node tools/audit-csp.mjs --emit-policy');
-assert.equal(header('Content-Security-Policy-Report-Only'), ro.policy, 'Report-Only in netlify.toml = node tools/audit-csp.mjs --emit-report-only');
+// The Report-Only hashes are checked against the pages as they are now: the
+// deploy build rewrites some HTML (other than ?v= stamps, which are never
+// hashed), so the choice of hashes may differ by a tie after a build, but a
+// hash in netlify.toml must always name a script that still exists.
+const shipped = header('Content-Security-Policy-Report-Only');
+const withoutHashes = (policy) => policy.replace(/ 'sha256-[^']+'/g, '');
+assert.equal(withoutHashes(shipped), withoutHashes(ro.policy), 'Report-Only directives = node tools/audit-csp.mjs --emit-report-only');
+const live = new Set(real.inlineScripts.groups.map((g) => g.hash));
+const stale = [...shipped.matchAll(/'sha256-([^']+)'/g)].map((m) => m[1]).filter((h) => !live.has(h));
+assert.deepEqual(stale, [], 'every Report-Only hash names an inline script that still exists; regenerate with --emit-report-only');
+assert.ok(Buffer.byteLength(shipped, 'utf8') <= REPORT_ONLY_BUDGET);
 
 console.log(`test-audit-csp: ok (${real.inlineScripts.distinct} distinct inline scripts, report-only ${ro.bytes} bytes)`);

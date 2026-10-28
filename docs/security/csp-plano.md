@@ -36,6 +36,8 @@ Saíram da política: `fonts.googleapis.com`/`fonts.gstatic.com` e `www.youtube.
 | 3 | Manipuladores `on*=` | 1.490 em 327 páginas: `onclick` 1.096 (325), `onload` 324, `onchange` 48 (14), `oninput` 14 (10), `onkeyup` 4, `onfocus` 2, `onkeydown` 2 | violação `script-src-attr` quando disparam | médio: cada manipulador é um comportamento | **Em grande parte.** 199 corpos distintos; os três maiores cobrem 757 ocorrências: `toggleTheme()` (323), o `onload` do CSS (308, item 2) e `toggleMobileSidebar()` (126). Delegação por `data-action="toggle-theme"` num script externo resolve esses por patch; os ≈ 190 restantes (tabela periódica, calculadoras, isomeria) são código de página e pedem migração arquivo a arquivo. |
 | 4 | Scripts inline únicos ou de poucas páginas | 116 distintos, 209 usos, ≈ 199 KB, fora do orçamento de 4 KiB do cabeçalho (23 aparecem numa página só; 93 em 2–9) | violação `script-src-elem` | médio a alto: é a lógica das páginas (calculadoras, viewers) | **Não.** Externalizar como arquivo `.js` por página (ou por família de páginas, como as 118 de elemento e as de isomeria). Sem isso a etapa 3 bloquearia essas páginas. |
 
+Dois desses scripts (o boot do visualizador em `explore/viewer/methyl-isocyanate*.html` e `explore/bhopal-disaster*.html`) carregam assets com `?v=`; o `bump-version.js` muda esse número a cada deploy, então eles **nunca** podem entrar por hash — externalizar é o único caminho. O inventário os marca como `buildVariable`.
+
 Ordem sugerida: 1 → 2 → 3 (os três maiores) → 4 página a página, rodando `e2e/csp.spec.js` e lendo `csp-violacoes.md` a cada passo. Cada item cabe num prompt próprio, com `--dry-run` como padrão no script de patch.
 
 ### Por que hashes e não nonces

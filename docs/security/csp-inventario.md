@@ -80,3 +80,4 @@ Atenção: «js literal» inclui URLs que só aparecem em texto (links, document
 - Cabeçalho: 4091 bytes (orçamento 4096).
 - Hashes incluídos: 55 (cobrem 1404 dos 1613 usos de script inline).
 - Fora do orçamento: 116 scripts distintos (209 usos) — vão aparecer como violação no Report-Only e são a lista de externalização.
+- Com `?v=` (mudam a cada deploy, nunca entram por hash): 2 scripts distintos.

@@ -9,6 +9,7 @@
         "bytes": 138,
         "count": 324,
         "pages": 324,
+        "buildVariable": false,
         "preview": "document.documentElement.classList.add('lc-loading');setTimeout(function(){document.docume",
         "samplePages": [
           "404.html",
@@ -21,6 +22,7 @@
         "bytes": 87,
         "count": 320,
         "pages": 320,
+        "buildVariable": false,
         "preview": "(window.atomurusRunAutoTag||function(){})({ zoneId: '…', });",
         "samplePages": [
           "404.html",
@@ -33,6 +35,7 @@
         "bytes": 620,
         "count": 304,
         "pages": 304,
+        "buildVariable": false,
         "preview": "(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement",
         "samplePages": [
           "404.html",
@@ -45,6 +48,7 @@
         "bytes": 323,
         "count": 254,
         "pages": 254,
+        "buildVariable": false,
         "preview": "function toggleTheme(){var h=document.documentElement;var d=h.getAttribute('data-theme')==",
         "samplePages": [
           "404.html",
@@ -57,6 +61,7 @@
         "bytes": 2574,
         "count": 23,
         "pages": 23,
+        "buildVariable": false,
         "preview": "function applyTheme(isDark){ document.documentElement.setAttribute('data-theme', isDark ? ",
         "samplePages": [
           "isomerism/constitutional/chain.html",
@@ -69,6 +74,7 @@
         "bytes": 847,
         "count": 21,
         "pages": 21,
+        "buildVariable": false,
         "preview": "(function initIsoSelector(){ var wrap = document.querySelector('[data-iso-selector]'); var",
         "samplePages": [
           "isomerism/constitutional/chain.html",
@@ -81,6 +87,7 @@
         "bytes": 1209,
         "count": 20,
         "pages": 20,
+        "buildVariable": false,
         "preview": "(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement",
         "samplePages": [
           "explore.html",
@@ -93,6 +100,7 @@
         "bytes": 207,
         "count": 14,
         "pages": 14,
+        "buildVariable": false,
         "preview": "atomurusBootLabViewer(document.getElementById('iso-3d-canvas') || document.querySelector('",
         "samplePages": [
           "viewer/isomerism/constitutional/chain.html",
@@ -105,6 +113,7 @@
         "bytes": 74,
         "count": 12,
         "pages": 12,
+        "buildVariable": false,
         "preview": "(window.atomurusRunAutoTag||function(){})({ zoneId: '…' });",
         "samplePages": [
           "about.html",
@@ -117,6 +126,7 @@
         "bytes": 591,
         "count": 10,
         "pages": 10,
+        "buildVariable": false,
         "preview": "(function() { var fs = localStorage.getItem('atomurus-fontsize') || 'md'; var fsSizes = { ",
         "samplePages": [
           "periodic-table.html",
@@ -129,6 +139,7 @@
         "bytes": 3418,
         "count": 8,
         "pages": 8,
+        "buildVariable": false,
         "preview": "(function(){ 'use strict'; window.toggleTheme = function() { var html = document.documentE",
         "samplePages": [
           "explore/bhopal-disaster.html",
@@ -141,6 +152,7 @@
         "bytes": 3417,
         "count": 7,
         "pages": 7,
+        "buildVariable": false,
         "preview": "(function(){ 'use strict'; window.toggleTheme = function() { var html = document.documentE",
         "samplePages": [
           "explore/chernobyl-disaster.pt.html",
@@ -153,6 +165,7 @@
         "bytes": 202,
         "count": 3,
         "pages": 3,
+        "buildVariable": false,
         "preview": "function toggleTheme(){var h=document.documentElement;var d=h.getAttribute('data-theme')==",
         "samplePages": [
           "account.html",
@@ -165,6 +178,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 23;",
         "samplePages": [
           "periodic-table/vanadium.en.html",
@@ -176,6 +190,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 12;",
         "samplePages": [
           "periodic-table/magnesium.en.html",
@@ -187,6 +202,7 @@
         "bytes": 20,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 105;",
         "samplePages": [
           "periodic-table/dubnium.en.html",
@@ -198,6 +214,7 @@
         "bytes": 205,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "(function(){try{var p=new URLSearchParams(window.location.search);if(p.get('embed')==='1')",
         "samplePages": [
           "viewer/atomic-models.html",
@@ -209,6 +226,7 @@
         "bytes": 2515,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "(function(){ var form = document.getElementById('cform'); var ok = document.getElementById",
         "samplePages": [
           "contact.html",
@@ -220,6 +238,7 @@
         "bytes": 6609,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "/* ── Theme ── */ function applyTheme(isDark){ document.documentElement.setAttribute('data",
         "samplePages": [
           "isomerism.html",
@@ -231,6 +250,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 84;",
         "samplePages": [
           "periodic-table/polonium.en.html",
@@ -242,6 +262,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 62;",
         "samplePages": [
           "periodic-table/samarium.en.html",
@@ -253,6 +274,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 72;",
         "samplePages": [
           "periodic-table/hafnium.en.html",
@@ -264,6 +286,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 40;",
         "samplePages": [
           "periodic-table/zirconium.en.html",
@@ -275,6 +298,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 11;",
         "samplePages": [
           "periodic-table/natrium.en.html",
@@ -286,6 +310,7 @@
         "bytes": 20,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 102;",
         "samplePages": [
           "periodic-table/nobelium.en.html",
@@ -297,6 +322,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 97;",
         "samplePages": [
           "periodic-table/berkelium.en.html",
@@ -308,6 +334,7 @@
         "bytes": 3006,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "// ═════════ THEME ═════════ function applyTheme(isDark){ document.documentElement.setAttr",
         "samplePages": [
           "viewer/atomic-models.html",
@@ -319,6 +346,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 48;",
         "samplePages": [
           "periodic-table/cadmium.en.html",
@@ -330,6 +358,7 @@
         "bytes": 18,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 8;",
         "samplePages": [
           "periodic-table/oxygenium.en.html",
@@ -341,6 +370,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 93;",
         "samplePages": [
           "periodic-table/neptunium.en.html",
@@ -352,6 +382,7 @@
         "bytes": 20,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 103;",
         "samplePages": [
           "periodic-table/lawrencium.en.html",
@@ -363,6 +394,7 @@
         "bytes": 20,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 115;",
         "samplePages": [
           "periodic-table/moscovium.en.html",
@@ -374,6 +406,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 95;",
         "samplePages": [
           "periodic-table/americium.en.html",
@@ -385,6 +418,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 44;",
         "samplePages": [
           "periodic-table/ruthenium.en.html",
@@ -396,6 +430,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 33;",
         "samplePages": [
           "periodic-table/arsenicum.en.html",
@@ -407,6 +442,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 60;",
         "samplePages": [
           "periodic-table/neodymium.en.html",
@@ -418,6 +454,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 82;",
         "samplePages": [
           "periodic-table/plumbum.en.html",
@@ -429,6 +466,7 @@
         "bytes": 20,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 104;",
         "samplePages": [
           "periodic-table/rutherfordium.en.html",
@@ -440,6 +478,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 86;",
         "samplePages": [
           "periodic-table/radon.en.html",
@@ -451,6 +490,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 10;",
         "samplePages": [
           "periodic-table/neon.en.html",
@@ -462,6 +502,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 43;",
         "samplePages": [
           "periodic-table/technetium.en.html",
@@ -473,6 +514,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 66;",
         "samplePages": [
           "periodic-table/dysprosium.en.html",
@@ -484,6 +526,7 @@
         "bytes": 20,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 100;",
         "samplePages": [
           "periodic-table/fermium.en.html",
@@ -495,6 +538,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 89;",
         "samplePages": [
           "periodic-table/actinium.en.html",
@@ -506,6 +550,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 78;",
         "samplePages": [
           "periodic-table/platinum.en.html",
@@ -517,6 +562,7 @@
         "bytes": 20,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 113;",
         "samplePages": [
           "periodic-table/nihonium.en.html",
@@ -528,6 +574,7 @@
         "bytes": 4506,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "/* ── Theme ── */ function applyTheme(isDark){ document.documentElement.setAttribute('data",
         "samplePages": [
           "isomerism.pt.html",
@@ -539,6 +586,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 19;",
         "samplePages": [
           "periodic-table/kalium.en.html",
@@ -550,6 +598,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 20;",
         "samplePages": [
           "periodic-table/calcium.en.html",
@@ -561,6 +610,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 13;",
         "samplePages": [
           "periodic-table/aluminium.en.html",
@@ -572,6 +622,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 47;",
         "samplePages": [
           "periodic-table/argentum.en.html",
@@ -583,6 +634,7 @@
         "bytes": 270,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "atomurusBootLabViewer(document.getElementById('viewer3d'), 'atomicModelViewer', function (",
         "samplePages": [
           "viewer/atomic-models.html",
@@ -594,6 +646,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 25;",
         "samplePages": [
           "periodic-table/manganum.en.html",
@@ -605,6 +658,7 @@
         "bytes": 20,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 101;",
         "samplePages": [
           "periodic-table/mendelevium.en.html",
@@ -616,6 +670,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 61;",
         "samplePages": [
           "periodic-table/promethium.en.html",
@@ -627,6 +682,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 50;",
         "samplePages": [
           "periodic-table/stannum.en.html",
@@ -638,6 +694,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 28;",
         "samplePages": [
           "periodic-table/niccolum.en.html",
@@ -649,6 +706,7 @@
         "bytes": 20,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 112;",
         "samplePages": [
           "periodic-table/copernicium.en.html",
@@ -660,6 +718,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 74;",
         "samplePages": [
           "periodic-table/wolframium.en.html",
@@ -671,6 +730,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 85;",
         "samplePages": [
           "periodic-table/astatium.en.html",
@@ -682,6 +742,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 37;",
         "samplePages": [
           "periodic-table/rubidium.en.html",
@@ -693,6 +754,7 @@
         "bytes": 18,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 7;",
         "samplePages": [
           "periodic-table/nitrogenium.en.html",
@@ -704,6 +766,7 @@
         "bytes": 20,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 111;",
         "samplePages": [
           "periodic-table/roentgenium.en.html",
@@ -715,6 +778,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 80;",
         "samplePages": [
           "periodic-table/hydrargyrum.en.html",
@@ -726,6 +790,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 83;",
         "samplePages": [
           "periodic-table/bismuthum.en.html",
@@ -737,6 +802,7 @@
         "bytes": 20,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 109;",
         "samplePages": [
           "periodic-table/meitnerium.en.html",
@@ -748,6 +814,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 49;",
         "samplePages": [
           "periodic-table/indium.en.html",
@@ -759,6 +826,7 @@
         "bytes": 277,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "atomurusBootLabViewer(document.getElementById('viewer3d'), 'allotropeViewer', function () ",
         "samplePages": [
           "viewer/allotropes.html",
@@ -770,6 +838,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 32;",
         "samplePages": [
           "periodic-table/germanium.en.html",
@@ -781,6 +850,7 @@
         "bytes": 2576,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "function applyTheme(isDark){ document.documentElement.setAttribute('data-theme', isDark ? ",
         "samplePages": [
           "viewer/molecules.html",
@@ -792,6 +862,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 64;",
         "samplePages": [
           "periodic-table/gadolinium.en.html",
@@ -803,6 +874,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 54;",
         "samplePages": [
           "periodic-table/xenon.en.html",
@@ -814,6 +886,7 @@
         "bytes": 20,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 117;",
         "samplePages": [
           "periodic-table/tennessium.en.html",
@@ -825,6 +898,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 30;",
         "samplePages": [
           "periodic-table/zincum.en.html",
@@ -836,6 +910,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 41;",
         "samplePages": [
           "periodic-table/niobium.en.html",
@@ -847,6 +922,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 26;",
         "samplePages": [
           "periodic-table/ferrum.en.html",
@@ -858,6 +934,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 38;",
         "samplePages": [
           "periodic-table/strontium.en.html",
@@ -869,6 +946,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 27;",
         "samplePages": [
           "periodic-table/cobaltum.en.html",
@@ -880,6 +958,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 99;",
         "samplePages": [
           "periodic-table/einsteinium.en.html",
@@ -891,6 +970,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 24;",
         "samplePages": [
           "periodic-table/chromium.en.html",
@@ -902,6 +982,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 88;",
         "samplePages": [
           "periodic-table/radium.en.html",
@@ -913,6 +994,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 36;",
         "samplePages": [
           "periodic-table/krypton.en.html",
@@ -924,6 +1006,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 52;",
         "samplePages": [
           "periodic-table/tellurium.en.html",
@@ -935,6 +1018,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 16;",
         "samplePages": [
           "periodic-table/sulfur.en.html",
@@ -946,6 +1030,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 81;",
         "samplePages": [
           "periodic-table/thallium.en.html",
@@ -957,6 +1042,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 73;",
         "samplePages": [
           "periodic-table/tantalum.en.html",
@@ -968,6 +1054,7 @@
         "bytes": 6450,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "// ── theme function toggleTheme() { const html = document.documentElement; const isDark =",
         "samplePages": [
           "index.html",
@@ -979,6 +1066,7 @@
         "bytes": 273,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "atomurusBootLabViewer(document.getElementById('viewer3d'), 'moleculeViewer', function () {",
         "samplePages": [
           "viewer/molecules.html",
@@ -990,6 +1078,7 @@
         "bytes": 18,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 3;",
         "samplePages": [
           "periodic-table/lithium.en.html",
@@ -1001,6 +1090,7 @@
         "bytes": 4058,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "function toggleMobileSidebar(){ var s=document.getElementById('sidebar'),o=document.getEle",
         "samplePages": [
           "config.html",
@@ -1012,6 +1102,7 @@
         "bytes": 20,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 110;",
         "samplePages": [
           "periodic-table/darmstadtium.en.html",
@@ -1023,6 +1114,7 @@
         "bytes": 203,
         "count": 2,
         "pages": 2,
+        "buildVariable": true,
         "preview": "atomurusBootViewer(document.getElementById('mvwr-canvas'), function () { var s = document.",
         "samplePages": [
           "explore/bhopal-disaster.html",
@@ -1034,6 +1126,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 58;",
         "samplePages": [
           "periodic-table/cerium.en.html",
@@ -1045,6 +1138,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 45;",
         "samplePages": [
           "periodic-table/rhodium.en.html",
@@ -1056,6 +1150,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 22;",
         "samplePages": [
           "periodic-table/titanium.en.html",
@@ -1067,6 +1162,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 87;",
         "samplePages": [
           "periodic-table/francium.en.html",
@@ -1078,6 +1174,7 @@
         "bytes": 742,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement",
         "samplePages": [
           "account.html",
@@ -1089,6 +1186,7 @@
         "bytes": 20,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 118;",
         "samplePages": [
           "periodic-table/oganesson.en.html",
@@ -1100,6 +1198,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 92;",
         "samplePages": [
           "periodic-table/uranium.en.html",
@@ -1111,6 +1210,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 90;",
         "samplePages": [
           "periodic-table/thorium.en.html",
@@ -1122,6 +1222,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 77;",
         "samplePages": [
           "periodic-table/iridium.en.html",
@@ -1133,6 +1234,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 46;",
         "samplePages": [
           "periodic-table/palladium.en.html",
@@ -1144,6 +1246,7 @@
         "bytes": 20,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 106;",
         "samplePages": [
           "periodic-table/seaborgium.en.html",
@@ -1155,6 +1258,7 @@
         "bytes": 18,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 6;",
         "samplePages": [
           "periodic-table/carboneum.en.html",
@@ -1166,6 +1270,7 @@
         "bytes": 20,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 108;",
         "samplePages": [
           "periodic-table/hassium.en.html",
@@ -1177,6 +1282,7 @@
         "bytes": 18,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 9;",
         "samplePages": [
           "periodic-table/fluorum.en.html",
@@ -1188,6 +1294,7 @@
         "bytes": 18,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 2;",
         "samplePages": [
           "periodic-table/helium.en.html",
@@ -1199,6 +1306,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 68;",
         "samplePages": [
           "periodic-table/erbium.en.html",
@@ -1210,6 +1318,7 @@
         "bytes": 196,
         "count": 2,
         "pages": 2,
+        "buildVariable": true,
         "preview": "atomurusBootViewer(document.getElementById('mvwr-canvas'), function () { var s = document.",
         "samplePages": [
           "explore/viewer/methyl-isocyanate.html",
@@ -1221,6 +1330,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 39;",
         "samplePages": [
           "periodic-table/yttrium.en.html",
@@ -1232,6 +1342,7 @@
         "bytes": 20,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 114;",
         "samplePages": [
           "periodic-table/flerovium.en.html",
@@ -1243,6 +1354,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 96;",
         "samplePages": [
           "periodic-table/curium.en.html",
@@ -1254,6 +1366,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 17;",
         "samplePages": [
           "periodic-table/chlorum.en.html",
@@ -1265,6 +1378,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 69;",
         "samplePages": [
           "periodic-table/thulium.en.html",
@@ -1276,6 +1390,7 @@
         "bytes": 18,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 1;",
         "samplePages": [
           "periodic-table/hydrogenium.en.html",
@@ -1287,6 +1402,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 76;",
         "samplePages": [
           "periodic-table/osmium.en.html",
@@ -1298,6 +1414,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 79;",
         "samplePages": [
           "periodic-table/aurum.en.html",
@@ -1309,6 +1426,7 @@
         "bytes": 20,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 107;",
         "samplePages": [
           "periodic-table/bohrium.en.html",
@@ -1320,6 +1438,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 67;",
         "samplePages": [
           "periodic-table/holmium.en.html",
@@ -1331,6 +1450,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 59;",
         "samplePages": [
           "periodic-table/praseodymium.en.html",
@@ -1342,6 +1462,7 @@
         "bytes": 18,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 4;",
         "samplePages": [
           "periodic-table/beryllium.en.html",
@@ -1353,6 +1474,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 18;",
         "samplePages": [
           "periodic-table/argon.en.html",
@@ -1364,6 +1486,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 98;",
         "samplePages": [
           "periodic-table/californium.en.html",
@@ -1375,6 +1498,7 @@
         "bytes": 18,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 5;",
         "samplePages": [
           "periodic-table/borium.en.html",
@@ -1386,6 +1510,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 21;",
         "samplePages": [
           "periodic-table/scandium.en.html",
@@ -1397,6 +1522,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 51;",
         "samplePages": [
           "periodic-table/stibium.en.html",
@@ -1408,6 +1534,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 42;",
         "samplePages": [
           "periodic-table/molybdaenum.en.html",
@@ -1419,6 +1546,7 @@
         "bytes": 1069,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "// Molecule / element quick search in the sidebar panel. (function () { var inp = document",
         "samplePages": [
           "viewer/molecules.html",
@@ -1430,6 +1558,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 70;",
         "samplePages": [
           "periodic-table/ytterbium.en.html",
@@ -1441,6 +1570,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 29;",
         "samplePages": [
           "periodic-table/cuprum.en.html",
@@ -1452,6 +1582,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 55;",
         "samplePages": [
           "periodic-table/caesium.en.html",
@@ -1463,6 +1594,7 @@
         "bytes": 20,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 116;",
         "samplePages": [
           "periodic-table/livermorium.en.html",
@@ -1474,6 +1606,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 56;",
         "samplePages": [
           "periodic-table/barium.en.html",
@@ -1485,6 +1618,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 75;",
         "samplePages": [
           "periodic-table/rhenium.en.html",
@@ -1496,6 +1630,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 65;",
         "samplePages": [
           "periodic-table/terbium.en.html",
@@ -1507,6 +1642,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 91;",
         "samplePages": [
           "periodic-table/protactinium.en.html",
@@ -1518,6 +1654,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 31;",
         "samplePages": [
           "periodic-table/gallium.en.html",
@@ -1529,6 +1666,7 @@
         "bytes": 881,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.toggleTheme = function () { var html = document.documentElement; var isDark = html.",
         "samplePages": [
           "explore/viewer/methyl-isocyanate.html",
@@ -1540,6 +1678,7 @@
         "bytes": 496,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.MOL_DATA = { atoms: [ { pos: [-2.10, 0.95, 0], r: 0.35, color: 0x… }, { pos: [-1.20",
         "samplePages": [
           "explore/bhopal-disaster.html",
@@ -1551,6 +1690,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 34;",
         "samplePages": [
           "periodic-table/selenium.en.html",
@@ -1562,6 +1702,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 14;",
         "samplePages": [
           "periodic-table/silicium.en.html",
@@ -1573,6 +1714,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 71;",
         "samplePages": [
           "periodic-table/lutetium.en.html",
@@ -1584,6 +1726,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 15;",
         "samplePages": [
           "periodic-table/phosphorus.en.html",
@@ -1595,6 +1738,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 53;",
         "samplePages": [
           "periodic-table/iodum.en.html",
@@ -1606,6 +1750,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 63;",
         "samplePages": [
           "periodic-table/europium.en.html",
@@ -1617,6 +1762,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 57;",
         "samplePages": [
           "periodic-table/lanthanum.en.html",
@@ -1628,6 +1774,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 35;",
         "samplePages": [
           "periodic-table/bromium.en.html",
@@ -1639,6 +1786,7 @@
         "bytes": 19,
         "count": 2,
         "pages": 2,
+        "buildVariable": false,
         "preview": "window.PAGE_Z = 94;",
         "samplePages": [
           "periodic-table/plutonium.en.html",
@@ -1650,6 +1798,7 @@
         "bytes": 1453,
         "count": 1,
         "pages": 1,
+        "buildVariable": false,
         "preview": "(function initIsoQuiz(){ var quiz = window.AtomurusIsoQuiz; document.querySelectorAll('.is",
         "samplePages": [
           "isomerism/constitutional/function.html"
@@ -1660,6 +1809,7 @@
         "bytes": 269,
         "count": 1,
         "pages": 1,
+        "buildVariable": false,
         "preview": "(function(){ var h=location.hash.replace('#',''); if(['geometrica','optica','espacial','sp",
         "samplePages": [
           "isomerism.pt.html"
@@ -1670,6 +1820,7 @@
         "bytes": 759,
         "count": 1,
         "pages": 1,
+        "buildVariable": false,
         "preview": "(function(){var h=location.hash||'',q=location.search||'',hp,sp,lang='?lang=pt-BR';try{hp=",
         "samplePages": [
           "index.pt.html"
@@ -1680,6 +1831,7 @@
         "bytes": 79693,
         "count": 1,
         "pages": 1,
+        "buildVariable": false,
         "preview": "// ═════════════════════════════════════════ // THEME — swaps the SVG content (sun ↔ moon)",
         "samplePages": [
           "calculators.pt.html"
@@ -1690,6 +1842,7 @@
         "bytes": 79691,
         "count": 1,
         "pages": 1,
+        "buildVariable": false,
         "preview": "// ═════════════════════════════════════════ // THEME — swaps the SVG content (sun ↔ moon)",
         "samplePages": [
           "calculators.html"
@@ -1700,6 +1853,7 @@
         "bytes": 5064,
         "count": 1,
         "pages": 1,
+        "buildVariable": false,
         "preview": "(function(){ 'use strict'; window.toggleTheme = function() { var html = document.documentE",
         "samplePages": [
           "explore.html"
@@ -1710,6 +1864,7 @@
         "bytes": 1007,
         "count": 1,
         "pages": 1,
+        "buildVariable": false,
         "preview": "(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement",
         "samplePages": [
           "login.html"
@@ -1720,6 +1875,7 @@
         "bytes": 59,
         "count": 1,
         "pages": 1,
+        "buildVariable": false,
         "preview": "location.replace('position.html?lang=pt-BR'+location.hash);",
         "samplePages": [
           "isomerism/constitutional/position.pt.html"
@@ -1730,6 +1886,7 @@
         "bytes": 5136,
         "count": 1,
         "pages": 1,
+        "buildVariable": false,
         "preview": "(function(){ 'use strict'; // Theme toggle window.toggleTheme = function() { var html = do",
         "samplePages": [
           "explore.pt.html"
@@ -1740,6 +1897,7 @@
         "bytes": 277,
         "count": 1,
         "pages": 1,
+        "buildVariable": false,
         "preview": "(function(){ var h=location.hash.replace('#',''); if(['geometrica','optica','espacial','sp",
         "samplePages": [
           "viewer/isomerism.html"
@@ -1750,6 +1908,7 @@
         "bytes": 748,
         "count": 1,
         "pages": 1,
+        "buildVariable": false,
         "preview": "(function(){var h=location.hash||'',q=location.search||'',hp,sp,lang='';try{hp=new URLSear",
         "samplePages": [
           "index.html"
@@ -1760,6 +1919,7 @@
         "bytes": 3631,
         "count": 1,
         "pages": 1,
+        "buildVariable": false,
         "preview": "(function(){ 'use strict'; // Theme toggle window.toggleTheme = function() { var html = do",
         "samplePages": [
           "explore/bhopal-disaster.pt.html"
@@ -1770,6 +1930,7 @@
         "bytes": 60,
         "count": 1,
         "pages": 1,
+        "buildVariable": false,
         "preview": "location.replace('geometric.html?lang=pt-BR'+location.hash);",
         "samplePages": [
           "isomerism/spatial/geometric.pt.html"
@@ -1780,6 +1941,7 @@
         "bytes": 59,
         "count": 1,
         "pages": 1,
+        "buildVariable": false,
         "preview": "location.replace('function.html?lang=pt-BR'+location.hash);",
         "samplePages": [
           "isomerism/constitutional/function.pt.html"
@@ -1790,6 +1952,7 @@
         "bytes": 62,
         "count": 1,
         "pages": 1,
+        "buildVariable": false,
         "preview": "location.replace('tautomerism.html?lang=pt-BR'+location.hash);",
         "samplePages": [
           "isomerism/constitutional/tautomerism.pt.html"
@@ -1800,6 +1963,7 @@
         "bytes": 503,
         "count": 1,
         "pages": 1,
+        "buildVariable": false,
         "preview": "function toggleTheme(){var h=document.documentElement;var d=h.getAttribute('data-theme')==",
         "samplePages": [
           "login.html"
@@ -1810,6 +1974,7 @@
         "bytes": 300,
         "count": 1,
         "pages": 1,
+        "buildVariable": false,
         "preview": "(function(){try{var p=new URLSearchParams(location.search);if(String(p.get('section')||'')",
         "samplePages": [
           "app.html"
@@ -1820,6 +1985,7 @@
         "bytes": 58,
         "count": 1,
         "pages": 1,
+        "buildVariable": false,
         "preview": "location.replace('optical.html?lang=pt-BR'+location.hash);",
         "samplePages": [
           "isomerism/spatial/optical.pt.html"
@@ -1830,6 +1996,7 @@
         "bytes": 247,
         "count": 1,
         "pages": 1,
+        "buildVariable": false,
         "preview": "(function(){ var h=location.hash.replace('#',''); if(['geometrica','optica','espacial','sp",
         "samplePages": [
           "isomerism.html"
@@ -1840,6 +2007,7 @@
         "bytes": 504,
         "count": 1,
         "pages": 1,
+        "buildVariable": false,
         "preview": "function toggleMirror(){ var btn=document.getElementById('mirror-btn'); var cards=document",
         "samplePages": [
           "isomerism/spatial/optical.html"
@@ -1850,6 +2018,7 @@
         "bytes": 61,
         "count": 1,
         "pages": 1,
+        "buildVariable": false,
         "preview": "location.replace('metamerism.html?lang=pt-BR'+location.hash);",
         "samplePages": [
           "isomerism/constitutional/metamerism.pt.html"
@@ -1860,6 +2029,7 @@
         "bytes": 270,
         "count": 1,
         "pages": 1,
+        "buildVariable": false,
         "preview": "(function(){ var h=location.hash.replace('#',''); if(['geometrica','optica','espacial','sp",
         "samplePages": [
           "viewer/isomerism.pt.html"
@@ -1870,6 +2040,7 @@
         "bytes": 56,
         "count": 1,
         "pages": 1,
+        "buildVariable": false,
         "preview": "location.replace('chain.html?lang=pt-BR'+location.hash);",
         "samplePages": [
           "isomerism/constitutional/chain.pt.html"

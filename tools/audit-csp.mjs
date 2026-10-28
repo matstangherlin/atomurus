@@ -167,6 +167,10 @@ export function scanJs(js) {
   return [...out];
 }
 
+// bump-version.js rewrites every ?v=<digits> at deploy, so a script that
+// carries one has a different hash on every build: it cannot be allowed by hash.
+const BUILD_STAMP = /\?v=\d+/;
+
 // Files the Netlify build deletes before publishing (tools/scrub-publish-tree.js).
 function scrubbed(root) {
   const file = path.join(root, 'tools', 'scrub-publish-tree.js');
@@ -201,7 +205,7 @@ export function inventory(root) {
     scan.scripts.forEach((body) => {
       inlineTotal += 1;
       const hash = sha256(body);
-      if (!groups.has(hash)) groups.set(hash, { hash, bytes: Buffer.byteLength(body, 'utf8'), preview: preview(body), pages: new Set(), count: 0 });
+      if (!groups.has(hash)) groups.set(hash, { hash, bytes: Buffer.byteLength(body, 'utf8'), preview: preview(body), buildVariable: BUILD_STAMP.test(body), pages: new Set(), count: 0 });
       const g = groups.get(hash);
       g.count += 1;
       g.pages.add(rel);
@@ -239,7 +243,7 @@ export function inventory(root) {
   const handlerPagesAll = new Set();
   Object.values(handlerPages).forEach((set) => set.forEach((page) => handlerPagesAll.add(page)));
   const scripts = [...groups.values()]
-    .map((g) => ({ hash: g.hash, bytes: g.bytes, count: g.count, pages: g.pages.size, preview: g.preview, samplePages: [...g.pages].sort().slice(0, 3) }))
+    .map((g) => ({ hash: g.hash, bytes: g.bytes, count: g.count, pages: g.pages.size, buildVariable: g.buildVariable, preview: g.preview, samplePages: [...g.pages].sort().slice(0, 3) }))
     .sort((a, b) => b.pages - a.pages || b.count - a.count || a.hash.localeCompare(b.hash));
   return {
     htmlFiles: htmlFiles.length,
@@ -330,11 +334,13 @@ export function buildPolicy({ scriptHashes = null } = {}) {
 
 // Stage 2 carries hashes for the most widely used inline scripts only, so the
 // header stays under the budget; the rest are the externalisation work list.
+// Scripts stamped with ?v= are left out: their hash changes on every deploy.
 export const REPORT_ONLY_BUDGET = 4096;
 
 export function reportOnlyPolicy(inv, budget = REPORT_ONLY_BUDGET) {
   const chosen = [];
   for (const group of inv.inlineScripts.groups) {
+    if (group.buildVariable) continue;
     const next = buildPolicy({ scriptHashes: chosen.concat(group.hash) });
     if (Buffer.byteLength(next, 'utf8') > budget) break;
     chosen.push(group.hash);
@@ -400,6 +406,7 @@ function markdown(inv, ro) {
   lines.push(`- Cabeçalho: ${ro.bytes} bytes (orçamento ${REPORT_ONLY_BUDGET}).`);
   lines.push(`- Hashes incluídos: ${ro.hashes} (cobrem ${ro.coveredUses} dos ${inv.inlineScripts.total} usos de script inline).`);
   lines.push(`- Fora do orçamento: ${ro.uncoveredGroups} scripts distintos (${ro.uncoveredUses} usos) — vão aparecer como violação no Report-Only e são a lista de externalização.`);
+  lines.push(`- Com \`?v=\` (mudam a cada deploy, nunca entram por hash): ${inv.inlineScripts.groups.filter((g) => g.buildVariable).length} scripts distintos.`);
   lines.push('');
   return lines.join('\n');
 }
