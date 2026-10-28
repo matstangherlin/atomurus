@@ -139,7 +139,7 @@
     <!-- Mobile hamburger -->
     <button class="mobile-menu-btn" onclick="toggleMobileSidebar()"
             data-i18n-attr="aria-label:ptable.mobileMenuLabel"
-            aria-label="Open menu">
+            aria-label="Abrir menu">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
         <line x1="2" y1="4.5" x2="14" y2="4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
         <line x1="2" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
@@ -159,16 +159,16 @@
         <circle cx="5.5" cy="5.5" r="4" stroke="var(--text-3)" stroke-width="1.4"/>
         <line x1="8.7" y1="8.7" x2="11.5" y2="11.5" stroke="var(--text-3)" stroke-width="1.4" stroke-linecap="round"/>
       </svg>
-      <input id="search-input" type="text" placeholder="Search element (name or Z)…"
-             data-i18n-attr="placeholder:ptable.searchPlaceholder"
-             oninput="handleSearchInput(this.value)" onfocus="updateSearchSuggestions(this.value)" onkeydown="handleSearchKey(event)" autocomplete="off">
+      <input id="search-input" type="text" placeholder="Buscar elemento (nome ou Z)…"
+             data-i18n-attr="placeholder:ptable.searchPlaceholder; aria-label:ptable.searchAria"
+             oninput="handleSearchInput(this.value)" onfocus="updateSearchSuggestions(this.value)" onkeydown="handleSearchKey(event)" autocomplete="off" aria-label="Buscar elemento">
       <div class="search-suggestions" id="search-suggestions" role="listbox" aria-label="Search suggestions"></div>
     </div>
 
     <!-- Language toggle -->
     <button class="theme-btn" data-i18n-toggle
             data-i18n-attr="aria-label:common.langToggle; title:common.langToggle"
-            aria-label="Switch language" title="Switch language"
+            aria-label="Trocar idioma" title="Trocar idioma"
             style="margin-left:8px;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;width:auto;min-width:32px;padding:0 8px;">
       <span data-i18n-toggle-label>PT</span>
     </button>
@@ -176,7 +176,7 @@
     <!-- Theme toggle — top right -->
     <button class="theme-btn" id="theme-btn-topbar" onclick="toggleTheme()"
             data-i18n-attr="title:common.themeToggle; aria-label:common.themeToggle"
-            title="Toggle theme" aria-label="Toggle theme" style="margin-left:4px;">
+            title="Alternar tema" aria-label="Alternar tema" style="margin-left:4px;">
       <svg id="theme-icon" width="15" height="15" viewBox="0 0 15 15" fill="none">
         <path d="M7.5 1v1M7.5 13v1M1 7.5H0M15 7.5h-1M2.93 2.93l.7.7M11.37 11.37l.7.7M2.93 12.07l.7-.7M11.37 3.63l.7-.7M7.5 5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
       </svg>
@@ -338,7 +338,7 @@
             <div class="legend-dot" style="background:var(--c-actinide);border-color:var(--c-actinide-b)"></div>
             <span data-i18n="ptable.legendActinide">Actinídeos</span>
           </div>
-          <div class="legend-clear" onclick="clearFilter()" title="Clear selection" data-i18n-attr="title:ptable.legendClearTitle" id="legend-clear-btn" style="display:none">
+          <div class="legend-clear" onclick="clearFilter()" title="Remover seleção" data-i18n-attr="title:ptable.legendClearTitle" id="legend-clear-btn" style="display:none">
             <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
               <path d="M1 1l8 8M9 1L1 9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
             </svg>
@@ -348,11 +348,11 @@
 
         <!-- Download bar -->
         <div class="dl-bar" id="dl-bar">
-          <button class="dl-btn active" id="dl-png-btn" onclick="dlSwitch('png')" title="Download as PNG" data-i18n-attr="title:ptable.dlPngTitle">
+          <button class="dl-btn active" id="dl-png-btn" onclick="dlSwitch('png')" title="Baixar como PNG" data-i18n-attr="title:ptable.dlPngTitle">
             <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="8.5" rx="1.5" stroke="currentColor" stroke-width="1.3" fill="none"/><path d="M1 7l3-3 2.5 2.5L9 4l3 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="6.5" y1="10" x2="6.5" y2="12.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M4 11.5l2.5 1 2.5-1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
             PNG
           </button>
-          <button class="dl-btn" id="dl-pdf-btn" onclick="dlSwitch('pdf')" title="Download as PDF" data-i18n-attr="title:ptable.dlPdfTitle">
+          <button class="dl-btn" id="dl-pdf-btn" onclick="dlSwitch('pdf')" title="Baixar como PDF" data-i18n-attr="title:ptable.dlPdfTitle">
             <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1.5" y="1" width="8" height="11" rx="1.2" stroke="currentColor" stroke-width="1.3" fill="none"/><path d="M4 1v3.5h5.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/><line x1="3.5" y1="6.5" x2="8" y2="6.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/><line x1="3.5" y1="8.5" x2="8" y2="8.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
             PDF
           </button>
@@ -362,7 +362,7 @@
             <span id="dl-action-label" data-i18n="ptable.dlActionPng">Baixar PNG</span>
           </button>
           <div class="dl-divider"></div>
-          <button class="dl-btn" id="fs-btn" onclick="toggleFullTable()" title="Fullscreen (ESC to exit)" aria-label="Fullscreen" data-i18n-attr="title:ptable.dlFullscreenTitle; aria-label:ptable.dlFullscreen">
+          <button class="dl-btn" id="fs-btn" onclick="toggleFullTable()" title="Tela cheia (ESC para sair)" aria-label="Tela cheia" data-i18n-attr="title:ptable.dlFullscreenTitle; aria-label:ptable.dlFullscreen">
             <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M1.5 4.5V1.5h3M8.5 1.5h3v3M11.5 8.5v3h-3M4.5 11.5h-3v-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
             <span data-i18n="ptable.dlFullscreen">Tela cheia</span>
           </button>
@@ -460,10 +460,10 @@
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" fill="currentColor" opacity=".8"/><rect x="8" y="1" width="5" height="5" rx="1" fill="currentColor" opacity=".5"/><rect x="1" y="8" width="5" height="5" rx="1" fill="currentColor" opacity=".5"/><rect x="8" y="8" width="5" height="5" rx="1" fill="currentColor" opacity=".3"/></svg> <span data-i18n="config.ptable">Tabela Periódica</span> </div>
           <div class="settings-row">
             <div class="settings-row-info">
-              <div class="settings-row-label" data-i18n="config.viewmode">Modo de visualização</div>
+              <div class="settings-row-label" id="set-viewmode-label" data-i18n="config.viewmode">Modo de visualização</div>
               <div class="settings-row-desc" data-i18n="config.viewmodeDesc">Por categoria de cor, ou heatmap por propriedade física.</div>
             </div>
-            <select class="settings-select" onchange="setHeatmap(this.value)" id="heatmap-select">
+            <select class="settings-select" onchange="setHeatmap(this.value)" id="heatmap-select" aria-labelledby="set-viewmode-label">
               <option value="category" data-i18n="config.viewCategory">Por Categoria</option>
               <option value="electronegativity" data-i18n="config.viewEneg">Eletronegatividade</option>
               <option value="atomic_radius" data-i18n="config.viewRadius">Raio Atômico</option>
@@ -497,10 +497,10 @@
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M1.5 5h11M1.5 9h11M7 1.5c-2 2-2 9 0 11M7 1.5c2 2 2 9 0 11" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg> <span data-i18n="config.langSection">Idioma</span> </div>
           <div class="settings-row">
             <div class="settings-row-info">
-              <div class="settings-row-label" data-i18n="config.langLabel">Idioma da interface</div>
+              <div class="settings-row-label" id="set-lang-label" data-i18n="config.langLabel">Idioma da interface</div>
               <div class="settings-row-desc" data-i18n="config.langDesc">Muda o idioma de toda a interface.</div>
             </div>
-            <select class="settings-select" onchange="if(window.I18N)I18N.setLang(this.value);else setLanguage(this.value);" id="lang-select">
+            <select class="settings-select" onchange="if(window.I18N)I18N.setLang(this.value);else setLanguage(this.value);" id="lang-select" aria-labelledby="set-lang-label">
               <option value="en" data-i18n="config.langOptEn">Inglês</option>
               <option value="pt" data-i18n="config.langOptPt">Português</option>
             </select>
@@ -590,17 +590,17 @@
       <div class="modal-corner-actions">
         <div class="modal-nav-group">
           <button class="modal-nav-btn" id="m-nav-prev" onclick="navElement(-1)"
-                  aria-label="Previous element" title="Previous element (←)"
+                  aria-label="Elemento anterior" title="Elemento anterior (←)"
                   data-i18n-attr="aria-label:ptable.mNavPrev; title:ptable.mNavPrevTitle">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
           <button class="modal-nav-btn" id="m-nav-next" onclick="navElement(1)"
-                  aria-label="Next element" title="Next element (→)"
+                  aria-label="Próximo elemento" title="Próximo elemento (→)"
                   data-i18n-attr="aria-label:ptable.mNavNext; title:ptable.mNavNextTitle">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
           <button class="modal-nav-btn modal-nav-btn-wide" id="m-nav-compare" onclick="addCurrentToCompare()"
-                  aria-label="Add to compare" title="Add to compare"
+                  aria-label="Adicionar ao comparador" title="Adicionar ao comparador"
                   data-i18n-attr="aria-label:ptable.mNavCompare; title:ptable.mNavCompare">
             <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="2" width="4.5" height="9" rx="1" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="7.5" y="2" width="4.5" height="9" rx="1" stroke="currentColor" stroke-width="1.2" fill="none"/><line x1="5.5" y1="6.5" x2="7.5" y2="6.5" stroke="currentColor" stroke-width="1.2"/></svg>
             <span data-i18n="ptable.mNavCompareLbl">Comparar</span>
@@ -608,7 +608,7 @@
         </div>
         <div class="modal-action-group">
           <a class="modal-cta-corner" id="m-explore-link" href="#" data-i18n="ptable.mExplore">Explorar ↗</a>
-          <button class="modal-close-corner" onclick="closeModal()" aria-label="Close (ESC)" title="Close (ESC)"
+          <button class="modal-close-corner" onclick="closeModal()" aria-label="Fechar (ESC)" title="Fechar (ESC)"
                   data-i18n-attr="aria-label:ptable.mCloseAria; title:ptable.mCloseTitle">✕</button>
         </div>
       </div>
@@ -716,7 +716,7 @@
             <canvas id="bohr-canvas" width="200" height="200" style="display:block;border-radius:50%;"></canvas>
           </div>
           <div class="bohr-controls">
-            <button class="bohr-ctrl-btn" title="Pause / Animate" data-i18n-attr="title:ptable.bohrCtrlTitle" onclick="handleBohrClick('bohr-canvas'); event.stopPropagation();">
+            <button class="bohr-ctrl-btn" title="Pausar / Animar" data-i18n-attr="title:ptable.bohrCtrlTitle" onclick="handleBohrClick('bohr-canvas'); event.stopPropagation();">
               <svg viewBox="0 0 16 16" fill="currentColor" id="bohr-play-icon">
                 <rect x="5" y="4" width="2" height="8" rx=".5"/>
                 <rect x="9" y="4" width="2" height="8" rx=".5"/>

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { createRequire } from 'node:module';
 import { checkPage, audit, normalize } from './a11y-static.mjs';
 
 const page = (body) => `<!doctype html><html lang="en"><head><title>t</title></head><body>${body}</body></html>`;
@@ -90,6 +91,23 @@ assert.equal(normalize('  PT&nbsp;—  Switch\nlanguage '), 'pt — switch langu
   assert.equal(r.totals.withMain, 2);
   assert.equal(r.totals.skipMissing, 1);
   fs.rmSync(root, { recursive: true, force: true });
+}
+
+// ── The PT build bakes translated names into the static HTML ───────────────
+{
+  const require = createRequire(import.meta.url);
+  const { bakeDataI18nAttrs } = require('../build-i18n.js');
+  const dict = { pt: { common: { langToggle: 'Trocar idioma', searchAria: 'Buscar & achar' } } };
+  const html = '<button data-i18n-attr="title:common.langToggle; aria-label:common.langToggle" title="Switch language" aria-label="Switch language">PT</button>' +
+    '<input data-i18n-attr="placeholder:common.searchAria" placeholder="x">' +
+    '<i data-i18n-attr="aria-label:common.missing" aria-label="kept"></i>' +
+    '<meta name="description" data-i18n-attr="content:common.langToggle" content="untouched">';
+  const out = bakeDataI18nAttrs(html, 'pt', dict);
+  assert.match(out, /title="Trocar idioma" aria-label="Trocar idioma"/);
+  assert.match(out, /placeholder="Buscar &amp; achar"/);
+  assert.match(out, /aria-label="kept"/);
+  assert.match(out, /content="untouched"/);
+  assert.equal(bakeDataI18nAttrs(out, 'pt', dict), out, 'idempotent');
 }
 
 console.log('test-a11y-static: ok');

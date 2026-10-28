@@ -170,6 +170,30 @@ function bakeDataI18nText(html, lang, dict) {
   );
 }
 
+// Bake data-i18n-attr values too (aria-label, title, placeholder, alt,
+// label), so the static .pt.html names its controls in Portuguese before
+// i18n.js runs — screen readers and the a11y checks read the static HTML.
+// Only attributes the tag already has are rewritten; meta content is
+// handled above.
+const BAKED_ATTRS = new Set(['aria-label', 'title', 'placeholder', 'alt', 'label']);
+function bakeDataI18nAttrs(html, lang, dict) {
+  return html.replace(/<[a-zA-Z][a-zA-Z0-9:-]*\b[^>]*\bdata-i18n-attr="([^"]+)"[^>]*>/g, function (tag, spec) {
+    let out = tag;
+    spec.split(';').forEach(function (pair) {
+      const idx = pair.indexOf(':');
+      if (idx < 0) return;
+      const attr = pair.slice(0, idx).trim();
+      const key = pair.slice(idx + 1).trim();
+      if (!BAKED_ATTRS.has(attr)) return;
+      const val = resolveKey(dict, lang, key);
+      if (typeof val !== 'string') return;
+      const re = new RegExp('(\\s' + attr + '=")[^"]*(")');
+      out = out.replace(re, function (_m, open, close) { return open + escAttr(val) + close; });
+    });
+    return out;
+  });
+}
+
 function buildVariant(srcAbs, dstAbs, lang, dict) {
   const src = fs.readFileSync(srcAbs, 'utf8');
 
@@ -244,6 +268,7 @@ function buildVariant(srcAbs, dstAbs, lang, dict) {
   );
 
   out = bakeDataI18nText(out, lang, dict);
+  out = bakeDataI18nAttrs(out, lang, dict);
 
   // index.html owns the recovery redirect. The PT page must keep ?lang=pt-BR
   // inside that script; otherwise npm run build copies lang='' from the EN source
@@ -467,4 +492,6 @@ function main() {
   console.log(`Done. Generated=${generated}  Skipped=${skipped}`);
 }
 
-main();
+module.exports = { bakeDataI18nText, bakeDataI18nAttrs, resolveKey, PAGES };
+
+if (require.main === module) main();

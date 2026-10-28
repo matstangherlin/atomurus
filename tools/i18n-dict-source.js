@@ -499,6 +499,7 @@ const DICT = {
         labelEmail:   'E-mail',
         labelSubject: 'Subject',
         labelMessage: 'Message',
+        honeypotAria: 'Leave this field empty',
         subjectChoose: 'Choose a subject…',
         subjectBug:        'Report a bug or scientific error',
         subjectFeedback:   'Feedback / suggestion',
@@ -2045,6 +2046,8 @@ const DICT = {
         mCloseTitle:     'Close (ESC)',
         // Search & topbar
         searchPlaceholder: 'Search element (name or Z)…',
+        searchAria: 'Search element',
+        hmSelectAria: 'Heatmap property',
         // Physical states (used in modal/compare/canvas — translated via stateName helper)
         stateSolid:   'Solid',
         stateLiquid:  'Liquid',
@@ -2777,6 +2780,7 @@ const DICT = {
         labelEmail:   'E-mail',
         labelSubject: 'Assunto',
         labelMessage: 'Mensagem',
+        honeypotAria: 'Deixe este campo em branco',
         subjectChoose: 'Escolha um assunto…',
         subjectBug:        'Reportar bug ou erro científico',
         subjectFeedback:   'Feedback / sugestão',
@@ -4283,6 +4287,8 @@ const DICT = {
         mCloseAria:      'Fechar (ESC)',
         mCloseTitle:     'Fechar (ESC)',
         searchPlaceholder: 'Buscar elemento (nome ou Z)…',
+        searchAria: 'Buscar elemento',
+        hmSelectAria: 'Propriedade do mapa de calor',
         stateSolid:   'Sólido',
         stateLiquid:  'Líquido',
         stateGas:     'Gasoso',
