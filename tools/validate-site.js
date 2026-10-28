@@ -87,6 +87,25 @@ function assertDeployGuards() {
       fail(`Published HTML references assets/concepts: ${path.relative(ROOT, file)}`);
     }
   }
+
+  const scrubNames = [
+    'dev', 'e2e', 'src', 'playwright.config.js', 'build-i18n.js', 'bump-version.js',
+    'bump-version.ps1', 'add-content-script.js', 'add-share-script.js', 'enrich-element-schema.js',
+    'fix-adsense-head.js', 'fix-element-i18n.js', 'fix-mobile-scroll.js', 'migrate-element-seo.js',
+    'patch.js', 'sync-en-meta.js', 'assets/concepts'
+  ];
+  scrubNames.forEach((name) => {
+    if (!scrub.includes(`'${name}'`)) fail(`Missing scrub-publish-tree.js REMOVE_PATHS entry: ${name}`);
+  });
+  ['dev/', 'e2e/', 'src/', 'playwright.config.js', 'build-i18n.js', 'bump-version.js', 'bump-version.ps1', 'assets/concepts/'].forEach((needle) => {
+    if (!ignore.includes(needle)) fail(`Missing .netlifyignore guard: ${needle}`);
+  });
+  ['/dev/*', '/e2e/*', '/src/*', '/playwright.config.js', '/build-i18n.js', '/bump-version.js', '/bump-version.ps1', '/assets/concepts/*'].forEach((needle) => {
+    if (!netlify.includes(needle)) fail(`Missing netlify.toml block redirect: ${needle}`);
+  });
+  if (/'elements-data\.js'/.test(scrub) || /'assets\/i18n\/molecules\.json'/.test(scrub)) {
+    fail('REMOVE_PATHS must not remove elements-data.js or assets/i18n/molecules.json');
+  }
 }
 
 function assertElementContentLoader() {
