@@ -2,7 +2,8 @@
   "_comment": "Prompt 24 — which page loads which part of the periodic table script. Read by tools/patch-pt-modules.js, tools/test-pt-split.mjs and tools/validate-site.js.",
   "core": "periodic-table.js",
   "modules": {
-    "compare": "assets/pt/pt-compare.js"
+    "compare": "assets/pt/pt-compare.js",
+    "isotopes": "assets/pt/pt-isotopes.js"
   },
   "onDemand": {
     "export": "assets/pt/pt-export.js"
@@ -20,7 +21,11 @@
     "periodic-table/compare.pt.html": [
       "compare"
     ],
-    "periodic-table/isotopes.html": [],
-    "periodic-table/isotopes.pt.html": []
+    "periodic-table/isotopes.html": [
+      "isotopes"
+    ],
+    "periodic-table/isotopes.pt.html": [
+      "isotopes"
+    ]
   }
 }
