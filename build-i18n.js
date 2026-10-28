@@ -170,6 +170,46 @@ function bakeDataI18nText(html, lang, dict) {
   );
 }
 
+// Bake data-i18n-html too. The value is trusted markup from the DICT — the
+// same string i18n.js sets as innerHTML — so the static .pt.html reads in the
+// target language before (or without) JS instead of keeping the EN source
+// paragraph. The closing tag is found by counting nested tags of that name;
+// an element whose content holds block markup or other keys is left alone, so
+// an unclosed <p> can never swallow the rest of the page.
+const HTML_BAKE_UNSAFE = /<(p|div|section|article|aside|header|footer|main|nav|ul|ol|table|form|h[1-6])\b|\sdata-i18n(-html)?="/i;
+function bakeDataI18nHtml(html, lang, dict) {
+  const open = /<([a-zA-Z][a-zA-Z0-9:-]*)\b[^>]*\bdata-i18n-html="([^"]+)"[^>]*>/g;
+  let out = '';
+  let last = 0;
+  let m;
+  while ((m = open.exec(html))) {
+    const start = m.index + m[0].length;
+    const end = findCloseTag(html, m[1], start);
+    const val = resolveKey(dict, lang, m[2]);
+    if (end === -1 || typeof val !== 'string' || HTML_BAKE_UNSAFE.test(html.slice(start, end))) continue;
+    out += html.slice(last, start) + val;
+    last = end;
+    open.lastIndex = end;
+  }
+  return out + html.slice(last);
+}
+
+function findCloseTag(html, tag, from) {
+  const re = new RegExp('<(/?)' + tag + '\\b[^>]*>', 'gi');
+  re.lastIndex = from;
+  let depth = 1;
+  let m;
+  while ((m = re.exec(html))) {
+    if (m[1]) {
+      depth--;
+      if (depth === 0) return m.index;
+    } else if (!/\/>$/.test(m[0])) {
+      depth++;
+    }
+  }
+  return -1;
+}
+
 // Bake data-i18n-attr values too (aria-label, title, placeholder, alt,
 // label), so the static .pt.html names its controls in Portuguese before
 // i18n.js runs — screen readers and the a11y checks read the static HTML.
@@ -219,8 +259,16 @@ function bakeSkipLink(html, lang, dict) {
 }
 
 function buildVariant(srcAbs, dstAbs, lang, dict) {
-  const src = fs.readFileSync(srcAbs, 'utf8');
+  const out = renderVariant(fs.readFileSync(srcAbs, 'utf8'), lang, dict, path.basename(srcAbs));
+  if (out == null) return false;
+  fs.writeFileSync(dstAbs, out, 'utf8');
+  return true;
+}
 
+// The <page>.<lang>.html text for an EN source, or null when the page has no
+// data-i18n title/description. Pure, so tools/lint-lang-mix.mjs can check the
+// variant the build would write without writing it.
+function renderVariant(src, lang, dict, name) {
   const titleM = src.match(/<title\s+data-i18n="([^"]+)">[^<]*<\/title>/);
   // Match either attribute order:
   //   data-i18n-attr="content:KEY" content="..."   (most pages)
@@ -229,16 +277,16 @@ function buildVariant(srcAbs, dstAbs, lang, dict) {
     src.match(/<meta\s+name="description"\s+data-i18n-attr="content:([^"]+)"\s+content="[^"]*">/) ||
     src.match(/<meta\s+name="description"\s+content="[^"]*"\s+data-i18n-attr="content:([^"]+)">/);
   if (!titleM || !descM) {
-    console.warn(`  skip (no data-i18n title/desc): ${path.basename(srcAbs)}`);
-    return false;
+    console.warn(`  skip (no data-i18n title/desc): ${name}`);
+    return null;
   }
   const titleKey = titleM[1];
   const descKey  = descM[1];
   const title    = resolveKey(dict, lang, titleKey);
   const desc     = resolveKey(dict, lang, descKey);
   if (title == null || desc == null) {
-    console.warn(`  skip (missing ${lang} translation for ${titleKey} or ${descKey}): ${path.basename(srcAbs)}`);
-    return false;
+    console.warn(`  skip (missing ${lang} translation for ${titleKey} or ${descKey}): ${name}`);
+    return null;
   }
 
   let out = src;
@@ -292,6 +340,7 @@ function buildVariant(srcAbs, dstAbs, lang, dict) {
   );
 
   out = bakeDataI18nText(out, lang, dict);
+  out = bakeDataI18nHtml(out, lang, dict);
   out = bakeDataI18nAttrs(out, lang, dict);
   out = bakeLangToggle(out, lang, dict);
 
@@ -322,8 +371,7 @@ function buildVariant(srcAbs, dstAbs, lang, dict) {
     );
   }
 
-  fs.writeFileSync(dstAbs, out, 'utf8');
-  return true;
+  return out;
 }
 
 // ── Element page builder (PT → EN) ─────────────────────────────────
@@ -520,6 +568,6 @@ function main() {
   console.log(`Done. Generated=${generated}  Skipped=${skipped}`);
 }
 
-module.exports = { bakeDataI18nText, bakeDataI18nAttrs, bakeLangToggle, bakeSkipLink, resolveKey, PAGES };
+module.exports = { bakeDataI18nText, bakeDataI18nHtml, bakeDataI18nAttrs, bakeLangToggle, bakeSkipLink, resolveKey, renderVariant, loadDict, PAGES };
 
 if (require.main === module) main();

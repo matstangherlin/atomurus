@@ -149,3 +149,18 @@ test('404 without JavaScript shows both languages', async ({ browser }) => {
   await expect(page.locator('h1', { hasText: 'This page drifted' })).toBeVisible();
   await context.close();
 });
+
+// ── B04: legal pages in one language each, after i18n.js has run too ────────
+for (const name of ['privacy', 'terms', 'contact']) {
+  for (const lang of ['pt', 'en']) {
+    test(`${name} in ${lang.toUpperCase()}: no block in the other language once the page has run`, async ({ context, page }) => {
+      const { lintHtml } = await import('../tools/lint-lang-mix.mjs');
+      await isolate(context, lang);
+      await page.goto(lang === 'pt' ? `/${name}.pt.html` : `/${name}.html`);
+      await page.waitForLoadState('load');
+      await expect(page.locator('html')).toHaveAttribute('lang', lang === 'pt' ? 'pt-BR' : /^en/);
+      const result = lintHtml(await page.content(), { maxWords: 0 });
+      expect(result.foreign.map((b) => `${b.where} ${b.text}`)).toEqual([]);
+    });
+  }
+}

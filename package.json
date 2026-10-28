@@ -57,6 +57,7 @@
     "test:safe-area": "playwright test e2e/a1-mobile.spec.js --grep \"safe area\"",
     "test:isotopes": "node tools/test-isotopes-data.mjs",
     "test:404": "node tools/test-404-and-redirects.mjs",
+    "test:lang-mix": "node tools/test-lang-mix.mjs && node tools/lint-lang-mix.mjs",
     "test:pt-split": "node tools/test-pt-split.mjs",
     "test:pt-pages": "playwright test e2e/periodic-table-pages.spec.js",
     "test:no-horizontal-overflow": "playwright test e2e/a1-mobile.spec.js e2e/mobile-overflow.spec.js --grep \"overflow\"",
@@ -72,7 +73,7 @@
     "validate": "node tools/validate-site.js",
     "warm:cache": "node tools/warm-edge-cache.js",
     "smoke:prod": "node tools/smoke-prod.js",
-    "ci": "npm run build && npm run test:plan && npm run test:auth && npm run test:study && npm run test:review && npm run test:insights && npm run test:billing && npm run test:ux && npm run test:lang && npm run test:editorial && npm run test:consent && npm run test:content && npm run test:data && npm run test:pro-lab && npm run test:solver && npm run test:calc && npm run test:sci && npm run test:molecules && npm run test:lab-access && npm run test:publish && npm run test:contact && npm run test:rate-store && npm run test:third-party && npm run test:images && npm run test:csp-audit && npm run test:a11y && npm run test:pt-split && npm run test:isotopes && npm run test:404 && npm run test:ui-v2 && npm run test:a1 && npm run validate"
+    "ci": "npm run build && npm run test:plan && npm run test:auth && npm run test:study && npm run test:review && npm run test:insights && npm run test:billing && npm run test:ux && npm run test:lang && npm run test:editorial && npm run test:consent && npm run test:content && npm run test:data && npm run test:pro-lab && npm run test:solver && npm run test:calc && npm run test:sci && npm run test:molecules && npm run test:lab-access && npm run test:publish && npm run test:contact && npm run test:rate-store && npm run test:third-party && npm run test:images && npm run test:csp-audit && npm run test:a11y && npm run test:pt-split && npm run test:isotopes && npm run test:404 && npm run test:lang-mix && npm run test:ui-v2 && npm run test:a1 && npm run validate"
   },
   "dependencies": {
     "stripe": "^22.3.0"
