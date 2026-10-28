@@ -709,6 +709,45 @@ function buildTable() {
 
 
 
+// ── Modal focus (a11y): the closed overlay is inert and hidden from screen
+// readers; opening it moves focus inside, Tab stays inside, and closing it
+// gives focus back to what opened it (or to the current element's cell).
+let modalReturnFocus = null;
+function setModalHidden(overlay, hidden) {
+  if (hidden) {
+    overlay.setAttribute('aria-hidden', 'true');
+    overlay.setAttribute('inert', '');
+  } else {
+    overlay.removeAttribute('aria-hidden');
+    overlay.removeAttribute('inert');
+  }
+}
+function modalFocusables(modal) {
+  return Array.from(modal.querySelectorAll(
+    'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+  )).filter(node => node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden');
+}
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Tab') return;
+  const overlay = document.getElementById('overlay');
+  const modal = document.getElementById('modal');
+  if (!overlay || !modal || !overlay.classList.contains('open')) return;
+  const items = modalFocusables(modal);
+  if (!items.length) { e.preventDefault(); return; }
+  const first = items[0];
+  const last = items[items.length - 1];
+  if (!modal.contains(document.activeElement)) {
+    e.preventDefault();
+    (e.shiftKey ? last : first).focus();
+  } else if (e.shiftKey && document.activeElement === first) {
+    e.preventDefault();
+    last.focus();
+  } else if (!e.shiftKey && document.activeElement === last) {
+    e.preventDefault();
+    first.focus();
+  }
+});
+
 function openModal(el) {
   currentElement = el;
   // Lab Console — update data strip selected indicator
@@ -803,7 +842,14 @@ function openModal(el) {
   const left = document.getElementById('modal-l');
   left.className = `modal-l c-${el.cat}`;
 
+  const wasOpen = overlay.classList.contains('open');
+  if (!wasOpen) modalReturnFocus = document.activeElement;
+  setModalHidden(overlay, false);
   overlay.classList.add('open');
+  if (!wasOpen) {
+    const close = overlay.querySelector('.modal-close-corner');
+    if (close) close.focus({ preventScroll: true });
+  }
   // Reflect navigation availability (prev disabled at Z=1, next disabled at Z=118)
   updateNavButtons();
 
@@ -822,7 +868,18 @@ function openModal(el) {
 }
 
 function closeModal() {
-  document.getElementById('overlay').classList.remove('open');
+  const overlay = document.getElementById('overlay');
+  const wasOpen = overlay.classList.contains('open');
+  overlay.classList.remove('open');
+  setModalHidden(overlay, true);
+  if (wasOpen) {
+    let back = modalReturnFocus;
+    if (!back || !back.isConnected || back === document.body) {
+      back = currentElement ? document.querySelector(`.el[data-z="${currentElement.z}"]`) : null;
+    }
+    modalReturnFocus = null;
+    if (back && typeof back.focus === 'function') back.focus({ preventScroll: true });
+  }
   // Stop the main viewer's animation loop (using the per-canvas registry)
   if (bohrAnims['bohr-canvas']) {
     cancelAnimationFrame(bohrAnims['bohr-canvas']);

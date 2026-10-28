@@ -2043,6 +2043,7 @@ const DICT = {
         mNavCompare:     'Add to compare',
         mNavCompareLbl:  'Compare',
         mCloseAria:      'Close (ESC)',
+        mDialogAria:     'Element details',
         mCloseTitle:     'Close (ESC)',
         // Search & topbar
         searchPlaceholder: 'Search element (name or Z)…',
@@ -4285,6 +4286,7 @@ const DICT = {
         mNavCompare:     'Adicionar ao comparador',
         mNavCompareLbl:  'Comparar',
         mCloseAria:      'Fechar (ESC)',
+        mDialogAria:     'Detalhes do elemento',
         mCloseTitle:     'Fechar (ESC)',
         searchPlaceholder: 'Buscar elemento (nome ou Z)…',
         searchAria: 'Buscar elemento',
