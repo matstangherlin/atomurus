@@ -8,7 +8,9 @@
 (function (global) {
   'use strict';
 
-  var DEFAULT_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+  // CDN stays the default. Set window.ATOMURUS_THREE_SRC before this file
+  // to point at a self-hosted build without editing the loader.
+  var THREE_SRC = global.ATOMURUS_THREE_SRC || 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
   var pending = null;
 
   function loadThree(src) {
@@ -17,7 +19,7 @@
 
     pending = new Promise(function (resolve, reject) {
       var s = document.createElement('script');
-      s.src = src || DEFAULT_SRC;
+      s.src = src || THREE_SRC;
       s.async = true;
       s.dataset.atomurusDep = 'three';
       s.onload = function () {
@@ -321,17 +323,4 @@
     );
   };
   global.atomurusShowProViewerError = global.atomurusShowLabViewerError;
-
-  (function prefetchLikelyViewer() {
-    var path = (global.location && global.location.pathname) || '';
-    if (!/\/viewer\//.test(path)) return;
-    function warm() {
-      loadThree().then(function () { return loadPaperLab(); }).catch(function () {});
-    }
-    if (typeof global.requestIdleCallback === 'function') {
-      global.requestIdleCallback(warm, { timeout: 1800 });
-    } else {
-      setTimeout(warm, 400);
-    }
-  })();
 })(typeof window !== 'undefined' ? window : this);
