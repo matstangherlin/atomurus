@@ -10,15 +10,25 @@
  * SCHEMA (per isotope)
  *   a    — mass number (A = protons + neutrons)
  *   ab   — natural abundance as a fraction (0–1), or null if synthetic / cosmogenic-only
- *   hl   — half-life in seconds, or null for stable
+ *   hl   — half-life in seconds, or null when no decay has been observed
+ *          (older code reads hl == null as "stable"; that stays true)
  *   hlf  — display-formatted half-life ('stable', '5,730 y', '12.32 y', '8.02 d' …)
  *   dec  — array of decay modes (ISO codes: 'β-', 'β+', 'α', 'EC', 'γ', '2β-', 'SF', 'IT')
  *   prim — primordial flag (occurred at Earth's formation, still present)
+ *   stab — 'stable' | 'obs-stable' | 'radioactive' (filled in below when not given):
+ *          stable      no decay mode and no half-life;
+ *          obs-stable  "observationally stable": a decay is expected or seen but the
+ *                      half-life is beyond OBS_STABLE_MIN_YEARS (or only a lower limit
+ *                      is known), so in practice it does not decay;
+ *          radioactive everything else with a half-life.
+ *   hlKind — 'measured' | 'lower-limit' | 'estimated' (filled in when hl is known)
+ *   verified — false on values that still need checking against the sources below
  *
  * SOURCE & ACCURACY
- *   Values populated from training-data memory (mix of NUBASE-2020 / AME-2020 / IUPAC-2021).
- *   Adequate for vestibular/ensino-médio precision (no 5+ decimal demands).
- *   NOT to be cited in scientific publications — use IAEA NUBASE evaluations for that.
+ *   Curated data for vestibular / ensino médio. Review against NUBASE2020 and AME2020
+ *   (half-lives, decay modes, masses) and CIAAW/IUPAC (abundances) is PENDING — see
+ *   docs/data/isotopos-pendencias.md. Until then these values are not a citable source;
+ *   entries marked verified:false were added without that check.
  *
  * UNITS HELPER — half-life seconds (for memory):
  *   1 year   ≈ 3.156e7  s
@@ -122,6 +132,8 @@
 
     // C — Carbon  (C-14 → radiocarbon dating)
     6: [
+      // PET tracer. Half-life to be checked against NUBASE2020 (prompt 25).
+      { a: 11, ab: null,   hl: 20 * 60, hlf: '≈ 20 min', dec: ['β+'], prim: false, verified: false },
       { a: 12, ab: 0.9893, hl: null, hlf: 'stable', dec: [], prim: true },
       { a: 13, ab: 0.0107, hl: null, hlf: 'stable', dec: [], prim: true },
       { a: 14, ab: null,   hl: 5730 * YEAR, hlf: '5,730 y', dec: ['β-'], prim: false }
@@ -222,7 +234,7 @@
       { a: 43, ab: 0.00135, hl: null, hlf: 'stable', dec: [], prim: true },
       { a: 44, ab: 0.02086, hl: null, hlf: 'stable', dec: [], prim: true },
       { a: 46, ab: 0.00004, hl: null, hlf: 'stable', dec: [], prim: true },
-      { a: 48, ab: 0.00187, hl: null, hlf: 'stable', dec: ['2β-'], prim: true }
+      { a: 48, ab: 0.00187, hl: null, hlf: 'observationally stable', dec: ['2β-'], prim: true }
     ],
 
     // Sc — Scandium (monoisotopic)
@@ -335,7 +347,8 @@
 
     // Kr — Krypton
     36: [
-      { a: 78, ab: 0.00355, hl: null, hlf: 'stable', dec: [], prim: true },
+      // Double electron capture reported; half-life to be taken from NUBASE2020.
+      { a: 78, ab: 0.00355, hl: null, hlf: 'observationally stable', dec: [], prim: true, stab: 'obs-stable', verified: false },
       { a: 80, ab: 0.02286, hl: null, hlf: 'stable', dec: [], prim: true },
       { a: 82, ab: 0.11593, hl: null, hlf: 'stable', dec: [], prim: true },
       { a: 83, ab: 0.11500, hl: null, hlf: 'stable', dec: [], prim: true },
@@ -569,7 +582,8 @@
 
     // Eu — Europium
     63: [
-      { a: 151, ab: 0.4781, hl: null, hlf: 'stable', dec: [], prim: true },
+      // α decay reported; half-life to be taken from NUBASE2020.
+      { a: 151, ab: 0.4781, hl: null, hlf: 'observationally stable', dec: [], prim: true, stab: 'obs-stable', verified: false },
       { a: 153, ab: 0.5219, hl: null, hlf: 'stable', dec: [], prim: true }
     ],
 
@@ -649,7 +663,8 @@
 
     // Ta — Tantalum (180mTa is the ONLY naturally-occurring nuclear isomer in nature)
     73: [
-      { a: 180, m: true, ab: 0.00012, hl: null, hlf: 'stable (isomer)', dec: [], prim: true },
+      // Never seen to decay: only a lower limit on the half-life exists (value pending NUBASE2020).
+      { a: 180, m: true, ab: 0.00012, hl: null, hlf: 'no decay observed (isomer)', dec: [], prim: true, stab: 'obs-stable', hlKind: 'lower-limit', verified: false },
       { a: 181, ab: 0.99988, hl: null, hlf: 'stable', dec: [], prim: true }
     ],
 
@@ -723,7 +738,9 @@
       { a: 204, ab: 0.014, hl: null, hlf: 'stable', dec: [], prim: true },
       { a: 206, ab: 0.241, hl: null, hlf: 'stable', dec: [], prim: true },  // end of 238U chain
       { a: 207, ab: 0.221, hl: null, hlf: 'stable', dec: [], prim: true },  // end of 235U chain
-      { a: 208, ab: 0.524, hl: null, hlf: 'stable', dec: [], prim: true }   // end of 232Th chain; doubly-magic
+      { a: 208, ab: 0.524, hl: null, hlf: 'stable', dec: [], prim: true },  // end of 232Th chain; doubly-magic
+      // In the 238U chain (radiogenic, not primordial). Half-life and branches to be checked against NUBASE2020.
+      { a: 210, ab: null, hl: 22 * YEAR, hlf: '≈ 22 y', dec: ['β-', 'α'], prim: false, verified: false }
     ],
 
     // Bi — Bismuth (once thought stable, actually α-emitting with longest half-life ever measured)
@@ -932,9 +949,68 @@
 
   };
 
+  // ───── STABILITY (prompt 25) ─────
+  // A half-life beyond this counts as "observationally stable" (it does not decay
+  // on any human or geological scale; e.g. Te-128, Bi-209).
+  const OBS_STABLE_MIN_YEARS = 1e18;
+  // Teaching choice (owner / teacher): true shows obs-stable isotopes as "stable"
+  // with a note instead of their own label. The correct default is false.
+  const DEFAULT_SHOW_OBS_STABLE_AS_STABLE = false;
+
+  function isotopeStability(iso) {
+    if (!iso) return null;
+    if (iso.stab) return iso.stab;
+    if (iso.hl == null) return iso.dec && iso.dec.length ? 'obs-stable' : 'stable';
+    return iso.hl / YEAR > OBS_STABLE_MIN_YEARS ? 'obs-stable' : 'radioactive';
+  }
+  Object.keys(ISOTOPES).forEach(function (z) {
+    ISOTOPES[z].forEach(function (iso) {
+      iso.stab = isotopeStability(iso);
+      if (iso.hl != null && !iso.hlKind) iso.hlKind = 'measured';
+    });
+  });
+
+  // Where the numbers come from, for the isotopes page footer and the docs.
+  // reviewed:false until the dataset is regenerated from these sources (mode A).
+  const ISOTOPE_SOURCES = {
+    halfLife: 'NUBASE2020 (Kondev et al., 2021)',
+    mass: 'AME2020 (Wang et al., 2021)',
+    abundance: 'CIAAW/IUPAC',
+    reviewed: false,
+    retrievedOn: null
+  };
+
+  // ───── AVERAGE ATOMIC MASS ─────
+  // Σ(abundance × mass) / Σ(abundance) over the naturally occurring isotopes.
+  // The dataset has mass NUMBERS only (no AME2020 isotopic masses yet), so the
+  // result is an approximation "with whole mass numbers" (Cl → 35.48, not 35.45)
+  // and is not compared with the table's atomic mass.
+  const AVERAGE_MASS_METHOD = 'mass-number';
+
+  function averageAtomicMassTerms(z) {
+    const list = ISOTOPES[z] || [];
+    return list
+      .filter(function (iso) { return iso.ab != null && iso.ab > 0; })
+      .map(function (iso) { return { a: iso.a, m: !!iso.m, ab: iso.ab, mass: iso.mass != null ? iso.mass : iso.a }; });
+  }
+
+  function averageAtomicMass(z) {
+    const terms = averageAtomicMassTerms(z);
+    const total = terms.reduce(function (s, t) { return s + t.ab; }, 0);
+    if (!terms.length || !(total > 0)) return null;
+    return terms.reduce(function (s, t) { return s + t.ab * t.mass; }, 0) / total;
+  }
+
   // ───── EXPORT ─────
   root.ISOTOPES = ISOTOPES;
   root.formatHalfLife = formatHalfLife;
   root.formatAbundance = formatAbundance;
+  root.isotopeStability = isotopeStability;
+  root.ISOTOPE_SOURCES = ISOTOPE_SOURCES;
+  root.OBS_STABLE_MIN_YEARS = OBS_STABLE_MIN_YEARS;
+  root.DEFAULT_SHOW_OBS_STABLE_AS_STABLE = DEFAULT_SHOW_OBS_STABLE_AS_STABLE;
+  root.averageAtomicMass = averageAtomicMass;
+  root.averageAtomicMassTerms = averageAtomicMassTerms;
+  root.AVERAGE_MASS_METHOD = AVERAGE_MASS_METHOD;
 
 })(typeof window !== 'undefined' ? window : globalThis);
