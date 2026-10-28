@@ -20,7 +20,7 @@
     "test:study": "node tools/test-study-cloud.mjs",
     "test:review": "node tools/test-review.mjs",
     "test:insights": "node tools/test-insights.mjs",
-    "test:billing": "node tools/test-billing-geo.mjs && node tools/test-billing-lifecycle.mjs && node tools/test-account-plan-ui.mjs",
+    "test:billing": "node tools/test-billing-geo.mjs && node tools/test-billing-lifecycle.mjs && node tools/test-billing-webhook.mjs && node tools/test-account-plan-ui.mjs",
     "test:lang": "node tools/test-lang-redirects.mjs && node tools/test-pt-terminology.mjs",
     "test:editorial": "node tools/test-editorial-blocks.mjs && node tools/test-isomerism-quiz.mjs",
     "test:ux": "node tools/test-workspace-ux.mjs && node tools/test-study-hub.mjs && node tools/test-viz-prototype.mjs && node tools/test-virtual-lab.mjs && node tools/test-lab-ph.mjs && node tools/test-lab-mechanics.mjs && node tools/test-lab-poe.mjs && node tools/test-account-nav.mjs && node tools/test-periodic-search.mjs && npm run test:lang",

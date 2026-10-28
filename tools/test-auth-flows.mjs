@@ -213,6 +213,35 @@ await withAuthEnv(async () => {
 });
 
 await withAuthEnv(async () => {
+  // 2b. corpo vazio / campos vazios → 400 (pedido malformado), sem chamar o
+  // provedor nem gastar o limite de tentativas; credencial inválida segue 401.
+  let upstream = 0;
+  installSupabaseMock([{
+    match: () => true,
+    respond: async () => { upstream += 1; return jsonRes(400, { error: 'invalid_grant' }); }
+  }]);
+  resetAuthRateLimiters();
+  for (const body of [{}, { identifier: '', password: '' }, { identifier: 'alice@atomurus.com', password: '' }, { identifier: '   ', password: 'Correct#Pass' }, 'null', '[]', '"text"']) {
+    const res = await loginHandler(cookieRequest('https://atomurus.com/api/auth/login', { method: 'POST', body }));
+    assert.equal(res.status, 400, `empty login ${JSON.stringify(body)} → 400`);
+    assert.deepEqual(await readJson(res), { ok: false, error: 'Invalid request' });
+  }
+  assert.equal(upstream, 0, 'an empty request never reaches the provider');
+  assert.equal(loginIdentifierLimiter.keys().length, 0, 'nor the rate limiter');
+  const short = await loginHandler(cookieRequest('https://atomurus.com/api/auth/login', {
+    method: 'POST',
+    body: { identifier: 'alice@atomurus.com', password: 'short' }
+  }));
+  assert.equal(short.status, 401, 'a password that cannot be right is still a failed sign-in');
+  const wrong = await loginHandler(cookieRequest('https://atomurus.com/api/auth/login', {
+    method: 'POST',
+    body: { identifier: 'alice@atomurus.com', password: 'Wrong#Pass' }
+  }));
+  assert.equal(wrong.status, 401);
+  assert.equal(upstream, 1);
+});
+
+await withAuthEnv(async () => {
   // 3 + 4. reload / persistência via access token; reopen via refresh
   installSupabaseMock([{
     match: (url, method) => method === 'GET' && url.endsWith('/user'),

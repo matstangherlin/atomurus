@@ -492,6 +492,47 @@ export async function supabaseAdminGetUser(userId) {
   return normalizeSupabaseUser(data.user || data);
 }
 
+/* Deletes the user in the auth provider; every table of the app references
+   profiles(id) ON DELETE CASCADE, so the rows go with it (prompt 29,
+   tools/test-account-delete.mjs proves the cascade). Idempotent: a user that
+   no longer exists is not an error. */
+export async function supabaseAdminDeleteUser(userId) {
+  if (!userId) {
+    const err = new Error('Missing user id');
+    err.status = 400;
+    throw err;
+  }
+  const res = await upstreamFetch(authUrl(`/admin/users/${encodeURIComponent(userId)}`), {
+    method: 'DELETE',
+    headers: serviceHeaders()
+  });
+  if (res.status === 404) return { deleted: false, missing: true };
+  await parseSupabaseResponse(res);
+  return { deleted: true, missing: false };
+}
+
+/* PostgREST with the service role, for tables no user may read (the webhook
+   dedupe table). Returns the parsed JSON body, or null when there is none. */
+export async function supabaseServiceRest(path, init = {}) {
+  const cfg = supabaseConfig();
+  if (!cfg) {
+    const err = new Error('Supabase is not configured');
+    err.status = 500;
+    throw err;
+  }
+  const res = await upstreamFetch(`${cfg.url}/rest/v1${path}`, {
+    ...init,
+    headers: serviceHeaders(init.headers || {})
+  });
+  const text = await res.text();
+  if (!res.ok) {
+    const err = new Error(`Supabase REST ${res.status}`);
+    err.status = res.status >= 500 ? 503 : 500;
+    throw err;
+  }
+  return text ? JSON.parse(text) : null;
+}
+
 async function resolveLoginEmail(identifier) {
   const raw = String(identifier || '').trim();
   if (!raw) {
