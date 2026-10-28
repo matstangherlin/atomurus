@@ -32,5 +32,26 @@
     "periodic-table/isotopes.pt.html": [
       "isotopes"
     ]
+  },
+  "_inertHandlers": "The heatmap pages still carry the compare, trends and isotopes panels (.tab-content without .active, display:none) and the hidden compare picker; their buttons call module functions the page does not load. They cannot be reached, so the calls are listed here instead of loading ~200 KB for nothing.",
+  "inertHandlers": {
+    "periodic-table/heatmap.html": [
+      "openCompPicker",
+      "clearCompSlot",
+      "closeCompPickerBg",
+      "filterCompPicker",
+      "closeCompPicker",
+      "renderTrendChart",
+      "filterIsoList"
+    ],
+    "periodic-table/heatmap.pt.html": [
+      "openCompPicker",
+      "clearCompSlot",
+      "closeCompPickerBg",
+      "filterCompPicker",
+      "closeCompPicker",
+      "renderTrendChart",
+      "filterIsoList"
+    ]
   }
 }

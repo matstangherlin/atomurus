@@ -120,6 +120,27 @@ function assertElementContentLoader() {
   }
 }
 
+// Prompt 24: periodic-table.js is split into a core and per-page modules
+// (tools/pt-modules.json). Every file exists and every page loads the core
+// and its own modules (tools/test-pt-split.mjs checks the details).
+function assertPtModules() {
+  const config = JSON.parse(read('tools/pt-modules.json'));
+  const files = [config.core, ...Object.values(config.modules), ...Object.values(config.onDemand || {})];
+  files.forEach((file) => {
+    if (!fs.existsSync(path.join(ROOT, file))) fail(`tools/pt-modules.json: ${file} is missing`);
+  });
+  Object.entries(config.pages).forEach(([page, modules]) => {
+    if (!fs.existsSync(path.join(ROOT, page))) return fail(`tools/pt-modules.json: page ${page} is missing`);
+    const html = read(page);
+    [config.core, ...modules.map((key) => config.modules[key])].forEach((file) => {
+      if (!html.includes(`/${file}?v=`) && !html.includes(`"${file}?v=`)) fail(`${page} does not load ${file}`);
+    });
+    Object.values(config.onDemand || {}).forEach((file) => {
+      if (html.includes(file)) fail(`${page} loads the on-demand ${file} up front`);
+    });
+  });
+}
+
 function assertIsomerismVariants() {
   REQUIRED_VARIANTS.forEach((relPath) => {
     if (!fs.existsSync(path.join(ROOT, relPath))) {
@@ -875,6 +896,7 @@ function main() {
   assertDeployGuards();
   assertElementContentLoader();
   assertIsomerismVariants();
+  assertPtModules();
   assertReadme();
   assertHomePreviewPayload();
   assertI18nNamespaceAssets();
