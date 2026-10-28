@@ -546,6 +546,7 @@
                   <div id="sci-suggestions" class="sci-suggestions" role="listbox" aria-label="Calculator suggestions"></div>
                 </div>
                 <div class="calc-help" data-i18n="calc.expressionHelp">Type a chemical expression or use a helper function.</div>
+                <div class="calc-help" data-i18n="calc.sciDecimalHelp">Use a point for decimals (2.5): the comma separates arguments, as in log(8, 2).</div>
                 <div id="sci-syntax-help" class="sci-inline-help">
                   <span data-i18n="calc.syntaxLabel">Syntax</span>
                   <code>molarMass("H2SO4")</code>
@@ -1724,7 +1725,7 @@ function sciText(key) {
   const dict = calcLangIsPt()
     ? {
         empty:'Digite uma expressão',
-        invalid:'Expressão inválida',
+        error:'Erro',
         result:'Resultado',
         sci:'Notação científica',
         expression:'Expressão',
@@ -1736,12 +1737,11 @@ function sciText(key) {
         historyLoaded:'historico carregado',
         noAnswer:'sem resultado anterior',
         noContext:'nenhum contexto quimico',
-        noConstants:'nenhuma constante',
-        syntax:'Sintaxe inválida'
+        noConstants:'nenhuma constante'
       }
     : {
         empty:'Enter an expression',
-        invalid:'Invalid expression',
+        error:'Error',
         result:'Result',
         sci:'Scientific notation',
         expression:'Expression',
@@ -1753,8 +1753,7 @@ function sciText(key) {
         historyLoaded:'history loaded',
         noAnswer:'no previous answer',
         noContext:'no chemistry helper context',
-        noConstants:'no constants',
-        syntax:'Invalid syntax'
+        noConstants:'no constants'
       };
   return dict[key] || key;
 }
@@ -1781,13 +1780,27 @@ document.addEventListener('click', function (e) {
   if (btn) setScientificAngle(btn.getAttribute('data-sci-angle'));
 });
 function evaluateScientificExpression(expr) {
-  return SCI.evaluateScientificExpression(expr, { molarMass: sciMolarMass, syntaxLabel: sciText('syntax'), angleMode: sciAngleMode });
+  return SCI.evaluateScientificExpression(expr, { molarMass: sciMolarMass, angleMode: sciAngleMode });
+}
+/* Shown with a decimal comma in Portuguese; the copied value keeps the point
+   so it can be typed back in. */
+function sciLocalNumber(text) {
+  return calcLangIsPt() ? String(text).replace('.', ',') : String(text);
 }
 function formatScientificValue(value) {
   if (value === 0) return '0';
   const abs = Math.abs(value);
-  if (abs >= 1e6 || abs < 1e-4) return value.toExponential(8);
-  return Number(value.toPrecision(10)).toString();
+  if (abs >= 1e6 || abs < 1e-4) return sciLocalNumber(value.toExponential(8));
+  return sciLocalNumber(Number(value.toPrecision(10)).toString());
+}
+/* The engine's errors carry a code; the dictionary says them in the page's language. */
+function sciErrorText(err) {
+  if (err && err.code) {
+    const key = 'sciErr' + err.code.charAt(0).toUpperCase() + err.code.slice(1);
+    const text = solverT(key, err.params || {});
+    if (text && text !== key) return text;
+  }
+  return (err && err.message) || sciText('error');
 }
 function describeScientificExpression(functions) {
   const lang = calcLangIsPt() ? 'pt' : 'en';
@@ -1941,7 +1954,7 @@ function runScientific(options = {}) {
   if (!expr) {
     body.innerHTML = '<div class="calc-result-empty">' + sciText('empty') + '</div>';
     setScientificDisplay({ expr: '', result: '--', scientific: '--' });
-    meta.textContent = sciText('invalid');
+    meta.textContent = sciText('empty');
     return;
   }
   try {
@@ -1950,7 +1963,7 @@ function runScientific(options = {}) {
     const constants = evaluated.constants.length ? evaluated.constants.join(', ') : sciText('noConstants');
     const notes = describeScientificExpression(evaluated.functions);
     const resultText = formatScientificValue(value);
-    const scientificText = value.toExponential(8);
+    const scientificText = sciLocalNumber(value.toExponential(8));
     const detailsHtml = buildScientificDetails(expr, constants, notes);
     setScientificDisplay({ expr, result: resultText, scientific: scientificText });
     body.innerHTML = detailsHtml;
@@ -1967,13 +1980,13 @@ function runScientific(options = {}) {
       renderScientificHistory();
     }
   } catch (err) {
-    body.innerHTML = `<div class="calc-result-empty" style="color:var(--lc-amber)">${escapeHtml(err.message || sciText('invalid'))}</div>`;
-    setScientificDisplay({ expr, result: sciText('invalid'), scientific: '--', error: true });
+    body.innerHTML = `<div class="calc-result-empty" style="color:var(--lc-amber)">${escapeHtml(sciErrorText(err))}</div>`;
+    setScientificDisplay({ expr, result: sciText('error'), scientific: '--', error: true });
     const copyValueBtn = document.getElementById('sci-copy-value');
     if (copyValueBtn) copyValueBtn.dataset.copyValue = '';
     const calcCopyBtn = document.getElementById('scc-copy-value');
     if (calcCopyBtn) calcCopyBtn.dataset.copyValue = '';
-    meta.textContent = sciText('invalid');
+    meta.textContent = sciText('error');
   }
 }
 function resetScientific() {

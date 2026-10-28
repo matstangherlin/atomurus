@@ -111,12 +111,46 @@ fails('density(10,0)', /volume > 0/);
 fails('foo(1)', /Unknown function "foo"/);
 fails('bar', /Unknown constant "bar"/);
 fails('2 $ 3', /Invalid syntax: \$/);
-fails('1+', /Unexpected token/);
+fails('1+', /Unexpected end/);
 fails('((1)', /Expected "\)"/);
 fails('2(3)', /Unexpected token/, null);
 fails('2pi', /Unexpected token/);
 fails('dilution(1,2)', /expects 3 arguments/);
 fails('molarMass("H2O")', /not available/, { molarMass: null });
+
+// ── Typed errors: the page says them in its own language ─────────────────────
+function code(expr, extra) {
+  try { value(expr, extra); } catch (err) { return [err.code, err.params]; }
+  return null;
+}
+assert.deepEqual(code('1/0'), ['div0', {}]);
+assert.deepEqual(code('0/0'), ['div0', {}]);
+assert.deepEqual(code('sqrt(-1)'), ['domain', { fn: 'sqrt()' }]);
+assert.deepEqual(code('asin(2)'), ['domain', { fn: 'asin()' }]);
+assert.deepEqual(code('log(-1)'), ['domain', { fn: 'log()' }]);
+assert.deepEqual(code('density(10,0)'), ['domain', { fn: 'density()' }]);
+assert.deepEqual(code('1+'), ['incomplete', {}]);
+assert.deepEqual(code('((1)'), ['incomplete', {}]);
+assert.deepEqual(code('2 $ 3'), ['syntax', { token: '$' }]);
+assert.deepEqual(code('1 2'), ['syntax', { token: '2' }]);
+assert.deepEqual(code('foo(1)'), ['unknownFn', { name: 'foo' }]);
+assert.deepEqual(code('bar'), ['unknownConst', { name: 'bar' }]);
+assert.deepEqual(code('dilution(1,2)'), ['arity', { fn: 'dilution()', n: '3' }]);
+assert.deepEqual(code('log()'), ['arity', { fn: 'log()', n: '1/2' }]);
+assert.deepEqual(code('(-1)!'), ['factorial', {}]);
+assert.deepEqual(code('171!'), ['factorial', {}]);
+assert.deepEqual(code('"x"'), ['notNumber', {}]);
+assert.deepEqual(code('10^400'), ['overflow', {}]);
+assert.deepEqual(code('molarMass("H2O")', { molarMass: null }), ['unavailable', { fn: 'molarMass()' }]);
+
+// Every code has a message in both languages in the dictionary.
+const { DICT } = require('./i18n-dict-source.js');
+for (const c of ['div0', 'domain', 'incomplete', 'syntax', 'unknownFn', 'unknownConst', 'arity', 'factorial', 'notNumber', 'overflow', 'unavailable']) {
+  const key = 'sciErr' + c.charAt(0).toUpperCase() + c.slice(1);
+  assert.ok(DICT.en.calc[key] && DICT.pt.calc[key] && DICT.en.calc[key] !== DICT.pt.calc[key], `${key} in EN and PT`);
+}
+assert.equal(DICT.pt.calc.sciErrDiv0, 'Divisão por zero');
+assert.equal(DICT.en.calc.sciErrDiv0, 'Division by zero');
 
 // Used constants and functions are reported for the chemistry context panel.
 const ctx = sci.evaluateScientificExpression('pH(Kw/1e-7)', opts);

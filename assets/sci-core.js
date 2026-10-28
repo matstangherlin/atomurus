@@ -53,19 +53,39 @@
     percentYield: { en: 'percentYield(actual,theoretical) returns reaction yield in percent.', pt: 'percentYield(actual,theoretical) retorna o rendimento percentual da reação.' }
   };
 
+  /* Every error carries a code (and the names it is about) so the page can
+     say it in the reader's language; message stays as an English fallback.
+     Codes: div0, domain, incomplete, syntax, unknownFn, unknownConst, arity,
+     factorial, notNumber, overflow, unavailable. */
+  function sciError(code, params, message) {
+    var err = new Error(message);
+    err.code = code;
+    err.params = params || {};
+    return err;
+  }
+
+  function fnOf(label) {
+    var m = /^[A-Za-z_][A-Za-z0-9_]*/.exec(String(label || ''));
+    return m ? m[0] + '()' : '';
+  }
+
   function sciNumber(value, label) {
-    if (typeof value !== 'number' || !Number.isFinite(value)) throw new Error(label + ' requires a numeric value');
+    if (typeof value !== 'number' || !Number.isFinite(value)) throw sciError('notNumber', { fn: fnOf(label) }, label + ' requires a numeric value');
     return value;
   }
 
   function sciPositive(value, message) {
-    if (!(value > 0)) throw new Error(message);
+    if (!(value > 0)) throw sciError('domain', { fn: fnOf(message) }, message);
     return value;
   }
 
+  function domain(fn, message) {
+    return sciError('domain', { fn: fn }, message);
+  }
+
   function sciFactorial(x) {
-    if (!Number.isInteger(x) || x < 0) throw new Error('factorial requires a non-negative integer');
-    if (x > 170) throw new Error('factorial input is too large');
+    if (!Number.isInteger(x) || x < 0) throw sciError('factorial', {}, 'factorial requires a non-negative integer');
+    if (x > 170) throw sciError('factorial', {}, 'factorial input is too large');
     var out = 1;
     for (var i = 2; i <= x; i++) out *= i;
     return out;
@@ -93,31 +113,31 @@
     function fromRad(x) { return deg ? x * 180 / Math.PI : x; }
     function inverse(name, fn, x) {
       x = sciNumber(x, name + '()');
-      if (x < -1 || x > 1) throw new Error(name + '() requires a value between -1 and 1');
+      if (x < -1 || x > 1) throw domain(name + '()', name + '() requires a value between -1 and 1');
       return tidy(fromRad(fn(x)));
     }
     function logBase(x, base, label) {
       x = sciNumber(x, label);
-      if (x <= 0) throw new Error(label + ' requires a positive value');
+      if (x <= 0) throw domain(label, label + ' requires a positive value');
       if (base === undefined) return Math.log10(x);
       base = sciNumber(base, label);
-      if (!(base > 0) || base === 1) throw new Error(label + ' requires a positive base other than 1');
+      if (!(base > 0) || base === 1) throw domain(label, label + ' requires a positive base other than 1');
       return Math.log(x) / Math.log(base);
     }
     return {
       sqrt: function (x) {
         x = sciNumber(x, 'sqrt()');
-        if (x < 0) throw new Error('sqrt() requires a non-negative value');
+        if (x < 0) throw domain('sqrt()', 'sqrt() requires a non-negative value');
         return Math.sqrt(x);
       },
       log10: function (x) {
         x = sciNumber(x, 'log10()');
-        if (x <= 0) throw new Error('log10() requires a positive value');
+        if (x <= 0) throw domain('log10()', 'log10() requires a positive value');
         return Math.log10(x);
       },
       ln: function (x) {
         x = sciNumber(x, 'ln()');
-        if (x <= 0) throw new Error('ln() requires a positive value');
+        if (x <= 0) throw domain('ln()', 'ln() requires a positive value');
         return Math.log(x);
       },
       log: function (x, base) { return logBase(x, base, 'log()'); },
@@ -128,7 +148,7 @@
       tan: function (x) {
         x = sciNumber(x, 'tan()');
         /* tan is undefined at 90° + k·180°; in degrees that is exact. */
-        if (deg && Math.abs(((x % 180) + 180) % 180 - 90) < 1e-12) throw new Error('tan() is undefined at 90° + k·180°');
+        if (deg && Math.abs(((x % 180) + 180) % 180 - 90) < 1e-12) throw domain('tan()', 'tan() is undefined at 90° + k·180°');
         return tidy(Math.tan(toRad(x)));
       },
       asin: function (x) { return inverse('asin', Math.asin, x); },
@@ -139,23 +159,23 @@
         x = sciNumber(x, 'round()');
         if (digits === undefined) return roundHalfAway(x, 0);
         digits = sciNumber(digits, 'round(x, n)');
-        if (!Number.isInteger(digits) || digits < 0 || digits > 12) throw new Error('round(x, n) requires a whole n from 0 to 12');
+        if (!Number.isInteger(digits) || digits < 0 || digits > 12) throw domain('round()', 'round(x, n) requires a whole n from 0 to 12');
         return roundHalfAway(x, digits);
       },
       pH: function (x) {
         x = sciNumber(x, 'pH()');
-        if (x <= 0) throw new Error('pH() requires a positive concentration');
+        if (x <= 0) throw domain('pH()', 'pH() requires a positive concentration');
         return -Math.log10(x);
       },
       pOH: function (x) {
         x = sciNumber(x, 'pOH()');
-        if (x <= 0) throw new Error('pOH() requires a positive concentration');
+        if (x <= 0) throw domain('pOH()', 'pOH() requires a positive concentration');
         return -Math.log10(x);
       },
       HfromPH: function (x) { return Math.pow(10, -sciNumber(x, 'HfromPH()')); },
       OHfromPOH: function (x) { return Math.pow(10, -sciNumber(x, 'OHfromPOH()')); },
       molarMass: function (formula) {
-        if (typeof ctx.molarMass !== 'function') throw new Error('molarMass() is not available here');
+        if (typeof ctx.molarMass !== 'function') throw sciError('unavailable', { fn: 'molarMass()' }, 'molarMass() is not available here');
         return ctx.molarMass(formula);
       },
       molToParticles: function (x) { return sciNumber(x, 'molToParticles()') * SCI_CONSTANTS.NA; },
@@ -223,7 +243,7 @@
     var allowed = [].concat(expected);
     if (allowed.indexOf(args.length) === -1) {
       var said = allowed.join(' or ');
-      throw new Error(name + '() expects ' + said + ' argument' + (allowed.length === 1 && allowed[0] === 1 ? '' : 's'));
+      throw sciError('arity', { fn: name + '()', n: allowed.join('/') }, name + '() expects ' + said + ' argument' + (allowed.length === 1 && allowed[0] === 1 ? '' : 's'));
     }
   }
 
@@ -257,7 +277,7 @@
           var next = input[i++];
           raw += next;
           if (next === '\\') {
-            if (i >= input.length) throw new Error('Invalid string literal');
+            if (i >= input.length) throw sciError('incomplete', {}, 'Invalid string literal');
             var escaped = input[i++];
             raw += escaped;
             value += escaped;
@@ -266,7 +286,7 @@
           if (next === quote) { closed = true; break; }
           value += next;
         }
-        if (!closed) throw new Error('Unterminated string literal');
+        if (!closed) throw sciError('incomplete', {}, 'Unterminated string literal');
         tokens.push({ type: 'string', value: value, raw: raw });
         continue;
       }
@@ -275,7 +295,7 @@
         i++;
         continue;
       }
-      throw new Error((syntaxLabel || 'Invalid syntax') + ': ' + ch);
+      throw sciError('syntax', { token: ch }, (syntaxLabel || 'Invalid syntax') + ': ' + ch);
     }
     tokens.push({ type: 'eof', value: null, raw: '' });
     return tokens;
@@ -295,12 +315,15 @@
   };
   ScientificParser.prototype.expect = function (type) {
     var token = this.take(type);
-    if (!token) throw new Error('Expected "' + type + '"');
+    if (!token) {
+      if (this.peek().type === 'eof') throw sciError('incomplete', {}, 'Expected "' + type + '"');
+      throw sciError('syntax', { token: this.peek().raw }, 'Expected "' + type + '"');
+    }
     return token;
   };
   ScientificParser.prototype.parse = function () {
     var value = this.parseAddSub();
-    if (this.peek().type !== 'eof') throw new Error('Unexpected token "' + this.peek().raw + '"');
+    if (this.peek().type !== 'eof') throw sciError('syntax', { token: this.peek().raw }, 'Unexpected token "' + this.peek().raw + '"');
     return value;
   };
   ScientificParser.prototype.parseAddSub = function () {
@@ -321,6 +344,7 @@
       var right = this.parseUnary();
       value = sciNumber(value, 'left operand');
       sciNumber(right, 'right operand');
+      if (op === '/' && right === 0) throw sciError('div0', {}, 'Division by zero');
       value = op === '*' ? value * right : value / right;
     }
     return value;
@@ -366,25 +390,26 @@
       if (this.take('(')) {
         var args = this.parseArguments();
         var fn = Object.prototype.hasOwnProperty.call(this.functions, name) ? this.functions[name] : null;
-        if (!fn) throw new Error('Unknown function "' + name + '"');
+        if (!fn) throw sciError('unknownFn', { name: name }, 'Unknown function "' + name + '"');
         sciCheckArity(name, args);
         this.usedFunctions.add(name);
         var value = fn.apply(null, args);
-        if (!Number.isFinite(value)) throw new Error('Function "' + name + '" returned an invalid value');
+        if (!Number.isFinite(value)) throw sciError(Number.isNaN(value) ? 'domain' : 'overflow', { fn: name + '()' }, 'Function "' + name + '" returned an invalid value');
         return value;
       }
       if (Object.prototype.hasOwnProperty.call(SCI_CONSTANTS, name)) {
         this.usedConstants.add(name);
         return SCI_CONSTANTS[name];
       }
-      throw new Error('Unknown constant "' + name + '"');
+      throw sciError('unknownConst', { name: name }, 'Unknown constant "' + name + '"');
     }
     if (this.take('(')) {
       var inner = this.parseAddSub();
       this.expect(')');
       return inner;
     }
-    throw new Error('Unexpected token "' + this.peek().raw + '"');
+    if (this.peek().type === 'eof') throw sciError('incomplete', {}, 'Unexpected end of expression');
+    throw sciError('syntax', { token: this.peek().raw }, 'Unexpected token "' + this.peek().raw + '"');
   };
 
   /* opts: { molarMass(formula) → g/mol, syntaxLabel, angleMode: 'deg' | 'rad' } */
@@ -392,7 +417,8 @@
     opts = opts || {};
     var parser = new ScientificParser(tokenizeScientificExpression(expr, opts.syntaxLabel), opts);
     var value = parser.parse();
-    if (!Number.isFinite(value)) throw new Error('Result is not finite');
+    if (typeof value !== 'number') throw sciError('notNumber', {}, 'The result is not a number');
+    if (!Number.isFinite(value)) throw sciError('overflow', {}, 'Result is not finite');
     return { value: value, constants: Array.from(parser.usedConstants), functions: Array.from(parser.usedFunctions) };
   }
 
@@ -409,6 +435,7 @@
     sciNumber: sciNumber,
     sciPositive: sciPositive,
     sciFactorial: sciFactorial,
+    sciError: sciError,
     tokenizeScientificExpression: tokenizeScientificExpression,
     ScientificParser: ScientificParser,
     evaluateScientificExpression: evaluateScientificExpression

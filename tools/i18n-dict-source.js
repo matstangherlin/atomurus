@@ -1748,7 +1748,19 @@ const DICT = {
         natureSolution: '{nature} solution',
         angleMode: 'Angle unit',
         angleDeg: 'Degrees',
-        angleRad: 'Radians'
+        angleRad: 'Radians',
+        sciDecimalHelp: 'Use a point for decimals (2.5): the comma separates arguments, as in log(8, 2).',
+        sciErrDiv0: 'Division by zero',
+        sciErrDomain: 'Outside the domain of {fn}',
+        sciErrIncomplete: 'Incomplete expression',
+        sciErrSyntax: 'Unexpected “{token}”',
+        sciErrUnknownFn: 'Unknown function: {name}()',
+        sciErrUnknownConst: 'Unknown name: {name}',
+        sciErrArity: '{fn} takes {n} argument(s)',
+        sciErrFactorial: 'Factorial needs a whole number from 0 to 170',
+        sciErrNotNumber: 'A number is needed here',
+        sciErrOverflow: 'The result is too large to show',
+        sciErrUnavailable: '{fn} is not available here'
       },
       ptable: {
         metaTitle: 'Interactive Periodic Table: 118 Elements, Properties and 3D Models | Atomurus',
@@ -3953,7 +3965,19 @@ const DICT = {
         natureSolution: 'solução {nature}',
         angleMode: 'Unidade de ângulo',
         angleDeg: 'Graus',
-        angleRad: 'Radianos'
+        angleRad: 'Radianos',
+        sciDecimalHelp: 'Use ponto para decimais (2.5): a vírgula separa argumentos, como em log(8, 2).',
+        sciErrDiv0: 'Divisão por zero',
+        sciErrDomain: 'Fora do domínio da função {fn}',
+        sciErrIncomplete: 'Expressão incompleta',
+        sciErrSyntax: 'Símbolo inesperado: “{token}”',
+        sciErrUnknownFn: 'Função desconhecida: {name}()',
+        sciErrUnknownConst: 'Nome desconhecido: {name}',
+        sciErrArity: '{fn} recebe {n} argumento(s)',
+        sciErrFactorial: 'O fatorial precisa de um número inteiro de 0 a 170',
+        sciErrNotNumber: 'Aqui é preciso um número',
+        sciErrOverflow: 'O resultado é grande demais para mostrar',
+        sciErrUnavailable: '{fn} não está disponível aqui'
       },
       ptable: {
         metaTitle: 'Tabela Periódica Interativa: 118 Elementos, Propriedades e 3D | Atomurus',
