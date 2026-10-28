@@ -210,6 +210,14 @@ function bakeLangToggle(html, lang, dict) {
   });
 }
 
+function bakeSkipLink(html, lang, dict) {
+  const text = resolveKey(dict, lang, 'common.skipToContent');
+  if (typeof text !== 'string') return html;
+  return html.replace(/(<a\b[^>]*\bclass="skip-link"[^>]*>)[^<]*(<\/a>)/, function (_m, open, close) {
+    return open + escText(text) + close;
+  });
+}
+
 function buildVariant(srcAbs, dstAbs, lang, dict) {
   const src = fs.readFileSync(srcAbs, 'utf8');
 
@@ -447,6 +455,9 @@ function buildElementEnVariant(srcAbs, ctx) {
     `$1"${escAttr(breadcrumb3)}"`
   );
 
+  // Skip link (tools/inject-ui-chrome.js writes it in the source's language).
+  out = bakeSkipLink(out, 'en', ctx.dict);
+
   const dstAbs = srcAbs.replace(/\.html$/, '.en.html');
   fs.writeFileSync(dstAbs, out, 'utf8');
   return true;
@@ -509,6 +520,6 @@ function main() {
   console.log(`Done. Generated=${generated}  Skipped=${skipped}`);
 }
 
-module.exports = { bakeDataI18nText, bakeDataI18nAttrs, bakeLangToggle, resolveKey, PAGES };
+module.exports = { bakeDataI18nText, bakeDataI18nAttrs, bakeLangToggle, bakeSkipLink, resolveKey, PAGES };
 
 if (require.main === module) main();

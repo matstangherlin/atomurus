@@ -82,3 +82,27 @@ test('language button on a Portuguese page', async ({ page }) => {
   await expect(btn).toHaveText('EN');
   await expect(btn).toHaveAttribute('aria-label', 'EN — Trocar idioma');
 });
+
+for (const [url, lang, text] of [
+  ['/index.html', 'en', 'Skip to content'],
+  ['/periodic-table.html', 'en', 'Skip to content'],
+  ['/calculators.html', 'en', 'Skip to content'],
+  ['/calculators.pt.html', 'pt', 'Pular para o conteúdo']
+]) {
+  test(`skip link on ${url}: Tab shows it, Enter moves focus to <main>`, async ({ page }) => {
+    await open(page, url, lang);
+    const skip = page.locator('a.skip-link');
+    await expect(skip).toHaveCount(1);
+    await expect(skip).toHaveText(text);
+    // Hidden until focused.
+    expect((await skip.boundingBox()).y).toBeLessThan(0);
+    await page.keyboard.press('Tab');
+    await expect(skip).toBeFocused();
+    // Visible once focused (after the short slide-in).
+    await expect.poll(async () => (await skip.boundingBox()).y).toBeGreaterThanOrEqual(0);
+    await page.keyboard.press('Enter');
+    await expect.poll(() => page.evaluate(() => document.activeElement && document.activeElement.tagName)).toBe('MAIN');
+    const target = await skip.getAttribute('href');
+    await expect(page.locator('main')).toHaveAttribute('id', target.slice(1));
+  });
+}

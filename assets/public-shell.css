@@ -17,6 +17,32 @@ html {
   --sidebar-w: 248px !important;
 }
 
+/* ── Skip link (a11y): first focusable element, shown only when focused,
+   above the top bar and the element modal overlay (z-index 2400). ── */
+.skip-link {
+  position: fixed;
+  left: 12px;
+  top: 8px;
+  z-index: 3000;
+  padding: 10px 14px;
+  border-radius: var(--ps-radius-sm);
+  background: var(--lc-ink, #14120E);
+  color: var(--lc-paper, #F8F5EC);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+.skip-link:focus {
+  transform: none;
+  outline: 2px solid var(--lc-green, #1E6A50);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .skip-link { transition: transform var(--ps-dur) ease; }
+}
+
 /* ── Hide Bloomberg / lab-console chrome ── */
 .lc-tn-no,
 .lc-hero-kicker .pill,

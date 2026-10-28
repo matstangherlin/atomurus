@@ -492,10 +492,47 @@ function normalizeLangToggles(html) {
   });
 }
 
-// The app (/app.html) keeps its own chrome and skip link; it only gets the
-// language-button fix.
+// Skip link: the first focusable element of <body> jumps to <main>, which
+// gets id="main-content" (or keeps its own id) and tabindex="-1" so it can
+// take focus. Text comes from common.skipToContent in the page's language;
+// .skip-link is styled in assets/public-shell.css (visible only on focus).
+function pageLang(html) {
+  const m = /<html\b[^>]*\slang="([^"]+)"/i.exec(html);
+  return m && /^pt/i.test(m[1]) ? 'pt' : 'en';
+}
+
+function skipText(lang) {
+  const { DICT } = require('./i18n-dict-source.js');
+  return (DICT[lang] && DICT[lang].common && DICT[lang].common.skipToContent) || DICT.en.common.skipToContent;
+}
+
+function ensureSkipLink(html) {
+  if (/<a\b[^>]*\bclass="skip-link"/.test(html)) return html;
+  const main = /<main\b([^>]*)>/i.exec(html);
+  const body = /<body\b[^>]*>/i.exec(html);
+  if (!main || !body || body.index > main.index) return html;
+  let attrs = main[1];
+  let id = (/\sid="([^"]+)"/.exec(attrs) || [])[1];
+  if (!id) {
+    id = 'main-content';
+    attrs += ' id="main-content"';
+  }
+  if (!/\stabindex=/.test(attrs)) attrs += ' tabindex="-1"';
+  let next = html.slice(0, main.index) + `<main${attrs}>` + html.slice(main.index + main[0].length);
+  const link = readTpl('skip-link.html')
+    .replace('{{target}}', id)
+    .replace('{{text}}', skipText(pageLang(html)));
+  const at = body.index + body[0].length;
+  next = next.slice(0, at) + '\n' + link + next.slice(at);
+  return next;
+}
+
+// The app (/app.html) keeps its own chrome and skip link (#ws-skip); it only
+// gets the language-button fix.
 function applyA11yChrome(html, file) {
-  return normalizeLangToggles(html);
+  let next = normalizeLangToggles(html);
+  if (!SKIP_FILES.has(path.basename(file || ''))) next = ensureSkipLink(next);
+  return next;
 }
 
 function patchEmittedChrome(html, file) {
@@ -580,6 +617,7 @@ module.exports = {
   injectHtml,
   applyA11yChrome,
   normalizeLangToggles,
+  ensureSkipLink,
   injectFile,
   prefixFor,
   SKIP_DIRS,
