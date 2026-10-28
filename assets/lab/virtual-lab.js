@@ -3786,6 +3786,32 @@
     return row ? (lang === 'pt' ? row.pt : row.en) : '';
   }
 
+  /* Plain text for the notebook or the school's learning platform; nothing
+     is sent anywhere. */
+  function poeSummaryText(session, creation, lang) {
+    var all = poeState(session, creation);
+    if (!all || !all.answered) return '';
+    var pt = lang === 'pt';
+    var out = ['Atomurus Lab · ' + (pt ? creation.title.pt : creation.title.en) + ' — ' + (pt ? 'previsões (POE, virtual)' : 'predictions (POE, virtual)')];
+    var n = 0;
+    all.items.forEach(function (row) {
+      if (!row.record || !row.record.revealedAt) return;
+      n += 1;
+      var poe = row.poe;
+      out.push('');
+      out.push(n + '. ' + (pt ? poe.predict.pt : poe.predict.en));
+      out.push('   ' + (pt ? 'Previsto: ' : 'Predicted: ') + pickLabel(poe, row.record.picked, lang));
+      var reading = poeReadingText(poe, row.record, lang);
+      out.push('   ' + (pt ? 'Aconteceu: ' : 'Happened: ') + pickLabel(poe, row.record.actual, lang) + (reading ? ' (' + reading + ')' : ''));
+      if (poe.keyIdea) out.push('   ' + (pt ? 'Ideia-chave: ' : 'Key idea: ') + (pt ? poe.keyIdea.pt : poe.keyIdea.en));
+    });
+    out.push('');
+    out.push(pt
+      ? 'Previsões que bateram com a simulação: ' + all.matched + ' de ' + all.answered + '.'
+      : 'Predictions that matched the simulation: ' + all.matched + ' of ' + all.answered + '.');
+    return out.join('\n');
+  }
+
   function defaultAmountFor(id) {
     var spec = SUBSTANCES[id];
     if (!spec) return 25;
@@ -4548,6 +4574,63 @@
         '</section>';
     }
 
+    /* End of the guide: how the predictions went, and a plain-text copy for
+       the notebook. Local only; the copy goes to the clipboard and nowhere else. */
+    function poeSummaryHtml(all) {
+      if (!all || !all.answered) return '';
+      var missed = all.matched < all.answered;
+      var head = all.answered === 1
+        ? (missed
+          ? copy('Your prediction did not match the result. See where to think again.', 'Sua previsão não bateu com o resultado. Veja onde pensar de novo.')
+          : copy('Your prediction matched the result.', 'Sua previsão bateu com o resultado.'))
+        : copy(
+          'Your predictions: ' + all.matched + ' of ' + all.answered + ' match the result' + (missed ? '. See where to think again.' : '.'),
+          'Suas previsões: ' + all.matched + ' de ' + all.answered + ' batem com o resultado' + (missed ? '. Veja onde pensar de novo.' : '.')
+        );
+      var rows = all.items.filter(function (row) { return row.record && row.record.revealedAt; }).map(function (row) {
+        return '<li class="' + (row.record.correct ? 'is-match' : 'is-miss') + '">' + esc(poeText(row.poe.predict)) + ' <span>' + esc(poeCompareText(row)) + '</span></li>';
+      }).join('');
+      return '<section class="lab-poe-summary" aria-labelledby="lab-poe-sum">' +
+        '<h3 id="lab-poe-sum">' + esc(copy('Your predictions', 'Suas previsões')) + '</h3>' +
+        '<p>' + esc(head) + '</p>' +
+        '<ul>' + rows + '</ul>' +
+        '<div class="lab-guide-actions">' +
+        '<button type="button" class="ws-btn ws-btn-sm" data-poe-copy>' + esc(copy('Copy summary', 'Copiar resumo')) + '</button>' +
+        '<span class="lab-poe-copied" data-poe-copied role="status"></span>' +
+        '</div>' +
+        '<p class="lab-poe-hint">' + esc(copy('Plain text for your notebook or class platform. Nothing is sent.', 'Texto simples para o caderno ou o AVA da turma. Nada é enviado.')) + '</p>' +
+        '</section>';
+    }
+
+    function poeCopy(button) {
+      var creation = CREATIONS.filter(function (row) { return row.id === session.creationId; })[0];
+      var text = creation ? poeSummaryText(session, creation, lang) : '';
+      if (!text) return;
+      var said = button && button.parentNode && button.parentNode.querySelector('[data-poe-copied]');
+      var done = function (ok) {
+        if (said) said.textContent = ok ? copy('Copied.', 'Copiado.') : copy('Could not copy: select the text above.', 'Não deu para copiar: selecione o texto acima.');
+      };
+      var fallback = function () {
+        try {
+          var area = document.createElement('textarea');
+          area.value = text;
+          area.setAttribute('readonly', '');
+          area.style.position = 'fixed';
+          area.style.left = '-9999px';
+          document.body.appendChild(area);
+          area.select();
+          var ok = document.execCommand && document.execCommand('copy');
+          area.remove();
+          done(Boolean(ok));
+        } catch (eC) { done(false); }
+      };
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        navigator.clipboard.writeText(text).then(function () { done(true); }, fallback);
+      } else {
+        fallback();
+      }
+    }
+
     /* The comparison is said once, through a live region that outlives the
        guide's re-renders. */
     function poeAnnounce(all) {
@@ -4688,6 +4771,7 @@
           usedNote +
           '<div class="lab-guide-bar"><i style="width:100%"></i></div>' +
           (poeStage === 'explain' ? poeExplainHtml(poeOpen) : '') +
+          poeSummaryHtml(poeLast) +
           '<p class="lab-guide-done">' + esc(copy('Practice complete (virtual).', 'Prática concluída (virtual).')) + '</p>' +
           '<p class="ws-lede">' + esc(lang === 'pt' ? creation.lede.pt : creation.lede.en) + '</p>' +
           '<ol>' + stepList + '</ol>' +
@@ -5864,7 +5948,7 @@
       rootEl.addEventListener('click', function (event) {
         try {
           var t = event.target && event.target.closest
-            ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-redo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel], [data-ready], [data-lab-zoom], [data-lab-fit], [data-lab-fit-all], [data-lab-zoom-menu], [data-lab-zoom-to], [data-lab-fit-selection], [data-board-tool], [data-lab-aspirate], [data-lab-dispense], [data-lab-drop], [data-lab-grind], [data-lab-drain], [data-lab-connect], [data-lab-duplicate], [data-lab-delete], [data-lab-rotate], [data-dock], [data-dock-close], [data-side], [data-lab-sound], [data-lab-focus], [data-start-creation], [data-stop-creation], [data-guide-clean], [data-guide-keep], [data-guide-cancel], [data-step-observed], [data-step-add], [data-lab-hint], [data-step-connect], [data-step-heat], [data-step-distill], [data-lab-distill], [data-lab-filter], [data-lab-reflux], [data-step-reflux], [data-step-reflux-connect], [data-lab-remove], [data-lab-stack], [data-lab-ferment], [data-step-ferment], [data-lab-crystallise], [data-step-crystallise], [data-step-filter], [data-poe-option], [data-poe-confirm], [data-poe-skip], [data-poe-dismiss]')
+            ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-redo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel], [data-ready], [data-lab-zoom], [data-lab-fit], [data-lab-fit-all], [data-lab-zoom-menu], [data-lab-zoom-to], [data-lab-fit-selection], [data-board-tool], [data-lab-aspirate], [data-lab-dispense], [data-lab-drop], [data-lab-grind], [data-lab-drain], [data-lab-connect], [data-lab-duplicate], [data-lab-delete], [data-lab-rotate], [data-dock], [data-dock-close], [data-side], [data-lab-sound], [data-lab-focus], [data-start-creation], [data-stop-creation], [data-guide-clean], [data-guide-keep], [data-guide-cancel], [data-step-observed], [data-step-add], [data-lab-hint], [data-step-connect], [data-step-heat], [data-step-distill], [data-lab-distill], [data-lab-filter], [data-lab-reflux], [data-step-reflux], [data-step-reflux-connect], [data-lab-remove], [data-lab-stack], [data-lab-ferment], [data-step-ferment], [data-lab-crystallise], [data-step-crystallise], [data-step-filter], [data-poe-option], [data-poe-confirm], [data-poe-skip], [data-poe-dismiss], [data-poe-copy]')
             : null;
           if (!t) return;
           if (t.hasAttribute('data-lab-sound')) {
@@ -5914,6 +5998,10 @@
             var poeCard = t.closest('[data-poe]');
             if (poeCard) poeSelect(poeCard, t);
             focusQuietly(t);
+            return;
+          }
+          if (t.hasAttribute('data-poe-copy')) {
+            poeCopy(t);
             return;
           }
           if (t.getAttribute('data-poe-confirm')) {
@@ -7078,6 +7166,7 @@
     poePredict: poePredict,
     poeSkip: poeSkip,
     poeDismiss: poeDismiss,
+    poeSummaryText: poeSummaryText,
     POE_UNSURE: POE_UNSURE,
     POE_EXPLAIN_ON_CORRECT: POE_EXPLAIN_ON_CORRECT,
     CHECKS: CHECKS,

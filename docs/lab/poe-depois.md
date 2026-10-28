@@ -45,10 +45,24 @@ a leitura fica em cerca de 42 °C (o andador do motor usa 45 °C); a resposta é
   `aria-live="polite"` que sobrevive às re-renderizações do guia; teclas dentro do cartão não chegam
   aos atalhos da bancada (setas movem vidraria, Delete remove, Espaço arrasta).
 
+## Resumo da sessão
+
+No fim do guia, se houve previsão: «Sua previsão bateu com o resultado» (ou «Suas previsões: N de M
+batem com o resultado. Veja onde pensar de novo.»), a lista «Você previu · Aconteceu» e o botão
+**Copiar resumo**, que põe na área de transferência um texto simples (título do guia, pergunta,
+previsto, acontecido com os valores simulados, ideia-chave e a contagem) para o caderno ou o AVA.
+Nada é enviado; uma previsão pulada não entra no resumo.
+
+## Acessibilidade conferida
+
+axe-core 4.x (só na pasta temporária, sem entrar no `package.json`) sobre o painel do guia com o
+cartão de previsão aberto e depois com a comparação e o resumo: **0 violações** WCAG 2 A/AA, nos
+temas claro e escuro.
+
 ## Testes
 
 | Teste | O que cobre |
 |---|---|
 | `tools/test-virtual-lab.mjs` | mecanismo num exercício sintético; os 11 guias percorrem os mesmos passos com e sem POE (prever, pular, ignorar) |
 | `tools/test-lab-poe.mjs` (em `test:ux`) | forma do conteúdo (PT/EN, ≤ 60 palavras, «Não tenho certeza»), cada guia percorrido com cada alternativa, valores químicos, `expected()` em estados alternativos |
-| `e2e/lab-poe.spec.js` (`npm run test:lab-poe`) | teclado, mouse, pular, agir antes de prever, atalhos bloqueados, os 5 guias × PT/EN × prever/pular |
+| `e2e/lab-poe.spec.js` (`npm run test:lab-poe`) | teclado, mouse, pular, agir antes de prever, atalhos bloqueados, os 5 guias × PT/EN × prever/pular, resumo e «Copiar resumo» (sem requisições) |

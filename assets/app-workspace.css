@@ -2025,6 +2025,13 @@ svg.lab-linking path {
 .lab-poe-verdict.is-miss, .lab-poe-verdict.is-unsure { color: var(--lc-ink, #1b1914); }
 .lab-poe-explain, .lab-poe-key, .lab-poe-misc { margin: 0 0 8px; font-size: 13px; color: var(--lc-ink-2, #58544A); }
 .lab-poe-key strong, .lab-poe-misc strong { color: var(--lc-ink, #1b1914); }
+.lab-poe-summary { margin: 12px 0; padding: 12px 14px; border: 1px solid var(--lc-rule, #D8D2BF); border-radius: 12px; }
+.lab-poe-summary h3 { margin: 0 0 6px; font-size: 14px; color: var(--lc-ink, #1b1914); }
+.lab-poe-summary p { margin: 0 0 6px; font-size: 13px; color: var(--lc-ink, #1b1914); }
+.lab-poe-summary ul { margin: 6px 0 0; padding-left: 18px; }
+.lab-poe-summary li { margin: 6px 0; font-size: 13px; color: var(--lc-ink, #1b1914); }
+.lab-poe-summary li span { display: block; color: var(--lc-ink-2, #58544A); }
+.lab-poe-copied { align-self: center; font-size: 12.5px; color: var(--lc-ink-2, #58544A); }
 .lab-profile { margin: 0; }
 .lab-profile svg { display: block; width: 100%; max-width: 260px; height: auto; }
 .lab-profile-axis { fill: none; stroke: var(--lc-rule, #D8D2BF); stroke-width: 1.2; }

@@ -124,6 +124,34 @@ for (const creation of withPoe) {
   assert.equal(lab.poeState(session, creation).open.stage, 'observe');
 }
 
+// ── The summary to copy: plain text, both languages, simulated values ──────
+{
+  const creation = withPoe.find((row) => row.id === 'reflux');
+  const before = lab.emptySession({ title: 'POE summary', mode: 'bench' });
+  lab.startGuide(before, 'reflux');
+  assert.equal(lab.poeSummaryText(before, creation, 'pt'), '', 'nothing answered, nothing to copy');
+  const session = walk(creation, (s, open) => lab.poePredict(s, creation, open.id, 'drops'));
+  const pt = lab.poeSummaryText(session, creation, 'pt');
+  assert.equal(pt, [
+    'Atomurus Lab · Aquecer sem perder solvente — previsões (POE, virtual)',
+    '',
+    '1. A mistura vai ferver por 10 minutos com o condensador na vertical e sem coletor. O que acontece com o volume no balão?',
+    '   Previsto: Diminui: o vapor escapa',
+    '   Aconteceu: Fica praticamente igual (80 mL → 80 mL)',
+    '   Ideia-chave: O refluxo aquece por muito tempo sem perder solvente; a destilação leva o vapor embora.',
+    '',
+    'Previsões que bateram com a simulação: 0 de 1.'
+  ].join('\n'));
+  const en = lab.poeSummaryText(session, creation, 'en');
+  assert.match(en, /^Atomurus Lab · Heat Without Losing Solvent — predictions \(POE, virtual\)/);
+  assert.match(en, /Happened: It stays about the same \(80 mL → 80 mL\)/);
+  assert.match(en, /Predictions that matched the simulation: 0 of 1\.$/);
+  assert.doesNotMatch(pt + en, /<|>/, 'plain text, no markup');
+  // A skipped exercise is not in the summary.
+  const skipped = walk(creation, (s, open) => lab.poeSkip(s, creation, open.id));
+  assert.equal(lab.poeSummaryText(skipped, creation, 'pt'), '');
+}
+
 console.debug = silence;
 
 if (process.argv.includes('--report')) {

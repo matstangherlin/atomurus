@@ -183,3 +183,41 @@ for (const lang of ['en', 'pt']) {
     }
   }
 }
+
+test('resumo no fim do guia: quantas previsões bateram e «Copiar resumo» em texto simples (PT)', async ({ page, context }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  const guide = await openGuide(page, 'pt', 'crescimento de cristal');
+  await page.locator('[data-step-add="water"]').click();
+  await page.locator('[data-step-add="sucrose"]').click();
+  const writes = watchWrites(page);
+  const card = guide.locator('[data-poe="crystal-heat"]');
+  await card.locator('[data-poe-option="crystals"]').click();
+  await card.locator('[data-poe-confirm]').click();
+  await guide.locator('[data-heat="20"]').click();
+  await guide.locator('[data-step-observed]').click();
+
+  const summary = guide.locator('.lab-poe-summary');
+  await expect(summary.locator('h3')).toHaveText('Suas previsões');
+  await expect(summary.locator('p').first()).toHaveText('Sua previsão não bateu com o resultado. Veja onde pensar de novo.');
+  await expect(summary.locator('li')).toHaveCount(1);
+  await summary.locator('[data-poe-copy]').click();
+  await expect(summary.locator('[data-poe-copied]')).toHaveText('Copiado.');
+  const text = await page.evaluate(() => navigator.clipboard.readText());
+  expect(text.split('\n')[0]).toBe('Atomurus Lab · Crescimento de cristal — previsões (POE, virtual)');
+  expect(text).toContain('   Previsto: Sim: aquecer faz o açúcar cristalizar');
+  expect(text).toContain('   Aconteceu: Não: tudo continua dissolvido');
+  expect(text).toContain('   Ideia-chave: Concentrada não é saturada: para cristalizar, a água precisa sair.');
+  expect(text.trim().split('\n').pop()).toBe('Previsões que bateram com a simulação: 0 de 1.');
+  expect(writes, 'copying sends nothing').toEqual([]);
+});
+
+test('the summary does not appear when the prediction was skipped (EN)', async ({ page }) => {
+  const guide = await openGuide(page, 'en', 'ph');
+  await page.locator('[data-step-add="water"]').click();
+  await page.locator('[data-step-add="citric_acid"]').click();
+  await guide.locator('[data-poe-skip]').click();
+  await page.locator('[data-step-add="bicarbonate"]').click();
+  await guide.locator('[data-measure="ph"]').click();
+  await expect(page.locator('.lab-guide.is-complete')).toBeVisible();
+  await expect(guide.locator('.lab-poe-summary')).toHaveCount(0);
+});
