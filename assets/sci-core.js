@@ -242,28 +242,31 @@
     return value;
   };
   ScientificParser.prototype.parseMulDiv = function () {
-    var value = this.parsePower();
+    var value = this.parseUnary();
     while (this.peek().type === '*' || this.peek().type === '/') {
       var op = this.tokens[this.pos++].type;
-      var right = this.parsePower();
+      var right = this.parseUnary();
       value = sciNumber(value, 'left operand');
       sciNumber(right, 'right operand');
       value = op === '*' ? value * right : value / right;
     }
     return value;
   };
-  ScientificParser.prototype.parsePower = function () {
-    var value = this.parseUnary();
-    if (this.peek().type === '^') {
-      this.pos++;
-      value = Math.pow(sciNumber(value, 'base'), sciNumber(this.parsePower(), 'exponent'));
-    }
-    return value;
-  };
+  /* A sign applies to the whole power, as in mathematics: -2^2 = -(2^2).
+     The exponent may carry its own sign (2^-3), and ^ groups to the right
+     (2^3^2 = 2^9). */
   ScientificParser.prototype.parseUnary = function () {
     if (this.take('+')) return this.parseUnary();
     if (this.take('-')) return -this.parseUnary();
-    return this.parsePostfix();
+    return this.parsePower();
+  };
+  ScientificParser.prototype.parsePower = function () {
+    var value = this.parsePostfix();
+    if (this.peek().type === '^') {
+      this.pos++;
+      value = Math.pow(sciNumber(value, 'base'), sciNumber(this.parseUnary(), 'exponent'));
+    }
+    return value;
   };
   ScientificParser.prototype.parsePostfix = function () {
     var value = this.parsePrimary();

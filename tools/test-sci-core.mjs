@@ -30,9 +30,16 @@ close('+5', 5);
 close('10^2', 100);
 close('2^0.5', Math.SQRT2);
 close('Kw*1e14', 1);
-close('-2^2', 4);
+// The sign applies to the whole power; the exponent may carry a sign; ^ groups right.
+close('-2^2', -4);
 close('(-2)^2', 4);
 close('2^-3', 0.125);
+close('-2^2^2', -16);
+close('2^-2^2', 1 / 16);
+close('-3!', -6);
+close('2*-3', -6);
+close('-2^-2', -0.25);
+close('10^-pH(1e-3)', 1e-3, null, 1e-12);
 
 // ── Functions and constants ─────────────────────────────────────────────────
 close('log10(1000)', 3);
