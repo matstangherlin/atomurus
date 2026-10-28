@@ -671,7 +671,8 @@ test('Lab names glassware properly, ferments sugar and drops a material', async 
   await page.locator('[data-lab-guide] [data-step-add="yeast"]').click();
   await page.locator('[data-lab-guide] [data-step-heat="28"]').click();
   await page.locator('[data-lab-guide] [data-step-ferment]').click();
-  await expect(page.locator('.lab-notes')).toContainText(/2 CO₂/);
+  // Sucrose: hydrolysis, then fermentation of the two hexoses.
+  await expect(page.locator('.lab-notes')).toContainText(/4 C₂H₅OH \+ 4 CO₂/);
   await expect(page.locator('[data-lab-guide]')).toContainText(/All steps done|Todos os passos/i);
 
   // Each material can be taken back out on its own.

@@ -128,3 +128,40 @@ test('water chips stop at the beaker capacity and the 7th beaker asks first', as
   await page.locator('[data-lab-status] [data-vessel-confirmed]').click();
   await expect(page.locator('[data-lab-world] .lab-beaker')).toHaveCount(7);
 });
+
+// Every guide can be finished from its own panel: the chips of the current
+// step, then «I observed it» where the step waits for it. No page errors.
+const GUIDES = ['distillation', 'ethanol', 'sugar', 'reflux', 'petroleum', 'solution', 'fragrance', 'diamond', 'ph', 'crystal', 'sunscreen'];
+for (const lang of ['en', 'pt']) {
+  for (const id of GUIDES) {
+    test(`${lang}: the ${id} guide completes from its panel`, async ({ page }) => {
+      const errors = [];
+      page.on('pageerror', (err) => errors.push(String(err)));
+      await installApi(page, { kind: 'free', lang });
+      await gotoWorkspace(page, `/app?section=lab&mode=guided&creation=${id}`);
+      await page.locator('[data-side="guide"]').click();
+      const guide = page.locator('[data-lab-guide]');
+      for (let round = 0; round < 30; round += 1) {
+        if (await page.locator('.lab-guide.is-complete').count()) break;
+        const observed = guide.locator('[data-step-observed]');
+        if (await observed.count()) {
+          await observed.click();
+          continue;
+        }
+        const chips = guide.locator('.lab-do-row .lab-do-chip');
+        const before = await guide.innerText();
+        let moved = false;
+        for (let i = 0; i < await chips.count(); i += 1) {
+          await chips.nth(i).click();
+          if ((await guide.innerText()) !== before) {
+            moved = true;
+            break;
+          }
+        }
+        if (!moved) break;
+      }
+      await expect(page.locator('.lab-guide.is-complete')).toContainText(lang === 'pt' ? 'Prática concluída (virtual).' : 'Practice complete (virtual).');
+      expect(errors).toEqual([]);
+    });
+  }
+}

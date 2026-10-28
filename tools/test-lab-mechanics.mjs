@@ -240,6 +240,15 @@ function sloppySolution() {
   assert.match(state.feedback.pt, /^Este passo vem primeiro: Conecte o balão/);
   lab.assembleRig(session);
   assert.equal(lab.tutorialState(session, stillGuide).current, 7, 'once connected, the heat already applied counts');
+
+  // A reading step that comes true by itself is not a skip.
+  const fragrance = byId('fragrance');
+  const accord = lab.emptySession({ title: 'Accord', mode: 'bench' });
+  lab.startGuide(accord, 'fragrance');
+  lab.addToContainer(accord, 'beaker-a', 'limonene', 8);
+  const after = lab.tutorialState(accord, fragrance);
+  assert.equal(after.current, 1);
+  assert.equal(after.feedback, null, 'the accord is named already, but that is not a step taken out of order');
 }
 
 // ── Automatic processes wait for «I observed it» ────────────────────────────

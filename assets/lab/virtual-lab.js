@@ -1174,7 +1174,7 @@
         { id: 'juice', action: 'addMaterial', need: { cane_juice: true, fibre: true }, anywhere: true, amounts: { cane_juice: 90, fibre: 8 }, into: 'beaker', check: [CHECKS.volumeBetween(80, 100, 'cane_juice'), CHECKS.massEquals('fibre', 8, 1)], en: 'Add virtual cane juice and the fibre that comes with it.', pt: 'Adicione caldo de cana virtual e a fibra que vem junto.', why: { en: 'Cane juice is sucrose dissolved in water, carrying plant fibre that never dissolved.', pt: 'O caldo de cana é sacarose dissolvida em água, com fibra vegetal que nunca dissolveu.' } },
         { id: 'funnel', action: 'addEquipment', needEquipment: ['funnel'], en: 'Add a funnel.', pt: 'Adicione um funil.', why: { en: 'A funnel with filter paper holds solids back and lets the liquid through.', pt: 'Um funil com papel de filtro retém os sólidos e deixa o líquido passar.' } },
         { id: 'fit', action: 'filter', needFiltered: true, en: 'Fit the funnel over an empty vessel and filter the juice.', pt: 'Encaixe o funil sobre um vidro vazio e filtre o caldo.', why: { en: 'Fibre does not dissolve, so it stays on the filter while the sugar runs through.', pt: 'A fibra não dissolve, então fica no filtro enquanto o açúcar passa.' } },
-        { id: 'boil', action: 'heat', heatTo: 70, needTemp: 62, check: [CHECKS.temperatureAtLeast(62)], en: 'Heat the filtrate to about 70 °C.', pt: 'Aqueça o filtrado até cerca de 70 °C.', why: { en: 'Heat makes the water evaporate much faster than at room temperature.', pt: 'O calor faz a água evaporar muito mais rápido do que à temperatura ambiente.' } },
+        { id: 'boil', action: 'heat', heatTo: 70, needTemp: 62, check: [CHECKS.volumeBetween(1, 250, 'cane_juice'), CHECKS.temperatureAtLeast(62)], feedback: { en: 'Heat the filtrate, the vessel the juice ran into.', pt: 'Aqueça o filtrado, o recipiente para onde o caldo escorreu.' }, en: 'Heat the filtrate to about 70 °C.', pt: 'Aqueça o filtrado até cerca de 70 °C.', why: { en: 'Heat makes the water evaporate much faster than at room temperature.', pt: 'O calor faz a água evaporar muito mais rápido do que à temperatura ambiente.' } },
         { id: 'grow', action: 'crystallise', needCrystals: true, en: 'Boil it down until crystals form.', pt: 'Evapore até formar cristais.', why: { en: 'Removing water makes the solution supersaturated and the sugar comes out of it.', pt: 'Tirar água deixa a solução supersaturada e o açúcar sai dela.' } }
       ]
     },
@@ -3417,10 +3417,13 @@
 
   /* A later step already done while this one is not: the order matters
      (heating before the still is sealed, salt before the water). Placing
-     equipment early is not a skip. */
+     equipment early is not a skip, and a reading step (a named product, a
+     measurement) can come true on its own, so only actions count. */
+  var SKIP_ACTIONS = ['addMaterial', 'heat', 'mix', 'connect', 'reflux-connect', 'distill', 'reflux', 'ferment', 'crystallise', 'filter'];
+
   function skippedAhead(session, steps, index, guide) {
     for (var j = index + 1; j < steps.length; j += 1) {
-      if (steps[j].action === 'addEquipment') continue;
+      if (SKIP_ACTIONS.indexOf(steps[j].action) === -1) continue;
       if (judgeStep(session, steps[j], guide).ok) {
         return { en: 'This step comes first: ' + steps[index].en, pt: 'Este passo vem primeiro: ' + steps[index].pt };
       }
@@ -3704,6 +3707,16 @@
     }
     function selected() {
       return findContainer(session, session.selectedId) || session.containers[0];
+    }
+    /* The vessel with liquid in it: the selected one if it has some, else the
+       first that does. A funnel only passes liquid on. */
+    function liquidVessel() {
+      var wet = function (row) {
+        return row && row.type !== 'funnel' && hasCap(row, 'contain') && (Number(row.volumeMl) || 0) > 0;
+      };
+      var current = selected();
+      if (wet(current)) return current;
+      return (session.containers || []).filter(wet)[0] || null;
     }
     /* Guided actions land in something that can actually hold a mixture. */
     function preferredVessel(type) {
@@ -5486,7 +5499,8 @@
           }
           if (t.getAttribute('data-step-heat')) {
             var wantC = Number(t.getAttribute('data-step-heat')) || 0;
-            var heatTarget = preferredVessel(t.getAttribute('data-step-into') || 'round-flask') || selected();
+            var heatInto = t.getAttribute('data-step-into') || '';
+            var heatTarget = (heatInto ? preferredVessel(heatInto) : (firstOfType(session, 'round-flask') || liquidVessel())) || selected();
             if (!heatTarget) return;
             var warmed = setTemperature(session, heatTarget.id, wantC);
             session.selectedId = heatTarget.id;
@@ -5835,7 +5849,7 @@
             return;
           }
           if (t.hasAttribute('data-lab-crystallise') || t.hasAttribute('data-step-crystallise')) {
-            var pan = selected();
+            var pan = t.hasAttribute('data-step-crystallise') ? (liquidVessel() || selected()) : selected();
             if (!pan) return;
             var panWasAt = fillLevelOf(pan.id);
             var grown = crystallise(session, pan.id);
@@ -5857,6 +5871,12 @@
           }
           if (t.hasAttribute('data-step-filter')) {
             var pot2 = selected();
+            /* Placing the funnel selects it; the guide filters what holds the liquid. */
+            if (!pot2 || pot2.type === 'funnel' || !hasCap(pot2, 'contain') || !((Number(pot2.volumeMl) || 0) > 0)) {
+              pot2 = (session.containers || []).filter(function (row) {
+                return row.type !== 'funnel' && hasCap(row, 'contain') && (Number(row.volumeMl) || 0) > 0;
+              })[0] || pot2;
+            }
             if (!filterSetup(session, pot2.id)) {
               var fitted2 = assembleFilter(session, pot2.id);
               if (!fitted2.ok) {
