@@ -817,6 +817,59 @@ function assertEncoding() {
   if (result.status !== 0) fail('tools/test-encoding.mjs failed');
 }
 
+// The CSP keeps its hardening directives, and every third-party origin the
+// site's loaders request is allowed by the directive that request needs.
+function cspSources(policy, name) {
+  const row = policy.split(';').map((part) => part.trim()).find((part) => part.split(/\s+/)[0] === name);
+  return row ? row.split(/\s+/).slice(1) : null;
+}
+
+function cspAllows(sources, url) {
+  const u = new URL(url);
+  return (sources || []).some((source) => {
+    if (!/^https?:\/\//.test(source)) return false;
+    const s = new URL(source.replace('*.', 'wildcard.'));
+    if (s.protocol !== u.protocol) return false;
+    const hostOk = source.includes('://*.')
+      ? u.hostname.endsWith(s.hostname.slice('wildcard'.length))
+      : u.hostname === s.hostname;
+    if (!hostOk) return false;
+    return s.pathname === '/' || (s.pathname.endsWith('/') ? u.pathname.startsWith(s.pathname) : u.pathname === s.pathname);
+  });
+}
+
+function assertCsp() {
+  const netlify = read('netlify.toml');
+  const header = (name) => {
+    const m = new RegExp('^\\s*' + name.replace(/-/g, '\\-') + '\\s*=\\s*"([^"]*)"', 'm').exec(netlify);
+    return m ? m[1] : null;
+  };
+  const policy = header('Content-Security-Policy');
+  if (!policy) fail('netlify.toml: Content-Security-Policy is missing');
+  if (!/(^|;)\s*object-src 'none'/.test(policy)) fail("CSP must keep object-src 'none'");
+  if (!/(^|;)\s*base-uri 'self'/.test(policy)) fail("CSP must keep base-uri 'self'");
+  if (!/(^|;)\s*frame-ancestors /.test(policy)) fail('CSP must keep frame-ancestors');
+  const reportOnly = header('Content-Security-Policy-Report-Only');
+  if (!reportOnly) fail('netlify.toml: Content-Security-Policy-Report-Only (stage 2) is missing');
+  if (/'unsafe-inline'/.test((cspSources(reportOnly, 'script-src') || []).join(' '))) {
+    fail("CSP Report-Only must not carry 'unsafe-inline' in script-src");
+  }
+  if (Buffer.byteLength(reportOnly, 'utf8') > 4096) fail('CSP Report-Only header is over 4 KiB');
+  // Script URLs written literally in the third-party loaders.
+  const loaders = ['lazy-ads.js', 'ads-gate.js', 'recaptcha.js', 'viewer/load-three.js', 'periodic-table.js'];
+  loaders.forEach((file) => {
+    const text = read(file).replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:'"\\])\/\/[^\n]*/g, '$1');
+    const urls = [...text.matchAll(/['"](https:\/\/[^'"\s]+)/g)].map((m) => m[1]);
+    urls.forEach((url) => {
+      const needs = /\.js(\?|$)|\/js\b|recaptcha\/api\.js/.test(url) || /gtag\/js/.test(url) ? 'script-src' : null;
+      if (!needs) return;
+      if (!cspAllows(cspSources(policy, needs), url)) {
+        fail(`CSP ${needs} does not allow ${new URL(url).origin}${new URL(url).pathname} (requested by ${file})`);
+      }
+    });
+  });
+}
+
 function main() {
   assertRootNoForbiddenArchives();
   assertDeployGuards();
@@ -830,6 +883,7 @@ function main() {
   assertStudyCloud();
   assertUiV2();
   assertEncoding();
+  assertCsp();
   console.log('Site validation passed');
 }
 
