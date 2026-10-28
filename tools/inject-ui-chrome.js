@@ -527,11 +527,24 @@ function ensureSkipLink(html) {
   return next;
 }
 
-// The app (/app.html) keeps its own chrome and skip link (#ws-skip); it only
-// gets the language-button fix.
+// Print stylesheet (prompt 26, B02): templates/chrome/print-css.html, a
+// media="print" <link> before </head>, so it never blocks rendering. The
+// absolute path works on any URL depth (and on the 404 page).
+function ensurePrintCss(html) {
+  if (/\/assets\/print\.css/.test(html)) return html;
+  const head = html.search(/<\/head>/i);
+  if (head === -1) return html;
+  return html.slice(0, head) + readTpl('print-css.html') + '\n' + html.slice(head);
+}
+
+// The app (/app.html) keeps its own chrome, skip link (#ws-skip) and print
+// behaviour; it only gets the language-button fix.
 function applyA11yChrome(html, file) {
   let next = normalizeLangToggles(html);
-  if (!SKIP_FILES.has(path.basename(file || ''))) next = ensureSkipLink(next);
+  if (!SKIP_FILES.has(path.basename(file || ''))) {
+    next = ensureSkipLink(next);
+    next = ensurePrintCss(next);
+  }
   return next;
 }
 
@@ -618,6 +631,7 @@ module.exports = {
   applyA11yChrome,
   normalizeLangToggles,
   ensureSkipLink,
+  ensurePrintCss,
   injectFile,
   prefixFor,
   SKIP_DIRS,

@@ -73,3 +73,41 @@ test('share menu: keyboard opens it, arrows move, Esc closes it and focus return
   await expect(host).toBeFocused();
   await expect(host).toHaveAttribute('aria-expanded', 'false');
 });
+
+// ── B02: print ───────────────────────────────────────────────────────────────
+const PRINT_TARGETS = [
+  { url: '/periodic-table.html', maxPages: 1, landscape: true },
+  { url: '/periodic-table/ferrum.html', maxPages: 6 },
+  { url: '/explore/what-is-an-atom.html', maxPages: 12 },
+  { url: '/calculators.html', maxPages: 3 }
+];
+const pdfPages = (buf) => (buf.toString('latin1').match(/\/Type\s*\/Page(?!s)/g) || []).length;
+
+for (const target of PRINT_TARGETS) {
+  test(`print ${target.url}: no site chrome, nothing clipped, ≤ ${target.maxPages} page(s)`, async ({ context, page }) => {
+    await isolate(context, 'en');
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto(target.url);
+    await page.waitForLoadState('load');
+    await page.emulateMedia({ media: 'print' });
+    const hidden = await page.evaluate(() => ['.topbar', '.lc-topnav', '#ws-sidebar', '.share-host', '.ps-account', '.aco-manage-wrap', '.skip-link']
+      .map((sel) => [sel, [...document.querySelectorAll(sel)].every((el) => getComputedStyle(el).display === 'none')]));
+    for (const [sel, ok] of hidden) expect(ok, `${sel} is hidden in print`).toBe(true);
+    const flow = await page.evaluate(() => ({
+      body: getComputedStyle(document.body).overflow,
+      main: getComputedStyle(document.querySelector('main')).overflow,
+      width: document.documentElement.scrollWidth <= window.innerWidth
+    }));
+    expect(flow.body).toBe('visible');
+    expect(flow.main).toBe('visible');
+    expect(flow.width).toBe(true);
+    const pdf = await page.pdf({ preferCSSPageSize: true, printBackground: true });
+    const pages = pdfPages(pdf);
+    expect(pages).toBeGreaterThan(0);
+    expect(pages).toBeLessThanOrEqual(target.maxPages);
+    if (target.landscape) {
+      const box = /\/MediaBox\s*\[\s*0\s+0\s+([\d.]+)\s+([\d.]+)\s*\]/.exec(pdf.toString('latin1'));
+      expect(Number(box[1])).toBeGreaterThan(Number(box[2]));
+    }
+  });
+}
