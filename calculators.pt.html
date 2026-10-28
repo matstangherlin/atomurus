@@ -1155,6 +1155,45 @@
             </div>
 
             <div class="calc-field">
+              <label class="calc-field-l" for="ph-kind" data-i18n="calc.phKind">Solução</label>
+              <select id="ph-kind" class="calc-select ui-select">
+                <option value="strong" selected data-i18n="calc.phKindStrong">Ácido ou base forte</option>
+                <option value="weakAcid" data-i18n="calc.phKindWeakAcid">Ácido fraco</option>
+                <option value="weakBase" data-i18n="calc.phKindWeakBase">Base fraca</option>
+                <option value="buffer" data-i18n="calc.phKindBuffer">Tampão (Henderson–Hasselbalch)</option>
+              </select>
+            </div>
+
+            <div class="calc-field" data-ph-kind="weakAcid weakBase buffer" style="display:none;">
+              <label class="calc-field-l" for="ph-species" data-i18n="calc.phSpecies">Espécie</label>
+              <select id="ph-species" class="calc-select ui-select">
+                <option value="custom" data-i18n="calc.phSpeciesCustom">Outra (digite a constante)</option>
+              </select>
+            </div>
+            <div class="calc-field" data-ph-kind="weakAcid weakBase" style="display:none;">
+              <label class="calc-field-l" for="ph-C" data-i18n="calc.phC">Concentração, mol/L</label>
+              <input id="ph-C" class="calc-input ui-input" type="number" step="any" min="0" value="0.1">
+            </div>
+            <div class="calc-field" data-ph-kind="buffer" style="display:none;">
+              <label class="calc-field-l" for="ph-Ca" data-i18n="calc.phCa">Ácido fraco [HA], mol/L</label>
+              <input id="ph-Ca" class="calc-input ui-input" type="number" step="any" min="0" value="0.1">
+            </div>
+            <div class="calc-field" data-ph-kind="buffer" style="display:none;">
+              <label class="calc-field-l" for="ph-Cb" data-i18n="calc.phCb">Base conjugada [A⁻], mol/L</label>
+              <input id="ph-Cb" class="calc-input ui-input" type="number" step="any" min="0" value="0.1">
+            </div>
+            <div class="calc-field" data-ph-kind="weakAcid weakBase buffer" style="display:none;">
+              <label class="calc-field-l" for="ph-K" data-i18n="calc.phK">Constante do ácido ou da base</label>
+              <div class="calc-row-2">
+                <input id="ph-K" class="calc-input ui-input" type="number" step="any" value="4.756">
+                <select id="ph-K-form" class="calc-select ui-select" aria-label="pKa / Ka">
+                  <option value="p" selected data-ph-k-label="p">pKa</option>
+                  <option value="k" data-ph-k-label="k">Ka</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="calc-field" data-ph-kind="strong">
               <label class="calc-field-l" data-i18n="calc.phInputMode">Modo de entrada</label>
               <select id="ph-mode" class="calc-select ui-select" onchange="updatePhFields()">
                 <option value="H" selected data-i18n="calc.phOptH">[H⁺] — concentração do ácido forte</option>
@@ -1181,7 +1220,7 @@
               <input id="ph-pOH" class="calc-input ui-input" type="number" step="any" value="6.6">
             </div>
 
-            <div class="calc-chip-row" aria-label="Exemplos de pH">
+            <div class="calc-chip-row" data-ph-kind="strong" aria-label="Exemplos de pH">
               <span class="calc-chip-label" data-i18n="calc.presets">Exemplos</span>
               <button class="calc-chip" type="button" data-ph-mode="H" data-ph-value="1e-3">Acid · 10⁻³ M H⁺</button>
               <button class="calc-chip" type="button" data-ph-mode="pH" data-ph-value="7">Neutral pH 7</button>
@@ -1200,7 +1239,7 @@
               </div>
             </details>
 
-            <div class="calc-result ui-card ui-card-data" id="ph-result">
+            <div class="calc-result ui-card ui-card-data" id="ph-result" aria-live="polite">
               <div class="calc-result-head">
                 <span class="calc-result-head-main"><span class="lc-st-dot"></span><span data-i18n="calc.output">saída</span></span>
                 <span class="calc-result-meta"><span id="ph-result-meta" data-i18n="calc.awaiting">aguardando entrada…</span><button class="calc-copy-btn" type="button" data-copy-result="ph-result-body" data-i18n="calc.copy">Copiar</button></span>
@@ -2583,13 +2622,126 @@ function resetDilution() {
 // ═════════════════════════════════════════
 // 04 · pH / pOH
 // ═════════════════════════════════════════
+function phKind() {
+  const el = document.getElementById('ph-kind');
+  return el ? el.value : 'strong';
+}
 function updatePhFields() {
+  const kind = phKind();
   const m = document.getElementById('ph-mode').value;
   document.querySelectorAll('[data-ph]').forEach(el => {
-    el.style.display = (el.dataset.ph === m) ? 'grid' : 'none';
+    el.style.display = (kind === 'strong' && el.dataset.ph === m) ? 'grid' : 'none';
   });
+  document.querySelectorAll('[data-ph-kind]').forEach(el => {
+    el.style.display = el.dataset.phKind.split(' ').indexOf(kind) !== -1 ? 'grid' : 'none';
+  });
+  if (kind !== 'strong') fillPhSpecies(kind);
+}
+/* Weak acids and bases come from the sourced table in calc-core.js; a buffer
+   is made of a weak acid and its conjugate base. */
+function fillPhSpecies(kind) {
+  const select = document.getElementById('ph-species');
+  if (!select) return;
+  const want = kind === 'weakBase' ? 'base' : 'acid';
+  if (select.dataset.kind === want) return;
+  select.dataset.kind = want;
+  const lang = calcLangIsPt() ? 'pt' : 'en';
+  const rows = window.AtomurusCalcCore.ACID_BASE_CONSTANTS.filter(row => row.kind === want);
+  const custom = select.querySelector('option[value="custom"]');
+  select.innerHTML = rows.map(row => '<option value="' + row.id + '">' + escapeHtml(row.name[lang] + ' (' + row.formula + ')') + '</option>').join('');
+  if (custom) select.appendChild(custom);
+  select.value = rows[0] ? rows[0].id : 'custom';
+  applyPhSpecies();
+}
+function applyPhSpecies() {
+  const select = document.getElementById('ph-species');
+  const row = window.AtomurusCalcCore.ACID_BASE_CONSTANTS.find(item => item.id === (select && select.value));
+  const form = document.getElementById('ph-K-form');
+  const isBase = phKind() === 'weakBase';
+  form.querySelector('[data-ph-k-label="p"]').textContent = isBase ? 'pKb' : 'pKa';
+  form.querySelector('[data-ph-k-label="k"]').textContent = isBase ? 'Kb' : 'Ka';
+  if (!row) return;
+  form.value = 'p';
+  document.getElementById('ph-K').value = String(row.kind === 'base' ? row.pKb : row.pKa[0]);
+}
+/* Wired here, not with on*= attributes, so the strict CSP plan does not grow. */
+(function () {
+  const kind = document.getElementById('ph-kind');
+  const species = document.getElementById('ph-species');
+  if (kind) kind.addEventListener('change', updatePhFields);
+  if (species) species.addEventListener('change', applyPhSpecies);
+})();
+function phFixed(n, digits) {
+  const text = Number(n).toFixed(digits);
+  return calcLangIsPt() ? text.replace('.', ',') : text;
+}
+function phStepsHtml(steps) {
+  return '<details class="calc-how ph-steps"><summary>' + solverT('phSteps') + '</summary><ol class="calc-how-body">' +
+    steps.map(step => '<li>' + step + '</li>').join('') + '</ol></details>';
+}
+function runWeakPH(kind, body, meta) {
+  const core = window.AtomurusCalcCore;
+  const form = document.getElementById('ph-K-form').value;
+  const kValue = parseFloat(document.getElementById('ph-K').value);
+  const select = document.getElementById('ph-species');
+  const species = core.ACID_BASE_CONSTANTS.find(item => item.id === (select && select.value)) || null;
+  const lang = calcLangIsPt() ? 'pt' : 'en';
+  const polyprotic = Boolean(species && species.pKa && species.pKa.length > 1);
+  const constant = kind === 'weakBase'
+    ? (form === 'p' ? { pKb: kValue } : { Kb: kValue })
+    : (form === 'p' ? { pKa: kValue } : { Ka: kValue });
+  let result;
+  if (kind === 'buffer') {
+    result = core.computeBufferPH(Object.assign({ acid: parseFloat(document.getElementById('ph-Ca').value), base: parseFloat(document.getElementById('ph-Cb').value), polyprotic: polyprotic }, constant));
+  } else if (kind === 'weakBase') {
+    result = core.computeWeakBasePH(Object.assign({ C: parseFloat(document.getElementById('ph-C').value) }, constant));
+  } else {
+    result = core.computeWeakAcidPH(Object.assign({ C: parseFloat(document.getElementById('ph-C').value), polyprotic: polyprotic }, constant));
+  }
+  if (!result.ok) {
+    const which = result.field === 'Ka' || result.field === 'Kb' ? 'phNeedK' : 'phNeedC';
+    body.innerHTML = '<div class="calc-result-empty" style="color:var(--lc-amber)">' + solverT(which) + '</div>';
+    meta.textContent = solverT('invalid');
+    return;
+  }
+  const cls = core.classifyPH(result.pH);
+  const nature = solverT(cls.key);
+  let html = '<div class="calc-result-row"><span class="calc-result-k">pH</span><span class="calc-result-v big">' + phFixed(result.pH, 2) +
+    ' <em style="color:' + cls.color + '">' + nature + '</em></span></div>';
+  html += '<div class="calc-result-row"><span class="calc-result-k">pOH</span><span class="calc-result-v">' + phFixed(result.pOH, 2) + '</span></div>';
+  html += '<div class="calc-result-row"><span class="calc-result-k">[H⁺]</span><span class="calc-result-v">' + fmt(result.H) + ' mol/L</span></div>';
+  html += '<div class="calc-result-row"><span class="calc-result-k">[OH⁻]</span><span class="calc-result-v">' + fmt(result.OH) + ' mol/L</span></div>';
+  const steps = [];
+  if (kind === 'buffer') {
+    html += '<div class="calc-result-row"><span class="calc-result-k">' + solverT('phExact') + '</span><span class="calc-result-v">pH ' + phFixed(result.exactPH, 2) + '</span></div>';
+    html += '<div class="calc-result-row"><span class="calc-result-k">' + solverT('phBeta') + '</span><span class="calc-result-v">' + fmt(result.beta, 3) + ' mol/(L·pH)</span></div>';
+    steps.push(solverT('phStepBuffer1', { pKa: phFixed(result.pKa, 3) }));
+    steps.push(solverT('phStepBuffer2', { pKa: phFixed(result.pKa, 3), base: fmt(parseFloat(document.getElementById('ph-Cb').value)), acid: fmt(parseFloat(document.getElementById('ph-Ca').value)), pH: phFixed(result.pH, 2) }));
+    steps.push(solverT('phStepBuffer3', { exact: phFixed(result.exactPH, 2) }));
+  } else {
+    const isBase = kind === 'weakBase';
+    html += '<div class="calc-result-row"><span class="calc-result-k">' + solverT(isBase ? 'phAlphaBase' : 'phAlphaAcid') + '</span><span class="calc-result-v">' + phFixed(result.alpha * 100, 2) + ' %</span></div>';
+    html += '<div class="calc-result-row"><span class="calc-result-k">' + solverT('phShortcut') + '</span><span class="calc-result-v">pH ' + phFixed(result.shortcutPH, 2) + '</span></div>';
+    const K = isBase ? result.Kb : result.Ka;
+    steps.push(solverT(isBase ? 'phStepBase1' : 'phStepAcid1', { K: fmt(K, 3), pK: phFixed(isBase ? result.pKb : result.pKa, 3) }));
+    steps.push(solverT(isBase ? 'phStepBase2' : 'phStepAcid2'));
+    steps.push(solverT('phStepResult', { H: fmt(result.H, 4), pH: phFixed(result.pH, 2), shortcut: phFixed(result.shortcutPH, 2), off: phFixed(result.shortcutOff, 3) }));
+  }
+  (result.warnings || []).forEach(code => {
+    const key = { autoion: 'phAutoionNote', polyproticApprox: 'phWarnPolyprotic', bufferRange: 'phWarnBufferRange', bufferDilute: 'phWarnBufferDilute', bufferApprox: 'phWarnBufferApprox' }[code];
+    if (key) html += '<div class="calc-result-formula" data-ph-warning="' + code + '">' + solverT(key) + '</div>';
+  });
+  if (species) html += '<div class="calc-result-formula">' + escapeHtml(solverT('phSource', { name: species.name[lang], source: species.source })) + '</div>';
+  html += '<div class="calc-result-formula">' + solverT('phModelNote') + '</div>';
+  html += phStepsHtml(steps);
+  body.innerHTML = html;
+  meta.textContent = solverT('natureSolution', { nature: nature });
 }
 function runPH() {
+  if (phKind() !== 'strong') {
+    runWeakPH(phKind(), document.getElementById('ph-result-body'), document.getElementById('ph-result-meta'));
+    return;
+  }
   const mode = document.getElementById('ph-mode').value;
   const body = document.getElementById('ph-result-body');
   const meta = document.getElementById('ph-result-meta');

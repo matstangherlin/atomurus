@@ -11,7 +11,7 @@ Gerado por `node tools/audit-csp.mjs` (somente leitura). Os IDs de anúncio e de
 | Scripts inline distintos (sha256) | 171 |
 | Manipuladores `on*=` | 1490 em 327 páginas |
 | Blocos `<style>` | 645 (19 distintos) |
-| Atributos `style=` | 3856 em 325 páginas |
+| Atributos `style=` | 3866 em 325 páginas |
 | Origens externas | 10 |
 
 ## Manipuladores inline por atributo

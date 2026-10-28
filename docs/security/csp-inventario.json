@@ -1827,19 +1827,8 @@
         ]
       },
       {
-        "hash": "2xo04EoY2Oo9hSQo7PoTQCPPpDHgYlpiCtBs7XJnrtc=",
-        "bytes": 79693,
-        "count": 1,
-        "pages": 1,
-        "buildVariable": false,
-        "preview": "// ═════════════════════════════════════════ // THEME — swaps the SVG content (sun ↔ moon)",
-        "samplePages": [
-          "calculators.pt.html"
-        ]
-      },
-      {
-        "hash": "6qIQm9bT0K7SGvkP+y5b1L4bGe77t+N4OIY33vMtgIs=",
-        "bytes": 79691,
+        "hash": "azwoGscxsZShLd9/guOfJQrAivSYsG50xJ86a07sl4w=",
+        "bytes": 76754,
         "count": 1,
         "pages": 1,
         "buildVariable": false,
@@ -1912,6 +1901,17 @@
         "preview": "(function(){var h=location.hash||'',q=location.search||'',hp,sp,lang='';try{hp=new URLSear",
         "samplePages": [
           "index.html"
+        ]
+      },
+      {
+        "hash": "Ep23m8AVRT/JNDKVa5EbO0Vn4vzOdVzk7+n7D7E0JXQ=",
+        "bytes": 76756,
+        "count": 1,
+        "pages": 1,
+        "buildVariable": false,
+        "preview": "// ═════════════════════════════════════════ // THEME — swaps the SVG content (sun ↔ moon)",
+        "samplePages": [
+          "calculators.pt.html"
         ]
       },
       {
@@ -2085,7 +2085,7 @@
   "styles": {
     "blocks": 645,
     "distinctBlocks": 19,
-    "styleAttributes": 3856,
+    "styleAttributes": 3866,
     "pagesWithStyleAttributes": 325
   },
   "origins": [
