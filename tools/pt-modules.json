@@ -1,0 +1,18 @@
+{
+  "_comment": "Prompt 24 — which page loads which part of the periodic table script. Read by tools/patch-pt-modules.js, tools/test-pt-split.mjs and tools/validate-site.js.",
+  "core": "periodic-table.js",
+  "modules": {},
+  "onDemand": {},
+  "pages": {
+    "periodic-table.html": [],
+    "periodic-table.pt.html": [],
+    "periodic-table/heatmap.html": [],
+    "periodic-table/heatmap.pt.html": [],
+    "periodic-table/trends.html": [],
+    "periodic-table/trends.pt.html": [],
+    "periodic-table/compare.html": [],
+    "periodic-table/compare.pt.html": [],
+    "periodic-table/isotopes.html": [],
+    "periodic-table/isotopes.pt.html": []
+  }
+}
