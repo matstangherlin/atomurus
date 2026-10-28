@@ -173,7 +173,11 @@ assert.equal(heatmapStateKey(bySym.Hg), 'liquid');
 assert.equal(heatmapStateKey(bySym.Fe), 'solid');
 assert.equal(heatmapStateKey(bySym.Br), 'liquid');
 
-const tableSrc = readFileSync(path.join(ROOT, 'periodic-table.js'), 'utf8');
+// periodic-table.js plus the page modules split out of it (prompt 24).
+const PT_FILES = JSON.parse(readFileSync(path.join(ROOT, 'tools', 'pt-modules.json'), 'utf8'));
+const tableSrc = [PT_FILES.core, ...Object.values(PT_FILES.modules), ...Object.values(PT_FILES.onDemand)]
+  .map((file) => readFileSync(path.join(ROOT, file), 'utf8'))
+  .join('\n');
 assert.match(tableSrc, /const laLeft\s+= colX\(3\)/);
 assert.match(tableSrc, /const acLeft\s+= colX\(3\)/);
 assert.doesNotMatch(tableSrc, /nq\.startsWith\(t\)/);

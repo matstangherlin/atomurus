@@ -2045,6 +2045,7 @@ const DICT = {
         mNavCompareLbl:  'Compare',
         mCloseAria:      'Close (ESC)',
         mDialogAria:     'Element details',
+        exportLoadError: 'Could not load the export tool. Check your connection and try again.',
         mCloseTitle:     'Close (ESC)',
         // Search & topbar
         searchPlaceholder: 'Search element (name or Z)…',
@@ -4289,6 +4290,7 @@ const DICT = {
         mNavCompareLbl:  'Comparar',
         mCloseAria:      'Fechar (ESC)',
         mDialogAria:     'Detalhes do elemento',
+        exportLoadError: 'Não foi possível carregar a ferramenta de exportação. Verifique a conexão e tente de novo.',
         mCloseTitle:     'Fechar (ESC)',
         searchPlaceholder: 'Buscar elemento (nome ou Z)…',
         searchAria: 'Buscar elemento',

@@ -2,7 +2,9 @@
   "_comment": "Prompt 24 — which page loads which part of the periodic table script. Read by tools/patch-pt-modules.js, tools/test-pt-split.mjs and tools/validate-site.js.",
   "core": "periodic-table.js",
   "modules": {},
-  "onDemand": {},
+  "onDemand": {
+    "export": "assets/pt/pt-export.js"
+  },
   "pages": {
     "periodic-table.html": [],
     "periodic-table.pt.html": [],

@@ -66,3 +66,46 @@ for (const spec of PT_PAGES) {
     });
   }
 }
+
+// Export lives in assets/pt/pt-export.js and is fetched on the first click.
+test('element PNG export loads its module on demand, once', async ({ context, page }) => {
+  await isolate(context, 'en');
+  const errors = [];
+  page.on('pageerror', (err) => errors.push(err.message));
+  const exportRequests = [];
+  page.on('request', (req) => { if (/assets\/pt\/pt-export\.js/.test(req.url())) exportRequests.push(req.url()); });
+  await page.goto('/periodic-table.html');
+  await page.waitForFunction(() => typeof ELEMENTS !== 'undefined' && ELEMENTS.length === 118);
+  expect(exportRequests).toEqual([]);
+  await page.locator('.el[data-z="26"]').click();
+  const download = page.waitForEvent('download');
+  await page.locator('#modal .modal-dl-btn').first().click();
+  expect((await download).suggestedFilename()).toBe('atomurus-fe.png');
+  expect(exportRequests).toHaveLength(1);
+  expect(exportRequests[0]).toMatch(/\?v=\d+$/);
+  // The module's own function replaced the stub; a second export does not fetch again.
+  const second = page.waitForEvent('download');
+  await page.locator('#modal .modal-dl-btn').first().click();
+  await second;
+  expect(exportRequests).toHaveLength(1);
+  expect(errors).toEqual([]);
+});
+
+test('if the export module cannot load, the page says so and keeps working', async ({ context, page }) => {
+  await isolate(context, 'pt');
+  await context.route(/assets\/pt\/pt-export\.js/, (route) => route.abort());
+  const dialogs = [];
+  page.on('dialog', async (dialog) => { dialogs.push(dialog.message()); await dialog.dismiss(); });
+  const errors = [];
+  page.on('pageerror', (err) => errors.push(err.message));
+  await page.goto('/periodic-table.pt.html');
+  await page.waitForFunction(() => typeof ELEMENTS !== 'undefined' && ELEMENTS.length === 118);
+  await page.locator('.el[data-z="26"]').click();
+  await page.locator('#modal .modal-dl-btn').first().click();
+  await expect.poll(() => dialogs.length).toBe(1);
+  expect(dialogs[0]).toContain('Não foi possível carregar a ferramenta de exportação');
+  await expect(page.locator('html')).not.toHaveClass(/pt-export-loading/);
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#overlay')).not.toHaveClass(/\bopen\b/);
+  expect(errors).toEqual([]);
+});
