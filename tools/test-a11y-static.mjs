@@ -110,4 +110,23 @@ assert.equal(normalize('  PT&nbsp;—  Switch\nlanguage '), 'pt — switch langu
   assert.equal(bakeDataI18nAttrs(out, 'pt', dict), out, 'idempotent');
 }
 
+// ── Language button: the name starts with the visible code ────────────────
+{
+  const require = createRequire(import.meta.url);
+  const { normalizeLangToggles } = require('./inject-ui-chrome.js');
+  const { bakeLangToggle } = require('../build-i18n.js');
+  const src = '<button class="theme-btn" data-i18n-toggle\n  data-i18n-attr="aria-label:common.langToggle; title:common.langToggle"\n  aria-label="Switch language" title="Switch language">\n  <span data-i18n-toggle-label>PT</span>\n</button>' +
+    '<button onclick="location.href=\'x.html?lang=en\'" data-i18n-attr="aria-label:common.langToggle" aria-label="Mudar idioma"><span>EN</span></button>' +
+    '<button aria-label="Close">EN</button>';
+  const en = normalizeLangToggles(src);
+  assert.match(en, /data-i18n-attr="title:common\.langToggle"\n  aria-label="PT — Switch language"/);
+  assert.match(en, /<button onclick="location\.href='x\.html\?lang=en'" aria-label="EN — Mudar idioma"><span>EN<\/span><\/button>/);
+  assert.match(en, /<button aria-label="Close">EN<\/button>/, 'other buttons are left alone');
+  assert.equal(normalizeLangToggles(en), en, 'idempotent');
+  assert.deepEqual(checkPage(page(en)).name.map((n) => n.label), ['Close']);
+  const pt = bakeLangToggle(en, 'pt', { pt: { common: { langToggle: 'Trocar idioma' } } });
+  assert.match(pt, /aria-label="EN — Trocar idioma"[^>]*>\n  <span data-i18n-toggle-label>EN<\/span>/);
+  assert.deepEqual(checkPage(page(pt)).name.map((n) => n.label), ['Close']);
+}
+
 console.log('test-a11y-static: ok');

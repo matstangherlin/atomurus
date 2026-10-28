@@ -194,6 +194,22 @@ function bakeDataI18nAttrs(html, lang, dict) {
   });
 }
 
+// The language button shows the language it switches TO and is named
+// «<code> — <action>» (WCAG 2.5.3); tools/inject-ui-chrome.js writes the EN
+// form, this writes the variant's own one so the static page matches what
+// i18n.js shows («EN — Trocar idioma» on .pt.html).
+function bakeLangToggle(html, lang, dict) {
+  const other = (lang === 'en' ? 'pt' : 'en').toUpperCase();
+  const action = resolveKey(dict, lang, 'common.langToggle');
+  return html.replace(/<button\b[^>]*\bdata-i18n-toggle\b[^>]*>[\s\S]*?<\/button>/g, function (btn) {
+    let out = btn.replace(/(<span\b[^>]*\bdata-i18n-toggle-label\b[^>]*>)\s*[A-Z]{2}\s*(<\/span>)/, '$1' + other + '$2');
+    if (typeof action === 'string') {
+      out = out.replace(/(\saria-label=")[^"]*(")/, function (_m, open, close) { return open + other + ' — ' + escAttr(action) + close; });
+    }
+    return out;
+  });
+}
+
 function buildVariant(srcAbs, dstAbs, lang, dict) {
   const src = fs.readFileSync(srcAbs, 'utf8');
 
@@ -269,6 +285,7 @@ function buildVariant(srcAbs, dstAbs, lang, dict) {
 
   out = bakeDataI18nText(out, lang, dict);
   out = bakeDataI18nAttrs(out, lang, dict);
+  out = bakeLangToggle(out, lang, dict);
 
   // index.html owns the recovery redirect. The PT page must keep ?lang=pt-BR
   // inside that script; otherwise npm run build copies lang='' from the EN source
@@ -492,6 +509,6 @@ function main() {
   console.log(`Done. Generated=${generated}  Skipped=${skipped}`);
 }
 
-module.exports = { bakeDataI18nText, bakeDataI18nAttrs, resolveKey, PAGES };
+module.exports = { bakeDataI18nText, bakeDataI18nAttrs, bakeLangToggle, resolveKey, PAGES };
 
 if (require.main === module) main();

@@ -462,6 +462,42 @@ function relabelChromeCopy(html) {
     });
 }
 
+// ── Accessibility pass (prompt 23), applied to every published page ──────
+// Language button: WCAG 2.5.3 wants the accessible name to contain the
+// visible text. The button shows «PT»/«EN» and was named «Switch language».
+// Its name becomes «PT — Switch language»; i18n.js keeps it in sync, so
+// data-i18n-attr no longer rewrites aria-label (I18N.apply() would undo it).
+const LANG_ACTION = /^(Switch language|Trocar idioma|Mudar idioma)$/;
+
+function stripAriaLabelKey(spec) {
+  return spec.split(';').map((pair) => pair.trim())
+    .filter((pair) => pair && !/^aria-label\s*:\s*common\.langToggle$/.test(pair))
+    .join('; ');
+}
+
+function normalizeLangToggles(html) {
+  return html.replace(/<button\b([^>]*)>(\s*<span\b[^>]*>\s*(PT|EN)\s*<\/span>\s*|\s*(PT|EN)\s*)<\/button>/g, (full, attrs, inner, spanCode, bareCode) => {
+    const code = spanCode || bareCode;
+    const label = /\saria-label="([^"]*)"/.exec(attrs);
+    const isToggle = /\sdata-i18n-toggle\b/.test(attrs);
+    if (!label) return full;
+    const action = label[1].startsWith(code + ' — ') ? label[1].slice(code.length + 3) : label[1];
+    if (!isToggle && !LANG_ACTION.test(action)) return full;
+    let next = attrs.replace(/\saria-label="[^"]*"/, ` aria-label="${code} — ${action}"`);
+    next = next.replace(/\sdata-i18n-attr="([^"]*)"/, (m, spec) => {
+      const kept = stripAriaLabelKey(spec);
+      return kept ? ` data-i18n-attr="${kept}"` : '';
+    });
+    return `<button${next}>${inner}</button>`;
+  });
+}
+
+// The app (/app.html) keeps its own chrome and skip link; it only gets the
+// language-button fix.
+function applyA11yChrome(html, file) {
+  return normalizeLangToggles(html);
+}
+
 function patchEmittedChrome(html, file) {
   let next = addHtmlAttr(html, 'data-ps-chrome', '1');
   const prefix = prefixFor(file);
@@ -528,9 +564,11 @@ function walkDir(dir, out) {
 }
 
 function injectFile(file) {
-  if (SKIP_FILES.has(path.basename(file))) return { status: 'skip-app', changed: false };
   const original = fs.readFileSync(file, 'utf8');
-  const result = injectHtml(original, file);
+  const result = SKIP_FILES.has(path.basename(file))
+    ? { html: original, status: 'skip-app' }
+    : injectHtml(original, file);
+  result.html = applyA11yChrome(result.html, file);
   if (result.html !== original) {
     fs.writeFileSync(file, result.html);
     return { status: result.status, changed: true };
@@ -540,6 +578,8 @@ function injectFile(file) {
 
 module.exports = {
   injectHtml,
+  applyA11yChrome,
+  normalizeLangToggles,
   injectFile,
   prefixFor,
   SKIP_DIRS,
@@ -556,10 +596,6 @@ if (require.main === module) {
   const counts = {};
   let changed = 0;
   for (const file of files) {
-    if (SKIP_FILES.has(path.basename(file))) {
-      counts['skip-app'] = (counts['skip-app'] || 0) + 1;
-      continue;
-    }
     const result = injectFile(file);
     counts[result.status] = (counts[result.status] || 0) + 1;
     if (result.changed) changed += 1;
