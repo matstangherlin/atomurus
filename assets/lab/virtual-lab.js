@@ -1091,6 +1091,177 @@
     }
   };
 
+  /* POE exercises (prompt 27; picked in docs/lab/poe-antes.md). Each reads the
+     vessel the guide works in, and the option that counts as right is the one
+     the simulation produced: change the engine and the answer follows. */
+  function poeVessel(session, type) {
+    return (session.containers || []).filter(function (row) { return row.type === type; })
+      .sort(function (a, b) { return (Number(b.volumeMl) || 0) - (Number(a.volumeMl) || 0); })[0] || null;
+  }
+
+  var POE_NOT_SURE = { id: 'unsure', en: 'Not sure', pt: 'Não tenho certeza' };
+
+  var POE_EXERCISES = {
+    ph: {
+      id: 'ph-bicarbonate',
+      beforeStep: 'base',
+      revealAfter: 'measure',
+      predict: { en: 'You will add bicarbonate to the citric acid solution. What happens to the pH?', pt: 'Você vai adicionar bicarbonato à solução de ácido cítrico. O que acontece com o pH?' },
+      options: [
+        { id: 'up', en: 'It rises, towards 7', pt: 'Sobe, em direção a 7' },
+        { id: 'down', en: 'It falls: the solution gets more acidic', pt: 'Desce: a solução fica mais ácida' },
+        { id: 'same', en: 'It stays the same: the bicarbonate only dissolves', pt: 'Fica igual: o bicarbonato só se dissolve' },
+        POE_NOT_SURE
+      ],
+      measure: function (session) {
+        var beaker = poeVessel(session, 'beaker');
+        return beaker ? { ph: r1(beaker.ph) } : null;
+      },
+      expected: function (after, before) {
+        if (!after || !before) return '';
+        var change = after.ph - before.ph;
+        return change >= 0.5 ? 'up' : (change <= -0.5 ? 'down' : 'same');
+      },
+      reading: function (after, before, lang) {
+        return 'pH ' + fmtNum(before.ph, lang) + ' → ' + fmtNum(after.ph, lang);
+      },
+      observe: { en: 'Watch the beaker as the bicarbonate goes in, then take the pH reading.', pt: 'Observe o béquer enquanto o bicarbonato entra e depois meça o pH.' },
+      explain: {
+        en: 'Bicarbonate (HCO₃⁻) is a base: it takes up the H⁺ ions the citric acid released and turns into water and carbon dioxide, the bubbles that leave the beaker. Fewer H⁺ ions in the solution means a higher pH.',
+        pt: 'O bicarbonato (HCO₃⁻) é uma base: ele captura os íons H⁺ que o ácido cítrico liberou e vira água e gás carbônico, as bolhas que saem do béquer. Menos H⁺ na solução significa pH mais alto.'
+      },
+      keyIdea: { en: 'A base neutralises an acid, so the pH goes up.', pt: 'Uma base neutraliza um ácido, por isso o pH sobe.' },
+      misconception: { en: 'The fizzing does not mean the solution got more acidic: the bubbles are CO₂ leaving.', pt: 'A efervescência não quer dizer que a solução ficou mais ácida: as bolhas são CO₂ saindo.' }
+    },
+    ethanol: {
+      id: 'ethanol-sugar',
+      beforeStep: 'brew',
+      predict: { en: 'The yeast is warm and has sugar. What happens in the flask while it ferments?', pt: 'A levedura está aquecida e tem açúcar. O que acontece no frasco durante a fermentação?' },
+      options: [
+        { id: 'convert', en: 'Bubbles form and part of the sugar becomes ethanol', pt: 'Formam-se bolhas e parte do açúcar vira etanol' },
+        { id: 'nothing', en: 'Nothing: the sugar just stays dissolved', pt: 'Nada: o açúcar só continua dissolvido' },
+        { id: 'solid', en: 'The sugar comes back out as a solid', pt: 'O açúcar volta a ficar sólido' },
+        POE_NOT_SURE
+      ],
+      measure: function (session) {
+        var flask = poeVessel(session, 'flask');
+        return flask ? { sucrose: r1(amountOf(flask, 'sucrose')), ethanol: r1(amountOf(flask, 'ethanol')), fizz: Boolean(flask.fizz), crystals: Boolean(flask.crystals) } : null;
+      },
+      expected: function (after, before) {
+        if (!after || !before) return '';
+        if (after.ethanol > before.ethanol && after.sucrose < before.sucrose) return 'convert';
+        return after.crystals ? 'solid' : 'nothing';
+      },
+      reading: function (after, before, lang) {
+        return lang === 'pt'
+          ? 'sacarose ' + fmtNum(before.sucrose, lang) + ' → ' + fmtNum(after.sucrose, lang) + ' g, etanol ' + fmtNum(before.ethanol, lang) + ' → ' + fmtNum(after.ethanol, lang) + ' mL'
+          : 'sucrose ' + fmtNum(before.sucrose, lang) + ' → ' + fmtNum(after.sucrose, lang) + ' g, ethanol ' + fmtNum(before.ethanol, lang) + ' → ' + fmtNum(after.ethanol, lang) + ' mL';
+      },
+      observe: { en: 'Watch for bubbles, then read the equation in the notebook.', pt: 'Procure bolhas e depois leia a equação no caderno.' },
+      explain: {
+        en: 'Yeast enzymes split sucrose into glucose and fructose and turn them into ethanol and carbon dioxide. The bubbles are the CO₂ leaving; the sugar goes down because it was used up, not because it hid.',
+        pt: 'As enzimas da levedura quebram a sacarose em glicose e frutose e as transformam em etanol e gás carbônico. As bolhas são o CO₂ saindo; o açúcar diminui porque foi consumido, não porque se escondeu.'
+      },
+      keyIdea: { en: 'In fermentation the sugar is transformed into new substances.', pt: 'Na fermentação, o açúcar se transforma em novas substâncias.' },
+      misconception: { en: 'Dissolved sugar has not disappeared; fermented sugar has: it became ethanol and CO₂.', pt: 'Açúcar dissolvido não sumiu; açúcar fermentado, sim: virou etanol e CO₂.' }
+    },
+    crystal: {
+      id: 'crystal-heat',
+      beforeStep: 'heat',
+      revealAfter: 'observe',
+      predict: { en: 'You will warm 20 g of sucrose dissolved in 60 mL of water. Will crystals appear?', pt: 'Você vai aquecer 20 g de sacarose dissolvidos em 60 mL de água. Vão aparecer cristais?' },
+      options: [
+        { id: 'crystals', en: 'Yes: warming makes the sugar crystallise', pt: 'Sim: aquecer faz o açúcar cristalizar' },
+        { id: 'dissolved', en: 'No: it all stays dissolved', pt: 'Não: tudo continua dissolvido' },
+        POE_NOT_SURE
+      ],
+      measure: function (session) {
+        var beaker = poeVessel(session, 'beaker');
+        return beaker ? { crystals: Boolean(beaker.crystals), sucrose: r1(amountOf(beaker, 'sucrose')), water: r1(amountOf(beaker, 'water')), temp: Math.round(tempOf(beaker)) } : null;
+      },
+      expected: function (after) {
+        if (!after) return '';
+        return after.crystals ? 'crystals' : 'dissolved';
+      },
+      reading: function (after, before, lang) {
+        return lang === 'pt'
+          ? fmtNum(after.sucrose, lang) + ' g de sacarose em ' + fmtNum(after.water, lang) + ' mL de água a ' + after.temp + ' °C, ' + (after.crystals ? 'com cristais' : 'sem cristais')
+          : fmtNum(after.sucrose, lang) + ' g of sucrose in ' + fmtNum(after.water, lang) + ' mL of water at ' + after.temp + ' °C, ' + (after.crystals ? 'with crystals' : 'no crystals');
+      },
+      observe: { en: 'Look at the beaker once it is warm.', pt: 'Olhe o béquer depois de aquecido.' },
+      explain: {
+        en: 'Crystals only appear when the water holds more sugar than it can keep dissolved. At 20 °C, 60 mL of water dissolve about 120 g of sucrose, and warm water even more; 20 g is far from that.',
+        pt: 'Cristais só aparecem quando a água tem mais açúcar do que consegue manter dissolvido. A 20 °C, 60 mL de água dissolvem cerca de 120 g de sacarose, e a água morna, ainda mais; 20 g estão longe disso.'
+      },
+      keyIdea: { en: 'Concentrated is not saturated: to crystallise, water has to leave.', pt: 'Concentrada não é saturada: para cristalizar, a água precisa sair.' },
+      misconception: { en: 'Heating does not push sugar out of a solution; it lets the water hold more.', pt: 'Aquecer não expulsa o açúcar da solução; deixa a água segurar mais.' }
+    },
+    distillation: {
+      id: 'distil-purity',
+      beforeStep: 'run',
+      predict: { en: 'At about 80 °C, what will collect in the receiving flask?', pt: 'A cerca de 80 °C, o que vai se juntar no balão coletor?' },
+      options: [
+        { id: 'pure', en: 'Pure ethanol (100%)', pt: 'Etanol puro (100%)' },
+        { id: 'mostly', en: 'Mostly ethanol, with some water', pt: 'Quase só etanol, com um pouco de água' },
+        { id: 'water', en: 'Mostly water', pt: 'Principalmente água' },
+        POE_NOT_SURE
+      ],
+      measure: function (session) {
+        var receiver = poeVessel(session, 'receiving-flask');
+        if (!receiver) return null;
+        var ethanol = amountOf(receiver, 'ethanol');
+        var water = amountOf(receiver, 'water');
+        return { ethanol: r1(ethanol), water: r1(water), purity: ethanol + water > 0 ? r1((ethanol / (ethanol + water)) * 100) : 0 };
+      },
+      expected: function (after) {
+        if (!after || after.ethanol + after.water <= 0) return '';
+        return after.purity >= 99.5 ? 'pure' : (after.purity >= 50 ? 'mostly' : 'water');
+      },
+      reading: function (after, before, lang) {
+        return lang === 'pt'
+          ? fmtNum(after.ethanol, lang) + ' mL de etanol + ' + fmtNum(after.water, lang) + ' mL de água ≈ ' + fmtNum(after.purity, lang) + '% de etanol em volume'
+          : fmtNum(after.ethanol, lang) + ' mL of ethanol + ' + fmtNum(after.water, lang) + ' mL of water ≈ ' + fmtNum(after.purity, lang) + '% ethanol by volume';
+      },
+      observe: { en: 'Read the purity in the notebook once it has distilled.', pt: 'Leia a pureza no caderno depois de destilar.' },
+      explain: {
+        en: 'Ethanol boils at 78 °C and water at 100 °C, so at 80 °C mostly ethanol vaporises, but some water evaporates too and comes over with it. Ethanol and water also form an azeotrope (about 95.6% ethanol by mass) that no simple distillation passes.',
+        pt: 'O etanol ferve a 78 °C e a água a 100 °C, então a 80 °C vaporiza sobretudo etanol, mas um pouco de água também evapora e vem junto. Etanol e água ainda formam um azeótropo (cerca de 95,6% de etanol em massa) que nenhuma destilação simples ultrapassa.'
+      },
+      keyIdea: { en: 'Distillation separates by boiling point, but it does not give 100% ethanol.', pt: 'A destilação separa pelo ponto de ebulição, mas não dá etanol 100%.' },
+      misconception: { en: 'Below its boiling point a liquid still evaporates; boiling is not the only way to become vapour.', pt: 'Abaixo do ponto de ebulição um líquido ainda evapora; ferver não é o único jeito de virar vapor.' }
+    },
+    reflux: {
+      id: 'reflux-volume',
+      beforeStep: 'hold',
+      predict: { en: 'The mixture will boil for 10 minutes with the condenser upright and no receiver. What happens to the volume in the flask?', pt: 'A mistura vai ferver por 10 minutos com o condensador na vertical e sem coletor. O que acontece com o volume no balão?' },
+      options: [
+        { id: 'drops', en: 'It goes down: the vapour escapes', pt: 'Diminui: o vapor escapa' },
+        { id: 'same', en: 'It stays about the same', pt: 'Fica praticamente igual' },
+        { id: 'rises', en: 'It goes up', pt: 'Aumenta' },
+        POE_NOT_SURE
+      ],
+      measure: function (session) {
+        var flask = poeVessel(session, 'round-flask');
+        return flask ? { ml: r1(Number(flask.volumeMl) || 0) } : null;
+      },
+      expected: function (after, before) {
+        if (!after || !before) return '';
+        if (Math.abs(after.ml - before.ml) <= 1) return 'same';
+        return after.ml < before.ml ? 'drops' : 'rises';
+      },
+      reading: function (after, before, lang) {
+        return fmtNum(before.ml, lang) + ' mL → ' + fmtNum(after.ml, lang) + ' mL';
+      },
+      observe: { en: 'Compare the volume in the flask before and after the reflux.', pt: 'Compare o volume do balão antes e depois do refluxo.' },
+      explain: {
+        en: 'The vapour rises into the cold condenser, turns back into liquid and runs down into the flask. With no receiver, nothing leaves the apparatus, so the volume holds while the mixture keeps boiling.',
+        pt: 'O vapor sobe até o condensador frio, volta a ser líquido e escorre de volta para o balão. Sem coletor, nada sai da aparelhagem, então o volume se mantém enquanto a mistura continua fervendo.'
+      },
+      keyIdea: { en: 'Reflux heats for a long time without losing solvent; distillation carries the vapour away.', pt: 'O refluxo aquece por muito tempo sem perder solvente; a destilação leva o vapor embora.' },
+      misconception: { en: 'Boiling does not always mean losing liquid: it depends on where the vapour goes.', pt: 'Ferver não significa sempre perder líquido: depende de para onde vai o vapor.' }
+    }
+  };
+
   var CREATIONS = [
     {
       id: 'distillation',
@@ -1112,6 +1283,7 @@
         en: 'Boiling point, vapour, condensation and why an azeotrope caps simple distillation.',
         pt: 'Ponto de ebulição, vapor, condensação e por que um azeótropo limita a destilação simples.'
       },
+      poe: POE_EXERCISES.distillation,
       tutorial: [
         { id: 'flask', action: 'addEquipment', needEquipment: ['round-flask'], en: 'Place a round-bottom flask: it heats evenly.', pt: 'Coloque um balão de fundo redondo: ele aquece por igual.', why: { en: 'A round bottom spreads heat without hot spots.', pt: 'O fundo redondo espalha o calor sem pontos quentes.' } },
         { id: 'cond', action: 'addEquipment', needEquipment: ['condenser'], en: 'Add a Liebig condenser.', pt: 'Adicione um condensador de Liebig.', why: { en: 'Vapour has to cool back to liquid somewhere.', pt: 'O vapor precisa voltar a líquido em algum lugar.' } },
@@ -1143,6 +1315,7 @@
         en: 'C₁₂H₂₂O₁₁ + H₂O → 2 C₆H₁₂O₆ → 4 C₂H₅OH + 4 CO₂: sucrose splits into glucose and fructose, yeast ferments them, and it stops working when it gets too hot.',
         pt: 'C₁₂H₂₂O₁₁ + H₂O → 2 C₆H₁₂O₆ → 4 C₂H₅OH + 4 CO₂: a sacarose se divide em glicose e frutose, a levedura as fermenta e para de trabalhar quando esquenta demais.'
       },
+      poe: POE_EXERCISES.ethanol,
       tutorial: [
         { id: 'vessel', action: 'addEquipment', needEquipment: ['flask'], en: 'Place an Erlenmeyer flask: its narrow neck keeps air out.', pt: 'Coloque um erlenmeyer: o gargalo estreito dificulta a entrada de ar.', why: { en: 'Fermentation works without oxygen.', pt: 'A fermentação ocorre sem oxigênio.' } },
         { id: 'sugar', action: 'addMaterial', need: { water: true, sucrose: true }, amounts: { water: 100, sucrose: 25 }, into: 'flask', check: [CHECKS.volumeBetween(90, 110, 'water'), CHECKS.massEquals('sucrose', 25, 1)], en: 'Add 100 mL of water and 25 g of sucrose.', pt: 'Adicione 100 mL de água e 25 g de sacarose.', why: { en: 'Yeast takes its sugar from the water around it, so the sugar has to be dissolved.', pt: 'A levedura tira o açúcar da água ao redor, então o açúcar precisa estar dissolvido.' } },
@@ -1198,6 +1371,7 @@
         en: 'Why a reflux condenser holds the volume that a still takes away.',
         pt: 'Por que um condensador de refluxo mantém o volume que a destilação retira.'
       },
+      poe: POE_EXERCISES.reflux,
       tutorial: [
         { id: 'flask', action: 'addEquipment', needEquipment: ['round-flask'], en: 'Place a round-bottom flask.', pt: 'Coloque um balão de fundo redondo.', why: { en: 'A round bottom heats evenly and carries the condenser on its neck.', pt: 'O fundo redondo aquece por igual e sustenta o condensador no gargalo.' } },
         { id: 'cond', action: 'addEquipment', needEquipment: ['condenser'], en: 'Add a condenser: this time it stands upright over the flask.', pt: 'Adicione um condensador: desta vez ele fica na vertical sobre o balão.', why: { en: 'Upright, the condensate falls straight back into the pot.', pt: 'Na vertical, o condensado cai de volta no balão.' } },
@@ -1351,6 +1525,7 @@
         en: 'In a real lab: goggles and gloves. Citric acid and bicarbonate are mild, but with any acid the rule is the same: add acid to water, never water to acid.',
         pt: 'No laboratório real: óculos e luvas. Ácido cítrico e bicarbonato são brandos, mas com qualquer ácido a regra é a mesma: adicione o ácido à água, nunca a água ao ácido.'
       },
+      poe: POE_EXERCISES.ph,
       tutorial: [
         { id: 'acid', action: 'addMaterial', need: { water: true, citric_acid: true }, amounts: { water: 50, citric_acid: 6 }, needEquipment: ['beaker'], check: [CHECKS.volumeBetween(45, 55, 'water'), CHECKS.massEquals('citric_acid', 6, 0.3)], en: 'Add water, then 6 g of citric acid.', pt: 'Adicione água e depois 6 g de ácido cítrico.', why: { en: 'The acid needs water before a virtual pH can be read.', pt: 'O ácido precisa de água antes de um pH virtual ser lido.' } },
         { id: 'base', action: 'addMaterial', need: { bicarbonate: true }, amounts: { bicarbonate: PH_CHALLENGE.bicarbonateG }, checkPh: { min: PH_CHALLENGE.phMin, max: PH_CHALLENGE.phMax }, errors: [{ when: CHECKS.massAbove('bicarbonate', 7.9), feedback: { en: 'Past 7.87 g every proton of the 6 g of citric acid is already used. The extra bicarbonate stays as HCO₃⁻ and pulls the pH towards 8.3. Undo the last addition and add less.', pt: 'Depois de 7,87 g todos os prótons dos 6 g de ácido cítrico já foram usados. O bicarbonato extra fica como HCO₃⁻ e puxa o pH para perto de 8,3. Desfaça a última adição e coloque menos.' } }], en: 'Add ' + PH_CHALLENGE.bicarbonateG + ' g of bicarbonate. The mixture may fizz.', pt: 'Adicione ' + String(PH_CHALLENGE.bicarbonateG).replace('.', ',') + ' g de bicarbonato. A mistura pode efervescer.', why: { en: 'pH 7 is not the equivalence point: trisodium citrate is a weak base, so the reading reaches 7 a little before 7.87 g of NaHCO₃. In this open vessel the CO₂ leaves.', pt: 'pH 7 não é o ponto de equivalência: o citrato trissódico é base fraca, então a leitura chega a 7 um pouco antes de 7,87 g de NaHCO₃. Neste recipiente aberto o CO₂ sai.' } },
@@ -1376,6 +1551,7 @@
         en: 'Concentrated is not saturated: how much sucrose water holds at 20 °C (about 200 g per 100 mL), and why crystals need a supersaturated solution.',
         pt: 'Concentrada não é saturada: quanto de sacarose a água segura a 20 °C (cerca de 200 g por 100 mL) e por que cristais precisam de uma solução supersaturada.'
       },
+      poe: POE_EXERCISES.crystal,
       tutorial: [
         { id: 'dissolve', action: 'addMaterial', need: { water: true, sucrose: true }, amounts: { water: 60, sucrose: 20 }, needEquipment: ['beaker'], into: 'beaker', check: [CHECKS.volumeBetween(55, 65, 'water'), CHECKS.massEquals('sucrose', 20, 1)], en: 'Dissolve 20 g of sucrose in 60 mL of water.', pt: 'Dissolva 20 g de sacarose em 60 mL de água.', why: { en: 'This makes a concentrated solution, not a saturated one: 60 mL of water at 20 °C hold about 120 g of sucrose (≈ 200 g per 100 mL).', pt: 'Isto faz uma solução concentrada, não saturada: 60 mL de água a 20 °C dissolvem cerca de 120 g de sacarose (≈ 200 g por 100 mL).' } },
         { id: 'heat', action: 'heat', into: 'beaker', check: [CHECKS.temperatureAtLeast(40)], en: 'Warm the vessel with a Bunsen or heat control (virtual).', pt: 'Aqueça o vidro com Bunsen ou o controle de calor (virtual).', why: { en: 'Warm water dissolves sugar faster and loses water to evaporation faster.', pt: 'A água morna dissolve o açúcar mais rápido e perde água por evaporação mais rápido.' } },
