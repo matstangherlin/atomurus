@@ -77,6 +77,6 @@ Atenção: «js literal» inclui URLs que só aparecem em texto (links, document
 
 ## Report-Only (etapa 2)
 
-- Cabeçalho: 4059 bytes (orçamento 4096).
+- Cabeçalho: 4091 bytes (orçamento 4096).
 - Hashes incluídos: 55 (cobrem 1404 dos 1613 usos de script inline).
 - Fora do orçamento: 116 scripts distintos (209 usos) — vão aparecer como violação no Report-Only e são a lista de externalização.

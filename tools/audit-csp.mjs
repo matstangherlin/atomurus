@@ -310,12 +310,12 @@ function directive(name, sources) {
 export function buildPolicy({ scriptHashes = null } = {}) {
   const strict = Array.isArray(scriptHashes);
   const script = strict
-    ? ["'self'"].concat(scriptHashes.map((h) => `'sha256-${h}'`), collect('script'))
+    ? ["'self'", "'report-sample'"].concat(scriptHashes.map((h) => `'sha256-${h}'`), collect('script'))
     : ["'self'", "'unsafe-inline'"].concat(collect('script'));
   return [
     "default-src 'self'",
     directive('script-src', script),
-    strict ? "script-src-attr 'none'" : null,
+    strict ? "script-src-attr 'none' 'report-sample'" : null,
     "style-src 'self' 'unsafe-inline'",
     "font-src 'self' data:",
     "img-src 'self' data: https:",

@@ -89,8 +89,8 @@ assert.doesNotMatch(applied, /fonts\.googleapis|fonts\.gstatic|youtube/, 'origin
 
 const strict = buildPolicy({ scriptHashes: ['AAAA'] });
 assert.doesNotMatch(strict, /'unsafe-inline'[^;]*;\s*script-src-attr/);
-assert.match(strict, /script-src 'self' 'sha256-AAAA' /);
-assert.match(strict, /script-src-attr 'none'/);
+assert.match(strict, /script-src 'self' 'report-sample' 'sha256-AAAA' /, 'reports carry the first characters of the script');
+assert.match(strict, /script-src-attr 'none' 'report-sample'/);
 
 const real = inventory(ROOT);
 const ro = reportOnlyPolicy(real);

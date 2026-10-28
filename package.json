@@ -38,6 +38,7 @@
     "test:contact": "node tools/test-contact-send.mjs",
     "test:rate-store": "node tools/test-rate-limit-store.mjs",
     "test:csp-audit": "node tools/test-audit-csp.mjs",
+    "test:csp": "playwright test e2e/csp.spec.js",
     "test:viewer-perf": "node tools/test-viewer-perf.mjs",
     "test:ui-v2": "node tools/test-ui-v2.mjs",
     "test:architecture-boundaries": "node tools/test-architecture-boundaries.mjs && node tools/test-core-contracts.mjs",
