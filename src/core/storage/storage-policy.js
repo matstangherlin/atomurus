@@ -44,6 +44,7 @@ export const STORAGE_REGISTRY = Object.freeze({
   'atomurus-fblock': { cls: StorageClass.PREFERENCE, area: 'local' },
   'atomurus-anim': { cls: StorageClass.PREFERENCE, area: 'local' },
   'atomurus-sci-mode': { cls: StorageClass.PREFERENCE, area: 'local' },
+  'atomurus-sci-angle': { cls: StorageClass.PREFERENCE, area: 'local', note: 'scientific calculator deg/rad' },
   'atomurus-proto-theme': { cls: StorageClass.PREFERENCE, area: 'local', note: 'dev prototype only' },
   'atomurus-lab-sound': { cls: StorageClass.PREFERENCE, area: 'local' },
   'atomurus-cookie-consent': { cls: StorageClass.PREFERENCE, area: 'local', note: 'web only; accepted or rejected' },

@@ -1745,7 +1745,10 @@ const DICT = {
         ph0: '0 · acidic',
         ph7: '7 · neutral',
         ph14: '14 · basic',
-        natureSolution: '{nature} solution'
+        natureSolution: '{nature} solution',
+        angleMode: 'Angle unit',
+        angleDeg: 'Degrees',
+        angleRad: 'Radians'
       },
       ptable: {
         metaTitle: 'Interactive Periodic Table: 118 Elements, Properties and 3D Models | Atomurus',
@@ -3947,7 +3950,10 @@ const DICT = {
         ph0: '0 · ácida',
         ph7: '7 · neutra',
         ph14: '14 · básica',
-        natureSolution: 'solução {nature}'
+        natureSolution: 'solução {nature}',
+        angleMode: 'Unidade de ângulo',
+        angleDeg: 'Graus',
+        angleRad: 'Radianos'
       },
       ptable: {
         metaTitle: 'Tabela Periódica Interativa: 118 Elementos, Propriedades e 3D | Atomurus',

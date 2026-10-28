@@ -44,7 +44,7 @@ close('10^-pH(1e-3)', 1e-3, null, 1e-12);
 // ── Functions and constants ─────────────────────────────────────────────────
 close('log10(1000)', 3);
 close('ln(e)', 1);
-close('sin(pi/6)', 0.5, null, 1e-12);
+close('sin(pi/6)', 0.5, { angleMode: 'rad' }, 1e-12);
 close('cos(0)', 1);
 close('tan(0)', 0);
 close('abs(-3)', 3);
@@ -54,7 +54,45 @@ close('5!', 120);
 close('3!!', 720);
 close('factorial(4)', 24);
 close('0^0', 1);
+// round: halves away from zero (school convention); round(x, n) keeps n decimals.
 close('round(2.5)', 3);
+close('round(-2.5)', -3);
+close('round(-0.4)', 0);
+close('round(1.005, 2)', 1.01);
+close('round(-1.25, 1)', -1.3);
+fails('round(1, 1.5)', /whole n/);
+assert.equal(sci.roundHalfAway(-2.5, 0), -3);
+
+// log is the base-10 logarithm (Brazilian school use); lg is an alias; ln is natural.
+close('log(1000)', 3);
+close('lg(100)', 2);
+close('log(8, 2)', 3);
+close('log10(1000)', 3, null);
+fails('log(8, 1)', /base other than 1/);
+fails('log(0)', /positive value/);
+fails('log()', /expects 1 or 2 arguments/);
+
+// Angles: degrees by default, radians on request.
+assert.equal(sci.DEFAULT_ANGLE_MODE, 'deg');
+assert.equal(sci.ANGLE_STORAGE_KEY, 'atomurus-sci-angle');
+assert.equal(sci.normalizeAngleMode('rad'), 'rad');
+assert.equal(sci.normalizeAngleMode('gradians'), 'deg');
+const DEG = { angleMode: 'deg' };
+const RAD = { angleMode: 'rad' };
+close('sin(30)', 0.5, DEG, 1e-12);
+close('sin(30)', 0.5, null, 1e-12);
+close('sin(pi/6)', 0.5, RAD, 1e-12);
+close('sin(30)', Math.sin(30), RAD);
+close('cos(60)', 0.5, DEG, 1e-12);
+close('tan(45)', 1, DEG, 1e-12);
+assert.equal(value('sin(180)', DEG), 0, 'sin(180°) is 0, not 1.2e-16');
+close('asin(0.5)', 30, DEG, 1e-12);
+close('asin(1)', Math.PI / 2, RAD);
+close('acos(0)', 90, DEG, 1e-12);
+close('atan(1)', 45, DEG, 1e-12);
+fails('asin(2)', /between -1 and 1/);
+fails('tan(90)', /undefined at 90°/, DEG);
+fails('tan(-270)', /undefined at 90°/, DEG);
 close('pH(1e-3)', 3);
 close('HfromPH(3)', 0.001);
 close('pOH(1e-5)', 5);

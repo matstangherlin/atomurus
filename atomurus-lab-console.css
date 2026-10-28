@@ -5904,6 +5904,12 @@ p.stub { display: none !important; }
   color: var(--lc-green);
   outline: none;
 }
+.sci-angle { display: inline-flex; gap: 4px; }
+.sci-angle .scc-top-btn[aria-pressed="true"] {
+  border-color: var(--lc-green);
+  color: var(--lc-green);
+  background: color-mix(in oklab, var(--lc-green) 14%, transparent);
+}
 .scimode-calc .scc-line {
   display: block;
 }

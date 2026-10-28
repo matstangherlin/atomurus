@@ -570,6 +570,10 @@
               </div>
 
               <div class="sci-display">
+                <div class="sci-display-row sci-display-angle-row">
+                  <span class="sci-display-label" data-i18n="calc.angleMode">Unidade de ângulo</span>
+                  <span class="sci-angle" role="group" aria-label="Unidade de ângulo" data-i18n-attr="aria-label:calc.angleMode"><button type="button" class="scc-top-btn" data-sci-angle="deg" aria-pressed="true" title="Graus" data-i18n-attr="title:calc.angleDeg">DEG</button><button type="button" class="scc-top-btn" data-sci-angle="rad" aria-pressed="false" title="Radianos" data-i18n-attr="title:calc.angleRad">RAD</button></span>
+                </div>
                 <div class="sci-display-row sci-display-expression-row">
                   <span class="sci-display-label" data-i18n="calc.expressionLine">Linha de expressao</span>
                   <code id="sci-display-expression">pH(1e-3)</code>
@@ -612,6 +616,7 @@
                   <div class="scc-topline">
                     <span>Atomurus</span>
                     <div class="scc-top-actions">
+                      <span class="sci-angle" role="group" aria-label="Unidade de ângulo" data-i18n-attr="aria-label:calc.angleMode"><button type="button" class="scc-top-btn" data-sci-angle="deg" aria-pressed="true" title="Graus" data-i18n-attr="title:calc.angleDeg">DEG</button><button type="button" class="scc-top-btn" data-sci-angle="rad" aria-pressed="false" title="Radianos" data-i18n-attr="title:calc.angleRad">RAD</button></span>
                       <button type="button" class="scc-top-btn" data-sci-mode="console" data-i18n="calc.modeConsole">Modo Console</button>
                       <button type="button" class="scc-top-btn" id="scc-copy-value" data-copy-value="" data-i18n="calc.copy">Copiar</button>
                     </div>
@@ -714,7 +719,7 @@
                       <button type="button" class="sk sk-fn" data-ck="^2" data-ck-shift="^3"><span class="k-main">x<sup>2</sup></span><span class="k-sub">x³</span></button>
                       <button type="button" class="sk sk-fn" data-ck="^" data-ck-shift="factorial()" data-ck-shift-cur="-1"><span class="k-main">x<sup>y</sup></span><span class="k-sub">x!</span></button>
                       <button type="button" class="sk sk-fn" data-ck="sqrt()" data-ck-cur="-1" data-ck-shift="sin()" data-ck-shift-cur="-1"><span class="k-main">√</span><span class="k-sub">sin</span></button>
-                      <button type="button" class="sk sk-fn" data-ck="log10()" data-ck-cur="-1" data-ck-shift="cos()" data-ck-shift-cur="-1"><span class="k-main">log</span><span class="k-sub">cos</span></button>
+                      <button type="button" class="sk sk-fn" data-ck="log()" data-ck-cur="-1" data-ck-shift="cos()" data-ck-shift-cur="-1"><span class="k-main">log</span><span class="k-sub">cos</span></button>
                       <button type="button" class="sk sk-fn" data-ck="ln()" data-ck-cur="-1" data-ck-shift="tan()" data-ck-shift-cur="-1"><span class="k-main">ln</span><span class="k-sub">tan</span></button>
                       <button type="button" class="sk sk-fn" data-ck="10^" data-ck-shift="abs()" data-ck-shift-cur="-1"><span class="k-main">10<sup>x</sup></span><span class="k-sub">abs</span></button>
                       <button type="button" class="sk sk-fn" data-ck="exp()" data-ck-cur="-1"><span class="k-main">e<sup>x</sup></span></button>
@@ -1751,8 +1756,30 @@ function sciText(key) {
       };
   return dict[key] || key;
 }
+/* DEG/RAD: shown on both displays, remembered on this device. */
+let sciAngleMode = (function () {
+  try { return SCI.normalizeAngleMode(localStorage.getItem(SCI.ANGLE_STORAGE_KEY)); } catch (e) { return SCI.DEFAULT_ANGLE_MODE; }
+})();
+function syncScientificAngle() {
+  document.querySelectorAll('[data-sci-angle]').forEach(function (btn) {
+    const on = btn.getAttribute('data-sci-angle') === sciAngleMode;
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    btn.classList.toggle('is-on', on);
+  });
+}
+function setScientificAngle(mode) {
+  sciAngleMode = SCI.normalizeAngleMode(mode);
+  try { localStorage.setItem(SCI.ANGLE_STORAGE_KEY, sciAngleMode); } catch (e) {}
+  syncScientificAngle();
+  const input = document.getElementById('sci-input');
+  if (input && input.value.trim()) runScientific({ record: false });
+}
+document.addEventListener('click', function (e) {
+  const btn = e.target.closest && e.target.closest('[data-sci-angle]');
+  if (btn) setScientificAngle(btn.getAttribute('data-sci-angle'));
+});
 function evaluateScientificExpression(expr) {
-  return SCI.evaluateScientificExpression(expr, { molarMass: sciMolarMass, syntaxLabel: sciText('syntax') });
+  return SCI.evaluateScientificExpression(expr, { molarMass: sciMolarMass, syntaxLabel: sciText('syntax'), angleMode: sciAngleMode });
 }
 function formatScientificValue(value) {
   if (value === 0) return '0';
@@ -2246,6 +2273,7 @@ document.addEventListener('click', e => {
   else setTimeout(update, 0);
 })();
 
+syncScientificAngle();
 runScientific({ record:false });
 
 function formulaParse(s) {

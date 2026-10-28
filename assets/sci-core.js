@@ -20,7 +20,25 @@
     e: Math.E
   };
 
+  /* Degrees by default, the way school trigonometry is taught; the page shows
+     DEG/RAD on the display and lets the user switch. An owner decision. */
+  var DEFAULT_ANGLE_MODE = 'deg';
+  var ANGLE_STORAGE_KEY = 'atomurus-sci-angle';
+
+  function normalizeAngleMode(mode) {
+    return mode === 'rad' || mode === 'deg' ? mode : DEFAULT_ANGLE_MODE;
+  }
+
   var SCI_FUNCTION_INFO = {
+    log: { en: 'log(x) is the base-10 logarithm; log(x, b) uses base b. ln(x) is the natural logarithm.', pt: 'log(x) é o logaritmo na base 10; log(x, b) usa a base b. ln(x) é o logaritmo natural.' },
+    lg: { en: 'lg(x) = log(x), the base-10 logarithm.', pt: 'lg(x) = log(x), o logaritmo na base 10.' },
+    round: { en: 'round(x) rounds halves away from zero (2.5 → 3, −2.5 → −3); round(x, n) keeps n decimals.', pt: 'round(x) arredonda o meio para longe do zero (2,5 → 3; −2,5 → −3); round(x, n) mantém n casas.' },
+    sin: { en: 'sin, cos and tan read the angle in the mode shown on the display (DEG or RAD).', pt: 'sin, cos e tan leem o ângulo no modo mostrado no visor (DEG ou RAD).' },
+    cos: { en: 'sin, cos and tan read the angle in the mode shown on the display (DEG or RAD).', pt: 'sin, cos e tan leem o ângulo no modo mostrado no visor (DEG ou RAD).' },
+    tan: { en: 'sin, cos and tan read the angle in the mode shown on the display (DEG or RAD).', pt: 'sin, cos e tan leem o ângulo no modo mostrado no visor (DEG ou RAD).' },
+    asin: { en: 'asin, acos and atan return the angle in the mode shown on the display (DEG or RAD).', pt: 'asin, acos e atan devolvem o ângulo no modo mostrado no visor (DEG ou RAD).' },
+    acos: { en: 'asin, acos and atan return the angle in the mode shown on the display (DEG or RAD).', pt: 'asin, acos e atan devolvem o ângulo no modo mostrado no visor (DEG ou RAD).' },
+    atan: { en: 'asin, acos and atan return the angle in the mode shown on the display (DEG or RAD).', pt: 'asin, acos e atan devolvem o ângulo no modo mostrado no visor (DEG ou RAD).' },
     pH: { en: 'pH(H) = -log10(H), for hydrogen ion concentration in mol/L.', pt: 'pH(H) = -log10(H), para concentração de H+ em mol/L.' },
     HfromPH: { en: 'HfromPH(pH) = 10^-pH, converting pH to [H+].', pt: 'HfromPH(pH) = 10^-pH, convertendo pH para [H+].' },
     pOH: { en: 'pOH(OH) = -log10(OH), for hydroxide ion concentration in mol/L.', pt: 'pOH(OH) = -log10(OH), para concentração de OH- em mol/L.' },
@@ -53,8 +71,39 @@
     return out;
   }
 
+  /* Half away from zero, the school convention: Math.round sends -2.5 to -2.
+     toPrecision(15) first, so 1.005 × 100 rounds as the 100.5 it is meant to be. */
+  function roundHalfAway(x, digits) {
+    var f = Math.pow(10, digits || 0);
+    var scaled = Number((Math.abs(x) * f).toPrecision(15));
+    var out = Math.sign(x) * Math.round(scaled) / f;
+    return out === 0 ? 0 : out;
+  }
+
+  /* Trig in the context's angle mode. Results this close to zero are zero:
+     sin(180°) is 0, not 1.2e-16. */
+  function tidy(v) {
+    return Math.abs(v) < 1e-15 ? 0 : v;
+  }
+
   /* Functions that need the page (molarMass) read it from the evaluation context. */
   function makeFunctions(ctx) {
+    var deg = normalizeAngleMode(ctx.angleMode) === 'deg';
+    function toRad(x) { return deg ? x * Math.PI / 180 : x; }
+    function fromRad(x) { return deg ? x * 180 / Math.PI : x; }
+    function inverse(name, fn, x) {
+      x = sciNumber(x, name + '()');
+      if (x < -1 || x > 1) throw new Error(name + '() requires a value between -1 and 1');
+      return tidy(fromRad(fn(x)));
+    }
+    function logBase(x, base, label) {
+      x = sciNumber(x, label);
+      if (x <= 0) throw new Error(label + ' requires a positive value');
+      if (base === undefined) return Math.log10(x);
+      base = sciNumber(base, label);
+      if (!(base > 0) || base === 1) throw new Error(label + ' requires a positive base other than 1');
+      return Math.log(x) / Math.log(base);
+    }
     return {
       sqrt: function (x) {
         x = sciNumber(x, 'sqrt()');
@@ -71,12 +120,28 @@
         if (x <= 0) throw new Error('ln() requires a positive value');
         return Math.log(x);
       },
+      log: function (x, base) { return logBase(x, base, 'log()'); },
+      lg: function (x) { return logBase(x, undefined, 'lg()'); },
       exp: function (x) { return Math.exp(sciNumber(x, 'exp()')); },
-      sin: function (x) { return Math.sin(sciNumber(x, 'sin()')); },
-      cos: function (x) { return Math.cos(sciNumber(x, 'cos()')); },
-      tan: function (x) { return Math.tan(sciNumber(x, 'tan()')); },
+      sin: function (x) { return tidy(Math.sin(toRad(sciNumber(x, 'sin()')))); },
+      cos: function (x) { return tidy(Math.cos(toRad(sciNumber(x, 'cos()')))); },
+      tan: function (x) {
+        x = sciNumber(x, 'tan()');
+        /* tan is undefined at 90° + k·180°; in degrees that is exact. */
+        if (deg && Math.abs(((x % 180) + 180) % 180 - 90) < 1e-12) throw new Error('tan() is undefined at 90° + k·180°');
+        return tidy(Math.tan(toRad(x)));
+      },
+      asin: function (x) { return inverse('asin', Math.asin, x); },
+      acos: function (x) { return inverse('acos', Math.acos, x); },
+      atan: function (x) { return tidy(fromRad(Math.atan(sciNumber(x, 'atan()')))); },
       abs: function (x) { return Math.abs(sciNumber(x, 'abs()')); },
-      round: function (x) { return Math.round(sciNumber(x, 'round()')); },
+      round: function (x, digits) {
+        x = sciNumber(x, 'round()');
+        if (digits === undefined) return roundHalfAway(x, 0);
+        digits = sciNumber(digits, 'round(x, n)');
+        if (!Number.isInteger(digits) || digits < 0 || digits > 12) throw new Error('round(x, n) requires a whole n from 0 to 12');
+        return roundHalfAway(x, digits);
+      },
       pH: function (x) {
         x = sciNumber(x, 'pH()');
         if (x <= 0) throw new Error('pH() requires a positive concentration');
@@ -124,14 +189,19 @@
 
   var SCI_FUNCTIONS = makeFunctions({});
 
+  /* A number, or the list of argument counts a function accepts. */
   var SCI_ARITY = {
-    sqrt: 1, log10: 1, ln: 1, exp: 1, sin: 1, cos: 1, tan: 1, abs: 1, round: 1,
+    sqrt: 1, log10: 1, log: [1, 2], lg: 1, ln: 1, exp: 1, sin: 1, cos: 1, tan: 1,
+    asin: 1, acos: 1, atan: 1, abs: 1, round: [1, 2],
     pH: 1, HfromPH: 1, pOH: 1, OHfromPOH: 1, molarMass: 1,
     molToParticles: 1, particlesToMol: 1, idealGas: 4, density: 2,
     molarity: 2, dilution: 3, percentYield: 2, factorial: 1
   };
 
   var SCI_LIBRARY = [
+    { name: 'log', insert: 'log()', keywords: 'log log10 logarithm base ten lg' },
+    { name: 'sin', insert: 'sin()', keywords: 'sine trigonometry angle degrees radians' },
+    { name: 'asin', insert: 'asin()', keywords: 'arcsine inverse trigonometry angle' },
     { name: 'pH', insert: 'pH()', keywords: 'ph acid hydrogen h concentration' },
     { name: 'HfromPH', insert: 'HfromPH()', keywords: 'ph hydrogen concentration h' },
     { name: 'pOH', insert: 'pOH()', keywords: 'ph poh base hydroxide oh concentration' },
@@ -149,8 +219,11 @@
 
   function sciCheckArity(name, args) {
     var expected = SCI_ARITY[name];
-    if (expected != null && args.length !== expected) {
-      throw new Error(name + '() expects ' + expected + ' argument' + (expected === 1 ? '' : 's'));
+    if (expected == null) return;
+    var allowed = [].concat(expected);
+    if (allowed.indexOf(args.length) === -1) {
+      var said = allowed.join(' or ');
+      throw new Error(name + '() expects ' + said + ' argument' + (allowed.length === 1 && allowed[0] === 1 ? '' : 's'));
     }
   }
 
@@ -314,7 +387,7 @@
     throw new Error('Unexpected token "' + this.peek().raw + '"');
   };
 
-  /* opts: { molarMass(formula) → g/mol, syntaxLabel } */
+  /* opts: { molarMass(formula) → g/mol, syntaxLabel, angleMode: 'deg' | 'rad' } */
   function evaluateScientificExpression(expr, opts) {
     opts = opts || {};
     var parser = new ScientificParser(tokenizeScientificExpression(expr, opts.syntaxLabel), opts);
@@ -324,6 +397,10 @@
   }
 
   return {
+    DEFAULT_ANGLE_MODE: DEFAULT_ANGLE_MODE,
+    ANGLE_STORAGE_KEY: ANGLE_STORAGE_KEY,
+    normalizeAngleMode: normalizeAngleMode,
+    roundHalfAway: roundHalfAway,
     SCI_CONSTANTS: SCI_CONSTANTS,
     SCI_FUNCTION_INFO: SCI_FUNCTION_INFO,
     SCI_FUNCTIONS: SCI_FUNCTIONS,
