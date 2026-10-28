@@ -3,6 +3,7 @@
   "core": "periodic-table.js",
   "modules": {
     "compare": "assets/pt/pt-compare.js",
+    "trends": "assets/pt/pt-trends.js",
     "isotopes": "assets/pt/pt-isotopes.js"
   },
   "onDemand": {
@@ -13,8 +14,12 @@
     "periodic-table.pt.html": [],
     "periodic-table/heatmap.html": [],
     "periodic-table/heatmap.pt.html": [],
-    "periodic-table/trends.html": [],
-    "periodic-table/trends.pt.html": [],
+    "periodic-table/trends.html": [
+      "trends"
+    ],
+    "periodic-table/trends.pt.html": [
+      "trends"
+    ],
     "periodic-table/compare.html": [
       "compare"
     ],
