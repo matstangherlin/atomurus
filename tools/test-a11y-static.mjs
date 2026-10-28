@@ -129,4 +129,24 @@ assert.equal(normalize('  PT&nbsp;—  Switch\nlanguage '), 'pt — switch langu
   assert.deepEqual(checkPage(page(pt)).name.map((n) => n.label), ['Close']);
 }
 
+// ── Contrast maths (tools/check-contrast.mjs) ───────────────────────────────
+{
+  const c = await import('./check-contrast.mjs');
+  const black = c.parseColor('#000');
+  const white = c.parseColor('#FFFFFF');
+  assert.equal(Math.round(c.ratio(black, white) * 100) / 100, 21);
+  assert.equal(c.ratio(white, white), 1);
+  assert.deepEqual(c.parseColor('rgba(255, 254, 252, 0.85)'), { r: 255, g: 254, b: 252, a: 0.85 });
+  assert.equal(c.hex(c.over({ r: 0, g: 0, b: 0, a: 0.5 }, white)), '#808080');
+  // The audit's pair: #9A948C on #F0EDE6 is 2.57:1; the suggestion keeps the hue and reaches 4.5.
+  const fg = c.parseColor('#9A948C');
+  const bg = c.parseColor('#F0EDE6');
+  assert.equal(Math.round(c.ratio(fg, bg) * 100) / 100, 2.57);
+  const s = c.suggest(fg, [bg], 4.5);
+  assert.ok(c.ratio(s, bg) >= 4.5);
+  assert.ok(c.luminance(s) < c.luminance(fg), 'darker on a light background');
+  const rows = c.check();
+  assert.ok(rows.length > 50 && rows.every((r) => !r.error && r.pass), 'every token pair passes');
+}
+
 console.log('test-a11y-static: ok');

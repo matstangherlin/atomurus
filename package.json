@@ -39,7 +39,7 @@
     "test:contact": "node tools/test-contact-send.mjs",
     "test:rate-store": "node tools/test-rate-limit-store.mjs",
     "test:csp-audit": "node tools/test-audit-csp.mjs",
-    "test:a11y": "node tools/test-a11y-static.mjs",
+    "test:a11y": "node tools/test-a11y-static.mjs && node tools/check-contrast.mjs --quiet && node tools/a11y-static.mjs --strict",
     "a11y:axe": "node tools/a11y-axe.mjs",
     "test:csp": "playwright test e2e/csp.spec.js",
     "test:viewer-perf": "node tools/test-viewer-perf.mjs",
