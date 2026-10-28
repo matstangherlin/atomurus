@@ -149,4 +149,16 @@ assert.equal(normalize('  PT&nbsp;—  Switch\nlanguage '), 'pt — switch langu
   assert.ok(rows.length > 50 && rows.every((r) => !r.error && r.pass), 'every token pair passes');
 }
 
+// ── Font sizes (tools/check-font-sizes.mjs) ─────────────────────────────────
+{
+  const f = await import('./check-font-sizes.mjs');
+  assert.equal(f.pxOf('11px'), 11);
+  assert.equal(f.pxOf('.75rem'), 12);
+  assert.equal(f.pxOf('clamp(10px, 2vw, 14px)'), 14);
+  assert.equal(f.pxOf('inherit'), null);
+  const list = f.declarations('/* a\nb */\n.a { font-size: 10px; }\n.b{font:600 9px/1.2 x}\n@media (max-width: 600px) { .c { font-size: 13px } }');
+  assert.deepEqual(list.map((d) => [d.selector, d.px, d.line]), [['.a', 10, 3], ['.b', 9, 4], ['.c', 13, 5]]);
+  assert.ok(f.CELL_EXCEPTIONS.test('.el-shells') && !f.CELL_EXCEPTIONS.test('.legend-item'));
+}
+
 console.log('test-a11y-static: ok');

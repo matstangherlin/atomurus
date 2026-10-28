@@ -9,6 +9,8 @@ Medido por `node tools/check-contrast.mjs` (razão WCAG 2.x, sem dependências),
 - `periodic-table.css`: `--text-3` (texto terciário) — só a luminosidade, mesmo matiz e saturação, até o mínimo de 4,5:1 no fundo mais exigente.
 - `periodic-table.css`: novo token `--el-meta-opacity` (claro .82, escuro .88) para o texto pequeno dentro das células (número atômico, camadas, massa, nome, estado). Antes cada um tinha a sua opacidade (.58 nas camadas, .65–.75 nos outros). A cor de cada categoria (`--c-*-t` sobre `--c-*`) **não mudou**; só quanto dela aparece. O valor é o menor que passa em todas as categorias (claro: gases nobres pedem .81; escuro: metais alcalinos pedem .87).
 - `atomurus-lab-console.css`: `.el-z` e `.el-name` usam o mesmo token (eram .65), com `.82` de reserva.
+- Modal do elemento (`periodic-table.css`): o número atômico (`.modal-z`, .45–.55), o rótulo «Atomic mass» (`.modal-mass-lbl`, .40–.45) e a etiqueta da categoria (`.modal-cat`, .85) ficam sobre a mesma cor de categoria das células e passam a usar `--el-meta-opacity`.
+- Modal, tema escuro: o botão «Explore» é verde da marca (`--accent` #34A872) com texto branco (3,0:1). O verde fica; o texto passa a `#0E0D0C` (o mesmo padrão já usado em `.lc-mod-go` e `.calc-btn-run` no escuro), ≈ 7:1.
 
 Não mudou: cores de marca (`--accent`, `--lc-green`), paleta das categorias de elementos, fundos, `--text-1`, `--text-2` (já passava: ≥ 6,3:1 no claro, ≥ 5,35:1 no escuro) e os tokens do lab console (`--lc-ink-*`, já ajustados em 2026-05).
 
@@ -50,6 +52,7 @@ Todos os pares alterados ficam ≥ 4,5:1 nos dois temas. `node tools/check-contr
 ## axe (opcional, fora do repositório)
 
 `color-contrast` na `/periodic-table` (EN e PT, 1280 px e 390 px): 109–120 nós → **0**, nos temas claro e escuro.
+Com o modal aberto, em 10 elementos de categorias diferentes (Z = 1, 2, 3, 4, 5, 6, 26, 57, 92, 118), EN e PT, 1280 e 390 px, claro e escuro: **0** (antes: o número atômico, o rótulo de massa e, no escuro, o botão «Explore»).
 
 ## Observação
 
