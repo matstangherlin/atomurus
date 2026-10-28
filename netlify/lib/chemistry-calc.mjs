@@ -1,17 +1,19 @@
 /**
  * Canonical calculation logic shared by the public calculators and Pro Lab.
  * Formulas match calculators.html (abridged standard atomic weights, CIAAW, C1V1=C2V2,
- * PV=nRT with R=8.314 J·mol⁻¹·K⁻¹, Kw=1e-14 at 25 °C).
+ * PV=nRT with R = N_A·k_B (exact, 2019 SI), Kw=1e-14 at 25 °C; constants from
+ * physical-constants.mjs).
  * Weights live in chemistry-base.mjs (Zr: 91.222). Never uses eval or new Function.
  */
 
 import { ATOMIC_WEIGHTS, calcError } from './chemistry-base.mjs';
 import { readFormulaStrict } from './chemistry-formula-strict.mjs';
+import { R, Kw25, T0, atm, mmHg } from './physical-constants.mjs';
 
 export { ATOMIC_WEIGHTS, calcError };
 
-export const GAS_R = 8.314;
-export const KW_25C = 1e-14;
+export const GAS_R = R;
+export const KW_25C = Kw25;
 
 export function formatSig(n, sig = 4) {
   if (!Number.isFinite(n)) return null;
@@ -112,16 +114,16 @@ export function solveDilution(input = {}) {
 function toPascals(v, u) {
   if (u === 'Pa') return v;
   if (u === 'kPa') return v * 1000;
-  if (u === 'atm') return v * 101325;
-  if (u === 'mmHg') return v * 133.322;
+  if (u === 'atm') return v * atm;
+  if (u === 'mmHg') return v * mmHg;
   return v;
 }
 
 function fromPascals(v, u) {
   if (u === 'Pa') return v;
   if (u === 'kPa') return v / 1000;
-  if (u === 'atm') return v / 101325;
-  if (u === 'mmHg') return v / 133.322;
+  if (u === 'atm') return v / atm;
+  if (u === 'mmHg') return v / mmHg;
   return v;
 }
 
@@ -141,15 +143,15 @@ function fromM3(v, u) {
 
 function toK(v, u) {
   if (u === 'K') return v;
-  if (u === 'C') return v + 273.15;
-  if (u === 'F') return ((v - 32) * 5) / 9 + 273.15;
+  if (u === 'C') return v + T0;
+  if (u === 'F') return ((v - 32) * 5) / 9 + T0;
   return v;
 }
 
 function fromK(v, u) {
   if (u === 'K') return v;
-  if (u === 'C') return v - 273.15;
-  if (u === 'F') return ((v - 273.15) * 9) / 5 + 32;
+  if (u === 'C') return v - T0;
+  if (u === 'F') return ((v - T0) * 9) / 5 + 32;
   return v;
 }
 

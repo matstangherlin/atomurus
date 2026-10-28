@@ -3,19 +3,22 @@
    and by Node tests (module.exports). The page supplies what depends on it:
    molarMass(formula) and the localized label for a syntax error. */
 (function (root, factory) {
-  var api = factory();
+  // Physical constants: assets/data/physical-constants.js (page) or require (Node).
+  var phys = root.AtomurusConstants ||
+    (typeof module === 'object' && module.exports ? require('./data/physical-constants.js') : null);
+  var api = factory(phys);
   if (typeof module === 'object' && module.exports) module.exports = api;
   root.AtomurusSci = api;
-})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+})(typeof globalThis !== 'undefined' ? globalThis : this, function (PHYS) {
   'use strict';
 
   var SCI_CONSTANTS = {
-    NA: 6.02214076e23,
-    R: 8.314462618,
-    F: 96485.33212,
-    Kw: 1e-14,
-    c: 299792458,
-    h: 6.62607015e-34,
+    NA: PHYS.N_A,
+    R: PHYS.R,
+    F: PHYS.F,
+    Kw: PHYS.Kw25,
+    c: PHYS.c,
+    h: PHYS.h,
     pi: Math.PI,
     e: Math.E
   };

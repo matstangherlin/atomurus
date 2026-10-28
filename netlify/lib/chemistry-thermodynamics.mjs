@@ -8,6 +8,7 @@
  * coupling here. Those belong to a later Thermochemistry Workbench.
  */
 import { calcError, formatSig } from './chemistry-calc.mjs';
+import { T0 } from './physical-constants.mjs';
 
 export const THERMO_HEAT_SUBSTANCES = Object.freeze({
   water: { c: 4.184, labelEn: 'Water (liquid)', labelPt: 'Água (líquido)' },
@@ -28,7 +29,7 @@ function requiredNumber(value, label) {
 function toKelvin(value, unit) {
   const u = String(unit || 'C').trim().toUpperCase();
   if (u === 'K') return value;
-  if (u === 'C') return value + 273.15;
+  if (u === 'C') return value + T0;
   throw calcError('temperature unit must be C or K');
 }
 
@@ -70,7 +71,7 @@ export function solveThermodynamics(input = {}) {
     const tStarK = deltaH / (deltaS / 1000);
     gibbs.crossover = {
       Tkelvin: tStarK,
-      Tcelsius: tStarK - 273.15,
+      Tcelsius: tStarK - T0,
       direction: deltaH > 0 ? 'above' : 'below'
     };
   }

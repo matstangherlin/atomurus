@@ -1,18 +1,22 @@
 /* Pure calculator checks. No DOM. */
 (function (root, factory) {
-  var api = factory();
+  // Physical constants come from assets/data/physical-constants.js, loaded
+  // first by the page (window.AtomurusConstants) or required here in Node.
+  var phys = root.AtomurusConstants ||
+    (typeof module === 'object' && module.exports ? require('./data/physical-constants.js') : null);
+  var api = factory(phys);
   if (typeof module === 'object' && module.exports) module.exports = api;
   root.AtomurusCalcCore = api;
-})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
-  var KW = 1e-14;
+})(typeof globalThis !== 'undefined' ? globalThis : this, function (PHYS) {
+  var KW = PHYS.Kw25;
   var NEUTRAL_EPS = 0.005;
   var NUMBER_ABS_MAX = 1e12;
   var ABS_ZERO_K = 0;
-  var ABS_ZERO_C = -273.15;
+  var ABS_ZERO_C = -PHYS.T0;
   var ABS_ZERO_F = -459.67;
   var DH_SUSPECT_J_THRESHOLD = 5000;
   var DILUTION_STRICT = true;
-  var R_IDEAL = 8.314;
+  var R_IDEAL = PHYS.R;
 
   var UNITS = {
     pressure: ['Pa', 'kPa', 'atm', 'mmHg'],
@@ -23,7 +27,7 @@
   var UNIT_CATEGORIES = {
     mass: { linear: true, units: { ng: 1e-9, 'µg': 1e-6, mg: 1e-3, g: 1, kg: 1e3, t: 1e6, lb: 453.59237, oz: 28.349523125 } },
     volume: { linear: true, units: { 'µL': 1e-6, mL: 1e-3, 'cm³': 1e-3, L: 1, 'm³': 1e3, 'fl oz': 0.0295735295625, pt: 0.473176473, qt: 0.946352946, 'gal (US)': 3.785411784, 'in³': 0.016387064 } },
-    pressure: { linear: true, units: { Pa: 1, hPa: 1e2, kPa: 1e3, MPa: 1e6, bar: 1e5, atm: 101325, mmHg: 133.322387415, Torr: 133.322387415, psi: 6894.757293168 } },
+    pressure: { linear: true, units: { Pa: 1, hPa: 1e2, kPa: 1e3, MPa: 1e6, bar: PHYS.bar, atm: PHYS.atm, mmHg: PHYS.mmHg, Torr: PHYS.torr, psi: 6894.757293168 } },
     temperature: { linear: false },
     energy: { linear: true, units: { J: 1, kJ: 1e3, MJ: 1e6, cal: 4.184, kcal: 4184, Wh: 3600, kWh: 3.6e6, eV: 1.602176634e-19 } },
     amount: { linear: true, units: { 'µmol': 1e-6, mmol: 1e-3, mol: 1, kmol: 1e3 } },
@@ -48,15 +52,15 @@
   function toPascals(v, u) {
     if (u === 'Pa') return v;
     if (u === 'kPa') return v * 1000;
-    if (u === 'atm') return v * 101325;
-    if (u === 'mmHg') return v * 133.322;
+    if (u === 'atm') return v * PHYS.atm;
+    if (u === 'mmHg') return v * PHYS.mmHg;
     return null;
   }
   function fromPascals(v, u) {
     if (u === 'Pa') return v;
     if (u === 'kPa') return v / 1000;
-    if (u === 'atm') return v / 101325;
-    if (u === 'mmHg') return v / 133.322;
+    if (u === 'atm') return v / PHYS.atm;
+    if (u === 'mmHg') return v / PHYS.mmHg;
     return null;
   }
   function toM3(v, u) {
@@ -73,14 +77,14 @@
   }
   function toK(v, u) {
     if (u === 'K') return v;
-    if (u === 'C') return v + 273.15;
-    if (u === 'F') return (v - 32) * 5 / 9 + 273.15;
+    if (u === 'C') return v + PHYS.T0;
+    if (u === 'F') return (v - 32) * 5 / 9 + PHYS.T0;
     return null;
   }
   function fromK(v, u) {
     if (u === 'K') return v;
-    if (u === 'C') return v - 273.15;
-    if (u === 'F') return (v - 273.15) * 9 / 5 + 32;
+    if (u === 'C') return v - PHYS.T0;
+    if (u === 'F') return (v - PHYS.T0) * 9 / 5 + 32;
     return null;
   }
 
@@ -127,13 +131,13 @@
 
   function tempToKelvin(value, unit) {
     if (unit === 'K') return value;
-    if (unit === '°C') return value + 273.15;
+    if (unit === '°C') return value + PHYS.T0;
     if (unit === '°F') return (value + 459.67) * 5 / 9;
     return null;
   }
   function kelvinTo(kelvin, unit) {
     if (unit === 'K') return kelvin;
-    if (unit === '°C') return kelvin - 273.15;
+    if (unit === '°C') return kelvin - PHYS.T0;
     if (unit === '°F') return kelvin * 9 / 5 - 459.67;
     return null;
   }

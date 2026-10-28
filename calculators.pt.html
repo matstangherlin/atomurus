@@ -758,7 +758,7 @@
                     <span class="sk-sect-k">Constants</span>
                     <div class="sk-grid sk-grid-const">
                       <button type="button" class="sk sk-const" data-ck="NA" title="Avogadro · 6.022e23"><span class="k-main">N<sub>A</sub></span></button>
-                      <button type="button" class="sk sk-const" data-ck="R" title="Gas constant · 8.314"><span class="k-main">R</span></button>
+                      <button type="button" class="sk sk-const" data-ck="R" title="Gas constant · 8.3145"><span class="k-main">R</span></button>
                       <button type="button" class="sk sk-const" data-ck="F" title="Faraday · 96485"><span class="k-main">F</span></button>
                       <button type="button" class="sk sk-const" data-ck="Kw" title="Water ion product · 1e-14"><span class="k-main">K<sub>w</sub></span></button>
                       <button type="button" class="sk sk-const" data-ck="c" title="Speed of light"><span class="k-main">c</span></button>
@@ -969,14 +969,14 @@
               <div class="calc-panel-h">
                 <span class="calc-panel-kicker" data-i18n="calc.ig02Kicker">Lei dos gases ideais</span>
                 <h2 class="calc-panel-title" data-i18n="calc.ig02Title">PV = nRT — resolva qualquer variável</h2>
-                <p class="calc-panel-desc" data-i18n-html="calc.ig02DescHtml">Provide any three of {P, V, n, T} and we solve for the fourth. R is fixed at <code style="font-family:var(--lc-mono);">8.314 J·K⁻¹·mol⁻¹</code>. Temperature input is converted to Kelvin automatically.</p>
+                <p class="calc-panel-desc" data-i18n-html="calc.ig02DescHtml">Provide any three of {P, V, n, T} and we solve for the fourth. R is fixed at <code style="font-family:var(--lc-mono);">8.3145 J·K⁻¹·mol⁻¹</code>. Temperature input is converted to Kelvin automatically.</p>
               </div>
               </div>
 
             <div class="calc-formula-strip">
               <div>
                 <span class="calc-formula-label" data-i18n="calc.formulaUsed">Fórmula usada</span>
-                <span class="calc-formula-value">PV = nRT · R = 8.314 J·K⁻¹·mol⁻¹</span>
+                <span class="calc-formula-value">PV = nRT · R = 8.3145 J·K⁻¹·mol⁻¹</span>
               </div>
               <span class="calc-formula-pill" data-i18n="calc.unitAware">com unidades</span>
             </div>
@@ -1372,7 +1372,7 @@
         </div>
       </div>
 
-      <p style="font-family:var(--lc-mono);font-size:10.5px;color:var(--lc-ink-3);letter-spacing:.04em;margin-top:18px;text-align:center;" data-i18n="calc.footer">massas atômicas · massas atômicas padrão abreviadas (CIAAW) · R = 8,314 J·K⁻¹·mol⁻¹ · Kw = 1,0 × 10⁻¹⁴ (25 °C)</p>
+      <p style="font-family:var(--lc-mono);font-size:10.5px;color:var(--lc-ink-3);letter-spacing:.04em;margin-top:18px;text-align:center;" data-i18n="calc.footer">massas atômicas · massas atômicas padrão abreviadas (CIAAW) · R = 8,3145 J·K⁻¹·mol⁻¹ · Kw = 1,0 × 10⁻¹⁴ (25 °C)</p>
     </div>
   </div>
 </main>
@@ -1392,6 +1392,7 @@
 </div>
 
 <script src="/assets/chemistry/formula-parser.js?v=202610261700"></script>
+<script src="/assets/data/physical-constants.js?v=202610281500"></script>
 <script src="/assets/calc-core.js?v=202610261800"></script>
 <script src="/assets/sci-core.js?v=202610280600"></script>
 <script>
@@ -2477,7 +2478,7 @@ runMolar({ fromLoad: !sharedFormula });
 // ═════════════════════════════════════════
 // 02 · IDEAL GAS
 // ═════════════════════════════════════════
-const R = 8.314;
+const R = window.AtomurusConstants.R; // R = N_A·k_B, assets/data/physical-constants.js
 function updateIdealFields() {
   const solve = document.getElementById('ig-solve').value;
   document.querySelectorAll('[data-ig]').forEach(el => {
@@ -2558,7 +2559,7 @@ function runIdeal() {
   if (solve !== 'n') html += `<div class="calc-result-row"><span class="calc-result-k">n</span><span class="calc-result-v">${fmt(n)} mol</span></div>`;
   if (solve !== 'T') html += `<div class="calc-result-row"><span class="calc-result-k">T</span><span class="calc-result-v">${fmt(T)} ${Tu === 'C' ? '°C' : Tu === 'F' ? '°F' : 'K'}</span></div>`;
 
-  html += `<div class="calc-result-formula">PV = nRT &nbsp;·&nbsp; R = 8.314 J·K⁻¹·mol⁻¹</div>`;
+  html += `<div class="calc-result-formula">PV = nRT &nbsp;·&nbsp; R = 8.3145 J·K⁻¹·mol⁻¹</div>`;
   body.innerHTML = html;
   meta.textContent = solverT('solvedFor', { label: label });
 }
