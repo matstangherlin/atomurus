@@ -109,3 +109,51 @@ test('if the export module cannot load, the page says so and keeps working', asy
   await expect(page.locator('#overlay')).not.toHaveClass(/\bopen\b/);
   expect(errors).toEqual([]);
 });
+
+// Prompt 25: stability labels, average atomic mass and the sources footer.
+test('isotopes: stable / observationally stable / radioactive, average mass and sources (EN)', async ({ context, page }) => {
+  await isolate(context, 'en');
+  const errors = [];
+  page.on('pageerror', (err) => errors.push(err.message));
+  await page.goto('/periodic-table/isotopes.html');
+  await page.locator('#iso-list .iso-item[data-z="20"]').click();
+  await page.waitForFunction(() => document.getElementById('iso-sym').textContent === 'Ca');
+  const stats = page.locator('#iso-hero-stats');
+  await expect(stats.locator('.iso-stat--stable .iso-stat-num')).toHaveText('5');
+  await expect(stats.locator('.iso-stat--obs .iso-stat-lbl')).toHaveText(/Observationally stable/i);
+  await expect(stats.locator('.iso-stat--obs .iso-stat-num')).toHaveText('1');
+  await expect(page.locator('#iso-decay-filter [data-mode="obs-stable"] .iso-decay-chip-count')).toHaveText('1');
+  await expect(page.locator('#iso-tbody tr[data-a="48"]')).toContainText('Observationally stable');
+  await expect(page.locator('#iso-avg-mass')).toContainText('Average atomic mass (calculated)');
+  await expect(page.locator('#iso-avg-mass .iso-avg-mass-note')).toContainText('whole mass numbers');
+  await expect(page.locator('#iso-sources')).toContainText('Sources:');
+  await expect(page.locator('#iso-sources')).toContainText('NUBASE2020');
+  await expect(page.locator('#iso-sources')).toContainText('pending');
+
+  // Chlorine: (0.7576 × 35) + (0.2424 × 37) = 35.48 u, labelled an approximation.
+  await page.locator('#iso-list .iso-item[data-z="17"]').click();
+  await expect(page.locator('#iso-avg-mass .iso-avg-mass-steps')).toHaveText('(0.7576 × 35) + (0.2424 × 37) = 35.48 u');
+
+  // Ta-180m: never seen to decay; C-11 is new and flagged.
+  await page.locator('#iso-list .iso-item[data-z="73"]').click();
+  await expect(page.locator('#iso-tbody tr[data-a="180"][data-m="1"]')).toContainText('No decay observed (to be checked)');
+  await page.locator('#iso-list .iso-item[data-z="6"]').click();
+  await expect(page.locator('#iso-tbody tr[data-a="11"]')).toContainText('(to be checked)');
+  // A single natural isotope: no average to show.
+  await page.locator('#iso-list .iso-item[data-z="9"]').click();
+  await expect(page.locator('#iso-avg-mass')).toHaveCount(0);
+  expect(errors).toEqual([]);
+});
+
+test('isótopos em português: rótulos e fontes', async ({ context, page }) => {
+  await isolate(context, 'pt');
+  await page.goto('/periodic-table/isotopes.pt.html');
+  await page.locator('#iso-list .iso-item[data-z="20"]').click();
+  await page.waitForFunction(() => document.getElementById('iso-sym').textContent === 'Ca');
+  await expect(page.locator('#iso-hero-stats .iso-stat--obs .iso-stat-lbl')).toHaveText(/Observacionalmente estáveis/i);
+  await expect(page.locator('#iso-sources')).toContainText('Fontes:');
+  await expect(page.locator('#iso-sources')).toContainText('pendente');
+  await page.locator('#iso-list .iso-item[data-z="17"]').click();
+  await expect(page.locator('#iso-avg-mass .iso-avg-mass-steps')).toHaveText('(0,7576 × 35) + (0,2424 × 37) = 35,48 u');
+  await expect(page.locator('#iso-avg-mass')).toContainText('Massa atômica média calculada');
+});

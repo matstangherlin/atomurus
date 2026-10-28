@@ -7,6 +7,32 @@
  * ─────────────────────────────────────────────────────────── */
 
 // ─── ISOTOPOS LOGIC ───
+// Stability comes from isotopes-data.js (stab: stable / obs-stable /
+// radioactive, prompt 25); the old «hl == null ⇒ stable» rule is the fallback.
+function isoStab(iso) {
+  if (!iso) return null;
+  const s = iso.stab || (typeof isotopeStability === 'function' ? isotopeStability(iso) : (iso.hl == null ? 'stable' : 'radioactive'));
+  if (s === 'obs-stable' && typeof DEFAULT_SHOW_OBS_STABLE_AS_STABLE !== 'undefined' && DEFAULT_SHOW_OBS_STABLE_AS_STABLE) return 'stable';
+  return s;
+}
+
+// Half-life text for the list and the tooltip: «> …» for a lower limit,
+// «observationally stable» / «no decay observed» when there is no value, and
+// «(to be checked)» on values not yet reviewed against the sources.
+function isoHalfLifeLabel(iso, stableLabel) {
+  const unchecked = iso.verified === false ? ' ' + _T('ptable.isoUnverified', '(to be checked)') : '';
+  if (iso.hl != null) {
+    const txt = (typeof formatHalfLife === 'function') ? formatHalfLife(iso.hl, stableLabel) : (iso.hlf || '');
+    return (iso.hlKind === 'lower-limit' ? '> ' : '') + txt + unchecked;
+  }
+  if (isoStab(iso) === 'obs-stable') {
+    return (iso.hlKind === 'lower-limit'
+      ? _T('ptable.isoNoDecayObserved', 'No decay observed')
+      : _T('ptable.isoObsStable', 'Observationally stable')) + unchecked;
+  }
+  return stableLabel;
+}
+
 let isoInited = false;
 let currentIsoZ = 1;          // Tracks which element's isotopes are on screen,
                               // so the language-change re-render can restore it.
@@ -80,6 +106,8 @@ function showIsotopes(z) {
   const T_none   = _T('ptable.isoNone',        'Nenhum');
   const T_pending = _T('ptable.isoPending',    'Dataset em construção — Z não coberto ainda');
 
+  renderIsoSources();
+
   // Pull from curated dataset (see isotopes-data.js).
   // Missing entry → graceful empty state, NO fake fallback (was the audit finding).
   const isosRaw = (typeof ISOTOPES !== 'undefined' && ISOTOPES[z]) || null;
@@ -142,10 +170,8 @@ function showIsotopes(z) {
       abBarPct = Math.max(0, Math.min(100, iso.ab * 100));
     }
 
-    // Half-life: hl seconds → formatted; null → stable label
-    const halfText = iso.hl == null
-      ? (iso.hlf || T_stable)
-      : (typeof formatHalfLife === 'function' ? formatHalfLife(iso.hl, T_stable) : iso.hlf);
+    // Half-life: hl seconds → formatted; none → stable / observationally stable label
+    const halfText = isoHalfLifeLabel(iso, T_stable);
 
     // Decay modes: array → joined; empty → "none"
     const decText = (iso.dec && iso.dec.length) ? iso.dec.join(' / ') : T_none;
@@ -266,6 +292,53 @@ function isoStatCard(num, label, cls) {
     </div>`;
 }
 
+// «Average atomic mass (calculated)» under the hero stats, for elements with two
+// or more natural isotopes, with the line of the calculation. The dataset has
+// mass numbers only (AVERAGE_MASS_METHOD 'mass-number'), so it is labelled an
+// approximation and not compared with the table's atomic mass.
+function renderIsoAvgMass(el, isos, after) {
+  let host = document.getElementById('iso-avg-mass');
+  const natural = (isos || []).filter(i => i.ab != null && i.ab > 0);
+  if (!after || natural.length < 2 || typeof averageAtomicMass !== 'function') {
+    if (host) host.remove();
+    return;
+  }
+  if (!host) {
+    host = document.createElement('div');
+    host.id = 'iso-avg-mass';
+    host.className = 'iso-avg-mass';
+    after.insertAdjacentElement('afterend', host);
+  }
+  const pt = isoInsightLang() === 'pt';
+  const num = (v, d) => {
+    const t = d == null ? String(v) : Number(v).toFixed(d);
+    return pt ? t.replace('.', ',') : t;
+  };
+  const terms = averageAtomicMassTerms(el.z);
+  const value = averageAtomicMass(el.z);
+  const approx = (typeof AVERAGE_MASS_METHOD === 'undefined' || AVERAGE_MASS_METHOD === 'mass-number');
+  const steps = terms.map(t => `(${num(t.ab)} × ${num(t.mass)})`).join(' + ') + ` = ${num(value, 2)} u`;
+  host.innerHTML =
+    `<div class="iso-avg-mass-k">${_T('ptable.isoAvgMassTitle', 'Average atomic mass (calculated)')}</div>` +
+    `<div class="iso-avg-mass-v">${num(value, 2)} u</div>` +
+    `<div class="iso-avg-mass-steps">${steps}</div>` +
+    (approx ? `<div class="iso-avg-mass-note">${_T('ptable.isoAvgMassApprox', 'Approximation with whole mass numbers; the table value uses the isotopes’ exact masses.')}</div>` : '');
+}
+
+// «Sources: …» under the isotope charts, from ISOTOPE_SOURCES (isotopes-data.js).
+function renderIsoSources() {
+  const host = document.getElementById('iso-sources');
+  if (!host || typeof ISOTOPE_SOURCES === 'undefined') return;
+  const src = ISOTOPE_SOURCES;
+  const fill = (t) => String(t)
+    .replace('{halfLife}', src.halfLife).replace('{mass}', src.mass)
+    .replace('{abundance}', src.abundance).replace('{date}', src.retrievedOn || '');
+  const body = src.reviewed
+    ? fill(_T('ptable.isoSourcesReviewed', 'Half-lives and decay modes: {halfLife}; masses: {mass}; abundances: {abundance} (retrieved {date}).'))
+    : fill(_T('ptable.isoSourcesPending', 'Curated for high-school / vestibular use. Review against {halfLife} (half-lives, decay modes), {mass} (masses) and {abundance} (abundances) is pending; values marked “(to be checked)” were added without it. Not a citable source.'));
+  host.innerHTML = `<strong>${_T('ptable.isoSourcesLabel', 'Sources')}:</strong> ${body} ${_T('ptable.isoSourcesConsult', '')}`;
+}
+
 function renderIsoHero(z, el, isos) {
   if (!el) return;
 
@@ -292,17 +365,20 @@ function renderIsoHero(z, el, isos) {
     return;
   }
 
-  const stable  = isos.filter(i => i.hl == null);
-  const radio   = isos.filter(i => i.hl != null);
+  const stable    = isos.filter(i => isoStab(i) === 'stable');
+  const obsStable = isos.filter(i => isoStab(i) === 'obs-stable');
+  const radio     = isos.filter(i => isoStab(i) === 'radioactive');
   const natural = isos.filter(i => i.ab != null && i.ab > 0);
   const mostAb  = natural.slice().sort((a, b) => b.ab - a.ab)[0] || null;
 
-  // Stat cards: known / stable / radioactive counts (+ most-abundant when it exists).
+  // Stat cards: known / stable / observationally stable (when any) /
+  // radioactive counts (+ most-abundant when it exists).
   if (statsHost) {
     statsHost.style.display = '';
     let html =
       isoStatCard(isos.length,   _T('ptable.heroKnown',       'Known'),       '') +
       isoStatCard(stable.length, _T('ptable.heroStable',      'Stable'),      'iso-stat--stable') +
+      (obsStable.length ? isoStatCard(obsStable.length, _T('ptable.heroObsStable', 'Observationally stable'), 'iso-stat--obs') : '') +
       isoStatCard(radio.length,  _T('ptable.heroRadioactive', 'Radioactive'), 'iso-stat--radio');
 
     if (mostAb) {
@@ -317,6 +393,7 @@ function renderIsoHero(z, el, isos) {
     }
     statsHost.innerHTML = html;
   }
+  renderIsoAvgMass(el, isos, statsHost);
 
   // Most-relevant chips: naturally-occurring (by abundance) + notable radioisotopes.
   if (relevantHost) {
@@ -369,11 +446,10 @@ function isoInsightStatus(z, item) {
   const ds = (typeof ISOTOPES !== 'undefined' && ISOTOPES[z]) || [];
   const match = ds.find(i => i.a === item.a && (!!i.m === !!item.m));
   if (!match) return { primary: null, rare: false };
-  const radioactive = match.hl != null;
   // "rare" = naturally occurring but scarce (<1% abundance). Purely synthetic
   // isotopes (ab == null) are already conveyed by the radioactive badge.
   const rare = (match.ab != null && match.ab > 0 && match.ab < 0.01);
-  return { primary: radioactive ? 'radioactive' : 'stable', rare };
+  return { primary: isoStab(match), rare };
 }
 
 // "11 protons and 12 neutrons." — grammar-safe (singular/plural) in both langs.
@@ -395,7 +471,16 @@ function isoFallbackItemText(z, iso, lang, mostAb) {
     ? ((typeof formatAbundance === 'function' ? formatAbundance(iso.ab) : null) || (iso.ab * 100).toFixed(3) + '%')
     : null;
   let sig;
-  if (iso.hl != null) {
+  if (isoStab(iso) === 'obs-stable') {
+    const hl = (iso.hl != null && typeof formatHalfLife === 'function') ? formatHalfLife(iso.hl) : null;
+    sig = hl
+      ? ((lang === 'pt')
+          ? 'Observacionalmente estável — meia-vida de ' + hl + ', muito maior que a idade do Universo.'
+          : 'Observationally stable — half-life ' + hl + ', far longer than the age of the Universe.')
+      : ((lang === 'pt')
+          ? 'Observacionalmente estável — nenhum decaimento medido.'
+          : 'Observationally stable — no decay measured.');
+  } else if (iso.hl != null) {
     const hl = (typeof formatHalfLife === 'function') ? formatHalfLife(iso.hl) : (iso.hlf || '');
     const modes = (iso.dec && iso.dec.length) ? iso.dec.join(' / ') : (lang === 'pt' ? 'decaimento' : 'decay');
     sig = (lang === 'pt')
@@ -425,7 +510,7 @@ function buildFallbackInsight(z) {
   const ds = (typeof ISOTOPES !== 'undefined' && ISOTOPES[z]) || [];
   if (!el || !ds.length) return null;
   const lang = isoInsightLang();
-  const nStable = ds.filter(i => i.hl == null).length;
+  const nStable = ds.filter(i => isoStab(i) !== 'radioactive').length;
 
   const lead = (lang === 'pt')
     ? (nStable === 0
@@ -446,7 +531,7 @@ function buildFallbackInsight(z) {
 
   const mostAb = natural.slice().sort((a, b) => b.ab - a.ab)[0] || stable[0];
   add(mostAb);                                            // most abundant
-  add(natural.filter(i => i.hl == null && i.ab < 0.01)    // a genuinely rare stable one
+  add(natural.filter(i => isoStab(i) === 'stable' && i.ab < 0.01)    // a genuinely rare stable one
             .sort((a, b) => a.ab - b.ab)[0]);
   radio.filter(i => i.alias).forEach(add);                // named radioisotopes first
   radio.slice().sort((a, b) => (b.hl || 0) - (a.hl || 0)) // then longest-lived
@@ -484,6 +569,7 @@ function renderIsotopeInsight(z) {
   const title   = _T('ptable.isoInsightTitle', 'Understanding these isotopes');
   const level   = _T('ptable.isoInsightLevel', 'High-school · intro chemistry');
   const L_stable = _T('ptable.isoBadgeStable',      'Stable');
+  const L_obs    = _T('ptable.isoBadgeObsStable',   'Observationally stable');
   const L_radio  = _T('ptable.isoBadgeRadioactive', 'Radioactive');
   const L_rare   = _T('ptable.isoBadgeRare',        'Rare');
 
@@ -491,6 +577,7 @@ function renderIsotopeInsight(z) {
     const st = isoInsightStatus(z, item);
     const badges = [];
     if (st.primary === 'stable')      badges.push(`<span class="iso-badge iso-badge--stable">${L_stable}</span>`);
+    if (st.primary === 'obs-stable')  badges.push(`<span class="iso-badge iso-badge--obs">${L_obs}</span>`);
     if (st.primary === 'radioactive') badges.push(`<span class="iso-badge iso-badge--radioactive">${L_radio}</span>`);
     if (st.rare)                      badges.push(`<span class="iso-badge iso-badge--rare">${L_rare}</span>`);
     const aText = `${item.a}${item.m ? 'm' : ''}`;
@@ -622,12 +709,13 @@ function renderDecayFilter(isos) {
   const host = document.getElementById('iso-decay-filter');
   if (!host) return;
 
-  // Count isotopes per decay mode + "stable" + "all"
-  const counts = { all: isos.length, stable: 0 };
+  // Count isotopes per decay mode + "stable" + "observationally stable" + "all"
+  const counts = { all: isos.length, stable: 0, 'obs-stable': 0 };
   isos.forEach(iso => {
-    if (iso.hl == null) {
-      counts.stable += 1;
-    } else if (iso.dec && iso.dec.length) {
+    const st = isoStab(iso);
+    if (st === 'stable') counts.stable += 1;
+    if (st === 'obs-stable') counts['obs-stable'] += 1;
+    if (st !== 'stable' && iso.dec && iso.dec.length) {
       iso.dec.forEach(m => { counts[m] = (counts[m] || 0) + 1; });
     }
   });
@@ -639,11 +727,12 @@ function renderDecayFilter(isos) {
   }
 
   // Build chip list: All → Stable (if any) → each decay mode (sorted by count desc)
-  const decayModes = Object.keys(counts).filter(k => k !== 'all' && k !== 'stable');
+  const decayModes = Object.keys(counts).filter(k => k !== 'all' && k !== 'stable' && k !== 'obs-stable' && counts[k]);
   decayModes.sort((a, b) => counts[b] - counts[a]);
   const chips = [
     { id: 'all',    label: _T('ptable.isoFilterAll',    'all')    },
     ...(counts.stable ? [{ id: 'stable', label: _T('ptable.isoFilterStable', 'stable') }] : []),
+    ...(counts['obs-stable'] ? [{ id: 'obs-stable', label: _T('ptable.isoFilterObsStable', 'observationally stable') }] : []),
     ...decayModes.map(m => ({ id: m, label: m }))
   ];
 
@@ -670,7 +759,8 @@ function renderDecayFilter(isos) {
 function isotopeMatchesDecayFilter(iso) {
   if (!iso) return false;
   if (currentDecayFilter === 'all') return true;
-  if (currentDecayFilter === 'stable') return iso.hl == null;
+  if (currentDecayFilter === 'stable') return isoStab(iso) === 'stable';
+  if (currentDecayFilter === 'obs-stable') return isoStab(iso) === 'obs-stable';
   return !!(iso.dec && iso.dec.indexOf(currentDecayFilter) !== -1);
 }
 
@@ -929,8 +1019,7 @@ function isoTipAbundance(iso) {
 
 function isoTipHalfLife(iso, stableLabel) {
   if (!isoTipHas(iso, 'hl') && !isoTipHas(iso, 'hlf')) return null;
-  if (iso.hl == null) return iso.hlf && iso.hlf !== 'stable' ? iso.hlf : stableLabel;
-  return (typeof formatHalfLife === 'function') ? formatHalfLife(iso.hl, iso.hlf || '') : (iso.hlf || null);
+  return isoHalfLifeLabel(iso, stableLabel);
 }
 
 function isoTipCompositionRows(el, iso, labels) {
@@ -948,7 +1037,7 @@ function buildIsotopeCard(el, iso) {
   const esc = trendEscapeHtml;
   const aTxt = iso.a + (iso.m ? 'm' : '');
   const alias = iso.alias ? _T('ptable.isoAlias_' + iso.alias.toLowerCase(), iso.alias) : '';
-  const stable = (iso.hl == null);
+  const stab = isoStab(iso);
 
   const L = {
     comp: isoTipText('Composition', 'Composição'),
@@ -959,6 +1048,7 @@ function buildIsotopeCard(el, iso) {
     dec: isoTipText('Decay', 'Decaimento'), stab: isoTipText('Stability', 'Estabilidade'),
     none: isoTipText('None', 'Nenhum'),
     stable: isoTipText('Stable', 'Estável'),
+    obsStable: isoTipText('Observationally stable', 'Observacionalmente estável'),
     radioactive: isoTipText('Radioactive', 'Radioativo')
   };
   const row = (k, v) => `<div class="iso-tip-row"><span class="iso-tip-k">${esc(k)}</span><span class="iso-tip-v">${esc(v)}</span></div>`;
@@ -966,14 +1056,15 @@ function buildIsotopeCard(el, iso) {
   const abVal = isoTipAbundance(iso);
   const halfVal = isoTipHalfLife(iso, L.stable);
   const decVal = isoTipDecay(iso.dec, L.none);
-  const stabVal = stable ? L.stable : L.radioactive;
+  const stabVal = stab === 'stable' ? L.stable : (stab === 'obs-stable' ? L.obsStable : L.radioactive);
+  const stabCls = stab === 'stable' ? 'is-stable' : (stab === 'obs-stable' ? 'is-obs' : 'is-radio');
 
   let dataRows = '';
   if (abVal) dataRows += row(L.ab, abVal);
   if (halfVal) dataRows += row(L.hl, halfVal);
   if (decVal) dataRows += row(L.dec, decVal);
   dataRows += `<div class="iso-tip-row"><span class="iso-tip-k">${esc(L.stab)}</span>` +
-              `<span class="iso-tip-badge ${stable ? 'is-stable' : 'is-radio'}">${esc(stabVal)}</span></div>`;
+              `<span class="iso-tip-badge ${stabCls}">${esc(stabVal)}</span></div>`;
 
   return `<div class="iso-tip-title-row">` +
            `<div><div class="iso-tip-title">${esc(elName(el))}-${esc(aTxt)}</div>` +

@@ -1662,6 +1662,17 @@ body.heatmap-mode .el.dim { opacity: .15; }
 }
 .iso-stat--stable .iso-stat-num { color: var(--accent); }
 .iso-stat--radio  .iso-stat-num { color: var(--accent-2); }
+.iso-stat--obs    .iso-stat-num { color: var(--text-2); }
+.iso-stat--obs    .iso-stat-lbl { overflow-wrap: anywhere; hyphens: auto; }
+/* Average atomic mass under the hero stats (prompt 25) */
+.iso-avg-mass {
+  margin-top: 10px; padding: 10px 12px;
+  border: 1px solid var(--border); border-radius: 10px; background: var(--surface);
+}
+.iso-avg-mass-k { font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3); }
+.iso-avg-mass-v { font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 600; color: var(--text-1); margin-top: 2px; }
+.iso-avg-mass-steps { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-2); margin-top: 4px; overflow-wrap: anywhere; }
+.iso-avg-mass-note { font-size: 12px; color: var(--text-3); margin-top: 4px; }
 .iso-stat--abundant { flex: 1 1 160px; justify-content: center; gap: 4px; }
 .iso-stat-abundant-val {
   display: flex;
@@ -2037,6 +2048,7 @@ body.heatmap-mode .el.dim { opacity: .15; }
 }
 .iso-badge--stable      { background: var(--accent-light);       color: var(--accent);   }
 .iso-badge--radioactive { background: rgba(217,119,6,.12);       color: var(--accent-2); }
+.iso-badge--obs         { background: var(--surface-2); color: var(--text-2); border: 1px solid var(--border); }
 .iso-badge--rare        { background: transparent; border-color: var(--border); color: var(--text-2); }
 [data-theme="dark"] .iso-badge--radioactive { background: rgba(245,158,11,.16); }
 .iso-insight-text {
@@ -3298,6 +3310,7 @@ body.heatmap-mode .el.dim { opacity: .15; }
 }
 .iso-tip-badge.is-stable { background: rgba(52,168,114,.16); color: #34A872; }
 .iso-tip-badge.is-radio  { background: rgba(245,158,11,.16); color: #F59E0B; }
+.iso-tip-badge.is-obs    { background: rgba(242,239,233,.12); color: #F2EFE9; }
 
 .iso-wrap { display: grid; grid-template-columns: 280px 1fr; gap: 24px; }
 .iso-list { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }

@@ -4,8 +4,8 @@
     "periodic-table.js": 100352,
     "assets/pt/pt-compare.js": 49152,
     "assets/pt/pt-trends.js": 107520,
-    "assets/pt/pt-isotopes.js": 50176,
+    "assets/pt/pt-isotopes.js": 55296,
     "assets/pt/pt-export.js": 29696
   },
-  "total": 332800
+  "total": 338944
 }
