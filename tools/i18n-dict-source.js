@@ -4283,7 +4283,7 @@ const DICT = {
         mNavPrevTitle:   'Elemento anterior (←)',
         mNavNext:        'Próximo elemento',
         mNavNextTitle:   'Próximo elemento (→)',
-        mNavCompare:     'Adicionar ao comparador',
+        mNavCompare:     'Comparar: adicionar ao comparador',
         mNavCompareLbl:  'Comparar',
         mCloseAria:      'Fechar (ESC)',
         mDialogAria:     'Detalhes do elemento',

@@ -62,3 +62,23 @@ test('element modal in Portuguese has a Portuguese name', async ({ page }) => {
   await page.keyboard.press('Escape');
   await expect(page.locator('.el[data-z="8"]')).toBeFocused();
 });
+
+test('language button: its name starts with the visible code, in both languages', async ({ page }) => {
+  await open(page, '/calculators.html', 'en');
+  const btn = page.locator('[data-i18n-toggle]').first();
+  await expect(btn).toHaveText('PT');
+  await expect(btn).toHaveAttribute('aria-label', 'PT — Switch language');
+  await btn.click();
+  await expect(btn).toHaveText('EN');
+  await expect(btn).toHaveAttribute('aria-label', 'EN — Trocar idioma');
+  // A later I18N.apply() (the periodic table calls it) must not undo the name.
+  await page.evaluate(() => window.I18N.apply());
+  await expect(btn).toHaveAttribute('aria-label', 'EN — Trocar idioma');
+});
+
+test('language button on a Portuguese page', async ({ page }) => {
+  await open(page, '/periodic-table.pt.html', 'pt');
+  const btn = page.locator('[data-i18n-toggle]').first();
+  await expect(btn).toHaveText('EN');
+  await expect(btn).toHaveAttribute('aria-label', 'EN — Trocar idioma');
+});
