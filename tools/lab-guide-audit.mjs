@@ -17,6 +17,7 @@
 // confirmObserved) so the same file measures the before and the after.
 import path from 'node:path';
 import { createRequire } from 'node:module';
+import { fileURLToPath } from 'node:url';
 
 const require = createRequire(import.meta.url);
 const engineAt = process.argv.indexOf('--engine');
@@ -52,7 +53,7 @@ function wetVessel(session, memo) {
     session.containers.find((row) => row.id === memo.last) || holdable(session)[0];
 }
 
-function doStep(session, creation, step, mode, memo) {
+export function doStep(session, creation, step, mode, memo) {
   if (step.needEquipment) {
     step.needEquipment.forEach((type) => {
       if (!lab.firstOfType(session, type)) lab.addVessel(session, type, { confirmed: true });
@@ -125,7 +126,7 @@ function doStep(session, creation, step, mode, memo) {
   }
 }
 
-function confirm(session, creation) {
+export function confirm(session, creation) {
   if (typeof lab.confirmObserved !== 'function') return;
   for (let i = 0; i < 4; i += 1) {
     const state = lab.tutorialState(session, creation);
@@ -134,7 +135,7 @@ function confirm(session, creation) {
   }
 }
 
-function start(session, creationId, keepBench) {
+export function start(session, creationId, keepBench) {
   if (typeof lab.startGuide === 'function') {
     lab.startGuide(session, creationId, { keepBench: Boolean(keepBench) });
   } else {
@@ -175,7 +176,9 @@ function dirty(creation) {
   return { opensAtWithoutCleaning: opensAt, opensAt: after ? after.current : 0, residue };
 }
 
-const rows = lab.CREATIONS.map((creation) => {
+// Imported by tools/test-lab-poe.mjs for the step walker; prints only when run.
+const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+const rows = !isMain ? [] : lab.CREATIONS.map((creation) => {
   const ok = walk(creation, 'correct');
   const bad = walk(creation, 'sloppy');
   const used = dirty(creation);
@@ -196,10 +199,10 @@ const rows = lab.CREATIONS.map((creation) => {
 });
 
 const yes = (value) => (value ? 'sim' : 'não');
-console.log('| Guia | Passos | Correto conclui? | Sem cumprir o objetivo conclui? | Para no passo | Bancada usada, sem limpar: abre no passo | Bancada usada, opção padrão: abre no passo | Resíduo fica na bancada? | `learningObjectives` | Passos sem `why` |');
-console.log('|---|---|---|---|---|---|---|---|---|---|');
+if (isMain) console.log('| Guia | Passos | Correto conclui? | Sem cumprir o objetivo conclui? | Para no passo | Bancada usada, sem limpar: abre no passo | Bancada usada, opção padrão: abre no passo | Resíduo fica na bancada? | `learningObjectives` | Passos sem `why` |');
+if (isMain) console.log('|---|---|---|---|---|---|---|---|---|---|');
 rows.forEach((row) => {
   console.log(`| ${row.id} | ${row.steps} | ${yes(row.correct)} | ${yes(row.sloppy)} | ${row.sloppy ? '—' : row.sloppyAt + 1} | ${row.opensAtWithoutCleaning + 1} | ${row.opensAt + 1} | ${yes(row.residue)} | ${yes(row.objectives)} | ${row.missingWhy} |`);
 });
 
-if (process.argv.includes('--json')) console.log(JSON.stringify(rows, null, 2));
+if (isMain && process.argv.includes('--json')) console.log(JSON.stringify(rows, null, 2));
