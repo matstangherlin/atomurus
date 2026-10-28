@@ -2361,7 +2361,25 @@ function solverMsg(key, vars) {
   return '<div class="calc-result-empty">' + solverT(key, vars) + ' <strong style="color:var(--lc-ink);font-weight:500;">' + solverCompute() + '</strong></div>';
 }
 
-function runMolar() {
+// ?formula=… — the molar-mass formula travels in the URL, so a shared link opens
+// already calculated (prompt 26, B01). replaceState: no history entry.
+const MM_FORMULA_PARAM = /^[A-Za-z0-9()\[\]·.•+\-*\/ ]{1,100}$/;
+function readFormulaParam() {
+  try {
+    const f = new URLSearchParams(location.search).get('formula');
+    return f && MM_FORMULA_PARAM.test(f) ? f : null;
+  } catch (e) { return null; }
+}
+function writeFormulaParam(formula) {
+  try {
+    const u = new URL(location.href);
+    if (formula && MM_FORMULA_PARAM.test(formula)) u.searchParams.set('formula', formula);
+    else u.searchParams.delete('formula');
+    if (u.href !== location.href) history.replaceState(history.state, '', u.href);
+  } catch (e) {}
+}
+
+function runMolar(opts) {
   const input = document.getElementById('mm-input').value.trim();
   const body = document.getElementById('mm-result-body');
   const meta = document.getElementById('mm-result-meta');
@@ -2440,8 +2458,11 @@ function runMolar() {
 
   body.innerHTML = html;
   meta.textContent = solverT('uniqueAtoms', { n: Object.keys(counts).length, m: Object.values(counts).reduce((a,b)=>a+b,0) });
+  // The default formula computed on load is not written; anything the user ran is.
+  if (!(opts && opts.fromLoad)) writeFormulaParam(input);
 }
 function resetMolar() {
+  writeFormulaParam(null);
   document.getElementById('mm-input').value = '';
   document.getElementById('mm-amount').value = '';
   document.getElementById('mm-result-body').innerHTML = solverMsg('enterFormula');
@@ -2449,8 +2470,10 @@ function resetMolar() {
 }
 document.getElementById('mm-input').addEventListener('keydown', e => { if (e.key === 'Enter') runMolar(); });
 document.getElementById('mm-amount').addEventListener('keydown', e => { if (e.key === 'Enter') runMolar(); });
-// auto-run on load
-runMolar();
+// auto-run on load — with the shared ?formula= when there is one
+const sharedFormula = readFormulaParam();
+if (sharedFormula) setCalcValue('mm-input', sharedFormula);
+runMolar({ fromLoad: !sharedFormula });
 
 // ═════════════════════════════════════════
 // 02 · IDEAL GAS
@@ -2956,6 +2979,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (typeof window[fn] !== 'function') continue;
       try {
         if (fn === 'runScientific') window[fn]({ record: false });
+        else if (fn === 'runMolar') window[fn]({ fromLoad: true });   // a re-render, not a user calculation
         else window[fn]();
       } catch (e) {}
     }

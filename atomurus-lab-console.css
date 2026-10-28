@@ -4193,6 +4193,21 @@ p.stub { display: none !important; }
   visibility: visible;
   transform: translateY(0);
 }
+/* Opened from the keyboard: show at once so the first item can take focus */
+.share-host.is-open .share-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition: none;
+}
+/* Esc closed it while focus stays on the button (share-button.js) */
+.share-host.is-dismissed .share-menu,
+.share-host.is-dismissed:hover .share-menu,
+.share-host.is-dismissed:focus-within .share-menu {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+}
 
 .share-menu a,
 .share-menu button {
