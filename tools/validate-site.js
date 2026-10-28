@@ -159,6 +159,40 @@ function assertElementRedirects() {
   if (check.status !== 0) fail('netlify.toml: ' + (check.stderr || check.stdout).trim());
 }
 
+// Prompt 28: activity sheets. Generated from content/fichas/*.json and
+// checked here: a draft stays out of search and the sitemap, an answer key
+// is never indexed, and every «open the tool» link points at a real page.
+function assertActivitySheets() {
+  const srcDir = path.join(ROOT, 'content', 'fichas');
+  if (!fs.existsSync(srcDir)) return;
+  const sitemap = read('sitemap.xml');
+  fs.readdirSync(srcDir).filter((f) => /^F\d+\.json$/.test(f)).forEach((f) => {
+    const sheet = JSON.parse(read(path.join('content', 'fichas', f)));
+    const draft = sheet.status !== 'published';
+    ['', '.pt'].forEach((lang) => {
+      ['', '-gabarito'].forEach((key) => {
+        const rel = `fichas/${sheet.id}${key}${lang}.html`;
+        if (!fs.existsSync(path.join(ROOT, rel))) return fail(`${rel} is missing (node tools/build-activity-sheets.mjs)`);
+        const html = read(rel);
+        const robots = (/<meta name="robots" content="([^"]+)">/.exec(html) || [])[1] || '';
+        if ((key || draft) && robots !== 'noindex,nofollow') fail(`${rel}: ${key ? 'an answer key' : 'a draft'} must be noindex,nofollow`);
+        if (draft && !/class="fx-draft"/.test(html)) fail(`${rel}: a draft shows the «draft» band`);
+        if (/ads-gate\.js|lazy-ads\.js|adsbygoogle|atomurusRunAutoTag/.test(html)) fail(`${rel}: no ads on activity sheets`);
+      });
+    });
+    [sheet.tool, sheet.tool2].filter(Boolean).forEach((tool) => {
+      Object.values(tool.href).forEach((href) => {
+        const pathname = href.split(/[?#]/)[0].replace(/^\//, '');
+        const file = pathname === 'app' ? 'app.html' : pathname;
+        if (!fs.existsSync(path.join(ROOT, file))) fail(`${f}: tool link ${href} → ${file} does not exist`);
+      });
+    });
+  });
+  if (/fichas\//.test(sitemap)) fail('sitemap.xml lists fichas/: activity sheets stay out of it until the owner publishes them');
+  const check = require('child_process').spawnSync(process.execPath, [path.join(ROOT, 'tools', 'build-activity-sheets.mjs'), '--check'], { encoding: 'utf8' });
+  if (check.status !== 0) fail('activity sheets: ' + (check.stderr || check.stdout).trim());
+}
+
 function assertIsomerismVariants() {
   REQUIRED_VARIANTS.forEach((relPath) => {
     if (!fs.existsSync(path.join(ROOT, relPath))) {
@@ -916,6 +950,7 @@ function main() {
   assertIsomerismVariants();
   assertPtModules();
   assertElementRedirects();
+  assertActivitySheets();
   assertReadme();
   assertHomePreviewPayload();
   assertI18nNamespaceAssets();
