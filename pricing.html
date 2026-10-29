@@ -257,6 +257,12 @@
       </section>
     </div>
     <p class="price-checkout-err" id="pricing-checkout-err" role="alert"></p>
+    <!-- Prompt 34: hidden unless SCHOOL_PLAN_ENABLED (feature-catalog.mjs); no checkout. -->
+    <section class="price-school ui-card" id="school-plan" data-school-plan hidden aria-labelledby="pricing-school-title">
+      <h3 id="pricing-school-title" data-i18n="pricing.schoolTitle">For schools</h3>
+      <p data-i18n="pricing.schoolBody">A school plan, with seats for classes, is being considered. Nothing is on sale yet: if your school is interested, write to us.</p>
+      <a class="ui-btn ui-btn-ghost" href="contact.html" data-i18n="pricing.schoolCta">Talk to us</a>
+    </section>
 
     <h2 id="compare"><span class="h-no">§ 02</span> <span id="pricing-compare-title">Compare plans</span></h2>
     <div class="price-compare-wrap">

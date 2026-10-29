@@ -107,6 +107,24 @@ assert.equal(shipped.window.ATOMURUS_ACCESS.featureAccess('reactionBalancer'), '
 const frozen = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools/fixtures/feature-access-snapshot.json'), 'utf8')).limits;
 assert.deepEqual(JSON.parse(JSON.stringify({ PRO_LAB_LIMITS, STUDY_LIMITS, STUDY_SET_LIMITS, REACTION_LIMITS })), frozen);
 
+// ── School plan skeleton: off by default, a seat is then a free account ─────
+const seat = { id: 'u-s', email: 's@example.test', createdAt: '2020-01-01T00:00:00Z', app_metadata: { atomurus_plan: 'school' } };
+assert.equal(accessForUser(seat).plan, 'free', 'SCHOOL_PLAN_ENABLED off: school = free');
+assert.deepEqual(accessForUser(seat).features, accessForUser(freeUser).features);
+const SCHOOL = { FREE_TIER_OVERRIDES: {}, SCHOOL_PLAN_ENABLED: true, SCHOOL_PLAN_FEATURES: ['reactionBalancer'] };
+const seated = accessForUser(seat, SCHOOL);
+assert.equal(seated.plan, 'school');
+assert.equal(seated.isPro, false, 'a seat is not Pro');
+assert.equal(seated.features.reactionBalancer, true, 'the seat grants SCHOOL_PLAN_FEATURES');
+assert.equal(seated.features.reactionWorkbench, false);
+assert.equal(seated.features.adsFree, false);
+assert.equal(accessForUser(freeUser, SCHOOL).features.reactionBalancer, false, 'only seats get it');
+assert.equal(accessForUser({ ...seat, createdAt: new Date().toISOString() }, SCHOOL).planSource, 'trial', 'a trial still wins over a seat');
+vm.runInNewContext(renderAccessPolicy(SCHOOL), sandbox);
+assert.equal(sandbox.window.ATOMURUS_ACCESS.SCHOOL_PLAN_ENABLED, true, 'the pricing page can show the school block');
+assert.match(fs.readFileSync(path.join(ROOT, 'pricing.html'), 'utf8'), /data-school-plan hidden/);
+assert.match(fs.readFileSync(path.join(ROOT, 'pricing.pt.html'), 'utf8'), /data-school-plan hidden/);
+
 // ── Mistakes are refused, not applied silently ──────────────────────────────
 const bad = (overrides, re) => assert.throws(() => resolveAccessConfig({ FREE_TIER_OVERRIDES: overrides }), re);
 bad({ reactionBalance: 'account' }, /unknown feature/);

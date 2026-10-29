@@ -394,7 +394,11 @@ const DICT = {
         asideKeep: 'What stays free',
         asideNext: 'Roadmap',
         asideCreate: 'Create account',
-        asideLogin: 'Login'
+        asideLogin: 'Login',
+        // Prompt 34: shown only when SCHOOL_PLAN_ENABLED (netlify/lib/feature-catalog.mjs).
+        schoolTitle: 'For schools',
+        schoolBody: 'A school plan, with seats for classes, is being considered. Nothing is on sale yet: if your school is interested, write to us.',
+        schoolCta: 'Talk to us'
       },
       home: {
         metaTitle: 'Atomurus: Interactive Chemistry Lab — Periodic Table, 3D Models, Calculators and Articles',
@@ -2757,7 +2761,11 @@ const DICT = {
         asideKeep: 'O que continua grátis',
         asideNext: 'Roadmap',
         asideCreate: 'Criar conta',
-        asideLogin: 'Entrar'
+        asideLogin: 'Entrar',
+        // Prompt 34: aparece só com SCHOOL_PLAN_ENABLED (netlify/lib/feature-catalog.mjs).
+        schoolTitle: 'Para escolas',
+        schoolBody: 'Um plano escolar, com vagas para turmas, está em estudo. Ainda não há nada à venda: se a sua escola tiver interesse, escreva para nós.',
+        schoolCta: 'Fale com a gente'
       },
       home: {
         metaTitle: 'Atomurus: Laboratório de Química Interativo — Tabela Periódica, Modelos 3D, Calculadoras e Artigos',

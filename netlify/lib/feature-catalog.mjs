@@ -177,12 +177,16 @@ export function featureAccess(featureKey, config = ACCESS_CONFIG) {
   return spec ? spec.access : 'pro';
 }
 
-export function featuresForAccess({ signedIn = false, isPro = false, isAdmin = false } = {}, config = ACCESS_CONFIG) {
+/* isSchool: a school seat (plan 'school'), which only exists while
+   SCHOOL_PLAN_ENABLED is on; it adds SCHOOL_PLAN_FEATURES to a free account. */
+export function featuresForAccess({ signedIn = false, isPro = false, isAdmin = false, isSchool = false } = {}, config = ACCESS_CONFIG) {
+  const { schoolEnabled, schoolFeatures } = resolveAccessConfig(config);
+  const seat = schoolEnabled && isSchool ? new Set(schoolFeatures) : null;
   const features = {};
   for (const [id, spec] of Object.entries(accessCatalog(config).FEATURES)) {
     if (spec.access === 'public') features[id] = true;
     else if (spec.access === 'account') features[id] = Boolean(signedIn || isPro);
-    else features[id] = Boolean(isPro);
+    else features[id] = Boolean(isPro || (seat && seat.has(id)));
   }
   features.adminConsole = Boolean(isAdmin);
   features.adsFree = Boolean(isPro);
