@@ -8,8 +8,11 @@ import {
 } from '../lib/auth-rate-limit.mjs';
 import {
   clientIp,
+  isLeakedPasswordError,
   json,
   jsonWithCookies,
+  LEAKED_PASSWORD_CODE,
+  LEAKED_PASSWORD_MESSAGE,
   normalizeEmail,
   normalizeUsername,
   options,
@@ -105,6 +108,10 @@ export default async function handler(request) {
     if (isAuthConfigError(err) || status >= 500) {
       logAuthEvent('auth-signup', { ok: false, errorType: 'unavailable', level: 'error' });
       return json(500, { ok: false, error: 'Account creation is unavailable.' });
+    }
+    if (isLeakedPasswordError(err)) {
+      logAuthEvent('auth-signup', { ok: false, errorType: LEAKED_PASSWORD_CODE, status: 400 });
+      return json(400, { ok: false, error: LEAKED_PASSWORD_MESSAGE, code: LEAKED_PASSWORD_CODE });
     }
     logAuthEvent('auth-signup', {
       ok: false,

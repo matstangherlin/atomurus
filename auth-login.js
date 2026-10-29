@@ -474,6 +474,8 @@
     } catch (err) {
       if (err && err.code === 'user_exists') {
         show(errBox, t('common.auth.emailTaken', 'This email already has an account. Sign in or reset your password.'));
+      } else if (err && err.code === 'password_pwned') {
+        show(errBox, t('common.auth.passwordPwned', 'This password has appeared in known data leaks. Choose another.'));
       } else if (err && err.code === 'email_send_failed') {
         show(errBox, t('common.auth.emailSendFailed', 'We could not send the email right now. Try again in a few minutes.'));
       } else {
@@ -512,6 +514,12 @@
       await auth().resetPassword({ token: token, password: password, type: recoveryType });
       auth().redirectAfterLogin();
     } catch (err) {
+      if (err && err.code === 'password_pwned') {
+        // The link is spent; the server kept the verified session for the retry.
+        panel.dataset.recoveryToken = '';
+        show(errBox, t('common.auth.passwordPwned', 'This password has appeared in known data leaks. Choose another.'));
+        return;
+      }
       show(errBox, err && err.message ? err.message : t('common.auth.resetError', 'Password reset link is invalid or expired.'));
     } finally {
       setBusy(button, false);

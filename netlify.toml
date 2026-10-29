@@ -130,6 +130,17 @@
   to     = "/.netlify/functions/billing-portal"
   status = 200
 
+# Account data (prompt 29, LGPD): export as JSON, delete with re-authentication.
+[[redirects]]
+  from   = "/api/account/export"
+  to     = "/.netlify/functions/account-export"
+  status = 200
+
+[[redirects]]
+  from   = "/api/account/delete"
+  to     = "/.netlify/functions/account-delete"
+  status = 200
+
 [[redirects]]
   from   = "/api/billing/webhook"
   to     = "/.netlify/functions/billing-webhook"

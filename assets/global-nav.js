@@ -342,6 +342,36 @@
     bindMobileSearch();
   }
 
+  /* One-shot notices after a redirect (e.g. /?notice=account-deleted). The
+     parameter is dropped from the address so a reload does not repeat it. */
+  var NOTICES = {
+    'account-deleted': ['common.accountDeleted', {
+      en: 'Your account was deleted. Thank you for using Atomurus.',
+      pt: 'Sua conta foi excluída. Obrigado por usar o Atomurus.'
+    }]
+  };
+
+  function showNotice() {
+    var params;
+    try { params = new URLSearchParams(location.search); } catch (e) { return; }
+    var entry = NOTICES[params.get('notice') || ''];
+    if (!entry) return;
+    var main = document.getElementById('ps-main') || document.querySelector('main');
+    if (!main || document.getElementById('lc-notice')) return;
+    var pt = (document.documentElement.lang || '').toLowerCase().indexOf('pt') === 0;
+    var note = document.createElement('p');
+    note.id = 'lc-notice';
+    note.className = 'ui-alert ui-alert-success lc-notice';
+    note.setAttribute('role', 'status');
+    note.textContent = t(entry[0], pt ? entry[1].pt : entry[1].en);
+    main.insertBefore(note, main.firstChild);
+    params.delete('notice');
+    try {
+      var rest = params.toString();
+      history.replaceState(history.state, '', location.pathname + (rest ? '?' + rest : '') + location.hash);
+    } catch (e) {}
+  }
+
   function enhance() {
     bindDrawer();
     sync();
@@ -375,11 +405,13 @@
       bindDrawer();
       markActive();
       paintFoot();
+      showNotice();
     });
   } else {
     bindDrawer();
     markActive();
     paintFoot();
+    showNotice();
   }
 
   document.addEventListener('atomurus-ads-ready', function () {

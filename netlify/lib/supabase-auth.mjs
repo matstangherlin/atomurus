@@ -76,6 +76,8 @@ async function parseSupabaseResponse(res) {
     const err = new Error(data.msg || data.message || data.error_description || 'Supabase auth request failed');
     err.status = res.status;
     err.code = data.error_code || data.error || null;
+    // weak_password carries why (e.g. 'pwned' with leaked password protection on).
+    if (Array.isArray(data.weak_password?.reasons)) err.reasons = data.weak_password.reasons.map(String);
     throw err;
   }
   return data;
@@ -388,7 +390,15 @@ export async function supabaseResetPassword(token, password, type = 'recovery') 
     headers: anonHeaders({ Authorization: `Bearer ${accessToken}` }),
     body: JSON.stringify({ password })
   });
-  const data = await parseSupabaseResponse(res);
+  let data;
+  try {
+    data = await parseSupabaseResponse(res);
+  } catch (err) {
+    // The link is spent by now; the verified session lets the user retry
+    // with another password (see auth-reset.mjs).
+    err.cookieHeaders = verified.cookieHeaders;
+    throw err;
+  }
   const user = normalizeSupabaseUser(data.user || data) || verified.user;
   return {
     user,

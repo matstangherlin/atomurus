@@ -894,4 +894,67 @@ await withAuthEnv(async () => {
   assert.equal(recoveredJson.user.email, 'alice@atomurus.com');
 });
 
+// Prompt 29, block C: a password found in known leaks (Supabase «Leaked
+// password protection», an owner setting) → a clear message, never the password.
+const PWNED = { code: 422, error_code: 'weak_password', msg: 'Password is known to be weak and easy to guess, please choose a different one.', weak_password: { reasons: ['pwned'] } };
+await withAuthEnv(async () => {
+  resetAuthRateLimiters();
+  installSupabaseMock([
+    { match: (url, method) => method === 'POST' && url.includes('/signup'), respond: async () => jsonRes(422, PWNED) },
+    { match: (url, method) => method === 'POST' && url.endsWith('/verify'), respond: async () => jsonRes(200, sessionBody()) },
+    { match: (url, method) => method === 'PUT' && url.endsWith('/user'), respond: async () => jsonRes(422, PWNED) }
+  ]);
+  const signup = await signupHandler(cookieRequest('https://atomurus.com/api/auth/signup', {
+    method: 'POST',
+    body: { fullName: 'Alice Atom', username: 'alice', email: 'alice@atomurus.com', password: 'Leaked#Pass1', passwordConfirm: 'Leaked#Pass1' }
+  }));
+  const signupJson = await readJson(signup);
+  assert.equal(signup.status, 400);
+  assert.equal(signupJson.code, 'password_pwned');
+  assert.equal(signupJson.error, 'This password has appeared in known data leaks. Choose another.');
+  assert.doesNotMatch(JSON.stringify(signupJson), /Leaked#Pass1/, 'never echoes the password');
+
+  const reset = await resetHandler(cookieRequest('https://atomurus.com/api/auth/reset', {
+    method: 'POST',
+    body: { token: 'token-hash', password: 'Leaked#Pass1', type: 'recovery' }
+  }));
+  const resetJson = await readJson(reset);
+  assert.equal(reset.status, 400);
+  assert.equal(resetJson.code, 'password_pwned', 'not «link invalid or expired»');
+  assert.doesNotMatch(JSON.stringify(resetJson), /Leaked#Pass1/);
+  // The link is spent; the verified session comes back so the retry works.
+  const kept = cookieHeadersOf(reset).join('\n');
+  assert.match(kept, /atm_access=[^;]+/);
+
+  installSupabaseMock([{
+    match: (url, method) => method === 'PUT' && url.endsWith('/user'),
+    respond: async (_url, _method, options) => {
+      assert.equal(options.headers.Authorization, 'Bearer access-live');
+      return jsonRes(200, demoUser());
+    }
+  }]);
+  const retry = await resetHandler(cookieRequest('https://atomurus.com/api/auth/reset', {
+    method: 'POST',
+    cookies: 'atm_access=access-live; atm_refresh=refresh-live',
+    body: { password: 'Fresh#Pass99' }
+  }));
+  assert.equal(retry.status, 200, 'retry without the token, on the kept session');
+});
+
+await withAuthEnv(async () => {
+  // Another weak_password reason keeps the provider's own message.
+  resetAuthRateLimiters();
+  installSupabaseMock([{
+    match: (url, method) => method === 'POST' && url.includes('/signup'),
+    respond: async () => jsonRes(422, { ...PWNED, msg: 'Password should contain at least one character of each kind.', weak_password: { reasons: ['characters'] } })
+  }]);
+  const res = await signupHandler(cookieRequest('https://atomurus.com/api/auth/signup', {
+    method: 'POST',
+    body: { fullName: 'Alice Atom', username: 'alice', email: 'alice@atomurus.com', password: 'Correct#Pass', passwordConfirm: 'Correct#Pass' }
+  }));
+  const json = await readJson(res);
+  assert.equal(res.status, 422);
+  assert.equal(json.code, 'weak_password');
+});
+
 console.log('test-auth-flows: ok');

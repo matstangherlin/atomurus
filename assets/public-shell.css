@@ -2125,3 +2125,6 @@ html body .lc-form label {
   color: var(--lc-ink-3, #6b675c);
 }
 .pt-solver-cta a { color: var(--lc-green, #1E6A50); text-decoration: none; }
+
+/* One-shot notice after a redirect (global-nav.js showNotice). */
+.lc-notice { margin: 16px clamp(16px, 4vw, 32px) 0; max-width: 920px; }
