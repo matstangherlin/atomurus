@@ -1,5 +1,87 @@
 (function (global) {
   'use strict';
+
+  /* ── Measurement (prompt 31): pure functions, exported for the page and for
+     tools/test-molecule-measure.mjs. Points are [x, y, z]; 1 unit = 1 Å in
+     the viewer's teaching models. ── */
+  var MEASURE_NEEDS = { distance: 2, angle: 3, dihedral: 4 };
+  function vSub(a, b) { return [a[0] - b[0], a[1] - b[1], a[2] - b[2]]; }
+  function vDot(a, b) { return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]; }
+  function vCross(a, b) { return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]; }
+  function vLen(a) { return Math.sqrt(vDot(a, a)); }
+  function measureDistance(a, b) { return vLen(vSub(a, b)); }
+  /* Angle a–b–c at b, in degrees. */
+  function measureAngle(a, b, c) {
+    var u = vSub(a, b), v = vSub(c, b);
+    var cos = vDot(u, v) / (vLen(u) * vLen(v));
+    return Math.acos(Math.min(1, Math.max(-1, cos))) * 180 / Math.PI;
+  }
+  /* Dihedral a–b–c–d in degrees, −180…180, IUPAC sign: positive when, seen
+     along b→c (Newman projection, b in front), the bond to a turns clockwise
+     to eclipse the bond to d. */
+  function measureDihedral(a, b, c, d) {
+    var b1 = vSub(b, a), b2 = vSub(c, b), b3 = vSub(d, c);
+    var n1 = vCross(b1, b2), n2 = vCross(b2, b3);
+    return Math.atan2(vLen(b2) * vDot(b1, n2), vDot(n1, n2)) * 180 / Math.PI;
+  }
+  /* Clicking a chosen atom drops it; a new one past the count starts over. */
+  function nextSelection(selection, index, mode) {
+    var need = MEASURE_NEEDS[mode] || 2;
+    var at = selection.indexOf(index);
+    if (at !== -1) return selection.slice(0, at).concat(selection.slice(at + 1));
+    if (selection.length >= need) return [index];
+    return selection.concat([index]);
+  }
+  function isBonded(bonds, i, j) {
+    return (bonds || []).some(function (b) { return (b[0] === i && b[1] === j) || (b[0] === j && b[1] === i); });
+  }
+  /* → { mode, atoms, value, bonded? } once the selection is complete, else null. */
+  function measureResult(points, selection, mode, bonds) {
+    var need = MEASURE_NEEDS[mode];
+    if (!need || selection.length !== need) return null;
+    var p = selection.map(function (i) { return points[i]; });
+    if (mode === 'distance') return { mode: mode, atoms: selection.slice(), value: measureDistance(p[0], p[1]), bonded: isBonded(bonds, selection[0], selection[1]) };
+    if (mode === 'angle') return { mode: mode, atoms: selection.slice(), value: measureAngle(p[0], p[1], p[2]) };
+    return { mode: mode, atoms: selection.slice(), value: measureDihedral(p[0], p[1], p[2], p[3]) };
+  }
+  var MEASURE_TEXT = {
+    en: {
+      measure: 'Measure', distance: 'Distance', angle: 'Angle', dihedral: 'Dihedral', mode: 'What to measure',
+      hint: 'Choose {n} atoms: click them in the 3D view or use the list.', clear: 'Clear', close: 'Close',
+      atoms: 'Atoms', atom: 'Atom {i}: {el}', bond: 'bond', nonBond: 'not bonded', picked: 'Chosen: {list}', cleared: 'Selection cleared.',
+      note: 'Values from the Atomurus teaching model (1 unit = 1 Å); compare them with experimental data.',
+      only3d: 'Measuring works in the 3D view.', labels: 'Labels', small: 'small', medium: 'medium', large: 'large'
+    },
+    pt: {
+      measure: 'Medir', distance: 'Distância', angle: 'Ângulo', dihedral: 'Diedro', mode: 'O que medir',
+      hint: 'Escolha {n} átomos: clique neles na vista 3D ou use a lista.', clear: 'Limpar', close: 'Fechar',
+      atoms: 'Átomos', atom: 'Átomo {i}: {el}', bond: 'ligação', nonBond: 'sem ligação', picked: 'Escolhidos: {list}', cleared: 'Seleção limpa.',
+      note: 'Valores do modelo didático do Atomurus (1 unidade = 1 Å); compare com dados experimentais.',
+      only3d: 'A medição funciona na vista 3D.', labels: 'Rótulos', small: 'pequenos', medium: 'médios', large: 'grandes'
+    }
+  };
+  function atomName(labels, i) { return (labels[i] || '?') + (i + 1); }
+  /* «O1–H2: 1,1 Å (ligação)», «H2–O1–H3: 104,5°», «H5–C1–C2–H8: −60,0°». */
+  function formatMeasure(result, labels, locale) {
+    var T = MEASURE_TEXT[locale === 'pt' ? 'pt' : 'en'];
+    var num = result.value.toFixed(1).replace(/^-/, '−');
+    if (locale === 'pt') num = num.replace('.', ',');
+    var names = result.atoms.map(function (i) { return atomName(labels, i); });
+    if (result.mode === 'distance') return names.join(result.bonded ? '–' : '···') + ': ' + num + ' Å (' + (result.bonded ? T.bond : T.nonBond) + ')';
+    return names.join('–') + ': ' + num + '°';
+  }
+  global.AtomurusMoleculeMeasure = {
+    MEASURE_NEEDS: MEASURE_NEEDS,
+    MEASURE_TEXT: MEASURE_TEXT,
+    distance: measureDistance,
+    angle: measureAngle,
+    dihedral: measureDihedral,
+    nextSelection: nextSelection,
+    measureResult: measureResult,
+    formatMeasure: formatMeasure
+  };
+  if (typeof module === 'object' && module.exports) module.exports = global.AtomurusMoleculeMeasure;
+
   global.atomurusInitMoleculeViewer = function atomurusInitMoleculeViewer() {
 return (function(){
   const canvas = document.getElementById('viewer3d');
@@ -57,6 +139,8 @@ return (function(){
   let labelsVisible = true;
   const DEFAULT_CAM_Z = paper() ? 6.2 : 10;
 
+  let downAt = null;
+  canvas.addEventListener('pointerdown', e => { downAt = { x: e.clientX, y: e.clientY }; });
   canvas.addEventListener('mousedown', e => {
     if (intro) intro.userToggle();
     isDragging=true; autoRotate=false; updateRotateBtn();
@@ -304,6 +388,7 @@ return (function(){
       const pos = [a.pos[0]*sx, a.pos[1], a.pos[2]];
       m.position.fromArray(pos);
       const label = COLOR_TO_ELEMENT[a.color] || '';
+      m.userData.atomIndex = trackedAtoms.length;
       trackedAtoms.push({mesh:m, label, radius, color:a.color, pos});
       g.add(m); return m;
     });
@@ -321,6 +406,7 @@ return (function(){
 
   let liveLoop = null;
   function rebuildScene(){
+    const t0 = performance.now();
     if (paper() && paper().replaceChild) {
       currentGroup = paper().replaceChild(scene, currentGroup, buildMolecule(currentMolecule));
     } else {
@@ -337,6 +423,8 @@ return (function(){
     }
     updateRotateBtn();
     refreshLabels();
+    // Scene build time, for docs/viewer/novas-moleculas-desempenho.md.
+    canvas.dataset.buildMs = String(Math.round((performance.now() - t0) * 10) / 10);
     if (liveLoop && liveLoop.wake) liveLoop.wake();
   }
 
@@ -357,11 +445,17 @@ return (function(){
       scene.add(currentGroup);
     }
     refreshLabels();
+    measureAfterRebuild(false);
     if (viewMode === '2d') draw2DMolecule(0);
   };
 
   // ── Label sprites ──
-  function makeLabelSprite(text, atomRadius){
+  // One material (and texture) per symbol, reused by every atom and rebuild.
+  const LABEL_SIZES = { small: 0.9, medium: 1.3, large: 1.7 };
+  let labelSize = 'medium';
+  const labelMaterials = Object.create(null);
+  function labelMaterial(text){
+    if (labelMaterials[text]) return labelMaterials[text];
     const c = document.createElement('canvas');
     c.width = 160; c.height = 80;
     const ctx = c.getContext('2d');
@@ -378,9 +472,13 @@ return (function(){
     ctx.fillStyle = '#14120E';
     ctx.fillText(text, 80, 42);
     const tex = new THREE.CanvasTexture(c); tex.needsUpdate = true;
-    const sp = new THREE.Sprite(new THREE.SpriteMaterial({map:tex, transparent:true, depthTest:false, depthWrite:false}));
+    labelMaterials[text] = new THREE.SpriteMaterial({map:tex, transparent:true, depthTest:false, depthWrite:false});
+    return labelMaterials[text];
+  }
+  function makeLabelSprite(text, atomRadius){
+    const sp = new THREE.Sprite(labelMaterial(text));
     const r = atomRadius || 0.5;
-    const w = Math.max(0.55, r * 1.85);
+    const w = Math.max(0.55, r * 1.85) * LABEL_SIZES[labelSize];
     sp.scale.set(w, w * 0.5, 1);
     sp.renderOrder = 999;
     return sp;
@@ -403,7 +501,8 @@ return (function(){
     trackedAtoms.forEach(a=>{
       if (!a.label) return;
       const sp = makeLabelSprite(a.label, a.radius);
-      const localY = (paper() && paper().sphereMesh) ? (1 + 0.28 / Math.max(a.radius, 0.08)) : (a.radius + 0.28);
+      const lift = 0.28 * LABEL_SIZES[labelSize];
+      const localY = (paper() && paper().sphereMesh) ? (1 + lift / Math.max(a.radius, 0.08)) : (a.radius + lift);
       sp.position.set(0, localY, 0);
       a.mesh.add(sp); a.labelSprite = sp;
     });
@@ -730,9 +829,13 @@ return (function(){
   };
   function applyMolecule(key, skipUrl){
     if (!molData[key] || !molData[key].atoms) return;
+    const switched = key !== currentMolecule || !trackedAtoms.length;
     currentMolecule = key;
     mirrorMode = false;
     rebuildScene();
+    measureAfterRebuild(switched);
+    buildMeasureUi(); // idempotent: repaints its labels after a language change
+    if (measureOn && !switched) renderMeasurePanel();
     const md = molData[key];
     const tName  = _i18nTr('molecules.mol.' + key + '.name',  md.name);
     const tDesc  = _i18nTr('molecules.mol.' + key + '.desc',  md.desc);
@@ -780,6 +883,7 @@ return (function(){
     if (!md || !md.chiral) return;
     mirrorMode = !mirrorMode;
     rebuildScene();
+    measureAfterRebuild(false);
     // Reflect the 2D rendering too when the mirror is engaged.
     if (viewMode === '2d') draw2DMolecule(anim2dEnabled ? t : _t2dFrozen);
     const btn = document.getElementById('vc-mirror');
@@ -904,12 +1008,251 @@ return (function(){
     else if (k === '-' || k === '_') zoomBy(1);
     else if (k === '2') setViewerMode(viewMode === '2d' ? '3d' : '2d');
     else if (k === 'p') toggle2DAnim();
+    else if (k === 'm') toggleMeasure();
+    else if (k === 'escape' && measureOn) {
+      if (selection.length) clearSelection(true);
+      else toggleMeasure(false);
+    }
   });
 
   window.addEventListener('atomurus:themechange', () => {
     refreshLabels();
     if (viewMode === '2d') draw2DMolecule(anim2dEnabled ? t : _t2dFrozen);
   });
+
+  // ── Measurement UI (prompt 31) ──
+  // Built here, not in the page, so the viewer page itself does not grow. The
+  // result is text in an aria-live panel; the atom list is the keyboard path.
+  const MM = global.AtomurusMoleculeMeasure;
+  const mmLang = () => ((document.documentElement.lang || '').toLowerCase().indexOf('pt') === 0 ? 'pt' : 'en');
+  const mmT = () => MM.MEASURE_TEXT[mmLang()];
+  const mmFill = (text, vars) => text.replace(/\{(\w+)\}/g, (_, k) => (vars[k] != null ? vars[k] : ''));
+  const raycaster = new THREE.Raycaster();
+  const ndc = new THREE.Vector2();
+  const highlightGeo = new THREE.SphereGeometry(1, 16, 12);
+  const highlightMat = new THREE.MeshBasicMaterial({ color: 0x1E6A50, wireframe: true, transparent: true, opacity: 0.9, depthTest: false });
+  let measureOn = false;
+  let measureMode = 'distance';
+  let selection = [];
+  let mmPanel = null;
+  let mmButton = null;
+  let sizeButton = null;
+  const MM_CSS = '.mm-panel{margin:10px 0 0;padding:12px 14px;border:1px solid var(--lc-rule,#D8D2BF);border-radius:12px;background:var(--lc-paper-2,#F8F5EC);font-size:13px}' +
+    '.mm-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px}.mm-title{font-size:14px;margin:0 6px 0 0}' +
+    '.mm-panel button{min-height:40px;padding:0 10px;border:1px solid var(--lc-rule,#D8D2BF);border-radius:8px;background:transparent;color:inherit;font:inherit;cursor:pointer}' +
+    '.mm-panel button[aria-pressed="true"]{background:var(--lc-green,#1E6A50);border-color:var(--lc-green,#1E6A50);color:#fff}' +
+    '.mm-panel button:focus-visible{outline:2px solid var(--lc-green,#1E6A50);outline-offset:2px}' +
+    '.mm-result{font-family:var(--lc-mono,monospace);font-size:14px;font-weight:600;min-height:1.4em;margin:8px 0}' +
+    '.mm-hint,.mm-note{margin:6px 0;color:var(--lc-ink-2,#58544A)}.mm-atoms{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}';
+
+  function mmLabels() { return trackedAtoms.map(a => a.label || '?'); }
+  function mmPoints() { return trackedAtoms.map(a => a.pos); }
+  function wake() { if (liveLoop && liveLoop.wake) liveLoop.wake(); }
+
+  function paintHighlights() {
+    trackedAtoms.forEach((a, i) => {
+      const on = measureOn && selection.indexOf(i) !== -1;
+      if (on && !a.highlight) {
+        const h = new THREE.Mesh(highlightGeo, highlightMat);
+        const k = (paper() && paper().sphereMesh) ? 1.35 : a.radius * 1.35; // paper meshes are unit spheres scaled by r
+        h.scale.set(k, k, k);
+        h.renderOrder = 998;
+        a.mesh.add(h);
+        a.highlight = h;
+      } else if (!on && a.highlight) {
+        a.mesh.remove(a.highlight);
+        a.highlight = null;
+      }
+    });
+    wake();
+  }
+
+  function announce() {
+    if (!mmPanel) return;
+    const T = mmT();
+    const out = mmPanel.querySelector('[data-mm-result]');
+    const labels = mmLabels();
+    const result = MM.measureResult(mmPoints(), selection, measureMode, molData[currentMolecule] && molData[currentMolecule].bonds);
+    if (result) out.textContent = MM.formatMeasure(result, labels, mmLang());
+    else if (selection.length) out.textContent = mmFill(T.picked, { list: selection.map(i => labels[i] + (i + 1)).join(', ') });
+    else out.textContent = '';
+    mmPanel.querySelectorAll('[data-mm-atom]').forEach(b => {
+      b.setAttribute('aria-pressed', selection.indexOf(Number(b.dataset.mmAtom)) !== -1 ? 'true' : 'false');
+    });
+  }
+
+  function pick(index) {
+    if (!(index >= 0 && index < trackedAtoms.length)) return;
+    selection = MM.nextSelection(selection, index, measureMode);
+    paintHighlights();
+    announce();
+  }
+
+  function clearSelection(say) {
+    selection = [];
+    paintHighlights();
+    announce();
+    if (say && mmPanel) mmPanel.querySelector('[data-mm-result]').textContent = mmT().cleared;
+  }
+
+  function renderMeasurePanel() {
+    if (!mmPanel) return;
+    const T = mmT();
+    mmPanel.setAttribute('aria-label', T.measure);
+    mmPanel.querySelector('.mm-title').textContent = T.measure;
+    mmPanel.querySelector('.mm-modes').setAttribute('aria-label', T.mode);
+    mmPanel.querySelectorAll('[data-mm-mode]').forEach(b => {
+      const mode = b.dataset.mmMode;
+      b.textContent = T[mode];
+      b.setAttribute('aria-pressed', mode === measureMode ? 'true' : 'false');
+    });
+    mmPanel.querySelector('[data-mm-clear]').textContent = T.clear;
+    mmPanel.querySelector('[data-mm-close]').textContent = T.close;
+    mmPanel.querySelector('[data-mm-hint]').textContent = mmFill(T.hint, { n: MM.MEASURE_NEEDS[measureMode] }) + (viewMode === '2d' ? ' ' + T.only3d : '');
+    mmPanel.querySelector('.mm-note').textContent = T.note;
+    const list = mmPanel.querySelector('[data-mm-atoms]');
+    list.setAttribute('aria-label', T.atoms);
+    list.innerHTML = '';
+    mmLabels().forEach((el, i) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.dataset.mmAtom = String(i);
+      b.textContent = mmFill(T.atom, { i: i + 1, el: el });
+      b.setAttribute('aria-pressed', 'false');
+      list.appendChild(b);
+    });
+    announce();
+  }
+
+  function buildMeasureUi() {
+    const T = mmT();
+    if (!document.getElementById('mm-style')) {
+      const st = document.createElement('style');
+      st.id = 'mm-style';
+      st.textContent = MM_CSS;
+      document.head.appendChild(st);
+    }
+    const labelsBtn = document.getElementById('vc-labels');
+    if (labelsBtn && !document.getElementById('vc-measure')) {
+      mmButton = document.createElement('button');
+      mmButton.type = 'button';
+      mmButton.className = 'vc-btn';
+      mmButton.id = 'vc-measure';
+      mmButton.setAttribute('aria-pressed', 'false');
+      mmButton.setAttribute('aria-controls', 'mol-measure');
+      mmButton.innerHTML = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 11.5 11.5 2 14 4.5 4.5 14z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M5 9l1.3 1.3M7 7l1.3 1.3M9 5l1.3 1.3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>';
+      mmButton.addEventListener('click', () => toggleMeasure());
+      sizeButton = document.createElement('button');
+      sizeButton.type = 'button';
+      sizeButton.className = 'vc-btn';
+      sizeButton.id = 'vc-label-size';
+      sizeButton.innerHTML = '<span aria-hidden="true" style="font-weight:700;font-size:12px">Aa</span>';
+      sizeButton.addEventListener('click', () => {
+        const order = ['small', 'medium', 'large'];
+        labelSize = order[(order.indexOf(labelSize) + 1) % order.length];
+        paintSizeButton();
+        refreshLabels();
+        wake();
+      });
+      labelsBtn.insertAdjacentElement('afterend', sizeButton);
+      sizeButton.insertAdjacentElement('afterend', mmButton);
+    }
+    const bar = document.querySelector('.info-bar');
+    if (bar && !document.getElementById('mol-measure')) {
+      mmPanel = document.createElement('section');
+      mmPanel.className = 'mm-panel';
+      mmPanel.id = 'mol-measure';
+      mmPanel.hidden = true;
+      mmPanel.innerHTML =
+        '<div class="mm-head"><h2 class="mm-title"></h2>' +
+        '<div class="mm-modes" role="group"><button type="button" data-mm-mode="distance"></button><button type="button" data-mm-mode="angle"></button><button type="button" data-mm-mode="dihedral"></button></div>' +
+        '<button type="button" data-mm-clear></button><button type="button" data-mm-close></button></div>' +
+        '<p class="mm-hint" data-mm-hint></p>' +
+        '<p class="mm-result" data-mm-result aria-live="polite"></p>' +
+        '<div class="mm-atoms" role="group" data-mm-atoms></div>' +
+        '<p class="mm-note"></p>';
+      bar.insertAdjacentElement('afterend', mmPanel);
+      mmPanel.addEventListener('click', e => {
+        const t = e.target.closest('button');
+        if (!t) return;
+        if (t.dataset.mmMode) {
+          measureMode = t.dataset.mmMode;
+          selection = [];
+          paintHighlights();
+          renderMeasurePanel();
+          const again = mmPanel.querySelector('[data-mm-mode="' + measureMode + '"]');
+          if (again) again.focus({ preventScroll: true });
+        } else if (t.hasAttribute('data-mm-clear')) clearSelection(true);
+        else if (t.hasAttribute('data-mm-close')) toggleMeasure(false);
+        else if (t.dataset.mmAtom != null) pick(Number(t.dataset.mmAtom));
+      });
+    }
+    paintSizeButton();
+    if (mmButton) {
+      mmButton.setAttribute('aria-label', T.measure + ' (M)');
+      mmButton.dataset.tip = T.measure + ' (M)';
+    }
+  }
+
+  function paintSizeButton() {
+    if (!sizeButton) return;
+    const T = mmT();
+    const text = T.labels + ': ' + T[labelSize];
+    sizeButton.setAttribute('aria-label', text);
+    sizeButton.dataset.tip = text;
+  }
+
+  function toggleMeasure(force) {
+    measureOn = typeof force === 'boolean' ? force : !measureOn;
+    if (mmButton) {
+      mmButton.classList.toggle('active', measureOn);
+      mmButton.setAttribute('aria-pressed', measureOn ? 'true' : 'false');
+    }
+    if (mmPanel) mmPanel.hidden = !measureOn;
+    canvas.style.cursor = measureOn ? 'crosshair' : 'grab';
+    if (measureOn) {
+      renderMeasurePanel();
+      const first = mmPanel && mmPanel.querySelector('[data-mm-mode="' + measureMode + '"]');
+      if (first) first.focus({ preventScroll: true }); // the 3D view stays where it is
+    } else {
+      selection = [];
+      paintHighlights();
+      if (mmButton) mmButton.focus({ preventScroll: true });
+    }
+  }
+  window.toggleMeasure = toggleMeasure;
+
+  /* A new molecule starts a new selection; the same one (mirror, style)
+     keeps it, re-measured on the new positions. */
+  function measureAfterRebuild(newMolecule) {
+    if (newMolecule) selection = [];
+    paintHighlights();
+    if (measureOn && newMolecule) renderMeasurePanel();
+    else announce();
+  }
+
+  canvas.addEventListener('pointerup', e => {
+    if (!measureOn || viewMode !== '3d') return;
+    if (downAt && Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y) > 6) return; // a drag, not a pick
+    const rect = canvas.getBoundingClientRect();
+    ndc.set(((e.clientX - rect.left) / rect.width) * 2 - 1, -((e.clientY - rect.top) / rect.height) * 2 + 1);
+    scene.updateMatrixWorld(true);
+    raycaster.setFromCamera(ndc, camera);
+    const hits = raycaster.intersectObjects(trackedAtoms.map(a => a.mesh), false);
+    if (hits.length) pick(hits[0].object.userData.atomIndex);
+  });
+  buildMeasureUi();
+  // For the e2e test: where each atom is on screen (CSS px inside the canvas).
+  window.__mmScreenPoints = function () {
+    scene.updateMatrixWorld(true);
+    const rect = canvas.getBoundingClientRect();
+    return trackedAtoms.map(a => {
+      const v = new THREE.Vector3();
+      a.mesh.getWorldPosition(v);
+      v.project(camera);
+      return { x: (v.x + 1) / 2 * rect.width, y: (1 - v.y) / 2 * rect.height };
+    });
+  };
 
   // ── Resize / Animate ──
   function resize(){
