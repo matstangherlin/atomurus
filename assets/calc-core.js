@@ -236,7 +236,156 @@
       return { ok: false, code: 'positiveNum' };
     }
     if (![pH, pOH, H, OH].every(Number.isFinite)) return { ok: false, code: 'positiveNum' };
-    return { ok: true, pH: pH, pOH: pOH, H: H, OH: OH, autoion: autoion };
+    return { ok: true, pH: pH, pOH: pOH, H: H, OH: OH, autoion: autoion, steps: phSteps(mode, value, pH, pOH, H, OH, autoion) };
+  }
+
+  /* Worked steps (prompt 30). Every compute* below returns the numbers the
+     calculator shows plus steps[]: { id, vars, value?, unit? } with raw
+     numbers and no language. assets/worked-steps.js turns them into text and
+     expressions; the calculation itself lives only here. */
+  function phSteps(mode, value, pH, pOH, H, OH, autoion) {
+    var nature = { id: 'ph.nature', vars: { pH: pH, key: classifyPH(pH).key, eps: NEUTRAL_EPS } };
+    if (mode === 'H' || mode === 'OH') {
+      var ion = mode === 'H' ? H : OH;
+      var first = autoion
+        ? { id: 'ph.autoion', vars: { ion: mode, c: value, Kw: KW, x: ion } }
+        : { id: 'ph.strong', vars: { ion: mode, c: value, x: ion } };
+      // The answer is the pH the calculator shows in large type.
+      return mode === 'H'
+        ? [first, { id: 'ph.log', vars: { ion: 'H', x: H, p: pH }, value: pH, answer: true }, { id: 'ph.complement', vars: { from: 'pH', p: pH, q: pOH } }, nature]
+        : [first, { id: 'ph.log', vars: { ion: 'OH', x: OH, p: pOH } }, { id: 'ph.complement', vars: { from: 'pOH', p: pOH, q: pH }, value: pH, answer: true }, nature];
+    }
+    return mode === 'pH'
+      ? [{ id: 'ph.pow', vars: { ion: 'H', p: pH, x: H }, value: H, unit: 'mol/L', answer: true }, { id: 'ph.complement', vars: { from: 'pH', p: pH, q: pOH } }, nature]
+      : [{ id: 'ph.pow', vars: { ion: 'OH', p: pOH, x: OH } }, { id: 'ph.complement', vars: { from: 'pOH', p: pOH, q: pH }, value: pH, answer: true }, nature];
+  }
+
+  /* Molar mass from parsed counts (formula-parser.js) and a weights table;
+     amount = { value, unit: 'g' | 'kg' | 'mol' } is optional. Unknown symbols
+     are left out of the total (the page warns); then there are no steps. */
+  function computeMolarMass(counts, weights, amount) {
+    var rows = [];
+    var unknown = [];
+    var total = 0;
+    for (var sym in counts) {
+      if (!Object.prototype.hasOwnProperty.call(counts, sym)) continue;
+      if (weights[sym] == null) { unknown.push(sym); continue; }
+      var cont = weights[sym] * counts[sym];
+      total += cont;
+      rows.push({ sym: sym, count: counts[sym], mass: weights[sym], cont: cont });
+    }
+    var out = { ok: true, total: total, rows: rows, unknown: unknown, steps: [] };
+    var amt = amount && amount.value;
+    if (isFinite(amt) && amt > 0 && total > 0) {
+      if (amount.unit === 'g') { out.grams = amt; out.moles = amt / total; }
+      else if (amount.unit === 'kg') { out.grams = amt * 1000; out.moles = out.grams / total; }
+      else { out.moles = amt; out.grams = amt * total; }
+    }
+    if (unknown.length || !rows.length) return out;
+    out.steps = [
+      { id: 'mm.count', vars: { rows: rows } },
+      { id: 'mm.weights', vars: { rows: rows } },
+      { id: 'mm.terms', vars: { rows: rows } },
+      { id: 'mm.sum', vars: { rows: rows, M: total }, value: total, unit: 'g/mol', answer: true }
+    ];
+    if (out.moles != null) {
+      if (amount.unit === 'kg') out.steps.push({ id: 'mm.kg', vars: { kg: amt, g: out.grams } });
+      out.steps.push(amount.unit === 'mol'
+        ? { id: 'mm.mass', vars: { n: out.moles, M: total, m: out.grams }, value: out.grams, unit: 'g' }
+        : { id: 'mm.moles', vars: { m: out.grams, M: total, n: out.moles }, value: out.moles, unit: 'mol' });
+    }
+    return out;
+  }
+
+  var TEMP_LABEL = { K: 'K', C: '°C', F: '°F' };
+
+  /* PV = nRT, solved for one of P, V, n, T; same arithmetic as before. */
+  function computeIdealGas(input) {
+    input = input || {};
+    var check = validateIdeal(input);
+    if (!check.ok) return check;
+    var solve = input.solve;
+    var Ppa = toPascals(input.P, input.Pu);
+    var Vm3 = toM3(input.V, input.Vu);
+    var Tk = toK(input.T, input.Tu);
+    if ((solve !== 'P' && Ppa == null) || (solve !== 'V' && Vm3 == null) || (solve !== 'T' && Tk == null)) {
+      return bad('igUnknownUnit');
+    }
+    var n = input.n;
+    var R = R_IDEAL;
+    var result;
+    var displayValue;
+    var displayUnit;
+    if (solve === 'P') {
+      result = n * R * Tk / Vm3;
+      displayValue = fromPascals(result, input.Pu); displayUnit = input.Pu;
+    } else if (solve === 'V') {
+      result = n * R * Tk / Ppa;
+      displayValue = fromM3(result, input.Vu); displayUnit = input.Vu;
+    } else if (solve === 'n') {
+      result = (Ppa * Vm3) / (R * Tk);
+      displayValue = result; displayUnit = 'mol';
+    } else {
+      result = (Ppa * Vm3) / (n * R);
+      var again = validateIdeal({ solve: solve, P: input.P, V: input.V, n: n, T: input.T, Pu: input.Pu, Vu: input.Vu, Tu: input.Tu, resultK: result });
+      if (!again.ok) return again;
+      displayValue = fromK(result, input.Tu); displayUnit = TEMP_LABEL[input.Tu];
+    }
+    if (displayValue == null) return bad('igUnknownUnit');
+    if (!isFinite(displayValue)) return { ok: false, code: 'fillThreeVars', incomplete: true };
+    var si = { P: Ppa, V: Vm3, n: n, T: Tk };
+    si[solve] = result;
+    var given = [];
+    if (solve !== 'P') given.push({ q: 'P', v: input.P, u: input.Pu, si: Ppa, siUnit: 'Pa' });
+    if (solve !== 'V') given.push({ q: 'V', v: input.V, u: input.Vu, si: Vm3, siUnit: 'm3' });
+    if (solve !== 'n') given.push({ q: 'n', v: n, u: 'mol', si: n, siUnit: 'mol' });
+    if (solve !== 'T') given.push({ q: 'T', v: input.T, u: TEMP_LABEL[input.Tu], si: Tk, siUnit: 'K' });
+    var siUnit = { P: 'Pa', V: 'm3', n: 'mol', T: 'K' }[solve];
+    var steps = [
+      { id: 'ig.si', vars: { given: given } },
+      { id: 'ig.isolate', vars: { solve: solve } },
+      { id: 'ig.substitute', vars: { solve: solve, si: si, R: R, unit: siUnit }, value: result, unit: siUnit, answer: displayUnit === siUnit }
+    ];
+    if (displayUnit !== siUnit) steps.push({ id: 'ig.back', vars: { solve: solve, si: result, siUnit: siUnit, value: displayValue, unit: displayUnit }, value: displayValue, unit: displayUnit, answer: true });
+    return { ok: true, solve: solve, label: solve, value: result, displayValue: displayValue, displayUnit: displayUnit, steps: steps };
+  }
+
+  var DILUTION_UNIT = { C1: 'mol/L', C2: 'mol/L', V1: 'mL', V2: 'mL' };
+
+  /* C₁V₁ = C₂V₂, solved for the missing one; same arithmetic as before. */
+  function computeDilution(input) {
+    input = input || {};
+    var gate = validateDilution(input);
+    if (!gate.ok) return gate;
+    var solve = input.solve;
+    var C1 = input.C1, V1 = input.V1, C2 = input.C2, V2 = input.V2;
+    var val;
+    if (solve === 'C1') val = C2 * V2 / V1;
+    if (solve === 'V1') val = C2 * V2 / C1;
+    if (solve === 'C2') val = C1 * V1 / V2;
+    if (solve === 'V2') val = C1 * V1 / C2;
+    if (!isFinite(val)) return { ok: false, code: 'fillThreeKnown', incomplete: true };
+    var solved = { C1: C1, V1: V1, C2: C2, V2: V2 };
+    solved[solve] = val;
+    var after = validateDilution({ solve: solve, C1: solved.C1, V1: solved.V1, C2: solved.C2, V2: solved.V2, phase: 'result' });
+    if (!after.ok) return after;
+    var ratio = solved.C1 / solved.C2;
+    var unit = DILUTION_UNIT[solve];
+    var known = ['C1', 'V1', 'C2', 'V2'].filter(function (k) { return k !== solve; })
+      .map(function (k) { return { q: k, v: solved[k], u: DILUTION_UNIT[k] }; });
+    return {
+      ok: true,
+      solve: solve,
+      value: val,
+      unit: unit,
+      ratio: ratio,
+      warnings: after.warnings,
+      steps: [
+        { id: 'dl.identify', vars: { known: known } },
+        { id: 'dl.isolate', vars: { solve: solve } },
+        { id: 'dl.substitute', vars: { solve: solve, values: solved, unit: unit }, value: val, unit: unit, answer: true }
+      ]
+    };
   }
 
   /* Acid–base constants at 25 °C for the weak-acid, weak-base and buffer modes.
@@ -416,6 +565,9 @@
     formatUnit: formatUnit,
     validateThermo: validateThermo,
     computePH: computePH,
+    computeMolarMass: computeMolarMass,
+    computeIdealGas: computeIdealGas,
+    computeDilution: computeDilution,
     ACID_BASE_CONSTANTS: ACID_BASE_CONSTANTS,
     ACID_BASE_SOURCE: ACID_BASE_SOURCE,
     BUFFER_RATIO_MIN: BUFFER_RATIO_MIN,

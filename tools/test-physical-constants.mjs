@@ -63,7 +63,9 @@ for (const page of ['calculators.html', 'calculators.pt.html']) {
   const html = fs.readFileSync(path.join(ROOT, page), 'utf8');
   const at = (src) => html.indexOf(src);
   assert.ok(at('/assets/data/physical-constants.js') !== -1 && at('/assets/data/physical-constants.js') < at('/assets/calc-core.js') && at('/assets/calc-core.js') < at('/assets/sci-core.js'), page);
-  assert.match(html, /const R = window\.AtomurusConstants\.R;/, `${page}: the page's ideal-gas solver reads R from the shared source`);
+  // Prompt 30: PV = nRT is solved in calc-core (R_IDEAL = PHYS.R), not on the page.
+  assert.match(html, /core\.computeIdealGas\(/, `${page}: the ideal-gas solver is calc-core's`);
+  assert.doesNotMatch(html, /n\*R\*Tk|\(R\*Tk\)/, `${page}: no copy of the gas-law arithmetic on the page`);
 }
 
 // No rounded copy left: 8.314 / 133.322 only in the source, the generated

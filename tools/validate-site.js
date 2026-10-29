@@ -193,6 +193,32 @@ function assertActivitySheets() {
   if (check.status !== 0) fail('activity sheets: ' + (check.stderr || check.stdout).trim());
 }
 
+/* Prompt 30: the exercise bank. Drafts are noindex and out of the sitemap;
+   the pages are what tools/build-exercises.mjs generates. */
+function assertExercises() {
+  const srcDir = path.join(ROOT, 'content', 'exercises');
+  if (!fs.existsSync(srcDir)) return;
+  const sitemap = read('sitemap.xml');
+  fs.readdirSync(srcDir).filter((f) => f.endsWith('.json')).forEach((f) => {
+    const def = JSON.parse(read(path.join('content', 'exercises', f)));
+    ['', '.pt'].forEach((lang) => {
+      const rel = `exercises/${def.id}${lang}.html`;
+      if (!fs.existsSync(path.join(ROOT, rel))) return fail(`${rel} is missing (node tools/build-exercises.mjs)`);
+      const html = read(rel);
+      const robots = (/<meta name="robots" content="([^"]+)">/.exec(html) || [])[1] || '';
+      if (def.status !== 'published' && robots !== 'noindex,nofollow') fail(`${rel}: a draft must be noindex,nofollow`);
+      if (/ads-gate\.js|lazy-ads\.js|adsbygoogle|atomurusRunAutoTag/.test(html)) fail(`${rel}: no ads on exercise pages`);
+      if (def.status !== 'published' && sitemap.includes(`exercises/${def.id}`)) fail(`sitemap.xml lists the draft ${rel}`);
+    });
+    Object.values(def.tool.href).forEach((href) => {
+      const file = href.split(/[?#]/)[0].replace(/^\//, '');
+      if (!fs.existsSync(path.join(ROOT, file))) fail(`${f}: tool link ${href} → ${file} does not exist`);
+    });
+  });
+  const check = require('child_process').spawnSync(process.execPath, [path.join(ROOT, 'tools', 'build-exercises.mjs'), '--check'], { encoding: 'utf8' });
+  if (check.status !== 0) fail('exercises: ' + (check.stderr || check.stdout).trim());
+}
+
 function assertIsomerismVariants() {
   REQUIRED_VARIANTS.forEach((relPath) => {
     if (!fs.existsSync(path.join(ROOT, relPath))) {
@@ -951,6 +977,7 @@ function main() {
   assertPtModules();
   assertElementRedirects();
   assertActivitySheets();
+  assertExercises();
   assertReadme();
   assertHomePreviewPayload();
   assertI18nNamespaceAssets();

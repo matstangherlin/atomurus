@@ -1,0 +1,56 @@
+{
+  "id": "ph-strong",
+  "type": "ph-strong",
+  "status": "draft",
+  "reviewedBy": null,
+  "title": { "pt": "pH de ácido e base fortes", "en": "pH of strong acids and bases" },
+  "summary": {
+    "pt": "Dez exercícios de pH e pOH de ácidos e bases fortes a 25 °C, com resposta e solução comentada geradas pela calculadora do site.",
+    "en": "Ten pH and pOH exercises for strong acids and bases at 25 °C, with the answer and the worked solution produced by the site's calculator."
+  },
+  "tool": { "href": { "pt": "/calculators.pt.html#ph", "en": "/calculators.html#ph" }, "label": { "pt": "Abrir a calculadora de pH", "en": "Open the pH calculator" } },
+  "template": {
+    "@by": "mode",
+    "H": { "pt": "Qual é o pH de uma solução aquosa de {solute} {c} mol/L, a 25 °C? ({solute} é um ácido forte.)", "en": "What is the pH of a {c} mol/L aqueous solution of {solute} at 25 °C? ({solute} is a strong acid.)" },
+    "OH": { "pt": "Qual é o pH de uma solução aquosa de {solute} {c} mol/L, a 25 °C? ({solute} é uma base forte.)", "en": "What is the pH of a {c} mol/L aqueous solution of {solute} at 25 °C? ({solute} is a strong base.)" }
+  },
+  "variables": {
+    "mode": { "list": ["H", "OH"] },
+    "solute": { "@by": "mode", "H": { "list": ["HCl", "HNO3", "HBr"] }, "OH": { "list": ["NaOH", "KOH", "LiOH"] } },
+    "c": { "list": [0.1, 0.05, 0.02, 0.01, 0.005, 0.002, 0.001, 0.0001] }
+  },
+  "engine": { "fn": "calc-core.computePH", "args": [{ "mode": "@mode", "value": "@c" }] },
+  "answer": { "step": { "@by": "mode", "H": "ph.log", "OH": "ph.complement" }, "unit": "" },
+  "commonErrors": [
+    {
+      "id": "sign",
+      "when": { "mode": "H" },
+      "wrong": "phSignForgotten",
+      "message": {
+        "pt": "Se você chegou a {wrong}, esqueceu o sinal: pH = −log[H⁺]. O pH de uma solução ácida é positivo e menor que 7.",
+        "en": "If you got {wrong}, you dropped the sign: pH = −log[H⁺]. The pH of an acidic solution is positive and below 7."
+      }
+    },
+    {
+      "id": "poh",
+      "when": { "mode": "OH" },
+      "wrong": "pOHasPH",
+      "message": {
+        "pt": "Se você chegou a {wrong}, parou no pOH: para uma base, −log[OH⁻] dá o pOH. Falta fazer pH = 14 − pOH; uma solução básica tem pH maior que 7.",
+        "en": "If you got {wrong}, you stopped at the pOH: for a base, −log[OH⁻] gives the pOH. Then pH = 14 − pOH; a basic solution has a pH above 7."
+      }
+    }
+  ],
+  "exercises": [
+    { "id": "PH01", "level": "basico", "vars": { "mode": "H", "solute": "HCl", "c": 0.01 } },
+    { "id": "PH02", "level": "basico", "vars": { "mode": "H", "solute": "HCl", "c": 0.001 } },
+    { "id": "PH03", "level": "basico", "vars": { "mode": "H", "solute": "HNO3", "c": 0.1 } },
+    { "id": "PH04", "level": "basico", "vars": { "mode": "OH", "solute": "NaOH", "c": 0.01 } },
+    { "id": "PH05", "level": "medio", "vars": { "mode": "OH", "solute": "NaOH", "c": 0.001 } },
+    { "id": "PH06", "level": "medio", "vars": { "mode": "H", "solute": "HCl", "c": 0.05 } },
+    { "id": "PH07", "level": "medio", "vars": { "mode": "OH", "solute": "KOH", "c": 0.1 } },
+    { "id": "PH08", "level": "medio", "vars": { "mode": "OH", "solute": "KOH", "c": 0.02 } },
+    { "id": "PH09", "level": "avancado", "vars": { "mode": "OH", "solute": "NaOH", "c": 0.0005 } },
+    { "id": "PH10", "level": "avancado", "vars": { "mode": "H", "solute": "HCl", "c": 1e-8 } }
+  ]
+}

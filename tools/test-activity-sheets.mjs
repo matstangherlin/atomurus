@@ -139,10 +139,10 @@ for (const sheet of sheets) {
   }
 }
 
-// The build writes the sheets last, after the version bump and the PT bake.
+// The build writes the sheets after the version bump and the PT bake.
 const buildCmd = JSON.parse(read('package.json')).scripts.build.split(' && ');
-assert.equal(buildCmd[buildCmd.length - 1], 'node tools/build-activity-sheets.mjs');
-assert.ok(buildCmd.indexOf('node bump-version.js') < buildCmd.length - 1 && buildCmd.indexOf('node tools/inject-ui-chrome.js') < buildCmd.length - 1);
+const sheetsAt = buildCmd.indexOf('node tools/build-activity-sheets.mjs');
+assert.ok(sheetsAt > buildCmd.indexOf('node bump-version.js') && sheetsAt > buildCmd.indexOf('node tools/inject-ui-chrome.js') && sheetsAt > buildCmd.indexOf('node build-i18n.js'));
 assert.doesNotMatch(read('sitemap.xml'), /fichas\//, 'drafts stay out of the sitemap');
 
 console.log(`test-activity-sheets: ok (${sheets.length} sheets, ${pages.length} pages)`);

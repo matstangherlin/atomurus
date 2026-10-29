@@ -84,7 +84,9 @@ for (const file of ['calculators.html', 'calculators.pt.html']) {
   const html = readFileSync(new URL('../' + file, import.meta.url), 'utf8');
   assert.match(html, /assets\/calc-core\.js/);
   assert.match(html, /AtomurusCalcCore/);
-  for (const name of ['validateIdeal', 'validateDilution', 'convertUnit', 'validateThermo', 'computePH', 'classifyPH']) {
+  // Prompt 30: the gas law, dilution and molar mass are solved in calc-core
+  // (which validates first), so the page calls the compute* engines.
+  for (const name of ['computeIdealGas', 'computeDilution', 'computeMolarMass', 'convertUnit', 'validateThermo', 'computePH', 'classifyPH']) {
     assert.match(html, new RegExp(name), file + ' ' + name);
   }
   assert.match(html, /id="tm-t-unit"/);
@@ -92,6 +94,12 @@ for (const file of ['calculators.html', 'calculators.pt.html']) {
   assert.doesNotMatch(html, /function toM3[\s\S]{0,180}return v;/);
   assert.doesNotMatch(html, /function toK[\s\S]{0,180}return v;/);
 }
+
+// The compute* engines keep the validators' answers.
+assert.equal(core.computeIdealGas({ solve: 'V', P: 101325, V: 1, n: -2, T: 298, Pu: 'Pa', Vu: 'L', Tu: 'K' }).code, 'igInvalidPositive');
+assert.equal(core.computeIdealGas({ solve: 'P', P: 1, V: 1, n: 1, T: 300, Pu: 'bar', Vu: 'L', Tu: 'K' }).code, 'igUnknownUnit');
+assert.equal(core.computeDilution({ solve: 'C2', C1: 1, V1: 10, V2: 5 }).code, 'dilutionNotDilution');
+assert.equal(core.computeDilution({ solve: 'V2', C1: 0, V1: 10, C2: 0.5 }).code, 'dlInvalidPositive');
 
 function mulberry32(seed) {
   let a = seed >>> 0;

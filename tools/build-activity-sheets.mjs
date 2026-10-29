@@ -350,7 +350,7 @@ export function keyContent(sheet, lang) {
     '  </article>\n</div>';
 }
 
-function stamp() {
+export function stamp() {
   const m = /\?v=(\d+)/.exec(fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8'));
   return m ? m[1] : '0';
 }
@@ -362,6 +362,7 @@ export function renderPage(sheet, lang, key, template, version) {
   const title = sheet.title[lang] + ' — ' + (key ? t.key : t.sheet) + ' ' + sheet.id + ' | Atomurus';
   const robots = key || sheet.status !== 'published' ? 'noindex,nofollow' : 'index,follow';
   const fill = {
+    dataPage: 'activity-sheet',
     htmlLang: t.htmlLang,
     robots,
     title: esc(title),
@@ -378,7 +379,13 @@ export function renderPage(sheet, lang, key, template, version) {
     if (!(k in fill)) throw new Error('template slot without a value: ' + k);
     return fill[k];
   });
-  const abs = path.join(OUT_DIR, name);
+  html = finishDocPage(html, path.join(OUT_DIR, name), lang);
+  return { name, html: html.replace(/\?v=\d+/g, '?v=' + version) };
+}
+
+/* The site chrome (build-time injection) and, for PT, the baked dictionary:
+   shared with tools/build-exercises.mjs. */
+export function finishDocPage(html, abs, lang) {
   html = chrome.injectHtml(html, abs).html;
   html = chrome.applyA11yChrome(html, abs);
   if (lang === 'pt') {
@@ -391,7 +398,7 @@ export function renderPage(sheet, lang, key, template, version) {
     // once it runs, this gives the static page the same name.
     html = html.replace(/(<a\b[^>]*\bdata-atomurus-account-chip\b[^>]*\saria-label=")[^"]*(")/, (m, a, b) => a + esc(d.pt.common.auth.createAccount) + b);
   }
-  return { name, html: html.replace(/\?v=\d+/g, '?v=' + version) };
+  return html;
 }
 
 export function loadSheets() {

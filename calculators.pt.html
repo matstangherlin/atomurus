@@ -98,6 +98,7 @@
 <script src="/assets/public-workspace.js?v=202608282500"></script>
 <link rel="stylesheet" href="/assets/ui/index.css?v=202609090500">
 <link rel="stylesheet" href="/assets/layouts/calculators.css?v=202609090500">
+<link rel="stylesheet" href="/assets/ui/worked-solution.css?v=202610291200">
 
 <style>
   *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1395,6 +1396,8 @@
 <script src="/assets/data/physical-constants.js?v=202610281500"></script>
 <script src="/assets/calc-core.js?v=202610261800"></script>
 <script src="/assets/sci-core.js?v=202610280600"></script>
+<script src="/assets/worked-steps.js?v=202610291200"></script>
+<script src="/assets/worked-solution.js?v=202610291200"></script>
 <script>
 // ═════════════════════════════════════════
 // THEME — swaps the SVG content (sun ↔ moon) so the icon reflects the
@@ -1567,8 +1570,8 @@ function calcLangIsPt() {
 }
 function calcUiText(key) {
   const dict = calcLangIsPt()
-    ? { copy:'Copiar', copied:'Copiado', copyEmpty:'Sem resultado' }
-    : { copy:'Copy', copied:'Copied', copyEmpty:'No result' };
+    ? { copy:'Copiar', copied:'Copiado', copyEmpty:'Sem resultado', wsShow:'Ver solução comentada' }
+    : { copy:'Copy', copied:'Copied', copyEmpty:'No result', wsShow:'Show worked solution' };
   return dict[key] || key;
 }
 function setCalcValue(id, value) {
@@ -2361,6 +2364,22 @@ function solverMsg(key, vars) {
   return '<div class="calc-result-empty">' + solverT(key, vars) + ' <strong style="color:var(--lc-ink);font-weight:500;">' + solverCompute() + '</strong></div>';
 }
 
+// «Solução comentada» (prompt 30): the steps come from the calc-core engine
+// that computed the result (assets/worked-steps.js only puts them in words);
+// a failed calculation leaves no solution.
+const WSOL_HOST = '<div class="calc-wsol"></div>';
+function showWorked(body, result) {
+  const host = body.querySelector('.calc-wsol');
+  if (!host || !window.AtomurusWorkedSteps || !window.AtomurusWorkedSolution) return;
+  const locale = calcLangIsPt() ? 'pt' : 'en';
+  const view = window.AtomurusWorkedSteps.describe(result.steps, {
+    locale: locale,
+    fmt: fmt,
+    nature: function (key) { const v = solverT(key); return v !== key ? v : null; }
+  });
+  window.AtomurusWorkedSolution.render(host, { steps: view.steps, answer: view.answer, locale: locale, labels: { show: calcUiText('wsShow') } });
+}
+
 // ?formula=… — the molar-mass formula travels in the URL, so a shared link opens
 // already calculated (prompt 26, B01). replaceState: no history entry.
 const MM_FORMULA_PARAM = /^[A-Za-z0-9()\[\]·.•+\-*\/ ]{1,100}$/;
@@ -2397,26 +2416,18 @@ function runMolar(opts) {
     return;
   }
   const counts = parsed.counts;
-  let total = 0;
-  const rows = [];
-  const unknown = [];
-  for (const sym in counts) {
-    if (AW[sym] == null) { unknown.push(sym); continue; }
-    const cont = AW[sym] * counts[sym];
-    total += cont;
-    rows.push({ sym, count: counts[sym], mass: AW[sym], cont });
-  }
+  const amt = parseFloat(document.getElementById('mm-amount').value);
+  const unit = document.getElementById('mm-amount-unit').value;
+  const mm = window.AtomurusCalcCore.computeMolarMass(counts, AW, { value: amt, unit: unit });
+  const total = mm.total;
+  const rows = mm.rows.slice();
+  const unknown = mm.unknown;
 
   let html = `<div class="calc-result-row"><span class="calc-result-k">Molar mass · M</span><span class="calc-result-v big">${fmt(total, 5)} <em>g · mol⁻¹</em></span></div>`;
 
   // amount conversion
-  const amt = parseFloat(document.getElementById('mm-amount').value);
-  const unit = document.getElementById('mm-amount-unit').value;
-  if (isFinite(amt) && amt > 0 && total > 0) {
-    let grams, moles;
-    if (unit === 'g')   { grams = amt; moles = amt / total; }
-    else if (unit === 'kg') { grams = amt * 1000; moles = grams / total; }
-    else { moles = amt; grams = amt * total; }
+  if (mm.moles != null) {
+    const grams = mm.grams, moles = mm.moles;
     html += `<div class="calc-result-row"><span class="calc-result-k">→ for ${fmt(grams)} g</span><span class="calc-result-v">${fmt(moles)} mol</span></div>`;
     html += `<div class="calc-result-row"><span class="calc-result-k">→ for ${fmt(moles)} mol</span><span class="calc-result-v">${fmt(grams)} g</span></div>`;
   }
@@ -2455,8 +2466,10 @@ function runMolar(opts) {
       html += `<a href="periodic-table.html#q=${encodeURIComponent(first)}" class="calc-deeplink" style="margin-left:22px;margin-top:12px;">${solverT('inspectPeriodic', { el: first })}</a>`;
     }
   }
+  if (mm.steps.length) html += WSOL_HOST;
 
   body.innerHTML = html;
+  showWorked(body, mm);
   meta.textContent = solverT('uniqueAtoms', { n: Object.keys(counts).length, m: Object.values(counts).reduce((a,b)=>a+b,0) });
   // The default formula computed on load is not written; anything the user ran is.
   if (!(opts && opts.fromLoad)) writeFormulaParam(input);
@@ -2478,7 +2491,6 @@ runMolar({ fromLoad: !sharedFormula });
 // ═════════════════════════════════════════
 // 02 · IDEAL GAS
 // ═════════════════════════════════════════
-const R = window.AtomurusConstants.R; // R = N_A·k_B, assets/data/physical-constants.js
 function updateIdealFields() {
   const solve = document.getElementById('ig-solve').value;
   document.querySelectorAll('[data-ig]').forEach(el => {
@@ -2509,46 +2521,16 @@ function runIdeal() {
   const Tu = document.getElementById('ig-T-u').value;
   const body = document.getElementById('ig-result-body');
   const meta = document.getElementById('ig-result-meta');
-  const check = core.validateIdeal({ solve: solve, P: P, V: V, n: n, T: T, Pu: Pu, Vu: Vu, Tu: Tu });
-  if (!check.ok) { calcFail(body, meta, check.code); return; }
-
-  const Ppa = core.toPascals(P, Pu);
-  const Vm3 = core.toM3(V, Vu);
-  const Tk  = core.toK(T, Tu);
-  if ((solve !== 'P' && Ppa == null) || (solve !== 'V' && Vm3 == null) || (solve !== 'T' && Tk == null)) {
-    calcFail(body, meta, 'igUnknownUnit');
-    return;
-  }
-
-  let result, label, unit, displayValue, displayUnit;
-  try {
-    if (solve === 'P') {
-      result = n*R*Tk / Vm3;  // Pa
-      displayValue = core.fromPascals(result, Pu); displayUnit = Pu;
-      label = 'P';
-    } else if (solve === 'V') {
-      result = n*R*Tk / Ppa;  // m³
-      displayValue = core.fromM3(result, Vu); displayUnit = Vu;
-      label = 'V';
-    } else if (solve === 'n') {
-      result = (Ppa*Vm3) / (R*Tk);
-      displayValue = result; displayUnit = 'mol';
-      label = 'n';
-    } else if (solve === 'T') {
-      result = (Ppa*Vm3) / (n*R);  // K
-      const again = core.validateIdeal({ solve: solve, P: P, V: V, n: n, T: T, Pu: Pu, Vu: Vu, Tu: Tu, resultK: result });
-      if (!again.ok) throw again;
-      displayValue = core.fromK(result, Tu); displayUnit = Tu === 'C' ? '°C' : Tu === 'F' ? '°F' : 'K';
-      label = 'T';
-    }
-    if (displayValue == null) { calcFail(body, meta, 'igUnknownUnit'); return; }
-    if (!isFinite(displayValue)) throw 1;
-  } catch (e) {
-    if (e && e.code) { calcFail(body, meta, e.code); return; }
+  // PV = nRT is solved in calc-core (computeIdealGas), with R from
+  // assets/data/physical-constants.js.
+  const ig = core.computeIdealGas({ solve: solve, P: P, V: V, n: n, T: T, Pu: Pu, Vu: Vu, Tu: Tu });
+  if (!ig.ok && ig.incomplete) {
     body.innerHTML = '<div class="calc-result-empty" style="color:var(--lc-amber)">' + solverT('fillThreeVars') + '</div>';
     meta.textContent = solverT('incomplete');
     return;
   }
+  if (!ig.ok) { calcFail(body, meta, ig.code); return; }
+  const label = ig.label, displayValue = ig.displayValue, displayUnit = ig.displayUnit;
 
   let html = `<div class="calc-result-row">
     <span class="calc-result-k">${solverT('solvedLabel', { label: label })}</span>
@@ -2560,7 +2542,9 @@ function runIdeal() {
   if (solve !== 'T') html += `<div class="calc-result-row"><span class="calc-result-k">T</span><span class="calc-result-v">${fmt(T)} ${Tu === 'C' ? '°C' : Tu === 'F' ? '°F' : 'K'}</span></div>`;
 
   html += `<div class="calc-result-formula">PV = nRT &nbsp;·&nbsp; R = 8.3145 J·K⁻¹·mol⁻¹</div>`;
+  html += WSOL_HOST;
   body.innerHTML = html;
+  showWorked(body, ig);
   meta.textContent = solverT('solvedFor', { label: label });
 }
 function resetIdeal() {
@@ -2593,23 +2577,16 @@ function runDilution() {
   const body = document.getElementById('dl-result-body');
   const meta = document.getElementById('dl-result-meta');
 
-  const gate = window.AtomurusCalcCore.validateDilution({ solve: solve, C1: C1, V1: V1, C2: C2, V2: V2 });
-  if (!gate.ok) { calcFail(body, meta, gate.code); return; }
-  let val, label, unit;
-  try {
-    if (solve === 'C1') { if (![V1,C2,V2].every(isFinite)) throw 1; val = C2*V2/V1; label='C₁'; unit='mol/L'; }
-    if (solve === 'V1') { if (![C1,C2,V2].every(isFinite)) throw 1; val = C2*V2/C1; label='V₁'; unit='mL'; }
-    if (solve === 'C2') { if (![C1,V1,V2].every(isFinite)) throw 1; val = C1*V1/V2; label='C₂'; unit='mol/L'; }
-    if (solve === 'V2') { if (![C1,V1,C2].every(isFinite)) throw 1; val = C1*V1/C2; label='V₂'; unit='mL'; }
-  } catch (e) {
+  // C₁V₁ = C₂V₂ is solved in calc-core (computeDilution).
+  const dl = window.AtomurusCalcCore.computeDilution({ solve: solve, C1: C1, V1: V1, C2: C2, V2: V2 });
+  if (!dl.ok && dl.incomplete) {
     body.innerHTML = '<div class="calc-result-empty" style="color:var(--lc-amber)">' + solverT('fillThreeKnown') + '</div>';
     meta.textContent = solverT('incomplete');
     return;
   }
-  const solved = { C1: C1, V1: V1, C2: C2, V2: V2 };
-  solved[solve] = val;
-  const after = window.AtomurusCalcCore.validateDilution({ solve: solve, C1: solved.C1, V1: solved.V1, C2: solved.C2, V2: solved.V2, phase: 'result' });
-  if (!after.ok) { calcFail(body, meta, after.code); return; }
+  if (!dl.ok) { calcFail(body, meta, dl.code); return; }
+  const val = dl.value, unit = dl.unit;
+  const label = { C1: 'C₁', V1: 'V₁', C2: 'C₂', V2: 'V₂' }[solve];
 
   let html = `<div class="calc-result-row">
     <span class="calc-result-k">${solverT('solvedLabel', { label: label })}</span>
@@ -2619,25 +2596,18 @@ function runDilution() {
   if (solve !== 'V1') html += `<div class="calc-result-row"><span class="calc-result-k">V₁</span><span class="calc-result-v">${fmt(V1)} mL</span></div>`;
   if (solve !== 'C2') html += `<div class="calc-result-row"><span class="calc-result-k">C₂</span><span class="calc-result-v">${fmt(C2)} mol/L</span></div>`;
   if (solve !== 'V2') html += `<div class="calc-result-row"><span class="calc-result-k">V₂</span><span class="calc-result-v">${fmt(V2)} mL</span></div>`;
-  // Dilution ratio
-  let ratio;
-  if (solve === 'V2' || solve === 'C1') {
-    const c1 = solve === 'C1' ? val : C1;
-    const c2 = C2;
-    ratio = c1 / c2;
-  } else if (solve === 'C2' || solve === 'V1') {
-    const c1 = C1;
-    const c2 = solve === 'C2' ? val : C2;
-    ratio = c1 / c2;
-  }
+  // Dilution ratio C₁ : C₂
+  const ratio = dl.ratio;
   if (isFinite(ratio) && ratio > 0) {
     html += '<div class="calc-result-row"><span class="calc-result-k">' + solverT('dilutionFactor') + '</span><span class="calc-result-v">1 : ' + fmt(ratio) + '</span></div>';
   }
   html += `<div class="calc-result-formula">C₁V₁ = C₂V₂</div>`;
-  (after.warnings || []).forEach(function (key) {
+  (dl.warnings || []).forEach(function (key) {
     html += '<div class="calc-result-formula" style="color:var(--lc-amber)">' + solverT(key) + '</div>';
   });
+  html += WSOL_HOST;
   body.innerHTML = html;
+  showWorked(body, dl);
   meta.textContent = solverT('solvedFor', { label: label });
 }
 function resetDilution() {
@@ -2789,9 +2759,9 @@ function runPH() {
 
   let html = `<div class="calc-result-row">
     <span class="calc-result-k">pH</span>
-    <span class="calc-result-v big">${pH.toFixed(2)} <em style="color:${color}">${nature}</em></span>
+    <span class="calc-result-v big">${phFixed(pH, 2)} <em style="color:${color}">${nature}</em></span>
   </div>`;
-  html += `<div class="calc-result-row"><span class="calc-result-k">pOH</span><span class="calc-result-v">${pOH.toFixed(2)}</span></div>`;
+  html += `<div class="calc-result-row"><span class="calc-result-k">pOH</span><span class="calc-result-v">${phFixed(pOH, 2)}</span></div>`;
   html += `<div class="calc-result-row"><span class="calc-result-k">[H⁺]</span><span class="calc-result-v">${fmt(H)} mol/L</span></div>`;
   html += `<div class="calc-result-row"><span class="calc-result-k">[OH⁻]</span><span class="calc-result-v">${fmt(OH)} mol/L</span></div>`;
   // pH bar
@@ -2802,7 +2772,9 @@ function runPH() {
     </div>`;
   if (result.autoion) html += '<div class="calc-result-formula" data-ph-autoion>' + solverT('phAutoionNote') + '</div>';
   html += `<div class="calc-result-formula">at 25 °C · Kw = [H⁺][OH⁻] = 1.0 × 10⁻¹⁴ · pH + pOH = 14</div>`;
+  html += WSOL_HOST;
   body.innerHTML = html;
+  showWorked(body, result);
   meta.textContent = solverT('natureSolution', { nature: nature });
 }
 function resetPH() {

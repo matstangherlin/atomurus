@@ -1,0 +1,39 @@
+{
+  "id": "dilution",
+  "type": "dilution",
+  "status": "draft",
+  "reviewedBy": null,
+  "title": { "pt": "Diluição", "en": "Dilution" },
+  "summary": {
+    "pt": "Dez exercícios de diluição (C₁V₁ = C₂V₂), com resposta e solução comentada geradas pela calculadora do site.",
+    "en": "Ten dilution exercises (C₁V₁ = C₂V₂), with the answer and the worked solution produced by the site's calculator."
+  },
+  "tool": { "href": { "pt": "/calculators.pt.html#dilute", "en": "/calculators.html#dilute" }, "label": { "pt": "Abrir a calculadora de diluição", "en": "Open the dilution calculator" } },
+  "template": {
+    "@by": "solve",
+    "V2": { "pt": "Uma solução {C1} mol/L, com volume de {V1} mL, é diluída com água até ficar {C2} mol/L. Qual é o volume final?", "en": "A {C1} mol/L solution, {V1} mL of it, is diluted with water down to {C2} mol/L. What is the final volume?" },
+    "C2": { "pt": "Diluem-se {V1} mL de uma solução {C1} mol/L com água até o volume de {V2} mL. Qual é a nova concentração?", "en": "{V1} mL of a {C1} mol/L solution are diluted with water to a volume of {V2} mL. What is the new concentration?" }
+  },
+  "variables": {
+    "solve": { "list": ["V2", "C2"] },
+    "C1": { "list": [0.5, 1, 2, 3, 5, 6, 12] },
+    "V1": { "list": [10, 20, 25, 50, 100] },
+    "C2": { "@by": "solve", "V2": { "times": "C1", "list": [0.5, 0.25, 0.2, 0.1] }, "C2": null },
+    "V2": { "@by": "solve", "C2": { "times": "V1", "list": [2, 4, 5, 10] }, "V2": null }
+  },
+  "engine": { "fn": "calc-core.computeDilution", "args": [{ "solve": "@solve", "C1": "@C1", "V1": "@V1", "C2": "@C2", "V2": "@V2" }] },
+  "answer": { "step": "dl.substitute", "unit": { "@by": "solve", "V2": "mL", "C2": "mol/L" } },
+  "commonErrors": [],
+  "exercises": [
+    { "id": "DL01", "level": "basico", "vars": { "solve": "V2", "C1": 2, "V1": 10, "C2": 0.5 } },
+    { "id": "DL02", "level": "basico", "vars": { "solve": "V2", "C1": 1, "V1": 25, "C2": 0.1 } },
+    { "id": "DL03", "level": "basico", "vars": { "solve": "C2", "C1": 2, "V1": 50, "V2": 200 } },
+    { "id": "DL04", "level": "basico", "vars": { "solve": "C2", "C1": 1, "V1": 10, "V2": 100 } },
+    { "id": "DL05", "level": "medio", "vars": { "solve": "V2", "C1": 6, "V1": 50, "C2": 1.5 } },
+    { "id": "DL06", "level": "medio", "vars": { "solve": "V2", "C1": 0.5, "V1": 100, "C2": 0.2 } },
+    { "id": "DL07", "level": "medio", "vars": { "solve": "C2", "C1": 0.8, "V1": 25, "V2": 100 } },
+    { "id": "DL08", "level": "medio", "vars": { "solve": "C2", "C1": 3, "V1": 20, "V2": 150 } },
+    { "id": "DL09", "level": "avancado", "vars": { "solve": "V2", "C1": 12, "V1": 10, "C2": 1 } },
+    { "id": "DL10", "level": "avancado", "vars": { "solve": "C2", "C1": 5, "V1": 15, "V2": 250 } }
+  ]
+}

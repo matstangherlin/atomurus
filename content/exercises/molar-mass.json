@@ -1,0 +1,40 @@
+{
+  "id": "molar-mass",
+  "type": "molar-mass",
+  "status": "draft",
+  "reviewedBy": null,
+  "title": { "pt": "Massa molar", "en": "Molar mass" },
+  "summary": {
+    "pt": "Dez exercícios de massa molar a partir da fórmula, com resposta e solução comentada geradas pela calculadora do site.",
+    "en": "Ten molar mass exercises from the formula, with the answer and the worked solution produced by the site's calculator."
+  },
+  "tool": { "href": { "pt": "/calculators.pt.html#molar", "en": "/calculators.html#molar" }, "label": { "pt": "Abrir a calculadora de massa molar", "en": "Open the molar mass calculator" } },
+  "template": { "pt": "Calcule a massa molar de {formula}.", "en": "Calculate the molar mass of {formula}." },
+  "variables": {
+    "formula": { "list": ["H2O", "CO2", "NaCl", "NH3", "CH4", "O2", "HNO3", "NaOH", "KCl", "MgCl2", "CaCO3", "Fe2O3", "NaHCO3", "C2H6O", "H3PO4", "KMnO4", "C6H12O6", "H2SO4", "Ca(OH)2", "Al2(SO4)3"] }
+  },
+  "engine": { "fn": "calc-core.computeMolarMass", "args": ["@counts:formula", "@weights"] },
+  "answer": { "step": "mm.sum", "unit": "g/mol" },
+  "commonErrors": [
+    {
+      "id": "ignore-subscripts",
+      "wrong": "ignoreSubscripts",
+      "message": {
+        "pt": "Se você chegou a {wrong}, somou cada elemento uma vez só. O índice diz quantos átomos há: multiplique a massa atômica por ele.",
+        "en": "If you got {wrong}, you added each element only once. The subscript gives the number of atoms: multiply the atomic mass by it."
+      }
+    }
+  ],
+  "exercises": [
+    { "id": "MM01", "level": "basico", "vars": { "formula": "H2O" } },
+    { "id": "MM02", "level": "basico", "vars": { "formula": "CO2" } },
+    { "id": "MM03", "level": "basico", "vars": { "formula": "NaCl" } },
+    { "id": "MM04", "level": "basico", "vars": { "formula": "NH3" } },
+    { "id": "MM05", "level": "basico", "vars": { "formula": "CH4" } },
+    { "id": "MM06", "level": "medio", "vars": { "formula": "C6H12O6" } },
+    { "id": "MM07", "level": "medio", "vars": { "formula": "H2SO4" } },
+    { "id": "MM08", "level": "medio", "vars": { "formula": "Ca(OH)2" } },
+    { "id": "MM09", "level": "avancado", "vars": { "formula": "Al2(SO4)3" } },
+    { "id": "MM10", "level": "avancado", "vars": { "formula": "CuSO4·5H2O" } }
+  ]
+}
