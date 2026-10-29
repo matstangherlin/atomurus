@@ -11,7 +11,7 @@
      '-' or ':' are prefixes. tools/test-account-delete.mjs keeps this list
      equal to the registry. */
   var LOCAL_DATA_KEYS = {
-    local: ['atomurus-compare-queue', 'atomurus-lab-v1', 'atomurus-auth-sync', 'atomurus-cache:'],
+    local: ['atomurus-compare-queue', 'atomurus-lab-v1', 'atomurus-trail-progress', 'atomurus-auth-sync', 'atomurus-cache:'],
     session: ['atomurus-guest-lab-views', 'atomurus-iso-tab', 'atomurus-iso-tab-', 'atomurus-iso-group']
   };
   var COPY = {

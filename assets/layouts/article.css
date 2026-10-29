@@ -90,3 +90,26 @@ html body.ps-body .art-callout {
   letter-spacing: 0;
   color: var(--color-text-muted);
 }
+
+/* Draft articles and worked examples (prompt 32). */
+.art-draft {
+  max-width: 640px;
+  margin: 12px 0 0;
+  padding: 8px 12px;
+  border: 1px dashed var(--color-warning);
+  border-radius: var(--radius-md);
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+}
+
+.art-worked {
+  margin: 18px 0;
+  padding: 14px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.art-worked .aw-q { margin: 0 0 8px; font-weight: 600; }
+.art-worked .aw-a { margin: 8px 0 0; font-weight: 600; }
+.art-eq { font-family: var(--font-mono); }

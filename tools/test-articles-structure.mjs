@@ -12,8 +12,8 @@ const HEADS = {
   en: { mis: 'Common misconceptions', recap: 'Key takeaways' },
   pt: { mis: 'Equívocos comuns', recap: 'O que você precisa lembrar' }
 };
-// Written for prompt 28; the older sections keep their own length.
-const NEW_MISCONCEPTIONS = new Set(['what-is-isomerism', 'what-is-the-periodic-table', 'bhopal-disaster']);
+// Written for prompts 28 and 32; the older sections keep their own length.
+const NEW_MISCONCEPTIONS = new Set(['what-is-isomerism', 'what-is-the-periodic-table', 'bhopal-disaster', 'what-is-the-mole', 'conservation-of-mass']);
 
 const text = (html) => html.replace(/<[^>]+>/g, ' ').replace(/&[a-z#0-9]+;/gi, ' ').replace(/\s+/g, ' ').trim();
 const words = (html) => text(html).split(' ').filter(Boolean).length;
@@ -30,7 +30,7 @@ export function articleStructure(html) {
 }
 
 const slugs = fs.readdirSync(DIR).filter((f) => f.endsWith('.html') && !f.endsWith('.pt.html')).map((f) => f.replace(/\.html$/, '')).sort();
-assert.equal(slugs.length, 8, 'eight explore articles');
+assert.equal(slugs.length, 10, 'ten explore articles (two drafts from prompt 32)');
 
 let checked = 0;
 for (const slug of slugs) {

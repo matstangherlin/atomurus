@@ -2128,3 +2128,7 @@ html body .lc-form label {
 
 /* One-shot notice after a redirect (global-nav.js showNotice). */
 .lc-notice { margin: 16px clamp(16px, 4vw, 32px) 0; max-width: 920px; }
+
+/* «Trilha: … — etapa n/N» on pages opened from a trail (assets/trail-chip.js). */
+.trail-chip { margin: 12px clamp(16px, 4vw, 32px) 0; font-size: 13px; }
+.trail-chip a { display: inline-flex; align-items: center; min-height: 32px; padding: 0 12px; border: 1px solid var(--lc-green, #1E6A50); border-radius: 999px; color: var(--lc-green, #1E6A50); text-decoration: none; font-weight: 600; }

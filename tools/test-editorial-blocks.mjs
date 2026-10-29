@@ -15,7 +15,7 @@ const files = [];
 for (const file of Object.keys(config.articles)) {
   files.push(file, file.replace(/\.html$/, '.pt.html'));
 }
-assert.equal(files.length, 18);
+assert.equal(files.length, 22);
 
 for (const file of files) {
   const html = read(file);

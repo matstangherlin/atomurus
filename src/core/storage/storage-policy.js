@@ -52,6 +52,7 @@ export const STORAGE_REGISTRY = Object.freeze({
   'atomurus-nav-': { cls: StorageClass.PREFERENCE, area: 'local', prefix: true, note: 'sidebar group open/closed' },
   'atomurus-compare-queue': { cls: StorageClass.LOCAL_STATE, area: 'local', note: 'elements queued to compare' },
   'atomurus-lab-v1': { cls: StorageClass.LOCAL_STATE, area: 'local', note: 'Virtual Lab board; cloud model is future work' },
+  'atomurus-trail-progress': { cls: StorageClass.LOCAL_STATE, area: 'local', note: 'trail steps marked done (assets/trail-progress.js)' },
   'atomurus-guest-nudge': { cls: StorageClass.PREFERENCE, area: 'local', note: 'dismissal timestamp' },
   'atomurus-guest-lab-views': { cls: StorageClass.UI_SESSION, area: 'session' },
   'atomurus-iso-tab': { cls: StorageClass.UI_SESSION, area: 'session' },
