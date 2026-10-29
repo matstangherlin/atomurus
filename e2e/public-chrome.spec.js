@@ -293,11 +293,14 @@ test('molecules, allotropes and 404 drop leftover console chrome', async ({ page
   await expect.poll(() => fontFamily(page.locator('.allo-search'))).toMatch(/Inter Tight/i);
   await saveShot(page, 'desktop-public-allotropes');
 
+  // The 404 carries both languages (prompt 26) and shows the browser's one.
   await page.goto('/404.html');
-  await expect(page.locator('.lc-doc-title')).toBeVisible();
-  await expect(page.locator('.lc-doc-card .lbl').first()).toHaveText(/Periodic Table/);
-  await expect(page.locator('.lc-doc-card .lbl').first()).not.toHaveText(/01/);
-  await expect(page.locator('.h-no')).toBeHidden();
+  const nf = page.locator('[data-nf-lang="en"]');
+  await expect(page.locator('[data-nf-lang="pt"]')).toBeHidden();
+  await expect(nf.locator('.lc-doc-title')).toBeVisible();
+  await expect(nf.locator('.lc-doc-card .lbl').first()).toHaveText(/Periodic Table/);
+  await expect(nf.locator('.lc-doc-card .lbl').first()).not.toHaveText(/01/);
+  await expect(nf.locator('.h-no')).toBeHidden();
   await saveShot(page, 'desktop-public-404');
 });
 
