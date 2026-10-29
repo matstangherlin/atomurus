@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html data-ps-chrome="1" lang="pt-BR" data-theme="light">
+<head>
+<style>html[data-theme="dark"] #icon-theme-light,html[data-theme="light"] #icon-theme-dark{display:none!important}html[data-theme="dark"] #icon-theme-dark,html[data-theme="light"] #icon-theme-light{display:block!important}</style>
+<script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var q=new URLSearchParams(location.search);var p=q.get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem('atomurus-lang');var path=location.pathname;var isPt=/\.pt\.html$/i.test(path)||/\.pt$/i.test(path);if(!l&&isPt)l='pt';if(!l){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}if(l==='pt'){document.documentElement.lang='pt-BR';}else{document.documentElement.lang='en-US';}localStorage.setItem('atomurus-lang',l);var u=new URL(location.href);if(l==='pt'&&!isPt){if(/\.html$/i.test(path)){u.pathname=path.replace(/\.html$/i,'.pt.html');}else if(path.charAt(path.length-1)!=='/'){u.pathname=path+'.pt.html';}u.searchParams.set('lang','pt-BR');if(u.href!==location.href)location.replace(u.href);}else if(l==='en'&&isPt){if(/\.pt\.html$/i.test(path)){u.pathname=path.replace(/\.pt\.html$/i,'.html');}else{u.pathname=path.replace(/\.pt$/i,'');}u.searchParams.set('lang','en');if(u.href!==location.href)location.replace(u.href);}}catch(e){}})();</script>
+
+<meta charset="UTF-8">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1E6A50" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E0D0C" media="(prefers-color-scheme: dark)">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" type="image/png" href="../assets/atomurus-logo.png?v=202608041630">
+<link rel="apple-touch-icon" href="../assets/atomurus-logo.png?v=202608041630">
+
+<title>Ácidos, bases e pH: ácidos fortes e fracos, Ka e tampões | Atomurus</title>
+<meta name="description" content="O que ácidos e bases fazem na água, o que o pH mede e por que cada unidade é um fator de dez; o pH de ácidos fortes e fracos, a constante de ionização Ka e como um tampão mantém o pH estável. Exemplos resolvidos a 25 °C.">
+<meta name="keywords" content="ácido, base, pH, pOH, ácido forte, ácido fraco, Ka, pKa, tampão, Henderson–Hasselbalch">
+<meta name="author" content="Atomurus">
+<meta property="og:title" content="Ácidos, bases e pH: ácidos fortes e fracos, Ka e tampões">
+<meta property="og:description" content="O que ácidos e bases fazem na água, o que o pH mede e por que cada unidade é um fator de dez; o pH de ácidos fortes e fracos, a constante de ionização Ka e como um tampão mantém o pH estável. Exemplos resolvidos a 25 °C.">
+<meta property="og:image" content="https://atomurus.com/assets/og-explore.png?v=202608041630">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://atomurus.com/explore/acids-bases-and-ph?lang=pt-BR">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Atomurus">
+<meta property="article:published_time" content="2026-10-29">
+<meta property="article:section" content="Conceitos de Química">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Ácidos, bases e pH: ácidos fortes e fracos, Ka e tampões">
+<meta name="twitter:description" content="O que ácidos e bases fazem na água, o que o pH mede e por que cada unidade é um fator de dez; o pH de ácidos fortes e fracos, a constante de ionização Ka e como um tampão mantém o pH estável. Exemplos resolvidos a 25 °C.">
+<meta name="twitter:image" content="https://atomurus.com/assets/og-explore.png?v=202608041630">
+<link rel="canonical" href="https://atomurus.com/explore/acids-bases-and-ph?lang=pt-BR">
+<link rel="alternate" hreflang="en" href="https://atomurus.com/explore/acids-bases-and-ph">
+<link rel="alternate" hreflang="pt-BR" href="https://atomurus.com/explore/acids-bases-and-ph?lang=pt-BR">
+<link rel="alternate" hreflang="x-default" href="https://atomurus.com/explore/acids-bases-and-ph">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Ácidos, bases e pH: ácidos fortes e fracos, Ka e tampões",
+      "description": "O que ácidos e bases fazem na água, o que o pH mede e por que cada unidade é um fator de dez; o pH de ácidos fortes e fracos, a constante de ionização Ka e como um tampão mantém o pH estável. Exemplos resolvidos a 25 °C.",
+      "image": "https://atomurus.com/assets/og-explore.png",
+      "datePublished": "2026-10-29",
+      "dateModified": "2026-10-29",
+      "inLanguage": "pt-BR",
+      "author": { "@type": "Organization", "name": "Atomurus", "url": "https://atomurus.com/" },
+      "publisher": { "@type": "Organization", "name": "Atomurus", "logo": { "@type": "ImageObject", "url": "https://atomurus.com/assets/atomurus-logo.png" } },
+      "mainEntityOfPage": { "@type": "WebPage", "@id": "https://atomurus.com/explore/acids-bases-and-ph?lang=pt-BR" },
+      "articleSection": "Conceitos de Química",
+      "keywords": "ácido, base, pH, pOH, ácido forte, ácido fraco, Ka, pKa, tampão, Henderson–Hasselbalch"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type":"ListItem","position":1,"name":"Atomurus","item":"https://atomurus.com/"},
+        {"@type":"ListItem","position":2,"name":"Explorar","item":"https://atomurus.com/explore"},
+        {"@type":"ListItem","position":3,"name":"Ácidos, bases e pH","item":"https://atomurus.com/explore/acids-bases-and-ph?lang=pt-BR"}
+      ]
+    }
+  ]
+}
+</script>
+
+
+<link rel="preload" href="/assets/fonts/inter-tight-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/instrument-serif-400-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/instrument-serif-400-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202608041630">
+<script src="../i18n.js?v=202608041630" defer></script>
+<script src="/assets/trail-chip.js?v=202610291200" defer></script>
+<script src="../share-button.js?v=202608041630" defer></script>
+<script src="../page-share-init.js?v=202608041630" defer></script>
+<link rel="stylesheet" href="/assets/critical-lab.css?v=202608041630">
+<script>document.documentElement.classList.add('lc-loading');setTimeout(function(){document.documentElement.classList.remove('lc-loading')},4000);</script>
+<link rel="preload" href="../atomurus-lab-console.css?v=202608041630" as="style">
+<link rel="stylesheet" href="../atomurus-lab-console.css?v=202608041630" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
+<noscript><link rel="stylesheet" href="../atomurus-lab-console.css?v=202608041630"></noscript>
+<link rel="stylesheet" href="/assets/public-shell.css?v=202608281830">
+<script src="../assets/global-nav.js?v=202609090500"></script>
+<script src="/assets/public-workspace.js?v=202608282500"></script>
+<link rel="stylesheet" href="/assets/ui/index.css?v=202609090500">
+<link rel="stylesheet" href="../explore-article.css?v=202608041630">
+<link rel="stylesheet" href="/assets/layouts/article.css?v=202609101700">
+<link rel="stylesheet" href="/assets/ui/worked-solution.css?v=202610291200">
+<style>
+  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100vh; overflow: hidden; }
+  body { display: flex; }
+  .sidebar { width: 220px; flex-shrink: 0; display: flex; flex-direction: column; overflow: hidden; padding-bottom: 22px; }
+  .sidebar > .logo-wrap, .sidebar > .sidebar-foot { flex-shrink: 0; }
+  .sidebar-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; }
+  .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+  .sidebar-scroll::-webkit-scrollbar-thumb { background: var(--lc-rule); }
+  .logo-wrap { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
+  .logo-mark { display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .logo-mark svg circle[fill] { fill: currentColor !important; stroke: none; }
+  .nav-section { padding: 10px 0 4px; display: block; }
+  .nav-expandable .nav-row { display: flex; align-items: center; gap: 10px; padding: 5px 14px 5px 12px; cursor: pointer; font-family: var(--lc-sans); font-size: 12.5px; color: var(--lc-ink-2); transition: background .12s, color .12s; user-select: none; }
+  .nav-expandable .nav-row:hover { background: var(--lc-surface); color: var(--lc-ink); }
+  .nav-expandable.has-active .nav-row { color: var(--lc-ink); font-weight: 500; }
+  .nav-chevron { margin-left: auto; width: 11px; height: 11px; opacity: .45; transition: transform .2s; flex-shrink: 0; }
+  .nav-expandable.open .nav-chevron { transform: rotate(90deg); opacity: .75; }
+  .nav-children { display: none; margin: 2px 0 4px 12px; padding-left: 8px; border-left: 1px solid var(--lc-rule); }
+  .nav-expandable.open .nav-children { display: block; }
+  .nav-children .nav-item { padding: 6px 8px; font-size: 12.5px; }
+  .nav-children .nav-icon { width: 13px; height: 13px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; text-decoration: none; cursor: pointer; user-select: none; white-space: nowrap; position: relative; }
+  .sidebar-foot { display: flex; flex-direction: column; }
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+  .topbar { display: flex; align-items: center; gap: 14px; flex-shrink: 0; padding: 0 18px; }
+  .mobile-menu-btn { display: none; }
+  .breadcrumb { display: flex; align-items: center; gap: 7px; }
+  .breadcrumb a { color: inherit; text-decoration: none; opacity: .75; }
+  .breadcrumb a:hover { opacity: 1; color: var(--lc-ink); }
+  .content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 0 0 50px; position: relative; }
+  .content::-webkit-scrollbar { width: 6px; }
+  .content::-webkit-scrollbar-thumb { background: var(--lc-rule); }
+  @media (max-width: 760px) {
+    body { flex-direction: column; height: auto; overflow: auto; }
+    html { height: auto; overflow: auto; }
+    .sidebar { width: 100%; overflow: visible; }
+    .main { height: auto; overflow: visible; }
+    .content { overflow: visible; }
+  }
+</style>
+<link rel="stylesheet" href="/assets/print.css?v=202610281500" media="print">
+</head>
+<body class="ps-body">
+<a class="skip-link" href="#main-content" data-i18n="common.skipToContent">Pular para o conteúdo</a>
+
+<!-- ════════════ SIDEBAR ════════════ -->
+<div class="ps-shell" id="ps-shell">
+<div class="topbar">
+    <a class="ps-brand logo-wrap" href="../index.html" title="Atomurus home">
+    <div class="logo-mark">
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="2.5" fill="currentColor"/>
+        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/>
+        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/>
+        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/>
+      </svg>
+    </div>
+    <div>
+      <div class="logo-text">Atomurus</div>
+      <div class="logo-tag" data-i18n="common.brandTag">chemistry lab</div>
+    </div>
+  </a>
+    <button class="mobile-menu-btn" onclick="toggleMobileSidebar()" aria-label="Abrir menu">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><line x1="2" y1="4.5" x2="14" y2="4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="2" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="2" y1="11.5" x2="14" y2="11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+    </button>
+    <div class="breadcrumb" hidden>
+      <a href="../index.html" data-i18n="common.footer.workspace">Workspace</a>
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="opacity:.35"><path d="M3.5 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      <a href="../explore.html?lang=pt-BR" data-i18n="common.nav.explore">Explorar</a>
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="opacity:.35"><path d="M3.5 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      <span>Ácidos, bases e pH</span>
+    </div>
+    <form class="ps-search search-box" role="search" action="../periodic-table.html" method="get">
+  <label class="lc-sr-only" for="ps-search-q">Search element</label>
+  <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+    <circle cx="5.5" cy="5.5" r="4" stroke="currentColor" stroke-width="1.4"/>
+    <line x1="8.7" y1="8.7" x2="11.5" y2="11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+  </svg>
+  <input id="ps-search-q" name="q" type="search" autocomplete="off" data-i18n-attr="placeholder:common.searchPlaceholder" placeholder="search element, symbol or Z…">
+  <button type="submit" data-i18n-attr="aria-label:common.searchAria" aria-label="Search element">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <circle cx="6" cy="6" r="4.2" stroke="currentColor" stroke-width="1.3"/>
+      <path d="M9.2 9.2 12 12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+    </svg>
+  </button>
+</form>
+    <button class="theme-btn" onclick="location.href='acids-bases-and-ph.html?lang=en'" data-i18n-attr="title:common.langToggle" aria-label="EN — Mudar idioma" title="Mudar idioma" style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;width:auto;min-width:32px;padding:0 8px;">
+      <span>EN</span>
+    </button>
+    <button class="theme-btn" onclick="toggleTheme()" data-i18n-attr="title:common.themeToggle; aria-label:common.themeToggle" title="Alternar tema" aria-label="Alternar tema" style="margin-left:4px;">
+      <svg id="icon-theme-light" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M11.5 7.5A4.5 4.5 0 0 1 6.5 2.5 4.5 4.5 0 1 0 11.5 7.5z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/></svg>
+      <svg id="icon-theme-dark" width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M7 1v1.4M7 11.6V13M1 7h1.4M11.6 7H13M2.5 2.5l1 1M10.5 10.5l1 1M2.5 11.5l1-1M10.5 3.5l1-1" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+    </button>
+  <div class="ps-account" data-atomurus-account>
+  <span class="ps-plan-badge" data-atomurus-plan-badge hidden></span>
+  <a class="ps-userchip lc-topnav-cta" href="../login.html" data-atomurus-account-chip aria-label="Account">
+    <svg class="ps-userchip-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span data-i18n="pricing.ctaAccount">Account</span>
+  </a>
+</div>
+  </div>
+<div class="mobile-overlay" id="mobile-overlay" onclick="toggleMobileSidebar()"></div>
+<aside class="ws-sidebar sidebar ps-pub-sidebar" id="ws-sidebar" data-atomurus-sidebar>
+  <nav class="ws-nav" id="ws-nav-main" aria-label="Laboratory" data-atomurus-lab-nav>
+    <div class="ws-nav-block ws-nav-site">
+      <h2 class="ws-nav-group" data-i18n="common.nav.laboratory">Laboratory</h2>
+      <a class="ws-nav-item" href="/" data-nav="home">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M2.5 7.5 8 3l5.5 4.5M4 6.5V13h8V6.5M6.5 13V9h3v4"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.home">Home</span>
+      </a>
+      <a class="ws-nav-item" href="/periodic-table.html" data-nav="periodic">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.periodic">Periodic Table</span>
+      </a>
+      <a class="ws-nav-item" href="/viewer/atomic-models.html" data-nav="viewer">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="8" cy="8" r="2"/><ellipse cx="8" cy="8" rx="6" ry="2.5"/><ellipse cx="8" cy="8" rx="6" ry="2.5" transform="rotate(60 8 8)"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.visualizador">Viewer</span>
+      </a>
+      <a class="ws-nav-item" href="/calculators.html" data-nav="calculators">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="2" width="10" height="12" rx="1"/><path d="M5 5h6M5.5 8h1M9.5 8h1M5.5 11h1M9.5 11h1"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.calc">Calculators</span>
+      </a>
+      <a class="ws-nav-item" href="/explore.html" data-nav="explore">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.explore">Explore</span>
+      </a>
+      <a class="ws-nav-item" href="/app" data-nav="workspace">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 12l4-4 2 2 4-6"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.workspace">Workspace</span>
+      </a>
+    </div>
+  </nav>
+  <div class="ws-nav-foot sidebar-foot" id="ws-nav-foot" data-atomurus-nav-foot>
+    <a class="ws-nav-item" href="/login" data-nav="account" data-auth-nav-link="common.nav.login">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5"/></g></svg>
+      <span class="ws-nav-label" data-i18n="common.nav.login">Account</span>
+    </a>
+    <a class="ws-nav-item" href="/pricing" data-nav="plans">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 5h8v8H4zM6 3v2M10 3v2"/></g></svg>
+      <span class="ws-nav-label" data-i18n="common.nav.plans">Plans</span>
+    </a>
+  </div>
+</aside>
+<main class="main" id="main-content" tabindex="-1">
+  
+
+  <div class="data-strip">
+    <span class="ds-k">scope</span><span class="ds-v">DOC.ARTICLE</span>
+    <span class="ds-sep"></span>
+    <span class="ds-k">seção</span><span class="ds-v">conceitos · ácidos e bases</span>
+    <span class="ds-sep"></span>
+    <span class="ds-k">elementos</span><span class="ds-v ds-hi">pH = −log₁₀[H⁺]</span>
+    <span class="ds-spacer"></span>
+    <span class="ds-k">norma</span><span class="ds-v">25 °C</span>
+  </div>
+
+  <div class="content" id="content">
+    <div class="art-progress" id="art-progress"><span></span></div>
+
+    <div class="art-wrap">
+      <header class="art-hero">
+        <div class="art-kicker">
+          <span>Explorar Atomurus</span>
+          <span class="art-cat ui-badge">Conceitos de Química</span>
+          <span class="art-cat ui-badge">Ácidos e bases</span>
+        </div>
+        <h1 class="art-title">Ácidos, bases e <em>pH</em>: ácidos fortes e fracos, Ka e tampões</h1>
+        <p class="art-dek">O pH resume num número o balanço entre íons hidrogênio e hidróxido. Veja por que cada unidade é um fator de dez, por que um ácido fraco tem pH maior que um ácido forte de mesma concentração e como um tampão mantém o pH perto do seu pKa.</p>
+        <p class="art-draft" role="note">Rascunho — em revisão docente. Ainda não publicado.</p>
+        <div class="lab-tool-cta">
+          <p>Calcule o pH de ácidos e bases fortes e fracos e de tampões.</p>
+          <a href="../calculators.pt.html#ph">Abrir a calculadora de pH</a>
+        </div>
+        <div class="art-meta">
+          <span><strong>Atomurus</strong> · Redação</span>
+          <span class="am-dot"></span>
+          <span>Atualizado em 29 out. 2026</span>
+          <span class="am-dot"></span>
+          <span>≈ 9 min de leitura</span>
+        </div>
+<!-- ed:level -->
+<p class="article-level"><span class="article-level-chip" data-i18n="article.level.intermediate">Intermediário</span></p>
+<!-- /ed:level -->
+<!-- ed:learn -->
+<aside class="article-learn" aria-labelledby="article-learn-title">
+  <h2 id="article-learn-title" data-i18n="article.learn.title">Você vai aprender</h2>
+  <ul>
+    <li>Explicar o que o pH mede e por que a escala é logarítmica</li>
+    <li>Calcular o pH de ácidos fortes e fracos</li>
+    <li>Explicar como um tampão limita as mudanças de pH</li>
+  </ul>
+</aside>
+<!-- /ed:learn -->
+</header>
+
+      <div class="art-grid">
+        <article class="art-body" id="art-body">
+
+          <p class="lead">Suco de limão, vinagre, sabão, bicarbonato: ácidos e bases estão por toda parte, e a escala de <strong>pH</strong> é o jeito de dizer quão ácida ou básica é uma solução. Por trás de um único número há uma ideia simples — quantos íons hidrogênio a solução contém.</p>
+
+          <p>Neste artigo você vai ver o que são ácidos e bases, o que o pH mede e por que cada degrau da escala é um fator de dez, por que um ácido forte e um ácido fraco de mesma concentração têm pH diferentes e como um tampão mantém o pH estável. Os exemplos resolvidos vêm do mesmo motor da calculadora de pH do Atomurus, a 25 °C.</p>
+
+          <div class="art-callout">
+            <span class="ac-label">Definição rápida</span>
+            Na água, um <strong>ácido</strong> aumenta a concentração de íons hidrogênio, H⁺, e uma <strong>base</strong> aumenta a concentração de íons hidróxido, OH⁻. O <strong>pH</strong> é <span translate="no">pH = −log₁₀[H⁺]</span>, com [H⁺] em mol/L.
+          </div>
+
+          <figure class="art-fig" role="img" aria-label="A escala de pH de 0 a 14: soluções ácidas abaixo de 7, básicas acima de 7 e neutras em 7, para a água a 25 °C; cada unidade para a esquerda significa dez vezes mais íons hidrogênio.">
+            <svg viewBox="0 0 640 150" width="100%" aria-hidden="true" focusable="false">
+              <defs><linearGradient id="ph-scale" x1="0" x2="1"><stop offset="0" stop-color="#B96B0C"/><stop offset=".5" stop-color="#D8D2BF"/><stop offset="1" stop-color="#2A4878"/></linearGradient></defs>
+              <rect x="40" y="50" width="560" height="22" rx="11" fill="url(#ph-scale)"/>
+              <g font-family="Inter Tight, sans-serif" font-size="13" fill="currentColor" text-anchor="middle">
+                <text x="40" y="95">0</text><text x="200" y="95">4</text><text x="320" y="95">7</text><text x="440" y="95">10</text><text x="600" y="95">14</text>
+                <text x="140" y="36">ácido</text><text x="320" y="36">neutro (25 °C)</text><text x="500" y="36">básico</text>
+                <text x="320" y="125" font-size="12">uma unidade = dez vezes a [H⁺]</text>
+              </g>
+              <path d="M320 46v30" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            <figcaption>A escala de pH a 25 °C: abaixo de 7, ácido; acima de 7, básico. Cada unidade é um fator de dez na [H⁺].</figcaption>
+          </figure>
+
+          <h2><span class="h-no">§ 01</span> Ácidos e bases</h2>
+          <p>Na definição usada na maior parte da química escolar, um ácido é uma substância que cede íons hidrogênio à água, e uma base é uma substância que os recebe, produzindo íons hidróxido. O ácido clorídrico, HCl, forma H⁺ e Cl⁻; o hidróxido de sódio, NaOH, forma Na⁺ e OH⁻.</p>
+          <p>A própria água participa. Uma fração minúscula das suas moléculas está sempre se separando em H⁺ e OH⁻, e a 25 °C o produto das concentrações é fixo: <span translate="no">Kw = [H⁺][OH⁻] = 1,0 × 10⁻¹⁴</span>. Mais H⁺ significa menos OH⁻, e vice-versa.</p>
+
+          <h2><span class="h-no">§ 02</span> O que o pH mede</h2>
+          <p>As concentrações de íons hidrogênio variam por muitas potências de dez, então, em vez de escrevê-las por extenso, usamos o seu logaritmo. Uma solução com [H⁺] = 1 × 10⁻³ mol/L tem pH 3. Como a escala é logarítmica, <strong>cada unidade de pH é um fator de dez</strong>: pH 3 tem dez vezes mais H⁺ que pH 4 e cem vezes mais que pH 5.</p>
+          <p>O mesmo raciocínio dá o pOH, <span translate="no">pOH = −log₁₀[OH⁻]</span>, e a 25 °C os dois somam 14. Uma solução é <strong>neutra</strong> quando [H⁺] = [OH⁻]; a 25 °C isso acontece em pH 7.</p>
+
+          <h2><span class="h-no">§ 03</span> Ácidos e bases fortes</h2>
+          <p>Um ácido ou uma base <strong>forte</strong> se ioniza totalmente na água. Para um ácido forte com um H⁺ por fórmula, como o HCl, a [H⁺] é simplesmente a sua concentração:</p>
+          <div class="art-worked" data-calc="ab-strong-acid">
+<!-- calc:ab-strong-acid -->
+<p class="aw-q">Exemplo: o pH do ácido clorídrico 0,01 mol/L</p><ol class="wsol-steps"><li><span class="wsol-text">Um ácido forte ioniza totalmente, então [H⁺] é igual à sua concentração.</span> <span class="wsol-expr" translate="no">[H⁺] = 0,01 mol/L</span></li><li><span class="wsol-text">Calcule menos o logaritmo decimal.</span> <span class="wsol-expr" translate="no">pH = −log₁₀(0,01) = 2,00</span></li><li><span class="wsol-text">A 25 °C, pH + pOH = 14.</span> <span class="wsol-expr" translate="no">pOH = 14 − 2,00 = 12,00</span></li><li><span class="wsol-text">Compare com 7 (neutra dentro de ±0,005 a 25 °C): a solução é ácida.</span> <span class="wsol-expr" translate="no">pH = 2,00 &lt; 7</span></li></ol><p class="aw-a">Resposta: <span translate="no">pH = 2,00</span></p>
+<!-- /calc:ab-strong-acid -->
+          </div>
+          <p>Para uma base forte, a concentração dá primeiro a [OH⁻], e o pH vem de pH + pOH = 14:</p>
+          <div class="art-worked" data-calc="ab-strong-base">
+<!-- calc:ab-strong-base -->
+<p class="aw-q">Exemplo: o pH do hidróxido de sódio 0,001 mol/L</p><ol class="wsol-steps"><li><span class="wsol-text">Uma base forte se dissocia totalmente, então [OH⁻] é igual à sua concentração.</span> <span class="wsol-expr" translate="no">[OH⁻] = 0,001 mol/L</span></li><li><span class="wsol-text">Calcule menos o logaritmo decimal.</span> <span class="wsol-expr" translate="no">pOH = −log₁₀(0,001) = 3,00</span></li><li><span class="wsol-text">A 25 °C, pH + pOH = 14.</span> <span class="wsol-expr" translate="no">pH = 14 − 3,00 = 11,00</span></li><li><span class="wsol-text">Compare com 7 (neutra dentro de ±0,005 a 25 °C): a solução é básica.</span> <span class="wsol-expr" translate="no">pH = 11,00 &gt; 7</span></li></ol><p class="aw-a">Resposta: <span translate="no">pH = 11,00</span></p>
+<!-- /calc:ab-strong-base -->
+          </div>
+
+          <h2><span class="h-no">§ 04</span> Ácidos fracos e Ka</h2>
+          <p>Um ácido <strong>fraco</strong> se ioniza só em parte, e se estabelece um <a href="chemical-equilibrium.pt.html">equilíbrio</a> entre o ácido e os seus íons. Quanto ele se ioniza é medido pela <strong>constante de ionização do ácido</strong>, <span translate="no">Ka = [H⁺][A⁻] ÷ [HA]</span>, muitas vezes dada como pKa = −log₁₀ Ka. O ácido acético, o ácido do vinagre, tem pKa = 4,756 a 25 °C (CRC Handbook, via OpenStax).</p>
+          <div class="art-worked" data-calc="ab-weak-acid">
+<!-- calc:ab-weak-acid -->
+<p class="aw-q">Exemplo: o pH do ácido acético 0,10 mol/L (pKa = 4,756 a 25 °C)</p><ol class="wsol-steps"><li><span class="wsol-text">Ka a partir do pKa.</span> <span class="wsol-expr" translate="no">Ka = 10^(−4,756) = 1,754 × 10⁻⁵</span></li><li><span class="wsol-text">No equilíbrio, [H⁺] = [A⁻] = x e [HA] = C − x; então:</span> <span class="wsol-expr" translate="no">Ka = x² ÷ (0,10 − x) = 1,754 × 10⁻⁵</span></li><li><span class="wsol-text">x é pequeno perto de C, então x ≈ √(Ka × C); resolvendo sem o atalho, o valor quase não muda.</span> <span class="wsol-expr" translate="no">x ≈ √(1,754 × 10⁻⁵ × 0,10) = 1,324 × 10⁻³ · x = 1,316 × 10⁻³ mol/L</span></li><li><span class="wsol-text">Calcule menos o logaritmo decimal.</span> <span class="wsol-expr" translate="no">pH = −log₁₀(1,316 × 10⁻³) = 2,88</span></li><li><span class="wsol-text">A fração do ácido que se ionizou.</span> <span class="wsol-expr" translate="no">α = x ÷ C = 1,316 × 10⁻³ ÷ 0,10 = 1,3 %</span></li></ol><p class="aw-a">Resposta: <span translate="no">pH = 2,88</span></p>
+<!-- /calc:ab-weak-acid -->
+          </div>
+          <p>Na mesma concentração, 0,10 mol/L, o ácido clorídrico teria pH 1,00. A diferença, perto de duas unidades de pH, significa que a solução de ácido acético tem cerca de 75 vezes menos íons hidrogênio; ela vem de quanto cada ácido se ioniza, não de quanto dele há.</p>
+
+          <h2><span class="h-no">§ 05</span> Tampões</h2>
+          <p>Um <strong>tampão</strong> é uma solução de um ácido fraco e da sua base conjugada — por exemplo, ácido acético e acetato de sódio. Pequenas adições de ácido ou de base mudam o seu pH muito menos do que mudariam o da água pura, porque a base do tampão consome o H⁺ adicionado e o ácido repõe o H⁺ retirado.</p>
+          <p>O pH de um tampão é dado, com boa aproximação, pela equação de Henderson–Hasselbalch, <span translate="no">pH = pKa + log₁₀([A⁻] ÷ [HA])</span>:</p>
+          <div class="art-worked" data-calc="ab-buffer">
+<!-- calc:ab-buffer -->
+<p class="aw-q">Exemplo: o pH de um tampão com ácido acético 0,10 mol/L e acetato de sódio 0,20 mol/L</p><ol class="wsol-steps"><li><span class="wsol-text">A razão entre a base conjugada e o ácido.</span> <span class="wsol-expr" translate="no">[A⁻]/[HA] = 0,20 ÷ 0,10 = 2</span></li><li><span class="wsol-text">Henderson–Hasselbalch.</span> <span class="wsol-expr" translate="no">pH = 4,756 + log₁₀(2) = 4,756 + 0,301 = 5,06</span></li><li><span class="wsol-text">A razão está entre 0,1 e 10, então a equação é uma boa aproximação: o balanço de cargas completo também dá pH 5,06.</span> <span class="wsol-expr" translate="no">0,1 ≤ 2 ≤ 10 ✓</span></li></ol><p class="aw-a">Resposta: <span translate="no">pH = 5,06</span></p>
+<!-- /calc:ab-buffer -->
+          </div>
+          <p>Um tampão funciona melhor quando o ácido e a base estão em quantidades parecidas, mais ou menos enquanto a razão [A⁻]/[HA] fica entre 0,1 e 10 — ou seja, a cerca de uma unidade do pKa.</p>
+
+          <h2><span class="h-no">§ 06</span> Equívocos comuns</h2>
+          <h3>"pH 7 é sempre neutro"</h3>
+          <p>Neutro significa [H⁺] = [OH⁻]. Isso acontece em pH 7 só a 25 °C, em que Kw = 1,0 × 10⁻¹⁴. O Kw aumenta com a temperatura, então a água pura quente continua neutra, mas o seu pH fica abaixo de 7.</p>
+          <h3>"Ácido forte é ácido concentrado"</h3>
+          <p>Forte diz quão completamente um ácido se ioniza; concentrado diz quanto dele está dissolvido. Uma solução diluída de ácido clorídrico é de um ácido forte, e uma solução concentrada de ácido acético continua sendo de um ácido fraco.</p>
+          <h3>"pH 2 é só um pouco mais ácido que pH 3"</h3>
+          <p>A escala é logarítmica: uma unidade significa dez vezes a concentração de íons hidrogênio. Uma solução de pH 2 tem dez vezes mais H⁺ que uma de pH 3, e cem vezes mais que uma de pH 4.</p>
+          <h3>"Um tampão impede qualquer mudança de pH"</h3>
+          <p>Um tampão reduz a mudança; não a impede. A sua capacidade é limitada, e quando a maior parte do seu ácido ou da sua base já foi consumida, o pH muda depressa.</p>
+
+          <h2><span class="h-no">§ 07</span> O que você precisa lembrar</h2>
+          <ul class="art-recap">
+            <li>Ácidos aumentam a [H⁺] na água e bases aumentam a [OH⁻]; a 25 °C, [H⁺][OH⁻] = 1,0 × 10⁻¹⁴.</li>
+            <li>pH = −log₁₀[H⁺]: cada unidade é um fator de dez, e a 25 °C pH + pOH = 14.</li>
+            <li>Ácidos e bases fortes se ionizam totalmente; os fracos, só em parte, como medem o Ka ou o pKa.</li>
+            <li>Força e concentração são coisas diferentes.</li>
+            <li>Um tampão de um ácido fraco e da sua base conjugada mantém o pH perto de pKa + log₁₀([A⁻]/[HA]).</li>
+          </ul>
+
+          <div class="art-callout">
+            <span class="ac-label">Conclusão</span>
+            O pH resume num só número o equilíbrio entre H⁺ e OH⁻. Saber se um ácido é forte ou fraco, e como funciona um tampão, é o que permite prever esse número — e mantê-lo onde ele precisa estar.
+          </div>
+
+          <section class="art-refs">
+            <h2><span class="h-no">§ Fontes</span> Referências e leitura</h2>
+            <ol>
+              <li>OpenStax — <em lang="en">Chemistry 2e</em> (Química 2e), capítulo sobre equilíbrios ácido-base: pH e pOH, força relativa de ácidos e bases, tampões.</li>
+              <li>CRC <em lang="en">Handbook of Chemistry and Physics</em>, 84.ª ed. (2004), na tabela de OpenStax <em lang="en">Introductory Chemistry</em>, Apêndice B: pKa do ácido acético a 25 °C.</li>
+              <li>IUPAC — <em lang="en">Compendium of Chemical Terminology</em> (Gold Book): pH.</li>
+            </ol>
+          </section>
+
+          <section class="art-related">
+            <div class="ar-label">Continue explorando</div>
+            <div class="art-related-grid">
+              <a class="ar-card" href="chemical-equilibrium.pt.html">
+                <div class="ar-cat">Conceitos</div>
+                <div class="ar-title">Equilíbrio químico</div>
+                <div class="ar-desc">Reações reversíveis, K e Q e o princípio de Le Chatelier.</div>
+              </a>
+              <a class="ar-card" href="solutions-and-concentration.pt.html">
+                <div class="ar-cat">Conceitos</div>
+                <div class="ar-title">Soluções e concentração</div>
+                <div class="ar-desc">Mols por litro, preparo e diluição de uma solução.</div>
+              </a>
+              <a class="ar-card" href="../exercises/ph-strong.pt.html">
+                <div class="ar-cat">Prática</div>
+                <div class="ar-title">Exercícios de pH</div>
+                <div class="ar-desc">Dez exercícios com solução comentada.</div>
+              </a>
+            </div>
+          </section>
+
+          <section class="art-follow">
+            <div>
+              <div class="afl-title">Gostou? Siga o Atomurus</div>
+              <div class="afl-sub">Novos mergulhos em química, ferramentas e visualizações 3D — toda semana.</div>
+            </div>
+            <div class="afl-links">
+              <a href="https://x.com/atomurusapp" target="_blank" rel="noopener me" aria-label="Siga o Atomurus no X (Twitter), @atomurusapp">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.658l-5.214-6.817-5.967 6.817H1.68l7.73-8.835L1.254 2.25h6.828l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/></svg>
+                <span>X / Twitter</span>
+              </a>
+              <a href="https://instagram.com/atomurusapp" target="_blank" rel="noopener me" aria-label="Siga o Atomurus no Instagram, @atomurusapp">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor"/></svg>
+                <span>Instagram</span>
+              </a>
+            </div>
+          </section>
+
+        </article>
+
+        <aside class="art-aside">
+          <nav class="art-toc" id="art-toc" aria-label="Índice do artigo">
+            <div class="toc-label">Neste artigo</div>
+          </nav>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ════════════ FOOTER ════════════ -->
+    <footer class="lc-footer">
+      <div class="lc-footer-inner">
+        <div class="lc-footer-col lc-footer-brand">
+          <div class="lc-footer-brand-row">
+            <div class="lc-topnav-mark" style="width:24px;height:24px">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.5" fill="currentColor"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/></svg>
+            </div>
+            <span class="lc-footer-brand-name">Atomurus</span>
+          </div>
+          <p class="lc-footer-brand-desc" data-i18n="common.footer.brandDesc">Um laboratório instrumental de química para os estudiosos, os curiosos e os pacientes.</p>
+        </div>
+        <div class="lc-footer-col">
+          <h4 data-i18n="common.footer.modules">Módulos</h4>
+          <a href="../periodic-table.html" data-i18n="common.nav.periodic">Tabela Periódica</a>
+          <a href="../viewer/atomic-models.html" data-i18n="common.nav.viewer3d">Visualizador</a>
+          <a href="../calculators.html" data-i18n="common.nav.calc">Calculadoras</a>
+          <a href="../explore.html?lang=pt-BR" data-i18n="common.nav.explore">Explorar</a>
+        </div>
+        <div class="lc-footer-col">
+          <h4 data-i18n="common.footer.project">Projeto</h4>
+          <a href="../about.html" data-i18n="common.footer.about">Sobre</a>
+          <a href="../privacy.html" data-i18n="common.footer.privacy">Privacidade</a>
+          <a href="../terms.html" data-i18n="common.footer.terms">Termos</a>
+          <a href="../contact.html" data-i18n="common.footer.contact">Contato</a>
+        </div>
+      </div>
+      <div class="lc-footer-bottom">        <span><span class="lc-st-dot" style="width:6px;height:6px;border-radius:50%;background:#1E6A50;display:inline-block"></span> <span data-i18n="common.footer.systemNominal">sistema nominal</span></span>
+        <span data-i18n="common.footer.copy">© 2026 Atomurus · v1.11</span>
+      </div>
+    </footer>
+  </div><!-- /.content -->
+</main>
+</div>
+
+<div class="lc-statusbar">
+  <span><span class="lc-st-dot"></span> ready</span>
+  <span class="lc-st-sep">·</span>
+  <span>explore / artigo</span>
+  <span class="lc-st-spacer"></span>
+  <a href="../explore.html?lang=pt-BR">→ explorar</a>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  window.toggleTheme = function() {
+    var html = document.documentElement;
+    var isDark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    try { localStorage.setItem('atomurus-theme', isDark ? 'light' : 'dark'); } catch(e){}
+  };
+  window.toggleMobileSidebar = function() {
+    var sidebar = document.querySelector('.sidebar');
+    var overlay = document.getElementById('mobile-overlay');
+    if (!sidebar) return;
+    var isOpen = sidebar.classList.contains('mobile-open');
+    sidebar.classList.toggle('mobile-open', !isOpen);
+    if (overlay) overlay.classList.toggle('show', !isOpen);
+    document.body.style.overflow = isOpen ? '' : 'hidden';
+  };
+  window.toggleNavGroup = function(name) {
+    var el = document.querySelector('.nav-expandable[data-expand="' + name + '"]');
+    if (!el) return;
+    var open = !el.classList.contains('open');
+    el.classList.toggle('open', open);
+    var row = el.querySelector('.nav-row');
+    if (row) row.setAttribute('aria-expanded', open ? 'true' : 'false');
+    try { localStorage.setItem('atomurus-nav-' + name, open ? '1' : '0'); } catch(e){}
+  };
+  (function initExpandable(){
+    document.querySelectorAll('.nav-expandable').forEach(function(el){
+      var name = el.dataset.expand;
+      var hasActive = !!el.querySelector('.nav-item.active, [aria-current="page"]');
+      var stored = null;
+      try { stored = localStorage.getItem('atomurus-nav-' + name); } catch(e){}
+      if (hasActive || stored === '1') { el.classList.add('open'); var r = el.querySelector('.nav-row'); if (r) r.setAttribute('aria-expanded','true'); }
+      var row = el.querySelector('.nav-row');
+      if (row) row.addEventListener('keydown', function(e){ if (e.key==='Enter'||e.key===' '){ e.preventDefault(); window.toggleNavGroup(name);} });
+    });
+  })();
+  function initArticle(){
+    var body = document.getElementById('art-body');
+    var toc = document.getElementById('art-toc');
+    var content = document.getElementById('content');
+    var bar = document.querySelector('#art-progress span');
+    if (!body || !toc) return;
+    var heads = body.querySelectorAll('h2');
+    var links = [];
+    heads.forEach(function(h, i){
+      if (!h.id) h.id = 'sec-' + (i + 1);
+      var txt = h.textContent.replace(/^§\s*\d+\s*/, '').replace(/^§\s*Fontes\s*/,'').trim();
+      var a = document.createElement('a');
+      a.href = '#' + h.id;
+      a.textContent = txt;
+      a.addEventListener('click', function(e){ e.preventDefault(); h.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+      toc.appendChild(a);
+      links.push({ a: a, h: h });
+    });
+    function onScroll(){
+      if (bar && content){
+        var max = content.scrollHeight - content.clientHeight;
+        var pct = max > 0 ? (content.scrollTop / max) * 100 : 0;
+        bar.style.width = pct + '%';
+      }
+      var top = content.scrollTop + 100;
+      var current = null;
+      links.forEach(function(l){ if (l.h.offsetTop <= top) current = l; });
+      links.forEach(function(l){ l.a.classList.toggle('is-active', l === current); });
+    }
+    content.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    onScroll();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initArticle);
+  else initArticle();
+})();
+</script>
+</body>
+</html>

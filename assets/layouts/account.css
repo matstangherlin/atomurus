@@ -64,6 +64,27 @@
   color: inherit;
 }
 
+/* My data: export status and the delete-account zone (prompt 29). */
+.ac-status:empty { display: none; }
+.ac-status.is-error { color: var(--color-danger, #A33A2B); }
+
+.ac-danger-zone {
+  border-color: color-mix(in oklab, var(--color-danger, #A33A2B) 35%, var(--color-border, #D8D2BF));
+}
+
+.ac-delete-list { margin: 6px 0 10px; padding-left: 1.2em; }
+.ac-delete-form { display: grid; gap: 12px; }
+
+.ac-linklike {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-link, var(--color-brand, #1E6A50));
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 @media (max-width: 760px) {
   .ac-page { padding: 18px 16px 48px; }
   .ws-account-tabs { flex-direction: column; }

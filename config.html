@@ -97,8 +97,10 @@
     .main { padding-bottom: 22px; }
   }
 </style>
+<link rel="stylesheet" href="/assets/print.css?v=202610281500" media="print">
 </head>
 <body class="ps-body">
+<a class="skip-link" href="#main-content" data-i18n="common.skipToContent">Skip to content</a>
 
 <div class="mobile-overlay" id="mobile-overlay" onclick="toggleMobileSidebar()"></div>
 
@@ -131,7 +133,7 @@
     </svg>
   </button>
 </form>
-    <button class="theme-btn" data-i18n-toggle aria-label="Switch language" title="Switch language" style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;width:auto;min-width:32px;padding:0 8px;">
+    <button class="theme-btn" data-i18n-toggle aria-label="PT — Switch language" title="Switch language" style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;width:auto;min-width:32px;padding:0 8px;">
       <span data-i18n-toggle-label>PT</span>
     </button>
     <button class="theme-btn" onclick="setTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark')" title="Toggle theme" aria-label="Toggle theme" style="margin-left:4px;">
@@ -186,7 +188,7 @@
     </a>
   </div>
 </aside>
-<main class="main">
+<main class="main" id="main-content" tabindex="-1">
   
 
   <div class="data-strip">
@@ -262,10 +264,10 @@
         </div>
         <div class="settings-row">
           <div class="settings-row-info">
-            <div class="settings-row-label" data-i18n="config.viewmode">View mode</div>
+            <div class="settings-row-label" id="set-viewmode-label" data-i18n="config.viewmode">View mode</div>
             <div class="settings-row-desc" data-i18n="config.viewmodeDesc">By color category, or heatmap by physical property.</div>
           </div>
-          <select class="settings-select ui-select" onchange="savePref('atomurus-heatmap',this.value)" id="heatmap-select">
+          <select class="settings-select ui-select" onchange="savePref('atomurus-heatmap',this.value)" id="heatmap-select" aria-labelledby="set-viewmode-label">
             <option value="category" data-i18n="config.viewCategory">By Category</option>
             <option value="electronegativity" data-i18n="config.viewEneg">Electronegativity</option>
             <option value="atomic_radius" data-i18n="config.viewRadius">Atomic Radius</option>
@@ -297,10 +299,10 @@
         </div>
         <div class="settings-row">
           <div class="settings-row-info">
-            <div class="settings-row-label" data-i18n="config.langLabel">Interface language</div>
+            <div class="settings-row-label" id="set-lang-label" data-i18n="config.langLabel">Interface language</div>
             <div class="settings-row-desc" data-i18n="config.langDesc">Change the language of the entire interface.</div>
           </div>
-          <select class="settings-select ui-select" onchange="setLanguage(this.value)" id="lang-select">
+          <select class="settings-select ui-select" onchange="setLanguage(this.value)" id="lang-select" aria-labelledby="set-lang-label">
             <option value="en" data-i18n="config.langOptEn">🇺🇸 English</option>
             <option value="pt" data-i18n="config.langOptPt">🇧🇷 Portuguese</option>
           </select>

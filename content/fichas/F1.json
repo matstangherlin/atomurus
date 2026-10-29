@@ -1,0 +1,90 @@
+{
+  "id": "F1",
+  "status": "draft",
+  "reviewedBy": null,
+  "minutes": 50,
+  "level": { "pt": "Ensino médio — 1ª série", "en": "High school — first year" },
+  "title": { "pt": "Lendo a tabela periódica", "en": "Reading the periodic table" },
+  "summary": {
+    "pt": "Localizar elementos por grupo e período e distinguir metais, não metais, metaloides e gases nobres com a tabela periódica do Atomurus.",
+    "en": "Find elements by group and period, and tell metals, non-metals, metalloids and noble gases apart with the Atomurus periodic table."
+  },
+  "tool": {
+    "href": { "pt": "/periodic-table.pt.html", "en": "/periodic-table.html" },
+    "label": { "pt": "Abrir a tabela periódica", "en": "Open the periodic table" }
+  },
+  "objectives": {
+    "pt": [
+      "Localizar um elemento pelo grupo (coluna) e pelo período (linha).",
+      "Usar as cores da tabela para distinguir metais, não metais, metaloides e gases nobres.",
+      "Explicar por que o hidrogênio fica no topo do grupo 1 sem ser um metal alcalino."
+    ],
+    "en": [
+      "Find an element by its group (column) and period (row).",
+      "Use the table's colours to tell metals, non-metals, metalloids and noble gases apart.",
+      "Explain why hydrogen sits at the top of group 1 without being an alkali metal."
+    ]
+  },
+  "materials": {
+    "pt": ["Computador, tablet ou celular com a tabela periódica do Atomurus (ou uma tabela impressa)", "Esta ficha e caneta"],
+    "en": ["A computer, tablet or phone with the Atomurus periodic table (or a printed table)", "This sheet and a pen"]
+  },
+  "steps": [
+    { "minutes": 5, "pt": "Apresente a tabela: as linhas são os períodos e as colunas são os grupos.", "en": "Introduce the table: rows are periods and columns are groups." },
+    { "minutes": 25, "pt": "Em duplas, os alunos respondem às questões 1 a 5 com a tabela aberta.", "en": "In pairs, students answer questions 1 to 5 with the table open." },
+    { "minutes": 10, "pt": "Discuta a questão 6 (o hidrogênio) com a turma.", "en": "Discuss question 6 (hydrogen) with the class." },
+    { "minutes": 10, "pt": "Correção coletiva com o gabarito; registre as dúvidas que sobrarem.", "en": "Go through the answer key together and note any questions left open." }
+  ],
+  "questions": [
+    {
+      "id": "q1", "kind": "short", "points": 1, "lines": 1,
+      "prompt": { "pt": "Em que grupo e em que período está o ferro (Fe)?", "en": "In which group and which period is iron (Fe)?" },
+      "answer": { "kind": "computed", "engine": "elements.position", "input": { "symbol": "Fe" } },
+      "comment": { "pt": "O grupo é a coluna e o período é a linha em que o elemento está.", "en": "The group is the column and the period is the row the element is in." }
+    },
+    {
+      "id": "q2", "kind": "short", "points": 2, "lines": 2,
+      "prompt": { "pt": "Quantos elementos a tabela classifica como metais alcalinos? Quais são?", "en": "How many elements does the table class as alkali metals? Which ones?" },
+      "answer": { "kind": "computed", "engine": "elements.members", "input": { "category": "alkali" } },
+      "comment": { "pt": "O hidrogênio está no grupo 1, mas não é metal alcalino (veja a questão 6).", "en": "Hydrogen is in group 1 but is not an alkali metal (see question 6)." }
+    },
+    {
+      "id": "q3", "kind": "short", "points": 2, "lines": 2,
+      "prompt": { "pt": "Quantos gases nobres a tabela mostra, e em que grupo eles ficam?", "en": "How many noble gases does the table show, and in which group are they?" },
+      "answer": { "kind": "computed", "engine": "elements.members", "input": { "category": "noble", "withGroup": true } }
+    },
+    {
+      "id": "q4", "kind": "short", "points": 1, "lines": 1,
+      "prompt": { "pt": "Qual é o elemento de número atômico 17 e qual é a categoria dele, pelas cores da tabela?", "en": "Which element has atomic number 17, and what is its category by the table's colours?" },
+      "answer": { "kind": "computed", "engine": "elements.identify", "input": { "z": 17 } },
+      "comment": { "pt": "A tabela do site divide os não metais em «diatômicos» e «poliatômicos»; «não metal» também está certo.", "en": "The site's table splits non-metals into «diatomic» and «polyatomic»; «non-metal» is also right." }
+    },
+    {
+      "id": "q5", "kind": "short", "points": 2, "lines": 2,
+      "prompt": { "pt": "No período 2, quantos elementos são metais (alcalinos, alcalino-terrosos, de transição ou pós-transição)? Quais?", "en": "In period 2, how many elements are metals (alkali, alkaline-earth, transition or post-transition)? Which ones?" },
+      "answer": { "kind": "computed", "engine": "elements.where", "input": { "period": 2, "categories": ["alkali", "alkaline", "transition", "posttrans", "lanthanide", "actinide"] } },
+      "comment": { "pt": "O boro, logo depois, é um metaloide, não um metal.", "en": "Boron, right after them, is a metalloid, not a metal." }
+    },
+    {
+      "id": "q6", "kind": "open", "points": 2, "lines": 3,
+      "prompt": { "pt": "Por que o hidrogênio costuma ficar no topo do grupo 1, mas não é um metal alcalino?", "en": "Why does hydrogen usually sit at the top of group 1, yet it is not an alkali metal?" },
+      "answer": {
+        "kind": "text",
+        "value": {
+          "pt": "Porque tem um único elétron, como os metais alcalinos do grupo 1; por isso costuma ficar no topo dessa coluna. Mas o hidrogênio é um não metal e se comporta de forma muito diferente do sódio ou do potássio.",
+          "en": "Because it has a single electron, like the group-1 alkali metals, so it usually sits at the top of that column. But hydrogen is a non-metal and behaves very differently from sodium or potassium."
+        },
+        "source": { "pt": "Atomurus, «O que é a Tabela Periódica?», perguntas frequentes", "en": "Atomurus, «What is the Periodic Table?», FAQ", "href": "/explore/what-is-the-periodic-table.html" }
+      }
+    }
+  ],
+  "teacherNotes": {
+    "pt": "As respostas das questões 1 a 5 saem dos dados da própria tabela do site (elements-data.js): se a classificação mudar, o gabarito gerado muda junto.",
+    "en": "The answers to questions 1 to 5 come from the site's own table data (elements-data.js): if the classification changes, the generated key changes with it."
+  },
+  "commonErrors": [
+    { "pt": "Trocar grupo (coluna) por período (linha).", "en": "Swapping group (column) and period (row)." },
+    { "pt": "Contar o hidrogênio entre os metais alcalinos.", "en": "Counting hydrogen among the alkali metals." },
+    { "pt": "Contar o boro como metal no período 2 (é um metaloide).", "en": "Counting boron as a metal in period 2 (it is a metalloid)." }
+  ]
+}

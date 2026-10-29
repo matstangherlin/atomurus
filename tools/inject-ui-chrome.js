@@ -462,6 +462,92 @@ function relabelChromeCopy(html) {
     });
 }
 
+// ── Accessibility pass (prompt 23), applied to every published page ──────
+// Language button: WCAG 2.5.3 wants the accessible name to contain the
+// visible text. The button shows «PT»/«EN» and was named «Switch language».
+// Its name becomes «PT — Switch language»; i18n.js keeps it in sync, so
+// data-i18n-attr no longer rewrites aria-label (I18N.apply() would undo it).
+const LANG_ACTION = /^(Switch language|Trocar idioma|Mudar idioma)$/;
+
+function stripAriaLabelKey(spec) {
+  return spec.split(';').map((pair) => pair.trim())
+    .filter((pair) => pair && !/^aria-label\s*:\s*common\.langToggle$/.test(pair))
+    .join('; ');
+}
+
+function normalizeLangToggles(html) {
+  return html.replace(/<button\b([^>]*)>(\s*<span\b[^>]*>\s*(PT|EN)\s*<\/span>\s*|\s*(PT|EN)\s*)<\/button>/g, (full, attrs, inner, spanCode, bareCode) => {
+    const code = spanCode || bareCode;
+    const label = /\saria-label="([^"]*)"/.exec(attrs);
+    const isToggle = /\sdata-i18n-toggle\b/.test(attrs);
+    if (!label) return full;
+    const action = label[1].startsWith(code + ' — ') ? label[1].slice(code.length + 3) : label[1];
+    if (!isToggle && !LANG_ACTION.test(action)) return full;
+    let next = attrs.replace(/\saria-label="[^"]*"/, ` aria-label="${code} — ${action}"`);
+    next = next.replace(/\sdata-i18n-attr="([^"]*)"/, (m, spec) => {
+      const kept = stripAriaLabelKey(spec);
+      return kept ? ` data-i18n-attr="${kept}"` : '';
+    });
+    return `<button${next}>${inner}</button>`;
+  });
+}
+
+// Skip link: the first focusable element of <body> jumps to <main>, which
+// gets id="main-content" (or keeps its own id) and tabindex="-1" so it can
+// take focus. Text comes from common.skipToContent in the page's language;
+// .skip-link is styled in assets/public-shell.css (visible only on focus).
+function pageLang(html) {
+  const m = /<html\b[^>]*\slang="([^"]+)"/i.exec(html);
+  return m && /^pt/i.test(m[1]) ? 'pt' : 'en';
+}
+
+function skipText(lang) {
+  const { DICT } = require('./i18n-dict-source.js');
+  return (DICT[lang] && DICT[lang].common && DICT[lang].common.skipToContent) || DICT.en.common.skipToContent;
+}
+
+function ensureSkipLink(html) {
+  if (/<a\b[^>]*\bclass="skip-link"/.test(html)) return html;
+  const main = /<main\b([^>]*)>/i.exec(html);
+  const body = /<body\b[^>]*>/i.exec(html);
+  if (!main || !body || body.index > main.index) return html;
+  let attrs = main[1];
+  let id = (/\sid="([^"]+)"/.exec(attrs) || [])[1];
+  if (!id) {
+    id = 'main-content';
+    attrs += ' id="main-content"';
+  }
+  if (!/\stabindex=/.test(attrs)) attrs += ' tabindex="-1"';
+  let next = html.slice(0, main.index) + `<main${attrs}>` + html.slice(main.index + main[0].length);
+  const link = readTpl('skip-link.html')
+    .replace('{{target}}', id)
+    .replace('{{text}}', skipText(pageLang(html)));
+  const at = body.index + body[0].length;
+  next = next.slice(0, at) + '\n' + link + next.slice(at);
+  return next;
+}
+
+// Print stylesheet (prompt 26, B02): templates/chrome/print-css.html, a
+// media="print" <link> before </head>, so it never blocks rendering. The
+// absolute path works on any URL depth (and on the 404 page).
+function ensurePrintCss(html) {
+  if (/\/assets\/print\.css/.test(html)) return html;
+  const head = html.search(/<\/head>/i);
+  if (head === -1) return html;
+  return html.slice(0, head) + readTpl('print-css.html') + '\n' + html.slice(head);
+}
+
+// The app (/app.html) keeps its own chrome, skip link (#ws-skip) and print
+// behaviour; it only gets the language-button fix.
+function applyA11yChrome(html, file) {
+  let next = normalizeLangToggles(html);
+  if (!SKIP_FILES.has(path.basename(file || ''))) {
+    next = ensureSkipLink(next);
+    next = ensurePrintCss(next);
+  }
+  return next;
+}
+
 function patchEmittedChrome(html, file) {
   let next = addHtmlAttr(html, 'data-ps-chrome', '1');
   const prefix = prefixFor(file);
@@ -528,9 +614,11 @@ function walkDir(dir, out) {
 }
 
 function injectFile(file) {
-  if (SKIP_FILES.has(path.basename(file))) return { status: 'skip-app', changed: false };
   const original = fs.readFileSync(file, 'utf8');
-  const result = injectHtml(original, file);
+  const result = SKIP_FILES.has(path.basename(file))
+    ? { html: original, status: 'skip-app' }
+    : injectHtml(original, file);
+  result.html = applyA11yChrome(result.html, file);
   if (result.html !== original) {
     fs.writeFileSync(file, result.html);
     return { status: result.status, changed: true };
@@ -540,6 +628,10 @@ function injectFile(file) {
 
 module.exports = {
   injectHtml,
+  applyA11yChrome,
+  normalizeLangToggles,
+  ensureSkipLink,
+  ensurePrintCss,
   injectFile,
   prefixFor,
   SKIP_DIRS,
@@ -556,10 +648,6 @@ if (require.main === module) {
   const counts = {};
   let changed = 0;
   for (const file of files) {
-    if (SKIP_FILES.has(path.basename(file))) {
-      counts['skip-app'] = (counts['skip-app'] || 0) + 1;
-      continue;
-    }
     const result = injectFile(file);
     counts[result.status] = (counts[result.status] || 0) + 1;
     if (result.changed) changed += 1;

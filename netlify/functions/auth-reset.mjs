@@ -3,8 +3,11 @@ import { logAuthEvent } from '../lib/auth-log.mjs';
 import { resetIpLimiter } from '../lib/auth-rate-limit.mjs';
 import {
   clientIp,
+  isLeakedPasswordError,
   json,
   jsonWithCookies,
+  LEAKED_PASSWORD_CODE,
+  LEAKED_PASSWORD_MESSAGE,
   options,
   passwordPolicyError,
   publicUser,
@@ -62,6 +65,12 @@ export default async function handler(request) {
     if (isAuthConfigError(err) || status >= 500) {
       logAuthEvent('auth-reset', { ok: false, errorType: 'unavailable', level: 'error' });
       return json(500, { ok: false, error: 'Password reset is unavailable.' });
+    }
+    if (isLeakedPasswordError(err)) {
+      // The recovery link was used up by the verification; keep that session
+      // so the next try (without the token) can set another password.
+      logAuthEvent('auth-reset', { ok: false, errorType: LEAKED_PASSWORD_CODE, status: 400 });
+      return jsonWithCookies(400, { ok: false, error: LEAKED_PASSWORD_MESSAGE, code: LEAKED_PASSWORD_CODE }, err.cookieHeaders || []);
     }
     logAuthEvent('auth-reset', { ok: false, errorType: err?.code || 'invalid_token' });
     return json(status === 401 ? 401 : 400, {

@@ -70,6 +70,41 @@
         "en": ["Recognize methyl isocyanate as the Bhopal gas", "See the linear N=C=O group in the model", "Notice the methyl carbon that reacts with water"],
         "pt": ["Reconhecer o isocianato de metila como o gás de Bhopal", "Ver o grupo linear N=C=O no modelo", "Notar o carbono da metila que reage com a água"]
       }
+    },
+    "explore/what-is-the-mole.html": {
+      "level": "beginner",
+      "learn": {
+        "en": ["Define the mole and the Avogadro constant", "Use molar mass to convert grams into moles", "Find the number of particles in a sample"],
+        "pt": ["Definir o mol e a constante de Avogadro", "Usar a massa molar para converter gramas em mols", "Calcular o número de partículas numa amostra"]
+      }
+    },
+    "explore/conservation-of-mass.html": {
+      "level": "beginner",
+      "learn": {
+        "en": ["State the law of conservation of mass", "Explain apparent mass changes in open systems", "Check a balanced equation with molar masses"],
+        "pt": ["Enunciar a lei da conservação da massa", "Explicar as variações aparentes de massa em sistemas abertos", "Conferir uma equação balanceada com massas molares"]
+      }
+    },
+    "explore/solutions-and-concentration.html": {
+      "level": "beginner",
+      "learn": {
+        "en": ["Define amount concentration in mol/L", "Calculate the mass of solute to prepare a solution", "Use C₁V₁ = C₂V₂ for a dilution"],
+        "pt": ["Definir a concentração em quantidade de matéria, em mol/L", "Calcular a massa de soluto para preparar uma solução", "Usar C₁V₁ = C₂V₂ numa diluição"]
+      }
+    },
+    "explore/acids-bases-and-ph.html": {
+      "level": "intermediate",
+      "learn": {
+        "en": ["Explain what pH measures and why the scale is logarithmic", "Calculate the pH of strong and weak acids", "Explain how a buffer limits pH changes"],
+        "pt": ["Explicar o que o pH mede e por que a escala é logarítmica", "Calcular o pH de ácidos fortes e fracos", "Explicar como um tampão limita as mudanças de pH"]
+      }
+    },
+    "explore/chemical-equilibrium.html": {
+      "level": "intermediate",
+      "learn": {
+        "en": ["Explain why chemical equilibrium is dynamic", "Use K and Q to predict which way a mixture reacts", "Apply Le Chatelier’s principle qualitatively"],
+        "pt": ["Explicar por que o equilíbrio químico é dinâmico", "Usar K e Q para prever para que lado uma mistura reage", "Aplicar o princípio de Le Chatelier de forma qualitativa"]
+      }
     }
   }
 }

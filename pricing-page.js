@@ -693,9 +693,20 @@
     if (pro) pro.addEventListener('click', startCheckout);
   }
 
+  /* Prompt 34: the school-plan block stays hidden unless the owner turns the
+     flag on in netlify/lib/feature-catalog.mjs (copied into
+     assets/access-policy.js). There is no school checkout. */
+  function showSchoolPlan() {
+    var block = document.getElementById('school-plan');
+    var access = window.ATOMURUS_ACCESS;
+    if (block) block.hidden = !(access && access.SCHOOL_PLAN_ENABLED === true);
+  }
+
   function boot() {
     hydrateCopy(selectedCurrency());
     bind();
+    showSchoolPlan();
+    document.addEventListener('atomurus-access-ready', showSchoolPlan);
     window.addEventListener('pageshow', function () {
       restoreCheckoutButton();
     });

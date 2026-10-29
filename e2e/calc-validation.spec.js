@@ -40,7 +40,7 @@ test('public calculators reject impossible inputs and show 101325 Pa', async ({ 
   expect(errors).toEqual([]);
 });
 
-test('pH 1e-8 em português mostra 6.98 e a autoionização', async ({ page }) => {
+test('pH 1e-8 em português mostra 6,98 e a autoionização', async ({ page }) => {
   const errors = [];
   page.on('pageerror', (err) => errors.push(String(err)));
   await page.addInitScript(() => {
@@ -50,7 +50,8 @@ test('pH 1e-8 em português mostra 6.98 e a autoionização', async ({ page }) =
   await page.locator('#ph-mode').selectOption('H');
   await page.locator('#ph-H').fill('1e-8');
   await page.locator('#tab-ph .calc-btn-run').click();
-  await expect(page.locator('#ph-result-body')).toContainText('6.98');
+  // Decimal comma in PT, like the rest of the page (prompt 30).
+  await expect(page.locator('#ph-result-body .calc-result-v.big')).toContainText('6,98');
   await expect(page.locator('[data-ph-autoion]')).toContainText('autoionização');
   await expect(page.locator('#ph-result-body')).toContainText('levemente ácida');
   await page.locator('#ph-mode').selectOption('pH');

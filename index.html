@@ -135,9 +135,11 @@
   body { display: block; height: auto; overflow-x: hidden; padding-bottom: 22px; }
   /* hide the .sidebar/.main reset rules that don't apply here */
 </style>
+<link rel="stylesheet" href="/assets/print.css?v=202610281500" media="print">
 </head>
 
 <body class="ps-body lc-landing">
+<a class="skip-link" href="#ps-main" data-i18n="common.skipToContent">Skip to content</a>
 
 <!-- ════════════ TOPNAV ════════════ -->
 <div class="ps-shell" id="ps-shell">
@@ -223,8 +225,8 @@
   </div>
 
   <button class="lc-topnav-btn lc-topnav-lang" data-i18n-toggle
-          data-i18n-attr="title:common.langToggle; aria-label:common.langToggle"
-          title="Switch language" aria-label="Switch language"
+          data-i18n-attr="title:common.langToggle"
+          title="Switch language" aria-label="PT — Switch language"
           style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;">
     <span data-i18n-toggle-label>PT</span>
   </button>
@@ -291,7 +293,7 @@
     </a>
   </div>
 </aside>
-<main class="ps-main" id="ps-main">
+<main class="ps-main" id="ps-main" tabindex="-1">
 
 
 <!-- ════════════ DATA STRIP ════════════ -->

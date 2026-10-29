@@ -83,9 +83,11 @@
 <script src="assets/global-nav.js?v=202609090500"></script>
 <script src="/assets/public-workspace.js?v=202608282500"></script>
 <script src="atomurus-mobile-nav.js?v=202608041630" defer></script>
+<link rel="stylesheet" href="/assets/print.css?v=202610281500" media="print">
 </head>
 
 <body class="ps-body lc-doc">
+<a class="skip-link" href="#ps-main" data-i18n="common.skipToContent">Pular para o conteúdo</a>
 
 <div class="ps-shell" id="ps-shell">
 <nav class="lc-topnav">
@@ -112,13 +114,13 @@
   </div>
 
   <form class="ps-search search-box" role="search" action="periodic-table.html" method="get">
-  <label class="lc-sr-only" for="ps-search-q">Search element</label>
+  <label class="lc-sr-only" for="ps-search-q" data-i18n="common.searchAria">Buscar elemento</label>
   <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
     <circle cx="5.5" cy="5.5" r="4" stroke="currentColor" stroke-width="1.4"/>
     <line x1="8.7" y1="8.7" x2="11.5" y2="11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
   </svg>
-  <input id="ps-search-q" name="q" type="search" autocomplete="off" data-i18n-attr="placeholder:common.searchPlaceholder" placeholder="search element, symbol or Z…">
-  <button type="submit" data-i18n-attr="aria-label:common.searchAria" aria-label="Search element">
+  <input id="ps-search-q" name="q" type="search" autocomplete="off" data-i18n-attr="placeholder:common.searchPlaceholder" placeholder="buscar elemento, símbolo ou Z…">
+  <button type="submit" data-i18n-attr="aria-label:common.searchAria" aria-label="Buscar elemento">
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
       <circle cx="6" cy="6" r="4.2" stroke="currentColor" stroke-width="1.3"/>
       <path d="M9.2 9.2 12 12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
@@ -127,18 +129,18 @@
 </form>
     <div class="lc-topnav-spacer"></div>
 
-  <button class="lc-topnav-btn lc-topnav-lang" data-i18n-toggle data-i18n-attr="title:common.langToggle; aria-label:common.langToggle" title="Switch language" aria-label="Switch language" style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;width:auto;min-width:30px;padding:0 8px;">
-    <span data-i18n-toggle-label>PT</span>
+  <button class="lc-topnav-btn lc-topnav-lang" data-i18n-toggle data-i18n-attr="title:common.langToggle" title="Trocar idioma" aria-label="EN — Trocar idioma" style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;width:auto;min-width:30px;padding:0 8px;">
+    <span data-i18n-toggle-label>EN</span>
   </button>
 
-  <button class="lc-topnav-btn" onclick="toggleTheme()" data-i18n-attr="title:common.themeToggle; aria-label:common.themeToggle" title="Toggle theme" aria-label="Toggle theme">
+  <button class="lc-topnav-btn" onclick="toggleTheme()" data-i18n-attr="title:common.themeToggle; aria-label:common.themeToggle" title="Alternar tema" aria-label="Alternar tema">
     <svg id="icon-theme-light" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M11.5 7.5A4.5 4.5 0 0 1 6.5 2.5 4.5 4.5 0 1 0 11.5 7.5z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/></svg>
     <svg id="icon-theme-dark" width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M7 1v1.4M7 11.6V13M1 7h1.4M11.6 7H13M2.5 2.5l1 1M10.5 10.5l1 1M2.5 11.5l1-1M10.5 3.5l1-1" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
   </button>
 
   <div class="ps-account" data-atomurus-account>
   <span class="ps-plan-badge" data-atomurus-plan-badge hidden></span>
-  <a class="ps-userchip lc-topnav-cta" href="login.html" data-atomurus-account-chip aria-label="Account">
+  <a class="ps-userchip lc-topnav-cta" href="login.html" data-atomurus-account-chip data-i18n-attr="aria-label:pricing.ctaAccount" aria-label="Conta">
     <svg class="ps-userchip-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
     <span data-i18n="pricing.ctaAccount">Conta</span>
   </a>
@@ -146,7 +148,7 @@
   
 </nav>
 <aside class="ws-sidebar sidebar ps-pub-sidebar" id="ws-sidebar" data-atomurus-sidebar>
-  <nav class="ws-nav" id="ws-nav-main" aria-label="Laboratory" data-atomurus-lab-nav>
+  <nav class="ws-nav" id="ws-nav-main" aria-label="Laboratório" data-i18n-attr="aria-label:common.nav.laboratory" data-atomurus-lab-nav>
     <div class="ws-nav-block ws-nav-site">
       <h2 class="ws-nav-group" data-i18n="common.nav.laboratory">Laboratório</h2>
       <a class="ws-nav-item" href="/" data-nav="home">
@@ -186,17 +188,17 @@
     </a>
   </div>
 </aside>
-<main class="ps-main" id="ps-main">
+<main class="ps-main" id="ps-main" tabindex="-1">
 
 
 <div class="data-strip">
-  <span class="ds-k">scope</span><span class="ds-v">DOC.PRIVACY</span>
+  <span class="ds-k" data-i18n="privacy.dsKScope">escopo</span><span class="ds-v" data-i18n="privacy.dsScopeVal">DOC.PRIVACIDADE</span>
   <span class="ds-sep"></span>
-  <span class="ds-k">section</span><span class="ds-v">privacy</span>
+  <span class="ds-k" data-i18n="privacy.dsKSection">seção</span><span class="ds-v" data-i18n="privacy.dsSectionVal">privacidade</span>
   <span class="ds-sep"></span>
-  <span class="ds-k">rev</span><span class="ds-v">v1.11 · 2026.05</span>
+  <span class="ds-k" data-i18n="privacy.dsKRev">rev</span><span class="ds-v">v1.11 · 2026.05</span>
   <span class="ds-spacer"></span>
-  <span class="ds-k">data</span><span class="ds-v ds-hi">IUPAC 2024 · CODATA 2022</span>
+  <span class="ds-k" data-i18n="privacy.dsKData">dados</span><span class="ds-v ds-hi">IUPAC 2024 · CODATA 2022</span>
 </div>
 
 <header class="lc-doc-hero">
@@ -204,48 +206,48 @@
     <span data-i18n="privacy.kicker">Legal</span>
     <span class="pill">doc.privacy</span>
   </div>
-  <h1 class="lc-doc-title" data-i18n-html="privacy.titleHtml">Privacy <em>Policy</em></h1>
+  <h1 class="lc-doc-title" data-i18n-html="privacy.titleHtml">Política de <em>Privacidade</em></h1>
   <p class="lc-doc-desc" data-i18n="privacy.desc">Como o Atomurus lida com dados, cookies e publicidade. Linguagem simples, sem juridiquês.</p>
 </header>
 
 <div class="lc-doc-body ui-root">
 
   <aside class="lc-doc-aside">
-    <div><span class="lbl">document</span><br><span class="v">privacy</span></div>
+    <div><span class="lbl" data-i18n="privacy.asideKDoc">documento</span><br><span class="v" data-i18n="privacy.dsSectionVal">privacidade</span></div>
     <hr>
-    <div><span class="lbl">updated</span><br><span class="v">2026 · 05</span></div>
+    <div><span class="lbl" data-i18n="privacy.asideKUpdated">atualizado</span><br><span class="v">2026 · 05</span></div>
     <hr>
-    <div><span class="lbl">contents</span></div>
-    <a href="#who">Who we are</a>
-    <a href="#no-collect">Information we do not collect directly</a>
-    <a href="#local">Information stored locally in your browser</a>
-    <a href="#analytics">Analytics — Google Analytics 4</a>
-    <a href="#ads">Advertising — Google AdSense</a>
-    <a href="#recaptcha">Anti-spam — Google reCAPTCHA v3</a>
-    <a href="#cookies">Cookies</a>
-    <a href="#children">Children's privacy</a>
-    <a href="#tpl">Third-party links</a>
-    <a href="#sec">Data security</a>
-    <a href="#rights">Your rights</a>
-    <a href="#changes">Changes to this policy</a>
-    <a href="#contact">Contact</a>
+    <div><span class="lbl" data-i18n="privacy.asideKContents">conteúdo</span></div>
+    <a href="#who" data-i18n="privacy.toc_1">Quem somos</a>
+    <a href="#no-collect" data-i18n="privacy.toc_2">Informações que não coletamos diretamente</a>
+    <a href="#local" data-i18n="privacy.toc_3">Informações armazenadas localmente no seu navegador</a>
+    <a href="#analytics" data-i18n="privacy.toc_4">Analytics — Google Analytics 4</a>
+    <a href="#ads" data-i18n="privacy.toc_5">Publicidade — Google AdSense e AdCash</a>
+    <a href="#recaptcha" data-i18n="privacy.toc_6">Anti-spam — Google reCAPTCHA v3</a>
+    <a href="#cookies" data-i18n="privacy.toc_7">Cookies</a>
+    <a href="#children" data-i18n="privacy.toc_8">Privacidade infantil</a>
+    <a href="#tpl" data-i18n="privacy.toc_9">Links de terceiros</a>
+    <a href="#sec" data-i18n="privacy.toc_10">Segurança de dados</a>
+    <a href="#rights" data-i18n="privacy.toc_11">Seus direitos</a>
+    <a href="#changes" data-i18n="privacy.toc_12">Alterações nesta política</a>
+    <a href="#contact" data-i18n="privacy.toc_13">Contato</a>
     <hr>
-    <a href="contact.html" style="text-transform:none;letter-spacing:.04em">→ Contact</a>
+    <a href="contact.html" style="text-transform:none;letter-spacing:.04em" data-i18n="privacy.asideLinkContact">→ Contato</a>
   </aside>
 
   <article class="lc-doc-prose">
     <div class="doc-effective">
-      <span class="k">Effective date</span>
-      <span class="v" data-i18n="privacy.effectiveDate">May 16, 2026</span>
+      <span class="k" data-i18n="privacy.effectiveLabel">Data de vigência</span>
+      <span class="v" data-i18n="privacy.effectiveDate">16 de Maio de 2026</span>
     </div>
 
-    <blockquote data-i18n-html="privacy.calloutHtml">Atomurus keeps the public chemistry lab open without requiring an account, but now offers optional accounts for the private workspace. Account creation and login are handled through a secure authentication provider, and the site does not store raw passwords.</blockquote>
+    <blockquote data-i18n-html="privacy.calloutHtml">O Atomurus mantém o laboratório público aberto sem exigir conta, mas agora oferece contas opcionais para o workspace privado. Criação de conta e login são tratados por um provedor de autenticação seguro, e o site não armazena senhas em texto puro.</blockquote>
 
     <h2 id="who"><span class="h-no">§ 01</span> <span data-i18n="privacy.h2_1">1. Quem somos</span></h2>
-    <p data-i18n-html="privacy.p_1Html">Atomurus ("we", "us", "our") operates the website at <strong>atomurus.com</strong>. This Privacy Policy explains what data is collected when you visit Atomurus, by whom, and what choices you have.</p>
+    <p data-i18n-html="privacy.p_1Html">O Atomurus ("nós", "nosso") opera o site em <strong>atomurus.com</strong>. Esta Política de Privacidade explica quais dados são coletados quando você visita o Atomurus, por quem, e quais escolhas você tem.</p>
 
     <h2 id="no-collect"><span class="h-no">§ 02</span> <span data-i18n="privacy.h2_2">2. Informações que não coletamos diretamente</span></h2>
-    <p data-i18n-html="privacy.p_2Html">Even with optional accounts, Atomurus does <strong>not</strong> directly collect or store:</p>
+    <p data-i18n-html="privacy.p_2Html">Mesmo com contas opcionais, o Atomurus <strong>não</strong> coleta ou armazena diretamente:</p>
     <ul>
       <li data-i18n="privacy.li_2_1">Sua senha em texto puro ou segredos de redefinição</li>
       <li data-i18n="privacy.li_2_2">Detalhes de pagamento dentro do banco principal do site</li>
@@ -253,16 +255,16 @@
     </ul>
 
     <h2 id="local"><span class="h-no">§ 03</span> <span data-i18n="privacy.h2_3">3. Informações armazenadas localmente no seu navegador</span></h2>
-    <p data-i18n-html="privacy.p_3Html">To remember your preferences across visits, Atomurus stores a few values in your browser's <strong>localStorage</strong>. These values never leave your device and are not sent to us:</p>
+    <p data-i18n-html="privacy.p_3Html">Para lembrar suas preferências entre visitas, o Atomurus armazena alguns valores no <strong>localStorage</strong> do seu navegador. Esses valores nunca deixam o seu dispositivo e não são enviados a nós:</p>
     <ul>
-      <li data-i18n-html="privacy.li_3_1Html"><strong>Theme</strong> — whether you prefer light or dark mode</li>
-      <li data-i18n-html="privacy.li_3_2Html"><strong>Language</strong> — your selected interface language</li>
-      <li data-i18n-html="privacy.li_3_3Html"><strong>Display preferences</strong> — element card size, font size, lanthanide/actinide visibility, atomic mass toggle, animations on/off, heatmap mode</li>
+      <li data-i18n-html="privacy.li_3_1Html"><strong>Tema</strong> — se você prefere modo claro ou escuro</li>
+      <li data-i18n-html="privacy.li_3_2Html"><strong>Idioma</strong> — o idioma selecionado para a interface</li>
+      <li data-i18n-html="privacy.li_3_3Html"><strong>Preferências de exibição</strong> — tamanho dos cards, tamanho da fonte, visibilidade de lantanídeos/actinídeos, exibir massa atômica, animações ligadas/desligadas, modo heatmap</li>
     </ul>
-    <p data-i18n-html="privacy.p_3bHtml">You can clear these at any time through your browser's site-data settings.</p>
+    <p data-i18n-html="privacy.p_3bHtml">Você pode limpar esses valores a qualquer momento nas configurações de dados de site do seu navegador.</p>
 
     <h2 id="analytics"><span class="h-no">§ 04</span> <span data-i18n="privacy.h2_4">4. Analytics — Google Analytics 4</span></h2>
-    <p data-i18n-html="privacy.p_4Html">Atomurus uses <strong>Google Analytics 4</strong> (measurement ID <code>G-Q3ME3FMB8X</code>) to understand aggregated, anonymous usage — for example, which pages are visited most often and roughly which countries our visitors come from. Google Analytics may set cookies and collect:</p>
+    <p data-i18n-html="privacy.p_4Html">O Atomurus usa o <strong>Google Analytics 4</strong> (ID de medição <code>G-Q3ME3FMB8X</code>) para entender uso agregado e anônimo — por exemplo, quais páginas são mais visitadas e de quais países (em linhas gerais) vêm os visitantes. O Google Analytics pode definir cookies e coletar:</p>
     <ul>
       <li data-i18n="privacy.li_4_1">Endereço IP truncado/anonimizado</li>
       <li data-i18n="privacy.li_4_2">Tipo de dispositivo e navegador</li>
@@ -278,10 +280,10 @@
       <li data-i18n="privacy.li_5_2">Medir desempenho dos anúncios</li>
       <li data-i18n="privacy.li_5_3">Prevenir impressões fraudulentas ou repetidas</li>
     </ul>
-    <p data-i18n-html="privacy.p_5bHtml">You can review and control how Google uses data when you use our partners' sites or apps at <a href="https://policies.google.com/technologies/partner-sites" rel="nofollow noopener" target="_blank">policies.google.com/technologies/partner-sites</a>. You can opt out of personalized advertising at <a href="https://www.google.com/settings/ads" rel="nofollow noopener" target="_blank">google.com/settings/ads</a> or via the <a href="https://www.aboutads.info" rel="nofollow noopener" target="_blank">Digital Advertising Alliance</a>.</p>
+    <p data-i18n-html="privacy.p_5bHtml">Você pode revisar e controlar como o Google usa dados ao acessar sites e apps de nossos parceiros em <a href="https://policies.google.com/technologies/partner-sites" rel="nofollow noopener" target="_blank">policies.google.com/technologies/partner-sites</a>. Para sair de publicidade personalizada, use <a href="https://www.google.com/settings/ads" rel="nofollow noopener" target="_blank">google.com/settings/ads</a> ou a <a href="https://www.aboutads.info" rel="nofollow noopener" target="_blank">Digital Advertising Alliance</a>.</p>
 
     <h2 id="recaptcha"><span class="h-no">§ 06</span> <span data-i18n="privacy.h2_6">6. Anti-spam — Google reCAPTCHA v3</span></h2>
-    <p data-i18n-html="privacy.p_6Html">Páginas com formulário carregam o <strong>Google reCAPTCHA v3</strong> para proteger o site contra abuso automatizado. O reCAPTCHA roda em segundo plano, coleta informações de hardware e software e as envia ao Google para análise. Ele pode definir o cookie <code>_GRECAPTCHA</code>. O uso está sujeito à <a href="https://policies.google.com/privacy" rel="nofollow noopener" target="_blank">Política de Privacidade</a> e aos <a href="https://policies.google.com/terms" rel="nofollow noopener" target="_blank">Termos de Serviço</a> do Google.</p>
+    <p data-i18n-html="privacy.p_6Html">Páginas com formulário carregam o <strong>Google reCAPTCHA v3</strong> para proteger o site contra abuso automatizado. O reCAPTCHA roda em segundo plano, coleta informações de hardware e software (como dados do dispositivo e do aplicativo) e as envia ao Google para análise. Ele pode definir o cookie <code>_GRECAPTCHA</code>. O uso está sujeito à <a href="https://policies.google.com/privacy" rel="nofollow noopener" target="_blank">Política de Privacidade</a> e aos <a href="https://policies.google.com/terms" rel="nofollow noopener" target="_blank">Termos de Serviço</a> do Google.</p>
 
     <h2 id="cookies"><span class="h-no">§ 07</span> <span data-i18n="privacy.h2_7">7. Cookies</span></h2>
     <p data-i18n="privacy.p_7">Os cookies ficam em três categorias. Os necessários mantêm o site funcionando e lembram esta escolha. Os de medição (_ga e _ga_*) são definidos pelo Google Analytics só depois que você permite a medição. Os de publicidade, inclusive IDE, são definidos pelo Google AdSense e pela AdCash só depois que você permite publicidade. O cookie _GRECAPTCHA aparece em páginas com formulário. Use Gerenciar cookies no rodapé para mudar ou retirar medição e publicidade. Anúncios já desenhados na página somem no próximo carregamento.</p>
@@ -302,7 +304,7 @@
     <p data-i18n="privacy.p_12">Podemos atualizar esta Política de Privacidade conforme o site evolui. Mudanças materiais serão refletidas pela atualização da "Data de vigência" no topo desta página.</p>
 
     <h2 id="contact"><span class="h-no">§ 13</span> <span data-i18n="privacy.h2_13">13. Contato</span></h2>
-    <p data-i18n-html="privacy.p_13Html">For privacy-related questions, write to <a href="mailto:contato@atomurus.com">contato@atomurus.com</a> or use the <a href="contact.html">Contact</a> form. Messages sent through the form are delivered to our inbox by <strong>Mailgun</strong> (our email provider) — we do not store contact details in any database.</p>
+    <p data-i18n-html="privacy.p_13Html">Para perguntas relacionadas à privacidade, escreva para <a href="mailto:contato@atomurus.com">contato@atomurus.com</a> ou use o formulário em <a href="contact.html">Contato</a>. Mensagens do formulário são entregues pelo <strong>Mailgun</strong>; a autenticação de contas é tratada separadamente pelo provedor de login.</p>
 
     <hr>
     <p style="font-family:var(--lc-mono);font-size:11px;color:var(--lc-ink-3);letter-spacing:.04em" data-i18n="privacy.footer">Atomurus · atomurus.com · Atualizado em 16 de Maio de 2026</p>
@@ -373,13 +375,13 @@
 </footer>
 
 <div class="lc-statusbar">
-  <span><span class="lc-st-dot"></span> ready</span>
+  <span><span class="lc-st-dot"></span> <span data-i18n="common.stReady">pronto</span></span>
   <span class="lc-st-sep">·</span>
-  <span>doc / privacy</span>
+  <span data-i18n="common.stDocPrivacy">doc / privacidade</span>
   <span class="lc-st-spacer"></span>
-  <a href="periodic-table.html">→ periodic-table</a>
+  <a href="periodic-table.html" data-i18n="common.stLinkPeriodic">→ tabela-periódica</a>
   <span class="lc-st-sep">·</span>
-  <a href="about.html">→ about</a>
+  <a href="about.html" data-i18n="common.stLinkAbout">→ sobre</a>
 </div>
 
 </main>

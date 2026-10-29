@@ -57,6 +57,55 @@ function assertDeployGuards() {
   if (!netlify.includes('scrub-publish-tree.js')) {
     fail('netlify.toml build command must scrub internal files before publish');
   }
+  if (!ignore.includes('assets/concepts/')) {
+    fail('Missing .netlifyignore guard: assets/concepts/');
+  }
+  const scrub = read('tools/scrub-publish-tree.js');
+  if (!scrub.includes("'assets/concepts'")) {
+    fail("Missing scrub-publish-tree.js REMOVE_PATHS entry: 'assets/concepts'");
+  }
+  if (!/from\s*=\s*"\/assets\/concepts\/\*"[\s\S]*?status\s*=\s*404[\s\S]*?force\s*=\s*true/.test(netlify)) {
+    fail('Missing netlify.toml block redirect: /assets/concepts/* (404, force)');
+  }
+  const skipHtml = new Set([
+    'node_modules', '.git', 'netlify', 'tools', 'scripts', 'supabase',
+    'hanzi-logic', 'propostas', 'dev', 'docs', 'templates', 'src', 'dist'
+  ]);
+  function walkPublishedHtml(dir, out = []) {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (entry.name.startsWith('.')) continue;
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        if (skipHtml.has(entry.name)) continue;
+        walkPublishedHtml(full, out);
+      } else if (entry.name.endsWith('.html')) out.push(full);
+    }
+    return out;
+  }
+  for (const file of walkPublishedHtml(ROOT)) {
+    if (fs.readFileSync(file, 'utf8').includes('assets/concepts')) {
+      fail(`Published HTML references assets/concepts: ${path.relative(ROOT, file)}`);
+    }
+  }
+
+  const scrubNames = [
+    'dev', 'e2e', 'src', 'playwright.config.js', 'build-i18n.js', 'bump-version.js',
+    'bump-version.ps1', 'add-content-script.js', 'add-share-script.js', 'enrich-element-schema.js',
+    'fix-adsense-head.js', 'fix-element-i18n.js', 'fix-mobile-scroll.js', 'migrate-element-seo.js',
+    'patch.js', 'sync-en-meta.js', 'assets/concepts'
+  ];
+  scrubNames.forEach((name) => {
+    if (!scrub.includes(`'${name}'`)) fail(`Missing scrub-publish-tree.js REMOVE_PATHS entry: ${name}`);
+  });
+  ['dev/', 'e2e/', 'src/', 'playwright.config.js', 'build-i18n.js', 'bump-version.js', 'bump-version.ps1', 'assets/concepts/'].forEach((needle) => {
+    if (!ignore.includes(needle)) fail(`Missing .netlifyignore guard: ${needle}`);
+  });
+  ['/dev/*', '/e2e/*', '/src/*', '/playwright.config.js', '/build-i18n.js', '/bump-version.js', '/bump-version.ps1', '/assets/concepts/*'].forEach((needle) => {
+    if (!netlify.includes(needle)) fail(`Missing netlify.toml block redirect: ${needle}`);
+  });
+  if (/'elements-data\.js'/.test(scrub) || /'assets\/i18n\/molecules\.json'/.test(scrub)) {
+    fail('REMOVE_PATHS must not remove elements-data.js or assets/i18n/molecules.json');
+  }
 }
 
 function assertElementContentLoader() {
@@ -69,6 +118,131 @@ function assertElementContentLoader() {
   if (!fs.existsSync(sampleChunk)) {
     fail('Generated element content chunk assets/element-content/001.js is missing');
   }
+}
+
+// Prompt 24: periodic-table.js is split into a core and per-page modules
+// (tools/pt-modules.json). Every file exists and every page loads the core
+// and its own modules (tools/test-pt-split.mjs checks the details).
+function assertPtModules() {
+  const config = JSON.parse(read('tools/pt-modules.json'));
+  const files = [config.core, ...Object.values(config.modules), ...Object.values(config.onDemand || {})];
+  files.forEach((file) => {
+    if (!fs.existsSync(path.join(ROOT, file))) fail(`tools/pt-modules.json: ${file} is missing`);
+  });
+  Object.entries(config.pages).forEach(([page, modules]) => {
+    if (!fs.existsSync(path.join(ROOT, page))) return fail(`tools/pt-modules.json: page ${page} is missing`);
+    const html = read(page);
+    [config.core, ...modules.map((key) => config.modules[key])].forEach((file) => {
+      if (!html.includes(`/${file}?v=`) && !html.includes(`"${file}?v=`)) fail(`${page} does not load ${file}`);
+    });
+    Object.values(config.onDemand || {}).forEach((file) => {
+      if (html.includes(file)) fail(`${page} loads the on-demand ${file} up front`);
+    });
+  });
+}
+
+// Prompt 26: /element/N short URLs live in a generated block of netlify.toml;
+// it must exist, be current, and point only at element pages that exist.
+function assertElementRedirects() {
+  const toml = read('netlify.toml');
+  const begin = toml.indexOf('# BEGIN element-redirects');
+  const end = toml.indexOf('# END element-redirects');
+  if (begin === -1 || end === -1) return fail('netlify.toml: the element-redirects block is missing (node tools/build-element-redirects.mjs)');
+  const block = toml.slice(begin, end);
+  [...block.matchAll(/to\s*=\s*"([^"]+)"/g)].forEach((m) => {
+    const [pathname, query] = m[1].split('?');
+    const file = pathname.replace(/^\//, '') + (query === 'lang=en' ? '.en.html' : '.html');
+    if (!fs.existsSync(path.join(ROOT, file))) fail(`netlify.toml element redirect → ${m[1]}: ${file} does not exist`);
+  });
+  if (/from\s*=\s*"\/element\/\*"/.test(toml)) fail('netlify.toml: no /element/* catch-all (it would hide real 404s)');
+  const check = require('child_process').spawnSync(process.execPath, [path.join(ROOT, 'tools', 'build-element-redirects.mjs'), '--check'], { encoding: 'utf8' });
+  if (check.status !== 0) fail('netlify.toml: ' + (check.stderr || check.stdout).trim());
+}
+
+// Prompt 28: activity sheets. Generated from content/fichas/*.json and
+// checked here: a draft stays out of search and the sitemap, an answer key
+// is never indexed, and every «open the tool» link points at a real page.
+function assertActivitySheets() {
+  const srcDir = path.join(ROOT, 'content', 'fichas');
+  if (!fs.existsSync(srcDir)) return;
+  const sitemap = read('sitemap.xml');
+  fs.readdirSync(srcDir).filter((f) => /^F\d+\.json$/.test(f)).forEach((f) => {
+    const sheet = JSON.parse(read(path.join('content', 'fichas', f)));
+    const draft = sheet.status !== 'published';
+    ['', '.pt'].forEach((lang) => {
+      ['', '-gabarito'].forEach((key) => {
+        const rel = `fichas/${sheet.id}${key}${lang}.html`;
+        if (!fs.existsSync(path.join(ROOT, rel))) return fail(`${rel} is missing (node tools/build-activity-sheets.mjs)`);
+        const html = read(rel);
+        const robots = (/<meta name="robots" content="([^"]+)">/.exec(html) || [])[1] || '';
+        if ((key || draft) && robots !== 'noindex,nofollow') fail(`${rel}: ${key ? 'an answer key' : 'a draft'} must be noindex,nofollow`);
+        if (draft && !/class="fx-draft"/.test(html)) fail(`${rel}: a draft shows the «draft» band`);
+        if (/ads-gate\.js|lazy-ads\.js|adsbygoogle|atomurusRunAutoTag/.test(html)) fail(`${rel}: no ads on activity sheets`);
+      });
+    });
+    [sheet.tool, sheet.tool2].filter(Boolean).forEach((tool) => {
+      Object.values(tool.href).forEach((href) => {
+        const pathname = href.split(/[?#]/)[0].replace(/^\//, '');
+        const file = pathname === 'app' ? 'app.html' : pathname;
+        if (!fs.existsSync(path.join(ROOT, file))) fail(`${f}: tool link ${href} → ${file} does not exist`);
+      });
+    });
+  });
+  if (/fichas\//.test(sitemap)) fail('sitemap.xml lists fichas/: activity sheets stay out of it until the owner publishes them');
+  const check = require('child_process').spawnSync(process.execPath, [path.join(ROOT, 'tools', 'build-activity-sheets.mjs'), '--check'], { encoding: 'utf8' });
+  if (check.status !== 0) fail('activity sheets: ' + (check.stderr || check.stdout).trim());
+}
+
+/* Prompt 30: the exercise bank. Drafts are noindex and out of the sitemap;
+   the pages are what tools/build-exercises.mjs generates. */
+function assertExercises() {
+  const srcDir = path.join(ROOT, 'content', 'exercises');
+  if (!fs.existsSync(srcDir)) return;
+  const sitemap = read('sitemap.xml');
+  fs.readdirSync(srcDir).filter((f) => f.endsWith('.json')).forEach((f) => {
+    const def = JSON.parse(read(path.join('content', 'exercises', f)));
+    ['', '.pt'].forEach((lang) => {
+      const rel = `exercises/${def.id}${lang}.html`;
+      if (!fs.existsSync(path.join(ROOT, rel))) return fail(`${rel} is missing (node tools/build-exercises.mjs)`);
+      const html = read(rel);
+      const robots = (/<meta name="robots" content="([^"]+)">/.exec(html) || [])[1] || '';
+      if (def.status !== 'published' && robots !== 'noindex,nofollow') fail(`${rel}: a draft must be noindex,nofollow`);
+      if (/ads-gate\.js|lazy-ads\.js|adsbygoogle|atomurusRunAutoTag/.test(html)) fail(`${rel}: no ads on exercise pages`);
+      if (def.status !== 'published' && sitemap.includes(`exercises/${def.id}`)) fail(`sitemap.xml lists the draft ${rel}`);
+    });
+    Object.values(def.tool.href).forEach((href) => {
+      const file = href.split(/[?#]/)[0].replace(/^\//, '');
+      if (!fs.existsSync(path.join(ROOT, file))) fail(`${f}: tool link ${href} → ${file} does not exist`);
+    });
+  });
+  const check = require('child_process').spawnSync(process.execPath, [path.join(ROOT, 'tools', 'build-exercises.mjs'), '--check'], { encoding: 'utf8' });
+  if (check.status !== 0) fail('exercises: ' + (check.stderr || check.stdout).trim());
+}
+
+/* Prompts 32 and 33: trails and their draft articles stay out of search until
+   a teacher reviews them; pages and worked examples are what
+   tools/build-trails.mjs generates. */
+const DRAFT_ARTICLES = ['explore/what-is-the-mole', 'explore/conservation-of-mass', 'explore/solutions-and-concentration', 'explore/acids-bases-and-ph', 'explore/chemical-equilibrium'];
+function assertTrails() {
+  const srcDir = path.join(ROOT, 'content', 'trilhas');
+  if (!fs.existsSync(srcDir)) return;
+  const sitemap = read('sitemap.xml');
+  const drafts = new RegExp('trilhas/|' + DRAFT_ARTICLES.map((b) => b.replace('explore/', '')).join('|'));
+  if (drafts.test(sitemap)) fail('sitemap.xml lists a draft trail or a draft article');
+  const pages = [];
+  fs.readdirSync(srcDir).filter((f) => f.endsWith('.json')).forEach((f) => {
+    const trail = JSON.parse(read(path.join('content', 'trilhas', f)));
+    if (trail.status !== 'published') pages.push(`trilhas/${trail.id}.html`, `trilhas/${trail.id}.pt.html`);
+  });
+  DRAFT_ARTICLES.forEach((base) => pages.push(base + '.html', base + '.pt.html'));
+  pages.forEach((rel) => {
+    if (!fs.existsSync(path.join(ROOT, rel))) return fail(`${rel} is missing (node tools/build-trails.mjs)`);
+    const html = read(rel);
+    if (!/<meta name="robots" content="noindex,nofollow">/.test(html)) fail(`${rel}: a draft must be noindex,nofollow`);
+    if (/ads-gate\.js|lazy-ads\.js|adsbygoogle|atomurusRunAutoTag|google-adsense-account/.test(html)) fail(`${rel}: no ads on draft pages`);
+  });
+  const check = require('child_process').spawnSync(process.execPath, [path.join(ROOT, 'tools', 'build-trails.mjs'), '--check'], { encoding: 'utf8' });
+  if (check.status !== 0) fail('trails: ' + (check.stderr || check.stdout).trim());
 }
 
 function assertIsomerismVariants() {
@@ -255,6 +429,47 @@ function assertPerfGuards() {
   const ptable = read('periodic-table.html');
   if (/elements-data-en\.js/.test(ptable) && !/ensure-elements-en\.js/.test(ptable)) {
     fail('periodic-table.html still loads elements-data-en.js eagerly');
+  }
+
+  const skipHtml = new Set([
+    'node_modules', '.git', 'netlify', 'tools', 'scripts', 'supabase',
+    'hanzi-logic', 'propostas', 'dev', 'docs', 'templates', 'src', 'dist'
+  ]);
+  const adHost = /pagead2|googlesyndication|doubleclick|acscdn|googletagmanager|google-analytics|adtrafficquality|googleadservices/i;
+  function walkPublished(dir, out = []) {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (entry.name.startsWith('.')) continue;
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        if (skipHtml.has(entry.name)) continue;
+        walkPublished(full, out);
+      } else if (entry.name.endsWith('.html')) out.push(full);
+    }
+    return out;
+  }
+  for (const file of walkPublished(ROOT)) {
+    const rel = path.relative(ROOT, file).replace(/\\/g, '/');
+    const html = fs.readFileSync(file, 'utf8');
+    const linkRe = /<link\b[^>]*>/gi;
+    let link;
+    while ((link = linkRe.exec(html))) {
+      const tag = link[0];
+      const relAttr = (tag.match(/\brel=["']([^"']+)["']/i) || [])[1] || '';
+      if (/preconnect|dns-prefetch/i.test(relAttr) && adHost.test(tag)) {
+        fail(`${rel} must not preconnect or dns-prefetch an ad or measurement host`);
+      }
+    }
+    const scriptRe = /<script\b[^>]*>/gi;
+    let script;
+    while ((script = scriptRe.exec(html))) {
+      const tag = script[0];
+      const src = (tag.match(/\bsrc=["']([^"']+)["']/i) || [])[1] || '';
+      const external = /^https?:\/\//i.test(src) || src.startsWith('//');
+      if (!external) continue;
+      if (/\b(?:async|defer)\b/i.test(tag)) continue;
+      if (/google\.com\/recaptcha\/api\.js/i.test(src)) continue;
+      fail(`${rel} has a synchronous third-party script (${src.split('/')[2] || 'external'})`);
+    }
   }
 }
 
@@ -727,11 +942,69 @@ function assertEncoding() {
   if (result.status !== 0) fail('tools/test-encoding.mjs failed');
 }
 
+// The CSP keeps its hardening directives, and every third-party origin the
+// site's loaders request is allowed by the directive that request needs.
+function cspSources(policy, name) {
+  const row = policy.split(';').map((part) => part.trim()).find((part) => part.split(/\s+/)[0] === name);
+  return row ? row.split(/\s+/).slice(1) : null;
+}
+
+function cspAllows(sources, url) {
+  const u = new URL(url);
+  return (sources || []).some((source) => {
+    if (!/^https?:\/\//.test(source)) return false;
+    const s = new URL(source.replace('*.', 'wildcard.'));
+    if (s.protocol !== u.protocol) return false;
+    const hostOk = source.includes('://*.')
+      ? u.hostname.endsWith(s.hostname.slice('wildcard'.length))
+      : u.hostname === s.hostname;
+    if (!hostOk) return false;
+    return s.pathname === '/' || (s.pathname.endsWith('/') ? u.pathname.startsWith(s.pathname) : u.pathname === s.pathname);
+  });
+}
+
+function assertCsp() {
+  const netlify = read('netlify.toml');
+  const header = (name) => {
+    const m = new RegExp('^\\s*' + name.replace(/-/g, '\\-') + '\\s*=\\s*"([^"]*)"', 'm').exec(netlify);
+    return m ? m[1] : null;
+  };
+  const policy = header('Content-Security-Policy');
+  if (!policy) fail('netlify.toml: Content-Security-Policy is missing');
+  if (!/(^|;)\s*object-src 'none'/.test(policy)) fail("CSP must keep object-src 'none'");
+  if (!/(^|;)\s*base-uri 'self'/.test(policy)) fail("CSP must keep base-uri 'self'");
+  if (!/(^|;)\s*frame-ancestors /.test(policy)) fail('CSP must keep frame-ancestors');
+  const reportOnly = header('Content-Security-Policy-Report-Only');
+  if (!reportOnly) fail('netlify.toml: Content-Security-Policy-Report-Only (stage 2) is missing');
+  if (/'unsafe-inline'/.test((cspSources(reportOnly, 'script-src') || []).join(' '))) {
+    fail("CSP Report-Only must not carry 'unsafe-inline' in script-src");
+  }
+  if (Buffer.byteLength(reportOnly, 'utf8') > 4096) fail('CSP Report-Only header is over 4 KiB');
+  // Script URLs written literally in the third-party loaders.
+  const loaders = ['lazy-ads.js', 'ads-gate.js', 'recaptcha.js', 'viewer/load-three.js', 'periodic-table.js'];
+  loaders.forEach((file) => {
+    const text = read(file).replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:'"\\])\/\/[^\n]*/g, '$1');
+    const urls = [...text.matchAll(/['"](https:\/\/[^'"\s]+)/g)].map((m) => m[1]);
+    urls.forEach((url) => {
+      const needs = /\.js(\?|$)|\/js\b|recaptcha\/api\.js/.test(url) || /gtag\/js/.test(url) ? 'script-src' : null;
+      if (!needs) return;
+      if (!cspAllows(cspSources(policy, needs), url)) {
+        fail(`CSP ${needs} does not allow ${new URL(url).origin}${new URL(url).pathname} (requested by ${file})`);
+      }
+    });
+  });
+}
+
 function main() {
   assertRootNoForbiddenArchives();
   assertDeployGuards();
   assertElementContentLoader();
   assertIsomerismVariants();
+  assertPtModules();
+  assertElementRedirects();
+  assertActivitySheets();
+  assertExercises();
+  assertTrails();
   assertReadme();
   assertHomePreviewPayload();
   assertI18nNamespaceAssets();
@@ -740,6 +1013,7 @@ function main() {
   assertStudyCloud();
   assertUiV2();
   assertEncoding();
+  assertCsp();
   console.log('Site validation passed');
 }
 

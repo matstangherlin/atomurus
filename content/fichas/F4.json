@@ -1,0 +1,88 @@
+{
+  "id": "F4",
+  "status": "draft",
+  "reviewedBy": null,
+  "minutes": 50,
+  "level": { "pt": "Ensino médio — 2ª série", "en": "High school — second year" },
+  "title": { "pt": "Preparando uma solução", "en": "Preparing a solution" },
+  "summary": {
+    "pt": "Calcular a massa de soluto para preparar uma solução de concentração conhecida, descrever o preparo no balão volumétrico e diluir a solução preparada.",
+    "en": "Work out the mass of solute for a solution of known concentration, describe how to make it in a volumetric flask, and dilute the solution you made."
+  },
+  "tool": {
+    "href": { "pt": "/calculators.pt.html?formula=NaCl#molar", "en": "/calculators.html?formula=NaCl#molar" },
+    "label": { "pt": "Abrir a calculadora de massa molar", "en": "Open the molar mass calculator" }
+  },
+  "tool2": {
+    "href": { "pt": "/app?section=lab&mode=guided&creation=solution", "en": "/app?section=lab&mode=guided&creation=solution" },
+    "label": { "pt": "Abrir «Preparar uma solução» no Lab", "en": "Open «Prepare a Solution» in the Lab" }
+  },
+  "objectives": {
+    "pt": [
+      "Calcular a quantidade de matéria e a massa de soluto de uma solução: n = C × V e m = n × M.",
+      "Descrever o preparo de uma solução num balão volumétrico.",
+      "Usar C₁V₁ = C₂V₂ para diluir uma solução já preparada."
+    ],
+    "en": [
+      "Work out the amount and the mass of solute of a solution: n = C × V and m = n × M.",
+      "Describe how a solution is made up in a volumetric flask.",
+      "Use C₁V₁ = C₂V₂ to dilute a solution you already have."
+    ]
+  },
+  "materials": {
+    "pt": ["Calculadora de massa molar do Atomurus (ou tabela periódica)", "Lab do Atomurus: «Preparar uma solução» (opcional)", "Papel e caneta"],
+    "en": ["Atomurus molar mass calculator (or a periodic table)", "Atomurus Lab: «Prepare a Solution» (optional)", "Paper and pen"]
+  },
+  "steps": [
+    { "minutes": 10, "pt": "Revise concentração em mol/L e a conversão de mL em L.", "en": "Review concentration in mol/L and converting mL into L." },
+    { "minutes": 20, "pt": "Questões 1 a 3: massa molar, quantidade de matéria e massa de soluto.", "en": "Questions 1 to 3: molar mass, amount and mass of solute." },
+    { "minutes": 10, "pt": "Questão 4 (preparo) e, se houver tempo, o Lab; questão 5 (diluição).", "en": "Question 4 (making it up) and, if there is time, the Lab; question 5 (dilution)." },
+    { "minutes": 10, "pt": "Correção com o gabarito.", "en": "Go through the answer key." }
+  ],
+  "questions": [
+    {
+      "id": "q1", "kind": "numeric", "points": 1, "lines": 1,
+      "prompt": { "pt": "Massa molar do cloreto de sódio, NaCl (g/mol):", "en": "Molar mass of sodium chloride, NaCl (g/mol):" },
+      "answer": { "kind": "computed", "engine": "formula.molarMass", "input": "NaCl", "decimals": 2 }
+    },
+    {
+      "id": "q2", "kind": "numeric", "points": 1, "lines": 2,
+      "prompt": { "pt": "Quantos mols de NaCl há em 250 mL de solução 0,100 mol/L?", "en": "How many moles of NaCl are there in 250 mL of a 0.100 mol/L solution?" },
+      "answer": { "kind": "computed", "engine": "solution.amount", "input": { "C": 0.1, "V": 250 }, "decimals": 4 }
+    },
+    {
+      "id": "q3", "kind": "numeric", "points": 2, "lines": 2,
+      "prompt": { "pt": "Que massa de NaCl é preciso pesar para preparar essa solução?", "en": "What mass of NaCl must you weigh to make that solution?" },
+      "answer": { "kind": "computed", "engine": "solution.mass", "input": { "formula": "NaCl", "C": 0.1, "V": 250 }, "decimals": 2 }
+    },
+    {
+      "id": "q4", "kind": "text", "points": 2, "lines": 3,
+      "prompt": { "pt": "Em que vidraria a solução é preparada, e em que ordem? (dissolver, transferir, completar)", "en": "In which glassware is the solution made up, and in what order? (dissolve, transfer, make up)" },
+      "answer": {
+        "kind": "text",
+        "value": {
+          "pt": "Num balão volumétrico de 250 mL: dissolver o sal num pouco de água, transferir para o balão, completar com água até a marca e homogeneizar.",
+          "en": "In a 250 mL volumetric flask: dissolve the salt in a little water, transfer it to the flask, make it up with water to the mark and mix."
+        },
+        "source": {
+          "pt": "Procedimento de preparo de soluções de livro-texto (ex.: OpenStax Chemistry 2e, molaridade) — a conferir pelo revisor.",
+          "en": "Textbook procedure for making up solutions (e.g. OpenStax Chemistry 2e, molarity) — to be checked by the reviewer."
+        }
+      }
+    },
+    {
+      "id": "q5", "kind": "numeric", "points": 2, "lines": 2,
+      "prompt": { "pt": "Que volume final se obtém diluindo 100 mL dessa solução até 0,020 mol/L?", "en": "What final volume do you get by diluting 100 mL of that solution down to 0.020 mol/L?" },
+      "answer": { "kind": "computed", "engine": "calc.dilution", "input": { "solve": "V2", "C1": 0.1, "V1": 100, "C2": 0.02 }, "decimals": 0 }
+    }
+  ],
+  "teacherNotes": {
+    "pt": "Os valores do gabarito saem dos mesmos motores das calculadoras (massas atômicas padrão abreviadas, CIAAW). A questão 4 é a base para o guia «Preparar uma solução» do Lab.",
+    "en": "The answer-key values come from the same engines as the calculators (abridged standard atomic weights, CIAAW). Question 4 sets up the Lab guide «Prepare a Solution»."
+  },
+  "commonErrors": [
+    { "pt": "Usar o volume em mL na conta: a concentração está em mol por litro.", "en": "Using the volume in mL: the concentration is in moles per litre." },
+    { "pt": "Medir 250 mL de água e depois juntar o sal: o volume final passa de 250 mL.", "en": "Measuring 250 mL of water and then adding the salt: the final volume is more than 250 mL." },
+    { "pt": "Na diluição, esquecer que a quantidade de soluto não muda (C₁V₁ = C₂V₂).", "en": "When diluting, forgetting that the amount of solute does not change (C₁V₁ = C₂V₂)." }
+  ]
+}

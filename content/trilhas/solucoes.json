@@ -1,0 +1,89 @@
+{
+  "id": "solucoes",
+  "status": "draft",
+  "reviewedBy": null,
+  "level": "basico",
+  "minutes": 125,
+  "title": { "pt": "Soluções", "en": "Solutions" },
+  "summary": {
+    "pt": "Concentração, preparo e diluição: sete etapas do site, na ordem, para calcular e preparar soluções. Leia, use a calculadora, pratique, prepare uma solução no Lab e aplique numa ficha.",
+    "en": "Concentration, preparation and dilution: seven steps of the site, in order, to calculate and prepare solutions. Read, use the calculator, practise, prepare a solution in the Lab and apply it on a sheet."
+  },
+  "steps": [
+    {
+      "id": "solucoes", "type": "article", "estMinutes": 15,
+      "title": { "pt": "Soluções e concentração", "en": "Solutions and concentration" },
+      "href": { "pt": "/explore/solutions-and-concentration.pt.html", "en": "/explore/solutions-and-concentration.html" }
+    },
+    {
+      "id": "diluicao", "type": "tool", "estMinutes": 10,
+      "title": { "pt": "Calculadora de diluição (C₁V₁ = C₂V₂)", "en": "Dilution calculator (C₁V₁ = C₂V₂)" },
+      "href": { "pt": "/calculators.pt.html#dilute", "en": "/calculators.html#dilute" }
+    },
+    {
+      "id": "exercicios-preparo", "type": "exercises", "estMinutes": 20, "requires": ["solucoes"],
+      "title": { "pt": "Exercícios de preparo de solução", "en": "Preparing a solution exercises" },
+      "href": { "pt": "/exercises/solution-prep.pt.html", "en": "/exercises/solution-prep.html" }
+    },
+    {
+      "id": "exercicios-diluicao", "type": "exercises", "estMinutes": 20, "requires": ["diluicao"],
+      "title": { "pt": "Exercícios de diluição", "en": "Dilution exercises" },
+      "href": { "pt": "/exercises/dilution.pt.html", "en": "/exercises/dilution.html" }
+    },
+    {
+      "id": "lab", "type": "lab", "estMinutes": 20,
+      "title": { "pt": "Lab: preparar uma solução", "en": "Lab: prepare a solution" },
+      "href": { "pt": "/app?section=lab&mode=guided&creation=solution", "en": "/app?section=lab&mode=guided&creation=solution" }
+    },
+    {
+      "id": "ficha", "type": "sheet", "estMinutes": 30, "requires": ["exercicios-preparo"],
+      "title": { "pt": "Ficha F4: preparando uma solução", "en": "Sheet F4: preparing a solution" },
+      "href": { "pt": "/fichas/F4.pt.html", "en": "/fichas/F4.html" }
+    },
+    {
+      "id": "revisao", "type": "review", "estMinutes": 10,
+      "title": { "pt": "Revisão e autoavaliação", "en": "Review and self-check" },
+      "href": { "pt": "#revisao", "en": "#revisao" }
+    },
+    {
+      "id": "extra-cristal", "type": "lab", "estMinutes": 15, "optional": true,
+      "title": { "pt": "Extra: Lab — crescimento de cristal (prever, observar, explicar)", "en": "Extra: Lab — crystal growth (predict, observe, explain)" },
+      "href": { "pt": "/app?section=lab&mode=guided&creation=crystal", "en": "/app?section=lab&mode=guided&creation=crystal" }
+    }
+  ],
+  "review": {
+    "recap": {
+      "pt": [
+        "A concentração em quantidade de matéria é C = n ÷ V, em mol por litro de solução.",
+        "Para preparar uma solução: n = C × V (V em litros) e depois m = n × M.",
+        "A solução se completa até a marca do balão volumétrico; o volume é o da solução, não o da água.",
+        "Diluir não muda a quantidade de soluto: C₁V₁ = C₂V₂."
+      ],
+      "en": [
+        "Amount concentration is C = n ÷ V, in moles per litre of solution.",
+        "To prepare a solution: n = C × V (V in litres), then m = n × M.",
+        "The solution is made up to the mark of a volumetric flask; the volume is that of the solution, not of the water.",
+        "Diluting does not change the amount of solute: C₁V₁ = C₂V₂."
+      ]
+    },
+    "questions": [
+      { "id": "q1", "kind": "computed", "calc": "rev-naoh-mass" },
+      { "id": "q2", "kind": "computed", "calc": "rev-dilute-c2" },
+      {
+        "id": "q3", "kind": "text",
+        "prompt": { "pt": "Por que se completa a solução até a marca do balão em vez de pôr o sólido num volume de água já medido?", "en": "Why is the solution made up to the mark of the flask instead of adding the solid to a measured volume of water?" },
+        "answer": { "pt": "Porque a concentração é por volume de solução, e dissolver o sólido muda o volume. Só a marca garante o volume final.", "en": "Because concentration is per volume of solution, and dissolving the solid changes the volume. Only the mark fixes the final volume." }
+      },
+      {
+        "id": "q4", "kind": "text",
+        "prompt": { "pt": "50 mL de uma solução são diluídos até 200 mL. O que acontece com a quantidade de soluto e com a concentração?", "en": "50 mL of a solution are diluted to 200 mL. What happens to the amount of solute and to the concentration?" },
+        "answer": { "pt": "A quantidade de soluto não muda; a concentração cai para um quarto, porque o volume ficou quatro vezes maior.", "en": "The amount of solute does not change; the concentration falls to a quarter, because the volume is four times larger." }
+      },
+      {
+        "id": "q5", "kind": "text",
+        "prompt": { "pt": "Meio litro e dois litros da mesma solução 0,1 mol/L têm a mesma concentração?", "en": "Do half a litre and two litres of the same 0.1 mol/L solution have the same concentration?" },
+        "answer": { "pt": "Sim. A concentração é a mesma; o volume maior só contém quatro vezes mais soluto.", "en": "Yes. The concentration is the same; the larger volume just holds four times as much solute." }
+      }
+    ]
+  }
+}

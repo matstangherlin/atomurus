@@ -73,6 +73,7 @@
     host.tabIndex = 0;
     host.setAttribute('role', 'button');
     host.setAttribute('aria-haspopup', 'menu');
+    host.setAttribute('aria-expanded', 'false');
     host.setAttribute('aria-label', lbl('el.shareTitle', 'Share this page'));
 
     // Build the channel list. The href is what the user navigates to —
@@ -169,6 +170,48 @@
     host.addEventListener('mouseenter', refreshShareLinks);
     host.addEventListener('focusin', refreshShareLinks);
     host.addEventListener('pointerdown', refreshShareLinks);
+
+    // Keyboard: the menu opens on hover and on focus (CSS :focus-within);
+    // Enter/Space/↓ move into it, ↑/↓ walk the items, Esc closes it and gives
+    // focus back to the button. .is-dismissed keeps it closed while focus
+    // stays on the button after Esc; .is-open shows it at once (no fade), so
+    // the first item can take focus right away.
+    function items() { return Array.prototype.slice.call(host.querySelectorAll('.share-menu [role="menuitem"]')); }
+    function setOpen(open, now) {
+      host.setAttribute('aria-expanded', open ? 'true' : 'false');
+      host.classList.toggle('is-dismissed', !open);
+      host.classList.toggle('is-open', !!(open && now));
+    }
+    function reset() {
+      host.classList.remove('is-dismissed', 'is-open');
+      host.setAttribute('aria-expanded', 'false');
+    }
+    host.addEventListener('mouseenter', function () { setOpen(true); });
+    host.addEventListener('mouseleave', function () { if (!host.contains(document.activeElement)) reset(); });
+    host.addEventListener('focusin', function () { if (!host.classList.contains('is-dismissed')) host.setAttribute('aria-expanded', 'true'); });
+    host.addEventListener('focusout', function (e) {
+      if (e.relatedTarget && host.contains(e.relatedTarget)) return;
+      reset();
+    });
+    host.addEventListener('keydown', function (e) {
+      var list = items();
+      var at = list.indexOf(document.activeElement);
+      if (e.key === 'Escape') {
+        if (host.getAttribute('aria-expanded') !== 'true' && !host.contains(document.activeElement)) return;
+        e.preventDefault();
+        e.stopPropagation();
+        setOpen(false);
+        host.focus();
+      } else if (e.target === host && (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown')) {
+        e.preventDefault();
+        setOpen(true, true);
+        if (list[0]) list[0].focus();
+      } else if (at !== -1 && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+        e.preventDefault();
+        var next = (at + (e.key === 'ArrowDown' ? 1 : -1) + list.length) % list.length;
+        list[next].focus();
+      }
+    });
 
     // Copy-to-clipboard handler (only menu item that's a button, not <a>).
     var copyBtn = host.querySelector('.share-copy');

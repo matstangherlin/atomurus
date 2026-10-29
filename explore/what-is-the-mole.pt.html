@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html data-ps-chrome="1" lang="pt-BR" data-theme="light">
+<head>
+<style>html[data-theme="dark"] #icon-theme-light,html[data-theme="light"] #icon-theme-dark{display:none!important}html[data-theme="dark"] #icon-theme-dark,html[data-theme="light"] #icon-theme-light{display:block!important}</style>
+<script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var q=new URLSearchParams(location.search);var p=q.get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem('atomurus-lang');var path=location.pathname;var isPt=/\.pt\.html$/i.test(path)||/\.pt$/i.test(path);if(!l&&isPt)l='pt';if(!l){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}if(l==='pt'){document.documentElement.lang='pt-BR';}else{document.documentElement.lang='en-US';}localStorage.setItem('atomurus-lang',l);var u=new URL(location.href);if(l==='pt'&&!isPt){if(/\.html$/i.test(path)){u.pathname=path.replace(/\.html$/i,'.pt.html');}else if(path.charAt(path.length-1)!=='/'){u.pathname=path+'.pt.html';}u.searchParams.set('lang','pt-BR');if(u.href!==location.href)location.replace(u.href);}else if(l==='en'&&isPt){if(/\.pt\.html$/i.test(path)){u.pathname=path.replace(/\.pt\.html$/i,'.html');}else{u.pathname=path.replace(/\.pt$/i,'');}u.searchParams.set('lang','en');if(u.href!==location.href)location.replace(u.href);}}catch(e){}})();</script>
+
+<meta charset="UTF-8">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1E6A50" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E0D0C" media="(prefers-color-scheme: dark)">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" type="image/png" href="../assets/atomurus-logo.png?v=202608041630">
+<link rel="apple-touch-icon" href="../assets/atomurus-logo.png?v=202608041630">
+
+<title>O que é o mol? Quantidade de matéria, massa molar e constante de Avogadro | Atomurus</title>
+<meta name="description" content="O que é o mol: a unidade SI de quantidade de matéria, exatamente 6,02214076 × 10²³ entidades; como a massa molar converte gramas em mols e como a constante de Avogadro dá o número de partículas.">
+<meta name="keywords" content="mol, quantidade de matéria, massa molar, constante de avogadro, estequiometria">
+<meta name="author" content="Atomurus">
+<meta property="og:title" content="O que é o mol? Quantidade de matéria, massa molar e constante de Avogadro">
+<meta property="og:description" content="O que é o mol: a unidade SI de quantidade de matéria, exatamente 6,02214076 × 10²³ entidades; como a massa molar converte gramas em mols e como a constante de Avogadro dá o número de partículas.">
+<meta property="og:image" content="https://atomurus.com/assets/og-explore.png?v=202608041630">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://atomurus.com/explore/what-is-the-mole?lang=pt-BR">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Atomurus">
+<meta property="article:published_time" content="2026-10-29">
+<meta property="article:section" content="Conceitos de Química">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="O que é o mol? Quantidade de matéria, massa molar e constante de Avogadro">
+<meta name="twitter:description" content="O que é o mol: a unidade SI de quantidade de matéria, exatamente 6,02214076 × 10²³ entidades; como a massa molar converte gramas em mols e como a constante de Avogadro dá o número de partículas.">
+<meta name="twitter:image" content="https://atomurus.com/assets/og-explore.png?v=202608041630">
+<link rel="canonical" href="https://atomurus.com/explore/what-is-the-mole?lang=pt-BR">
+<link rel="alternate" hreflang="en" href="https://atomurus.com/explore/what-is-the-mole">
+<link rel="alternate" hreflang="pt-BR" href="https://atomurus.com/explore/what-is-the-mole?lang=pt-BR">
+<link rel="alternate" hreflang="x-default" href="https://atomurus.com/explore/what-is-the-mole">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "O que é o mol? Quantidade de matéria, massa molar e constante de Avogadro",
+      "description": "O que é o mol: a unidade SI de quantidade de matéria, exatamente 6,02214076 × 10²³ entidades; como a massa molar converte gramas em mols e como a constante de Avogadro dá o número de partículas.",
+      "image": "https://atomurus.com/assets/og-explore.png",
+      "datePublished": "2026-10-29",
+      "dateModified": "2026-10-29",
+      "inLanguage": "pt-BR",
+      "author": { "@type": "Organization", "name": "Atomurus", "url": "https://atomurus.com/" },
+      "publisher": { "@type": "Organization", "name": "Atomurus", "logo": { "@type": "ImageObject", "url": "https://atomurus.com/assets/atomurus-logo.png" } },
+      "mainEntityOfPage": { "@type": "WebPage", "@id": "https://atomurus.com/explore/what-is-the-mole?lang=pt-BR" },
+      "articleSection": "Conceitos de Química",
+      "keywords": "mol, quantidade de matéria, massa molar, constante de avogadro, estequiometria"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type":"ListItem","position":1,"name":"Atomurus","item":"https://atomurus.com/"},
+        {"@type":"ListItem","position":2,"name":"Explorar","item":"https://atomurus.com/explore"},
+        {"@type":"ListItem","position":3,"name":"O que é o mol","item":"https://atomurus.com/explore/what-is-the-mole?lang=pt-BR"}
+      ]
+    }
+  ]
+}
+</script>
+
+
+<link rel="preload" href="/assets/fonts/inter-tight-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/instrument-serif-400-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/instrument-serif-400-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202608041630">
+<script src="../i18n.js?v=202608041630" defer></script>
+<script src="/assets/trail-chip.js?v=202610291200" defer></script>
+<script src="../share-button.js?v=202608041630" defer></script>
+<script src="../page-share-init.js?v=202608041630" defer></script>
+<link rel="stylesheet" href="/assets/critical-lab.css?v=202608041630">
+<script>document.documentElement.classList.add('lc-loading');setTimeout(function(){document.documentElement.classList.remove('lc-loading')},4000);</script>
+<link rel="preload" href="../atomurus-lab-console.css?v=202608041630" as="style">
+<link rel="stylesheet" href="../atomurus-lab-console.css?v=202608041630" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
+<noscript><link rel="stylesheet" href="../atomurus-lab-console.css?v=202608041630"></noscript>
+<link rel="stylesheet" href="/assets/public-shell.css?v=202608281830">
+<script src="../assets/global-nav.js?v=202609090500"></script>
+<script src="/assets/public-workspace.js?v=202608282500"></script>
+<link rel="stylesheet" href="/assets/ui/index.css?v=202609090500">
+<link rel="stylesheet" href="../explore-article.css?v=202608041630">
+<link rel="stylesheet" href="/assets/layouts/article.css?v=202609101700">
+<link rel="stylesheet" href="/assets/ui/worked-solution.css?v=202610291200">
+<style>
+  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100vh; overflow: hidden; }
+  body { display: flex; }
+  .sidebar { width: 220px; flex-shrink: 0; display: flex; flex-direction: column; overflow: hidden; padding-bottom: 22px; }
+  .sidebar > .logo-wrap, .sidebar > .sidebar-foot { flex-shrink: 0; }
+  .sidebar-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; }
+  .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+  .sidebar-scroll::-webkit-scrollbar-thumb { background: var(--lc-rule); }
+  .logo-wrap { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
+  .logo-mark { display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .logo-mark svg circle[fill] { fill: currentColor !important; stroke: none; }
+  .nav-section { padding: 10px 0 4px; display: block; }
+  .nav-expandable .nav-row { display: flex; align-items: center; gap: 10px; padding: 5px 14px 5px 12px; cursor: pointer; font-family: var(--lc-sans); font-size: 12.5px; color: var(--lc-ink-2); transition: background .12s, color .12s; user-select: none; }
+  .nav-expandable .nav-row:hover { background: var(--lc-surface); color: var(--lc-ink); }
+  .nav-expandable.has-active .nav-row { color: var(--lc-ink); font-weight: 500; }
+  .nav-chevron { margin-left: auto; width: 11px; height: 11px; opacity: .45; transition: transform .2s; flex-shrink: 0; }
+  .nav-expandable.open .nav-chevron { transform: rotate(90deg); opacity: .75; }
+  .nav-children { display: none; margin: 2px 0 4px 12px; padding-left: 8px; border-left: 1px solid var(--lc-rule); }
+  .nav-expandable.open .nav-children { display: block; }
+  .nav-children .nav-item { padding: 6px 8px; font-size: 12.5px; }
+  .nav-children .nav-icon { width: 13px; height: 13px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; text-decoration: none; cursor: pointer; user-select: none; white-space: nowrap; position: relative; }
+  .sidebar-foot { display: flex; flex-direction: column; }
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+  .topbar { display: flex; align-items: center; gap: 14px; flex-shrink: 0; padding: 0 18px; }
+  .mobile-menu-btn { display: none; }
+  .breadcrumb { display: flex; align-items: center; gap: 7px; }
+  .breadcrumb a { color: inherit; text-decoration: none; opacity: .75; }
+  .breadcrumb a:hover { opacity: 1; color: var(--lc-ink); }
+  .content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 0 0 50px; position: relative; }
+  .content::-webkit-scrollbar { width: 6px; }
+  .content::-webkit-scrollbar-thumb { background: var(--lc-rule); }
+  @media (max-width: 760px) {
+    body { flex-direction: column; height: auto; overflow: auto; }
+    html { height: auto; overflow: auto; }
+    .sidebar { width: 100%; overflow: visible; }
+    .main { height: auto; overflow: visible; }
+    .content { overflow: visible; }
+  }
+</style>
+<link rel="stylesheet" href="/assets/print.css?v=202610281500" media="print">
+</head>
+<body class="ps-body">
+<a class="skip-link" href="#main-content" data-i18n="common.skipToContent">Pular para o conteúdo</a>
+
+<!-- ════════════ SIDEBAR ════════════ -->
+<div class="ps-shell" id="ps-shell">
+<div class="topbar">
+    <a class="ps-brand logo-wrap" href="../index.html" title="Atomurus home">
+    <div class="logo-mark">
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="2.5" fill="currentColor"/>
+        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/>
+        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/>
+        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/>
+      </svg>
+    </div>
+    <div>
+      <div class="logo-text">Atomurus</div>
+      <div class="logo-tag" data-i18n="common.brandTag">chemistry lab</div>
+    </div>
+  </a>
+    <button class="mobile-menu-btn" onclick="toggleMobileSidebar()" aria-label="Abrir menu">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><line x1="2" y1="4.5" x2="14" y2="4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="2" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="2" y1="11.5" x2="14" y2="11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+    </button>
+    <div class="breadcrumb" hidden>
+      <a href="../index.html" data-i18n="common.footer.workspace">Workspace</a>
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="opacity:.35"><path d="M3.5 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      <a href="../explore.html?lang=pt-BR" data-i18n="common.nav.explore">Explorar</a>
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="opacity:.35"><path d="M3.5 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      <span>O que é o mol</span>
+    </div>
+    <form class="ps-search search-box" role="search" action="../periodic-table.html" method="get">
+  <label class="lc-sr-only" for="ps-search-q">Search element</label>
+  <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+    <circle cx="5.5" cy="5.5" r="4" stroke="currentColor" stroke-width="1.4"/>
+    <line x1="8.7" y1="8.7" x2="11.5" y2="11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+  </svg>
+  <input id="ps-search-q" name="q" type="search" autocomplete="off" data-i18n-attr="placeholder:common.searchPlaceholder" placeholder="search element, symbol or Z…">
+  <button type="submit" data-i18n-attr="aria-label:common.searchAria" aria-label="Search element">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <circle cx="6" cy="6" r="4.2" stroke="currentColor" stroke-width="1.3"/>
+      <path d="M9.2 9.2 12 12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+    </svg>
+  </button>
+</form>
+    <button class="theme-btn" onclick="location.href='what-is-the-mole.html?lang=en'" data-i18n-attr="title:common.langToggle" aria-label="EN — Mudar idioma" title="Mudar idioma" style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;width:auto;min-width:32px;padding:0 8px;">
+      <span>EN</span>
+    </button>
+    <button class="theme-btn" onclick="toggleTheme()" data-i18n-attr="title:common.themeToggle; aria-label:common.themeToggle" title="Alternar tema" aria-label="Alternar tema" style="margin-left:4px;">
+      <svg id="icon-theme-light" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M11.5 7.5A4.5 4.5 0 0 1 6.5 2.5 4.5 4.5 0 1 0 11.5 7.5z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/></svg>
+      <svg id="icon-theme-dark" width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M7 1v1.4M7 11.6V13M1 7h1.4M11.6 7H13M2.5 2.5l1 1M10.5 10.5l1 1M2.5 11.5l1-1M10.5 3.5l1-1" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+    </button>
+  <div class="ps-account" data-atomurus-account>
+  <span class="ps-plan-badge" data-atomurus-plan-badge hidden></span>
+  <a class="ps-userchip lc-topnav-cta" href="../login.html" data-atomurus-account-chip aria-label="Account">
+    <svg class="ps-userchip-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span data-i18n="pricing.ctaAccount">Account</span>
+  </a>
+</div>
+  </div>
+<div class="mobile-overlay" id="mobile-overlay" onclick="toggleMobileSidebar()"></div>
+<aside class="ws-sidebar sidebar ps-pub-sidebar" id="ws-sidebar" data-atomurus-sidebar>
+  <nav class="ws-nav" id="ws-nav-main" aria-label="Laboratory" data-atomurus-lab-nav>
+    <div class="ws-nav-block ws-nav-site">
+      <h2 class="ws-nav-group" data-i18n="common.nav.laboratory">Laboratory</h2>
+      <a class="ws-nav-item" href="/" data-nav="home">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M2.5 7.5 8 3l5.5 4.5M4 6.5V13h8V6.5M6.5 13V9h3v4"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.home">Home</span>
+      </a>
+      <a class="ws-nav-item" href="/periodic-table.html" data-nav="periodic">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.periodic">Periodic Table</span>
+      </a>
+      <a class="ws-nav-item" href="/viewer/atomic-models.html" data-nav="viewer">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="8" cy="8" r="2"/><ellipse cx="8" cy="8" rx="6" ry="2.5"/><ellipse cx="8" cy="8" rx="6" ry="2.5" transform="rotate(60 8 8)"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.visualizador">Viewer</span>
+      </a>
+      <a class="ws-nav-item" href="/calculators.html" data-nav="calculators">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="2" width="10" height="12" rx="1"/><path d="M5 5h6M5.5 8h1M9.5 8h1M5.5 11h1M9.5 11h1"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.calc">Calculators</span>
+      </a>
+      <a class="ws-nav-item" href="/explore.html" data-nav="explore">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.explore">Explore</span>
+      </a>
+      <a class="ws-nav-item" href="/app" data-nav="workspace">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 12l4-4 2 2 4-6"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.workspace">Workspace</span>
+      </a>
+    </div>
+  </nav>
+  <div class="ws-nav-foot sidebar-foot" id="ws-nav-foot" data-atomurus-nav-foot>
+    <a class="ws-nav-item" href="/login" data-nav="account" data-auth-nav-link="common.nav.login">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5"/></g></svg>
+      <span class="ws-nav-label" data-i18n="common.nav.login">Account</span>
+    </a>
+    <a class="ws-nav-item" href="/pricing" data-nav="plans">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 5h8v8H4zM6 3v2M10 3v2"/></g></svg>
+      <span class="ws-nav-label" data-i18n="common.nav.plans">Plans</span>
+    </a>
+  </div>
+</aside>
+<main class="main" id="main-content" tabindex="-1">
+  
+
+  <div class="data-strip">
+    <span class="ds-k">scope</span><span class="ds-v">DOC.ARTICLE</span>
+    <span class="ds-sep"></span>
+    <span class="ds-k">seção</span><span class="ds-v">conceitos · estequiometria</span>
+    <span class="ds-sep"></span>
+    <span class="ds-k">elementos</span><span class="ds-v ds-hi">Nᴀ = 6,02214076 × 10²³ mol⁻¹</span>
+    <span class="ds-spacer"></span>
+    <span class="ds-k">norma</span><span class="ds-v">SI 2019</span>
+  </div>
+
+  <div class="content" id="content">
+    <div class="art-progress" id="art-progress"><span></span></div>
+
+    <div class="art-wrap">
+      <header class="art-hero">
+        <div class="art-kicker">
+          <span>Explorar Atomurus</span>
+          <span class="art-cat ui-badge">Conceitos de Química</span>
+          <span class="art-cat ui-badge">Estequiometria</span>
+        </div>
+        <h1 class="art-title">O que é o <em>mol</em>? Quantidade de matéria, massa molar e constante de Avogadro</h1>
+        <p class="art-dek">O mol é o jeito de os químicos contarem partículas que não conseguem ver: um número fixo de entidades, exatamente 6,02214076 × 10²³. Veja como a massa molar e a constante de Avogadro transformam uma massa na balança em mols e partículas.</p>
+        <p class="art-draft" role="note">Rascunho — em revisão docente. Ainda não publicado.</p>
+        <div class="lab-tool-cta">
+          <p>Calcule a massa molar de qualquer fórmula.</p>
+          <a href="../calculators.pt.html?formula=CO2#molar">Abrir a calculadora de massa molar</a>
+        </div>
+        <div class="art-meta">
+          <span><strong>Atomurus</strong> · Redação</span>
+          <span class="am-dot"></span>
+          <span>Atualizado em 29 out. 2026</span>
+          <span class="am-dot"></span>
+          <span>≈ 9 min de leitura</span>
+        </div>
+<!-- ed:level -->
+<p class="article-level"><span class="article-level-chip" data-i18n="article.level.beginner">Iniciante</span></p>
+<!-- /ed:level -->
+<!-- ed:learn -->
+<aside class="article-learn" aria-labelledby="article-learn-title">
+  <h2 id="article-learn-title" data-i18n="article.learn.title">Você vai aprender</h2>
+  <ul>
+    <li>Definir o mol e a constante de Avogadro</li>
+    <li>Usar a massa molar para converter gramas em mols</li>
+    <li>Calcular o número de partículas numa amostra</li>
+  </ul>
+</aside>
+<!-- /ed:learn -->
+</header>
+
+      <div class="art-grid">
+        <article class="art-body" id="art-body">
+
+          <p class="lead">Átomos e moléculas são pequenos demais para serem contados um a um, e mesmo assim a química trata de quantos deles participam de uma transformação. O <strong>mol</strong> é a unidade que liga as duas escalas: permite contar partículas pesando uma amostra numa balança comum.</p>
+
+          <p>Neste artigo você vai ver o que é um mol, por que os químicos contam em mols, como a <strong>massa molar</strong> transforma gramas em mols e de volta, como passar de mols ao número de partículas e quanto ocupa um mol de gás. Todos os números dos exemplos resolvidos são calculados pelo mesmo motor das calculadoras do Atomurus.</p>
+
+          <div class="art-callout">
+            <span class="ac-label">Definição rápida</span>
+            O <strong>mol</strong> (símbolo mol) é a unidade SI de quantidade de matéria. Um mol contém exatamente <strong>6,02214076 × 10²³</strong> entidades elementares — átomos, moléculas, íons ou a entidade que for especificada.
+          </div>
+
+          <figure class="art-fig" role="img" aria-label="Diagrama das duas conversões em torno do mol: a massa em gramas dividida pela massa molar dá a quantidade em mols, e a quantidade em mols multiplicada pela constante de Avogadro dá o número de partículas; as setas também fazem o caminho de volta.">
+            <svg viewBox="0 0 640 170" width="100%" aria-hidden="true" focusable="false">
+              <g font-family="Inter Tight, sans-serif" font-size="15" fill="currentColor" text-anchor="middle">
+                <rect x="20" y="55" width="150" height="60" rx="10" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                <text x="95" y="82">massa</text><text x="95" y="102" font-size="13">m (g)</text>
+                <rect x="245" y="55" width="150" height="60" rx="10" fill="none" stroke="currentColor" stroke-width="2.5"/>
+                <text x="320" y="82">quantidade</text><text x="320" y="102" font-size="13">n (mol)</text>
+                <rect x="470" y="55" width="150" height="60" rx="10" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                <text x="545" y="82">partículas</text><text x="545" y="102" font-size="13">N</text>
+                <path d="M172 75h70M398 75h70" stroke="currentColor" stroke-width="1.5" marker-end="url(#mol-arrow)"/>
+                <path d="M243 98h-70M468 98h-70" stroke="currentColor" stroke-width="1.5" marker-end="url(#mol-arrow)"/>
+                <text x="207" y="48" font-size="13">÷ M</text><text x="207" y="132" font-size="13">× M</text>
+                <text x="433" y="48" font-size="13">× Nᴀ</text><text x="433" y="132" font-size="13">÷ Nᴀ</text>
+              </g>
+              <defs><marker id="mol-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="currentColor"/></marker></defs>
+            </svg>
+            <figcaption>Massa, quantidade de matéria e número de partículas: a massa molar M liga as duas primeiras; a constante de Avogadro Nᴀ, as duas últimas.</figcaption>
+          </figure>
+
+          <h2><span class="h-no">§ 01</span> O que é um mol</h2>
+          <p>O mol é uma <strong>unidade de contagem</strong>, do mesmo jeito que uma dúzia são doze unidades de qualquer coisa. A diferença está no tamanho do número: um mol são 6,02214076 × 10²³ entidades. Esse número é o valor numérico da <strong>constante de Avogadro</strong>, Nᴀ = 6,02214076 × 10²³ mol⁻¹.</p>
+          <p>Desde a revisão do Sistema Internacional de Unidades que entrou em vigor em 20 de maio de 2019, esse valor é <strong>exato</strong>: é fixado por definição, não medido. Antes disso, o mol era definido pelo número de átomos em 12 gramas de carbono-12, e por isso a constante de Avogadro precisava ser determinada por experimentos e tinha uma incerteza.</p>
+          <p>Ao usar mols é preciso sempre dizer <strong>o que</strong> se está contando. Um mol de átomos de oxigênio (O) e um mol de moléculas de oxigênio (O₂) não são a mesma quantidade de oxigênio: o segundo contém o dobro de átomos. Os químicos escrevem a entidade junto da quantidade — n(O₂) = 1 mol — justamente para evitar essa ambiguidade.</p>
+
+          <h2><span class="h-no">§ 02</span> Por que os químicos contam em mols</h2>
+          <p>As equações químicas são escritas em partículas. Em 2 H₂ + O₂ → 2 H₂O, duas moléculas de hidrogênio reagem com uma molécula de oxigênio. No laboratório, porém, ninguém manipula moléculas isoladas: pesamos gramas e medimos mililitros.</p>
+          <p>O mol resolve esse descompasso. Como um mol de qualquer coisa tem o mesmo número de entidades, os coeficientes de uma equação podem ser lidos diretamente em mols: 2 mol de H₂ reagem com 1 mol de O₂ e formam 2 mol de H₂O. A equação mantém o seu sentido, e as quantidades viram valores que se podem pesar de verdade.</p>
+
+          <h2><span class="h-no">§ 03</span> Massa molar</h2>
+          <p>A <strong>massa molar</strong> M de uma substância é a massa de um mol dela, em geral expressa em gramas por mol (g/mol). Para um elemento, ela tem o mesmo número que a sua massa atômica padrão: a massa atômica padrão abreviada do oxigênio é 15,999, então os átomos de oxigênio têm M ≈ 15,999 g/mol.</p>
+          <p>Para um composto, somam-se as massas molares dos átomos da fórmula, cada uma multiplicada pelo número de vezes que o átomo aparece. O índice informa esse número: o CO₂ tem um átomo de carbono e dois de oxigênio.</p>
+          <div class="art-worked" data-calc="mole-co2">
+<!-- calc:mole-co2 -->
+<p class="aw-q">Exemplo: a massa molar do CO₂</p><ol class="wsol-steps"><li><span class="wsol-text">Conte os átomos de cada elemento da fórmula.</span> <span class="wsol-expr" translate="no">C: 1 · O: 2</span></li><li><span class="wsol-text">Procure a massa atômica de cada elemento em g/mol (massas atômicas padrão abreviadas, CIAAW).</span> <span class="wsol-expr" translate="no">A(C) = 12,011 · A(O) = 15,999</span></li><li><span class="wsol-text">Multiplique cada massa atômica pelo número de átomos.</span> <span class="wsol-expr" translate="no">1 × 12,011 = 12,011 · 2 × 15,999 = 31,998</span></li><li><span class="wsol-text">Some as contribuições: a soma é a massa molar.</span> <span class="wsol-expr" translate="no">M = 12,011 + 31,998 = 44,009 g/mol</span></li></ol><p class="aw-a">Resposta: <span translate="no">M = 44,009 g/mol</span></p>
+<!-- /calc:mole-co2 -->
+          </div>
+          <p>Substâncias diferentes têm massas molares muito diferentes, e é por isso que um mol de água e um mol de açúcar têm o mesmo número de moléculas, mas não a mesma massa.</p>
+
+          <h2><span class="h-no">§ 04</span> Da massa aos mols e de volta</h2>
+          <p>A massa molar é o fator de conversão entre massa e quantidade de matéria. Dividir uma massa pela massa molar dá a quantidade de matéria; multiplicar uma quantidade pela massa molar dá a massa:</p>
+          <p class="art-eq"><span translate="no">n = m ÷ M</span> &nbsp;e&nbsp; <span translate="no">m = n × M</span></p>
+          <div class="art-worked" data-calc="mole-water">
+<!-- calc:mole-water -->
+<p class="aw-q">Exemplo: quantos mols há em 36 g de água?</p><ol class="wsol-steps"><li><span class="wsol-text">Conte os átomos de cada elemento da fórmula.</span> <span class="wsol-expr" translate="no">H: 2 · O: 1</span></li><li><span class="wsol-text">Procure a massa atômica de cada elemento em g/mol (massas atômicas padrão abreviadas, CIAAW).</span> <span class="wsol-expr" translate="no">A(H) = 1,008 · A(O) = 15,999</span></li><li><span class="wsol-text">Multiplique cada massa atômica pelo número de átomos.</span> <span class="wsol-expr" translate="no">2 × 1,008 = 2,016 · 1 × 15,999 = 15,999</span></li><li><span class="wsol-text">Some as contribuições: a soma é a massa molar.</span> <span class="wsol-expr" translate="no">M = 2,016 + 15,999 = 18,015 g/mol</span></li><li><span class="wsol-text">Quantidade de matéria: n = m / M.</span> <span class="wsol-expr" translate="no">n = 36 g ÷ 18,015 g/mol = 1,998 mol</span></li></ol><p class="aw-a">Resposta: <span translate="no">n = 1,998 mol</span></p>
+<!-- /calc:mole-water -->
+          </div>
+          <p>Uma conferência rápida é olhar as unidades: gramas divididos por gramas por mol deixam mols. Se as unidades não se cancelam, a conta foi montada ao contrário.</p>
+
+          <h2><span class="h-no">§ 05</span> Dos mols ao número de partículas</h2>
+          <p>Conhecida a quantidade de matéria, a constante de Avogadro dá o número de entidades: <span translate="no">N = n × Nᴀ</span>. Como Nᴀ é exata, a precisão do resultado depende só da massa medida e da massa molar.</p>
+          <div class="art-worked" data-calc="mole-particles">
+<!-- calc:mole-particles -->
+<p class="aw-q">Exemplo: quantas moléculas há em 36 g de água?</p><ol class="wsol-steps"><li><span class="wsol-text">A quantidade de matéria, do exemplo anterior.</span> <span class="wsol-expr" translate="no">n = 36 g ÷ 18,015 g/mol = 1,998 mol</span></li><li><span class="wsol-text">Multiplique pela constante de Avogadro.</span> <span class="wsol-expr" translate="no">N = 1,998 mol × 6,02214076 × 10²³ mol⁻¹ = 1,203 × 10²⁴ moléculas</span></li></ol><p class="aw-a">Resposta: <span translate="no">N = 1,203 × 10²⁴ moléculas</span></p>
+<!-- /calc:mole-particles -->
+          </div>
+          <p>Números desse tamanho são a razão de existir do mol: ninguém conseguiria escrevê-los ou usá-los cada vez que uma reação fosse descrita.</p>
+
+          <h2><span class="h-no">§ 06</span> Um mol de gás</h2>
+          <p>Para os gases há mais um atalho. Um gás ideal obedece a PV = nRT, então, numa dada temperatura e pressão, um mol ocupa sempre o mesmo volume, qualquer que seja o gás. Esse volume não é uma constante para decorar: ele vale RT/P e depende das condições escolhidas.</p>
+          <div class="art-worked" data-calc="mole-gas">
+<!-- calc:mole-gas -->
+<p class="aw-q">Exemplo: o volume de 1 mol de gás ideal a 0 °C (273,15 K) e 101,325 kPa</p><ol class="wsol-steps"><li><span class="wsol-text">Escreva os dados em unidades do SI (Pa, m³, mol, K).</span> <span class="wsol-expr" translate="no">P = 101325 Pa · n = 1 mol · T = 273,15 K</span></li><li><span class="wsol-text">Isole V em PV = nRT.</span> <span class="wsol-expr" translate="no">V = nRT / P</span></li><li><span class="wsol-text">Substitua, com R = 8,3145 J·K⁻¹·mol⁻¹ (CODATA 2018).</span> <span class="wsol-expr" translate="no">V = (1 mol × 8,3145 × 273,15 K) / 101325 Pa = 0,02241 m³</span></li><li><span class="wsol-text">Converta o resultado para a unidade pedida.</span> <span class="wsol-expr" translate="no">V = 0,02241 m³ = 22,41 L</span></li></ol><p class="aw-a">Resposta: <span translate="no">V = 22,41 L</span></p>
+<!-- /calc:mole-gas -->
+          </div>
+          <p>Com pressão de 100 kPa em vez de 101,325 kPa, a mesma conta dá um volume um pouco maior, e por isso um volume molar deve sempre vir acompanhado da temperatura e da pressão. Os gases reais se afastam um pouco do modelo ideal, sobretudo em pressão alta e temperatura baixa.</p>
+
+          <h2><span class="h-no">§ 07</span> Equívocos comuns</h2>
+          <h3>"Um mol é uma quantidade de massa"</h3>
+          <p>Não: um mol é uma quantidade de matéria, um número de entidades. A massa só entra pela massa molar, que é diferente para cada substância. Um mol de moléculas de hidrogênio e um mol de átomos de ouro têm o mesmo número de partículas, mas massas muito diferentes.</p>
+          <h3>"Massa molar e massa molecular são a mesma coisa"</h3>
+          <p>Têm o mesmo número, mas não o mesmo significado. A massa de uma molécula de água é de cerca de 18 daltons; a massa molar da água é de cerca de 18 gramas por mol, a massa de 6,02214076 × 10²³ moléculas. Uma descreve uma partícula; a outra, um mol delas.</p>
+          <h3>"O número de Avogadro ainda está sendo medido"</h3>
+          <p>Não mais. Desde a revisão do SI de 2019, a constante de Avogadro é fixada exatamente em 6,02214076 × 10²³ mol⁻¹. Os experimentos agora medem outras grandezas, como a massa de um átomo, usando esse valor fixo.</p>
+          <h3>"Um mol de qualquer gás tem a mesma massa"</h3>
+          <p>Na mesma temperatura e pressão, um mol de qualquer gás ideal tem o mesmo volume, não a mesma massa. Um mol de hélio tem massa de cerca de 4 g, e um mol de gás carbônico, de cerca de 44 g, no mesmo volume.</p>
+
+          <h2><span class="h-no">§ 08</span> O que você precisa lembrar</h2>
+          <ul class="art-recap">
+            <li>O mol é a unidade SI de quantidade de matéria: exatamente 6,02214076 × 10²³ entidades especificadas.</li>
+            <li>Diga sempre qual entidade está contando: um mol de átomos de O não é um mol de moléculas de O₂.</li>
+            <li>A massa molar, em g/mol, converte massa em mols (n = m ÷ M) e mols em massa (m = n × M).</li>
+            <li>A constante de Avogadro converte mols em número de partículas (N = n × Nᴀ).</li>
+            <li>O volume de um mol de gás ideal é RT/P: informe-o com a temperatura e a pressão.</li>
+          </ul>
+
+          <div class="art-callout">
+            <span class="ac-label">Conclusão</span>
+            O mol permite que uma balança faça o papel de contador de partículas. Com a massa molar e a constante de Avogadro, dá para passar livremente entre gramas, mols e partículas — as três maneiras de os químicos dizerem quanto de uma substância participa de uma reação.
+          </div>
+
+          <section class="art-refs">
+            <h2><span class="h-no">§ Fontes</span> Referências e leitura</h2>
+            <ol>
+              <li>BIPM — <em lang="en">The International System of Units (SI)</em>, 9.ª edição (2019): definição do mol e da constante de Avogadro.</li>
+              <li>IUPAC — <em lang="en">Compendium of Chemical Terminology</em> (Gold Book): mol; massa molar; constante de Avogadro.</li>
+              <li>CIAAW/IUPAC — massas atômicas padrão abreviadas (os valores usados pelas calculadoras do Atomurus).</li>
+              <li>CODATA 2018 — constante molar dos gases R = Nᴀ·k (exata desde 2019).</li>
+            </ol>
+          </section>
+
+          <section class="art-related">
+            <div class="ar-label">Continue explorando</div>
+            <div class="art-related-grid">
+              <a class="ar-card" href="conservation-of-mass.pt.html">
+                <div class="ar-cat">Conceitos</div>
+                <div class="ar-title">Conservação da massa</div>
+                <div class="ar-desc">Por que a massa total de um sistema fechado não muda.</div>
+              </a>
+              <a class="ar-card" href="what-is-an-atom.pt.html">
+                <div class="ar-cat">Conceitos</div>
+                <div class="ar-title">O que é um Átomo</div>
+                <div class="ar-desc">Prótons, nêutrons, elétrons — e massa atômica.</div>
+              </a>
+              <a class="ar-card" href="../exercises/moles-mass.pt.html">
+                <div class="ar-cat">Prática</div>
+                <div class="ar-title">Exercícios de mol e massa</div>
+                <div class="ar-desc">Dez exercícios com solução comentada.</div>
+              </a>
+            </div>
+          </section>
+
+          <section class="art-follow">
+            <div>
+              <div class="afl-title">Gostou? Siga o Atomurus</div>
+              <div class="afl-sub">Novos mergulhos em química, ferramentas e visualizações 3D — toda semana.</div>
+            </div>
+            <div class="afl-links">
+              <a href="https://x.com/atomurusapp" target="_blank" rel="noopener me" aria-label="Siga o Atomurus no X (Twitter), @atomurusapp">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.658l-5.214-6.817-5.967 6.817H1.68l7.73-8.835L1.254 2.25h6.828l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/></svg>
+                <span>X / Twitter</span>
+              </a>
+              <a href="https://instagram.com/atomurusapp" target="_blank" rel="noopener me" aria-label="Siga o Atomurus no Instagram, @atomurusapp">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor"/></svg>
+                <span>Instagram</span>
+              </a>
+            </div>
+          </section>
+
+        </article>
+
+        <aside class="art-aside">
+          <nav class="art-toc" id="art-toc" aria-label="Índice do artigo">
+            <div class="toc-label">Neste artigo</div>
+          </nav>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ════════════ FOOTER ════════════ -->
+    <footer class="lc-footer">
+      <div class="lc-footer-inner">
+        <div class="lc-footer-col lc-footer-brand">
+          <div class="lc-footer-brand-row">
+            <div class="lc-topnav-mark" style="width:24px;height:24px">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.5" fill="currentColor"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/></svg>
+            </div>
+            <span class="lc-footer-brand-name">Atomurus</span>
+          </div>
+          <p class="lc-footer-brand-desc" data-i18n="common.footer.brandDesc">Um laboratório instrumental de química para os estudiosos, os curiosos e os pacientes.</p>
+        </div>
+        <div class="lc-footer-col">
+          <h4 data-i18n="common.footer.modules">Módulos</h4>
+          <a href="../periodic-table.html" data-i18n="common.nav.periodic">Tabela Periódica</a>
+          <a href="../viewer/atomic-models.html" data-i18n="common.nav.viewer3d">Visualizador</a>
+          <a href="../calculators.html" data-i18n="common.nav.calc">Calculadoras</a>
+          <a href="../explore.html?lang=pt-BR" data-i18n="common.nav.explore">Explorar</a>
+        </div>
+        <div class="lc-footer-col">
+          <h4 data-i18n="common.footer.project">Projeto</h4>
+          <a href="../about.html" data-i18n="common.footer.about">Sobre</a>
+          <a href="../privacy.html" data-i18n="common.footer.privacy">Privacidade</a>
+          <a href="../terms.html" data-i18n="common.footer.terms">Termos</a>
+          <a href="../contact.html" data-i18n="common.footer.contact">Contato</a>
+        </div>
+      </div>
+      <div class="lc-footer-bottom">        <span><span class="lc-st-dot" style="width:6px;height:6px;border-radius:50%;background:#1E6A50;display:inline-block"></span> <span data-i18n="common.footer.systemNominal">sistema nominal</span></span>
+        <span data-i18n="common.footer.copy">© 2026 Atomurus · v1.11</span>
+      </div>
+    </footer>
+  </div><!-- /.content -->
+</main>
+</div>
+
+<div class="lc-statusbar">
+  <span><span class="lc-st-dot"></span> ready</span>
+  <span class="lc-st-sep">·</span>
+  <span>explore / artigo</span>
+  <span class="lc-st-spacer"></span>
+  <a href="../explore.html?lang=pt-BR">→ explorar</a>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  window.toggleTheme = function() {
+    var html = document.documentElement;
+    var isDark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    try { localStorage.setItem('atomurus-theme', isDark ? 'light' : 'dark'); } catch(e){}
+  };
+  window.toggleMobileSidebar = function() {
+    var sidebar = document.querySelector('.sidebar');
+    var overlay = document.getElementById('mobile-overlay');
+    if (!sidebar) return;
+    var isOpen = sidebar.classList.contains('mobile-open');
+    sidebar.classList.toggle('mobile-open', !isOpen);
+    if (overlay) overlay.classList.toggle('show', !isOpen);
+    document.body.style.overflow = isOpen ? '' : 'hidden';
+  };
+  window.toggleNavGroup = function(name) {
+    var el = document.querySelector('.nav-expandable[data-expand="' + name + '"]');
+    if (!el) return;
+    var open = !el.classList.contains('open');
+    el.classList.toggle('open', open);
+    var row = el.querySelector('.nav-row');
+    if (row) row.setAttribute('aria-expanded', open ? 'true' : 'false');
+    try { localStorage.setItem('atomurus-nav-' + name, open ? '1' : '0'); } catch(e){}
+  };
+  (function initExpandable(){
+    document.querySelectorAll('.nav-expandable').forEach(function(el){
+      var name = el.dataset.expand;
+      var hasActive = !!el.querySelector('.nav-item.active, [aria-current="page"]');
+      var stored = null;
+      try { stored = localStorage.getItem('atomurus-nav-' + name); } catch(e){}
+      if (hasActive || stored === '1') { el.classList.add('open'); var r = el.querySelector('.nav-row'); if (r) r.setAttribute('aria-expanded','true'); }
+      var row = el.querySelector('.nav-row');
+      if (row) row.addEventListener('keydown', function(e){ if (e.key==='Enter'||e.key===' '){ e.preventDefault(); window.toggleNavGroup(name);} });
+    });
+  })();
+  function initArticle(){
+    var body = document.getElementById('art-body');
+    var toc = document.getElementById('art-toc');
+    var content = document.getElementById('content');
+    var bar = document.querySelector('#art-progress span');
+    if (!body || !toc) return;
+    var heads = body.querySelectorAll('h2');
+    var links = [];
+    heads.forEach(function(h, i){
+      if (!h.id) h.id = 'sec-' + (i + 1);
+      var txt = h.textContent.replace(/^§\s*\d+\s*/, '').replace(/^§\s*Fontes\s*/,'').trim();
+      var a = document.createElement('a');
+      a.href = '#' + h.id;
+      a.textContent = txt;
+      a.addEventListener('click', function(e){ e.preventDefault(); h.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+      toc.appendChild(a);
+      links.push({ a: a, h: h });
+    });
+    function onScroll(){
+      if (bar && content){
+        var max = content.scrollHeight - content.clientHeight;
+        var pct = max > 0 ? (content.scrollTop / max) * 100 : 0;
+        bar.style.width = pct + '%';
+      }
+      var top = content.scrollTop + 100;
+      var current = null;
+      links.forEach(function(l){ if (l.h.offsetTop <= top) current = l; });
+      links.forEach(function(l){ l.a.classList.toggle('is-active', l === current); });
+    }
+    content.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    onScroll();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initArticle);
+  else initArticle();
+})();
+</script>
+</body>
+</html>

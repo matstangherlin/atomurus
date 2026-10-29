@@ -39,7 +39,10 @@ const center = read('assets/account-center.js');
 assert.match(center, /\/account\?tab=/);
 assert.match(center, /atomurus-3d-quality/);
 assert.match(center, /atomurus-reduced-motion/);
-assert.doesNotMatch(center, /delete account|Delete account/);
+// Deletion is real now (prompt 29): only through the endpoint, with friction.
+assert.match(center, /\/api\/account\/delete/);
+assert.match(center, /autocomplete="current-password"/);
+assert.match(center, /id="ac-delete-submit" disabled/);
 
 const toml = read('netlify.toml');
 assert.match(toml, /from\s+=\s+"\/account"/);

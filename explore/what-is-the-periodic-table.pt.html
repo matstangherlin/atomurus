@@ -143,8 +143,10 @@
     .content { overflow: visible; }
   }
 </style>
+<link rel="stylesheet" href="/assets/print.css?v=202610281500" media="print">
 </head>
 <body class="ps-body">
+<a class="skip-link" href="#main-content" data-i18n="common.skipToContent">Pular para o conteúdo</a>
 
 <!-- ════════════ SIDEBAR ════════════ -->
 <div class="ps-shell" id="ps-shell">
@@ -187,7 +189,7 @@
     </svg>
   </button>
 </form>
-    <button class="theme-btn" onclick="location.href='what-is-the-periodic-table.html?lang=en'" data-i18n-attr="aria-label:common.langToggle; title:common.langToggle" aria-label="Mudar idioma" title="Mudar idioma" style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;width:auto;min-width:32px;padding:0 8px;">
+    <button class="theme-btn" onclick="location.href='what-is-the-periodic-table.html?lang=en'" data-i18n-attr="title:common.langToggle" aria-label="EN — Mudar idioma" title="Mudar idioma" style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;width:auto;min-width:32px;padding:0 8px;">
       <span>EN</span>
     </button>
     <button class="theme-btn" onclick="toggleTheme()" data-i18n-attr="title:common.themeToggle; aria-label:common.themeToggle" title="Alternar tema" aria-label="Alternar tema" style="margin-left:4px;">
@@ -244,7 +246,7 @@
     </a>
   </div>
 </aside>
-<main class="main">
+<main class="main" id="main-content" tabindex="-1">
   
 
   <div class="data-strip">
@@ -491,7 +493,13 @@
           <p>Nem todos os elementos existem na natureza. Tudo além do urânio (Z = 92) é essencialmente <strong>sintético</strong> — forjado em reatores nucleares ou aceleradores de partículas, chocando núcleos mais leves uns contra os outros. Esses elementos <em>superpesados</em>, que completam o período 7 até o oganessônio (Z = 118), são intensamente radioativos e muitas vezes sobrevivem por apenas frações de segundo antes de decair.</p>
           <p>Como desaparecem tão rápido, alguns só existiram como um punhado de átomos. Isso levanta uma pergunta natural: existe um limite? Físicos formulam a hipótese de uma <strong>"ilha de estabilidade"</strong> — um conjunto de elementos superpesados ainda não descobertos cujos números específicos de prótons e nêutrons os tornariam muito mais duradouros que os vizinhos. Procurá-la é uma das fronteiras da química moderna — e a razão pela qual a tabela ainda pode crescer.</p>
 
-          <h2><span class="h-no">§ 12</span> Perguntas frequentes</h2>
+          <h2><span class="h-no">§ 12</span> Equívocos comuns</h2>
+          <h3>"A tabela é ordenada pela massa atômica."</h3>
+          <p>Ela é ordenada pelo número atômico, o número de prótons. Tentativas antigas, como a de Newlands, ordenavam os elementos pela massa, mas Moseley (1913) mostrou que o critério correto é o número atômico. Por isso, nesta mesma tabela, o telúrio (Z = 52, 127,6 u) vem antes do iodo (Z = 53, 126,90 u).</p>
+          <h3>"Todo elemento de um grupo reage exatamente do mesmo jeito."</h3>
+          <p>Elementos de um grupo têm o mesmo número de elétrons de valência, por isso reagem de formas parecidas: o sódio e o potássio reagem violentamente com a água. Parecido não é idêntico. Descendo o grupo, o raio atômico cresce e a energia de ionização cai, então as propriedades mudam aos poucos. É uma tendência, não uma cópia.</p>
+
+          <h2><span class="h-no">§ 13</span> Perguntas frequentes</h2>
           <h3>Por que o hidrogênio às vezes aparece sozinho?</h3>
           <p>O hidrogênio tem um único elétron, como os metais alcalinos do grupo 1, então costuma ficar no topo do grupo 1. Mas é um ametal e se comporta de forma muito diferente do sódio ou do potássio, então algumas tabelas o colocam flutuando acima do centro para mostrar que ele não pertence de fato a nenhuma família.</p>
           <h3>Por que existem exatamente 18 grupos?</h3>
@@ -500,6 +508,15 @@
           <p>O <strong>flúor</strong>, no canto superior direito dos ametais reativos, é o elemento mais eletronegativo — atrai os elétrons de uma ligação com mais força que qualquer outro átomo.</p>
           <h3>Por que os lantanídeos e actinídeos ficam embaixo da tabela?</h3>
           <p>Eles pertencem ao bloco f, entre os grupos 2 e 3 dos períodos 6 e 7. Desenhados no lugar, deixariam a tabela com cerca de 32 colunas de largura; destacá-los a mantém compacta e legível.</p>
+
+          <h2><span class="h-no">§ 14</span> O que você precisa lembrar</h2>
+          <ul class="art-recap">
+            <li>A tabela organiza os elementos em ordem crescente de número atômico, de modo que elementos com propriedades parecidas fiquem na mesma coluna.</li>
+            <li>Os períodos são as 7 linhas e os grupos, as 18 colunas; elementos de um grupo têm o mesmo número de elétrons de valência e reagem de formas parecidas.</li>
+            <li>A periodicidade vem da configuração eletrônica: a camada mais externa determina como um elemento reage.</li>
+            <li>As propriedades mudam de forma regular: ao longo de um período a eletronegatividade e a energia de ionização sobem, e descendo um grupo o raio atômico cresce.</li>
+            <li>A maioria dos elementos é metal, à esquerda da linha em escada; os ametais ficam no canto superior direito e os semimetais ao longo da escada.</li>
+          </ul>
 
           <div class="art-callout">
             <span class="ac-label">Conclusão</span>

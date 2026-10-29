@@ -143,8 +143,10 @@
     .content { overflow: visible; }
   }
 </style>
+<link rel="stylesheet" href="/assets/print.css?v=202610281500" media="print">
 </head>
 <body class="ps-body">
+<a class="skip-link" href="#main-content" data-i18n="common.skipToContent">Pular para o conteúdo</a>
 
 <!-- ════════════ SIDEBAR ════════════ -->
 <div class="ps-shell" id="ps-shell">
@@ -187,7 +189,7 @@
     </svg>
   </button>
 </form>
-    <button class="theme-btn" onclick="location.href='what-is-isomerism.html?lang=en'" data-i18n-attr="aria-label:common.langToggle; title:common.langToggle" aria-label="Mudar idioma" title="Mudar idioma" style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;width:auto;min-width:32px;padding:0 8px;">
+    <button class="theme-btn" onclick="location.href='what-is-isomerism.html?lang=en'" data-i18n-attr="title:common.langToggle" aria-label="EN — Mudar idioma" title="Mudar idioma" style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;width:auto;min-width:32px;padding:0 8px;">
       <span>EN</span>
     </button>
     <button class="theme-btn" onclick="toggleTheme()" data-i18n-attr="title:common.themeToggle; aria-label:common.themeToggle" title="Alternar tema" aria-label="Alternar tema" style="margin-left:4px;">
@@ -244,7 +246,7 @@
     </a>
   </div>
 </aside>
-<main class="main">
+<main class="main" id="main-content" tabindex="-1">
   
 
   <div class="data-strip">
@@ -466,7 +468,13 @@
           <h3>Por que o número de isômeros explode</h3>
           <p>Quanto mais átomos uma fórmula tem, mais maneiras de arranjá-los. O alcano C₄H₁₀ tem apenas 2 isômeros; o C₅H₁₂ tem 3; o C₁₀H₂₂ já tem 75; e o C₃₀H₆₂ tem mais de quatro <em>bilhões</em> de estruturas possíveis. É essa explosão combinatória que torna a química orgânica tão vasta.</p>
 
-          <h2><span class="h-no">§ 08</span> Perguntas frequentes</h2>
+          <h2><span class="h-no">§ 08</span> Equívocos comuns</h2>
+          <h3>"Isômeros têm as mesmas propriedades, porque têm a mesma fórmula."</h3>
+          <p>Só a massa molar é igual. Etanol e éter dimetílico são ambos C₂H₆O, mas um é álcool e o outro é éter, com comportamentos radicalmente diferentes; o cis- e o trans-2-buteno têm propriedades físicas mensuravelmente diferentes. Estrutura diferente quer dizer composto diferente.</p>
+          <h3>"Isomeria é só trocar um grupo de posição."</h3>
+          <p>Esse é apenas um caso: o 1-propanol e o 2-propanol diferem na posição do grupo –OH. Isômeros constitucionais também podem ter outra cadeia carbônica ou outro grupo funcional, e na estereoisomeria nada é religado: a conectividade é idêntica e só a geometria muda, como nos isômeros cis/trans ou nos enantiômeros.</p>
+
+          <h2><span class="h-no">§ 09</span> Perguntas frequentes</h2>
           <h3>Qual a diferença entre isômeros e alótropos?</h3>
           <p>Isômeros são <em>compostos</em> diferentes com a mesma fórmula molecular. Alótropos são formas estruturais diferentes do mesmo <em>elemento</em> — como o diamante e o grafite, que são ambos carbono puro. A isomeria é sobre moléculas; a alotropia, sobre elementos.</p>
           <h3>Isômeros têm a mesma massa molar?</h3>
@@ -475,6 +483,15 @@
           <p>Não. A quiralidade envolve imagens especulares não sobreponíveis (enantiômeros). Muitos estereoisômeros — como os isômeros cis/trans (geométricos) — não são imagens especulares; são diastereoisômeros e não precisam ser quirais.</p>
           <h3>Por que a isomeria importa tanto na medicina?</h3>
           <p>Os receptores biológicos são, eles mesmos, quirais, então muitas vezes ligam apenas um enantiômero de um fármaco. O outro pode ser inativo ou até nocivo — por isso os órgãos reguladores hoje examinam tão de perto a estereoquímica dos novos medicamentos.</p>
+
+          <h2><span class="h-no">§ 10</span> O que você precisa lembrar</h2>
+          <ul class="art-recap">
+            <li>Isômeros são compostos diferentes com a mesma fórmula molecular, mas com estruturas ou arranjos espaciais diferentes e, por isso, propriedades diferentes.</li>
+            <li>Na isomeria constitucional os átomos se ligam em outra ordem; na estereoisomeria a conectividade é idêntica e só a geometria muda.</li>
+            <li>A isomeria geométrica (cis-trans) precisa de rotação restrita, em geral em torno de uma ligação dupla ou num anel.</li>
+            <li>Enantiômeros são imagens especulares não sobreponíveis: têm quase todas as propriedades físicas iguais, mas podem agir de formas muito diferentes no corpo.</li>
+            <li>A mesma fórmula sempre quer dizer a mesma massa molar, mas não necessariamente o mesmo comportamento.</li>
+          </ul>
 
           <div class="art-callout">
             <span class="ac-label">Conclusão</span>

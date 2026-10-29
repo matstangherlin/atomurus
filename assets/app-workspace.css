@@ -1961,6 +1961,84 @@ svg.lab-linking path {
 .lab-guide-step.is-done { color: var(--lc-green, #1E6A50); text-decoration: line-through; }
 .lab-guide-step.is-now { color: var(--lc-ink, #1b1914); font-weight: 650; }
 .lab-guide-done { color: var(--lc-green, #1E6A50); font-weight: 650; }
+.lab-guide-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+.lab-guide-confirm { padding: 12px 14px; border: 1px solid var(--lc-rule, #D8D2BF); border-radius: 12px; }
+.lab-guide-note { font-size: 13px; color: var(--lc-ink-2, #58544A); font-style: italic; }
+.lab-guide-feedback {
+  margin: 10px 0;
+  padding: 8px 12px;
+  border-left: 3px solid var(--lc-amber, #B7791F);
+  background: color-mix(in oklab, var(--lc-amber, #B7791F) 9%, transparent);
+  border-radius: 0 8px 8px 0;
+  font-size: 13px;
+  color: var(--lc-ink, #1b1914);
+}
+.lab-guide-observe { margin: 10px 0; display: grid; gap: 8px; justify-items: start; }
+.lab-guide-observe p { margin: 0; font-size: 13px; color: var(--lc-ink-2, #58544A); }
+.lab-guide-safety { font-size: 13px; color: var(--lc-ink-2, #58544A); }
+/* POE: predict, observe, explain (prompt 27) */
+.lab-poe {
+  margin: 10px 0;
+  padding: 12px 14px;
+  border: 1px solid var(--lc-rule, #D8D2BF);
+  border-left: 3px solid var(--lc-green, #1E6A50);
+  border-radius: 0 12px 12px 0;
+  background: color-mix(in oklab, var(--lc-green, #1E6A50) 5%, transparent);
+}
+.lab-poe:focus { outline: 2px solid color-mix(in oklab, var(--lc-green, #1E6A50) 55%, transparent); outline-offset: 2px; }
+.lab-poe-kicker { margin: 0 0 4px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--lc-ink-2, #58544A); }
+.lab-poe-q { margin: 0 0 8px; font-size: 14px; line-height: 1.35; color: var(--lc-ink, #1b1914); }
+.lab-poe-options { display: grid; gap: 6px; }
+.lab-poe-opt {
+  display: block;
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 12px 8px 34px;
+  position: relative;
+  text-align: left;
+  font: inherit;
+  font-size: 13px;
+  color: var(--lc-ink, #1b1914);
+  background: var(--lc-paper, #FBF8F1);
+  border: 1px solid var(--lc-rule, #D8D2BF);
+  border-radius: 10px;
+  cursor: pointer;
+}
+.lab-poe-opt::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  margin-top: -7px;
+  border: 1.5px solid var(--lc-ink-2, #58544A);
+  border-radius: 50%;
+}
+.lab-poe-opt.is-on { border-color: var(--lc-green, #1E6A50); box-shadow: inset 0 0 0 1px var(--lc-green, #1E6A50); }
+.lab-poe-opt.is-on::before { border-color: var(--lc-green, #1E6A50); background: radial-gradient(circle, var(--lc-green, #1E6A50) 0 3.5px, transparent 4px); }
+.lab-poe-opt:focus-visible { outline: 2px solid var(--lc-green, #1E6A50); outline-offset: 2px; }
+.lab-poe-hint, .lab-poe-note { margin: 6px 0 0; font-size: 12.5px; color: var(--lc-ink-2, #58544A); }
+.lab-poe-compare { margin: 0 0 6px; font-size: 13px; color: var(--lc-ink, #1b1914); }
+.lab-poe-verdict { margin: 0 0 8px; font-size: 13px; font-weight: 650; }
+.lab-poe-verdict.is-match { color: var(--lc-green, #1E6A50); }
+.lab-poe-verdict.is-miss, .lab-poe-verdict.is-unsure { color: var(--lc-ink, #1b1914); }
+.lab-poe-explain, .lab-poe-key, .lab-poe-misc { margin: 0 0 8px; font-size: 13px; color: var(--lc-ink-2, #58544A); }
+.lab-poe-key strong, .lab-poe-misc strong { color: var(--lc-ink, #1b1914); }
+.lab-poe-summary { margin: 12px 0; padding: 12px 14px; border: 1px solid var(--lc-rule, #D8D2BF); border-radius: 12px; }
+.lab-poe-summary h3 { margin: 0 0 6px; font-size: 14px; color: var(--lc-ink, #1b1914); }
+.lab-poe-summary p { margin: 0 0 6px; font-size: 13px; color: var(--lc-ink, #1b1914); }
+.lab-poe-summary ul { margin: 6px 0 0; padding-left: 18px; }
+.lab-poe-summary li { margin: 6px 0; font-size: 13px; color: var(--lc-ink, #1b1914); }
+.lab-poe-summary li span { display: block; color: var(--lc-ink-2, #58544A); }
+.lab-poe-copied { align-self: center; font-size: 12.5px; color: var(--lc-ink-2, #58544A); }
+.lab-profile { margin: 0; }
+.lab-profile svg { display: block; width: 100%; max-width: 260px; height: auto; }
+.lab-profile-axis { fill: none; stroke: var(--lc-rule, #D8D2BF); stroke-width: 1.2; }
+.lab-profile-line { fill: none; stroke: var(--lc-green, #1E6A50); stroke-width: 2.2; stroke-linejoin: round; }
+.lab-profile-line.is-after { stroke-dasharray: 4 4; opacity: .7; }
+.lab-profile text { font-size: 10px; fill: var(--lc-ink-2, #58544A); }
+.lab-profile figcaption { font-size: 12px; color: var(--lc-ink-3, #8E8978); }
 @keyframes lab-wave {
   0%, 100% { transform: translateX(0); }
   50% { transform: translateX(7%); }

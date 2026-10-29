@@ -2,7 +2,18 @@
 (function () {
   'use strict';
 
-  var TABS = ['overview', 'profile', 'security', 'plan', 'preferences', 'chemistry'];
+  var TABS = ['overview', 'profile', 'security', 'plan', 'preferences', 'chemistry', 'data'];
+  /* The server accepts either phrase (netlify/functions/account-delete.mjs). */
+  var CONFIRM_PHRASES = { en: 'DELETE', pt: 'EXCLUIR' };
+  /* After deletion the device-only work goes too: every key of
+     src/core/storage/storage-policy.js that is not a preference (theme,
+     language, consent… describe the device, not the person). Keys ending in
+     '-' or ':' are prefixes. tools/test-account-delete.mjs keeps this list
+     equal to the registry. */
+  var LOCAL_DATA_KEYS = {
+    local: ['atomurus-compare-queue', 'atomurus-lab-v1', 'atomurus-trail-progress', 'atomurus-auth-sync', 'atomurus-cache:'],
+    session: ['atomurus-guest-lab-views', 'atomurus-iso-tab', 'atomurus-iso-tab-', 'atomurus-iso-group']
+  };
   var COPY = {
     en: {
       title: 'Account',
@@ -60,7 +71,38 @@
       active: 'Active',
       wontRenew: 'Your subscription will not renew.',
       cancelUntil: 'Your subscription will not renew. Pro access until {date}.',
-      cancelNoDate: 'Your subscription will not renew.'
+      cancelNoDate: 'Your subscription will not renew.',
+      data: 'My data',
+      dataBody: 'Download a copy of what Atomurus keeps about your account: profile, plan status, Study Sets, cards, progress, review history and saved Lab sessions.',
+      dataNotIncluded: 'Not included: payment details (kept by Stripe) and server logs.',
+      exportBtn: 'Download my data (JSON)',
+      exporting: 'Preparing your file…',
+      exportDone: 'Download started.',
+      exportError: 'The file could not be prepared right now. Try again in a few minutes.',
+      exportLimited: 'You can download your data 3 times per hour. Try again later.',
+      exportTooLarge: 'Your data is larger than the 5 MB online limit. Write to contato@atomurus.com and we will send it to you.',
+      sessionExpired: 'Your session has expired. Sign in again.',
+      deleteTitle: 'Delete account',
+      deleteBody: 'Deleting the account removes it for good. This cannot be undone.',
+      deleteSubscription: 'You have a subscription that will renew. Cancel it in Plan & Billing first; then you can delete the account.',
+      deleteOpen: 'Delete account…',
+      deleteDialogTitle: 'Delete your Atomurus account?',
+      deleteWhat: 'This deletes, for good:',
+      deleteItemProfile: 'your account and profile (name, username, e-mail);',
+      deleteItemStudy: 'Study Sets, cards, progress and review history;',
+      deleteItemLab: 'saved Lab and solver sessions;',
+      deleteItemDevice: 'Lab work and caches saved on this device.',
+      deleteKept: 'Payment records are kept by Stripe and are not deleted here. Theme and language on this device stay.',
+      deleteExportFirst: 'Download your data first',
+      deletePassword: 'Current password',
+      deleteConfirmLabel: 'Type {when} to confirm',
+      cancel: 'Cancel',
+      deleteSubmit: 'Delete account',
+      deleting: 'Deleting…',
+      deleteWrongPassword: 'The password is not correct.',
+      deletePhraseError: 'Type the confirmation word exactly.',
+      deleteLimited: 'Too many attempts. Try again tomorrow.',
+      deleteFailed: 'The account could not be deleted right now. Nothing was removed; try again later.'
     },
     pt: {
       title: 'Conta',
@@ -118,7 +160,38 @@
       active: 'Ativo',
       wontRenew: 'Sua assinatura não será renovada.',
       cancelUntil: 'Sua assinatura não será renovada. Acesso Pro até {date}.',
-      cancelNoDate: 'Sua assinatura não será renovada.'
+      cancelNoDate: 'Sua assinatura não será renovada.',
+      data: 'Meus dados',
+      dataBody: 'Baixe uma cópia do que o Atomurus guarda sobre a sua conta: perfil, situação do plano, Study Sets, cartões, progresso, histórico de revisões e sessões salvas do Lab.',
+      dataNotIncluded: 'Não incluídos: dados de pagamento (ficam com a Stripe) e registros do servidor.',
+      exportBtn: 'Baixar meus dados (JSON)',
+      exporting: 'Preparando o arquivo…',
+      exportDone: 'O download começou.',
+      exportError: 'Não foi possível preparar o arquivo agora. Tente de novo em alguns minutos.',
+      exportLimited: 'Você pode baixar seus dados 3 vezes por hora. Tente mais tarde.',
+      exportTooLarge: 'Seus dados passam do limite de 5 MB para download direto. Escreva para contato@atomurus.com e enviaremos o arquivo.',
+      sessionExpired: 'Sua sessão expirou. Entre de novo.',
+      deleteTitle: 'Excluir conta',
+      deleteBody: 'Excluir a conta a remove de vez. Não é possível desfazer.',
+      deleteSubscription: 'Você tem uma assinatura que será renovada. Cancele-a antes em Plano e cobrança; depois é possível excluir a conta.',
+      deleteOpen: 'Excluir conta…',
+      deleteDialogTitle: 'Excluir sua conta Atomurus?',
+      deleteWhat: 'Isto apaga, de vez:',
+      deleteItemProfile: 'sua conta e o perfil (nome, nome de usuário, e-mail);',
+      deleteItemStudy: 'Study Sets, cartões, progresso e histórico de revisões;',
+      deleteItemLab: 'sessões salvas do Lab e do solver;',
+      deleteItemDevice: 'o trabalho do Lab e os caches guardados neste dispositivo.',
+      deleteKept: 'Os registros de pagamento ficam com a Stripe e não são apagados aqui. Tema e idioma deste dispositivo continuam.',
+      deleteExportFirst: 'Baixe seus dados antes',
+      deletePassword: 'Senha atual',
+      deleteConfirmLabel: 'Digite {when} para confirmar',
+      cancel: 'Cancelar',
+      deleteSubmit: 'Excluir conta',
+      deleting: 'Excluindo…',
+      deleteWrongPassword: 'A senha não está correta.',
+      deletePhraseError: 'Digite a palavra de confirmação exatamente.',
+      deleteLimited: 'Muitas tentativas. Tente de novo amanhã.',
+      deleteFailed: 'Não foi possível excluir a conta agora. Nada foi removido; tente mais tarde.'
     }
   };
 
@@ -278,6 +351,239 @@
       '<a class="ws-btn ws-btn-primary" href="/pricing">' + esc(t('upgrade')) + '</a>';
   }
 
+  function phrase() {
+    return CONFIRM_PHRASES[lang()] || CONFIRM_PHRASES.en;
+  }
+
+  function subscriptionWillRenew(user) {
+    var logic = window.AtomurusWorkspace || {};
+    var state = logic.accountPlanState ? logic.accountPlanState(user) : { kind: 'free', canManage: false };
+    return Boolean(state.canManage && state.kind !== 'cancel_scheduled');
+  }
+
+  function dataBlock(user) {
+    return '<section class="ws-account-card" id="ac-data"><h2>' + esc(t('data')) + '</h2>' +
+      '<p>' + esc(t('dataBody')) + '</p>' +
+      '<p class="ui-field-hint">' + esc(t('dataNotIncluded')) + '</p>' +
+      '<p><button type="button" class="ws-btn ws-btn-primary" id="ac-export">' + esc(t('exportBtn')) + '</button></p>' +
+      '<p class="ac-status" id="ac-export-status" role="status" aria-live="polite"></p></section>' +
+      '<section class="ws-account-card ac-danger-zone" id="ac-delete"><h2>' + esc(t('deleteTitle')) + '</h2>' +
+      '<p>' + esc(t('deleteBody')) + '</p>' +
+      (subscriptionWillRenew(user)
+        ? '<p class="ui-alert ui-alert-warning" id="ac-delete-subscription">' + esc(t('deleteSubscription')) +
+          ' <a href="/account?tab=plan">' + esc(t('plan')) + '</a></p>'
+        : '') +
+      '<p><button type="button" class="ui-btn ui-btn-danger" id="ac-delete-open" aria-haspopup="dialog">' + esc(t('deleteOpen')) + '</button></p></section>';
+  }
+
+  function deleteDialog() {
+    return '<div class="ui-dialog-host" id="ac-delete-host" hidden>' +
+      '<div class="ui-dialog-backdrop"></div>' +
+      '<div class="ui-dialog" role="dialog" aria-modal="true" aria-labelledby="ac-delete-title" aria-describedby="ac-delete-desc">' +
+      '<h2 class="ui-dialog-title" id="ac-delete-title">' + esc(t('deleteDialogTitle')) + '</h2>' +
+      '<div class="ui-dialog-body" id="ac-delete-desc"><p>' + esc(t('deleteWhat')) + '</p><ul class="ac-delete-list">' +
+      '<li>' + esc(t('deleteItemProfile')) + '</li><li>' + esc(t('deleteItemStudy')) + '</li>' +
+      '<li>' + esc(t('deleteItemLab')) + '</li><li>' + esc(t('deleteItemDevice')) + '</li></ul>' +
+      '<p>' + esc(t('deleteKept')) + '</p>' +
+      '<p><button type="button" class="ac-linklike" id="ac-delete-export">' + esc(t('deleteExportFirst')) + '</button></p></div>' +
+      '<form class="ac-delete-form" id="ac-delete-form" novalidate>' +
+      '<div class="ui-field"><label class="ui-label" for="ac-delete-password">' + esc(t('deletePassword')) + '</label>' +
+      '<input class="ui-input" type="password" id="ac-delete-password" name="password" autocomplete="current-password" required></div>' +
+      '<div class="ui-field"><label class="ui-label" for="ac-delete-confirm">' + esc(t('deleteConfirmLabel', { when: phrase() })) + '</label>' +
+      '<input class="ui-input" type="text" id="ac-delete-confirm" name="confirm" autocomplete="off" autocapitalize="characters" spellcheck="false" required></div>' +
+      '<p class="ui-field-error" id="ac-delete-error" role="alert" hidden></p>' +
+      '<div class="ui-dialog-actions">' +
+      '<button type="button" class="ui-btn ui-btn-ghost" id="ac-delete-cancel">' + esc(t('cancel')) + '</button>' +
+      '<button type="submit" class="ui-btn ui-btn-danger" id="ac-delete-submit" disabled>' + esc(t('deleteSubmit')) + '</button>' +
+      '</div></form></div></div>';
+  }
+
+  function fileNameFrom(res) {
+    var header = (res.headers && res.headers.get('content-disposition')) || '';
+    var match = /filename="([^"]+)"/.exec(header);
+    return match ? match[1] : 'atomurus-dados.json';
+  }
+
+  function exportMessage(status) {
+    if (status === 401) return t('sessionExpired');
+    if (status === 429) return t('exportLimited');
+    if (status === 413) return t('exportTooLarge');
+    return t('exportError');
+  }
+
+  function downloadData(button, statusNode) {
+    if (button.disabled) return Promise.resolve();
+    button.disabled = true;
+    button.setAttribute('aria-busy', 'true');
+    statusNode.className = 'ac-status';
+    statusNode.textContent = t('exporting');
+    return fetch('/api/account/export', { credentials: 'include', headers: { Accept: 'application/json' } })
+      .then(function (res) {
+        if (!res.ok) {
+          var err = new Error('export');
+          err.status = res.status;
+          throw err;
+        }
+        var name = fileNameFrom(res);
+        return res.blob().then(function (blob) {
+          var url = URL.createObjectURL(blob);
+          var link = document.createElement('a');
+          link.href = url;
+          link.download = name;
+          link.hidden = true;
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+          statusNode.textContent = t('exportDone');
+        });
+      })
+      .catch(function (err) {
+        statusNode.className = 'ac-status is-error';
+        statusNode.textContent = exportMessage(err && err.status);
+      })
+      .then(function () {
+        button.disabled = false;
+        button.removeAttribute('aria-busy');
+      });
+  }
+
+  function clearLocalData() {
+    [['local', 'localStorage'], ['session', 'sessionStorage']].forEach(function (pair) {
+      var store;
+      try { store = window[pair[1]]; } catch (e) { return; }
+      if (!store) return;
+      var names = LOCAL_DATA_KEYS[pair[0]];
+      var doomed = [];
+      for (var i = 0; i < store.length; i += 1) {
+        var key = store.key(i);
+        if (!key) continue;
+        var hit = names.some(function (name) {
+          var prefix = /[-:]$/.test(name);
+          return prefix ? key.indexOf(name) === 0 : key === name;
+        });
+        if (hit) doomed.push(key);
+      }
+      doomed.forEach(function (key) { try { store.removeItem(key); } catch (e) {} });
+    });
+  }
+
+  function deleteMessage(status, code) {
+    if (status === 401 && code === 'reauth_failed') return t('deleteWrongPassword');
+    if (status === 401) return t('sessionExpired');
+    if (status === 409) return t('deleteSubscription');
+    if (status === 429) return t('deleteLimited');
+    if (status === 400 && code === 'confirm_phrase') return t('deletePhraseError');
+    return t('deleteFailed');
+  }
+
+  function bindDeleteDialog(opener) {
+    var host = document.getElementById('ac-delete-host');
+    if (!host || !opener) return;
+    var dialog = host.querySelector('.ui-dialog');
+    var form = document.getElementById('ac-delete-form');
+    var password = document.getElementById('ac-delete-password');
+    var confirm = document.getElementById('ac-delete-confirm');
+    var submit = document.getElementById('ac-delete-submit');
+    var error = document.getElementById('ac-delete-error');
+    var busy = false;
+
+    function valid() {
+      return Boolean(password.value) && confirm.value.trim() === phrase();
+    }
+    function update() {
+      submit.disabled = busy || !valid();
+    }
+    function close() {
+      if (busy) return;
+      host.classList.remove('is-open');
+      host.hidden = true;
+      document.body.classList.remove('ui-dialog-open');
+      password.value = '';
+      confirm.value = '';
+      error.hidden = true;
+      update();
+      opener.focus();
+    }
+    function open() {
+      host.hidden = false;
+      host.classList.add('is-open');
+      document.body.classList.add('ui-dialog-open');
+      password.focus();
+    }
+    function fail(message) {
+      error.textContent = message;
+      error.hidden = false;
+    }
+
+    opener.addEventListener('click', open);
+    document.getElementById('ac-delete-cancel').addEventListener('click', close);
+    host.addEventListener('click', function (event) {
+      if (event.target.classList.contains('ui-dialog-backdrop')) close();
+    });
+    host.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        close();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      var items = Array.prototype.filter.call(dialog.querySelectorAll('button, [href], input'), function (el) { return !el.disabled; });
+      if (!items.length) return;
+      var first = items[0];
+      var last = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    });
+    password.addEventListener('input', update);
+    confirm.addEventListener('input', update);
+    document.getElementById('ac-delete-export').addEventListener('click', function () {
+      var button = document.getElementById('ac-export');
+      var status = document.getElementById('ac-export-status');
+      if (button && status) downloadData(button, status);
+    });
+
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      if (busy || !valid()) return;
+      busy = true;
+      update();
+      error.hidden = true;
+      submit.textContent = t('deleting');
+      fetch('/api/account/delete', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ password: password.value, confirm: confirm.value.trim() })
+      }).then(function (res) {
+        return res.json().catch(function () { return {}; }).then(function (data) {
+          if (!res.ok || !data || data.ok !== true) {
+            var err = new Error('delete');
+            err.status = res.status;
+            err.code = data && data.code;
+            throw err;
+          }
+        });
+      }).then(function () {
+        password.value = '';
+        var signOut = window.AtomurusAuth && typeof window.AtomurusAuth.logout === 'function'
+          ? Promise.resolve(window.AtomurusAuth.logout()).catch(function () {})
+          : Promise.resolve();
+        return signOut.then(function () {
+          clearLocalData();
+          location.replace('/?notice=account-deleted');
+        });
+      }).catch(function (err) {
+        busy = false;
+        submit.textContent = t('deleteSubmit');
+        password.value = '';
+        update();
+        fail(deleteMessage(err && err.status, err && err.code));
+        password.focus();
+      });
+    });
+  }
+
   function renderGuest(node) {
     node.innerHTML =
       '<p class="ws-kicker">Atomurus</p>' +
@@ -336,6 +642,8 @@
         }).join('') +
         '</div>' +
         '<p class="ws-lede">' + esc(t('labSettings')) + ' <a href="/config">' + esc(t('openLabSettings')) + '</a></p></section>';
+    } else if (tab === 'data') {
+      body = dataBlock(user);
     } else {
       body = '<section class="ws-account-card"><h2>' + esc(displayName(user)) + '</h2>' +
         '<p>@' + esc(user.username || '—') + '</p><p>' + esc(user.email || '—') + '</p></section>' +
@@ -345,7 +653,8 @@
         '<a href="/account?tab=security">' + esc(t('security')) + '</a>' +
         '<a href="/account?tab=plan">' + esc(t('plan')) + '</a>' +
         '<a href="/account?tab=preferences">' + esc(t('preferences')) + '</a>' +
-        '<a href="/account?tab=chemistry">' + esc(t('chemistry')) + '</a></nav>' +
+        '<a href="/account?tab=chemistry">' + esc(t('chemistry')) + '</a>' +
+        '<a href="/account?tab=data">' + esc(t('data')) + '</a></nav>' +
         '<p><a class="ws-btn ws-btn-secondary" href="/app">' + esc(t('workspace')) + '</a></p>';
     }
 
@@ -355,6 +664,16 @@
       '<p class="ws-lede">' + esc(t('lede')) + '</p>' +
       '<p id="ac-banner" class="ws-lede" hidden></p>' +
       '<div class="ws-account-tabs" role="tablist">' + tabs + '</div>' + body;
+
+    var oldHost = document.getElementById('ac-delete-host');
+    if (oldHost) oldHost.remove();
+    if (tab === 'data') {
+      document.body.insertAdjacentHTML('beforeend', deleteDialog());
+      var exportBtn = document.getElementById('ac-export');
+      var exportStatus = document.getElementById('ac-export-status');
+      if (exportBtn) exportBtn.addEventListener('click', function () { downloadData(exportBtn, exportStatus); });
+      bindDeleteDialog(document.getElementById('ac-delete-open'));
+    }
 
     var portal = document.getElementById('ws-billing-portal');
     if (portal) portal.addEventListener('click', function () { openBillingPortal(portal); });
@@ -426,5 +745,12 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
 
-  window.AtomurusAccount = { planBlock: planBlock, billingPortalMessage: billingPortalMessage };
+  window.AtomurusAccount = {
+    planBlock: planBlock,
+    billingPortalMessage: billingPortalMessage,
+    clearLocalData: clearLocalData,
+    LOCAL_DATA_KEYS: LOCAL_DATA_KEYS,
+    CONFIRM_PHRASES: CONFIRM_PHRASES,
+    COPY: COPY
+  };
 })();

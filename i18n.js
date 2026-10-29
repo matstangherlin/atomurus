@@ -514,7 +514,12 @@
     document.querySelectorAll('[data-i18n-toggle]').forEach(function (btn) {
       const refresh = function () {
         const label = btn.querySelector('[data-i18n-toggle-label]') || btn;
-        label.textContent = I18N.otherLabel();
+        const code = I18N.otherLabel();
+        label.textContent = code;
+        // WCAG 2.5.3 (label in name): the accessible name starts with the
+        // visible code, e.g. «PT — Switch language» / «EN — Trocar idioma».
+        const action = I18N.t('common.langToggle');
+        if (action) btn.setAttribute('aria-label', code + ' — ' + action);
       };
       refresh();
       btn.addEventListener('click', function (e) {

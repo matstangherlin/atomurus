@@ -104,8 +104,10 @@
     document.documentElement.style.setProperty('--el-sym-size', szValues[sz].sym);
   })();
 </script>
+<link rel="stylesheet" href="/assets/print.css?v=202610281500" media="print">
 </head>
 <body class="ps-body" data-pt-tab="comparar" data-compare-canonical="pro-lab">
+<a class="skip-link" href="#main-content" data-i18n="common.skipToContent">Skip to content</a>
 
 <!-- ════════════ SIDEBAR ════════════ -->
 <div class="ps-shell" id="ps-shell">
@@ -148,14 +150,14 @@
         <line x1="8.7" y1="8.7" x2="11.5" y2="11.5" stroke="var(--text-3)" stroke-width="1.4" stroke-linecap="round"/>
       </svg>
       <input id="search-input" type="text" placeholder="Search element (name or Z)…"
-             data-i18n-attr="placeholder:ptable.searchPlaceholder"
-             oninput="doSearch(this.value)" autocomplete="off">
+             data-i18n-attr="placeholder:ptable.searchPlaceholder; aria-label:ptable.searchAria"
+             oninput="doSearch(this.value)" autocomplete="off" aria-label="Search element">
     </div>
 
     <!-- Language toggle -->
     <button class="theme-btn" data-i18n-toggle
-            data-i18n-attr="aria-label:common.langToggle; title:common.langToggle"
-            aria-label="Switch language" title="Switch language"
+            data-i18n-attr="title:common.langToggle"
+            aria-label="PT — Switch language" title="Switch language"
             style="margin-left:8px;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;width:auto;min-width:32px;padding:0 8px;">
       <span data-i18n-toggle-label>PT</span>
     </button>
@@ -219,7 +221,7 @@
     </a>
   </div>
 </aside>
-<main class="main">
+<main class="main" id="main-content" tabindex="-1">
 
   <!-- Mobile scroll hint for periodic table -->
   <div class="mobile-scroll-hint" id="mobile-scroll-hint" style="display:none;margin:8px 16px 0;">
@@ -393,7 +395,7 @@
               <div class="cmp-picker-title" id="cmp-picker-title" data-i18n="ptable.cmpPickerTitle">Select Element</div>
               <div class="cmp-picker-sub" data-i18n="ptable.cmpPickerSub">Click the desired element · ESC to cancel</div>
             </div>
-            <input type="text" class="cmp-picker-search" id="cmp-picker-search" placeholder="Search by name, symbol, Z…" data-i18n-attr="placeholder:ptable.cmpPickerSearch" oninput="filterCompPicker()">
+            <input type="text" class="cmp-picker-search" id="cmp-picker-search" aria-labelledby="cmp-picker-title" placeholder="Search by name, symbol, Z…" data-i18n-attr="placeholder:ptable.cmpPickerSearch" oninput="filterCompPicker()">
             <button class="cmp-picker-close" onclick="closeCompPicker()" aria-label="Close" data-i18n-attr="aria-label:ptable.cmpPickerClose">×</button>
           </div>
           <div class="cmp-picker-grid" id="cmp-picker-grid"></div>
@@ -464,10 +466,10 @@
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" fill="currentColor" opacity=".8"/><rect x="8" y="1" width="5" height="5" rx="1" fill="currentColor" opacity=".5"/><rect x="1" y="8" width="5" height="5" rx="1" fill="currentColor" opacity=".5"/><rect x="8" y="8" width="5" height="5" rx="1" fill="currentColor" opacity=".3"/></svg> <span data-i18n="config.ptable">Periodic Table</span> </div>
           <div class="settings-row">
             <div class="settings-row-info">
-              <div class="settings-row-label" data-i18n="config.viewmode">View mode</div>
+              <div class="settings-row-label" id="set-viewmode-label" data-i18n="config.viewmode">View mode</div>
               <div class="settings-row-desc" data-i18n="config.viewmodeDesc">By color category, or heatmap by physical property.</div>
             </div>
-            <select class="settings-select" onchange="setHeatmap(this.value)" id="heatmap-select">
+            <select class="settings-select" onchange="setHeatmap(this.value)" id="heatmap-select" aria-labelledby="set-viewmode-label">
               <option value="category" data-i18n="config.viewCategory">By Category</option>
               <option value="electronegativity" data-i18n="config.viewEneg">Electronegativity</option>
               <option value="atomic_radius" data-i18n="config.viewRadius">Atomic Radius</option>
@@ -501,10 +503,10 @@
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M1.5 5h11M1.5 9h11M7 1.5c-2 2-2 9 0 11M7 1.5c2 2 2 9 0 11" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg> <span data-i18n="config.langSection">Language</span> </div>
           <div class="settings-row">
             <div class="settings-row-info">
-              <div class="settings-row-label" data-i18n="config.langLabel">Interface language</div>
+              <div class="settings-row-label" id="set-lang-label" data-i18n="config.langLabel">Interface language</div>
               <div class="settings-row-desc" data-i18n="config.langDesc">Change the language of the entire interface.</div>
             </div>
-            <select class="settings-select" onchange="if(window.I18N)I18N.setLang(this.value);else setLanguage(this.value);" id="lang-select">
+            <select class="settings-select" onchange="if(window.I18N)I18N.setLang(this.value);else setLanguage(this.value);" id="lang-select" aria-labelledby="set-lang-label">
               <option value="en" data-i18n="config.langOptEn">🇺🇸 English</option>
               <option value="pt" data-i18n="config.langOptPt">🇧🇷 Portuguese</option>
             </select>
@@ -575,8 +577,8 @@
 </div>
 
 <!-- ════════════ ELEMENT MODAL ════════════ -->
-<div class="overlay" id="overlay" onclick="overlayClick(event)">
-  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="m-nm">
+<div class="overlay" id="overlay" onclick="overlayClick(event)" aria-hidden="true" inert>
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="m-nm" aria-label="Element details" data-i18n-attr="aria-label:ptable.mDialogAria">
 
     <div class="modal-l" id="modal-l">
       <div class="modal-z"  id="m-z"></div>
@@ -755,6 +757,7 @@
 <script src="../ensure-elements-en.js?v=202608041630" defer></script>
 <script src="../element-applications-data.js?v=202608041630"></script>
 <script src="../periodic-table.js?v=202609101700" defer></script>
+<script src="../assets/pt/pt-compare.js?v=202609101700" defer></script>
 
 <!-- ── Download libs ── -->
 <script type="text/javascript">

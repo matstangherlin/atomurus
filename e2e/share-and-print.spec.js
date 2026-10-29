@@ -1,0 +1,166 @@
+// Prompt 26 — B01 (share with state, keyboard menu) and B02 (print stylesheet).
+const { test, expect } = require('@playwright/test');
+const { isolate } = require('./pt-pages-helpers');
+
+test('a shared ?formula= opens the molar mass already calculated, in EN and PT', async ({ context, page }) => {
+  await isolate(context, 'en');
+  await page.goto('/calculators.html?formula=H2SO4');
+  await expect(page.locator('#mm-input')).toHaveValue('H2SO4');
+  await expect(page.locator('#mm-result-body .calc-result-v.big')).toContainText('98.07');
+
+  const pt = await context.newPage();
+  await pt.addInitScript(() => { try { localStorage.setItem('atomurus-lang', 'pt'); } catch (_err) {} });
+  await pt.goto('/calculators.pt.html?formula=H2SO4');
+  await expect(pt.locator('#mm-result-body .calc-result-v.big')).toContainText('98,07');
+});
+
+test('the default formula does not touch the URL; a calculation writes ?formula= and the share links carry it', async ({ context, page }) => {
+  await isolate(context, 'en');
+  await page.goto('/calculators.html?ref=test');
+  await expect(page.locator('#mm-result-body .calc-result-v.big')).toBeVisible();
+  expect(new URL(page.url()).searchParams.get('formula')).toBeNull();
+  const historyLength = await page.evaluate(() => history.length);
+
+  await page.locator('#mm-input').fill('NaCl');
+  await page.locator('#tab-molar .calc-btn-run').click();
+  await expect(page.locator('#mm-result-body .calc-result-v.big')).toContainText('58.44');
+  const url = new URL(page.url());
+  expect(url.searchParams.get('formula')).toBe('NaCl');
+  expect(url.searchParams.get('ref')).toBe('test');
+  expect(await page.evaluate(() => history.length)).toBe(historyLength);
+
+  const host = page.locator('.share-host').first();
+  await host.hover();
+  const whatsapp = await host.locator('a[data-channel="whatsapp"]').getAttribute('href');
+  const shared = decodeURIComponent(whatsapp);
+  expect(shared).toContain('formula=NaCl');
+  expect(shared).toContain('utm_source=whatsapp');
+  const telegram = decodeURIComponent(await host.locator('a[data-channel="telegram"]').getAttribute('href'));
+  expect(telegram).toContain('formula=NaCl');
+  expect(telegram).toContain('utm_source=telegram');
+});
+
+test('an unsafe ?formula= is ignored', async ({ context, page }) => {
+  await isolate(context, 'en');
+  await page.goto('/calculators.html?formula=' + encodeURIComponent('<img src=x onerror=alert(1)>'));
+  await expect(page.locator('#mm-input')).toHaveValue('H2SO4');
+  await expect(page.locator('#mm-result-body img')).toHaveCount(0);
+});
+
+test('share menu: keyboard opens it, arrows move, Esc closes it and focus returns', async ({ context, page }) => {
+  await isolate(context, 'en');
+  await page.goto('/calculators.html');
+  const host = page.locator('.share-host').first();
+  const menu = host.locator('.share-menu');
+  await host.focus();
+  await expect(host).toHaveAttribute('aria-expanded', 'true');
+  await expect(menu).toHaveCSS('visibility', 'visible');
+
+  await page.keyboard.press('Escape');
+  await expect(host).toHaveAttribute('aria-expanded', 'false');
+  await expect(host).toBeFocused();
+  await expect.poll(() => menu.evaluate((el) => getComputedStyle(el).visibility)).toBe('hidden');
+
+  await page.keyboard.press('Enter');
+  await expect(host).toHaveAttribute('aria-expanded', 'true');
+  await expect(host.locator('[role="menuitem"]').first()).toBeFocused();
+  await page.keyboard.press('ArrowDown');
+  await expect(host.locator('[role="menuitem"]').nth(1)).toBeFocused();
+  await page.keyboard.press('ArrowUp');
+  await page.keyboard.press('ArrowUp');
+  await expect(host.locator('[role="menuitem"]').last()).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(host).toBeFocused();
+  await expect(host).toHaveAttribute('aria-expanded', 'false');
+});
+
+// ── B02: print ───────────────────────────────────────────────────────────────
+const PRINT_TARGETS = [
+  { url: '/periodic-table.html', maxPages: 1, landscape: true },
+  { url: '/periodic-table/ferrum.html', maxPages: 6 },
+  { url: '/explore/what-is-an-atom.html', maxPages: 12 },
+  { url: '/calculators.html', maxPages: 3 }
+];
+const pdfPages = (buf) => (buf.toString('latin1').match(/\/Type\s*\/Page(?!s)/g) || []).length;
+
+for (const target of PRINT_TARGETS) {
+  test(`print ${target.url}: no site chrome, nothing clipped, ≤ ${target.maxPages} page(s)`, async ({ context, page }) => {
+    await isolate(context, 'en');
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto(target.url);
+    await page.waitForLoadState('load');
+    await page.emulateMedia({ media: 'print' });
+    const hidden = await page.evaluate(() => ['.topbar', '.lc-topnav', '#ws-sidebar', '.share-host', '.ps-account', '.aco-manage-wrap', '.skip-link']
+      .map((sel) => [sel, [...document.querySelectorAll(sel)].every((el) => getComputedStyle(el).display === 'none')]));
+    for (const [sel, ok] of hidden) expect(ok, `${sel} is hidden in print`).toBe(true);
+    const flow = await page.evaluate(() => ({
+      body: getComputedStyle(document.body).overflow,
+      main: getComputedStyle(document.querySelector('main')).overflow,
+      width: document.documentElement.scrollWidth <= window.innerWidth
+    }));
+    expect(flow.body).toBe('visible');
+    expect(flow.main).toBe('visible');
+    expect(flow.width).toBe(true);
+    const pdf = await page.pdf({ preferCSSPageSize: true, printBackground: true });
+    const pages = pdfPages(pdf);
+    expect(pages).toBeGreaterThan(0);
+    expect(pages).toBeLessThanOrEqual(target.maxPages);
+    if (target.landscape) {
+      const box = /\/MediaBox\s*\[\s*0\s+0\s+([\d.]+)\s+([\d.]+)\s*\]/.exec(pdf.toString('latin1'));
+      expect(Number(box[1])).toBeGreaterThan(Number(box[2]));
+    }
+  });
+}
+
+// ── B03: the 404 page at any depth, in the visitor's language ───────────────
+const fs = require('fs');
+const path = require('path');
+const NOT_FOUND = fs.readFileSync(path.join(__dirname, '..', '404.html'), 'utf8');
+
+for (const [lang, visible, hidden] of [['pt', 'Esta página saiu', 'This page drifted'], ['en', 'This page drifted', 'Esta página saiu']]) {
+  test(`404 served at /element/999 is styled and in ${lang.toUpperCase()}`, async ({ context, page }) => {
+    await isolate(context, lang);
+    // Netlify serves 404.html for an unknown path, keeping the URL.
+    await context.route(/\/(element\/999|qualquer\/coisa)$/, (route) => route.fulfill({ status: 404, contentType: 'text/html; charset=utf-8', body: NOT_FOUND }));
+    const failed = [];
+    page.on('response', (res) => { if (res.status() >= 400 && !/\/element\/999$|\/api\//.test(res.url())) failed.push(res.status() + ' ' + res.url()); });
+    const ads = [];
+    page.on('request', (req) => { if (/googlesyndication|doubleclick|googletagmanager/.test(req.url())) ads.push(req.url()); });
+    await page.goto('/element/999');
+    await page.waitForLoadState('load');
+    expect(failed).toEqual([]);
+    await expect(page.locator('h1', { hasText: visible })).toBeVisible();
+    await expect(page.locator('h1', { hasText: hidden })).toBeHidden();
+    // Styled: the stylesheets resolved from the root, so the doc layout applies.
+    const styled = await page.evaluate(() => [...document.styleSheets].filter((s) => s.href && /docs\.css|public-shell\.css|critical-lab\.css/.test(s.href)).length);
+    expect(styled).toBe(3);
+    expect(await page.locator('.lc-doc-title').first().evaluate((el) => getComputedStyle(el).fontSize)).not.toBe('32px');
+    await expect(page.locator(`.nf-lang[data-nf-lang="${lang}"] a`, { hasText: lang === 'pt' ? 'Tabela periódica' : 'Periodic Table' }).first()).toHaveAttribute('href', /\/periodic-table/);
+    expect(ads, 'no ad requests without consent').toEqual([]);
+  });
+}
+
+test('404 without JavaScript shows both languages', async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  await context.route(/\/qualquer\/coisa$/, (route) => route.fulfill({ status: 404, contentType: 'text/html; charset=utf-8', body: NOT_FOUND }));
+  const page = await context.newPage();
+  await page.goto('/qualquer/coisa');
+  await expect(page.locator('h1', { hasText: 'Esta página saiu' })).toBeVisible();
+  await expect(page.locator('h1', { hasText: 'This page drifted' })).toBeVisible();
+  await context.close();
+});
+
+// ── B04: legal pages in one language each, after i18n.js has run too ────────
+for (const name of ['privacy', 'terms', 'contact']) {
+  for (const lang of ['pt', 'en']) {
+    test(`${name} in ${lang.toUpperCase()}: no block in the other language once the page has run`, async ({ context, page }) => {
+      const { lintHtml } = await import('../tools/lint-lang-mix.mjs');
+      await isolate(context, lang);
+      await page.goto(lang === 'pt' ? `/${name}.pt.html` : `/${name}.html`);
+      await page.waitForLoadState('load');
+      await expect(page.locator('html')).toHaveAttribute('lang', lang === 'pt' ? 'pt-BR' : /^en/);
+      const result = lintHtml(await page.content(), { maxWords: 0 });
+      expect(result.foreign.map((b) => `${b.where} ${b.text}`)).toEqual([]);
+    });
+  }
+}

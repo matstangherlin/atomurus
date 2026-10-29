@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html data-ps-chrome="1" lang="pt-BR" data-theme="light">
+<head>
+<style>html[data-theme="dark"] #icon-theme-light,html[data-theme="light"] #icon-theme-dark{display:none!important}html[data-theme="dark"] #icon-theme-dark,html[data-theme="light"] #icon-theme-light{display:block!important}</style>
+<script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var q=new URLSearchParams(location.search);var p=q.get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem('atomurus-lang');var path=location.pathname;var isPt=/\.pt\.html$/i.test(path)||/\.pt$/i.test(path);if(!l&&isPt)l='pt';if(!l){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}if(l==='pt'){document.documentElement.lang='pt-BR';}else{document.documentElement.lang='en-US';}localStorage.setItem('atomurus-lang',l);var u=new URL(location.href);if(l==='pt'&&!isPt){if(/\.html$/i.test(path)){u.pathname=path.replace(/\.html$/i,'.pt.html');}else if(path.charAt(path.length-1)!=='/'){u.pathname=path+'.pt.html';}u.searchParams.set('lang','pt-BR');if(u.href!==location.href)location.replace(u.href);}else if(l==='en'&&isPt){if(/\.pt\.html$/i.test(path)){u.pathname=path.replace(/\.pt\.html$/i,'.html');}else{u.pathname=path.replace(/\.pt$/i,'');}u.searchParams.set('lang','en');if(u.href!==location.href)location.replace(u.href);}}catch(e){}})();</script>
+
+<meta charset="UTF-8">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1E6A50" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E0D0C" media="(prefers-color-scheme: dark)">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" type="image/png" href="../assets/atomurus-logo.png?v=202608041630">
+<link rel="apple-touch-icon" href="../assets/atomurus-logo.png?v=202608041630">
+
+<title>Conservação da massa: por que a massa total não muda numa reação | Atomurus</title>
+<meta name="description" content="A lei da conservação da massa: num sistema fechado, a massa dos reagentes é igual à massa dos produtos. Por que ela vale, por que os sistemas abertos parecem desrespeitá-la e como ela fundamenta as equações balanceadas.">
+<meta name="keywords" content="conservação da massa, lei da conservação da massa, sistema fechado, equação balanceada, estequiometria">
+<meta name="author" content="Atomurus">
+<meta property="og:title" content="Conservação da massa: por que a massa total não muda numa reação">
+<meta property="og:description" content="A lei da conservação da massa: num sistema fechado, a massa dos reagentes é igual à massa dos produtos. Por que ela vale, por que os sistemas abertos parecem desrespeitá-la e como ela fundamenta as equações balanceadas.">
+<meta property="og:image" content="https://atomurus.com/assets/og-explore.png?v=202608041630">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://atomurus.com/explore/conservation-of-mass?lang=pt-BR">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Atomurus">
+<meta property="article:published_time" content="2026-10-29">
+<meta property="article:section" content="Conceitos de Química">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Conservação da massa: por que a massa total não muda numa reação">
+<meta name="twitter:description" content="A lei da conservação da massa: num sistema fechado, a massa dos reagentes é igual à massa dos produtos. Por que ela vale, por que os sistemas abertos parecem desrespeitá-la e como ela fundamenta as equações balanceadas.">
+<meta name="twitter:image" content="https://atomurus.com/assets/og-explore.png?v=202608041630">
+<link rel="canonical" href="https://atomurus.com/explore/conservation-of-mass?lang=pt-BR">
+<link rel="alternate" hreflang="en" href="https://atomurus.com/explore/conservation-of-mass">
+<link rel="alternate" hreflang="pt-BR" href="https://atomurus.com/explore/conservation-of-mass?lang=pt-BR">
+<link rel="alternate" hreflang="x-default" href="https://atomurus.com/explore/conservation-of-mass">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Conservação da massa: por que a massa total não muda numa reação",
+      "description": "A lei da conservação da massa: num sistema fechado, a massa dos reagentes é igual à massa dos produtos. Por que ela vale, por que os sistemas abertos parecem desrespeitá-la e como ela fundamenta as equações balanceadas.",
+      "image": "https://atomurus.com/assets/og-explore.png",
+      "datePublished": "2026-10-29",
+      "dateModified": "2026-10-29",
+      "inLanguage": "pt-BR",
+      "author": { "@type": "Organization", "name": "Atomurus", "url": "https://atomurus.com/" },
+      "publisher": { "@type": "Organization", "name": "Atomurus", "logo": { "@type": "ImageObject", "url": "https://atomurus.com/assets/atomurus-logo.png" } },
+      "mainEntityOfPage": { "@type": "WebPage", "@id": "https://atomurus.com/explore/conservation-of-mass?lang=pt-BR" },
+      "articleSection": "Conceitos de Química",
+      "keywords": "conservação da massa, lei da conservação da massa, sistema fechado, equação balanceada, estequiometria"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type":"ListItem","position":1,"name":"Atomurus","item":"https://atomurus.com/"},
+        {"@type":"ListItem","position":2,"name":"Explorar","item":"https://atomurus.com/explore"},
+        {"@type":"ListItem","position":3,"name":"Conservação da massa","item":"https://atomurus.com/explore/conservation-of-mass?lang=pt-BR"}
+      ]
+    }
+  ]
+}
+</script>
+
+
+<link rel="preload" href="/assets/fonts/inter-tight-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/instrument-serif-400-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/instrument-serif-400-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202608041630">
+<script src="../i18n.js?v=202608041630" defer></script>
+<script src="/assets/trail-chip.js?v=202610291200" defer></script>
+<script src="../share-button.js?v=202608041630" defer></script>
+<script src="../page-share-init.js?v=202608041630" defer></script>
+<link rel="stylesheet" href="/assets/critical-lab.css?v=202608041630">
+<script>document.documentElement.classList.add('lc-loading');setTimeout(function(){document.documentElement.classList.remove('lc-loading')},4000);</script>
+<link rel="preload" href="../atomurus-lab-console.css?v=202608041630" as="style">
+<link rel="stylesheet" href="../atomurus-lab-console.css?v=202608041630" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
+<noscript><link rel="stylesheet" href="../atomurus-lab-console.css?v=202608041630"></noscript>
+<link rel="stylesheet" href="/assets/public-shell.css?v=202608281830">
+<script src="../assets/global-nav.js?v=202609090500"></script>
+<script src="/assets/public-workspace.js?v=202608282500"></script>
+<link rel="stylesheet" href="/assets/ui/index.css?v=202609090500">
+<link rel="stylesheet" href="../explore-article.css?v=202608041630">
+<link rel="stylesheet" href="/assets/layouts/article.css?v=202609101700">
+<link rel="stylesheet" href="/assets/ui/worked-solution.css?v=202610291200">
+<style>
+  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100vh; overflow: hidden; }
+  body { display: flex; }
+  .sidebar { width: 220px; flex-shrink: 0; display: flex; flex-direction: column; overflow: hidden; padding-bottom: 22px; }
+  .sidebar > .logo-wrap, .sidebar > .sidebar-foot { flex-shrink: 0; }
+  .sidebar-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; }
+  .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+  .sidebar-scroll::-webkit-scrollbar-thumb { background: var(--lc-rule); }
+  .logo-wrap { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
+  .logo-mark { display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .logo-mark svg circle[fill] { fill: currentColor !important; stroke: none; }
+  .nav-section { padding: 10px 0 4px; display: block; }
+  .nav-expandable .nav-row { display: flex; align-items: center; gap: 10px; padding: 5px 14px 5px 12px; cursor: pointer; font-family: var(--lc-sans); font-size: 12.5px; color: var(--lc-ink-2); transition: background .12s, color .12s; user-select: none; }
+  .nav-expandable .nav-row:hover { background: var(--lc-surface); color: var(--lc-ink); }
+  .nav-expandable.has-active .nav-row { color: var(--lc-ink); font-weight: 500; }
+  .nav-chevron { margin-left: auto; width: 11px; height: 11px; opacity: .45; transition: transform .2s; flex-shrink: 0; }
+  .nav-expandable.open .nav-chevron { transform: rotate(90deg); opacity: .75; }
+  .nav-children { display: none; margin: 2px 0 4px 12px; padding-left: 8px; border-left: 1px solid var(--lc-rule); }
+  .nav-expandable.open .nav-children { display: block; }
+  .nav-children .nav-item { padding: 6px 8px; font-size: 12.5px; }
+  .nav-children .nav-icon { width: 13px; height: 13px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; text-decoration: none; cursor: pointer; user-select: none; white-space: nowrap; position: relative; }
+  .sidebar-foot { display: flex; flex-direction: column; }
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+  .topbar { display: flex; align-items: center; gap: 14px; flex-shrink: 0; padding: 0 18px; }
+  .mobile-menu-btn { display: none; }
+  .breadcrumb { display: flex; align-items: center; gap: 7px; }
+  .breadcrumb a { color: inherit; text-decoration: none; opacity: .75; }
+  .breadcrumb a:hover { opacity: 1; color: var(--lc-ink); }
+  .content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 0 0 50px; position: relative; }
+  .content::-webkit-scrollbar { width: 6px; }
+  .content::-webkit-scrollbar-thumb { background: var(--lc-rule); }
+  @media (max-width: 760px) {
+    body { flex-direction: column; height: auto; overflow: auto; }
+    html { height: auto; overflow: auto; }
+    .sidebar { width: 100%; overflow: visible; }
+    .main { height: auto; overflow: visible; }
+    .content { overflow: visible; }
+  }
+</style>
+<link rel="stylesheet" href="/assets/print.css?v=202610281500" media="print">
+</head>
+<body class="ps-body">
+<a class="skip-link" href="#main-content" data-i18n="common.skipToContent">Pular para o conteúdo</a>
+
+<!-- ════════════ SIDEBAR ════════════ -->
+<div class="ps-shell" id="ps-shell">
+<div class="topbar">
+    <a class="ps-brand logo-wrap" href="../index.html" title="Atomurus home">
+    <div class="logo-mark">
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="2.5" fill="currentColor"/>
+        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/>
+        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/>
+        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/>
+      </svg>
+    </div>
+    <div>
+      <div class="logo-text">Atomurus</div>
+      <div class="logo-tag" data-i18n="common.brandTag">chemistry lab</div>
+    </div>
+  </a>
+    <button class="mobile-menu-btn" onclick="toggleMobileSidebar()" aria-label="Abrir menu">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><line x1="2" y1="4.5" x2="14" y2="4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="2" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="2" y1="11.5" x2="14" y2="11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+    </button>
+    <div class="breadcrumb" hidden>
+      <a href="../index.html" data-i18n="common.footer.workspace">Workspace</a>
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="opacity:.35"><path d="M3.5 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      <a href="../explore.html?lang=pt-BR" data-i18n="common.nav.explore">Explorar</a>
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="opacity:.35"><path d="M3.5 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      <span>Conservação da massa</span>
+    </div>
+    <form class="ps-search search-box" role="search" action="../periodic-table.html" method="get">
+  <label class="lc-sr-only" for="ps-search-q">Search element</label>
+  <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+    <circle cx="5.5" cy="5.5" r="4" stroke="currentColor" stroke-width="1.4"/>
+    <line x1="8.7" y1="8.7" x2="11.5" y2="11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+  </svg>
+  <input id="ps-search-q" name="q" type="search" autocomplete="off" data-i18n-attr="placeholder:common.searchPlaceholder" placeholder="search element, symbol or Z…">
+  <button type="submit" data-i18n-attr="aria-label:common.searchAria" aria-label="Search element">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <circle cx="6" cy="6" r="4.2" stroke="currentColor" stroke-width="1.3"/>
+      <path d="M9.2 9.2 12 12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+    </svg>
+  </button>
+</form>
+    <button class="theme-btn" onclick="location.href='conservation-of-mass.html?lang=en'" data-i18n-attr="title:common.langToggle" aria-label="EN — Mudar idioma" title="Mudar idioma" style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;width:auto;min-width:32px;padding:0 8px;">
+      <span>EN</span>
+    </button>
+    <button class="theme-btn" onclick="toggleTheme()" data-i18n-attr="title:common.themeToggle; aria-label:common.themeToggle" title="Alternar tema" aria-label="Alternar tema" style="margin-left:4px;">
+      <svg id="icon-theme-light" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M11.5 7.5A4.5 4.5 0 0 1 6.5 2.5 4.5 4.5 0 1 0 11.5 7.5z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/></svg>
+      <svg id="icon-theme-dark" width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M7 1v1.4M7 11.6V13M1 7h1.4M11.6 7H13M2.5 2.5l1 1M10.5 10.5l1 1M2.5 11.5l1-1M10.5 3.5l1-1" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+    </button>
+  <div class="ps-account" data-atomurus-account>
+  <span class="ps-plan-badge" data-atomurus-plan-badge hidden></span>
+  <a class="ps-userchip lc-topnav-cta" href="../login.html" data-atomurus-account-chip aria-label="Account">
+    <svg class="ps-userchip-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span data-i18n="pricing.ctaAccount">Account</span>
+  </a>
+</div>
+  </div>
+<div class="mobile-overlay" id="mobile-overlay" onclick="toggleMobileSidebar()"></div>
+<aside class="ws-sidebar sidebar ps-pub-sidebar" id="ws-sidebar" data-atomurus-sidebar>
+  <nav class="ws-nav" id="ws-nav-main" aria-label="Laboratory" data-atomurus-lab-nav>
+    <div class="ws-nav-block ws-nav-site">
+      <h2 class="ws-nav-group" data-i18n="common.nav.laboratory">Laboratory</h2>
+      <a class="ws-nav-item" href="/" data-nav="home">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M2.5 7.5 8 3l5.5 4.5M4 6.5V13h8V6.5M6.5 13V9h3v4"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.home">Home</span>
+      </a>
+      <a class="ws-nav-item" href="/periodic-table.html" data-nav="periodic">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.periodic">Periodic Table</span>
+      </a>
+      <a class="ws-nav-item" href="/viewer/atomic-models.html" data-nav="viewer">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="8" cy="8" r="2"/><ellipse cx="8" cy="8" rx="6" ry="2.5"/><ellipse cx="8" cy="8" rx="6" ry="2.5" transform="rotate(60 8 8)"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.visualizador">Viewer</span>
+      </a>
+      <a class="ws-nav-item" href="/calculators.html" data-nav="calculators">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="2" width="10" height="12" rx="1"/><path d="M5 5h6M5.5 8h1M9.5 8h1M5.5 11h1M9.5 11h1"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.calc">Calculators</span>
+      </a>
+      <a class="ws-nav-item" href="/explore.html" data-nav="explore">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.explore">Explore</span>
+      </a>
+      <a class="ws-nav-item" href="/app" data-nav="workspace">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 12l4-4 2 2 4-6"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.workspace">Workspace</span>
+      </a>
+    </div>
+  </nav>
+  <div class="ws-nav-foot sidebar-foot" id="ws-nav-foot" data-atomurus-nav-foot>
+    <a class="ws-nav-item" href="/login" data-nav="account" data-auth-nav-link="common.nav.login">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5"/></g></svg>
+      <span class="ws-nav-label" data-i18n="common.nav.login">Account</span>
+    </a>
+    <a class="ws-nav-item" href="/pricing" data-nav="plans">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 5h8v8H4zM6 3v2M10 3v2"/></g></svg>
+      <span class="ws-nav-label" data-i18n="common.nav.plans">Plans</span>
+    </a>
+  </div>
+</aside>
+<main class="main" id="main-content" tabindex="-1">
+  
+
+  <div class="data-strip">
+    <span class="ds-k">scope</span><span class="ds-v">DOC.ARTICLE</span>
+    <span class="ds-sep"></span>
+    <span class="ds-k">seção</span><span class="ds-v">conceitos · estequiometria</span>
+    <span class="ds-sep"></span>
+    <span class="ds-k">elementos</span><span class="ds-v ds-hi">m(reagentes) = m(produtos)</span>
+    <span class="ds-spacer"></span>
+    <span class="ds-k">norma</span><span class="ds-v">sistema fechado</span>
+  </div>
+
+  <div class="content" id="content">
+    <div class="art-progress" id="art-progress"><span></span></div>
+
+    <div class="art-wrap">
+      <header class="art-hero">
+        <div class="art-kicker">
+          <span>Explorar Atomurus</span>
+          <span class="art-cat ui-badge">Conceitos de Química</span>
+          <span class="art-cat ui-badge">Estequiometria</span>
+        </div>
+        <h1 class="art-title">Conservação da <em>massa</em>: por que a massa total não muda numa reação</h1>
+        <p class="art-dek">Numa reação química os átomos se rearranjam, nunca são criados nem destruídos. Veja por que a massa total de um sistema fechado continua a mesma, por que a queima e a ferrugem parecem quebrar a regra e como as equações balanceadas decorrem dela.</p>
+        <p class="art-draft" role="note">Rascunho — em revisão docente. Ainda não publicado.</p>
+        <div class="lab-tool-cta">
+          <p>Confira as massas molares das substâncias de uma reação.</p>
+          <a href="../calculators.pt.html?formula=CaCO3#molar">Abrir a calculadora de massa molar</a>
+        </div>
+        <div class="art-meta">
+          <span><strong>Atomurus</strong> · Redação</span>
+          <span class="am-dot"></span>
+          <span>Atualizado em 29 out. 2026</span>
+          <span class="am-dot"></span>
+          <span>≈ 9 min de leitura</span>
+        </div>
+<!-- ed:level -->
+<p class="article-level"><span class="article-level-chip" data-i18n="article.level.beginner">Iniciante</span></p>
+<!-- /ed:level -->
+<!-- ed:learn -->
+<aside class="article-learn" aria-labelledby="article-learn-title">
+  <h2 id="article-learn-title" data-i18n="article.learn.title">Você vai aprender</h2>
+  <ul>
+    <li>Enunciar a lei da conservação da massa</li>
+    <li>Explicar as variações aparentes de massa em sistemas abertos</li>
+    <li>Conferir uma equação balanceada com massas molares</li>
+  </ul>
+</aside>
+<!-- /ed:learn -->
+</header>
+
+      <div class="art-grid">
+        <article class="art-body" id="art-body">
+
+          <p class="lead">Queime uma tora de madeira e sobra só um pouco de cinza; deixe um prego de ferro na chuva e ele fica mais pesado enquanto enferruja. A massa parece aparecer e sumir nas transformações químicas — mas, quando nada pode entrar no sistema nem sair dele, a massa total permanece a mesma.</p>
+
+          <p>Neste artigo você vai ver o que diz a <strong>lei da conservação da massa</strong>, por que ela vale, por que os recipientes abertos parecem desrespeitá-la e como ela se torna a regra por trás de toda equação química balanceada. As massas dos exemplos resolvidos são calculadas a partir das massas molares pelo mesmo motor das calculadoras do Atomurus.</p>
+
+          <div class="art-callout">
+            <span class="ac-label">Definição rápida</span>
+            Num <strong>sistema fechado</strong>, a massa total das substâncias antes de uma reação química é igual à massa total depois dela. Os átomos se rearranjam em novas substâncias; nenhum é criado nem destruído.
+          </div>
+
+          <figure class="art-fig" role="img" aria-label="Dois frascos fechados sobre balanças, antes e depois de uma reação: as substâncias dentro mudam, mas as duas balanças mostram a mesma massa total, porque nada entrou nem saiu do frasco.">
+            <svg viewBox="0 0 640 190" width="100%" aria-hidden="true" focusable="false">
+              <g font-family="Inter Tight, sans-serif" font-size="14" fill="currentColor" text-anchor="middle" stroke="currentColor">
+                <path d="M110 40v30l-45 70h140l-45-70V40z" fill="none" stroke-width="1.6"/>
+                <rect x="100" y="30" width="60" height="10" rx="2" fill="currentColor" stroke="none"/>
+                <circle cx="120" cy="120" r="7" fill="none"/><circle cx="145" cy="110" r="5" fill="none"/>
+                <rect x="45" y="145" width="180" height="22" rx="4" fill="none" stroke-width="1.6"/>
+                <text x="135" y="161" stroke="none">m₁</text>
+                <path d="M480 40v30l-45 70h140l-45-70V40z" fill="none" stroke-width="1.6"/>
+                <rect x="470" y="30" width="60" height="10" rx="2" fill="currentColor" stroke="none"/>
+                <path d="M470 120q10-14 20 0t20 0" fill="none"/><circle cx="520" cy="105" r="4" fill="none"/>
+                <rect x="415" y="145" width="180" height="22" rx="4" fill="none" stroke-width="1.6"/>
+                <text x="505" y="161" stroke="none">m₂ = m₁</text>
+                <path d="M260 95h120" stroke-width="1.6" marker-end="url(#mass-arrow)"/>
+                <text x="320" y="85" stroke="none">reação</text>
+              </g>
+              <defs><marker id="mass-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10z" fill="currentColor"/></marker></defs>
+            </svg>
+            <figcaption>Um frasco fechado antes e depois de uma reação: o conteúdo muda; a massa total, não.</figcaption>
+          </figure>
+
+          <h2><span class="h-no">§ 01</span> A lei da conservação da massa</h2>
+          <p>A lei afirma que a matéria não é criada nem destruída numa reação química. Se você pesar tudo o que entra numa reação e tudo o que sai dela, os dois totais coincidem, dentro da precisão da balança. A lei é associada ao químico francês Antoine Lavoisier.</p>
+          <p>As palavras importantes são <strong>sistema fechado</strong>: um recipiente que não deixa a matéria entrar nem sair. A energia ainda pode atravessar as paredes — uma reação pode aquecer ou esfriar o frasco —, mas nenhum gás escapa e nenhum ar entra.</p>
+
+          <h2><span class="h-no">§ 02</span> Por que a massa se conserva</h2>
+          <p>Uma reação química rompe algumas ligações e forma outras, e assim os átomos terminam em novas combinações. Os átomos em si não mudam: um átomo de carbono continua sendo um átomo de carbono, com a mesma massa, esteja no metano ou no gás carbônico.</p>
+          <p>Como todo átomo presente antes da reação continua presente depois dela, a soma das massas é a mesma. A energia liberada ou absorvida numa reação química corresponde a uma variação de massa pequena demais para ser detectada em qualquer balança de laboratório. As reações nucleares, que mudam os próprios átomos, são outra história e não estão cobertas por esta lei na sua forma química.</p>
+
+          <h2><span class="h-no">§ 03</span> Sistemas abertos e fechados</h2>
+          <p>A maioria das observações do dia a dia que parecem contradizer a lei envolve um <strong>sistema aberto</strong>. Quando a madeira queima, a maior parte da sua massa sai como gás carbônico e vapor de água, e por isso a cinza pesa muito menos que a tora. Se os gases também forem contados, nada está faltando.</p>
+          <p>O contrário também acontece. Quando o ferro enferruja ou a palha de aço queima, o sólido retira oxigênio do ar e fica mais pesado. A massa ganha é exatamente a massa de oxigênio que reagiu. Num frasco fechado, contando o ar de dentro, o total não mudaria.</p>
+          <p>É por isso que os experimentos de conservação da massa são feitos em recipientes fechados, ou com todo o gás recolhido e pesado.</p>
+
+          <h2><span class="h-no">§ 04</span> Equações balanceadas são conservação da massa</h2>
+          <p>Uma equação química balanceada tem o mesmo número de átomos de cada elemento dos dois lados. Essa é a lei da conservação da massa escrita em símbolos. Balancear é escolher os <strong>coeficientes</strong> — os números na frente das fórmulas —, nunca mudar os índices, o que transformaria uma substância em outra.</p>
+          <p>Como cada átomo mantém a sua massa, uma equação balanceada também fecha em gramas. Usando as massas molares, a massa dos reagentes é igual à massa dos produtos:</p>
+          <div class="art-worked" data-calc="mass-water">
+<!-- calc:mass-water -->
+<p class="aw-q">Exemplo: <span translate="no">2 H₂ + O₂ → 2 H₂O</span></p><ol class="wsol-steps"><li><span class="wsol-text">Massa dos reagentes, nas quantidades da equação (em mol):</span> <span class="wsol-expr" translate="no">2 × M(H₂) = 2 × 2,016 g/mol = 4,032 g · 1 × M(O₂) = 1 × 31,998 g/mol = 31,998 g</span></li><li><span class="wsol-text">Massa dos produtos:</span> <span class="wsol-expr" translate="no">2 × M(H₂O) = 2 × 18,015 g/mol = 36,03 g</span></li><li><span class="wsol-text">Some e compare os dois lados.</span> <span class="wsol-expr" translate="no">reagentes: 4,032 + 31,998 = 36,03 g · produtos: 36,03 g</span></li></ol><p class="aw-a">Resposta: <span translate="no">36,03 g = 36,03 g</span></p>
+<!-- /calc:mass-water -->
+          </div>
+          <p>Repare que o número de <strong>moléculas</strong> muda — três à esquerda, duas à direita —, enquanto o número de átomos de cada elemento e a massa total não mudam.</p>
+
+          <h2><span class="h-no">§ 05</span> Trabalhando com massas</h2>
+          <p>O mesmo raciocínio vale para qualquer equação balanceada. Para a combustão do metano, principal componente do gás natural:</p>
+          <div class="art-worked" data-calc="mass-methane">
+<!-- calc:mass-methane -->
+<p class="aw-q">Exemplo: <span translate="no">CH₄ + 2 O₂ → CO₂ + 2 H₂O</span></p><ol class="wsol-steps"><li><span class="wsol-text">Massa dos reagentes, nas quantidades da equação (em mol):</span> <span class="wsol-expr" translate="no">1 × M(CH₄) = 1 × 16,043 g/mol = 16,043 g · 2 × M(O₂) = 2 × 31,998 g/mol = 63,996 g</span></li><li><span class="wsol-text">Massa dos produtos:</span> <span class="wsol-expr" translate="no">1 × M(CO₂) = 1 × 44,009 g/mol = 44,009 g · 2 × M(H₂O) = 2 × 18,015 g/mol = 36,03 g</span></li><li><span class="wsol-text">Some e compare os dois lados.</span> <span class="wsol-expr" translate="no">reagentes: 16,043 + 63,996 = 80,04 g · produtos: 44,009 + 36,03 = 80,04 g</span></li></ol><p class="aw-a">Resposta: <span translate="no">80,04 g = 80,04 g</span></p>
+<!-- /calc:mass-methane -->
+          </div>
+          <p>Ele também permite prever massas. Quando o carbonato de cálcio é aquecido fortemente, ele se decompõe em óxido de cálcio e gás carbônico. Partindo de uma massa conhecida, as massas dos dois produtos precisam somar esse valor:</p>
+          <div class="art-worked" data-calc="mass-limestone">
+<!-- calc:mass-limestone -->
+<p class="aw-q">Exemplo: 10 g de CaCO₃ aquecidos: <span translate="no">CaCO₃ → CaO + CO₂</span></p><ol class="wsol-steps"><li><span class="wsol-text">A quantidade de carbonato de cálcio.</span> <span class="wsol-expr" translate="no">n = 10 g ÷ 100,09 g/mol = 0,09991 mol</span></li><li><span class="wsol-text">A equação dá 1 mol de cada produto por mol de CaCO₃.</span> <span class="wsol-expr" translate="no">m(CaO) = 0,09991 mol × 56,077 g/mol = 5,603 g · m(CO₂) = 0,09991 mol × 44,009 g/mol = 4,397 g</span></li><li><span class="wsol-text">Some as massas dos produtos.</span> <span class="wsol-expr" translate="no">5,603 g + 4,397 g = 10,00 g</span></li></ol><p class="aw-a">Resposta: <span translate="no">10,00 g = 10,00 g</span></p>
+<!-- /calc:mass-limestone -->
+          </div>
+          <p>Se o gás carbônico puder escapar, o sólido que sobra pesa menos que a amostra inicial — exatamente a massa de gás carbônico liberada.</p>
+
+          <h2><span class="h-no">§ 06</span> Equívocos comuns</h2>
+          <h3>"A queima faz a matéria desaparecer"</h3>
+          <p>A queima transforma sólidos e líquidos em gases que saem do recipiente. A matéria continua lá, como gás carbônico e vapor de água no ar. Recolhidos e pesados, os produtos têm a mesma massa que o combustível somado ao oxigênio que ele consumiu.</p>
+          <h3>"Se a massa se conserva, o número de moléculas também"</h3>
+          <p>Os átomos se conservam; as moléculas, não. Em 2 H₂ + O₂ → 2 H₂O, três moléculas viram duas. Os quatro átomos de hidrogênio e os dois de oxigênio continuam todos lá, e por isso a massa é a mesma.</p>
+          <h3>"Dissolver um sólido faz a sua massa sumir"</h3>
+          <p>Quando o açúcar se dissolve na água, ele deixa de ser visto, mas a massa da solução é a massa da água somada à do açúcar. As partículas se espalharam; nenhuma se perdeu.</p>
+          <h3>"Para balancear uma equação, pode-se mudar os índices"</h3>
+          <p>Mudar um índice muda a substância: H₂O₂ é peróxido de hidrogênio, não água. Só os coeficientes na frente das fórmulas podem mudar, porque eles dizem quantas partículas de cada substância participam.</p>
+
+          <h2><span class="h-no">§ 07</span> O que você precisa lembrar</h2>
+          <ul class="art-recap">
+            <li>Num sistema fechado, a massa total antes de uma reação química é igual à massa total depois dela.</li>
+            <li>Os átomos se rearranjam, não são criados nem destruídos; o número de moléculas pode mudar.</li>
+            <li>Ganhos ou perdas aparentes de massa vêm de gases que entram num sistema aberto ou saem dele.</li>
+            <li>Uma equação balanceada tem os mesmos átomos dos dois lados, então reagentes e produtos também têm a mesma massa.</li>
+            <li>Balanceie com coeficientes, nunca mudando os índices de uma fórmula.</li>
+          </ul>
+
+          <div class="art-callout">
+            <span class="ac-label">Conclusão</span>
+            A conservação da massa é a regra de contabilidade da química: todo átomo é levado em conta. Junto com o mol e a massa molar, ela permite prever quantos gramas de produto uma reação pode dar — o assunto da estequiometria.
+          </div>
+
+          <section class="art-refs">
+            <h2><span class="h-no">§ Fontes</span> Referências e leitura</h2>
+            <ol>
+              <li>OpenStax — <em lang="en">Chemistry 2e</em> (Química 2e), capítulos sobre a teoria atômica e sobre como escrever e balancear equações químicas.</li>
+              <li>IUPAC — <em lang="en">Compendium of Chemical Terminology</em> (Gold Book): reação química; estequiometria.</li>
+              <li>CIAAW/IUPAC — massas atômicas padrão abreviadas (os valores usados pelas calculadoras do Atomurus).</li>
+            </ol>
+          </section>
+
+          <section class="art-related">
+            <div class="ar-label">Continue explorando</div>
+            <div class="art-related-grid">
+              <a class="ar-card" href="what-is-the-mole.pt.html">
+                <div class="ar-cat">Conceitos</div>
+                <div class="ar-title">O que é o mol</div>
+                <div class="ar-desc">Quantidade de matéria, massa molar e constante de Avogadro.</div>
+              </a>
+              <a class="ar-card" href="what-is-chemical-bonding.pt.html">
+                <div class="ar-cat">Conceitos</div>
+                <div class="ar-title">O que é Ligação Química</div>
+                <div class="ar-desc">Como os átomos se mantêm unidos — e se rearranjam nas reações.</div>
+              </a>
+              <a class="ar-card" href="../exercises/molar-mass.pt.html">
+                <div class="ar-cat">Prática</div>
+                <div class="ar-title">Exercícios de massa molar</div>
+                <div class="ar-desc">Dez exercícios com solução comentada.</div>
+              </a>
+            </div>
+          </section>
+
+          <section class="art-follow">
+            <div>
+              <div class="afl-title">Gostou? Siga o Atomurus</div>
+              <div class="afl-sub">Novos mergulhos em química, ferramentas e visualizações 3D — toda semana.</div>
+            </div>
+            <div class="afl-links">
+              <a href="https://x.com/atomurusapp" target="_blank" rel="noopener me" aria-label="Siga o Atomurus no X (Twitter), @atomurusapp">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.658l-5.214-6.817-5.967 6.817H1.68l7.73-8.835L1.254 2.25h6.828l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/></svg>
+                <span>X / Twitter</span>
+              </a>
+              <a href="https://instagram.com/atomurusapp" target="_blank" rel="noopener me" aria-label="Siga o Atomurus no Instagram, @atomurusapp">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor"/></svg>
+                <span>Instagram</span>
+              </a>
+            </div>
+          </section>
+
+        </article>
+
+        <aside class="art-aside">
+          <nav class="art-toc" id="art-toc" aria-label="Índice do artigo">
+            <div class="toc-label">Neste artigo</div>
+          </nav>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ════════════ FOOTER ════════════ -->
+    <footer class="lc-footer">
+      <div class="lc-footer-inner">
+        <div class="lc-footer-col lc-footer-brand">
+          <div class="lc-footer-brand-row">
+            <div class="lc-topnav-mark" style="width:24px;height:24px">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.5" fill="currentColor"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/></svg>
+            </div>
+            <span class="lc-footer-brand-name">Atomurus</span>
+          </div>
+          <p class="lc-footer-brand-desc" data-i18n="common.footer.brandDesc">Um laboratório instrumental de química para os estudiosos, os curiosos e os pacientes.</p>
+        </div>
+        <div class="lc-footer-col">
+          <h4 data-i18n="common.footer.modules">Módulos</h4>
+          <a href="../periodic-table.html" data-i18n="common.nav.periodic">Tabela Periódica</a>
+          <a href="../viewer/atomic-models.html" data-i18n="common.nav.viewer3d">Visualizador</a>
+          <a href="../calculators.html" data-i18n="common.nav.calc">Calculadoras</a>
+          <a href="../explore.html?lang=pt-BR" data-i18n="common.nav.explore">Explorar</a>
+        </div>
+        <div class="lc-footer-col">
+          <h4 data-i18n="common.footer.project">Projeto</h4>
+          <a href="../about.html" data-i18n="common.footer.about">Sobre</a>
+          <a href="../privacy.html" data-i18n="common.footer.privacy">Privacidade</a>
+          <a href="../terms.html" data-i18n="common.footer.terms">Termos</a>
+          <a href="../contact.html" data-i18n="common.footer.contact">Contato</a>
+        </div>
+      </div>
+      <div class="lc-footer-bottom">        <span><span class="lc-st-dot" style="width:6px;height:6px;border-radius:50%;background:#1E6A50;display:inline-block"></span> <span data-i18n="common.footer.systemNominal">sistema nominal</span></span>
+        <span data-i18n="common.footer.copy">© 2026 Atomurus · v1.11</span>
+      </div>
+    </footer>
+  </div><!-- /.content -->
+</main>
+</div>
+
+<div class="lc-statusbar">
+  <span><span class="lc-st-dot"></span> ready</span>
+  <span class="lc-st-sep">·</span>
+  <span>explore / artigo</span>
+  <span class="lc-st-spacer"></span>
+  <a href="../explore.html?lang=pt-BR">→ explorar</a>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  window.toggleTheme = function() {
+    var html = document.documentElement;
+    var isDark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    try { localStorage.setItem('atomurus-theme', isDark ? 'light' : 'dark'); } catch(e){}
+  };
+  window.toggleMobileSidebar = function() {
+    var sidebar = document.querySelector('.sidebar');
+    var overlay = document.getElementById('mobile-overlay');
+    if (!sidebar) return;
+    var isOpen = sidebar.classList.contains('mobile-open');
+    sidebar.classList.toggle('mobile-open', !isOpen);
+    if (overlay) overlay.classList.toggle('show', !isOpen);
+    document.body.style.overflow = isOpen ? '' : 'hidden';
+  };
+  window.toggleNavGroup = function(name) {
+    var el = document.querySelector('.nav-expandable[data-expand="' + name + '"]');
+    if (!el) return;
+    var open = !el.classList.contains('open');
+    el.classList.toggle('open', open);
+    var row = el.querySelector('.nav-row');
+    if (row) row.setAttribute('aria-expanded', open ? 'true' : 'false');
+    try { localStorage.setItem('atomurus-nav-' + name, open ? '1' : '0'); } catch(e){}
+  };
+  (function initExpandable(){
+    document.querySelectorAll('.nav-expandable').forEach(function(el){
+      var name = el.dataset.expand;
+      var hasActive = !!el.querySelector('.nav-item.active, [aria-current="page"]');
+      var stored = null;
+      try { stored = localStorage.getItem('atomurus-nav-' + name); } catch(e){}
+      if (hasActive || stored === '1') { el.classList.add('open'); var r = el.querySelector('.nav-row'); if (r) r.setAttribute('aria-expanded','true'); }
+      var row = el.querySelector('.nav-row');
+      if (row) row.addEventListener('keydown', function(e){ if (e.key==='Enter'||e.key===' '){ e.preventDefault(); window.toggleNavGroup(name);} });
+    });
+  })();
+  function initArticle(){
+    var body = document.getElementById('art-body');
+    var toc = document.getElementById('art-toc');
+    var content = document.getElementById('content');
+    var bar = document.querySelector('#art-progress span');
+    if (!body || !toc) return;
+    var heads = body.querySelectorAll('h2');
+    var links = [];
+    heads.forEach(function(h, i){
+      if (!h.id) h.id = 'sec-' + (i + 1);
+      var txt = h.textContent.replace(/^§\s*\d+\s*/, '').replace(/^§\s*Fontes\s*/,'').trim();
+      var a = document.createElement('a');
+      a.href = '#' + h.id;
+      a.textContent = txt;
+      a.addEventListener('click', function(e){ e.preventDefault(); h.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+      toc.appendChild(a);
+      links.push({ a: a, h: h });
+    });
+    function onScroll(){
+      if (bar && content){
+        var max = content.scrollHeight - content.clientHeight;
+        var pct = max > 0 ? (content.scrollTop / max) * 100 : 0;
+        bar.style.width = pct + '%';
+      }
+      var top = content.scrollTop + 100;
+      var current = null;
+      links.forEach(function(l){ if (l.h.offsetTop <= top) current = l; });
+      links.forEach(function(l){ l.a.classList.toggle('is-active', l === current); });
+    }
+    content.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    onScroll();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initArticle);
+  else initArticle();
+})();
+</script>
+</body>
+</html>

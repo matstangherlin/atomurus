@@ -80,6 +80,16 @@ export function passwordPolicyError(password) {
   return '';
 }
 
+/* The provider refuses a password found in known leaks (Supabase «Leaked
+   password protection», an owner setting — docs/security/leaked-password-protection.md).
+   The answer never echoes the password. */
+export const LEAKED_PASSWORD_CODE = 'password_pwned';
+export const LEAKED_PASSWORD_MESSAGE = 'This password has appeared in known data leaks. Choose another.';
+
+export function isLeakedPasswordError(err) {
+  return err?.code === 'weak_password' && Array.isArray(err.reasons) && err.reasons.includes('pwned');
+}
+
 export function clientIp(request) {
   return (
     request.headers.get('x-nf-client-connection-ip') ||

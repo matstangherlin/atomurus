@@ -1,0 +1,46 @@
+{
+  "id": "moles-mass",
+  "type": "moles-mass",
+  "status": "draft",
+  "reviewedBy": null,
+  "title": { "pt": "Mol e massa", "en": "Moles and mass" },
+  "summary": {
+    "pt": "Dez exercícios de conversão entre massa e quantidade de matéria (n = m / M), com resposta e solução comentada geradas pela calculadora do site.",
+    "en": "Ten exercises converting between mass and amount of substance (n = m / M), with the answer and the worked solution produced by the site's calculator."
+  },
+  "tool": { "href": { "pt": "/calculators.pt.html#molar", "en": "/calculators.html#molar" }, "label": { "pt": "Abrir a calculadora de massa molar", "en": "Open the molar mass calculator" } },
+  "template": {
+    "@by": "unit",
+    "g": { "pt": "Quantos mols há em {amount} g de {formula}?", "en": "How many moles are there in {amount} g of {formula}?" },
+    "mol": { "pt": "Qual é a massa de {amount} mol de {formula}?", "en": "What is the mass of {amount} mol of {formula}?" }
+  },
+  "variables": {
+    "formula": { "list": ["H2O", "CO2", "NaCl", "NH3", "O2", "NaOH", "KCl", "CaCO3", "Fe2O3", "C6H12O6", "H2SO4", "HNO3"] },
+    "unit": { "list": ["g", "mol"] },
+    "amount": { "@by": "unit", "g": { "min": 1, "max": 200, "step": 1 }, "mol": { "min": 0.1, "max": 5, "step": 0.1 } }
+  },
+  "engine": { "fn": "calc-core.computeMolarMass", "args": ["@counts:formula", "@weights", { "value": "@amount", "unit": "@unit" }] },
+  "answer": { "step": { "@by": "unit", "g": "mm.moles", "mol": "mm.mass" }, "unit": { "@by": "unit", "g": "mol", "mol": "g" } },
+  "commonErrors": [
+    {
+      "id": "inverted",
+      "wrong": "conversionInverted",
+      "message": {
+        "pt": "Se você chegou a {wrong}, inverteu a conta. Confira as unidades: g ÷ (g/mol) dá mol, e mol × (g/mol) dá g.",
+        "en": "If you got {wrong}, you turned the operation around. Check the units: g ÷ (g/mol) gives mol, and mol × (g/mol) gives g."
+      }
+    }
+  ],
+  "exercises": [
+    { "id": "MN01", "level": "basico", "vars": { "formula": "H2O", "unit": "g", "amount": 36 } },
+    { "id": "MN02", "level": "basico", "vars": { "formula": "CO2", "unit": "g", "amount": 88 } },
+    { "id": "MN03", "level": "basico", "vars": { "formula": "NaCl", "unit": "g", "amount": 117 } },
+    { "id": "MN04", "level": "basico", "vars": { "formula": "NaOH", "unit": "mol", "amount": 2 } },
+    { "id": "MN05", "level": "medio", "vars": { "formula": "H2SO4", "unit": "mol", "amount": 0.5 } },
+    { "id": "MN06", "level": "medio", "vars": { "formula": "C6H12O6", "unit": "g", "amount": 90 } },
+    { "id": "MN07", "level": "medio", "vars": { "formula": "CaCO3", "unit": "g", "amount": 25 } },
+    { "id": "MN08", "level": "medio", "vars": { "formula": "NH3", "unit": "mol", "amount": 3 } },
+    { "id": "MN09", "level": "avancado", "vars": { "formula": "O2", "unit": "g", "amount": 64 } },
+    { "id": "MN10", "level": "avancado", "vars": { "formula": "Fe2O3", "unit": "mol", "amount": 0.25 } }
+  ]
+}

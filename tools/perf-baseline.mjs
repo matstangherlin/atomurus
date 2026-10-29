@@ -3,6 +3,8 @@
 // Chromium (mobile 390×844) against a local static server of a checkout:
 //
 //   node tools/perf-baseline.mjs --root <checkout> --label before|after
+//   node tools/perf-baseline.mjs --set pt --root <checkout> --label before --out docs/perf/x.json
+//     (--set pt: the periodic table pages, home and calculators — prompt 24)
 //
 // Records, per page (median of RUNS): transferred bytes by type, request
 // count, DOM nodes, load/FCP, long tasks (>50ms), script/layout time, JS heap,
@@ -42,6 +44,18 @@ const PAGES = [
   { id: 'shell-periodic', label: 'AppShell · Periodic', url: '/dev/app-shell.html#/periodic-table', requires: 'dev/app-shell.html' },
   { id: 'shell-molecules', label: 'AppShell · Molecules', url: '/dev/app-shell.html#/molecules', requires: 'dev/app-shell.html', viewer: '.viewer-canvas' }
 ];
+
+// Prompt 24: the five periodic table pages, plus home and calculators for CSS.
+const PT_SET = [
+  { id: 'home', label: 'Home', url: '/' },
+  { id: 'calculators', label: 'Calculators', url: '/calculators.html' },
+  { id: 'periodic', label: 'Periodic Table', url: '/periodic-table.html' },
+  { id: 'pt-heatmap', label: 'PT · Heatmap', url: '/periodic-table/heatmap.html' },
+  { id: 'pt-trends', label: 'PT · Trends', url: '/periodic-table/trends.html' },
+  { id: 'pt-compare', label: 'PT · Compare', url: '/periodic-table/compare.html' },
+  { id: 'pt-isotopes', label: 'PT · Isotopes', url: '/periodic-table/isotopes.html' }
+];
+const SELECTED = args.set === 'pt' ? PT_SET : PAGES;
 
 function median(values) {
   const v = values.filter((x) => typeof x === 'number').sort((a, b) => a - b);
@@ -122,7 +136,7 @@ async function main() {
   const browser = await chromium.launch(process.env.PW_CHROMIUM_EXECUTABLE ? { executablePath: process.env.PW_CHROMIUM_EXECUTABLE } : {});
   const out = { label: LABEL, root: path.relative(HERE, ROOT) || '.', viewport: '390x844@2x mobile', runs: RUNS, measuredAt: new Date().toISOString(), pages: {} };
   try {
-    for (const page of PAGES) {
+    for (const page of SELECTED) {
       if (page.requires && !existsSync(path.join(ROOT, page.requires))) continue;
       const runs = [];
       for (let i = 0; i < RUNS; i += 1) runs.push(await measure(browser, page));
@@ -134,9 +148,9 @@ async function main() {
     await browser.close();
     server.kill();
   }
-  const dir = path.join(HERE, 'docs/reports');
-  mkdirSync(dir, { recursive: true });
-  writeFileSync(path.join(dir, `a1-0-perf-${LABEL}.json`), `${JSON.stringify(out, null, 2)}\n`);
+  const file = args.out ? path.resolve(HERE, args.out) : path.join(HERE, 'docs/reports', `a1-0-perf-${LABEL}.json`);
+  mkdirSync(path.dirname(file), { recursive: true });
+  writeFileSync(file, `${JSON.stringify(out, null, 2)}\n`);
   const cols = ['transferKB', 'scriptKB', 'cssKB', 'imageKB', 'requests', 'domNodes', 'fcpMs', 'loadMs', 'longTasks', 'longTaskMs', 'scriptMs', 'heapMB', 'rafFps', 'three'];
   console.log(`| page | ${cols.join(' | ')} |\n| --- | ${cols.map(() => '---:').join(' | ')} |`);
   for (const p of Object.values(out.pages)) console.log(`| ${p.label} | ${cols.map((c) => (p[c] == null ? '—' : p[c])).join(' | ')} |`);

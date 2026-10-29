@@ -84,7 +84,6 @@
 <script src="/assets/public-workspace.js?v=202608282500"></script>
 <link rel="stylesheet" href="/assets/ui/index.css?v=202609090500">
 <link rel="stylesheet" href="/assets/layouts/periodic-table.css?v=202609090500">
-<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
 <script src="../lazy-ads.js?v=202608041630" defer></script>
 <!-- i18n (EN default, PT fallback) — precedes periodic-table.js so I18N is defined before its initLang runs -->
 <script src="../i18n.js?v=202608041630" defer></script>
@@ -105,8 +104,10 @@
     document.documentElement.style.setProperty('--el-sym-size', szValues[sz].sym);
   })();
 </script>
+<link rel="stylesheet" href="/assets/print.css?v=202610281500" media="print">
 </head>
 <body class="ps-body" data-pt-tab="grupos">
+<a class="skip-link" href="#main-content" data-i18n="common.skipToContent">Pular para o conteúdo</a>
 
 <!-- ════════════ SIDEBAR ════════════ -->
 <div class="ps-shell" id="ps-shell">
@@ -128,7 +129,7 @@
     <!-- Mobile hamburger -->
     <button class="mobile-menu-btn" onclick="toggleMobileSidebar()"
             data-i18n-attr="aria-label:ptable.mobileMenuLabel"
-            aria-label="Open menu">
+            aria-label="Abrir menu">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
         <line x1="2" y1="4.5" x2="14" y2="4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
         <line x1="2" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
@@ -148,23 +149,23 @@
         <circle cx="5.5" cy="5.5" r="4" stroke="var(--text-3)" stroke-width="1.4"/>
         <line x1="8.7" y1="8.7" x2="11.5" y2="11.5" stroke="var(--text-3)" stroke-width="1.4" stroke-linecap="round"/>
       </svg>
-      <input id="search-input" type="text" placeholder="Search element (name or Z)…"
-             data-i18n-attr="placeholder:ptable.searchPlaceholder"
-             oninput="doSearch(this.value)" autocomplete="off">
+      <input id="search-input" type="text" placeholder="Buscar elemento (nome ou Z)…"
+             data-i18n-attr="placeholder:ptable.searchPlaceholder; aria-label:ptable.searchAria"
+             oninput="doSearch(this.value)" autocomplete="off" aria-label="Buscar elemento">
     </div>
 
     <!-- Language toggle -->
     <button class="theme-btn" data-i18n-toggle
-            data-i18n-attr="aria-label:common.langToggle; title:common.langToggle"
-            aria-label="Switch language" title="Switch language"
+            data-i18n-attr="title:common.langToggle"
+            aria-label="EN — Trocar idioma" title="Trocar idioma"
             style="margin-left:8px;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;width:auto;min-width:32px;padding:0 8px;">
-      <span data-i18n-toggle-label>PT</span>
+      <span data-i18n-toggle-label>EN</span>
     </button>
 
     <!-- Theme toggle — top right -->
     <button class="theme-btn" id="theme-btn-topbar" onclick="toggleTheme()"
             data-i18n-attr="title:common.themeToggle; aria-label:common.themeToggle"
-            title="Toggle theme" aria-label="Toggle theme" style="margin-left:4px;">
+            title="Alternar tema" aria-label="Alternar tema" style="margin-left:4px;">
       <svg id="theme-icon" width="15" height="15" viewBox="0 0 15 15" fill="none">
         <path d="M7.5 1v1M7.5 13v1M1 7.5H0M15 7.5h-1M2.93 2.93l.7.7M11.37 11.37l.7.7M2.93 12.07l.7-.7M11.37 3.63l.7-.7M7.5 5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
       </svg>
@@ -220,7 +221,7 @@
     </a>
   </div>
 </aside>
-<main class="main">
+<main class="main" id="main-content" tabindex="-1">
 
   <!-- Mobile scroll hint for periodic table -->
   <div class="mobile-scroll-hint" id="mobile-scroll-hint" style="display:none;margin:8px 16px 0;">
@@ -289,7 +290,7 @@
             <p style="font-size:13px;color:var(--text-2)" data-i18n="ptable.trDesc">Visualize como as propriedades variam ao longo da Tabela Periódica.</p>
           </div>
           <div class="trend-controls">
-            <select class="hm-select" id="trend-prop" onchange="renderTrendChart()" title="Property to plot" data-i18n-attr="title:ptable.trPropTitle">
+            <select class="hm-select" id="trend-prop" onchange="renderTrendChart()" title="Propriedade a plotar" data-i18n-attr="title:ptable.trPropTitle; aria-label:ptable.trPropTitle" aria-label="Propriedade a plotar">
               <option value="en" data-i18n="ptable.trOptEn">Eletronegatividade</option>
               <option value="radius" data-i18n="ptable.trOptRadius">Raio Atômico</option>
               <option value="melt" data-i18n="ptable.trOptMelt">Ponto de Fusão</option>
@@ -298,9 +299,9 @@
               <option value="density" data-i18n="ptable.hmOptDensity">Densidade</option>
               <option value="ionization" data-i18n="ptable.trOptIonization">Energia de Ionização</option>
             </select>
-            <select class="hm-select" id="trend-group" onchange="renderTrendChart()" title="Filter elements" data-i18n-attr="title:ptable.trFilterTitle">
+            <select class="hm-select" id="trend-group" onchange="renderTrendChart()" title="Filtrar elementos (por grupo ou período)" data-i18n-attr="title:ptable.trFilterTitle; aria-label:ptable.trFilterTitle" aria-label="Filtrar elementos (por grupo ou período)">
               <option value="all" data-i18n="ptable.trGroupAll">Todos os Elementos (Z 1–118)</option>
-              <optgroup label="Periods" data-i18n-attr="label:ptable.trGroupPeriods">
+              <optgroup label="Períodos" data-i18n-attr="label:ptable.trGroupPeriods">
                 <option value="p1" data-i18n="ptable.trGroupP1">Período 1</option>
                 <option value="p2" data-i18n="ptable.trGroupP2">Período 2</option>
                 <option value="p3" data-i18n="ptable.trGroupP3">Período 3</option>
@@ -309,7 +310,7 @@
                 <option value="p6" data-i18n="ptable.trGroupP6">Período 6</option>
                 <option value="p7" data-i18n="ptable.trGroupP7">Período 7</option>
               </optgroup>
-              <optgroup label="Main groups" data-i18n-attr="label:ptable.trGroupMain">
+              <optgroup label="Grupos principais" data-i18n-attr="label:ptable.trGroupMain">
                 <option value="g1" data-i18n="ptable.trGroupG1">Grupo 1 (Metais Alcalinos)</option>
                 <option value="g2" data-i18n="ptable.trGroupG2">Grupo 2 (Alcalino-Terrosos)</option>
                 <option value="g13" data-i18n="ptable.trGroupG13">Grupo 13 (Família do Boro)</option>
@@ -319,7 +320,7 @@
                 <option value="g17" data-i18n="ptable.trGroupG17">Grupo 17 (Halogênios)</option>
                 <option value="g18" data-i18n="ptable.trGroupG18">Grupo 18 (Gases Nobres)</option>
               </optgroup>
-              <optgroup label="Transition metals" data-i18n-attr="label:ptable.trGroupTransition">
+              <optgroup label="Metais de transição" data-i18n-attr="label:ptable.trGroupTransition">
                 <option value="g3" data-i18n="ptable.trGroupG3">Grupo 3 (família Sc)</option>
                 <option value="g4" data-i18n="ptable.trGroupG4">Grupo 4 (família Ti)</option>
                 <option value="g5" data-i18n="ptable.trGroupG5">Grupo 5 (família V)</option>
@@ -343,17 +344,17 @@
                 <option value="fam-lanthanide">Lanthanides</option>
                 <option value="fam-actinide">Actinides</option>
               </optgroup>
-              <optgroup label="F-block" data-i18n-attr="label:ptable.trGroupFblock">
+              <optgroup label="Bloco f" data-i18n-attr="label:ptable.trGroupFblock">
                 <option value="lanthanides" data-i18n="ptable.trGroupLanth">Lantanídeos (57–71)</option>
                 <option value="actinides" data-i18n="ptable.trGroupActin">Actinídeos (89–103)</option>
               </optgroup>
             </select>
             <div class="trend-export-bar">
-              <button class="trend-export-btn" onclick="exportTrendPNG()" title="Download as PNG" data-i18n-attr="title:ptable.trExportPngTitle">
+              <button class="trend-export-btn" onclick="exportTrendPNG()" title="Baixar gráfico como PNG" data-i18n-attr="title:ptable.trExportPngTitle">
                 <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="8.5" rx="1.5" stroke="currentColor" stroke-width="1.3" fill="none"/><path d="M1 7l3-3 2.5 2.5L9 4l3 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
                 PNG
               </button>
-              <button class="trend-export-btn" onclick="exportTrendCSV()" title="Download data as CSV" data-i18n-attr="title:ptable.trExportCsvTitle">
+              <button class="trend-export-btn" onclick="exportTrendCSV()" title="Baixar dados como CSV" data-i18n-attr="title:ptable.trExportCsvTitle">
                 <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1.5" y="1" width="8" height="11" rx="1.2" stroke="currentColor" stroke-width="1.3" fill="none"/><line x1="3.5" y1="5" x2="8" y2="5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/><line x1="3.5" y1="7.5" x2="8" y2="7.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
                 CSV
               </button>
@@ -449,10 +450,10 @@
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" fill="currentColor" opacity=".8"/><rect x="8" y="1" width="5" height="5" rx="1" fill="currentColor" opacity=".5"/><rect x="1" y="8" width="5" height="5" rx="1" fill="currentColor" opacity=".5"/><rect x="8" y="8" width="5" height="5" rx="1" fill="currentColor" opacity=".3"/></svg> <span data-i18n="config.ptable">Tabela Periódica</span> </div>
           <div class="settings-row">
             <div class="settings-row-info">
-              <div class="settings-row-label" data-i18n="config.viewmode">Modo de visualização</div>
+              <div class="settings-row-label" id="set-viewmode-label" data-i18n="config.viewmode">Modo de visualização</div>
               <div class="settings-row-desc" data-i18n="config.viewmodeDesc">Por categoria de cor, ou heatmap por propriedade física.</div>
             </div>
-            <select class="settings-select" onchange="setHeatmap(this.value)" id="heatmap-select">
+            <select class="settings-select" onchange="setHeatmap(this.value)" id="heatmap-select" aria-labelledby="set-viewmode-label">
               <option value="category" data-i18n="config.viewCategory">Por Categoria</option>
               <option value="electronegativity" data-i18n="config.viewEneg">Eletronegatividade</option>
               <option value="atomic_radius" data-i18n="config.viewRadius">Raio Atômico</option>
@@ -486,10 +487,10 @@
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M1.5 5h11M1.5 9h11M7 1.5c-2 2-2 9 0 11M7 1.5c2 2 2 9 0 11" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg> <span data-i18n="config.langSection">Idioma</span> </div>
           <div class="settings-row">
             <div class="settings-row-info">
-              <div class="settings-row-label" data-i18n="config.langLabel">Idioma da interface</div>
+              <div class="settings-row-label" id="set-lang-label" data-i18n="config.langLabel">Idioma da interface</div>
               <div class="settings-row-desc" data-i18n="config.langDesc">Muda o idioma de toda a interface.</div>
             </div>
-            <select class="settings-select" onchange="if(window.I18N)I18N.setLang(this.value);else setLanguage(this.value);" id="lang-select">
+            <select class="settings-select" onchange="if(window.I18N)I18N.setLang(this.value);else setLanguage(this.value);" id="lang-select" aria-labelledby="set-lang-label">
               <option value="en" data-i18n="config.langOptEn">Inglês</option>
               <option value="pt" data-i18n="config.langOptPt">Português</option>
             </select>
@@ -560,8 +561,8 @@
 </div>
 
 <!-- ════════════ ELEMENT MODAL ════════════ -->
-<div class="overlay" id="overlay" onclick="overlayClick(event)">
-  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="m-nm">
+<div class="overlay" id="overlay" onclick="overlayClick(event)" aria-hidden="true" inert>
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="m-nm" aria-label="Detalhes do elemento" data-i18n-attr="aria-label:ptable.mDialogAria">
 
     <div class="modal-l" id="modal-l">
       <div class="modal-z"  id="m-z"></div>
@@ -579,17 +580,17 @@
       <div class="modal-corner-actions">
         <div class="modal-nav-group">
           <button class="modal-nav-btn" id="m-nav-prev" onclick="navElement(-1)"
-                  aria-label="Previous element" title="Previous element (←)"
+                  aria-label="Elemento anterior" title="Elemento anterior (←)"
                   data-i18n-attr="aria-label:ptable.mNavPrev; title:ptable.mNavPrevTitle">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
           <button class="modal-nav-btn" id="m-nav-next" onclick="navElement(1)"
-                  aria-label="Next element" title="Next element (→)"
+                  aria-label="Próximo elemento" title="Próximo elemento (→)"
                   data-i18n-attr="aria-label:ptable.mNavNext; title:ptable.mNavNextTitle">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
           <button class="modal-nav-btn modal-nav-btn-wide" id="m-nav-compare" onclick="addCurrentToCompare()"
-                  aria-label="Add to compare" title="Add to compare"
+                  aria-label="Comparar: adicionar ao comparador" title="Comparar: adicionar ao comparador"
                   data-i18n-attr="aria-label:ptable.mNavCompare; title:ptable.mNavCompare">
             <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="2" width="4.5" height="9" rx="1" stroke="currentColor" stroke-width="1.2" fill="none"/><rect x="7.5" y="2" width="4.5" height="9" rx="1" stroke="currentColor" stroke-width="1.2" fill="none"/><line x1="5.5" y1="6.5" x2="7.5" y2="6.5" stroke="currentColor" stroke-width="1.2"/></svg>
             <span data-i18n="ptable.mNavCompareLbl">Comparar</span>
@@ -597,7 +598,7 @@
         </div>
         <div class="modal-action-group">
           <a class="modal-cta-corner" id="m-explore-link" href="#" data-i18n="ptable.mExplore">Explorar ↗</a>
-          <button class="modal-close-corner" onclick="closeModal()" aria-label="Close (ESC)" title="Close (ESC)"
+          <button class="modal-close-corner" onclick="closeModal()" aria-label="Fechar (ESC)" title="Fechar (ESC)"
                   data-i18n-attr="aria-label:ptable.mCloseAria; title:ptable.mCloseTitle">✕</button>
         </div>
       </div>
@@ -705,7 +706,7 @@
             <canvas id="bohr-canvas" width="200" height="200" style="display:block;border-radius:50%;"></canvas>
           </div>
           <div class="bohr-controls">
-            <button class="bohr-ctrl-btn" title="Pause / Animate" data-i18n-attr="title:ptable.bohrCtrlTitle" onclick="handleBohrClick('bohr-canvas'); event.stopPropagation();">
+            <button class="bohr-ctrl-btn" title="Pausar / Animar" data-i18n-attr="title:ptable.bohrCtrlTitle" onclick="handleBohrClick('bohr-canvas'); event.stopPropagation();">
               <svg viewBox="0 0 16 16" fill="currentColor" id="bohr-play-icon">
                 <rect x="5" y="4" width="2" height="8" rx=".5"/>
                 <rect x="9" y="4" width="2" height="8" rx=".5"/>
@@ -739,6 +740,7 @@
 <script src="../elements-data.js?v=202608041630"></script>
 <script src="../ensure-elements-en.js?v=202608041630" defer></script>
 <script src="../periodic-table.js?v=202609101700" defer></script>
+<script src="../assets/pt/pt-trends.js?v=202609101700" defer></script>
 
 <!-- ── Download libs ── -->
 <script type="text/javascript">

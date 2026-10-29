@@ -1135,8 +1135,10 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
 <script src="/assets/public-workspace.js?v=202608282500"></script>
 <link rel="stylesheet" href="/assets/ui/index.css?v=202609090500">
 <link rel="stylesheet" href="/assets/layouts/viewer.css?v=202609101700">
+<link rel="stylesheet" href="/assets/print.css?v=202610281500" media="print">
 </head>
 <body class="ps-body">
+<a class="skip-link" href="#main-content" data-i18n="common.skipToContent">Pular para o conteúdo</a>
 
 <!-- ════════════ SIDEBAR ════════════ -->
 <div class="ps-shell" id="ps-shell">
@@ -1155,7 +1157,7 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
       <div class="logo-tag" data-i18n="common.brandTag">laboratório de química</div>
     </div>
   </a>
-    <button class="mobile-menu-btn" onclick="toggleMobileSidebar()" aria-label="Open menu" data-i18n-attr="aria-label:atomicModels.aria.mobileMenu">
+    <button class="mobile-menu-btn" onclick="toggleMobileSidebar()" aria-label="Abrir menu" data-i18n-attr="aria-label:atomicModels.aria.mobileMenu">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
         <line x1="2" y1="4.5" x2="14" y2="4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
         <line x1="2" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
@@ -1175,8 +1177,8 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
     <circle cx="5.5" cy="5.5" r="4" stroke="currentColor" stroke-width="1.4"/>
     <line x1="8.7" y1="8.7" x2="11.5" y2="11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
   </svg>
-  <input id="ps-search-q" name="q" type="search" autocomplete="off" data-i18n-attr="placeholder:common.searchPlaceholder" placeholder="search element, symbol or Z…">
-  <button type="submit" data-i18n-attr="aria-label:common.searchAria" aria-label="Search element">
+  <input id="ps-search-q" name="q" type="search" autocomplete="off" data-i18n-attr="placeholder:common.searchPlaceholder" placeholder="buscar elemento, símbolo ou Z…">
+  <button type="submit" data-i18n-attr="aria-label:common.searchAria" aria-label="Buscar elemento">
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
       <circle cx="6" cy="6" r="4.2" stroke="currentColor" stroke-width="1.3"/>
       <path d="M9.2 9.2 12 12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
@@ -1184,14 +1186,14 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
   </button>
 </form>
     <button class="theme-btn" data-i18n-toggle
-            data-i18n-attr="title:common.langToggle; aria-label:common.langToggle"
-            title="Switch language" aria-label="Switch language"
+            data-i18n-attr="title:common.langToggle"
+            title="Trocar idioma" aria-label="EN — Trocar idioma"
             style="margin-left:auto;width:auto;min-width:32px;padding:0 8px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;">
-      <span data-i18n-toggle-label>PT</span>
+      <span data-i18n-toggle-label>EN</span>
     </button>
     <button class="theme-btn" onclick="toggleTheme()"
             data-i18n-attr="title:common.themeToggle; aria-label:common.themeToggle"
-            title="Toggle theme" aria-label="Toggle theme"
+            title="Alternar tema" aria-label="Alternar tema"
             style="margin-left:0;">
       <svg id="theme-icon" width="15" height="15" viewBox="0 0 15 15" fill="none"></svg>
     </button>
@@ -1245,7 +1247,7 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
     </a>
   </div>
 </aside>
-<main class="main">
+<main class="main" id="main-content" tabindex="-1">
 
   
   <div class="data-strip">
@@ -1319,11 +1321,11 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
           <div class="ion-panel" id="ion-panel">
             <div class="ion-row">
               <span class="ion-label" data-i18n="atomicModels.ion.stateLabel">Estado iônico:</span>
-              <button class="ion-btn charge-step" id="charge-down" onclick="changeCharge(-1)" data-tip="Add electron (anion)" aria-label="Add electron" data-i18n-attr="data-tip:atomicModels.ion.addTip; aria-label:atomicModels.ion.addAria">−</button>
+              <button class="ion-btn charge-step" id="charge-down" onclick="changeCharge(-1)" data-tip="Add electron (anion)" aria-label="Adicionar elétron" data-i18n-attr="data-tip:atomicModels.ion.addTip; aria-label:atomicModels.ion.addAria">−</button>
               <span class="charge-val" id="charge-val">0</span>
-              <button class="ion-btn charge-step" id="charge-up" onclick="changeCharge(1)" data-tip="Remove electron (cation)" aria-label="Remove electron" data-i18n-attr="data-tip:atomicModels.ion.removeTip; aria-label:atomicModels.ion.removeAria">+</button>
+              <button class="ion-btn charge-step" id="charge-up" onclick="changeCharge(1)" data-tip="Remove electron (cation)" aria-label="Remover elétron" data-i18n-attr="data-tip:atomicModels.ion.removeTip; aria-label:atomicModels.ion.removeAria">+</button>
               <span class="ion-badge neutral" id="ion-badge" data-i18n="atomicModels.ion.badgeNeutral">NEUTRO</span>
-              <button class="ion-btn charge-reset" id="charge-reset" onclick="resetCharge()" data-tip="Reset (C)" aria-label="Reset charge" data-i18n-attr="data-tip:atomicModels.ion.resetTip; aria-label:atomicModels.ion.resetAria">↺</button>
+              <button class="ion-btn charge-reset" id="charge-reset" onclick="resetCharge()" data-tip="Reset (C)" aria-label="Resetar carga" data-i18n-attr="data-tip:atomicModels.ion.resetTip; aria-label:atomicModels.ion.resetAria">↺</button>
             </div>
             <div class="ion-explain" id="ion-explain">
               <span class="ion-ecount" id="ion-ecount">6 e⁻</span>
@@ -1382,40 +1384,40 @@ html[data-theme="dark"] .md-col{background:rgba(255,255,255,.05)}
             <button class="vc-btn" id="mode-btn-2d" onclick="setViewerMode('2d')" style="font-family:var(--lc-mono); font-size:10px; font-weight:600; padding:2px 8px; width:auto; height:24px; border-radius:2px;" data-tip="2D view" data-i18n-attr="data-tip:atomicModels.tip.view2D" aria-pressed="false">2D</button>
           </div>
 
-          <canvas id="viewer3d" aria-label="Viewer" data-i18n-attr="aria-label:atomicModels.aria.viewer"></canvas>
+          <canvas id="viewer3d" aria-label="Visualizador" data-i18n-attr="aria-label:atomicModels.aria.viewer"></canvas>
           <canvas id="viewer2d-full" style="width:100%; height:460px; background:var(--canvas-bg-1); cursor:grab;"></canvas>
 
-          <div class="viewer-controls" role="toolbar" aria-label="Viewer controls" data-i18n-attr="aria-label:atomicModels.aria.toolbar">
-            <button class="vc-btn active" id="vc-rotate" onclick="toggleAutoRotate()" data-tip="Auto-rotate (Space)" aria-label="Toggle auto-rotate" data-i18n-attr="data-tip:atomicModels.tip.autoRotate; aria-label:atomicModels.aria.autoRotate">
+          <div class="viewer-controls" role="toolbar" aria-label="Controles do visualizador" data-i18n-attr="aria-label:atomicModels.aria.toolbar">
+            <button class="vc-btn active" id="vc-rotate" onclick="toggleAutoRotate()" data-tip="Auto-rotate (Space)" aria-label="Alternar auto-rotação" data-i18n-attr="data-tip:atomicModels.tip.autoRotate; aria-label:atomicModels.aria.autoRotate">
               <svg viewBox="0 0 16 16" fill="none"><path d="M2 8a6 6 0 0 1 10.5-3.9M14 8a6 6 0 0 1-10.5 3.9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M11 2v3h3M5 14v-3H2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
-            <button class="vc-btn" id="vc-static" onclick="toggleStatic()" data-tip="Static mode (S)" aria-label="Static mode" data-i18n-attr="data-tip:atomicModels.tip.static; aria-label:atomicModels.aria.static">
+            <button class="vc-btn" id="vc-static" onclick="toggleStatic()" data-tip="Static mode (S)" aria-label="Modo estático" data-i18n-attr="data-tip:atomicModels.tip.static; aria-label:atomicModels.aria.static">
               <svg viewBox="0 0 16 16" fill="none"><rect x="3" y="6" width="10" height="8" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M5.5 6V4.5a2.5 2.5 0 0 1 5 0V6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
             </button>
-            <button class="vc-btn" id="vc-reset" onclick="resetView()" data-tip="Reset (R)" aria-label="Reset" data-i18n-attr="data-tip:atomicModels.tip.reset; aria-label:atomicModels.aria.reset">
+            <button class="vc-btn" id="vc-reset" onclick="resetView()" data-tip="Reset (R)" aria-label="Resetar" data-i18n-attr="data-tip:atomicModels.tip.reset; aria-label:atomicModels.aria.reset">
               <svg viewBox="0 0 16 16" fill="none"><path d="M8 3v3M8 3L6 5M8 3l2 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="9" r="4.5" stroke="currentColor" stroke-width="1.4"/></svg>
             </button>
-            <button class="vc-btn" id="vc-2d-play" onclick="toggle2DAnim()" data-tip="Animate 2D (P)" aria-label="Animate 2D" data-i18n-attr="data-tip:atomicModels.tip.anim2D; aria-label:atomicModels.aria.anim2D" style="display:none">
+            <button class="vc-btn" id="vc-2d-play" onclick="toggle2DAnim()" data-tip="Animate 2D (P)" aria-label="Animar 2D" data-i18n-attr="data-tip:atomicModels.tip.anim2D; aria-label:atomicModels.aria.anim2D" style="display:none">
               <svg id="vc-2d-play-icon" viewBox="0 0 16 16" fill="none"><path d="M5 3l8 5-8 5V3z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" fill="currentColor"/></svg>
             </button>
             <span class="vc-sep" aria-hidden="true"></span>
-            <button class="vc-btn" id="vc-labels" onclick="toggleLabels()" data-tip="Labels (L)" aria-label="Labels" data-i18n-attr="data-tip:atomicModels.tip.labels; aria-label:atomicModels.aria.labels">
+            <button class="vc-btn" id="vc-labels" onclick="toggleLabels()" data-tip="Labels (L)" aria-label="Rótulos" data-i18n-attr="data-tip:atomicModels.tip.labels; aria-label:atomicModels.aria.labels">
               <svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
             </button>
-            <button class="vc-btn" id="vc-fs" onclick="toggleFullscreen()" data-tip="Fullscreen (F)" aria-label="Fullscreen" data-i18n-attr="data-tip:atomicModels.tip.fullscreen; aria-label:atomicModels.aria.fullscreen">
+            <button class="vc-btn" id="vc-fs" onclick="toggleFullscreen()" data-tip="Fullscreen (F)" aria-label="Tela cheia" data-i18n-attr="data-tip:atomicModels.tip.fullscreen; aria-label:atomicModels.aria.fullscreen">
               <svg viewBox="0 0 16 16" fill="none"><path d="M2 5V2h3M14 5V2h-3M2 11v3h3M14 11v3h-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
-            <button class="vc-btn" id="vc-download" onclick="downloadViewer()" data-tip="Download PNG (D)" aria-label="Download PNG" data-i18n-attr="data-tip:atomicModels.tip.download; aria-label:atomicModels.aria.download">
+            <button class="vc-btn" id="vc-download" onclick="downloadViewer()" data-tip="Download PNG (D)" aria-label="Baixar PNG" data-i18n-attr="data-tip:atomicModels.tip.download; aria-label:atomicModels.aria.download">
               <svg viewBox="0 0 16 16" fill="none"><path d="M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 13h12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
             </button>
           </div>
 
           <!-- Zoom -->
           <div class="viewer-zoom" role="toolbar" aria-label="Zoom" data-i18n-attr="aria-label:atomicModels.aria.zoomBar">
-            <button class="vc-btn" onclick="zoomBy(-1)" title="Zoom in" aria-label="Zoom in" data-i18n-attr="title:atomicModels.tip.zoomIn; aria-label:atomicModels.tip.zoomIn">
+            <button class="vc-btn" onclick="zoomBy(-1)" title="Aproximar" aria-label="Aproximar" data-i18n-attr="title:atomicModels.tip.zoomIn; aria-label:atomicModels.tip.zoomIn">
               <svg viewBox="0 0 16 16" fill="none"><path d="M4 8h8M8 4v8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
             </button>
-            <button class="vc-btn" onclick="zoomBy(1)" title="Zoom out" aria-label="Zoom out" data-i18n-attr="title:atomicModels.tip.zoomOut; aria-label:atomicModels.tip.zoomOut">
+            <button class="vc-btn" onclick="zoomBy(1)" title="Afastar" aria-label="Afastar" data-i18n-attr="title:atomicModels.tip.zoomOut; aria-label:atomicModels.tip.zoomOut">
               <svg viewBox="0 0 16 16" fill="none"><path d="M4 8h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
             </button>
           </div>

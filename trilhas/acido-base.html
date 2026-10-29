@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html data-ps-chrome="1" lang="en-US" data-theme="light" data-page="trail">
+<head>
+<style>html[data-theme="dark"] #icon-theme-light,html[data-theme="light"] #icon-theme-dark{display:none!important}html[data-theme="dark"] #icon-theme-dark,html[data-theme="light"] #icon-theme-light{display:block!important}</style>
+<script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var q=new URLSearchParams(location.search);var p=q.get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem('atomurus-lang');var path=location.pathname;var isPt=/\.pt\.html$/i.test(path)||/\.pt$/i.test(path);if(!l&&isPt)l='pt';if(!l){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}if(l==='pt'){document.documentElement.lang='pt-BR';}else{document.documentElement.lang='en-US';}localStorage.setItem('atomurus-lang',l);var u=new URL(location.href);if(l==='pt'&&!isPt){if(/\.html$/i.test(path)){u.pathname=path.replace(/\.html$/i,'.pt.html');}else if(path.charAt(path.length-1)!=='/'){u.pathname=path+'.pt.html';}u.searchParams.set('lang','pt-BR');if(u.href!==location.href)location.replace(u.href);}else if(l==='en'&&isPt){if(/\.pt\.html$/i.test(path)){u.pathname=path.replace(/\.pt\.html$/i,'.html');}else{u.pathname=path.replace(/\.pt$/i,'');}u.searchParams.set('lang','en');if(u.href!==location.href)location.replace(u.href);}}catch(e){}})();</script>
+<meta charset="UTF-8">
+
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1E6A50" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E0D0C" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Atomurus">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" type="image/png" href="/assets/atomurus-logo.png?v=202608041630">
+<link rel="apple-touch-icon" href="/assets/atomurus-logo.png?v=202608041630">
+<title>Trail: Acids and bases | Atomurus</title>
+<meta name="description" content="From the pH of strong acids to buffers: eight steps of the site, in order, to understand and calculate pH. Read, use the calculator, practise, try it in the Lab and apply it on a sheet.">
+<meta property="og:title" content="Trail: Acids and bases | Atomurus">
+<meta property="og:description" content="From the pH of strong acids to buffers: eight steps of the site, in order, to understand and calculate pH. Read, use the calculator, practise, try it in the Lab and apply it on a sheet.">
+<style>
+.fx-draft{margin:14px 0 0;padding:8px 12px;max-width:640px;border:1px dashed var(--lc-amber,#B7791F);border-radius:8px;font-size:13px}
+.lc-doc-prose .tr-steps{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+.lc-doc-prose .tr-steps>.tr-step{display:grid;grid-template-columns:32px 1fr auto;gap:12px;align-items:center;margin:0;padding:12px 14px;border:1px solid var(--lc-rule,#D8D2BF);border-radius:12px}
+.lc-doc-prose .tr-steps>.tr-step::before{content:none}
+.tr-step.is-done{border-color:var(--lc-green,#1E6A50);background:color-mix(in oklab,var(--lc-green,#1E6A50) 7%,transparent)}
+.tr-step svg{width:22px;height:22px}.tr-step a{font-weight:600}.tr-meta{display:block;font-size:12px;color:var(--lc-ink-2,#58544A)}
+.tr-step .ui-btn{min-height:40px}.tr-progress{font-weight:600}.tr-note{font-size:13px;color:var(--lc-ink-2,#58544A)}
+.tr-q{margin:0 0 12px}.tr-q summary{cursor:pointer;font-weight:600;min-height:32px}
+@media (max-width:560px){.tr-step{grid-template-columns:28px 1fr}.tr-step .ui-btn{grid-column:2}}
+@media print{:root body :is(.lc-doc-aside,.lc-statusbar,.lc-footer,.tr-step .ui-btn,.tr-tools){display:none!important}}
+</style>
+<link rel="stylesheet" href="/assets/ui/worked-solution.css?v=202608041630">
+<script src="/assets/trail-progress.js?v=202608041630" defer></script>
+<link rel="preload" href="/assets/fonts/inter-tight-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/instrument-serif-400-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202608041630">
+<script src="/i18n.js?v=202608041630" defer></script>
+<link rel="stylesheet" href="/assets/critical-lab.css?v=202608041630">
+<script>document.documentElement.classList.add('lc-loading');setTimeout(function(){document.documentElement.classList.remove('lc-loading')},4000);</script>
+<link rel="preload" href="/atomurus-lab-console.css?v=202608041630" as="style">
+<link rel="stylesheet" href="/atomurus-lab-console.css?v=202608041630" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
+<noscript><link rel="stylesheet" href="/atomurus-lab-console.css?v=202608041630"></noscript>
+<link rel="stylesheet" href="/assets/public-shell.css?v=202608041630">
+<link rel="stylesheet" href="/assets/ui/index.css?v=202608041630">
+<link rel="stylesheet" href="/assets/layouts/docs.css?v=202608041630">
+<script src="/assets/global-nav.js?v=202608041630"></script>
+<script src="/assets/public-workspace.js?v=202608041630"></script>
+<script src="/atomurus-mobile-nav.js?v=202608041630" defer></script>
+<script src="/assets/trail-chip.js?v=202608041630" defer></script>
+<link rel="stylesheet" href="/assets/print.css?v=202608041630" media="print">
+</head>
+
+<body class="ps-body lc-doc">
+<a class="skip-link" href="#ps-main" data-i18n="common.skipToContent">Skip to content</a>
+
+<div class="ps-shell" id="ps-shell">
+<nav class="lc-topnav">
+  <a class="lc-topnav-brand" href="/">
+    <div class="lc-topnav-mark">
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="2.5" fill="currentColor"/>
+        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/>
+        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/>
+        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/>
+      </svg>
+    </div>
+    <div>
+      <div class="lc-topnav-name">Atomurus</div>
+      <div class="lc-topnav-tag" data-i18n="common.brandTag">chemistry lab</div>
+    </div>
+  </a>
+
+  <div class="lc-topnav-links">
+    <a class="lc-topnav-link" href="/periodic-table.html"><span class="lc-tn-no">01</span> <span data-i18n="common.nav.periodic">Periodic Table</span></a>
+    <a class="lc-topnav-link" href="/viewer/atomic-models.html"><span class="lc-tn-no">02</span> <span data-i18n="common.nav.visualizador">Viewer</span></a>
+    <a class="lc-topnav-link" href="/calculators.html"><span class="lc-tn-no">03</span> <span data-i18n="common.nav.calc">Calculators</span></a>
+    <a class="lc-topnav-link" href="/explore.html"><span class="lc-tn-no">04</span> <span data-i18n="common.nav.explore">Explore</span></a>
+  </div>
+
+  <form class="ps-search search-box" role="search" action="periodic-table.html" method="get">
+  <label class="lc-sr-only" for="ps-search-q" data-i18n="common.searchAria">Search element</label>
+  <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+    <circle cx="5.5" cy="5.5" r="4" stroke="currentColor" stroke-width="1.4"/>
+    <line x1="8.7" y1="8.7" x2="11.5" y2="11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+  </svg>
+  <input id="ps-search-q" name="q" type="search" autocomplete="off" data-i18n-attr="placeholder:common.searchPlaceholder" placeholder="search element, symbol or Z…">
+  <button type="submit" data-i18n-attr="aria-label:common.searchAria" aria-label="Search element">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <circle cx="6" cy="6" r="4.2" stroke="currentColor" stroke-width="1.3"/>
+      <path d="M9.2 9.2 12 12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+    </svg>
+  </button>
+</form>
+    <div class="lc-topnav-spacer"></div>
+
+  <button class="lc-topnav-btn lc-topnav-lang" onclick="location.href='acido-base.pt.html?lang=pt-BR'" data-i18n-attr="title:common.langToggle" title="Switch language" aria-label="PT — Switch language" style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;width:auto;min-width:30px;padding:0 8px;">
+    <span>PT</span>
+  </button>
+
+  <button class="lc-topnav-btn" onclick="toggleTheme()" data-i18n-attr="title:common.themeToggle; aria-label:common.themeToggle" title="Toggle theme" aria-label="Toggle theme">
+    <svg id="icon-theme-light" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M11.5 7.5A4.5 4.5 0 0 1 6.5 2.5 4.5 4.5 0 1 0 11.5 7.5z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/></svg>
+    <svg id="icon-theme-dark" width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M7 1v1.4M7 11.6V13M1 7h1.4M11.6 7H13M2.5 2.5l1 1M10.5 10.5l1 1M2.5 11.5l1-1M10.5 3.5l1-1" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+  </button>
+
+<div class="ps-account" data-atomurus-account>
+  <span class="ps-plan-badge" data-atomurus-plan-badge hidden></span>
+  <a class="ps-userchip lc-topnav-cta is-guest-cta" href="../signup.html" data-atomurus-account-chip aria-label="Create account">
+    <svg class="ps-userchip-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span data-i18n="common.auth.createAccount">Create account</span>
+  </a>
+</div>
+  </nav>
+<aside class="ws-sidebar sidebar ps-pub-sidebar" id="ws-sidebar" data-atomurus-sidebar>
+  <nav class="ws-nav" id="ws-nav-main" aria-label="Laboratory" data-i18n-attr="aria-label:common.nav.laboratory" data-atomurus-lab-nav>
+    <div class="ws-nav-block ws-nav-site">
+      <h2 class="ws-nav-group" data-i18n="common.nav.laboratory">Laboratory</h2>
+      <a class="ws-nav-item" href="/" data-nav="home">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M2.5 7.5 8 3l5.5 4.5M4 6.5V13h8V6.5M6.5 13V9h3v4"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.home">Home</span>
+      </a>
+      <a class="ws-nav-item" href="/periodic-table.html" data-nav="periodic">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.periodic">Periodic Table</span>
+      </a>
+      <a class="ws-nav-item" href="/viewer/atomic-models.html" data-nav="viewer">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="8" cy="8" r="2"/><ellipse cx="8" cy="8" rx="6" ry="2.5"/><ellipse cx="8" cy="8" rx="6" ry="2.5" transform="rotate(60 8 8)"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.visualizador">Viewer</span>
+      </a>
+      <a class="ws-nav-item" href="/calculators.html" data-nav="calculators">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="2" width="10" height="12" rx="1"/><path d="M5 5h6M5.5 8h1M9.5 8h1M5.5 11h1M9.5 11h1"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.calc">Calculators</span>
+      </a>
+      <a class="ws-nav-item" href="/explore.html" data-nav="explore">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.explore">Explore</span>
+      </a>
+      <a class="ws-nav-item" href="/app" data-nav="workspace">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 12l4-4 2 2 4-6"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.workspace">Workspace</span>
+      </a>
+    </div>
+  </nav>
+  <div class="ws-nav-foot sidebar-foot" id="ws-nav-foot" data-atomurus-nav-foot>
+    <a class="ws-nav-item is-upgrade" href="/signup" data-nav="signup">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5"/></g></svg>
+      <span class="ws-nav-label" data-i18n="common.auth.createAccount">Create account</span>
+    </a>
+    <a class="ws-nav-item" href="/login" data-nav="signin">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5"/></g></svg>
+      <span class="ws-nav-label" data-i18n="common.auth.signIn">Sign in</span>
+    </a>
+    <a class="ws-nav-item" href="/pricing" data-nav="plans">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 5h8v8H4zM6 3v2M10 3v2"/></g></svg>
+      <span class="ws-nav-label" data-i18n="common.nav.plans">Plans</span>
+    </a>
+  </div>
+</aside>
+<main class="ps-main" id="ps-main" tabindex="-1">
+<header class="lc-doc-hero">
+  <div class="lc-doc-kicker">
+    <span>Trail</span>
+    <span class="pill">8 steps · ≈ 125 min</span>
+  </div>
+  <h1 class="lc-doc-title">Trail: Acids and bases</h1>
+  <p class="lc-doc-desc">From the pH of strong acids to buffers: eight steps of the site, in order, to understand and calculate pH. Read, use the calculator, practise, try it in the Lab and apply it on a sheet.</p>
+  <p class="fx-draft" role="note">Draft — under teacher review. Not published yet.</p>
+</header>
+<div class="lc-doc-body ui-root">
+  <aside class="lc-doc-aside">
+    <div><span class="lbl">level</span><br><span class="v">intermediate</span></div>
+    <hr>
+    <div><span class="lbl">duration</span><br><span class="v">≈ 125 min</span></div>
+  </aside>
+  <article class="lc-doc-prose" data-trail="acido-base">
+<p class="tr-progress" data-trail-count data-template="{n} of {total} steps done" aria-live="polite">0 of 8 steps done</p>
+<ol class="tr-steps">
+  <li class="tr-step" data-step="acidos-bases"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 2.5h6l2.5 2.5v8.5h-8.5zM6 7h5M6 9.5h5M6 12h3"/></g></svg><div><a href="/explore/acids-bases-and-ph.html?trail=acido-base&amp;step=1">1. Acids, bases and pH</a><span class="tr-meta">Article · 15 min</span></div><button type="button" class="ui-btn ui-btn-secondary" data-trail-done="acidos-bases" aria-pressed="false" data-label-off="Done" data-label-on="Done ✓" aria-label="Mark as done: Acids, bases and pH">Done</button></li>
+  <li class="tr-step" data-step="ph-forte"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="2" width="10" height="12" rx="1"/><path d="M5 5h6M5.5 8h1M9.5 8h1M5.5 11h1M9.5 11h1"/></g></svg><div><a href="/calculators.html?trail=acido-base&amp;step=2#ph">2. pH calculator: strong acid or base</a><span class="tr-meta">Tool · 10 min</span></div><button type="button" class="ui-btn ui-btn-secondary" data-trail-done="ph-forte" aria-pressed="false" data-label-off="Done" data-label-on="Done ✓" aria-label="Mark as done: pH calculator: strong acid or base">Done</button></li>
+  <li class="tr-step" data-step="exercicios-ph"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 4h10M3 8h10M3 12h6M12 11l1.5 1.5L16 10"/></g></svg><div><a href="/exercises/ph-strong.html?trail=acido-base&amp;step=3">3. pH of strong acids and bases exercises</a><span class="tr-meta">Exercises · 20 min · after: pH calculator: strong acid or base</span></div><button type="button" class="ui-btn ui-btn-secondary" data-trail-done="exercicios-ph" aria-pressed="false" data-label-off="Done" data-label-on="Done ✓" aria-label="Mark as done: pH of strong acids and bases exercises">Done</button></li>
+  <li class="tr-step" data-step="lab-ph"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6 2v4l-3.5 7h11L10 6V2M5 2h6"/></g></svg><div><a href="/app?section=lab&amp;mode=guided&amp;creation=ph&amp;trail=acido-base&amp;step=4">4. Lab: pH Challenge (predict, observe, explain)</a><span class="tr-meta">Lab · 20 min</span></div><button type="button" class="ui-btn ui-btn-secondary" data-trail-done="lab-ph" aria-pressed="false" data-label-off="Done" data-label-on="Done ✓" aria-label="Mark as done: Lab: pH Challenge (predict, observe, explain)">Done</button></li>
+  <li class="tr-step" data-step="ph-fraco"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="2" width="10" height="12" rx="1"/><path d="M5 5h6M5.5 8h1M9.5 8h1M5.5 11h1M9.5 11h1"/></g></svg><div><a href="/calculators.html?ph=weakAcid&amp;trail=acido-base&amp;step=5#ph">5. pH calculator: weak acid and Ka</a><span class="tr-meta">Tool · 10 min · after: Acids, bases and pH</span></div><button type="button" class="ui-btn ui-btn-secondary" data-trail-done="ph-fraco" aria-pressed="false" data-label-off="Done" data-label-on="Done ✓" aria-label="Mark as done: pH calculator: weak acid and Ka">Done</button></li>
+  <li class="tr-step" data-step="tampao"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="2" width="10" height="12" rx="1"/><path d="M5 5h6M5.5 8h1M9.5 8h1M5.5 11h1M9.5 11h1"/></g></svg><div><a href="/calculators.html?ph=buffer&amp;trail=acido-base&amp;step=6#ph">6. pH calculator: buffer (Henderson–Hasselbalch)</a><span class="tr-meta">Tool · 10 min · after: pH calculator: weak acid and Ka</span></div><button type="button" class="ui-btn ui-btn-secondary" data-trail-done="tampao" aria-pressed="false" data-label-off="Done" data-label-on="Done ✓" aria-label="Mark as done: pH calculator: buffer (Henderson–Hasselbalch)">Done</button></li>
+  <li class="tr-step" data-step="ficha"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="2" width="10" height="12" rx="1"/><path d="M5.5 5h5M5.5 7.5h5M5.5 10h3"/></g></svg><div><a href="/fichas/F3.html?trail=acido-base&amp;step=7">7. Sheet F3: everyday pH</a><span class="tr-meta">Activity sheet · 30 min · after: pH of strong acids and bases exercises</span></div><button type="button" class="ui-btn ui-btn-secondary" data-trail-done="ficha" aria-pressed="false" data-label-off="Done" data-label-on="Done ✓" aria-label="Mark as done: Sheet F3: everyday pH">Done</button></li>
+  <li class="tr-step" data-step="revisao"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M8 2.5l1.7 3.4 3.8.6-2.7 2.7.6 3.8L8 11.2 4.6 13l.6-3.8-2.7-2.7 3.8-.6z"/></g></svg><div><a href="#revisao">8. Review and self-check</a><span class="tr-meta">Review · 10 min</span></div><button type="button" class="ui-btn ui-btn-secondary" data-trail-done="revisao" aria-pressed="false" data-label-off="Done" data-label-on="Done ✓" aria-label="Mark as done: Review and self-check">Done</button></li>
+  <li class="tr-step" data-step="extra-tampao"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 4h10M3 8h10M3 12h6M12 11l1.5 1.5L16 10"/></g></svg><div><a href="/exercises/buffer.html?trail=acido-base&amp;step=9">Extra: buffer exercises</a><span class="tr-meta">Exercises · 20 min · optional · after: pH calculator: buffer (Henderson–Hasselbalch)</span></div><button type="button" class="ui-btn ui-btn-secondary" data-trail-done="extra-tampao" data-optional aria-pressed="false" data-label-off="Done" data-label-on="Done ✓" aria-label="Mark as done: Extra: buffer exercises">Done</button></li>
+  <li class="tr-step" data-step="extra-equilibrio"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 2.5h6l2.5 2.5v8.5h-8.5zM6 7h5M6 9.5h5M6 12h3"/></g></svg><div><a href="/explore/chemical-equilibrium.html?trail=acido-base&amp;step=10">Extra: chemical equilibrium</a><span class="tr-meta">Article · 15 min · optional</span></div><button type="button" class="ui-btn ui-btn-secondary" data-trail-done="extra-equilibrio" data-optional aria-pressed="false" data-label-off="Done" data-label-on="Done ✓" aria-label="Mark as done: Extra: chemical equilibrium">Done</button></li>
+</ol>
+<p class="tr-note tr-tools">Your progress stays in this browser only: no account, nothing sent. <button type="button" class="ui-btn ui-btn-ghost" data-trail-reset>Start over</button></p>
+<section id="revisao" aria-labelledby="tr-review-title">
+<h2 id="tr-review-title">Review</h2>
+<h3>What to remember</h3>
+<ul><li>pH = −log₁₀[H⁺]: each pH unit is a factor of ten in the H⁺ concentration.</li><li>Strong acids and bases ionize completely; weak ones only in part, as measured by Ka or pKa.</li><li>Strength and concentration are different things.</li><li>Neutral means [H⁺] = [OH⁻]; that gives pH 7 only at 25 °C.</li><li>A buffer of a weak acid and its conjugate base keeps the pH near pKa + log₁₀([A⁻]/[HA]).</li></ul>
+<h3>Check yourself</h3>
+<ol>
+<li class="tr-q"><p>What is the pH of 0.001 mol/L hydrochloric acid?</p><details><summary>Answer</summary><p><span translate="no">pH = 3.00</span><ol class="wsol-steps"><li><span class="wsol-text">A strong acid ionizes completely, so [H⁺] equals its concentration.</span> <span class="wsol-expr" translate="no">[H⁺] = 0.001 mol/L</span></li><li><span class="wsol-text">Take minus the base-10 logarithm.</span> <span class="wsol-expr" translate="no">pH = −log₁₀(0.001) = 3.00</span></li><li><span class="wsol-text">At 25 °C, pH + pOH = 14.</span> <span class="wsol-expr" translate="no">pOH = 14 − 3.00 = 11.00</span></li><li><span class="wsol-text">Compare with 7 (neutral within ±0.005 at 25 °C): the solution is acidic.</span> <span class="wsol-expr" translate="no">pH = 3.00 &lt; 7</span></li></ol></p></details></li>
+<li class="tr-q"><p>What [acetate]/[acetic acid] ratio gives a buffer of pH 5.00 (pKa = 4.756)?</p><details><summary>Answer</summary><p><span translate="no">[A⁻]/[HA] = 1.754</span><ol class="wsol-steps"><li><span class="wsol-text">Henderson–Hasselbalch: pH = pKa + log₁₀([A⁻]/[HA]), so log₁₀([A⁻]/[HA]) = pH − pKa.</span> <span class="wsol-expr" translate="no">log₁₀([A⁻]/[HA]) = 5.00 − 4.756 = 0.244</span></li><li><span class="wsol-text">Undo the logarithm to get the ratio.</span> <span class="wsol-expr" translate="no">[A⁻]/[HA] = 10^0.244 = 1.754</span></li><li><span class="wsol-text">A buffer works well while the ratio stays between 0.1 and 10 (pH = pKa ± 1).</span> <span class="wsol-expr" translate="no">0.1 ≤ 1.754 ≤ 10 ✓</span></li></ol></p></details></li>
+<li class="tr-q"><p>One solution has pH 3 and another pH 5. How many times more H⁺ does the first have?</p><details><summary>Answer</summary><p>A hundred times: two units, each a factor of ten.</p></details></li>
+<li class="tr-q"><p>Is 0.001 mol/L hydrochloric acid a strong or a weak acid?</p><details><summary>Answer</summary><p>Strong: it ionizes completely. It is dilute, which is a different thing.</p></details></li>
+<li class="tr-q"><p>Hot pure water has a pH below 7. Is it acidic?</p><details><summary>Answer</summary><p>No. It is still neutral, because [H⁺] = [OH⁻]; Kw is larger at a higher temperature, so the neutral pH is below 7.</p></details></li>
+</ol>
+</section>
+<p class="fx-license">Licence: [licença: definir]</p>
+  </article>
+</div>
+
+<footer class="lc-footer">
+  <div class="lc-footer-inner">
+    <div class="lc-footer-col lc-footer-brand">
+      <div class="lc-footer-brand-row">
+        <div class="lc-topnav-mark" style="width:24px;height:24px">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="2.5" fill="currentColor"/>
+            <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/>
+            <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/>
+            <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/>
+          </svg>
+        </div>
+        <span class="lc-footer-brand-name">Atomurus</span>
+      </div>
+      <p class="lc-footer-brand-desc" data-i18n="common.footer.brandDesc">An instrumental chemistry laboratory for the studious, the curious and the patient.</p>
+      <div class="lc-footer-social" aria-label="Social">
+        <a href="https://instagram.com/atomurusapp" target="_blank" rel="noopener me" aria-label="Instagram @atomurusapp" title="Instagram @atomurusapp">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.7"/>
+            <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/>
+            <circle cx="17.5" cy="6.5" r="1.1" fill="currentColor"/>
+          </svg>
+        </a>
+        <a href="https://x.com/atomurusapp" target="_blank" rel="noopener me" aria-label="X (Twitter) @atomurusapp" title="X (Twitter) @atomurusapp">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.658l-5.214-6.817-5.967 6.817H1.68l7.73-8.835L1.254 2.25h6.828l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+    <div class="lc-footer-col">
+      <h4 data-i18n="common.footer.modules">Modules</h4>
+      <a href="/periodic-table.html" data-i18n="common.nav.periodic">Periodic Table</a>
+      <a href="/viewer/atomic-models.html" data-i18n="common.nav.viewer3d">Viewer</a>
+      <a href="/calculators.html" data-i18n="common.nav.calc">Calculators</a>
+      <a href="/explore.html" data-i18n="common.nav.explore">Explore</a>
+    </div>
+    <div class="lc-footer-col">
+      <h4 data-i18n="common.footer.workspace">Workspace</h4>
+      <a href="/config.html" data-i18n="common.footer.settings">Settings</a>
+      <a href="/periodic-table.html#search" data-i18n="common.footer.elementSearch">Element search</a>
+      <a href="/calculators.html#molar" data-i18n="common.footer.molarMass">Molar mass</a>
+    </div>
+    <div class="lc-footer-col">
+      <h4 data-i18n="common.footer.project">Project</h4>
+      <a href="/about.html" data-i18n="common.footer.about">About</a>
+      <a href="/privacy.html" data-i18n="common.footer.privacy">Privacy</a>
+      <a href="/terms.html" data-i18n="common.footer.terms">Terms</a>
+      <a href="/contact.html" data-i18n="common.footer.contact">Contact</a>
+    </div>
+    <div class="lc-footer-col">
+      <h4 data-i18n="common.footer.data">Data</h4>
+      <a href="https://iupac.org/" target="_blank" rel="noopener">IUPAC 2024</a>
+      <a href="https://physics.nist.gov/cuu/Constants/" target="_blank" rel="noopener">CODATA 2022</a>
+      <a href="https://www.nist.gov/" target="_blank" rel="noopener">NIST</a>
+    </div>
+  </div>
+  <div class="lc-footer-bottom">
+    <span><span class="lc-st-dot" style="width:6px;height:6px;border-radius:50%;background:#1E6A50;display:inline-block"></span> <span data-i18n="common.footer.systemNominal">system nominal</span></span>
+    <span data-i18n="common.footer.copy">© 2026 Atomurus · v1.11</span>
+  </div>
+</footer>
+
+<div class="lc-statusbar">
+  <span><span class="lc-st-dot"></span> <span data-i18n="common.stReady">ready</span></span>
+  <span class="lc-st-sep">·</span>
+  <span>trails / acido-base</span>
+  <span class="lc-st-spacer"></span>
+  <a href="/">→ home</a>
+</div>
+
+</main>
+</div>
+<script>
+function toggleTheme(){var h=document.documentElement;var d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');localStorage.setItem('atomurus-theme',d?'light':'dark')}
+(function(){var s=localStorage.getItem('atomurus-theme');if(s)document.documentElement.setAttribute('data-theme',s)})();
+</script>
+</body>
+</html>

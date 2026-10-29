@@ -1,0 +1,1672 @@
+{
+  "server": {
+    "FEATURES": {
+      "labWorkspace": {
+        "access": "public",
+        "category": "workspace"
+      },
+      "scientificCalculator": {
+        "access": "public",
+        "category": "calculator"
+      },
+      "unitConverter": {
+        "access": "public",
+        "category": "calculator"
+      },
+      "idealGasCalculator": {
+        "access": "public",
+        "category": "calculator"
+      },
+      "phCalculator": {
+        "access": "public",
+        "category": "calculator"
+      },
+      "interactiveViewers": {
+        "access": "public",
+        "category": "visualize"
+      },
+      "atomicModelViewer": {
+        "access": "public",
+        "category": "visualize"
+      },
+      "moleculeViewer": {
+        "access": "public",
+        "category": "visualize"
+      },
+      "allotropeViewer": {
+        "access": "public",
+        "category": "visualize"
+      },
+      "isomerismViewer": {
+        "access": "public",
+        "category": "visualize"
+      },
+      "publicElementCompare": {
+        "access": "public",
+        "category": "visualize"
+      },
+      "studyCloud": {
+        "access": "account",
+        "category": "study"
+      },
+      "studyProgress": {
+        "access": "account",
+        "category": "study"
+      },
+      "favorites": {
+        "access": "account",
+        "category": "study"
+      },
+      "calculatorHistory": {
+        "access": "account",
+        "category": "study"
+      },
+      "studyNotes": {
+        "access": "account",
+        "category": "study"
+      },
+      "studyTags": {
+        "access": "account",
+        "category": "study"
+      },
+      "studySets": {
+        "access": "account",
+        "category": "study"
+      },
+      "flashcards": {
+        "access": "account",
+        "category": "study"
+      },
+      "premiumLessons": {
+        "access": "pro",
+        "category": "study"
+      },
+      "smartReview": {
+        "access": "pro",
+        "category": "study"
+      },
+      "spacedRepetition": {
+        "access": "pro",
+        "category": "study"
+      },
+      "studyInsights": {
+        "access": "pro",
+        "category": "study"
+      },
+      "focusReview": {
+        "access": "pro",
+        "category": "study"
+      },
+      "advancedStudyStats": {
+        "access": "pro",
+        "category": "study"
+      },
+      "exportPdf": {
+        "access": "pro",
+        "category": "study"
+      },
+      "automatedPractice": {
+        "access": "pro",
+        "category": "study"
+      },
+      "virtualLab": {
+        "access": "account",
+        "category": "lab"
+      },
+      "virtualLabAdvanced": {
+        "access": "pro",
+        "category": "lab"
+      },
+      "adsFree": {
+        "access": "pro",
+        "category": "platform"
+      },
+      "proLab": {
+        "access": "pro",
+        "category": "solve"
+      },
+      "advancedCalculations": {
+        "access": "pro",
+        "category": "solve"
+      },
+      "chemistrySolver": {
+        "access": "pro",
+        "category": "solve"
+      },
+      "reactionWorkbench": {
+        "access": "pro",
+        "category": "solve"
+      },
+      "reactionBalancer": {
+        "access": "pro",
+        "category": "solve"
+      },
+      "stoichiometrySolver": {
+        "access": "pro",
+        "category": "solve"
+      },
+      "limitingReagentSolver": {
+        "access": "pro",
+        "category": "solve"
+      },
+      "yieldSolver": {
+        "access": "pro",
+        "category": "solve"
+      },
+      "formulaSolver": {
+        "access": "pro",
+        "category": "solve"
+      },
+      "solutionBuilder": {
+        "access": "pro",
+        "category": "solve"
+      },
+      "publicStoichiometry": {
+        "access": "pro",
+        "category": "solve"
+      },
+      "publicThermodynamics": {
+        "access": "pro",
+        "category": "solve"
+      },
+      "advancedElementCompare": {
+        "access": "pro",
+        "category": "analyze"
+      },
+      "advancedMoleculeCompare": {
+        "access": "pro",
+        "category": "analyze"
+      },
+      "advancedAtomicCompare": {
+        "access": "pro",
+        "category": "analyze"
+      },
+      "savedLabSessions": {
+        "access": "pro",
+        "category": "analyze"
+      }
+    },
+    "LAB_TABS": {
+      "molar": {
+        "access": "public",
+        "category": null,
+        "feature": null
+      },
+      "dilute": {
+        "access": "public",
+        "category": null,
+        "feature": null
+      },
+      "scientific": {
+        "access": "public",
+        "category": null,
+        "feature": "scientificCalculator"
+      },
+      "unit": {
+        "access": "public",
+        "category": null,
+        "feature": "unitConverter"
+      },
+      "ideal": {
+        "access": "public",
+        "category": null,
+        "feature": "idealGasCalculator"
+      },
+      "ph": {
+        "access": "public",
+        "category": null,
+        "feature": "phCalculator"
+      },
+      "stoich": {
+        "access": "pro",
+        "category": null,
+        "feature": "publicStoichiometry"
+      },
+      "thermo": {
+        "access": "pro",
+        "category": null,
+        "feature": "publicThermodynamics"
+      }
+    },
+    "PAGE_TOOLS": {
+      "elementCompare": {
+        "access": "public",
+        "category": null,
+        "feature": "publicElementCompare"
+      },
+      "moleculeViewer": {
+        "access": "public",
+        "category": null,
+        "feature": "moleculeViewer"
+      },
+      "atomicModels": {
+        "access": "public",
+        "category": null,
+        "feature": "atomicModelViewer"
+      },
+      "allotropes": {
+        "access": "public",
+        "category": null,
+        "feature": "allotropeViewer"
+      },
+      "isomerism": {
+        "access": "public",
+        "category": null,
+        "feature": "isomerismViewer"
+      }
+    },
+    "featureAccess": {
+      "labWorkspace": "public",
+      "scientificCalculator": "public",
+      "unitConverter": "public",
+      "idealGasCalculator": "public",
+      "phCalculator": "public",
+      "interactiveViewers": "public",
+      "atomicModelViewer": "public",
+      "moleculeViewer": "public",
+      "allotropeViewer": "public",
+      "isomerismViewer": "public",
+      "publicElementCompare": "public",
+      "studyCloud": "account",
+      "studyProgress": "account",
+      "favorites": "account",
+      "calculatorHistory": "account",
+      "studyNotes": "account",
+      "studyTags": "account",
+      "studySets": "account",
+      "flashcards": "account",
+      "premiumLessons": "pro",
+      "smartReview": "pro",
+      "spacedRepetition": "pro",
+      "studyInsights": "pro",
+      "focusReview": "pro",
+      "advancedStudyStats": "pro",
+      "exportPdf": "pro",
+      "automatedPractice": "pro",
+      "virtualLab": "account",
+      "virtualLabAdvanced": "pro",
+      "adsFree": "pro",
+      "proLab": "pro",
+      "advancedCalculations": "pro",
+      "chemistrySolver": "pro",
+      "reactionWorkbench": "pro",
+      "reactionBalancer": "pro",
+      "stoichiometrySolver": "pro",
+      "limitingReagentSolver": "pro",
+      "yieldSolver": "pro",
+      "formulaSolver": "pro",
+      "solutionBuilder": "pro",
+      "publicStoichiometry": "pro",
+      "publicThermodynamics": "pro",
+      "advancedElementCompare": "pro",
+      "advancedMoleculeCompare": "pro",
+      "advancedAtomicCompare": "pro",
+      "savedLabSessions": "pro",
+      "noSuchFeature": "pro"
+    },
+    "profiles": {
+      "guest": [
+        "allotropeViewer",
+        "atomicModelViewer",
+        "idealGasCalculator",
+        "interactiveViewers",
+        "isomerismViewer",
+        "labWorkspace",
+        "moleculeViewer",
+        "phCalculator",
+        "publicElementCompare",
+        "scientificCalculator",
+        "unitConverter"
+      ],
+      "account": [
+        "allotropeViewer",
+        "atomicModelViewer",
+        "calculatorHistory",
+        "favorites",
+        "flashcards",
+        "idealGasCalculator",
+        "interactiveViewers",
+        "isomerismViewer",
+        "labWorkspace",
+        "moleculeViewer",
+        "phCalculator",
+        "publicElementCompare",
+        "scientificCalculator",
+        "studyCloud",
+        "studyNotes",
+        "studyProgress",
+        "studySets",
+        "studyTags",
+        "unitConverter",
+        "virtualLab"
+      ],
+      "pro": [
+        "adsFree",
+        "advancedAtomicCompare",
+        "advancedCalculations",
+        "advancedElementCompare",
+        "advancedMoleculeCompare",
+        "advancedStudyStats",
+        "allotropeViewer",
+        "atomicModelViewer",
+        "automatedPractice",
+        "calculatorHistory",
+        "chemistrySolver",
+        "exportPdf",
+        "favorites",
+        "flashcards",
+        "focusReview",
+        "formulaSolver",
+        "idealGasCalculator",
+        "interactiveViewers",
+        "isomerismViewer",
+        "labWorkspace",
+        "limitingReagentSolver",
+        "moleculeViewer",
+        "phCalculator",
+        "premiumLessons",
+        "proLab",
+        "publicElementCompare",
+        "publicStoichiometry",
+        "publicThermodynamics",
+        "reactionBalancer",
+        "reactionWorkbench",
+        "savedLabSessions",
+        "scientificCalculator",
+        "smartReview",
+        "solutionBuilder",
+        "spacedRepetition",
+        "stoichiometrySolver",
+        "studyCloud",
+        "studyInsights",
+        "studyNotes",
+        "studyProgress",
+        "studySets",
+        "studyTags",
+        "unitConverter",
+        "virtualLab",
+        "virtualLabAdvanced",
+        "yieldSolver"
+      ],
+      "admin": [
+        "adminConsole",
+        "adsFree",
+        "advancedAtomicCompare",
+        "advancedCalculations",
+        "advancedElementCompare",
+        "advancedMoleculeCompare",
+        "advancedStudyStats",
+        "allotropeViewer",
+        "atomicModelViewer",
+        "automatedPractice",
+        "calculatorHistory",
+        "chemistrySolver",
+        "exportPdf",
+        "favorites",
+        "flashcards",
+        "focusReview",
+        "formulaSolver",
+        "idealGasCalculator",
+        "interactiveViewers",
+        "isomerismViewer",
+        "labWorkspace",
+        "limitingReagentSolver",
+        "moleculeViewer",
+        "phCalculator",
+        "premiumLessons",
+        "proLab",
+        "publicElementCompare",
+        "publicStoichiometry",
+        "publicThermodynamics",
+        "reactionBalancer",
+        "reactionWorkbench",
+        "savedLabSessions",
+        "scientificCalculator",
+        "smartReview",
+        "solutionBuilder",
+        "spacedRepetition",
+        "stoichiometrySolver",
+        "studyCloud",
+        "studyInsights",
+        "studyNotes",
+        "studyProgress",
+        "studySets",
+        "studyTags",
+        "unitConverter",
+        "virtualLab",
+        "virtualLabAdvanced",
+        "yieldSolver"
+      ]
+    },
+    "users": {
+      "guest": {
+        "plan": "free",
+        "planSource": "free",
+        "isPro": false,
+        "adsFree": false,
+        "role": "member",
+        "trial": false,
+        "features": [
+          "allotropeViewer",
+          "atomicModelViewer",
+          "idealGasCalculator",
+          "interactiveViewers",
+          "isomerismViewer",
+          "labWorkspace",
+          "moleculeViewer",
+          "phCalculator",
+          "publicElementCompare",
+          "scientificCalculator",
+          "unitConverter"
+        ]
+      },
+      "freeAfterTrial": {
+        "plan": "free",
+        "planSource": "free",
+        "isPro": false,
+        "adsFree": false,
+        "role": "member",
+        "trial": false,
+        "features": [
+          "allotropeViewer",
+          "atomicModelViewer",
+          "calculatorHistory",
+          "favorites",
+          "flashcards",
+          "idealGasCalculator",
+          "interactiveViewers",
+          "isomerismViewer",
+          "labWorkspace",
+          "moleculeViewer",
+          "phCalculator",
+          "publicElementCompare",
+          "scientificCalculator",
+          "studyCloud",
+          "studyNotes",
+          "studyProgress",
+          "studySets",
+          "studyTags",
+          "unitConverter",
+          "virtualLab"
+        ]
+      },
+      "freeInTrial": {
+        "plan": "paid",
+        "planSource": "trial",
+        "isPro": true,
+        "adsFree": true,
+        "role": "member",
+        "trial": true,
+        "features": [
+          "adsFree",
+          "advancedAtomicCompare",
+          "advancedCalculations",
+          "advancedElementCompare",
+          "advancedMoleculeCompare",
+          "advancedStudyStats",
+          "allotropeViewer",
+          "atomicModelViewer",
+          "automatedPractice",
+          "calculatorHistory",
+          "chemistrySolver",
+          "exportPdf",
+          "favorites",
+          "flashcards",
+          "focusReview",
+          "formulaSolver",
+          "idealGasCalculator",
+          "interactiveViewers",
+          "isomerismViewer",
+          "labWorkspace",
+          "limitingReagentSolver",
+          "moleculeViewer",
+          "phCalculator",
+          "premiumLessons",
+          "proLab",
+          "publicElementCompare",
+          "publicStoichiometry",
+          "publicThermodynamics",
+          "reactionBalancer",
+          "reactionWorkbench",
+          "savedLabSessions",
+          "scientificCalculator",
+          "smartReview",
+          "solutionBuilder",
+          "spacedRepetition",
+          "stoichiometrySolver",
+          "studyCloud",
+          "studyInsights",
+          "studyNotes",
+          "studyProgress",
+          "studySets",
+          "studyTags",
+          "unitConverter",
+          "virtualLab",
+          "virtualLabAdvanced",
+          "yieldSolver"
+        ]
+      },
+      "trialExplicitEnded": {
+        "plan": "free",
+        "planSource": "free",
+        "isPro": false,
+        "adsFree": false,
+        "role": "member",
+        "trial": false,
+        "features": [
+          "allotropeViewer",
+          "atomicModelViewer",
+          "calculatorHistory",
+          "favorites",
+          "flashcards",
+          "idealGasCalculator",
+          "interactiveViewers",
+          "isomerismViewer",
+          "labWorkspace",
+          "moleculeViewer",
+          "phCalculator",
+          "publicElementCompare",
+          "scientificCalculator",
+          "studyCloud",
+          "studyNotes",
+          "studyProgress",
+          "studySets",
+          "studyTags",
+          "unitConverter",
+          "virtualLab"
+        ]
+      },
+      "paidActive": {
+        "plan": "paid",
+        "planSource": "paid",
+        "isPro": true,
+        "adsFree": true,
+        "role": "member",
+        "trial": false,
+        "features": [
+          "adsFree",
+          "advancedAtomicCompare",
+          "advancedCalculations",
+          "advancedElementCompare",
+          "advancedMoleculeCompare",
+          "advancedStudyStats",
+          "allotropeViewer",
+          "atomicModelViewer",
+          "automatedPractice",
+          "calculatorHistory",
+          "chemistrySolver",
+          "exportPdf",
+          "favorites",
+          "flashcards",
+          "focusReview",
+          "formulaSolver",
+          "idealGasCalculator",
+          "interactiveViewers",
+          "isomerismViewer",
+          "labWorkspace",
+          "limitingReagentSolver",
+          "moleculeViewer",
+          "phCalculator",
+          "premiumLessons",
+          "proLab",
+          "publicElementCompare",
+          "publicStoichiometry",
+          "publicThermodynamics",
+          "reactionBalancer",
+          "reactionWorkbench",
+          "savedLabSessions",
+          "scientificCalculator",
+          "smartReview",
+          "solutionBuilder",
+          "spacedRepetition",
+          "stoichiometrySolver",
+          "studyCloud",
+          "studyInsights",
+          "studyNotes",
+          "studyProgress",
+          "studySets",
+          "studyTags",
+          "unitConverter",
+          "virtualLab",
+          "virtualLabAdvanced",
+          "yieldSolver"
+        ]
+      },
+      "paidTrialing": {
+        "plan": "paid",
+        "planSource": "billing_trial",
+        "isPro": true,
+        "adsFree": true,
+        "role": "member",
+        "trial": false,
+        "features": [
+          "adsFree",
+          "advancedAtomicCompare",
+          "advancedCalculations",
+          "advancedElementCompare",
+          "advancedMoleculeCompare",
+          "advancedStudyStats",
+          "allotropeViewer",
+          "atomicModelViewer",
+          "automatedPractice",
+          "calculatorHistory",
+          "chemistrySolver",
+          "exportPdf",
+          "favorites",
+          "flashcards",
+          "focusReview",
+          "formulaSolver",
+          "idealGasCalculator",
+          "interactiveViewers",
+          "isomerismViewer",
+          "labWorkspace",
+          "limitingReagentSolver",
+          "moleculeViewer",
+          "phCalculator",
+          "premiumLessons",
+          "proLab",
+          "publicElementCompare",
+          "publicStoichiometry",
+          "publicThermodynamics",
+          "reactionBalancer",
+          "reactionWorkbench",
+          "savedLabSessions",
+          "scientificCalculator",
+          "smartReview",
+          "solutionBuilder",
+          "spacedRepetition",
+          "stoichiometrySolver",
+          "studyCloud",
+          "studyInsights",
+          "studyNotes",
+          "studyProgress",
+          "studySets",
+          "studyTags",
+          "unitConverter",
+          "virtualLab",
+          "virtualLabAdvanced",
+          "yieldSolver"
+        ]
+      },
+      "pastDue": {
+        "plan": "paid",
+        "planSource": "paid",
+        "isPro": true,
+        "adsFree": true,
+        "role": "member",
+        "trial": false,
+        "features": [
+          "adsFree",
+          "advancedAtomicCompare",
+          "advancedCalculations",
+          "advancedElementCompare",
+          "advancedMoleculeCompare",
+          "advancedStudyStats",
+          "allotropeViewer",
+          "atomicModelViewer",
+          "automatedPractice",
+          "calculatorHistory",
+          "chemistrySolver",
+          "exportPdf",
+          "favorites",
+          "flashcards",
+          "focusReview",
+          "formulaSolver",
+          "idealGasCalculator",
+          "interactiveViewers",
+          "isomerismViewer",
+          "labWorkspace",
+          "limitingReagentSolver",
+          "moleculeViewer",
+          "phCalculator",
+          "premiumLessons",
+          "proLab",
+          "publicElementCompare",
+          "publicStoichiometry",
+          "publicThermodynamics",
+          "reactionBalancer",
+          "reactionWorkbench",
+          "savedLabSessions",
+          "scientificCalculator",
+          "smartReview",
+          "solutionBuilder",
+          "spacedRepetition",
+          "stoichiometrySolver",
+          "studyCloud",
+          "studyInsights",
+          "studyNotes",
+          "studyProgress",
+          "studySets",
+          "studyTags",
+          "unitConverter",
+          "virtualLab",
+          "virtualLabAdvanced",
+          "yieldSolver"
+        ]
+      },
+      "canceled": {
+        "plan": "free",
+        "planSource": "free",
+        "isPro": false,
+        "adsFree": false,
+        "role": "member",
+        "trial": false,
+        "features": [
+          "allotropeViewer",
+          "atomicModelViewer",
+          "calculatorHistory",
+          "favorites",
+          "flashcards",
+          "idealGasCalculator",
+          "interactiveViewers",
+          "isomerismViewer",
+          "labWorkspace",
+          "moleculeViewer",
+          "phCalculator",
+          "publicElementCompare",
+          "scientificCalculator",
+          "studyCloud",
+          "studyNotes",
+          "studyProgress",
+          "studySets",
+          "studyTags",
+          "unitConverter",
+          "virtualLab"
+        ]
+      },
+      "legacyPaid": {
+        "plan": "paid",
+        "planSource": "paid",
+        "isPro": true,
+        "adsFree": true,
+        "role": "member",
+        "trial": false,
+        "features": [
+          "adsFree",
+          "advancedAtomicCompare",
+          "advancedCalculations",
+          "advancedElementCompare",
+          "advancedMoleculeCompare",
+          "advancedStudyStats",
+          "allotropeViewer",
+          "atomicModelViewer",
+          "automatedPractice",
+          "calculatorHistory",
+          "chemistrySolver",
+          "exportPdf",
+          "favorites",
+          "flashcards",
+          "focusReview",
+          "formulaSolver",
+          "idealGasCalculator",
+          "interactiveViewers",
+          "isomerismViewer",
+          "labWorkspace",
+          "limitingReagentSolver",
+          "moleculeViewer",
+          "phCalculator",
+          "premiumLessons",
+          "proLab",
+          "publicElementCompare",
+          "publicStoichiometry",
+          "publicThermodynamics",
+          "reactionBalancer",
+          "reactionWorkbench",
+          "savedLabSessions",
+          "scientificCalculator",
+          "smartReview",
+          "solutionBuilder",
+          "spacedRepetition",
+          "stoichiometrySolver",
+          "studyCloud",
+          "studyInsights",
+          "studyNotes",
+          "studyProgress",
+          "studySets",
+          "studyTags",
+          "unitConverter",
+          "virtualLab",
+          "virtualLabAdvanced",
+          "yieldSolver"
+        ]
+      },
+      "paidRole": {
+        "plan": "paid",
+        "planSource": "paid",
+        "isPro": true,
+        "adsFree": true,
+        "role": "member",
+        "trial": false,
+        "features": [
+          "adsFree",
+          "advancedAtomicCompare",
+          "advancedCalculations",
+          "advancedElementCompare",
+          "advancedMoleculeCompare",
+          "advancedStudyStats",
+          "allotropeViewer",
+          "atomicModelViewer",
+          "automatedPractice",
+          "calculatorHistory",
+          "chemistrySolver",
+          "exportPdf",
+          "favorites",
+          "flashcards",
+          "focusReview",
+          "formulaSolver",
+          "idealGasCalculator",
+          "interactiveViewers",
+          "isomerismViewer",
+          "labWorkspace",
+          "limitingReagentSolver",
+          "moleculeViewer",
+          "phCalculator",
+          "premiumLessons",
+          "proLab",
+          "publicElementCompare",
+          "publicStoichiometry",
+          "publicThermodynamics",
+          "reactionBalancer",
+          "reactionWorkbench",
+          "savedLabSessions",
+          "scientificCalculator",
+          "smartReview",
+          "solutionBuilder",
+          "spacedRepetition",
+          "stoichiometrySolver",
+          "studyCloud",
+          "studyInsights",
+          "studyNotes",
+          "studyProgress",
+          "studySets",
+          "studyTags",
+          "unitConverter",
+          "virtualLab",
+          "virtualLabAdvanced",
+          "yieldSolver"
+        ]
+      },
+      "admin": {
+        "plan": "admin",
+        "planSource": "admin",
+        "isPro": true,
+        "adsFree": true,
+        "role": "admin",
+        "trial": false,
+        "features": [
+          "adminConsole",
+          "adsFree",
+          "advancedAtomicCompare",
+          "advancedCalculations",
+          "advancedElementCompare",
+          "advancedMoleculeCompare",
+          "advancedStudyStats",
+          "allotropeViewer",
+          "atomicModelViewer",
+          "automatedPractice",
+          "calculatorHistory",
+          "chemistrySolver",
+          "exportPdf",
+          "favorites",
+          "flashcards",
+          "focusReview",
+          "formulaSolver",
+          "idealGasCalculator",
+          "interactiveViewers",
+          "isomerismViewer",
+          "labWorkspace",
+          "limitingReagentSolver",
+          "moleculeViewer",
+          "phCalculator",
+          "premiumLessons",
+          "proLab",
+          "publicElementCompare",
+          "publicStoichiometry",
+          "publicThermodynamics",
+          "reactionBalancer",
+          "reactionWorkbench",
+          "savedLabSessions",
+          "scientificCalculator",
+          "smartReview",
+          "solutionBuilder",
+          "spacedRepetition",
+          "stoichiometrySolver",
+          "studyCloud",
+          "studyInsights",
+          "studyNotes",
+          "studyProgress",
+          "studySets",
+          "studyTags",
+          "unitConverter",
+          "virtualLab",
+          "virtualLabAdvanced",
+          "yieldSolver"
+        ]
+      },
+      "schoolAfterTrial": {
+        "plan": "free",
+        "planSource": "free",
+        "isPro": false,
+        "adsFree": false,
+        "role": "member",
+        "trial": false,
+        "features": [
+          "allotropeViewer",
+          "atomicModelViewer",
+          "calculatorHistory",
+          "favorites",
+          "flashcards",
+          "idealGasCalculator",
+          "interactiveViewers",
+          "isomerismViewer",
+          "labWorkspace",
+          "moleculeViewer",
+          "phCalculator",
+          "publicElementCompare",
+          "scientificCalculator",
+          "studyCloud",
+          "studyNotes",
+          "studyProgress",
+          "studySets",
+          "studyTags",
+          "unitConverter",
+          "virtualLab"
+        ]
+      },
+      "schoolInTrial": {
+        "plan": "paid",
+        "planSource": "trial",
+        "isPro": true,
+        "adsFree": true,
+        "role": "member",
+        "trial": true,
+        "features": [
+          "adsFree",
+          "advancedAtomicCompare",
+          "advancedCalculations",
+          "advancedElementCompare",
+          "advancedMoleculeCompare",
+          "advancedStudyStats",
+          "allotropeViewer",
+          "atomicModelViewer",
+          "automatedPractice",
+          "calculatorHistory",
+          "chemistrySolver",
+          "exportPdf",
+          "favorites",
+          "flashcards",
+          "focusReview",
+          "formulaSolver",
+          "idealGasCalculator",
+          "interactiveViewers",
+          "isomerismViewer",
+          "labWorkspace",
+          "limitingReagentSolver",
+          "moleculeViewer",
+          "phCalculator",
+          "premiumLessons",
+          "proLab",
+          "publicElementCompare",
+          "publicStoichiometry",
+          "publicThermodynamics",
+          "reactionBalancer",
+          "reactionWorkbench",
+          "savedLabSessions",
+          "scientificCalculator",
+          "smartReview",
+          "solutionBuilder",
+          "spacedRepetition",
+          "stoichiometrySolver",
+          "studyCloud",
+          "studyInsights",
+          "studyNotes",
+          "studyProgress",
+          "studySets",
+          "studyTags",
+          "unitConverter",
+          "virtualLab",
+          "virtualLabAdvanced",
+          "yieldSolver"
+        ]
+      }
+    },
+    "labToolAccess": {
+      "pages": {
+        "/": {
+          "need": "public",
+          "tool": null,
+          "feature": null
+        },
+        "/explore/what-is-an-atom": {
+          "need": "public",
+          "tool": null,
+          "feature": null
+        },
+        "/periodic-table/compare": {
+          "need": "public",
+          "tool": "elementCompare",
+          "feature": "publicElementCompare"
+        },
+        "/periodic-table/compare.pt.html": {
+          "need": "public",
+          "tool": "elementCompare",
+          "feature": "publicElementCompare"
+        },
+        "/viewer/molecules/water": {
+          "need": "public",
+          "tool": "moleculeViewer",
+          "feature": "moleculeViewer"
+        },
+        "/molecules": {
+          "need": "public",
+          "tool": "moleculeViewer",
+          "feature": "moleculeViewer"
+        },
+        "/viewer/atomic-models/bohr": {
+          "need": "public",
+          "tool": "atomicModels",
+          "feature": "atomicModelViewer"
+        },
+        "/atomic-models": {
+          "need": "public",
+          "tool": "atomicModels",
+          "feature": "atomicModelViewer"
+        },
+        "/viewer/allotropes": {
+          "need": "public",
+          "tool": "allotropes",
+          "feature": "allotropeViewer"
+        },
+        "/allotropes": {
+          "need": "public",
+          "tool": "allotropes",
+          "feature": "allotropeViewer"
+        },
+        "/viewer/isomerism": {
+          "need": "public",
+          "tool": "isomerism",
+          "feature": "isomerismViewer"
+        },
+        "/isomerism/x": {
+          "need": "public",
+          "tool": "isomerism",
+          "feature": "isomerismViewer"
+        },
+        "/calculators": {
+          "need": "public",
+          "tool": null,
+          "feature": null
+        }
+      },
+      "tabs": {
+        "molar": [
+          "public",
+          null
+        ],
+        "dilute": [
+          "public",
+          null
+        ],
+        "scientific": [
+          "public",
+          "scientificCalculator"
+        ],
+        "unit": [
+          "public",
+          "unitConverter"
+        ],
+        "ideal": [
+          "public",
+          "idealGasCalculator"
+        ],
+        "ph": [
+          "public",
+          "phCalculator"
+        ],
+        "stoich": [
+          "pro",
+          "publicStoichiometry"
+        ],
+        "thermo": [
+          "pro",
+          "publicThermodynamics"
+        ],
+        "nope": [
+          "public",
+          null
+        ]
+      },
+      "allow": {
+        "guest": [
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "free": [
+          true,
+          true,
+          true,
+          false,
+          false,
+          false,
+          false
+        ],
+        "pro": [
+          true,
+          true,
+          true,
+          false,
+          true,
+          true,
+          true
+        ],
+        "loading": [
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      }
+    }
+  },
+  "browser": {
+    "FEATURES": {
+      "labWorkspace": {
+        "access": "public",
+        "category": "workspace"
+      },
+      "scientificCalculator": {
+        "access": "public",
+        "category": "calculator"
+      },
+      "unitConverter": {
+        "access": "public",
+        "category": "calculator"
+      },
+      "idealGasCalculator": {
+        "access": "public",
+        "category": "calculator"
+      },
+      "phCalculator": {
+        "access": "public",
+        "category": "calculator"
+      },
+      "interactiveViewers": {
+        "access": "public",
+        "category": "visualize"
+      },
+      "atomicModelViewer": {
+        "access": "public",
+        "category": "visualize"
+      },
+      "moleculeViewer": {
+        "access": "public",
+        "category": "visualize"
+      },
+      "allotropeViewer": {
+        "access": "public",
+        "category": "visualize"
+      },
+      "isomerismViewer": {
+        "access": "public",
+        "category": "visualize"
+      },
+      "publicElementCompare": {
+        "access": "public",
+        "category": "visualize"
+      },
+      "studyCloud": {
+        "access": "account",
+        "category": "study"
+      },
+      "studyProgress": {
+        "access": "account",
+        "category": "study"
+      },
+      "favorites": {
+        "access": "account",
+        "category": "study"
+      },
+      "calculatorHistory": {
+        "access": "account",
+        "category": "study"
+      },
+      "studyNotes": {
+        "access": "account",
+        "category": "study"
+      },
+      "studyTags": {
+        "access": "account",
+        "category": "study"
+      },
+      "studySets": {
+        "access": "account",
+        "category": "study"
+      },
+      "flashcards": {
+        "access": "account",
+        "category": "study"
+      },
+      "virtualLab": {
+        "access": "account",
+        "category": "lab"
+      },
+      "virtualLabAdvanced": {
+        "access": "pro",
+        "category": "lab"
+      },
+      "premiumLessons": {
+        "access": "pro",
+        "category": "study"
+      },
+      "smartReview": {
+        "access": "pro",
+        "category": "study"
+      },
+      "spacedRepetition": {
+        "access": "pro",
+        "category": "study"
+      },
+      "studyInsights": {
+        "access": "pro",
+        "category": "study"
+      },
+      "focusReview": {
+        "access": "pro",
+        "category": "study"
+      },
+      "advancedStudyStats": {
+        "access": "pro",
+        "category": "study"
+      },
+      "exportPdf": {
+        "access": "pro",
+        "category": "study"
+      },
+      "automatedPractice": {
+        "access": "pro",
+        "category": "study"
+      },
+      "adsFree": {
+        "access": "pro",
+        "category": "platform"
+      },
+      "proLab": {
+        "access": "pro",
+        "category": "solve"
+      },
+      "advancedCalculations": {
+        "access": "pro",
+        "category": "solve"
+      },
+      "chemistrySolver": {
+        "access": "pro",
+        "category": "solve"
+      },
+      "reactionWorkbench": {
+        "access": "pro",
+        "category": "solve"
+      },
+      "reactionBalancer": {
+        "access": "pro",
+        "category": "solve"
+      },
+      "stoichiometrySolver": {
+        "access": "pro",
+        "category": "solve"
+      },
+      "limitingReagentSolver": {
+        "access": "pro",
+        "category": "solve"
+      },
+      "yieldSolver": {
+        "access": "pro",
+        "category": "solve"
+      },
+      "formulaSolver": {
+        "access": "pro",
+        "category": "solve"
+      },
+      "solutionBuilder": {
+        "access": "pro",
+        "category": "solve"
+      },
+      "publicStoichiometry": {
+        "access": "pro",
+        "category": "solve"
+      },
+      "publicThermodynamics": {
+        "access": "pro",
+        "category": "solve"
+      },
+      "advancedElementCompare": {
+        "access": "pro",
+        "category": "analyze"
+      },
+      "advancedMoleculeCompare": {
+        "access": "pro",
+        "category": "analyze"
+      },
+      "advancedAtomicCompare": {
+        "access": "pro",
+        "category": "analyze"
+      },
+      "savedLabSessions": {
+        "access": "pro",
+        "category": "analyze"
+      }
+    },
+    "LAB_TABS": {
+      "molar": {
+        "access": "public",
+        "category": null,
+        "feature": null
+      },
+      "dilute": {
+        "access": "public",
+        "category": null,
+        "feature": null
+      },
+      "scientific": {
+        "access": "public",
+        "category": null,
+        "feature": "scientificCalculator"
+      },
+      "unit": {
+        "access": "public",
+        "category": null,
+        "feature": "unitConverter"
+      },
+      "ideal": {
+        "access": "public",
+        "category": null,
+        "feature": "idealGasCalculator"
+      },
+      "ph": {
+        "access": "public",
+        "category": null,
+        "feature": "phCalculator"
+      },
+      "stoich": {
+        "access": "pro",
+        "category": null,
+        "feature": "publicStoichiometry"
+      },
+      "thermo": {
+        "access": "pro",
+        "category": null,
+        "feature": "publicThermodynamics"
+      }
+    },
+    "PAGE_TOOLS": {
+      "elementCompare": {
+        "access": "public",
+        "category": null,
+        "feature": "publicElementCompare"
+      },
+      "moleculeViewer": {
+        "access": "public",
+        "category": null,
+        "feature": "moleculeViewer"
+      },
+      "atomicModels": {
+        "access": "public",
+        "category": null,
+        "feature": "atomicModelViewer"
+      },
+      "allotropes": {
+        "access": "public",
+        "category": null,
+        "feature": "allotropeViewer"
+      },
+      "isomerism": {
+        "access": "public",
+        "category": null,
+        "feature": "isomerismViewer"
+      }
+    },
+    "unknownFeature": "pro",
+    "gatePages": {
+      "/": {
+        "need": "public",
+        "kind": "page",
+        "feature": null
+      },
+      "/explore/what-is-an-atom": {
+        "need": "public",
+        "kind": "page",
+        "feature": null
+      },
+      "/periodic-table/compare": {
+        "need": "public",
+        "kind": "compare",
+        "feature": "publicElementCompare"
+      },
+      "/periodic-table/compare.pt.html": {
+        "need": "public",
+        "kind": "compare",
+        "feature": "publicElementCompare"
+      },
+      "/viewer/molecules/water": {
+        "need": "public",
+        "kind": "viewer",
+        "feature": "moleculeViewer"
+      },
+      "/molecules": {
+        "need": "public",
+        "kind": "viewer",
+        "feature": "moleculeViewer"
+      },
+      "/viewer/atomic-models/bohr": {
+        "need": "public",
+        "kind": "viewer",
+        "feature": "atomicModelViewer"
+      },
+      "/atomic-models": {
+        "need": "public",
+        "kind": "viewer",
+        "feature": "atomicModelViewer"
+      },
+      "/viewer/allotropes": {
+        "need": "public",
+        "kind": "viewer",
+        "feature": "allotropeViewer"
+      },
+      "/allotropes": {
+        "need": "public",
+        "kind": "viewer",
+        "feature": "allotropeViewer"
+      },
+      "/viewer/isomerism": {
+        "need": "public",
+        "kind": "viewer",
+        "feature": "isomerismViewer"
+      },
+      "/isomerism/x": {
+        "need": "public",
+        "kind": "viewer",
+        "feature": "isomerismViewer"
+      },
+      "/calculators": {
+        "need": "public",
+        "kind": "page",
+        "feature": null
+      }
+    },
+    "gateTabs": {
+      "molar": [
+        "public",
+        null
+      ],
+      "dilute": [
+        "public",
+        null
+      ],
+      "scientific": [
+        "public",
+        "scientificCalculator"
+      ],
+      "unit": [
+        "public",
+        "unitConverter"
+      ],
+      "ideal": [
+        "public",
+        "idealGasCalculator"
+      ],
+      "ph": [
+        "public",
+        "phCalculator"
+      ],
+      "stoich": [
+        "pro",
+        "publicStoichiometry"
+      ],
+      "thermo": [
+        "pro",
+        "publicThermodynamics"
+      ],
+      "nope": [
+        "public",
+        null
+      ]
+    },
+    "gateAllow": {
+      "guest": [
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "free": [
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false
+      ],
+      "pro": [
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true
+      ],
+      "loading": [
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    }
+  },
+  "pricing": {
+    "PLAN_PRICING": {
+      "brl": {
+        "currency": "BRL",
+        "monthly": {
+          "key": "pro_monthly_brl",
+          "amount": 24.9,
+          "label": "R$24,90/mês",
+          "period": "monthly"
+        },
+        "annual": {
+          "key": "pro_annual_brl",
+          "amount": 180,
+          "perMonth": 15,
+          "label": "R$15/mês no anual",
+          "billed": "R$180/ano",
+          "period": "annual"
+        }
+      },
+      "usd": {
+        "currency": "USD",
+        "monthly": {
+          "key": "pro_monthly_usd",
+          "amount": 10,
+          "label": "US$10/month",
+          "period": "monthly"
+        },
+        "annual": {
+          "key": "pro_annual_usd",
+          "amount": 60,
+          "perMonth": 5,
+          "label": "US$5/month on annual",
+          "billed": "US$60/year",
+          "period": "annual"
+        }
+      },
+      "trialDays": 30
+    },
+    "PAID_SUBSCRIPTION_STATUSES": [
+      "active",
+      "trialing",
+      "past_due"
+    ]
+  },
+  "limits": {
+    "PRO_LAB_LIMITS": {
+      "title": 120,
+      "maxSessions": 200,
+      "stateBytes": 24576,
+      "bodyBytes": 32768,
+      "pinned": 12,
+      "scenarios": 8,
+      "formulas": 25
+    },
+    "STUDY_LIMITS": {
+      "bodyBytes": 32768,
+      "title": 160,
+      "href": 500,
+      "note": 5000,
+      "itemKey": 200,
+      "lastPosition": 200,
+      "tags": 10,
+      "tag": 32,
+      "payloadBytes": 8192
+    },
+    "STUDY_SET_LIMITS": {
+      "title": 120,
+      "description": 1000,
+      "front": 1000,
+      "back": 3000,
+      "maxSets": 50,
+      "maxCards": 5000,
+      "bodyBytes": 32768,
+      "cardsPage": 20,
+      "cardsPageMax": 50,
+      "queueDefault": 20,
+      "queueMax": 50,
+      "focusLimits": [
+        10,
+        20,
+        30
+      ],
+      "focusDefault": 20,
+      "focusFetchCap": 200
+    },
+    "REACTION_LIMITS": {
+      "chars": 1000,
+      "species": 12,
+      "elements": 30,
+      "coefficient": 2000
+    }
+  }
+}

@@ -1,0 +1,93 @@
+@charset "UTF-8";
+/* Atomurus — print stylesheet (prompt 26, B02).
+   Linked with media="print" on every public page by tools/inject-ui-chrome.js,
+   so it never blocks rendering. Paper gets the content only: no site bar,
+   sidebar, share/account/theme buttons, consent, ads or nudges; nothing clipped
+   by the app-style fixed-height shell; the periodic table on one landscape
+   sheet with its category colours. */
+
+@page { margin: 12mm; }
+@page pt-wide { size: A4 landscape; margin: 8mm; }
+
+/* :not(#print) adds an id's worth of specificity, so these beat the screen
+   rules that pin the page to the viewport with !important. */
+:root:not(#print), :root:not(#print) body {
+  background: #fff !important;
+  color: #000 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+}
+:root:not(#print) body { display: block !important; }
+* { box-shadow: none !important; text-shadow: none !important; }
+
+/* Chrome with no use on paper. :is() takes the specificity of its most
+   specific item (an id), so these win over the screen rules that pin the
+   shell with !important (e.g. .ps-shell > .topbar). */
+:root body :is(.skip-link,
+.topbar, .lc-topnav, .ps-topbar,
+#ws-sidebar, .ws-sidebar, .ps-pub-sidebar, .sidebar,
+.mobile-menu-btn, .lc-mobile-menu, #mobile-overlay, .ws-bottom-nav,
+.share-host, .ps-account, .theme-btn, [data-i18n-toggle], .search-box, .ps-search,
+#aco-cookie-banner, .aco-manage-wrap, [data-consent-manage],
+ins.adsbygoogle, [data-ad-slot], [data-atomurus-ad], .ad-slot, .lazy-ad,
+.atomurus-guest-nudge, #atomurus-study-save,
+.overlay:not(.open),
+.pt-tabs, .dl-bar, #mobile-scroll-hint, #mobile-zoom-controls, #mobile-cat-bar,
+.calc-menu, .solver-discover, .sci-mode-switch,
+.art-toc, .art-related, .lc-footer) {
+  display: none !important;
+}
+
+/* The public shell is an app layout (100dvh, inner scroll): flow it on paper */
+:root body :is(#ps-shell, .ps-shell, main, .main, .ps-main, .content, .calc-shell, .calc-panel) {
+  display: block !important;
+  position: static !important;
+  width: auto !important;
+  max-width: none !important;
+  height: auto !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+  margin: 0 !important;
+  transform: none !important;
+}
+:root body :is(#ps-shell, main, .main, .ps-main, .content) { padding: 0 !important; }
+
+/* Text and media */
+a { color: #000 !important; text-decoration: underline; }
+img, svg, canvas, video, figure { max-width: 100% !important; height: auto; break-inside: avoid; }
+h1, h2, h3, h4 { break-after: avoid; color: #000 !important; }
+p, li { orphans: 3; widows: 3; }
+table, figure, pre, blockquote, .art-fig, .art-callout, .calc-result, .calc-tab.active { break-inside: avoid; }
+
+/* Articles: show where outside links go */
+.art-wrap a[href^="http"]::after,
+.art-refs a[href^="http"]::after {
+  content: " (" attr(href) ")";
+  font-size: 85%;
+  word-break: break-all;
+}
+
+/* Calculators: only the open instrument */
+:root body :is(#ps-shell) .calc-tab { display: none !important; }
+:root body :is(#ps-shell) .calc-tab.active { display: block !important; }
+
+/* Periodic table grid (the table and heatmap pages): one landscape sheet,
+   category colours kept. Trends/compare/isotopes print as normal pages. */
+body:not([data-pt-tab]) #pg-periodic,
+body[data-pt-tab="heatmap"] #pg-periodic { page: pt-wide; }
+#pg-periodic .table-wrap,
+#pg-periodic #table-with-connector {
+  overflow: visible !important;
+  max-width: none !important;
+  transform: none !important;
+}
+/* Header + grid are ≈ 910 CSS px tall; an A4 landscape sheet holds ≈ 730. */
+body:not([data-pt-tab]) #ct-periodic,
+body[data-pt-tab="heatmap"] #ct-periodic { zoom: .66; }
+#pg-periodic #ptable { break-inside: avoid; }
+.el, .legend-item, .legend-dot, .modal-l, .iso-badge, .heatmap-gradient {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.el { break-inside: avoid; }

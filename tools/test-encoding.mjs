@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Fails when public pages or element content still contain CP850/UTF-8 mojibake.
-// The only allowlisted hit is the runtime guard in periodic-table.js.
+// The only allowlisted hit is the runtime guard in assets/pt/pt-compare.js
+// (cmpHasValue, moved out of periodic-table.js in prompt 24).
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -9,6 +10,7 @@ import { reverseCp850Line } from './fix-element-content-encoding.mjs';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PATTERN = /├|Ô[ÇÉ]|â€|âœ|Ã[\u0080-\u00BF\u00A1-\u00FF]/;
 const GUARD = "s !== '\u00E2\u20AC\u201D'";
+const GUARD_FILE = 'assets/pt/pt-compare.js';
 const SKIP_EXT = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp', '.ico', '.woff', '.woff2', '.map']);
 
 function fail(message) {
@@ -17,7 +19,7 @@ function fail(message) {
 }
 
 function isAllowlisted(rel, line) {
-  if (rel !== 'periodic-table.js') return false;
+  if (rel !== GUARD_FILE) return false;
   return line.includes(GUARD) && !/├|Ô[ÇÉ]|âœ|Ã[\u0080-\u00BF\u00A1-\u00FF]/.test(line);
 }
 
@@ -53,6 +55,9 @@ function filesToScan() {
     if (name.endsWith('.html')) files.push(name);
   }
   files.push('periodic-table.js', 'tools/element-content-source.js');
+  for (const name of readdirSync(path.join(ROOT, 'assets/pt'))) {
+    if (name.endsWith('.js')) files.push(`assets/pt/${name}`);
+  }
   for (const name of readdirSync(path.join(ROOT, 'assets/element-content'))) {
     if (name.endsWith('.js')) files.push(`assets/element-content/${name}`);
   }
@@ -76,8 +81,8 @@ function assertScannerCases() {
   const bad = mojibakeHits('chunk.js', 'valor ├® quebrado');
   if (bad.length !== 1 || bad[0].line !== 1) fail('scanner: ├® should fail');
   const guard = `  return !!s && s !== '\\u2014' && s !== '&mdash;' && ${GUARD};`;
-  if (mojibakeHits('periodic-table.js', guard).length !== 0) fail('scanner: periodic-table.js guard should be allowlisted');
-  if (mojibakeHits('other.js', guard).length !== 1) fail('scanner: the guard is allowlisted only in periodic-table.js');
+  if (mojibakeHits(GUARD_FILE, guard).length !== 0) fail(`scanner: ${GUARD_FILE} guard should be allowlisted`);
+  if (mojibakeHits('periodic-table.js', guard).length !== 1) fail(`scanner: the guard is allowlisted only in ${GUARD_FILE}`);
 }
 
 function scanRepo() {

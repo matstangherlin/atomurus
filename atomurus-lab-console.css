@@ -561,7 +561,7 @@ body {
   font-family: var(--lc-mono);
   font-size: 8.5px;
   font-weight: 500;
-  opacity: .65;
+  opacity: var(--el-meta-opacity, .82);
 }
 .el-sym {
   font-family: var(--lc-sans);
@@ -572,7 +572,7 @@ body {
 .el-name {
   font-family: var(--lc-mono);
   font-size: 7.5px;
-  opacity: .65;
+  opacity: var(--el-meta-opacity, .82);
   letter-spacing: .02em;
 }
 .el-ph {
@@ -4193,6 +4193,21 @@ p.stub { display: none !important; }
   visibility: visible;
   transform: translateY(0);
 }
+/* Opened from the keyboard: show at once so the first item can take focus */
+.share-host.is-open .share-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition: none;
+}
+/* Esc closed it while focus stays on the button (share-button.js) */
+.share-host.is-dismissed .share-menu,
+.share-host.is-dismissed:hover .share-menu,
+.share-host.is-dismissed:focus-within .share-menu {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+}
 
 .share-menu a,
 .share-menu button {
@@ -5903,6 +5918,12 @@ p.stub { display: none !important; }
   border-color: var(--lc-green);
   color: var(--lc-green);
   outline: none;
+}
+.sci-angle { display: inline-flex; gap: 4px; }
+.sci-angle .scc-top-btn[aria-pressed="true"] {
+  border-color: var(--lc-green);
+  color: var(--lc-green);
+  background: color-mix(in oklab, var(--lc-green) 14%, transparent);
 }
 .scimode-calc .scc-line {
   display: block;

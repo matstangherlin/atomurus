@@ -1,0 +1,94 @@
+{
+  "id": "estequiometria",
+  "status": "draft",
+  "reviewedBy": null,
+  "level": "basico",
+  "minutes": 145,
+  "title": { "pt": "Estequiometria", "en": "Stoichiometry" },
+  "summary": {
+    "pt": "Do mol à conservação da massa: oito etapas do site, na ordem, para calcular quantidades em reações químicas. Leia, use a calculadora, pratique, experimente no Lab e aplique numa ficha.",
+    "en": "From the mole to conservation of mass: eight steps of the site, in order, to calculate amounts in chemical reactions. Read, use the calculator, practise, try it in the Lab and apply it on a sheet."
+  },
+  "steps": [
+    {
+      "id": "mol", "type": "article", "estMinutes": 15,
+      "title": { "pt": "O que é o mol", "en": "What is the mole" },
+      "href": { "pt": "/explore/what-is-the-mole.pt.html", "en": "/explore/what-is-the-mole.html" }
+    },
+    {
+      "id": "massa-molar", "type": "tool", "estMinutes": 10,
+      "title": { "pt": "Calculadora de massa molar (H₂SO₄)", "en": "Molar mass calculator (H₂SO₄)" },
+      "href": { "pt": "/calculators.pt.html?formula=H2SO4#molar", "en": "/calculators.html?formula=H2SO4#molar" }
+    },
+    {
+      "id": "exercicios-massa-molar", "type": "exercises", "estMinutes": 20, "requires": ["massa-molar"],
+      "title": { "pt": "Exercícios de massa molar", "en": "Molar mass exercises" },
+      "href": { "pt": "/exercises/molar-mass.pt.html", "en": "/exercises/molar-mass.html" }
+    },
+    {
+      "id": "exercicios-mol", "type": "exercises", "estMinutes": 25, "requires": ["mol"],
+      "title": { "pt": "Exercícios de mol e massa", "en": "Moles and mass exercises" },
+      "href": { "pt": "/exercises/moles-mass.pt.html", "en": "/exercises/moles-mass.html" }
+    },
+    {
+      "id": "conservacao", "type": "article", "estMinutes": 15,
+      "title": { "pt": "Conservação da massa", "en": "Conservation of mass" },
+      "href": { "pt": "/explore/conservation-of-mass.pt.html", "en": "/explore/conservation-of-mass.html" }
+    },
+    {
+      "id": "lab", "type": "lab", "estMinutes": 20,
+      "title": { "pt": "Lab: uma reação de neutralização (Desafio de pH)", "en": "Lab: a neutralisation reaction (pH Challenge)" },
+      "href": { "pt": "/app?section=lab&mode=guided&creation=ph", "en": "/app?section=lab&mode=guided&creation=ph" }
+    },
+    {
+      "id": "ficha", "type": "sheet", "estMinutes": 30, "requires": ["exercicios-mol"],
+      "title": { "pt": "Ficha F2: mol e massa molar", "en": "Sheet F2: moles and molar mass" },
+      "href": { "pt": "/fichas/F2.pt.html", "en": "/fichas/F2.html" }
+    },
+    {
+      "id": "revisao", "type": "review", "estMinutes": 10,
+      "title": { "pt": "Revisão e autoavaliação", "en": "Review and self-check" },
+      "href": { "pt": "#revisao", "en": "#revisao" }
+    },
+    {
+      "id": "extra-estequiometria", "type": "tool", "estMinutes": 15, "optional": true, "pro": true,
+      "title": { "pt": "Extra: calculadora de estequiometria", "en": "Extra: stoichiometry calculator" },
+      "href": { "pt": "/calculators.pt.html#stoich", "en": "/calculators.html#stoich" }
+    }
+  ],
+  "review": {
+    "recap": {
+      "pt": [
+        "Um mol são exatamente 6,02214076 × 10²³ entidades; diga sempre qual entidade está contando.",
+        "A massa molar converte massa em mols (n = m ÷ M) e mols em massa (m = n × M).",
+        "Num sistema fechado, a massa dos reagentes é igual à massa dos produtos.",
+        "Uma equação balanceada tem os mesmos átomos dos dois lados; balanceie com coeficientes."
+      ],
+      "en": [
+        "A mole is exactly 6.02214076 × 10²³ entities; always say which entity you count.",
+        "Molar mass converts mass into moles (n = m ÷ M) and moles into mass (m = n × M).",
+        "In a closed system, the mass of the reactants equals the mass of the products.",
+        "A balanced equation has the same atoms on both sides; balance it with coefficients."
+      ]
+    },
+    "questions": [
+      { "id": "q1", "kind": "computed", "calc": "moles-co2" },
+      { "id": "q2", "kind": "computed", "calc": "mass-h2so4" },
+      {
+        "id": "q3", "kind": "text",
+        "prompt": { "pt": "Quantas moléculas há em 1 mol de água?", "en": "How many molecules are there in 1 mol of water?" },
+        "answer": { "pt": "Exatamente 6,02214076 × 10²³ — a constante de Avogadro, fixada pelo SI desde 2019.", "en": "Exactly 6.02214076 × 10²³ — the Avogadro constant, fixed by the SI since 2019." }
+      },
+      {
+        "id": "q4", "kind": "text",
+        "prompt": { "pt": "Em 2 H₂ + O₂ → 2 H₂O, o número de moléculas se conserva?", "en": "In 2 H₂ + O₂ → 2 H₂O, is the number of molecules conserved?" },
+        "answer": { "pt": "Não: três moléculas viram duas. Os átomos (4 H e 2 O) e a massa se conservam.", "en": "No: three molecules become two. The atoms (4 H and 2 O) and the mass are conserved." }
+      },
+      {
+        "id": "q5", "kind": "text",
+        "prompt": { "pt": "Num frasco fechado, bicarbonato reage com vinagre e forma gás. A massa total do frasco muda?", "en": "In a sealed flask, baking soda reacts with vinegar and makes a gas. Does the total mass of the flask change?" },
+        "answer": { "pt": "Não: o gás formado fica no frasco. Aberto, o frasco perderia a massa do gás que escapasse.", "en": "No: the gas stays in the flask. Open, the flask would lose the mass of the gas that escaped." }
+      }
+    ]
+  }
+}

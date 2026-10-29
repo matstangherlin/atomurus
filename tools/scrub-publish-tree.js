@@ -23,10 +23,29 @@ const REMOVE_PATHS = [
   'package-lock.json',
   'supabase',
   'propostas',
+  'assets/concepts',
   'docs',
   // The packaged app bundle (A1.0) is a separate artifact, never part of the site.
   'dist',
   '.env.example',
+  'dev',
+  'e2e',
+  'src',
+  'playwright.config.js',
+  'build-i18n.js',
+  'bump-version.js',
+  'bump-version.ps1',
+  'add-content-script.js',
+  'add-share-script.js',
+  'enrich-element-schema.js',
+  'fix-adsense-head.js',
+  'fix-element-i18n.js',
+  'fix-mobile-scroll.js',
+  'migrate-element-seo.js',
+  'patch.js',
+  'sync-en-meta.js',
+  // Prompt 15 is not on main yet. Keep the concept art out of the publish.
+  'assets/concepts',
 ];
 
 function rm(rel) {

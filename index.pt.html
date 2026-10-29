@@ -135,9 +135,11 @@
   body { display: block; height: auto; overflow-x: hidden; padding-bottom: 22px; }
   /* hide the .sidebar/.main reset rules that don't apply here */
 </style>
+<link rel="stylesheet" href="/assets/print.css?v=202610281500" media="print">
 </head>
 
 <body class="ps-body lc-landing">
+<a class="skip-link" href="#ps-main" data-i18n="common.skipToContent">Pular para o conteúdo</a>
 
 <!-- ════════════ TOPNAV ════════════ -->
 <div class="ps-shell" id="ps-shell">
@@ -217,21 +219,21 @@
       <line x1="7.2" y1="7.2" x2="10" y2="10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
     </svg>
     <input class="lc-tn-search-input" id="quick-search" type="text"
-           placeholder="search element, symbol or Z…" autocomplete="off"
+           placeholder="buscar elemento, símbolo ou Z…" autocomplete="off"
            data-i18n-attr="placeholder:common.searchPlaceholder">
     <span class="lc-kbd" aria-hidden="true">⌘K</span>
   </div>
 
   <button class="lc-topnav-btn lc-topnav-lang" data-i18n-toggle
-          data-i18n-attr="title:common.langToggle; aria-label:common.langToggle"
-          title="Switch language" aria-label="Switch language"
+          data-i18n-attr="title:common.langToggle"
+          title="Trocar idioma" aria-label="EN — Trocar idioma"
           style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;">
-    <span data-i18n-toggle-label>PT</span>
+    <span data-i18n-toggle-label>EN</span>
   </button>
 
   <button class="lc-topnav-btn" id="theme-toggle" type="button"
           data-i18n-attr="title:common.themeToggle; aria-label:common.themeToggle"
-          title="Toggle theme" aria-label="Toggle theme">
+          title="Alternar tema" aria-label="Alternar tema">
     <svg id="icon-theme-light" width="14" height="14" viewBox="0 0 14 14" fill="none" style="display:block">
       <path d="M11.5 7.5A4.5 4.5 0 0 1 6.5 2.5 4.5 4.5 0 1 0 11.5 7.5z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/>
     </svg>
@@ -291,7 +293,7 @@
     </a>
   </div>
 </aside>
-<main class="ps-main" id="ps-main">
+<main class="ps-main" id="ps-main" tabindex="-1">
 
 
 <!-- ════════════ DATA STRIP ════════════ -->

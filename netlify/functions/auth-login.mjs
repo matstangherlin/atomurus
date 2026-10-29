@@ -47,7 +47,14 @@ export default async function handler(request) {
     return json(statusFromError(err, 400), { ok: false, error: 'Invalid request' });
   }
 
+  // Nothing to check is a malformed request, not a failed sign-in (prompt 29).
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
+    return json(400, { ok: false, error: 'Invalid request' });
+  }
   const identifierRaw = String(body.identifier || body.email || '').trim();
+  if (!identifierRaw || !String(body.password || '')) {
+    return json(400, { ok: false, error: 'Invalid request' });
+  }
   const email = normalizeEmail(identifierRaw);
   const username = normalizeUsername(identifierRaw);
   const password = String(body.password || '');

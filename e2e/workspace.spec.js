@@ -671,7 +671,8 @@ test('Lab names glassware properly, ferments sugar and drops a material', async 
   await page.locator('[data-lab-guide] [data-step-add="yeast"]').click();
   await page.locator('[data-lab-guide] [data-step-heat="28"]').click();
   await page.locator('[data-lab-guide] [data-step-ferment]').click();
-  await expect(page.locator('.lab-notes')).toContainText(/2 CO₂/);
+  // Sucrose: hydrolysis, then fermentation of the two hexoses.
+  await expect(page.locator('.lab-notes')).toContainText(/4 C₂H₅OH \+ 4 CO₂/);
   await expect(page.locator('[data-lab-guide]')).toContainText(/All steps done|Todos os passos/i);
 
   // Each material can be taken back out on its own.
@@ -810,10 +811,13 @@ test('Lab reactions fire with an equation and the still runs from the guide', as
   await page.locator('[data-lab-search]').evaluate((form) => form.requestSubmit());
   await expect(page.locator('[data-lab-guide]')).toContainText(/Petroleum Fractions|Frações do petróleo/i);
 
-  // The distillation guide builds a working still step by step.
+  // The distillation guide builds a working still step by step. The bench
+  // still holds the copper reaction, so the guide asks first; the default
+  // clears only the board.
   await page.locator('#lab-q').fill('distillation');
   await page.locator('[data-lab-search]').evaluate((form) => form.requestSubmit());
   await page.locator('[data-dock-close]').click();
+  await page.locator('[data-lab-guide] [data-guide-clean]').click();
   await expect(page.locator('[data-lab-guide]')).toContainText(/Step 1 of 8|Passo 1 de 8/i);
   for (const type of ['round-flask', 'condenser', 'receiving-flask', 'heating-mantle']) {
     await page.locator(`[data-lab-guide] [data-add-vessel="${type}"]`).click();
@@ -823,7 +827,7 @@ test('Lab reactions fire with an equation and the still runs from the guide', as
   await page.locator('[data-lab-guide] [data-step-add="ethanol"]').click();
   // The charge went into the flask the step named, not the beaker that was selected.
   await expect(page.locator('.lab-round-flask')).toContainText('100 / 250 mL');
-  await expect(page.locator('[data-vessel="beaker-a"]')).toContainText('25 / 250 mL');
+  await expect(page.locator('[data-vessel="beaker-a"]')).toContainText('0 / 250 mL');
   await expect(page.locator('[data-lab-guide]')).toContainText(/Step 6 of 8|Passo 6 de 8/i);
   await page.locator('[data-lab-guide] [data-step-connect]').click();
   await expect(page.locator('.lab-links path')).toHaveCount(2);
@@ -832,6 +836,9 @@ test('Lab reactions fire with an equation and the still runs from the guide', as
   await page.locator('[data-lab-guide] [data-step-distill]').click();
   await expect(page.locator('.lab-notes')).toContainText(/Distilled|Destilou/i);
   await expect(page.locator('.lab-notes')).toContainText(/azeotrope|azeótropo/i);
+  // The run is automatic, so the step waits until the result was looked at.
+  await expect(page.locator('[data-lab-guide]')).not.toContainText(/All steps done|Todos os passos/i);
+  await page.locator('[data-lab-guide] [data-step-observed]').click();
   await expect(page.locator('[data-lab-guide]')).toContainText(/All steps done|Todos os passos/i);
 });
 
@@ -888,6 +895,7 @@ test('Workspace home is the Virtual Lab and Open Bench runs', async ({ page }) =
   // Searching an approved creation starts the step-by-step guide on this board.
   await page.locator('#lab-q').fill('sunscreen');
   await page.locator('[data-lab-search]').evaluate((form) => form.requestSubmit());
+  await page.locator('[data-lab-guide] [data-guide-clean]').click();
   await expect(page.locator('[data-lab-guide]')).toContainText(/Step 1 of 4|Passo 1 de 4/i);
   await expect(page.locator('[data-lab-guide] .lab-do-chip').first()).toBeVisible();
   await page.locator('[data-lab-guide] [data-lab-hint]').click();

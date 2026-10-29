@@ -1,0 +1,57 @@
+{
+  "_comment": "Prompt 24 — which page loads which part of the periodic table script. Read by tools/patch-pt-modules.js, tools/test-pt-split.mjs and tools/validate-site.js.",
+  "core": "periodic-table.js",
+  "modules": {
+    "compare": "assets/pt/pt-compare.js",
+    "trends": "assets/pt/pt-trends.js",
+    "isotopes": "assets/pt/pt-isotopes.js"
+  },
+  "onDemand": {
+    "export": "assets/pt/pt-export.js"
+  },
+  "pages": {
+    "periodic-table.html": [],
+    "periodic-table.pt.html": [],
+    "periodic-table/heatmap.html": [],
+    "periodic-table/heatmap.pt.html": [],
+    "periodic-table/trends.html": [
+      "trends"
+    ],
+    "periodic-table/trends.pt.html": [
+      "trends"
+    ],
+    "periodic-table/compare.html": [
+      "compare"
+    ],
+    "periodic-table/compare.pt.html": [
+      "compare"
+    ],
+    "periodic-table/isotopes.html": [
+      "isotopes"
+    ],
+    "periodic-table/isotopes.pt.html": [
+      "isotopes"
+    ]
+  },
+  "_inertHandlers": "The heatmap pages still carry the compare, trends and isotopes panels (.tab-content without .active, display:none) and the hidden compare picker; their buttons call module functions the page does not load. They cannot be reached, so the calls are listed here instead of loading ~200 KB for nothing.",
+  "inertHandlers": {
+    "periodic-table/heatmap.html": [
+      "openCompPicker",
+      "clearCompSlot",
+      "closeCompPickerBg",
+      "filterCompPicker",
+      "closeCompPicker",
+      "renderTrendChart",
+      "filterIsoList"
+    ],
+    "periodic-table/heatmap.pt.html": [
+      "openCompPicker",
+      "clearCompSlot",
+      "closeCompPickerBg",
+      "filterCompPicker",
+      "closeCompPicker",
+      "renderTrendChart",
+      "filterIsoList"
+    ]
+  }
+}

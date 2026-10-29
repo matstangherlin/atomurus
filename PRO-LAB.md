@@ -82,7 +82,7 @@ Quota: **200 sessions / user**. Updates do not consume create quota.
 
 ## Canonical data sources
 
-- Calculators: `netlify/lib/chemistry-calc.mjs` (IUPAC 2024 atomic weights copied from the public calculator page, `C1V1=C2V2`, `PV=nRT` with `R=8.314`, `Kw=1e-14` at 25 °C)
+- Calculators: `netlify/lib/chemistry-calc.mjs` (IUPAC 2024 atomic weights copied from the public calculator page, `C1V1=C2V2`, `PV=nRT` with CODATA 2018 `R = N_A·k_B ≈ 8.314462618` and `Kw=1e-14` at 25 °C, both from `netlify/lib/physical-constants.mjs`)
 - Elements: `elements-data.js` (`ELEMENTS`, `ELEMENT_LATIN`, `EXTRA`, `EXTRA2`, `IONIZATION`)
 - Molecules: catalog in `netlify/lib/canonical-molecules.mjs` plus molar mass from the shared calculator
 - Atomic shells / configuration: `EXTRA.shells` and `EXTRA.econfig`

@@ -1,4 +1,4 @@
-import { featuresForAccess } from './feature-catalog.mjs';
+import { ACCESS_CONFIG, featuresForAccess, resolveAccessConfig } from './feature-catalog.mjs';
 
 const TRIAL_DAYS = 30;
 const MS_DAY = 24 * 60 * 60 * 1000;
@@ -63,6 +63,12 @@ function truthyFlag(value) {
   return value === true || value === 'true' || value === '1' || value === 1;
 }
 
+/* A school seat (prompt 34, skeleton): app_metadata atomurus_plan/plan = 'school',
+   set by whoever manages the seats — nothing in the site sets it yet. */
+function schoolSeat(app) {
+  return app.atomurus_plan === 'school' || app.plan === 'school';
+}
+
 function hasStripeCustomerId(app) {
   return Boolean(String(app.stripe_customer_id || '').trim());
 }
@@ -91,7 +97,8 @@ export function trialEndsAtForUser(user) {
   return new Date(created + TRIAL_DAYS * MS_DAY).toISOString();
 }
 
-export function accessForUser(user) {
+/* config: the owner's access switches (feature-catalog.mjs); tests inject their own. */
+export function accessForUser(user, config = ACCESS_CONFIG) {
   const roles = rolesOf(user);
   const app = appMeta(user);
   const isAdmin = user?.role === 'admin' || roles.includes('admin');
@@ -117,6 +124,10 @@ export function accessForUser(user) {
   } else if (trialActive) {
     plan = 'paid';
     planSource = 'trial';
+  } else if (schoolSeat(app) && resolveAccessConfig(config).schoolEnabled) {
+    // With SCHOOL_PLAN_ENABLED off (the default) a school seat is a free account.
+    plan = 'school';
+    planSource = 'school';
   }
 
   const isPro = plan === 'paid' || plan === 'admin';
@@ -142,7 +153,7 @@ export function accessForUser(user) {
     currentPeriodEnd,
     hasStripeCustomer,
     canManageBilling,
-    features: featuresForAccess({ signedIn, isPro, isAdmin })
+    features: featuresForAccess({ signedIn, isPro, isAdmin, isSchool: plan === 'school' }, config)
   };
 }
 

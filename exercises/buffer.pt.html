@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html data-ps-chrome="1" lang="pt-BR" data-theme="light" data-page="exercises">
+<head>
+<style>html[data-theme="dark"] #icon-theme-light,html[data-theme="light"] #icon-theme-dark{display:none!important}html[data-theme="dark"] #icon-theme-dark,html[data-theme="light"] #icon-theme-light{display:block!important}</style>
+<script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var q=new URLSearchParams(location.search);var p=q.get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem('atomurus-lang');var path=location.pathname;var isPt=/\.pt\.html$/i.test(path)||/\.pt$/i.test(path);if(!l&&isPt)l='pt';if(!l){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}if(l==='pt'){document.documentElement.lang='pt-BR';}else{document.documentElement.lang='en-US';}localStorage.setItem('atomurus-lang',l);var u=new URL(location.href);if(l==='pt'&&!isPt){if(/\.html$/i.test(path)){u.pathname=path.replace(/\.html$/i,'.pt.html');}else if(path.charAt(path.length-1)!=='/'){u.pathname=path+'.pt.html';}u.searchParams.set('lang','pt-BR');if(u.href!==location.href)location.replace(u.href);}else if(l==='en'&&isPt){if(/\.pt\.html$/i.test(path)){u.pathname=path.replace(/\.pt\.html$/i,'.html');}else{u.pathname=path.replace(/\.pt$/i,'');}u.searchParams.set('lang','en');if(u.href!==location.href)location.replace(u.href);}}catch(e){}})();</script>
+<meta charset="UTF-8">
+
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1E6A50" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E0D0C" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Atomurus">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" type="image/png" href="/assets/atomurus-logo.png?v=202608041630">
+<link rel="apple-touch-icon" href="/assets/atomurus-logo.png?v=202608041630">
+<title>Exercícios: Tampão: razão base/ácido | Atomurus</title>
+<meta name="description" content="Dez exercícios de tampão a 25 °C: que razão [base conjugada]/[ácido] dá um pH desejado (Henderson–Hasselbalch), com pKa da tabela com fonte da calculadora e solução comentada gerada pelo motor.">
+<meta property="og:title" content="Exercícios: Tampão: razão base/ácido | Atomurus">
+<meta property="og:description" content="Dez exercícios de tampão a 25 °C: que razão [base conjugada]/[ácido] dá um pH desejado (Henderson–Hasselbalch), com pKa da tabela com fonte da calculadora e solução comentada gerada pelo motor.">
+<style>
+.fx-draft{margin:14px 0 0;padding:8px 12px;max-width:640px;border:1px dashed var(--lc-amber,#B7791F);border-radius:8px;font-size:13px}
+.ex-tools{display:flex;flex-wrap:wrap;align-items:center;gap:12px}.ex-tools a.ui-btn-primary{color:var(--color-on-ink,#fff);text-decoration:none}
+.ex-list{padding-left:22px}.ex-item{margin:0 0 18px}.ex-item p{margin:0 0 6px}
+.ex-level{font-size:12px;color:var(--lc-ink-2,#58544A);white-space:nowrap}
+.ex-item details,.ex-new details{margin:4px 0}.ex-item summary,.ex-new summary,.ex-key summary{cursor:pointer;font-weight:600;min-height:32px}
+.ex-error{color:var(--lc-ink-2,#58544A);font-size:13px}.ex-new{margin-top:28px}
+.fx-license{color:var(--lc-ink-2,#58544A);font-size:13px;margin-top:18px}
+@media print{@page{size:A4;margin:14mm}
+:root body :is(.lc-doc-aside,.ex-tools,.ex-new,.lc-statusbar,.lc-footer){display:none!important}
+:root body .lc-doc-body{display:block!important;padding:0!important;background:none!important}
+.ex-item{break-inside:avoid;margin:0 0 16mm}.ex-item details{display:none!important}
+.ex-key{display:none}html.ex-print-key .ex-key{display:block;break-before:page}}
+</style>
+<link rel="stylesheet" href="/assets/ui/worked-solution.css?v=202608041630">
+<script src="/assets/data/physical-constants.js?v=202608041630" defer></script>
+<script src="/assets/calc-core.js?v=202608041630" defer></script>
+<script src="/assets/chemistry/formula-parser.js?v=202608041630" defer></script>
+<script src="/assets/worked-steps.js?v=202608041630" defer></script>
+<script src="/assets/worked-solution.js?v=202608041630" defer></script>
+<script src="/assets/exercises.js?v=202608041630" defer></script>
+<link rel="preload" href="/assets/fonts/inter-tight-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/instrument-serif-400-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202608041630">
+<script src="/i18n.js?v=202608041630" defer></script>
+<link rel="stylesheet" href="/assets/critical-lab.css?v=202608041630">
+<script>document.documentElement.classList.add('lc-loading');setTimeout(function(){document.documentElement.classList.remove('lc-loading')},4000);</script>
+<link rel="preload" href="/atomurus-lab-console.css?v=202608041630" as="style">
+<link rel="stylesheet" href="/atomurus-lab-console.css?v=202608041630" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
+<noscript><link rel="stylesheet" href="/atomurus-lab-console.css?v=202608041630"></noscript>
+<link rel="stylesheet" href="/assets/public-shell.css?v=202608041630">
+<link rel="stylesheet" href="/assets/ui/index.css?v=202608041630">
+<link rel="stylesheet" href="/assets/layouts/docs.css?v=202608041630">
+<script src="/assets/global-nav.js?v=202608041630"></script>
+<script src="/assets/public-workspace.js?v=202608041630"></script>
+<script src="/atomurus-mobile-nav.js?v=202608041630" defer></script>
+<script src="/assets/trail-chip.js?v=202608041630" defer></script>
+<link rel="stylesheet" href="/assets/print.css?v=202608041630" media="print">
+</head>
+
+<body class="ps-body lc-doc">
+<a class="skip-link" href="#ps-main" data-i18n="common.skipToContent">Pular para o conteúdo</a>
+
+<div class="ps-shell" id="ps-shell">
+<nav class="lc-topnav">
+  <a class="lc-topnav-brand" href="/">
+    <div class="lc-topnav-mark">
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="2.5" fill="currentColor"/>
+        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/>
+        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/>
+        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/>
+      </svg>
+    </div>
+    <div>
+      <div class="lc-topnav-name">Atomurus</div>
+      <div class="lc-topnav-tag" data-i18n="common.brandTag">laboratório de química</div>
+    </div>
+  </a>
+
+  <div class="lc-topnav-links">
+    <a class="lc-topnav-link" href="/periodic-table.html"><span class="lc-tn-no">01</span> <span data-i18n="common.nav.periodic">Tabela Periódica</span></a>
+    <a class="lc-topnav-link" href="/viewer/atomic-models.html"><span class="lc-tn-no">02</span> <span data-i18n="common.nav.visualizador">Visualizador</span></a>
+    <a class="lc-topnav-link" href="/calculators.html"><span class="lc-tn-no">03</span> <span data-i18n="common.nav.calc">Calculadoras</span></a>
+    <a class="lc-topnav-link" href="/explore.html"><span class="lc-tn-no">04</span> <span data-i18n="common.nav.explore">Explorar</span></a>
+  </div>
+
+  <form class="ps-search search-box" role="search" action="periodic-table.html" method="get">
+  <label class="lc-sr-only" for="ps-search-q" data-i18n="common.searchAria">Buscar elemento</label>
+  <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+    <circle cx="5.5" cy="5.5" r="4" stroke="currentColor" stroke-width="1.4"/>
+    <line x1="8.7" y1="8.7" x2="11.5" y2="11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+  </svg>
+  <input id="ps-search-q" name="q" type="search" autocomplete="off" data-i18n-attr="placeholder:common.searchPlaceholder" placeholder="buscar elemento, símbolo ou Z…">
+  <button type="submit" data-i18n-attr="aria-label:common.searchAria" aria-label="Buscar elemento">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <circle cx="6" cy="6" r="4.2" stroke="currentColor" stroke-width="1.3"/>
+      <path d="M9.2 9.2 12 12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+    </svg>
+  </button>
+</form>
+    <div class="lc-topnav-spacer"></div>
+
+  <button class="lc-topnav-btn lc-topnav-lang" onclick="location.href='buffer.html?lang=en'" data-i18n-attr="title:common.langToggle" title="Trocar idioma" aria-label="EN — Trocar idioma" style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;width:auto;min-width:30px;padding:0 8px;">
+    <span>EN</span>
+  </button>
+
+  <button class="lc-topnav-btn" onclick="toggleTheme()" data-i18n-attr="title:common.themeToggle; aria-label:common.themeToggle" title="Alternar tema" aria-label="Alternar tema">
+    <svg id="icon-theme-light" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M11.5 7.5A4.5 4.5 0 0 1 6.5 2.5 4.5 4.5 0 1 0 11.5 7.5z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/></svg>
+    <svg id="icon-theme-dark" width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M7 1v1.4M7 11.6V13M1 7h1.4M11.6 7H13M2.5 2.5l1 1M10.5 10.5l1 1M2.5 11.5l1-1M10.5 3.5l1-1" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+  </button>
+
+<div class="ps-account" data-atomurus-account>
+  <span class="ps-plan-badge" data-atomurus-plan-badge hidden></span>
+  <a class="ps-userchip lc-topnav-cta is-guest-cta" href="../signup.html" data-atomurus-account-chip aria-label="Criar conta">
+    <svg class="ps-userchip-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span data-i18n="common.auth.createAccount">Criar conta</span>
+  </a>
+</div>
+  </nav>
+<aside class="ws-sidebar sidebar ps-pub-sidebar" id="ws-sidebar" data-atomurus-sidebar>
+  <nav class="ws-nav" id="ws-nav-main" aria-label="Laboratório" data-i18n-attr="aria-label:common.nav.laboratory" data-atomurus-lab-nav>
+    <div class="ws-nav-block ws-nav-site">
+      <h2 class="ws-nav-group" data-i18n="common.nav.laboratory">Laboratório</h2>
+      <a class="ws-nav-item" href="/" data-nav="home">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M2.5 7.5 8 3l5.5 4.5M4 6.5V13h8V6.5M6.5 13V9h3v4"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.home">Início</span>
+      </a>
+      <a class="ws-nav-item" href="/periodic-table.html" data-nav="periodic">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.periodic">Tabela Periódica</span>
+      </a>
+      <a class="ws-nav-item" href="/viewer/atomic-models.html" data-nav="viewer">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="8" cy="8" r="2"/><ellipse cx="8" cy="8" rx="6" ry="2.5"/><ellipse cx="8" cy="8" rx="6" ry="2.5" transform="rotate(60 8 8)"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.visualizador">Visualizador</span>
+      </a>
+      <a class="ws-nav-item" href="/calculators.html" data-nav="calculators">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="2" width="10" height="12" rx="1"/><path d="M5 5h6M5.5 8h1M9.5 8h1M5.5 11h1M9.5 11h1"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.calc">Calculadoras</span>
+      </a>
+      <a class="ws-nav-item" href="/explore.html" data-nav="explore">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.explore">Explorar</span>
+      </a>
+      <a class="ws-nav-item" href="/app" data-nav="workspace">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 12l4-4 2 2 4-6"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.workspace">Workspace</span>
+      </a>
+    </div>
+  </nav>
+  <div class="ws-nav-foot sidebar-foot" id="ws-nav-foot" data-atomurus-nav-foot>
+    <a class="ws-nav-item is-upgrade" href="/signup" data-nav="signup">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5"/></g></svg>
+      <span class="ws-nav-label" data-i18n="common.auth.createAccount">Criar conta</span>
+    </a>
+    <a class="ws-nav-item" href="/login" data-nav="signin">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5"/></g></svg>
+      <span class="ws-nav-label" data-i18n="common.auth.signIn">Entrar</span>
+    </a>
+    <a class="ws-nav-item" href="/pricing" data-nav="plans">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 5h8v8H4zM6 3v2M10 3v2"/></g></svg>
+      <span class="ws-nav-label" data-i18n="common.nav.plans">Planos</span>
+    </a>
+  </div>
+</aside>
+<main class="ps-main" id="ps-main" tabindex="-1">
+<header class="lc-doc-hero">
+  <div class="lc-doc-kicker">
+    <span>Exercícios</span>
+    <span class="pill">10 exercícios</span>
+  </div>
+  <h1 class="lc-doc-title">Tampão: razão base/ácido</h1>
+  <p class="lc-doc-desc">Dez exercícios de tampão a 25 °C: que razão [base conjugada]/[ácido] dá um pH desejado (Henderson–Hasselbalch), com pKa da tabela com fonte da calculadora e solução comentada gerada pelo motor.</p>
+  <p class="fx-draft" role="note">Rascunho — em revisão docente. Ainda não publicado.</p>
+</header>
+<div class="lc-doc-body ui-root">
+  <aside class="lc-doc-aside">
+    <div><span class="lbl">nível</span><br><span class="v">básico 3 · médio 4 · avançado 3</span></div>
+    <hr>
+    <div><span class="lbl">situação</span><br><span class="v">rascunho</span></div>
+  </aside>
+  <article class="lc-doc-prose ex-page">
+<p>Resolva primeiro no papel; depois abra «Resposta» e «Solução comentada» para conferir. Cada resposta e cada passo vêm da calculadora do site.</p>
+<p class="ex-tools"><a class="ui-btn ui-btn-primary" href="/calculators.pt.html#ph">Abrir a calculadora de pH (modo tampão)</a> <label><input type="checkbox" data-ex-print-key> Imprimir com o gabarito</label></p>
+<h2>Exercícios</h2>
+<ol class="ex-list">
+  <li class="ex-item" id="BF01"><p class="ex-statement">Um tampão de ácido acético e acetato deve ter pH 4,76 a 25 °C. Qual deve ser a razão [acetato]/[ácido acético]? (pKa = 4,756) <span class="ex-level">(básico)</span></p>
+    <details class="ex-answer"><summary>Resposta</summary><p translate="no">[A⁻]/[HA] = 1,009</p></details>
+    <details class="ex-solution"><summary>Solução comentada</summary><ol class="wsol-steps"><li><span class="wsol-text">Henderson–Hasselbalch: pH = pKa + log₁₀([A⁻]/[HA]), então log₁₀([A⁻]/[HA]) = pH − pKa.</span> <span class="wsol-expr" translate="no">log₁₀([A⁻]/[HA]) = 4,76 − 4,756 = 0,004</span></li><li><span class="wsol-text">Desfaça o logaritmo para obter a razão.</span> <span class="wsol-expr" translate="no">[A⁻]/[HA] = 10^0,004 = 1,009</span></li><li><span class="wsol-text">Um tampão funciona bem enquanto a razão fica entre 0,1 e 10 (pH = pKa ± 1).</span> <span class="wsol-expr" translate="no">0,1 ≤ 1,009 ≤ 10 ✓</span></li></ol></details>
+  </li>
+  <li class="ex-item" id="BF02"><p class="ex-statement">Um tampão de ácido acético e acetato deve ter pH 5 a 25 °C. Qual deve ser a razão [acetato]/[ácido acético]? (pKa = 4,756) <span class="ex-level">(básico)</span></p>
+    <details class="ex-answer"><summary>Resposta</summary><p translate="no">[A⁻]/[HA] = 1,754</p></details>
+    <details class="ex-solution"><summary>Solução comentada</summary><ol class="wsol-steps"><li><span class="wsol-text">Henderson–Hasselbalch: pH = pKa + log₁₀([A⁻]/[HA]), então log₁₀([A⁻]/[HA]) = pH − pKa.</span> <span class="wsol-expr" translate="no">log₁₀([A⁻]/[HA]) = 5,00 − 4,756 = 0,244</span></li><li><span class="wsol-text">Desfaça o logaritmo para obter a razão.</span> <span class="wsol-expr" translate="no">[A⁻]/[HA] = 10^0,244 = 1,754</span></li><li><span class="wsol-text">Um tampão funciona bem enquanto a razão fica entre 0,1 e 10 (pH = pKa ± 1).</span> <span class="wsol-expr" translate="no">0,1 ≤ 1,754 ≤ 10 ✓</span></li></ol></details>
+  </li>
+  <li class="ex-item" id="BF03"><p class="ex-statement">Um tampão de ácido fórmico e formiato deve ter pH 3,75 a 25 °C. Qual deve ser a razão [formiato]/[ácido fórmico]? (pKa = 3,75) <span class="ex-level">(básico)</span></p>
+    <details class="ex-answer"><summary>Resposta</summary><p translate="no">[A⁻]/[HA] = 1</p></details>
+    <details class="ex-solution"><summary>Solução comentada</summary><ol class="wsol-steps"><li><span class="wsol-text">Henderson–Hasselbalch: pH = pKa + log₁₀([A⁻]/[HA]), então log₁₀([A⁻]/[HA]) = pH − pKa.</span> <span class="wsol-expr" translate="no">log₁₀([A⁻]/[HA]) = 3,75 − 3,75 = 0,000</span></li><li><span class="wsol-text">Desfaça o logaritmo para obter a razão.</span> <span class="wsol-expr" translate="no">[A⁻]/[HA] = 10^0,000 = 1</span></li><li><span class="wsol-text">Um tampão funciona bem enquanto a razão fica entre 0,1 e 10 (pH = pKa ± 1).</span> <span class="wsol-expr" translate="no">0,1 ≤ 1 ≤ 10 ✓</span></li></ol></details>
+  </li>
+  <li class="ex-item" id="BF04"><p class="ex-statement">Um tampão de ácido acético e acetato deve ter pH 4,5 a 25 °C. Qual deve ser a razão [acetato]/[ácido acético]? (pKa = 4,756) <span class="ex-level">(médio)</span></p>
+    <details class="ex-answer"><summary>Resposta</summary><p translate="no">[A⁻]/[HA] = 0,5546</p></details>
+    <details class="ex-solution"><summary>Solução comentada</summary><ol class="wsol-steps"><li><span class="wsol-text">Henderson–Hasselbalch: pH = pKa + log₁₀([A⁻]/[HA]), então log₁₀([A⁻]/[HA]) = pH − pKa.</span> <span class="wsol-expr" translate="no">log₁₀([A⁻]/[HA]) = 4,50 − 4,756 = −0,256</span></li><li><span class="wsol-text">Desfaça o logaritmo para obter a razão.</span> <span class="wsol-expr" translate="no">[A⁻]/[HA] = 10^−0,256 = 0,5546</span></li><li><span class="wsol-text">Um tampão funciona bem enquanto a razão fica entre 0,1 e 10 (pH = pKa ± 1).</span> <span class="wsol-expr" translate="no">0,1 ≤ 0,5546 ≤ 10 ✓</span></li></ol></details>
+  </li>
+  <li class="ex-item" id="BF05"><p class="ex-statement">Um tampão de ácido fórmico e formiato deve ter pH 4 a 25 °C. Qual deve ser a razão [formiato]/[ácido fórmico]? (pKa = 3,75) <span class="ex-level">(médio)</span></p>
+    <details class="ex-answer"><summary>Resposta</summary><p translate="no">[A⁻]/[HA] = 1,778</p></details>
+    <details class="ex-solution"><summary>Solução comentada</summary><ol class="wsol-steps"><li><span class="wsol-text">Henderson–Hasselbalch: pH = pKa + log₁₀([A⁻]/[HA]), então log₁₀([A⁻]/[HA]) = pH − pKa.</span> <span class="wsol-expr" translate="no">log₁₀([A⁻]/[HA]) = 4,00 − 3,75 = 0,250</span></li><li><span class="wsol-text">Desfaça o logaritmo para obter a razão.</span> <span class="wsol-expr" translate="no">[A⁻]/[HA] = 10^0,250 = 1,778</span></li><li><span class="wsol-text">Um tampão funciona bem enquanto a razão fica entre 0,1 e 10 (pH = pKa ± 1).</span> <span class="wsol-expr" translate="no">0,1 ≤ 1,778 ≤ 10 ✓</span></li></ol></details>
+  </li>
+  <li class="ex-item" id="BF06"><p class="ex-statement">Um tampão de ácido benzoico e benzoato deve ter pH 4,5 a 25 °C. Qual deve ser a razão [benzoato]/[ácido benzoico]? (pKa = 4,204) <span class="ex-level">(médio)</span></p>
+    <details class="ex-answer"><summary>Resposta</summary><p translate="no">[A⁻]/[HA] = 1,977</p></details>
+    <details class="ex-solution"><summary>Solução comentada</summary><ol class="wsol-steps"><li><span class="wsol-text">Henderson–Hasselbalch: pH = pKa + log₁₀([A⁻]/[HA]), então log₁₀([A⁻]/[HA]) = pH − pKa.</span> <span class="wsol-expr" translate="no">log₁₀([A⁻]/[HA]) = 4,50 − 4,204 = 0,296</span></li><li><span class="wsol-text">Desfaça o logaritmo para obter a razão.</span> <span class="wsol-expr" translate="no">[A⁻]/[HA] = 10^0,296 = 1,977</span></li><li><span class="wsol-text">Um tampão funciona bem enquanto a razão fica entre 0,1 e 10 (pH = pKa ± 1).</span> <span class="wsol-expr" translate="no">0,1 ≤ 1,977 ≤ 10 ✓</span></li></ol></details>
+  </li>
+  <li class="ex-item" id="BF07"><p class="ex-statement">Um tampão de ácido benzoico e benzoato deve ter pH 3,8 a 25 °C. Qual deve ser a razão [benzoato]/[ácido benzoico]? (pKa = 4,204) <span class="ex-level">(médio)</span></p>
+    <details class="ex-answer"><summary>Resposta</summary><p translate="no">[A⁻]/[HA] = 0,3945</p></details>
+    <details class="ex-solution"><summary>Solução comentada</summary><ol class="wsol-steps"><li><span class="wsol-text">Henderson–Hasselbalch: pH = pKa + log₁₀([A⁻]/[HA]), então log₁₀([A⁻]/[HA]) = pH − pKa.</span> <span class="wsol-expr" translate="no">log₁₀([A⁻]/[HA]) = 3,80 − 4,204 = −0,404</span></li><li><span class="wsol-text">Desfaça o logaritmo para obter a razão.</span> <span class="wsol-expr" translate="no">[A⁻]/[HA] = 10^−0,404 = 0,3945</span></li><li><span class="wsol-text">Um tampão funciona bem enquanto a razão fica entre 0,1 e 10 (pH = pKa ± 1).</span> <span class="wsol-expr" translate="no">0,1 ≤ 0,3945 ≤ 10 ✓</span></li></ol></details>
+  </li>
+  <li class="ex-item" id="BF08"><p class="ex-statement">Um tampão de ácido fluorídrico e fluoreto deve ter pH 3,5 a 25 °C. Qual deve ser a razão [fluoreto]/[ácido fluorídrico]? (pKa = 3,2) <span class="ex-level">(avançado)</span></p>
+    <details class="ex-answer"><summary>Resposta</summary><p translate="no">[A⁻]/[HA] = 1,995</p></details>
+    <details class="ex-solution"><summary>Solução comentada</summary><ol class="wsol-steps"><li><span class="wsol-text">Henderson–Hasselbalch: pH = pKa + log₁₀([A⁻]/[HA]), então log₁₀([A⁻]/[HA]) = pH − pKa.</span> <span class="wsol-expr" translate="no">log₁₀([A⁻]/[HA]) = 3,50 − 3,2 = 0,300</span></li><li><span class="wsol-text">Desfaça o logaritmo para obter a razão.</span> <span class="wsol-expr" translate="no">[A⁻]/[HA] = 10^0,300 = 1,995</span></li><li><span class="wsol-text">Um tampão funciona bem enquanto a razão fica entre 0,1 e 10 (pH = pKa ± 1).</span> <span class="wsol-expr" translate="no">0,1 ≤ 1,995 ≤ 10 ✓</span></li></ol></details>
+  </li>
+  <li class="ex-item" id="BF09"><p class="ex-statement">Um tampão de ácido fórmico e formiato deve ter pH 3,2 a 25 °C. Qual deve ser a razão [formiato]/[ácido fórmico]? (pKa = 3,75) <span class="ex-level">(avançado)</span></p>
+    <details class="ex-answer"><summary>Resposta</summary><p translate="no">[A⁻]/[HA] = 0,2818</p></details>
+    <details class="ex-solution"><summary>Solução comentada</summary><ol class="wsol-steps"><li><span class="wsol-text">Henderson–Hasselbalch: pH = pKa + log₁₀([A⁻]/[HA]), então log₁₀([A⁻]/[HA]) = pH − pKa.</span> <span class="wsol-expr" translate="no">log₁₀([A⁻]/[HA]) = 3,20 − 3,75 = −0,550</span></li><li><span class="wsol-text">Desfaça o logaritmo para obter a razão.</span> <span class="wsol-expr" translate="no">[A⁻]/[HA] = 10^−0,550 = 0,2818</span></li><li><span class="wsol-text">Um tampão funciona bem enquanto a razão fica entre 0,1 e 10 (pH = pKa ± 1).</span> <span class="wsol-expr" translate="no">0,1 ≤ 0,2818 ≤ 10 ✓</span></li></ol></details>
+  </li>
+  <li class="ex-item" id="BF10"><p class="ex-statement">Um tampão de ácido acético e acetato deve ter pH 6 a 25 °C. Qual deve ser a razão [acetato]/[ácido acético]? (pKa = 4,756) <span class="ex-level">(avançado)</span></p>
+    <details class="ex-answer"><summary>Resposta</summary><p translate="no">[A⁻]/[HA] = 17,54</p></details>
+    <details class="ex-solution"><summary>Solução comentada</summary><ol class="wsol-steps"><li><span class="wsol-text">Henderson–Hasselbalch: pH = pKa + log₁₀([A⁻]/[HA]), então log₁₀([A⁻]/[HA]) = pH − pKa.</span> <span class="wsol-expr" translate="no">log₁₀([A⁻]/[HA]) = 6,00 − 4,756 = 1,244</span></li><li><span class="wsol-text">Desfaça o logaritmo para obter a razão.</span> <span class="wsol-expr" translate="no">[A⁻]/[HA] = 10^1,244 = 17,54</span></li><li><span class="wsol-text">Um tampão funciona bem enquanto a razão fica entre 0,1 e 10 (pH = pKa ± 1).</span> <span class="wsol-expr" translate="no">17,54 &gt; 10 ✗</span></li></ol></details>
+  </li>
+</ol>
+<section class="ex-new" id="novo" data-ex-new-root aria-labelledby="ex-new-title">
+<h2 id="ex-new-title">Novo exercício</h2>
+<p>Sorteia outro exercício do mesmo tipo. O endereço guarda o sorteio, para você compartilhar o mesmo exercício.</p>
+<p><button type="button" class="ui-btn ui-btn-secondary" data-ex-new>Sortear um exercício</button> <a data-ex-link hidden href="#novo">Link para este exercício</a></p>
+<div data-ex-out aria-live="polite"></div>
+</section>
+<details class="ex-key" id="gabarito"><summary>Gabarito</summary><ol><li><span translate="no">BF01 · [A⁻]/[HA] = 1,009</span></li><li><span translate="no">BF02 · [A⁻]/[HA] = 1,754</span></li><li><span translate="no">BF03 · [A⁻]/[HA] = 1</span></li><li><span translate="no">BF04 · [A⁻]/[HA] = 0,5546</span></li><li><span translate="no">BF05 · [A⁻]/[HA] = 1,778</span></li><li><span translate="no">BF06 · [A⁻]/[HA] = 1,977</span></li><li><span translate="no">BF07 · [A⁻]/[HA] = 0,3945</span></li><li><span translate="no">BF08 · [A⁻]/[HA] = 1,995</span></li><li><span translate="no">BF09 · [A⁻]/[HA] = 0,2818</span></li><li><span translate="no">BF10 · [A⁻]/[HA] = 17,54</span></li></ol></details>
+<p class="fx-license">Licença: [licença: definir]</p>
+  </article>
+</div>
+<script type="application/json" id="ex-def">{"id":"buffer","template":{"pt":"Um tampão de {acidName} e {conj} deve ter pH {pH} a 25 °C. Qual deve ser a razão [{conj}]/[{acidName}]? (pKa = {pKa})","en":"A buffer of {acidName} and {conj} must have pH {pH} at 25 °C. What must the ratio [{conj}]/[{acidName}] be? (pKa = {pKa})"},"display":{"acidName":"@acid:acid.name|lower","conj":"@acid:acid.conjugate","pKa":"@acid:acid.pKa"},"variables":{"acid":{"list":["acetic","formic","benzoic","hydrofluoric"]},"pH":{"list":[3,3.5,4,4.5,5,5.5]}},"engine":{"fn":"calc-core.computeBufferRatio","args":[{"pKa":"@acid:acid.pKa","pH":"@pH"}]},"answer":{"step":"bf.ratio","unit":""},"commonErrors":[],"labels":{"answer":"Resposta","showSolution":"Ver solução comentada","hideSolution":"Esconder a solução","failed":"Não foi possível sortear este exercício. Tente de novo."}}</script>
+
+<footer class="lc-footer">
+  <div class="lc-footer-inner">
+    <div class="lc-footer-col lc-footer-brand">
+      <div class="lc-footer-brand-row">
+        <div class="lc-topnav-mark" style="width:24px;height:24px">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="2.5" fill="currentColor"/>
+            <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/>
+            <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/>
+            <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/>
+          </svg>
+        </div>
+        <span class="lc-footer-brand-name">Atomurus</span>
+      </div>
+      <p class="lc-footer-brand-desc" data-i18n="common.footer.brandDesc">Um laboratório de química instrumental para os estudiosos, os curiosos e os pacientes.</p>
+      <div class="lc-footer-social" aria-label="Social">
+        <a href="https://instagram.com/atomurusapp" target="_blank" rel="noopener me" aria-label="Instagram @atomurusapp" title="Instagram @atomurusapp">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.7"/>
+            <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/>
+            <circle cx="17.5" cy="6.5" r="1.1" fill="currentColor"/>
+          </svg>
+        </a>
+        <a href="https://x.com/atomurusapp" target="_blank" rel="noopener me" aria-label="X (Twitter) @atomurusapp" title="X (Twitter) @atomurusapp">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.658l-5.214-6.817-5.967 6.817H1.68l7.73-8.835L1.254 2.25h6.828l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+    <div class="lc-footer-col">
+      <h4 data-i18n="common.footer.modules">Módulos</h4>
+      <a href="/periodic-table.html" data-i18n="common.nav.periodic">Tabela Periódica</a>
+      <a href="/viewer/atomic-models.html" data-i18n="common.nav.viewer3d">Visualizador</a>
+      <a href="/calculators.html" data-i18n="common.nav.calc">Calculadoras</a>
+      <a href="/explore.html" data-i18n="common.nav.explore">Explorar</a>
+    </div>
+    <div class="lc-footer-col">
+      <h4 data-i18n="common.footer.workspace">Workspace</h4>
+      <a href="/config.html" data-i18n="common.footer.settings">Configurações</a>
+      <a href="/periodic-table.html#search" data-i18n="common.footer.elementSearch">Buscar elemento</a>
+      <a href="/calculators.html#molar" data-i18n="common.footer.molarMass">Massa molar</a>
+    </div>
+    <div class="lc-footer-col">
+      <h4 data-i18n="common.footer.project">Projeto</h4>
+      <a href="/about.html" data-i18n="common.footer.about">Sobre</a>
+      <a href="/privacy.html" data-i18n="common.footer.privacy">Privacidade</a>
+      <a href="/terms.html" data-i18n="common.footer.terms">Termos</a>
+      <a href="/contact.html" data-i18n="common.footer.contact">Contato</a>
+    </div>
+    <div class="lc-footer-col">
+      <h4 data-i18n="common.footer.data">Dados</h4>
+      <a href="https://iupac.org/" target="_blank" rel="noopener">IUPAC 2024</a>
+      <a href="https://physics.nist.gov/cuu/Constants/" target="_blank" rel="noopener">CODATA 2022</a>
+      <a href="https://www.nist.gov/" target="_blank" rel="noopener">NIST</a>
+    </div>
+  </div>
+  <div class="lc-footer-bottom">
+    <span><span class="lc-st-dot" style="width:6px;height:6px;border-radius:50%;background:#1E6A50;display:inline-block"></span> <span data-i18n="common.footer.systemNominal">sistema nominal</span></span>
+    <span data-i18n="common.footer.copy">© 2026 Atomurus</span>
+  </div>
+</footer>
+
+<div class="lc-statusbar">
+  <span><span class="lc-st-dot"></span> <span data-i18n="common.stReady">pronto</span></span>
+  <span class="lc-st-sep">·</span>
+  <span>exercícios / buffer</span>
+  <span class="lc-st-spacer"></span>
+  <a href="/">→ início</a>
+</div>
+
+</main>
+</div>
+<script>
+function toggleTheme(){var h=document.documentElement;var d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');localStorage.setItem('atomurus-theme',d?'light':'dark')}
+(function(){var s=localStorage.getItem('atomurus-theme');if(s)document.documentElement.setAttribute('data-theme',s)})();
+</script>
+</body>
+</html>

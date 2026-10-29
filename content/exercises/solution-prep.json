@@ -1,0 +1,45 @@
+{
+  "id": "solution-prep",
+  "type": "solution-prep",
+  "status": "draft",
+  "reviewedBy": null,
+  "title": { "pt": "Preparo de solução", "en": "Preparing a solution" },
+  "summary": {
+    "pt": "Dez exercícios de preparo de solução: que massa de soluto pesar para um volume e uma concentração dados (m = C × V × M), com resposta e solução comentada geradas pela calculadora do site.",
+    "en": "Ten exercises on preparing a solution: what mass of solute to weigh for a given volume and concentration (m = C × V × M), with the answer and the worked solution produced by the site's calculator."
+  },
+  "tool": { "href": { "pt": "/calculators.pt.html#molar", "en": "/calculators.html#molar" }, "label": { "pt": "Abrir a calculadora de massa molar", "en": "Open the molar mass calculator" } },
+  "template": {
+    "pt": "Que massa de {formula} é preciso pesar para preparar {V} mL de solução {C} mol/L?",
+    "en": "What mass of {formula} must you weigh to prepare {V} mL of a {C} mol/L solution?"
+  },
+  "variables": {
+    "formula": { "list": ["NaCl", "KCl", "NaOH", "KNO3", "C6H12O6", "CuSO4", "Na2CO3", "NaHCO3", "CaCl2", "KOH"] },
+    "C": { "list": [0.05, 0.1, 0.2, 0.25, 0.5, 1] },
+    "V": { "list": [100, 250, 500, 1000] }
+  },
+  "engine": { "fn": "calc-core.computeSolutionMass", "args": ["@counts:formula", "@weights", { "C": "@C", "V": "@V" }] },
+  "answer": { "step": "mm.mass", "unit": "g" },
+  "commonErrors": [
+    {
+      "id": "millilitres",
+      "wrong": "volumeInML",
+      "message": {
+        "pt": "Se você chegou a {wrong}, usou o volume em mililitros. A concentração está em mol por litro: divida o volume por 1000 antes de multiplicar.",
+        "en": "If you got {wrong}, you used the volume in millilitres. The concentration is in moles per litre: divide the volume by 1000 before multiplying."
+      }
+    }
+  ],
+  "exercises": [
+    { "id": "SP01", "level": "basico", "vars": { "formula": "NaCl", "C": 0.1, "V": 250 } },
+    { "id": "SP02", "level": "basico", "vars": { "formula": "NaCl", "C": 1, "V": 100 } },
+    { "id": "SP03", "level": "basico", "vars": { "formula": "KCl", "C": 0.2, "V": 500 } },
+    { "id": "SP04", "level": "basico", "vars": { "formula": "NaOH", "C": 0.5, "V": 250 } },
+    { "id": "SP05", "level": "medio", "vars": { "formula": "C6H12O6", "C": 0.25, "V": 500 } },
+    { "id": "SP06", "level": "medio", "vars": { "formula": "KNO3", "C": 0.1, "V": 1000 } },
+    { "id": "SP07", "level": "medio", "vars": { "formula": "Na2CO3", "C": 0.05, "V": 250 } },
+    { "id": "SP08", "level": "medio", "vars": { "formula": "CaCl2", "C": 0.2, "V": 100 } },
+    { "id": "SP09", "level": "avancado", "vars": { "formula": "CuSO4", "C": 0.05, "V": 1000 } },
+    { "id": "SP10", "level": "avancado", "vars": { "formula": "NaHCO3", "C": 0.25, "V": 250 } }
+  ]
+}

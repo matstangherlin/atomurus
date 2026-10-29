@@ -1,0 +1,11 @@
+{
+  "note": "Teto proposto a partir da mediana do Lighthouse after (c55c35956c10). Não está ligado ao CI. Decisão do dono.",
+  "source": "docs/perf/lighthouse-after.json",
+  "pages": {
+    "/": { "totalKiB": 1050, "requests": 64, "unusedJsKiB": 40 },
+    "/periodic-table": { "totalKiB": 1750, "requests": 68, "unusedJsKiB": 320 },
+    "/calculators": { "totalKiB": 1300, "requests": 68, "unusedJsKiB": 60 },
+    "/pricing": { "totalKiB": 950, "requests": 52, "unusedJsKiB": 8 },
+    "/login": { "totalKiB": 750, "requests": 52, "unusedJsKiB": 8 }
+  }
+}

@@ -83,9 +83,11 @@
 <script src="assets/global-nav.js?v=202609090500"></script>
 <script src="/assets/public-workspace.js?v=202608282500"></script>
 <script src="atomurus-mobile-nav.js?v=202608041630" defer></script>
+<link rel="stylesheet" href="/assets/print.css?v=202610281500" media="print">
 </head>
 
 <body class="ps-body lc-doc">
+<a class="skip-link" href="#ps-main" data-i18n="common.skipToContent">Skip to content</a>
 
 <div class="ps-shell" id="ps-shell">
 <nav class="lc-topnav">
@@ -112,7 +114,7 @@
   </div>
 
   <form class="ps-search search-box" role="search" action="periodic-table.html" method="get">
-  <label class="lc-sr-only" for="ps-search-q">Search element</label>
+  <label class="lc-sr-only" for="ps-search-q" data-i18n="common.searchAria">Search element</label>
   <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
     <circle cx="5.5" cy="5.5" r="4" stroke="currentColor" stroke-width="1.4"/>
     <line x1="8.7" y1="8.7" x2="11.5" y2="11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
@@ -127,7 +129,7 @@
 </form>
     <div class="lc-topnav-spacer"></div>
 
-  <button class="lc-topnav-btn lc-topnav-lang" data-i18n-toggle data-i18n-attr="title:common.langToggle; aria-label:common.langToggle" title="Switch language" aria-label="Switch language" style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;width:auto;min-width:30px;padding:0 8px;">
+  <button class="lc-topnav-btn lc-topnav-lang" data-i18n-toggle data-i18n-attr="title:common.langToggle" title="Switch language" aria-label="PT — Switch language" style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;width:auto;min-width:30px;padding:0 8px;">
     <span data-i18n-toggle-label>PT</span>
   </button>
 
@@ -138,7 +140,7 @@
 
   <div class="ps-account" data-atomurus-account>
   <span class="ps-plan-badge" data-atomurus-plan-badge hidden></span>
-  <a class="ps-userchip lc-topnav-cta" href="login.html" data-atomurus-account-chip aria-label="Account">
+  <a class="ps-userchip lc-topnav-cta" href="login.html" data-atomurus-account-chip data-i18n-attr="aria-label:pricing.ctaAccount" aria-label="Account">
     <svg class="ps-userchip-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
     <span data-i18n="pricing.ctaAccount">Account</span>
   </a>
@@ -146,7 +148,7 @@
   
 </nav>
 <aside class="ws-sidebar sidebar ps-pub-sidebar" id="ws-sidebar" data-atomurus-sidebar>
-  <nav class="ws-nav" id="ws-nav-main" aria-label="Laboratory" data-atomurus-lab-nav>
+  <nav class="ws-nav" id="ws-nav-main" aria-label="Laboratory" data-i18n-attr="aria-label:common.nav.laboratory" data-atomurus-lab-nav>
     <div class="ws-nav-block ws-nav-site">
       <h2 class="ws-nav-group" data-i18n="common.nav.laboratory">Laboratory</h2>
       <a class="ws-nav-item" href="/" data-nav="home">
@@ -186,17 +188,17 @@
     </a>
   </div>
 </aside>
-<main class="ps-main" id="ps-main">
+<main class="ps-main" id="ps-main" tabindex="-1">
 
 
 <div class="data-strip">
-  <span class="ds-k">scope</span><span class="ds-v">DOC.PRIVACY</span>
+  <span class="ds-k" data-i18n="privacy.dsKScope">scope</span><span class="ds-v" data-i18n="privacy.dsScopeVal">DOC.PRIVACY</span>
   <span class="ds-sep"></span>
-  <span class="ds-k">section</span><span class="ds-v">privacy</span>
+  <span class="ds-k" data-i18n="privacy.dsKSection">section</span><span class="ds-v" data-i18n="privacy.dsSectionVal">privacy</span>
   <span class="ds-sep"></span>
-  <span class="ds-k">rev</span><span class="ds-v">v1.11 · 2026.05</span>
+  <span class="ds-k" data-i18n="privacy.dsKRev">rev</span><span class="ds-v">v1.11 · 2026.05</span>
   <span class="ds-spacer"></span>
-  <span class="ds-k">data</span><span class="ds-v ds-hi">IUPAC 2024 · CODATA 2022</span>
+  <span class="ds-k" data-i18n="privacy.dsKData">data</span><span class="ds-v ds-hi">IUPAC 2024 · CODATA 2022</span>
 </div>
 
 <header class="lc-doc-hero">
@@ -211,31 +213,31 @@
 <div class="lc-doc-body ui-root">
 
   <aside class="lc-doc-aside">
-    <div><span class="lbl">document</span><br><span class="v">privacy</span></div>
+    <div><span class="lbl" data-i18n="privacy.asideKDoc">document</span><br><span class="v" data-i18n="privacy.dsSectionVal">privacy</span></div>
     <hr>
-    <div><span class="lbl">updated</span><br><span class="v">2026 · 05</span></div>
+    <div><span class="lbl" data-i18n="privacy.asideKUpdated">updated</span><br><span class="v">2026 · 05</span></div>
     <hr>
-    <div><span class="lbl">contents</span></div>
-    <a href="#who">Who we are</a>
-    <a href="#no-collect">Information we do not collect directly</a>
-    <a href="#local">Information stored locally in your browser</a>
-    <a href="#analytics">Analytics — Google Analytics 4</a>
-    <a href="#ads">Advertising — Google AdSense</a>
-    <a href="#recaptcha">Anti-spam — Google reCAPTCHA v3</a>
-    <a href="#cookies">Cookies</a>
-    <a href="#children">Children's privacy</a>
-    <a href="#tpl">Third-party links</a>
-    <a href="#sec">Data security</a>
-    <a href="#rights">Your rights</a>
-    <a href="#changes">Changes to this policy</a>
-    <a href="#contact">Contact</a>
+    <div><span class="lbl" data-i18n="privacy.asideKContents">contents</span></div>
+    <a href="#who" data-i18n="privacy.toc_1">Who we are</a>
+    <a href="#no-collect" data-i18n="privacy.toc_2">Information we do not collect directly</a>
+    <a href="#local" data-i18n="privacy.toc_3">Information stored locally in your browser</a>
+    <a href="#analytics" data-i18n="privacy.toc_4">Analytics — Google Analytics 4</a>
+    <a href="#ads" data-i18n="privacy.toc_5">Advertising — Google AdSense and AdCash</a>
+    <a href="#recaptcha" data-i18n="privacy.toc_6">Anti-spam — Google reCAPTCHA v3</a>
+    <a href="#cookies" data-i18n="privacy.toc_7">Cookies</a>
+    <a href="#children" data-i18n="privacy.toc_8">Children's privacy</a>
+    <a href="#tpl" data-i18n="privacy.toc_9">Third-party links</a>
+    <a href="#sec" data-i18n="privacy.toc_10">Data security</a>
+    <a href="#rights" data-i18n="privacy.toc_11">Your rights</a>
+    <a href="#changes" data-i18n="privacy.toc_12">Changes to this policy</a>
+    <a href="#contact" data-i18n="privacy.toc_13">Contact</a>
     <hr>
-    <a href="contact.html" style="text-transform:none;letter-spacing:.04em">→ Contact</a>
+    <a href="contact.html" style="text-transform:none;letter-spacing:.04em" data-i18n="privacy.asideLinkContact">→ Contact</a>
   </aside>
 
   <article class="lc-doc-prose">
     <div class="doc-effective">
-      <span class="k">Effective date</span>
+      <span class="k" data-i18n="privacy.effectiveLabel">Effective date</span>
       <span class="v" data-i18n="privacy.effectiveDate">May 16, 2026</span>
     </div>
 
@@ -373,13 +375,13 @@
 </footer>
 
 <div class="lc-statusbar">
-  <span><span class="lc-st-dot"></span> ready</span>
+  <span><span class="lc-st-dot"></span> <span data-i18n="common.stReady">ready</span></span>
   <span class="lc-st-sep">·</span>
-  <span>doc / privacy</span>
+  <span data-i18n="common.stDocPrivacy">doc / privacy</span>
   <span class="lc-st-spacer"></span>
-  <a href="periodic-table.html">→ periodic-table</a>
+  <a href="periodic-table.html" data-i18n="common.stLinkPeriodic">→ periodic-table</a>
   <span class="lc-st-sep">·</span>
-  <a href="about.html">→ about</a>
+  <a href="about.html" data-i18n="common.stLinkAbout">→ about</a>
 </div>
 
 </main>
