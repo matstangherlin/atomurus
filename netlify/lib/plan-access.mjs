@@ -1,4 +1,4 @@
-import { featuresForAccess } from './feature-catalog.mjs';
+import { ACCESS_CONFIG, featuresForAccess } from './feature-catalog.mjs';
 
 const TRIAL_DAYS = 30;
 const MS_DAY = 24 * 60 * 60 * 1000;
@@ -91,7 +91,8 @@ export function trialEndsAtForUser(user) {
   return new Date(created + TRIAL_DAYS * MS_DAY).toISOString();
 }
 
-export function accessForUser(user) {
+/* config: the owner's access switches (feature-catalog.mjs); tests inject their own. */
+export function accessForUser(user, config = ACCESS_CONFIG) {
   const roles = rolesOf(user);
   const app = appMeta(user);
   const isAdmin = user?.role === 'admin' || roles.includes('admin');
@@ -142,7 +143,7 @@ export function accessForUser(user) {
     currentPeriodEnd,
     hasStripeCustomer,
     canManageBilling,
-    features: featuresForAccess({ signedIn, isPro, isAdmin })
+    features: featuresForAccess({ signedIn, isPro, isAdmin }, config)
   };
 }
 

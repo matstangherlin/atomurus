@@ -156,7 +156,9 @@ assert.match(gate, /conversion UI only/);
 assert.match(gate, /authorized server-side/);
 assert.match(gate, /Create a free account/);
 assert.match(gate, /Start 30-day Pro trial/);
-assert.match(gate, /features\.moleculeViewer|moleculeViewer/);
+// The gate reads the page routes and features from the generated catalog (prompt 34).
+assert.match(gate, /PAGE_TOOL_ROUTES/);
+assert.match(read('assets/access-policy.js'), /moleculeViewer: \{ access: 'public'/);
 assert.doesNotMatch(gate, /security boundary/i);
 
 const loadThree = read('viewer/load-three.js');

@@ -28,6 +28,8 @@
     '.calc-menu-item .lab-tool-need{margin-left:4px}'
   ].join('');
 
+  /* assets/access-policy.js, generated from netlify/lib/feature-catalog.mjs:
+     the only place the access rules live. */
   function catalog() {
     return window.ATOMURUS_ACCESS || {};
   }
@@ -39,43 +41,21 @@
   }
 
   function calcTabPolicyMap() {
-    var tabs = catalog().LAB_TABS;
-    if (tabs) {
-      var out = {};
-      Object.keys(tabs).forEach(function (tab) {
-        out[tab] = tabs[tab].access || 'public';
-      });
-      return out;
-    }
-    return {
-      molar: 'public',
-      dilute: 'public',
-      scientific: 'public',
-      unit: 'public',
-      ideal: 'public',
-      ph: 'public',
-      stoich: 'pro',
-      thermo: 'pro'
-    };
+    var tabs = catalog().LAB_TABS || {};
+    var out = {};
+    Object.keys(tabs).forEach(function (tab) {
+      out[tab] = tabs[tab].access || 'public';
+    });
+    return out;
   }
 
   function calcTabFeatureMap() {
-    var tabs = catalog().LAB_TABS;
-    if (tabs) {
-      var out = {};
-      Object.keys(tabs).forEach(function (tab) {
-        out[tab] = tabs[tab].feature || null;
-      });
-      return out;
-    }
-    return {
-      scientific: 'scientificCalculator',
-      unit: 'unitConverter',
-      ideal: 'idealGasCalculator',
-      ph: 'phCalculator',
-      stoich: 'publicStoichiometry',
-      thermo: 'publicThermodynamics'
-    };
+    var tabs = catalog().LAB_TABS || {};
+    var out = {};
+    Object.keys(tabs).forEach(function (tab) {
+      out[tab] = tabs[tab].feature || null;
+    });
+    return out;
   }
 
   function langIsPt() {
@@ -98,20 +78,15 @@
   function pagePolicy(pathname) {
     var path = compactPath(pathname);
     if (path.indexOf('/explore/') !== -1) return { need: 'public', kind: 'page', feature: null };
-    if (/\/periodic-table\/compare$/.test(path)) {
-      return { need: catalogAccess('publicElementCompare', 'public'), kind: 'compare', feature: 'publicElementCompare' };
-    }
-    if (/\/viewer\/molecules/.test(path) || /(^|\/)molecules$/.test(path)) {
-      return { need: catalogAccess('moleculeViewer', 'public'), kind: 'viewer', feature: 'moleculeViewer' };
-    }
-    if (/\/viewer\/atomic-models/.test(path) || /\/atomic-models(\/|$)/.test(path)) {
-      return { need: catalogAccess('atomicModelViewer', 'public'), kind: 'viewer', feature: 'atomicModelViewer' };
-    }
-    if (/\/viewer\/allotropes/.test(path) || /(^|\/)allotropes$/.test(path)) {
-      return { need: catalogAccess('allotropeViewer', 'public'), kind: 'viewer', feature: 'allotropeViewer' };
-    }
-    if (/\/viewer\/isomerism/.test(path) || /(^|\/)isomerism(\/|$)/.test(path)) {
-      return { need: catalogAccess('isomerismViewer', 'public'), kind: 'viewer', feature: 'isomerismViewer' };
+    var routes = catalog().PAGE_TOOL_ROUTES || [];
+    var tools = catalog().PAGE_TOOLS || {};
+    for (var i = 0; i < routes.length; i += 1) {
+      var route = routes[i];
+      var hit = route.patterns.some(function (p) { return new RegExp(p).test(path); });
+      if (hit && tools[route.tool]) {
+        var feature = tools[route.tool].feature;
+        return { need: catalogAccess(feature, 'public'), kind: route.kind, feature: feature };
+      }
     }
     return { need: 'public', kind: 'page', feature: null };
   }
@@ -325,6 +300,7 @@
   }
 
   function apply() {
+    if (!window.ATOMURUS_ACCESS) return; // the catalog announces itself (atomurus-access-ready)
     ensureStyle();
     var session = sessionOf();
     if (!session.ready) return;
@@ -352,6 +328,7 @@
     apply();
     document.addEventListener('atomurus-ads-ready', apply);
     document.addEventListener('atomurus-auth-change', apply);
+    document.addEventListener('atomurus-access-ready', apply);
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

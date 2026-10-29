@@ -6,7 +6,7 @@
  * not by this module alone.
  */
 
-import { FEATURES, LAB_TABS, PAGE_TOOLS } from './feature-catalog.mjs';
+import { FEATURES, LAB_TABS, PAGE_TOOLS, PAGE_TOOL_ROUTES } from './feature-catalog.mjs';
 
 export const CALC_TAB_POLICY = Object.freeze(
   Object.fromEntries(Object.entries(LAB_TABS).map(([tab, spec]) => [tab, spec.access]))
@@ -37,43 +37,11 @@ function needForFeature(featureKey, fallback = 'public') {
 export function pageToolPolicy(pathname) {
   const path = compactPath(pathname);
   if (path.includes('/explore/')) return { need: 'public', tool: null, feature: null };
-  if (/\/periodic-table\/compare$/.test(path)) {
-    return {
-      need: needForFeature('publicElementCompare'),
-      tool: 'elementCompare',
-      feature: 'publicElementCompare'
-    };
-  }
-  if (
-    /\/viewer\/molecules/.test(path) ||
-    /(^|\/)molecules$/.test(path)
-  ) {
-    return {
-      need: needForFeature('moleculeViewer'),
-      tool: 'moleculeViewer',
-      feature: 'moleculeViewer'
-    };
-  }
-  if (/\/viewer\/atomic-models/.test(path) || /\/atomic-models(\/|$)/.test(path)) {
-    return {
-      need: needForFeature('atomicModelViewer'),
-      tool: 'atomicModels',
-      feature: 'atomicModelViewer'
-    };
-  }
-  if (/\/viewer\/allotropes/.test(path) || /(^|\/)allotropes$/.test(path)) {
-    return {
-      need: needForFeature('allotropeViewer'),
-      tool: 'allotropes',
-      feature: 'allotropeViewer'
-    };
-  }
-  if (/\/viewer\/isomerism/.test(path) || /(^|\/)isomerism(\/|$)/.test(path)) {
-    return {
-      need: needForFeature('isomerismViewer'),
-      tool: 'isomerism',
-      feature: 'isomerismViewer'
-    };
+  for (const route of PAGE_TOOL_ROUTES) {
+    if (route.patterns.some((p) => new RegExp(p).test(path))) {
+      const feature = PAGE_TOOLS[route.tool].feature;
+      return { need: needForFeature(feature), tool: route.tool, feature };
+    }
   }
   return { need: 'public', tool: null, feature: null };
 }
