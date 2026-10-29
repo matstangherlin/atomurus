@@ -21,7 +21,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const SRC_DIR = path.join(ROOT, 'content', 'exercises');
 export const OUT_DIR = path.join(ROOT, 'exercises');
 const TEMPLATE = path.join(ROOT, 'templates', 'fichas', 'sheet.html');
-export const TYPES = ['molar-mass', 'moles-mass', 'dilution', 'ph-strong'];
+export const TYPES = ['molar-mass', 'moles-mass', 'dilution', 'ph-strong', 'solution-prep', 'buffer'];
 export const LEVELS = ['basico', 'medio', 'avancado'];
 export const MIN_EXERCISES = 10;
 export const ENGINE_FILES = ['assets/data/physical-constants.js', 'assets/calc-core.js', 'assets/chemistry/formula-parser.js', 'assets/worked-steps.js', 'assets/exercises.js'];
@@ -181,7 +181,7 @@ export function pageContent(def, lang, ctx) {
     '  </article>\n</div>\n' +
     // The definition the «new exercise» mode runs; JSON, not script.
     '<script type="application/json" id="ex-def">' + JSON.stringify({
-      id: def.id, template: def.template, variables: def.variables, engine: def.engine, answer: def.answer, commonErrors: def.commonErrors,
+      id: def.id, template: def.template, display: def.display, variables: def.variables, engine: def.engine, answer: def.answer, commonErrors: def.commonErrors,
       labels: { answer: t.answer, showSolution: t.showSolution, hideSolution: t.hideSolution, failed: t.failed }
     }).replace(/</g, '\\u003c') + '</script>';
 }

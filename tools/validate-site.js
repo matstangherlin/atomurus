@@ -219,20 +219,22 @@ function assertExercises() {
   if (check.status !== 0) fail('exercises: ' + (check.stderr || check.stdout).trim());
 }
 
-/* Prompt 32: trails and their draft articles stay out of search until a
-   teacher reviews them; pages and worked examples are what
+/* Prompts 32 and 33: trails and their draft articles stay out of search until
+   a teacher reviews them; pages and worked examples are what
    tools/build-trails.mjs generates. */
+const DRAFT_ARTICLES = ['explore/what-is-the-mole', 'explore/conservation-of-mass', 'explore/solutions-and-concentration', 'explore/acids-bases-and-ph', 'explore/chemical-equilibrium'];
 function assertTrails() {
   const srcDir = path.join(ROOT, 'content', 'trilhas');
   if (!fs.existsSync(srcDir)) return;
   const sitemap = read('sitemap.xml');
-  if (/trilhas\/|what-is-the-mole|conservation-of-mass/.test(sitemap)) fail('sitemap.xml lists a draft trail or a draft article');
+  const drafts = new RegExp('trilhas/|' + DRAFT_ARTICLES.map((b) => b.replace('explore/', '')).join('|'));
+  if (drafts.test(sitemap)) fail('sitemap.xml lists a draft trail or a draft article');
   const pages = [];
   fs.readdirSync(srcDir).filter((f) => f.endsWith('.json')).forEach((f) => {
     const trail = JSON.parse(read(path.join('content', 'trilhas', f)));
     if (trail.status !== 'published') pages.push(`trilhas/${trail.id}.html`, `trilhas/${trail.id}.pt.html`);
   });
-  ['explore/what-is-the-mole', 'explore/conservation-of-mass'].forEach((base) => pages.push(base + '.html', base + '.pt.html'));
+  DRAFT_ARTICLES.forEach((base) => pages.push(base + '.html', base + '.pt.html'));
   pages.forEach((rel) => {
     if (!fs.existsSync(path.join(ROOT, rel))) return fail(`${rel} is missing (node tools/build-trails.mjs)`);
     const html = read(rel);

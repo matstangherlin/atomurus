@@ -297,6 +297,28 @@
     return out;
   }
 
+  /* Preparing a solution (prompt 33): the mass of solute for V mL of a
+     C mol/L solution — n = C·V, then m = n·M with the molar-mass steps. */
+  function computeSolutionMass(counts, weights, input) {
+    input = input || {};
+    var C = input.C;
+    var mL = input.V;
+    if (!positiveBounded(C) || !positiveBounded(mL)) return bad('positiveNum');
+    var L = mL / 1000;
+    var n = C * L;
+    var mm = computeMolarMass(counts, weights, { value: n, unit: 'mol' });
+    if (mm.unknown.length || !mm.rows.length) return { ok: false, code: 'unknownSymbols', unknown: mm.unknown };
+    var steps = [
+      { id: 'sp.volume', vars: { mL: mL, L: L } },
+      { id: 'sp.amount', vars: { C: C, L: L, n: n } }
+    ].concat(mm.steps.map(function (step) {
+      var copy = { id: step.id, vars: step.vars, value: step.value, unit: step.unit };
+      if (step.id === 'mm.mass') copy.answer = true;
+      return copy;
+    }));
+    return { ok: true, n: n, L: L, M: mm.total, mass: mm.grams, steps: steps };
+  }
+
   var TEMP_LABEL = { K: 'K', C: '°C', F: '°F' };
 
   /* PV = nRT, solved for one of P, V, n, T; same arithmetic as before. */
@@ -523,6 +545,33 @@
     return out;
   }
 
+  /* Designing a buffer (prompt 33): the base/acid ratio that gives a target
+     pH, from Henderson–Hasselbalch; outside 0.1–10 (pH = pKa ± 1) it is
+     flagged, as in computeBufferPH. */
+  function computeBufferRatio(input) {
+    input = input || {};
+    var Ka = constantFrom(input, 'Ka');
+    if (Ka == null) return { ok: false, code: 'positiveNum', field: 'Ka' };
+    var pH = input.pH;
+    if (typeof pH !== 'number' || !Number.isFinite(pH) || pH <= 0 || pH >= 14) return { ok: false, code: 'positiveNum', field: 'pH' };
+    var pKa = -Math.log10(Ka);
+    var diff = pH - pKa;
+    var ratio = Math.pow(10, diff);
+    var inRange = ratio >= BUFFER_RATIO_MIN && ratio <= BUFFER_RATIO_MAX;
+    return {
+      ok: true,
+      pKa: pKa,
+      ratio: ratio,
+      inRange: inRange,
+      warnings: inRange ? [] : ['bufferRange'],
+      steps: [
+        { id: 'bf.hh', vars: { pH: pH, pKa: pKa } },
+        { id: 'bf.ratio', vars: { pH: pH, pKa: pKa, diff: diff, ratio: ratio }, value: ratio, answer: true },
+        { id: 'bf.range', vars: { ratio: ratio, min: BUFFER_RATIO_MIN, max: BUFFER_RATIO_MAX, inRange: inRange } }
+      ]
+    };
+  }
+
   function classifyPH(pH) {
     var acidic = '#B96B0C';
     var basic = '#2A4878';
@@ -568,6 +617,8 @@
     computeMolarMass: computeMolarMass,
     computeIdealGas: computeIdealGas,
     computeDilution: computeDilution,
+    computeSolutionMass: computeSolutionMass,
+    computeBufferRatio: computeBufferRatio,
     ACID_BASE_CONSTANTS: ACID_BASE_CONSTANTS,
     ACID_BASE_SOURCE: ACID_BASE_SOURCE,
     BUFFER_RATIO_MIN: BUFFER_RATIO_MIN,

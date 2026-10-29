@@ -1,7 +1,8 @@
-// Prompt 32: trails. Schema, links that exist, drafts out of search, PT/EN
-// parity of the steps, the progress script's limits, and the worked examples
-// of the two draft articles recomputed here independently (own arithmetic
-// with the masses of elements-data.js).
+// Prompts 32 and 33: trails. Schema, links that exist, drafts out of search,
+// PT/EN parity of the steps, the progress script's limits, and the worked
+// examples of the stoichiometry articles recomputed here independently (own
+// arithmetic with the masses of elements-data.js). The examples of the
+// solutions, acid–base and equilibrium articles: tools/test-trail-examples.mjs.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -16,20 +17,37 @@ const read = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8');
 
 // ── Sources ─────────────────────────────────────────────────────────────────
 const trails = loadTrails();
-assert.deepEqual(trails.map((t) => t.id), ['estequiometria'], 'Trail 1 to start with');
+// The order on the site and the public names are the owner's call (prompt 33).
+assert.deepEqual(trails.map((t) => t.id), ['acido-base', 'estequiometria', 'solucoes'], 'three trails');
 assert.deepEqual(trails.flatMap(validate), [], 'the sources validate');
-const trail = trails[0];
-assert.equal(trail.status, 'draft', 'a draft until a teacher reviews it');
-const main = trail.steps.filter((s) => !s.optional);
-assert.ok(main.length >= 6 && main.length <= 8, '6–8 main steps');
-assert.deepEqual(main.map((s) => s.type), ['article', 'tool', 'exercises', 'exercises', 'article', 'lab', 'sheet', 'review']);
-for (const s of trail.steps) {
-  for (const lang of ['pt', 'en']) assert.ok(hrefTarget(s.href[lang]), `${s.id} ${lang}: ${s.href[lang]} exists`);
-  assert.equal(s.href.pt.startsWith('#'), s.href.en.startsWith('#'), `${s.id}: same kind of link in both languages`);
+const byId = Object.fromEntries(trails.map((t) => [t.id, t]));
+const MAIN_TYPES = {
+  estequiometria: ['article', 'tool', 'exercises', 'exercises', 'article', 'lab', 'sheet', 'review'],
+  solucoes: ['article', 'tool', 'exercises', 'exercises', 'lab', 'sheet', 'review'],
+  'acido-base': ['article', 'tool', 'exercises', 'lab', 'tool', 'tool', 'sheet', 'review']
+};
+for (const tr of trails) {
+  assert.equal(tr.status, 'draft', `${tr.id}: a draft until a teacher reviews it`);
+  const main = tr.steps.filter((s) => !s.optional);
+  assert.ok(main.length >= 6 && main.length <= 8, `${tr.id}: 6–8 main steps`);
+  assert.deepEqual(main.map((s) => s.type), MAIN_TYPES[tr.id], `${tr.id}: article → tool → exercises → Lab → sheet → review`);
+  for (const s of tr.steps) {
+    for (const lang of ['pt', 'en']) assert.ok(hrefTarget(s.href[lang]), `${tr.id}/${s.id} ${lang}: ${s.href[lang]} exists`);
+    assert.equal(s.href.pt.startsWith('#'), s.href.en.startsWith('#'), `${tr.id}/${s.id}: same kind of link in both languages`);
+  }
+  // The main path needs no Pro feature and no account.
+  assert.ok(main.every((s) => !s.pro), `${tr.id}: no Pro step on the main path`);
+  assert.ok(tr.steps.filter((s) => s.pro).every((s) => s.optional), `${tr.id}: Pro only as an optional extra`);
+  for (const q of tr.review.questions.filter((x) => x.kind === 'computed')) assert.ok(CALC[q.calc], `${tr.id}: ${q.calc} is a worked example`);
 }
-// The main path needs no Pro feature and no account.
-assert.ok(main.every((s) => !s.pro), 'no Pro step on the main path');
-assert.ok(trail.steps.filter((s) => s.pro).every((s) => s.optional), 'Pro only as an optional extra');
+const trail = byId.estequiometria;
+const main = trail.steps.filter((s) => !s.optional);
+// Each trail lands on its own article, Lab guide and sheet.
+assert.ok(byId.solucoes.steps.some((s) => s.href.en === '/fichas/F4.html') && byId.solucoes.steps.some((s) => /creation=solution\b/.test(s.href.en)), 'Solutions: sheet F4 and the Lab solution guide');
+assert.ok(byId['acido-base'].steps.some((s) => s.href.en === '/fichas/F3.html') && byId['acido-base'].steps.some((s) => /creation=ph\b/.test(s.href.en)), 'Acid–base: sheet F3 and the pH Challenge (POE)');
+// The calculator opens in the weak-acid and buffer modes from the URL.
+for (const mode of ['weakAcid', 'buffer']) assert.ok(byId['acido-base'].steps.some((s) => s.href.en === `/calculators.html?ph=${mode}#ph`), `pH calculator in ${mode} mode`);
+for (const page of ['calculators.html', 'calculators.pt.html']) assert.match(read(page), /\['weakAcid', 'weakBase', 'buffer'\]\.indexOf\(want\)/, `${page}: ?ph= picks the mode`);
 // The validator catches the usual mistakes.
 const broken = JSON.parse(JSON.stringify(trail));
 broken.steps[0].href.pt = '/explore/no-such-page.pt.html';
@@ -84,27 +102,32 @@ assert.deepEqual(fs.readdirSync(OUT_DIR).sort(), out.pages.map((p) => p.name).so
 for (const a of out.articles) assert.equal(read(a.rel), a.html, `${a.rel}: worked examples current`);
 assert.equal(read(path.relative(ROOT, CHIP_FILE)), chipScript(trails), 'assets/trail-chip.js current');
 const sitemap = read('sitemap.xml');
-assert.doesNotMatch(sitemap, /trilhas\/|what-is-the-mole|conservation-of-mass/, 'drafts stay out of the sitemap');
-assert.doesNotMatch(read('explore.html') + read('explore.pt.html'), /what-is-the-mole|conservation-of-mass|trilhas\//, 'drafts stay out of the menus');
+const drafts = new RegExp('trilhas\\/|' + DRAFT_ARTICLES.map((b) => b.replace('explore/', '')).join('|'));
+assert.equal(DRAFT_ARTICLES.length, 5, 'five draft articles (prompts 32 and 33)');
+assert.doesNotMatch(sitemap, drafts, 'drafts stay out of the sitemap');
+assert.doesNotMatch(read('explore.html') + read('explore.pt.html'), drafts, 'drafts stay out of the menus');
 
-const shape = {};
-for (const lang of ['pt', 'en']) {
-  const html = read('trilhas/' + fileName(trail, lang));
-  assert.match(html, /<meta name="robots" content="noindex,nofollow">/);
-  assert.match(html, /class="fx-draft"/);
-  assert.doesNotMatch(html, /ads-gate|lazy-ads|adsbygoogle|atomurusRunAutoTag|googletagmanager/, 'no ads, no trackers');
-  assert.match(html, /data-trail="estequiometria"/);
-  assert.match(html, /assets\/trail-progress\.js/);
-  const buttons = (html.match(/data-trail-done="/g) || []).length;
-  assert.equal(buttons, trail.steps.length, 'a «done» button per step');
-  assert.equal((html.match(/data-optional/g) || []).length, trail.steps.filter((s) => s.optional).length);
-  assert.match(html, /id="revisao"/, 'the review step lands on the page');
-  assert.equal((html.match(/class="tr-q"/g) || []).length, 5, 'five self-check questions');
-  const lint = lintHtml(html, { maxWords: 0 });
-  assert.deepEqual(lint.foreign.map((b) => `${b.where} ${b.text}`), [], `trail ${lang}: one language per page`);
-  shape[lang] = { steps: buttons, items: (html.match(/<li/g) || []).length };
+for (const tr of trails) {
+  const shape = {};
+  for (const lang of ['pt', 'en']) {
+    const html = read('trilhas/' + fileName(tr, lang));
+    assert.match(html, /<meta name="robots" content="noindex,nofollow">/);
+    assert.match(html, /class="fx-draft"/);
+    assert.doesNotMatch(html, /ads-gate|lazy-ads|adsbygoogle|atomurusRunAutoTag|googletagmanager/, 'no ads, no trackers');
+    assert.match(html, new RegExp(`data-trail="${tr.id}"`));
+    assert.match(html, /assets\/trail-progress\.js/);
+    const buttons = (html.match(/data-trail-done="/g) || []).length;
+    assert.equal(buttons, tr.steps.length, `${tr.id}: a «done» button per step`);
+    assert.equal((html.match(/data-optional/g) || []).length, tr.steps.filter((s) => s.optional).length);
+    assert.match(html, /id="revisao"/, 'the review step lands on the page');
+    assert.equal((html.match(/class="tr-q"/g) || []).length, 5, 'five self-check questions');
+    assert.doesNotMatch(html, /NaN|undefined/, `${tr.id} ${lang}: no NaN`);
+    const lint = lintHtml(html, { maxWords: 0 });
+    assert.deepEqual(lint.foreign.map((b) => `${b.where} ${b.text}`), [], `trail ${tr.id} ${lang}: one language per page`);
+    shape[lang] = { steps: buttons, items: (html.match(/<li/g) || []).length };
+  }
+  assert.deepEqual(shape.pt, shape.en, `${tr.id}: PT and EN have the same steps`);
 }
-assert.deepEqual(shape.pt, shape.en, 'PT and EN have the same steps');
 
 for (const base of DRAFT_ARTICLES) {
   for (const lang of ['pt', 'en']) {
@@ -117,6 +140,10 @@ for (const base of DRAFT_ARTICLES) {
     assert.match(html, /class="article-level-chip"/, `${rel}: level`);
     assert.match(html, /class="article-learn"/, `${rel}: you will learn`);
     assert.ok((html.match(/<!-- calc:/g) || []).length >= 3, `${rel}: worked examples`);
+    // 1,200–1,800 words from the body to the references, worked examples included.
+    const body = html.slice(html.indexOf('id="art-body"'), html.indexOf('<section class="art-refs">'));
+    const n = body.replace(/<[^>]+>/g, ' ').replace(/&[a-z#0-9]+;/gi, ' ').split(/\s+/).filter(Boolean).length;
+    assert.ok(n >= 1200 && n <= 1800, `${rel}: ${n} words`);
     assert.match(html, /assets\/trail-chip\.js/);
     // The hero and the body are this prompt's; the sidebar and search chrome
     // are the Explore pages' shared (and, in PT, partly English) chrome.
@@ -126,7 +153,7 @@ for (const base of DRAFT_ARTICLES) {
   }
 }
 // The chip goes on the new pages and the calculators only.
-for (const page of ['calculators.html', 'calculators.pt.html', 'exercises/molar-mass.html', 'fichas/F2.pt.html']) assert.match(read(page), /assets\/trail-chip\.js/, page);
+for (const page of ['calculators.html', 'calculators.pt.html', 'exercises/molar-mass.html', 'exercises/solution-prep.pt.html', 'exercises/buffer.html', 'fichas/F2.pt.html', 'fichas/F4.html']) assert.match(read(page), /assets\/trail-chip\.js/, page);
 assert.doesNotMatch(read('index.html') + read('periodic-table.html'), /trail-chip/, 'no change to the other pages');
 
 // ── Progress script ─────────────────────────────────────────────────────────
@@ -139,4 +166,4 @@ const chip = read('assets/trail-chip.js');
 assert.ok(Buffer.byteLength(chip) <= 1536, 'trail-chip.js is small');
 assert.doesNotMatch(chip, /fetch|localStorage|sessionStorage/, 'the chip reads only the URL');
 
-console.log(`test-trails: ok (${trails.length} trail, ${main.length} steps, ${Object.keys(CALC).length} worked examples)`);
+console.log(`test-trails: ok (${trails.length} trails, ${trails.map((t) => t.steps.filter((s) => !s.optional).length).join('/')} main steps, ${Object.keys(CALC).length} worked examples)`);

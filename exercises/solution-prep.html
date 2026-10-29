@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html data-ps-chrome="1" lang="en-US" data-theme="light" data-page="exercises">
+<head>
+<style>html[data-theme="dark"] #icon-theme-light,html[data-theme="light"] #icon-theme-dark{display:none!important}html[data-theme="dark"] #icon-theme-dark,html[data-theme="light"] #icon-theme-light{display:block!important}</style>
+<script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var q=new URLSearchParams(location.search);var p=q.get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem('atomurus-lang');var path=location.pathname;var isPt=/\.pt\.html$/i.test(path)||/\.pt$/i.test(path);if(!l&&isPt)l='pt';if(!l){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}if(l==='pt'){document.documentElement.lang='pt-BR';}else{document.documentElement.lang='en-US';}localStorage.setItem('atomurus-lang',l);var u=new URL(location.href);if(l==='pt'&&!isPt){if(/\.html$/i.test(path)){u.pathname=path.replace(/\.html$/i,'.pt.html');}else if(path.charAt(path.length-1)!=='/'){u.pathname=path+'.pt.html';}u.searchParams.set('lang','pt-BR');if(u.href!==location.href)location.replace(u.href);}else if(l==='en'&&isPt){if(/\.pt\.html$/i.test(path)){u.pathname=path.replace(/\.pt\.html$/i,'.html');}else{u.pathname=path.replace(/\.pt$/i,'');}u.searchParams.set('lang','en');if(u.href!==location.href)location.replace(u.href);}}catch(e){}})();</script>
+<meta charset="UTF-8">
+
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1E6A50" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E0D0C" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Atomurus">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" type="image/png" href="/assets/atomurus-logo.png?v=202608041630">
+<link rel="apple-touch-icon" href="/assets/atomurus-logo.png?v=202608041630">
+<title>Exercises: Preparing a solution | Atomurus</title>
+<meta name="description" content="Ten exercises on preparing a solution: what mass of solute to weigh for a given volume and concentration (m = C × V × M), with the answer and the worked solution produced by the site's calculator.">
+<meta property="og:title" content="Exercises: Preparing a solution | Atomurus">
+<meta property="og:description" content="Ten exercises on preparing a solution: what mass of solute to weigh for a given volume and concentration (m = C × V × M), with the answer and the worked solution produced by the site's calculator.">
+<style>
+.fx-draft{margin:14px 0 0;padding:8px 12px;max-width:640px;border:1px dashed var(--lc-amber,#B7791F);border-radius:8px;font-size:13px}
+.ex-tools{display:flex;flex-wrap:wrap;align-items:center;gap:12px}.ex-tools a.ui-btn-primary{color:var(--color-on-ink,#fff);text-decoration:none}
+.ex-list{padding-left:22px}.ex-item{margin:0 0 18px}.ex-item p{margin:0 0 6px}
+.ex-level{font-size:12px;color:var(--lc-ink-2,#58544A);white-space:nowrap}
+.ex-item details,.ex-new details{margin:4px 0}.ex-item summary,.ex-new summary,.ex-key summary{cursor:pointer;font-weight:600;min-height:32px}
+.ex-error{color:var(--lc-ink-2,#58544A);font-size:13px}.ex-new{margin-top:28px}
+.fx-license{color:var(--lc-ink-2,#58544A);font-size:13px;margin-top:18px}
+@media print{@page{size:A4;margin:14mm}
+:root body :is(.lc-doc-aside,.ex-tools,.ex-new,.lc-statusbar,.lc-footer){display:none!important}
+:root body .lc-doc-body{display:block!important;padding:0!important;background:none!important}
+.ex-item{break-inside:avoid;margin:0 0 16mm}.ex-item details{display:none!important}
+.ex-key{display:none}html.ex-print-key .ex-key{display:block;break-before:page}}
+</style>
+<link rel="stylesheet" href="/assets/ui/worked-solution.css?v=202608041630">
+<script src="/assets/data/physical-constants.js?v=202608041630" defer></script>
+<script src="/assets/calc-core.js?v=202608041630" defer></script>
+<script src="/assets/chemistry/formula-parser.js?v=202608041630" defer></script>
+<script src="/assets/worked-steps.js?v=202608041630" defer></script>
+<script src="/assets/worked-solution.js?v=202608041630" defer></script>
+<script src="/assets/exercises.js?v=202608041630" defer></script>
+<link rel="preload" href="/assets/fonts/inter-tight-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/instrument-serif-400-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202608041630">
+<script src="/i18n.js?v=202608041630" defer></script>
+<link rel="stylesheet" href="/assets/critical-lab.css?v=202608041630">
+<script>document.documentElement.classList.add('lc-loading');setTimeout(function(){document.documentElement.classList.remove('lc-loading')},4000);</script>
+<link rel="preload" href="/atomurus-lab-console.css?v=202608041630" as="style">
+<link rel="stylesheet" href="/atomurus-lab-console.css?v=202608041630" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
+<noscript><link rel="stylesheet" href="/atomurus-lab-console.css?v=202608041630"></noscript>
+<link rel="stylesheet" href="/assets/public-shell.css?v=202608041630">
+<link rel="stylesheet" href="/assets/ui/index.css?v=202608041630">
+<link rel="stylesheet" href="/assets/layouts/docs.css?v=202608041630">
+<script src="/assets/global-nav.js?v=202608041630"></script>
+<script src="/assets/public-workspace.js?v=202608041630"></script>
+<script src="/atomurus-mobile-nav.js?v=202608041630" defer></script>
+<script src="/assets/trail-chip.js?v=202608041630" defer></script>
+<link rel="stylesheet" href="/assets/print.css?v=202608041630" media="print">
+</head>
+
+<body class="ps-body lc-doc">
+<a class="skip-link" href="#ps-main" data-i18n="common.skipToContent">Skip to content</a>
+
+<div class="ps-shell" id="ps-shell">
+<nav class="lc-topnav">
+  <a class="lc-topnav-brand" href="/">
+    <div class="lc-topnav-mark">
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="2.5" fill="currentColor"/>
+        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/>
+        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/>
+        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/>
+      </svg>
+    </div>
+    <div>
+      <div class="lc-topnav-name">Atomurus</div>
+      <div class="lc-topnav-tag" data-i18n="common.brandTag">chemistry lab</div>
+    </div>
+  </a>
+
+  <div class="lc-topnav-links">
+    <a class="lc-topnav-link" href="/periodic-table.html"><span class="lc-tn-no">01</span> <span data-i18n="common.nav.periodic">Periodic Table</span></a>
+    <a class="lc-topnav-link" href="/viewer/atomic-models.html"><span class="lc-tn-no">02</span> <span data-i18n="common.nav.visualizador">Viewer</span></a>
+    <a class="lc-topnav-link" href="/calculators.html"><span class="lc-tn-no">03</span> <span data-i18n="common.nav.calc">Calculators</span></a>
+    <a class="lc-topnav-link" href="/explore.html"><span class="lc-tn-no">04</span> <span data-i18n="common.nav.explore">Explore</span></a>
+  </div>
+
+  <form class="ps-search search-box" role="search" action="periodic-table.html" method="get">
+  <label class="lc-sr-only" for="ps-search-q" data-i18n="common.searchAria">Search element</label>
+  <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+    <circle cx="5.5" cy="5.5" r="4" stroke="currentColor" stroke-width="1.4"/>
+    <line x1="8.7" y1="8.7" x2="11.5" y2="11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+  </svg>
+  <input id="ps-search-q" name="q" type="search" autocomplete="off" data-i18n-attr="placeholder:common.searchPlaceholder" placeholder="search element, symbol or Z…">
+  <button type="submit" data-i18n-attr="aria-label:common.searchAria" aria-label="Search element">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <circle cx="6" cy="6" r="4.2" stroke="currentColor" stroke-width="1.3"/>
+      <path d="M9.2 9.2 12 12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+    </svg>
+  </button>
+</form>
+    <div class="lc-topnav-spacer"></div>
+
+  <button class="lc-topnav-btn lc-topnav-lang" onclick="location.href='solution-prep.pt.html?lang=pt-BR'" data-i18n-attr="title:common.langToggle" title="Switch language" aria-label="PT — Switch language" style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;width:auto;min-width:30px;padding:0 8px;">
+    <span>PT</span>
+  </button>
+
+  <button class="lc-topnav-btn" onclick="toggleTheme()" data-i18n-attr="title:common.themeToggle; aria-label:common.themeToggle" title="Toggle theme" aria-label="Toggle theme">
+    <svg id="icon-theme-light" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M11.5 7.5A4.5 4.5 0 0 1 6.5 2.5 4.5 4.5 0 1 0 11.5 7.5z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/></svg>
+    <svg id="icon-theme-dark" width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M7 1v1.4M7 11.6V13M1 7h1.4M11.6 7H13M2.5 2.5l1 1M10.5 10.5l1 1M2.5 11.5l1-1M10.5 3.5l1-1" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+  </button>
+
+<div class="ps-account" data-atomurus-account>
+  <span class="ps-plan-badge" data-atomurus-plan-badge hidden></span>
+  <a class="ps-userchip lc-topnav-cta is-guest-cta" href="../signup.html" data-atomurus-account-chip aria-label="Create account">
+    <svg class="ps-userchip-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span data-i18n="common.auth.createAccount">Create account</span>
+  </a>
+</div>
+  </nav>
+<aside class="ws-sidebar sidebar ps-pub-sidebar" id="ws-sidebar" data-atomurus-sidebar>
+  <nav class="ws-nav" id="ws-nav-main" aria-label="Laboratory" data-i18n-attr="aria-label:common.nav.laboratory" data-atomurus-lab-nav>
+    <div class="ws-nav-block ws-nav-site">
+      <h2 class="ws-nav-group" data-i18n="common.nav.laboratory">Laboratory</h2>
+      <a class="ws-nav-item" href="/" data-nav="home">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M2.5 7.5 8 3l5.5 4.5M4 6.5V13h8V6.5M6.5 13V9h3v4"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.home">Home</span>
+      </a>
+      <a class="ws-nav-item" href="/periodic-table.html" data-nav="periodic">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.periodic">Periodic Table</span>
+      </a>
+      <a class="ws-nav-item" href="/viewer/atomic-models.html" data-nav="viewer">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="8" cy="8" r="2"/><ellipse cx="8" cy="8" rx="6" ry="2.5"/><ellipse cx="8" cy="8" rx="6" ry="2.5" transform="rotate(60 8 8)"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.visualizador">Viewer</span>
+      </a>
+      <a class="ws-nav-item" href="/calculators.html" data-nav="calculators">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="2" width="10" height="12" rx="1"/><path d="M5 5h6M5.5 8h1M9.5 8h1M5.5 11h1M9.5 11h1"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.calc">Calculators</span>
+      </a>
+      <a class="ws-nav-item" href="/explore.html" data-nav="explore">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.explore">Explore</span>
+      </a>
+      <a class="ws-nav-item" href="/app" data-nav="workspace">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 12l4-4 2 2 4-6"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.workspace">Workspace</span>
+      </a>
+    </div>
+  </nav>
+  <div class="ws-nav-foot sidebar-foot" id="ws-nav-foot" data-atomurus-nav-foot>
+    <a class="ws-nav-item is-upgrade" href="/signup" data-nav="signup">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5"/></g></svg>
+      <span class="ws-nav-label" data-i18n="common.auth.createAccount">Create account</span>
+    </a>
+    <a class="ws-nav-item" href="/login" data-nav="signin">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5"/></g></svg>
+      <span class="ws-nav-label" data-i18n="common.auth.signIn">Sign in</span>
+    </a>
+    <a class="ws-nav-item" href="/pricing" data-nav="plans">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 5h8v8H4zM6 3v2M10 3v2"/></g></svg>
+      <span class="ws-nav-label" data-i18n="common.nav.plans">Plans</span>
+    </a>
+  </div>
+</aside>
+<main class="ps-main" id="ps-main" tabindex="-1">
+<header class="lc-doc-hero">
+  <div class="lc-doc-kicker">
+    <span>Exercises</span>
+    <span class="pill">10 exercises</span>
+  </div>
+  <h1 class="lc-doc-title">Preparing a solution</h1>
+  <p class="lc-doc-desc">Ten exercises on preparing a solution: what mass of solute to weigh for a given volume and concentration (m = C × V × M), with the answer and the worked solution produced by the site's calculator.</p>
+  <p class="fx-draft" role="note">Draft — under teacher review. Not published yet.</p>
+</header>
+<div class="lc-doc-body ui-root">
+  <aside class="lc-doc-aside">
+    <div><span class="lbl">level</span><br><span class="v">basic 4 · intermediate 4 · advanced 2</span></div>
+    <hr>
+    <div><span class="lbl">status</span><br><span class="v">draft</span></div>
+  </aside>
+  <article class="lc-doc-prose ex-page">
+<p>Solve them on paper first, then open «Answer» and «Worked solution» to check. Every answer and every step comes from the site's calculator.</p>
+<p class="ex-tools"><a class="ui-btn ui-btn-primary" href="/calculators.html#molar">Open the molar mass calculator</a> <label><input type="checkbox" data-ex-print-key> Print with the answer key</label></p>
+<h2>Exercises</h2>
+<ol class="ex-list">
+  <li class="ex-item" id="SP01"><p class="ex-statement">What mass of NaCl must you weigh to prepare 250 mL of a 0.1 mol/L solution? <span class="ex-level">(basic)</span></p>
+    <details class="ex-answer"><summary>Answer</summary><p translate="no">m = 1.461 g</p></details>
+    <details class="ex-solution"><summary>Worked solution</summary><ol class="wsol-steps"><li><span class="wsol-text">Write the volume in litres.</span> <span class="wsol-expr" translate="no">V = 250 mL ÷ 1000 = 0.25 L</span></li><li><span class="wsol-text">Amount of solute the solution needs: n = C × V.</span> <span class="wsol-expr" translate="no">n = 0.1 mol/L × 0.25 L = 0.025 mol</span></li><li><span class="wsol-text">Count the atoms of each element in the formula.</span> <span class="wsol-expr" translate="no">Na: 1 · Cl: 1</span></li><li><span class="wsol-text">Look up each atomic mass in g/mol (abridged standard atomic weights, CIAAW).</span> <span class="wsol-expr" translate="no">A(Na) = 22.99 · A(Cl) = 35.45</span></li><li><span class="wsol-text">Multiply each atomic mass by its number of atoms.</span> <span class="wsol-expr" translate="no">1 × 22.99 = 22.99 · 1 × 35.45 = 35.45</span></li><li><span class="wsol-text">Add the contributions: the sum is the molar mass.</span> <span class="wsol-expr" translate="no">M = 22.99 + 35.45 = 58.44 g/mol</span></li><li><span class="wsol-text">Mass: m = n × M.</span> <span class="wsol-expr" translate="no">m = 0.025 mol × 58.44 g/mol = 1.461 g</span></li></ol><p class="ex-error">If you got 1461 g, you used the volume in millilitres. The concentration is in moles per litre: divide the volume by 1000 before multiplying.</p></details>
+  </li>
+  <li class="ex-item" id="SP02"><p class="ex-statement">What mass of NaCl must you weigh to prepare 100 mL of a 1 mol/L solution? <span class="ex-level">(basic)</span></p>
+    <details class="ex-answer"><summary>Answer</summary><p translate="no">m = 5.844 g</p></details>
+    <details class="ex-solution"><summary>Worked solution</summary><ol class="wsol-steps"><li><span class="wsol-text">Write the volume in litres.</span> <span class="wsol-expr" translate="no">V = 100 mL ÷ 1000 = 0.1 L</span></li><li><span class="wsol-text">Amount of solute the solution needs: n = C × V.</span> <span class="wsol-expr" translate="no">n = 1 mol/L × 0.1 L = 0.1 mol</span></li><li><span class="wsol-text">Count the atoms of each element in the formula.</span> <span class="wsol-expr" translate="no">Na: 1 · Cl: 1</span></li><li><span class="wsol-text">Look up each atomic mass in g/mol (abridged standard atomic weights, CIAAW).</span> <span class="wsol-expr" translate="no">A(Na) = 22.99 · A(Cl) = 35.45</span></li><li><span class="wsol-text">Multiply each atomic mass by its number of atoms.</span> <span class="wsol-expr" translate="no">1 × 22.99 = 22.99 · 1 × 35.45 = 35.45</span></li><li><span class="wsol-text">Add the contributions: the sum is the molar mass.</span> <span class="wsol-expr" translate="no">M = 22.99 + 35.45 = 58.44 g/mol</span></li><li><span class="wsol-text">Mass: m = n × M.</span> <span class="wsol-expr" translate="no">m = 0.1 mol × 58.44 g/mol = 5.844 g</span></li></ol><p class="ex-error">If you got 5844 g, you used the volume in millilitres. The concentration is in moles per litre: divide the volume by 1000 before multiplying.</p></details>
+  </li>
+  <li class="ex-item" id="SP03"><p class="ex-statement">What mass of KCl must you weigh to prepare 500 mL of a 0.2 mol/L solution? <span class="ex-level">(basic)</span></p>
+    <details class="ex-answer"><summary>Answer</summary><p translate="no">m = 7.455 g</p></details>
+    <details class="ex-solution"><summary>Worked solution</summary><ol class="wsol-steps"><li><span class="wsol-text">Write the volume in litres.</span> <span class="wsol-expr" translate="no">V = 500 mL ÷ 1000 = 0.5 L</span></li><li><span class="wsol-text">Amount of solute the solution needs: n = C × V.</span> <span class="wsol-expr" translate="no">n = 0.2 mol/L × 0.5 L = 0.1 mol</span></li><li><span class="wsol-text">Count the atoms of each element in the formula.</span> <span class="wsol-expr" translate="no">K: 1 · Cl: 1</span></li><li><span class="wsol-text">Look up each atomic mass in g/mol (abridged standard atomic weights, CIAAW).</span> <span class="wsol-expr" translate="no">A(K) = 39.098 · A(Cl) = 35.45</span></li><li><span class="wsol-text">Multiply each atomic mass by its number of atoms.</span> <span class="wsol-expr" translate="no">1 × 39.098 = 39.098 · 1 × 35.45 = 35.45</span></li><li><span class="wsol-text">Add the contributions: the sum is the molar mass.</span> <span class="wsol-expr" translate="no">M = 39.098 + 35.45 = 74.548 g/mol</span></li><li><span class="wsol-text">Mass: m = n × M.</span> <span class="wsol-expr" translate="no">m = 0.1 mol × 74.548 g/mol = 7.455 g</span></li></ol><p class="ex-error">If you got 7455 g, you used the volume in millilitres. The concentration is in moles per litre: divide the volume by 1000 before multiplying.</p></details>
+  </li>
+  <li class="ex-item" id="SP04"><p class="ex-statement">What mass of NaOH must you weigh to prepare 250 mL of a 0.5 mol/L solution? <span class="ex-level">(basic)</span></p>
+    <details class="ex-answer"><summary>Answer</summary><p translate="no">m = 5 g</p></details>
+    <details class="ex-solution"><summary>Worked solution</summary><ol class="wsol-steps"><li><span class="wsol-text">Write the volume in litres.</span> <span class="wsol-expr" translate="no">V = 250 mL ÷ 1000 = 0.25 L</span></li><li><span class="wsol-text">Amount of solute the solution needs: n = C × V.</span> <span class="wsol-expr" translate="no">n = 0.5 mol/L × 0.25 L = 0.125 mol</span></li><li><span class="wsol-text">Count the atoms of each element in the formula.</span> <span class="wsol-expr" translate="no">Na: 1 · O: 1 · H: 1</span></li><li><span class="wsol-text">Look up each atomic mass in g/mol (abridged standard atomic weights, CIAAW).</span> <span class="wsol-expr" translate="no">A(Na) = 22.99 · A(O) = 15.999 · A(H) = 1.008</span></li><li><span class="wsol-text">Multiply each atomic mass by its number of atoms.</span> <span class="wsol-expr" translate="no">1 × 22.99 = 22.99 · 1 × 15.999 = 15.999 · 1 × 1.008 = 1.008</span></li><li><span class="wsol-text">Add the contributions: the sum is the molar mass.</span> <span class="wsol-expr" translate="no">M = 22.99 + 15.999 + 1.008 = 39.997 g/mol</span></li><li><span class="wsol-text">Mass: m = n × M.</span> <span class="wsol-expr" translate="no">m = 0.125 mol × 39.997 g/mol = 5 g</span></li></ol><p class="ex-error">If you got 5000 g, you used the volume in millilitres. The concentration is in moles per litre: divide the volume by 1000 before multiplying.</p></details>
+  </li>
+  <li class="ex-item" id="SP05"><p class="ex-statement">What mass of C₆H₁₂O₆ must you weigh to prepare 500 mL of a 0.25 mol/L solution? <span class="ex-level">(intermediate)</span></p>
+    <details class="ex-answer"><summary>Answer</summary><p translate="no">m = 22.52 g</p></details>
+    <details class="ex-solution"><summary>Worked solution</summary><ol class="wsol-steps"><li><span class="wsol-text">Write the volume in litres.</span> <span class="wsol-expr" translate="no">V = 500 mL ÷ 1000 = 0.5 L</span></li><li><span class="wsol-text">Amount of solute the solution needs: n = C × V.</span> <span class="wsol-expr" translate="no">n = 0.25 mol/L × 0.5 L = 0.125 mol</span></li><li><span class="wsol-text">Count the atoms of each element in the formula.</span> <span class="wsol-expr" translate="no">C: 6 · H: 12 · O: 6</span></li><li><span class="wsol-text">Look up each atomic mass in g/mol (abridged standard atomic weights, CIAAW).</span> <span class="wsol-expr" translate="no">A(C) = 12.011 · A(H) = 1.008 · A(O) = 15.999</span></li><li><span class="wsol-text">Multiply each atomic mass by its number of atoms.</span> <span class="wsol-expr" translate="no">6 × 12.011 = 72.066 · 12 × 1.008 = 12.096 · 6 × 15.999 = 95.994</span></li><li><span class="wsol-text">Add the contributions: the sum is the molar mass.</span> <span class="wsol-expr" translate="no">M = 72.066 + 12.096 + 95.994 = 180.16 g/mol</span></li><li><span class="wsol-text">Mass: m = n × M.</span> <span class="wsol-expr" translate="no">m = 0.125 mol × 180.16 g/mol = 22.52 g</span></li></ol><p class="ex-error">If you got 22520 g, you used the volume in millilitres. The concentration is in moles per litre: divide the volume by 1000 before multiplying.</p></details>
+  </li>
+  <li class="ex-item" id="SP06"><p class="ex-statement">What mass of KNO₃ must you weigh to prepare 1000 mL of a 0.1 mol/L solution? <span class="ex-level">(intermediate)</span></p>
+    <details class="ex-answer"><summary>Answer</summary><p translate="no">m = 10.11 g</p></details>
+    <details class="ex-solution"><summary>Worked solution</summary><ol class="wsol-steps"><li><span class="wsol-text">Write the volume in litres.</span> <span class="wsol-expr" translate="no">V = 1000 mL ÷ 1000 = 1 L</span></li><li><span class="wsol-text">Amount of solute the solution needs: n = C × V.</span> <span class="wsol-expr" translate="no">n = 0.1 mol/L × 1 L = 0.1 mol</span></li><li><span class="wsol-text">Count the atoms of each element in the formula.</span> <span class="wsol-expr" translate="no">K: 1 · N: 1 · O: 3</span></li><li><span class="wsol-text">Look up each atomic mass in g/mol (abridged standard atomic weights, CIAAW).</span> <span class="wsol-expr" translate="no">A(K) = 39.098 · A(N) = 14.007 · A(O) = 15.999</span></li><li><span class="wsol-text">Multiply each atomic mass by its number of atoms.</span> <span class="wsol-expr" translate="no">1 × 39.098 = 39.098 · 1 × 14.007 = 14.007 · 3 × 15.999 = 47.997</span></li><li><span class="wsol-text">Add the contributions: the sum is the molar mass.</span> <span class="wsol-expr" translate="no">M = 39.098 + 14.007 + 47.997 = 101.1 g/mol</span></li><li><span class="wsol-text">Mass: m = n × M.</span> <span class="wsol-expr" translate="no">m = 0.1 mol × 101.1 g/mol = 10.11 g</span></li></ol><p class="ex-error">If you got 10110 g, you used the volume in millilitres. The concentration is in moles per litre: divide the volume by 1000 before multiplying.</p></details>
+  </li>
+  <li class="ex-item" id="SP07"><p class="ex-statement">What mass of Na₂CO₃ must you weigh to prepare 250 mL of a 0.05 mol/L solution? <span class="ex-level">(intermediate)</span></p>
+    <details class="ex-answer"><summary>Answer</summary><p translate="no">m = 1.325 g</p></details>
+    <details class="ex-solution"><summary>Worked solution</summary><ol class="wsol-steps"><li><span class="wsol-text">Write the volume in litres.</span> <span class="wsol-expr" translate="no">V = 250 mL ÷ 1000 = 0.25 L</span></li><li><span class="wsol-text">Amount of solute the solution needs: n = C × V.</span> <span class="wsol-expr" translate="no">n = 0.05 mol/L × 0.25 L = 0.0125 mol</span></li><li><span class="wsol-text">Count the atoms of each element in the formula.</span> <span class="wsol-expr" translate="no">Na: 2 · C: 1 · O: 3</span></li><li><span class="wsol-text">Look up each atomic mass in g/mol (abridged standard atomic weights, CIAAW).</span> <span class="wsol-expr" translate="no">A(Na) = 22.99 · A(C) = 12.011 · A(O) = 15.999</span></li><li><span class="wsol-text">Multiply each atomic mass by its number of atoms.</span> <span class="wsol-expr" translate="no">2 × 22.99 = 45.98 · 1 × 12.011 = 12.011 · 3 × 15.999 = 47.997</span></li><li><span class="wsol-text">Add the contributions: the sum is the molar mass.</span> <span class="wsol-expr" translate="no">M = 45.98 + 12.011 + 47.997 = 105.99 g/mol</span></li><li><span class="wsol-text">Mass: m = n × M.</span> <span class="wsol-expr" translate="no">m = 0.0125 mol × 105.99 g/mol = 1.325 g</span></li></ol><p class="ex-error">If you got 1325 g, you used the volume in millilitres. The concentration is in moles per litre: divide the volume by 1000 before multiplying.</p></details>
+  </li>
+  <li class="ex-item" id="SP08"><p class="ex-statement">What mass of CaCl₂ must you weigh to prepare 100 mL of a 0.2 mol/L solution? <span class="ex-level">(intermediate)</span></p>
+    <details class="ex-answer"><summary>Answer</summary><p translate="no">m = 2.22 g</p></details>
+    <details class="ex-solution"><summary>Worked solution</summary><ol class="wsol-steps"><li><span class="wsol-text">Write the volume in litres.</span> <span class="wsol-expr" translate="no">V = 100 mL ÷ 1000 = 0.1 L</span></li><li><span class="wsol-text">Amount of solute the solution needs: n = C × V.</span> <span class="wsol-expr" translate="no">n = 0.2 mol/L × 0.1 L = 0.02 mol</span></li><li><span class="wsol-text">Count the atoms of each element in the formula.</span> <span class="wsol-expr" translate="no">Ca: 1 · Cl: 2</span></li><li><span class="wsol-text">Look up each atomic mass in g/mol (abridged standard atomic weights, CIAAW).</span> <span class="wsol-expr" translate="no">A(Ca) = 40.078 · A(Cl) = 35.45</span></li><li><span class="wsol-text">Multiply each atomic mass by its number of atoms.</span> <span class="wsol-expr" translate="no">1 × 40.078 = 40.078 · 2 × 35.45 = 70.9</span></li><li><span class="wsol-text">Add the contributions: the sum is the molar mass.</span> <span class="wsol-expr" translate="no">M = 40.078 + 70.9 = 110.98 g/mol</span></li><li><span class="wsol-text">Mass: m = n × M.</span> <span class="wsol-expr" translate="no">m = 0.02 mol × 110.98 g/mol = 2.22 g</span></li></ol><p class="ex-error">If you got 2220 g, you used the volume in millilitres. The concentration is in moles per litre: divide the volume by 1000 before multiplying.</p></details>
+  </li>
+  <li class="ex-item" id="SP09"><p class="ex-statement">What mass of CuSO₄ must you weigh to prepare 1000 mL of a 0.05 mol/L solution? <span class="ex-level">(advanced)</span></p>
+    <details class="ex-answer"><summary>Answer</summary><p translate="no">m = 7.98 g</p></details>
+    <details class="ex-solution"><summary>Worked solution</summary><ol class="wsol-steps"><li><span class="wsol-text">Write the volume in litres.</span> <span class="wsol-expr" translate="no">V = 1000 mL ÷ 1000 = 1 L</span></li><li><span class="wsol-text">Amount of solute the solution needs: n = C × V.</span> <span class="wsol-expr" translate="no">n = 0.05 mol/L × 1 L = 0.05 mol</span></li><li><span class="wsol-text">Count the atoms of each element in the formula.</span> <span class="wsol-expr" translate="no">Cu: 1 · S: 1 · O: 4</span></li><li><span class="wsol-text">Look up each atomic mass in g/mol (abridged standard atomic weights, CIAAW).</span> <span class="wsol-expr" translate="no">A(Cu) = 63.546 · A(S) = 32.06 · A(O) = 15.999</span></li><li><span class="wsol-text">Multiply each atomic mass by its number of atoms.</span> <span class="wsol-expr" translate="no">1 × 63.546 = 63.546 · 1 × 32.06 = 32.06 · 4 × 15.999 = 63.996</span></li><li><span class="wsol-text">Add the contributions: the sum is the molar mass.</span> <span class="wsol-expr" translate="no">M = 63.546 + 32.06 + 63.996 = 159.6 g/mol</span></li><li><span class="wsol-text">Mass: m = n × M.</span> <span class="wsol-expr" translate="no">m = 0.05 mol × 159.6 g/mol = 7.98 g</span></li></ol><p class="ex-error">If you got 7980 g, you used the volume in millilitres. The concentration is in moles per litre: divide the volume by 1000 before multiplying.</p></details>
+  </li>
+  <li class="ex-item" id="SP10"><p class="ex-statement">What mass of NaHCO₃ must you weigh to prepare 250 mL of a 0.25 mol/L solution? <span class="ex-level">(advanced)</span></p>
+    <details class="ex-answer"><summary>Answer</summary><p translate="no">m = 5.25 g</p></details>
+    <details class="ex-solution"><summary>Worked solution</summary><ol class="wsol-steps"><li><span class="wsol-text">Write the volume in litres.</span> <span class="wsol-expr" translate="no">V = 250 mL ÷ 1000 = 0.25 L</span></li><li><span class="wsol-text">Amount of solute the solution needs: n = C × V.</span> <span class="wsol-expr" translate="no">n = 0.25 mol/L × 0.25 L = 0.0625 mol</span></li><li><span class="wsol-text">Count the atoms of each element in the formula.</span> <span class="wsol-expr" translate="no">Na: 1 · H: 1 · C: 1 · O: 3</span></li><li><span class="wsol-text">Look up each atomic mass in g/mol (abridged standard atomic weights, CIAAW).</span> <span class="wsol-expr" translate="no">A(Na) = 22.99 · A(H) = 1.008 · A(C) = 12.011 · A(O) = 15.999</span></li><li><span class="wsol-text">Multiply each atomic mass by its number of atoms.</span> <span class="wsol-expr" translate="no">1 × 22.99 = 22.99 · 1 × 1.008 = 1.008 · 1 × 12.011 = 12.011 · 3 × 15.999 = 47.997</span></li><li><span class="wsol-text">Add the contributions: the sum is the molar mass.</span> <span class="wsol-expr" translate="no">M = 22.99 + 1.008 + 12.011 + 47.997 = 84.006 g/mol</span></li><li><span class="wsol-text">Mass: m = n × M.</span> <span class="wsol-expr" translate="no">m = 0.0625 mol × 84.006 g/mol = 5.25 g</span></li></ol><p class="ex-error">If you got 5250 g, you used the volume in millilitres. The concentration is in moles per litre: divide the volume by 1000 before multiplying.</p></details>
+  </li>
+</ol>
+<section class="ex-new" id="novo" data-ex-new-root aria-labelledby="ex-new-title">
+<h2 id="ex-new-title">New exercise</h2>
+<p>Draws another exercise of this kind. The address keeps it, so you can share the same exercise.</p>
+<p><button type="button" class="ui-btn ui-btn-secondary" data-ex-new>Draw an exercise</button> <a data-ex-link hidden href="#novo">Link to this exercise</a></p>
+<div data-ex-out aria-live="polite"></div>
+</section>
+<details class="ex-key" id="gabarito"><summary>Answer key</summary><ol><li><span translate="no">SP01 · m = 1.461 g</span></li><li><span translate="no">SP02 · m = 5.844 g</span></li><li><span translate="no">SP03 · m = 7.455 g</span></li><li><span translate="no">SP04 · m = 5 g</span></li><li><span translate="no">SP05 · m = 22.52 g</span></li><li><span translate="no">SP06 · m = 10.11 g</span></li><li><span translate="no">SP07 · m = 1.325 g</span></li><li><span translate="no">SP08 · m = 2.22 g</span></li><li><span translate="no">SP09 · m = 7.98 g</span></li><li><span translate="no">SP10 · m = 5.25 g</span></li></ol></details>
+<p class="fx-license">Licence: [licença: definir]</p>
+  </article>
+</div>
+<script type="application/json" id="ex-def">{"id":"solution-prep","template":{"pt":"Que massa de {formula} é preciso pesar para preparar {V} mL de solução {C} mol/L?","en":"What mass of {formula} must you weigh to prepare {V} mL of a {C} mol/L solution?"},"variables":{"formula":{"list":["NaCl","KCl","NaOH","KNO3","C6H12O6","CuSO4","Na2CO3","NaHCO3","CaCl2","KOH"]},"C":{"list":[0.05,0.1,0.2,0.25,0.5,1]},"V":{"list":[100,250,500,1000]}},"engine":{"fn":"calc-core.computeSolutionMass","args":["@counts:formula","@weights",{"C":"@C","V":"@V"}]},"answer":{"step":"mm.mass","unit":"g"},"commonErrors":[{"id":"millilitres","wrong":"volumeInML","message":{"pt":"Se você chegou a {wrong}, usou o volume em mililitros. A concentração está em mol por litro: divida o volume por 1000 antes de multiplicar.","en":"If you got {wrong}, you used the volume in millilitres. The concentration is in moles per litre: divide the volume by 1000 before multiplying."}}],"labels":{"answer":"Answer","showSolution":"Show worked solution","hideSolution":"Hide the solution","failed":"This exercise could not be drawn. Try again."}}</script>
+
+<footer class="lc-footer">
+  <div class="lc-footer-inner">
+    <div class="lc-footer-col lc-footer-brand">
+      <div class="lc-footer-brand-row">
+        <div class="lc-topnav-mark" style="width:24px;height:24px">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="2.5" fill="currentColor"/>
+            <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/>
+            <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/>
+            <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/>
+          </svg>
+        </div>
+        <span class="lc-footer-brand-name">Atomurus</span>
+      </div>
+      <p class="lc-footer-brand-desc" data-i18n="common.footer.brandDesc">An instrumental chemistry laboratory for the studious, the curious and the patient.</p>
+      <div class="lc-footer-social" aria-label="Social">
+        <a href="https://instagram.com/atomurusapp" target="_blank" rel="noopener me" aria-label="Instagram @atomurusapp" title="Instagram @atomurusapp">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.7"/>
+            <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/>
+            <circle cx="17.5" cy="6.5" r="1.1" fill="currentColor"/>
+          </svg>
+        </a>
+        <a href="https://x.com/atomurusapp" target="_blank" rel="noopener me" aria-label="X (Twitter) @atomurusapp" title="X (Twitter) @atomurusapp">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.658l-5.214-6.817-5.967 6.817H1.68l7.73-8.835L1.254 2.25h6.828l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+    <div class="lc-footer-col">
+      <h4 data-i18n="common.footer.modules">Modules</h4>
+      <a href="/periodic-table.html" data-i18n="common.nav.periodic">Periodic Table</a>
+      <a href="/viewer/atomic-models.html" data-i18n="common.nav.viewer3d">Viewer</a>
+      <a href="/calculators.html" data-i18n="common.nav.calc">Calculators</a>
+      <a href="/explore.html" data-i18n="common.nav.explore">Explore</a>
+    </div>
+    <div class="lc-footer-col">
+      <h4 data-i18n="common.footer.workspace">Workspace</h4>
+      <a href="/config.html" data-i18n="common.footer.settings">Settings</a>
+      <a href="/periodic-table.html#search" data-i18n="common.footer.elementSearch">Element search</a>
+      <a href="/calculators.html#molar" data-i18n="common.footer.molarMass">Molar mass</a>
+    </div>
+    <div class="lc-footer-col">
+      <h4 data-i18n="common.footer.project">Project</h4>
+      <a href="/about.html" data-i18n="common.footer.about">About</a>
+      <a href="/privacy.html" data-i18n="common.footer.privacy">Privacy</a>
+      <a href="/terms.html" data-i18n="common.footer.terms">Terms</a>
+      <a href="/contact.html" data-i18n="common.footer.contact">Contact</a>
+    </div>
+    <div class="lc-footer-col">
+      <h4 data-i18n="common.footer.data">Data</h4>
+      <a href="https://iupac.org/" target="_blank" rel="noopener">IUPAC 2024</a>
+      <a href="https://physics.nist.gov/cuu/Constants/" target="_blank" rel="noopener">CODATA 2022</a>
+      <a href="https://www.nist.gov/" target="_blank" rel="noopener">NIST</a>
+    </div>
+  </div>
+  <div class="lc-footer-bottom">
+    <span><span class="lc-st-dot" style="width:6px;height:6px;border-radius:50%;background:#1E6A50;display:inline-block"></span> <span data-i18n="common.footer.systemNominal">system nominal</span></span>
+    <span data-i18n="common.footer.copy">© 2026 Atomurus · v1.11</span>
+  </div>
+</footer>
+
+<div class="lc-statusbar">
+  <span><span class="lc-st-dot"></span> <span data-i18n="common.stReady">ready</span></span>
+  <span class="lc-st-sep">·</span>
+  <span>exercises / solution-prep</span>
+  <span class="lc-st-spacer"></span>
+  <a href="/">→ home</a>
+</div>
+
+</main>
+</div>
+<script>
+function toggleTheme(){var h=document.documentElement;var d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');localStorage.setItem('atomurus-theme',d?'light':'dark')}
+(function(){var s=localStorage.getItem('atomurus-theme');if(s)document.documentElement.setAttribute('data-theme',s)})();
+</script>
+</body>
+</html>

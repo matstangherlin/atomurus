@@ -26,7 +26,7 @@ export const CHIP_FILE = path.join(ROOT, 'assets', 'trail-chip.js');
 const TEMPLATE = path.join(ROOT, 'templates', 'fichas', 'sheet.html');
 export const STEP_TYPES = ['article', 'tool', 'exercises', 'lab', 'sheet', 'review'];
 export const LEVELS = ['basico', 'medio', 'avancado'];
-export const DRAFT_ARTICLES = ['explore/what-is-the-mole', 'explore/conservation-of-mass'];
+export const DRAFT_ARTICLES = ['explore/what-is-the-mole', 'explore/conservation-of-mass', 'explore/solutions-and-concentration', 'explore/acids-bases-and-ph', 'explore/chemical-equilibrium'];
 const ROUTES = { '/': 'index.html', '/app': 'app.html', '/account': 'account.html', '/pricing': 'pricing.html' };
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -95,6 +95,15 @@ const M = (f) => E().calc.computeMolarMass(counts(f), E().formula.ATOMIC_WEIGHTS
 const F = (n, sig, lang) => E().words.formatNumber(n, sig, lang);
 const sub = (f) => E().formula.formatFormulaDisplay(f);
 const fixed = (n, d, lang) => { const s = n.toFixed(d); return lang === 'pt' ? s.replace('.', ',') : s; };
+const SUP = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+/* Scientific notation with d decimals kept (1.0 × 10⁻³), for data as written. */
+const sci = (n, d, lang) => {
+  const [m, e] = n.toExponential(d).split('e');
+  const exp = (Number(e) < 0 ? '⁻' : '') + String(Math.abs(Number(e))).split('').map((c) => SUP[c]).join('');
+  return (lang === 'pt' ? m.replace('.', ',') : m) + ' × 10' + exp;
+};
+/* Acid–base constants come from calc-core's sourced table, never typed here. */
+const acid = (id) => E().calc.ACID_BASE_CONSTANTS.find((a) => a.id === id);
 
 function engineSteps(result, lang, answerStep) {
   const view = E().words.describe(result.steps, { locale: lang, answerStep });
@@ -180,7 +189,154 @@ export const CALC = {
   'mass-h2so4': (lang) => ({
     q: lang === 'pt' ? 'Qual é a massa de 0,5 mol de H₂SO₄?' : 'What is the mass of 0.5 mol of H₂SO₄?',
     ...engineSteps(E().calc.computeMolarMass(counts('H2SO4'), E().formula.ATOMIC_WEIGHTS, { value: 0.5, unit: 'mol' }), lang, 'mm.mass')
-  })
+  }),
+
+  // ── Trail 2: solutions (prompt 33) ──
+  'sol-prep': (lang) => ({
+    q: lang === 'pt' ? 'Exemplo: a massa de NaCl para 250 mL de solução 0,1 mol/L' : 'Example: the mass of NaCl for 250 mL of a 0.1 mol/L solution',
+    ...engineSteps(E().calc.computeSolutionMass(counts('NaCl'), E().formula.ATOMIC_WEIGHTS, { C: 0.1, V: 250 }), lang)
+  }),
+  'sol-conc': (lang) => {
+    const r = E().calc.computeMolarMass(counts('NaCl'), E().formula.ATOMIC_WEIGHTS, { value: 5.85, unit: 'g' });
+    const view = engineSteps(r, lang, 'mm.moles');
+    const C = r.moles / 0.5;
+    const pt = lang === 'pt';
+    return {
+      q: pt ? 'Exemplo: 5,85 g de NaCl dissolvidos e completados a 500 mL. Qual é a concentração?' : 'Example: 5.85 g of NaCl dissolved and made up to 500 mL. What is the concentration?',
+      steps: view.steps.filter((s) => s.id === 'mm.sum' || s.id === 'mm.moles').concat([
+        { text: pt ? 'Divida pelo volume da solução, em litros.' : 'Divide by the volume of the solution, in litres.', expr: `C = ${F(r.moles, 4, lang)} mol ÷ ${fixed(0.5, 3, lang)} L = ${F(C, 4, lang)} mol/L` }
+      ]),
+      answer: `C = ${F(C, 4, lang)} mol/L`,
+      value: C
+    };
+  },
+  'sol-dilute': (lang) => ({
+    q: lang === 'pt' ? 'Exemplo: que volume de uma solução estoque 2 mol/L é preciso para preparar 250 mL de solução 0,2 mol/L?' : 'Example: what volume of a 2 mol/L stock solution is needed to make 250 mL of a 0.2 mol/L solution?',
+    ...engineSteps(E().calc.computeDilution({ solve: 'V1', C1: 2, C2: 0.2, V2: 250 }), lang)
+  }),
+  'rev-naoh-mass': (lang) => ({
+    q: lang === 'pt' ? 'Que massa de NaOH é preciso pesar para 500 mL de solução 0,2 mol/L?' : 'What mass of NaOH must be weighed for 500 mL of a 0.2 mol/L solution?',
+    ...engineSteps(E().calc.computeSolutionMass(counts('NaOH'), E().formula.ATOMIC_WEIGHTS, { C: 0.2, V: 500 }), lang)
+  }),
+  'rev-dilute-c2': (lang) => ({
+    q: lang === 'pt' ? '10 mL de uma solução 1 mol/L são diluídos até 100 mL. Qual é a nova concentração?' : '10 mL of a 1 mol/L solution are diluted to 100 mL. What is the new concentration?',
+    ...engineSteps(E().calc.computeDilution({ solve: 'C2', C1: 1, V1: 10, V2: 100 }), lang)
+  }),
+
+  // ── Trail 3: acids and bases (prompt 33) ──
+  'ab-strong-acid': (lang) => ({
+    q: lang === 'pt' ? 'Exemplo: o pH do ácido clorídrico 0,01 mol/L' : 'Example: the pH of 0.01 mol/L hydrochloric acid',
+    ...engineSteps(E().calc.computePH({ mode: 'H', value: 0.01 }), lang)
+  }),
+  'ab-strong-base': (lang) => ({
+    q: lang === 'pt' ? 'Exemplo: o pH do hidróxido de sódio 0,001 mol/L' : 'Example: the pH of 0.001 mol/L sodium hydroxide',
+    ...engineSteps(E().calc.computePH({ mode: 'OH', value: 0.001 }), lang)
+  }),
+  'ab-weak-acid': (lang) => {
+    const pKa = acid('acetic').pKa[0];
+    const C = 0.1;
+    const r = E().calc.computeWeakAcidPH({ C, pKa });
+    const x = r.alpha * C; // [A⁻] = [H⁺] from the acid
+    const pt = lang === 'pt';
+    return {
+      q: pt ? `Exemplo: o pH do ácido acético 0,10 mol/L (pKa = ${fixed(pKa, 3, lang)} a 25 °C)` : `Example: the pH of 0.10 mol/L acetic acid (pKa = ${fixed(pKa, 3, lang)} at 25 °C)`,
+      steps: [
+        { text: pt ? 'Ka a partir do pKa.' : 'Ka from the pKa.', expr: `Ka = 10^(−${fixed(pKa, 3, lang)}) = ${F(r.Ka, 4, lang)}` },
+        { text: pt ? 'No equilíbrio, [H⁺] = [A⁻] = x e [HA] = C − x; então:' : 'At equilibrium [H⁺] = [A⁻] = x and [HA] = C − x, so:', expr: `Ka = x² ÷ (${fixed(C, 2, lang)} − x) = ${F(r.Ka, 4, lang)}` },
+        { text: pt ? 'x é pequeno perto de C, então x ≈ √(Ka × C); resolvendo sem o atalho, o valor quase não muda.' : 'x is small compared with C, so x ≈ √(Ka × C); solving without the shortcut barely changes it.', expr: `x ≈ √(${F(r.Ka, 4, lang)} × ${fixed(C, 2, lang)}) = ${sci(Math.pow(10, -r.shortcutPH), 3, lang)} · x = ${sci(x, 3, lang)} mol/L` },
+        { text: pt ? 'Calcule menos o logaritmo decimal.' : 'Take minus the base-10 logarithm.', expr: `pH = −log₁₀(${sci(r.H, 3, lang)}) = ${fixed(r.pH, 2, lang)}` },
+        { text: pt ? 'A fração do ácido que se ionizou.' : 'The fraction of the acid that ionized.', expr: `α = x ÷ C = ${sci(x, 3, lang)} ÷ ${fixed(C, 2, lang)} = ${fixed(r.alpha * 100, 1, lang)} %` }
+      ],
+      answer: `pH = ${fixed(r.pH, 2, lang)}`,
+      value: r.pH
+    };
+  },
+  'ab-buffer': (lang) => {
+    const pKa = acid('acetic').pKa[0];
+    const r = E().calc.computeBufferPH({ acid: 0.1, base: 0.2, pKa });
+    const pt = lang === 'pt';
+    if (fixed(r.exactPH, 2, lang) !== fixed(r.pH, 2, lang)) throw new Error('ab-buffer: Henderson–Hasselbalch and the charge balance differ');
+    return {
+      q: pt ? 'Exemplo: o pH de um tampão com ácido acético 0,10 mol/L e acetato de sódio 0,20 mol/L' : 'Example: the pH of a buffer of 0.10 mol/L acetic acid and 0.20 mol/L sodium acetate',
+      steps: [
+        { text: pt ? 'A razão entre a base conjugada e o ácido.' : 'The ratio of conjugate base to acid.', expr: `[A⁻]/[HA] = ${fixed(0.2, 2, lang)} ÷ ${fixed(0.1, 2, lang)} = ${F(r.ratio, 4, lang)}` },
+        { text: 'Henderson–Hasselbalch.', expr: `pH = ${fixed(pKa, 3, lang)} + log₁₀(${F(r.ratio, 4, lang)}) = ${fixed(pKa, 3, lang)} + ${fixed(Math.log10(r.ratio), 3, lang)} = ${fixed(r.pH, 2, lang)}` },
+        { text: pt ? `A razão está entre 0,1 e 10, então a equação é uma boa aproximação: o balanço de cargas completo também dá pH ${fixed(r.exactPH, 2, lang)}.` : `The ratio is between 0.1 and 10, so the equation is a good approximation: the full charge balance also gives pH ${fixed(r.exactPH, 2, lang)}.`, expr: `${fixed(0.1, 1, lang)} ≤ ${F(r.ratio, 4, lang)} ≤ 10 ✓` }
+      ],
+      answer: `pH = ${fixed(r.pH, 2, lang)}`,
+      value: r.pH
+    };
+  },
+  'rev-ph-hcl': (lang) => ({
+    q: lang === 'pt' ? 'Qual é o pH do ácido clorídrico 0,001 mol/L?' : 'What is the pH of 0.001 mol/L hydrochloric acid?',
+    ...engineSteps(E().calc.computePH({ mode: 'H', value: 0.001 }), lang)
+  }),
+  'rev-buffer-ratio': (lang) => ({
+    q: lang === 'pt' ? `Que razão [acetato]/[ácido acético] dá um tampão de pH 5,00 (pKa = ${fixed(acid('acetic').pKa[0], 3, lang)})?` : `What [acetate]/[acetic acid] ratio gives a buffer of pH 5.00 (pKa = ${fixed(acid('acetic').pKa[0], 3, lang)})?`,
+    ...engineSteps(E().calc.computeBufferRatio({ pKa: acid('acetic').pKa[0], pH: 5 }), lang)
+  }),
+
+  // ── Chemical equilibrium (prompt 33) ──
+  'eq-ice': (lang) => {
+    const pKa = acid('acetic').pKa[0];
+    const C = 0.1;
+    const r = E().calc.computeWeakAcidPH({ C, pKa });
+    const x = r.alpha * C;
+    const pt = lang === 'pt';
+    const c = fixed(C, 2, lang);
+    return {
+      lead: pt ? 'Exemplo: tabela de equilíbrio do ácido acético 0,10 mol/L: ' : 'Example: an ICE table for 0.10 mol/L acetic acid: ', eq: 'CH₃COOH ⇌ H⁺ + CH₃COO⁻',
+      steps: [
+        { text: pt ? 'Início, antes da ionização, em mol/L.' : 'Initial (I), before any ionization, in mol/L.', expr: `[CH₃COOH] = ${c} · [H⁺] ≈ 0 · [CH₃COO⁻] = 0` },
+        { text: pt ? 'Reage: x mol/L do ácido se ioniza.' : 'Change (C): x mol/L of the acid ionizes.', expr: '−x · +x · +x' },
+        { text: pt ? 'Equilíbrio: o que resta do ácido e o que se formou.' : 'Equilibrium (E): what is left of the acid and what has formed.', expr: `[CH₃COOH] = ${c} − x · [H⁺] = x · [CH₃COO⁻] = x` },
+        { text: pt ? `Leve a linha do equilíbrio para K (Ka a 25 °C, de pKa = ${fixed(pKa, 3, lang)}).` : `Put the equilibrium row into K (Ka at 25 °C, from pKa = ${fixed(pKa, 3, lang)}).`, expr: `Ka = x² ÷ (${c} − x) = ${F(r.Ka, 4, lang)}` },
+        { text: pt ? 'Resolva a única incógnita: a raiz positiva de x² + Ka·x − Ka·C = 0.' : 'Solve for the one unknown: the positive root of x² + Ka·x − Ka·C = 0.', expr: `x = ${sci(x, 3, lang)} mol/L` },
+        { text: pt ? 'As concentrações no equilíbrio.' : 'The equilibrium concentrations.', expr: `[CH₃COOH] = ${F(C - x, 4, lang)} mol/L · [H⁺] = [CH₃COO⁻] = ${sci(x, 3, lang)} mol/L` }
+      ],
+      answer: `x = ${sci(x, 3, lang)} mol/L · pH = ${fixed(r.pH, 2, lang)}`,
+      value: x
+    };
+  },
+  'eq-common-ion': (lang) => {
+    const pKa = acid('acetic').pKa[0];
+    const before = E().calc.computeWeakAcidPH({ C: 0.1, pKa });
+    const after = E().calc.computeBufferPH({ acid: 0.1, base: 0.1, pKa });
+    const H = after.H; // Henderson–Hasselbalch: Ka × [HA] ÷ [A⁻]
+    const pt = lang === 'pt';
+    return {
+      q: pt ? 'Exemplo: acetato de sódio é adicionado ao ácido acético 0,10 mol/L até o acetato chegar a 0,10 mol/L. O que acontece com a ionização?' : 'Example: sodium acetate is added to 0.10 mol/L acetic acid until the acetate reaches 0.10 mol/L. What happens to the ionization?',
+      steps: [
+        { text: pt ? 'Antes: só o ácido, como na tabela de equilíbrio.' : 'Before: the acid alone, as in the ICE table.', expr: `[H⁺] = ${sci(before.H, 3, lang)} mol/L · pH = ${fixed(before.pH, 2, lang)} · α = ${fixed(before.alpha * 100, 1, lang)} %` },
+        { text: pt ? 'O acetato adicionado deixa Q maior que K: a reação inversa avança até Q = K de novo.' : 'The added acetate makes Q larger than K: the reverse reaction goes on until Q = K again.', expr: 'Q > Ka → H⁺ + CH₃COO⁻ ⟶ CH₃COOH' },
+        { text: pt ? 'No novo equilíbrio, com o mesmo Ka e as duas concentrações perto de 0,10 mol/L: [H⁺] = Ka × [CH₃COOH] ÷ [CH₃COO⁻].' : 'At the new equilibrium, with the same Ka and both concentrations close to 0.10 mol/L: [H⁺] = Ka × [CH₃COOH] ÷ [CH₃COO⁻].', expr: `[H⁺] = ${F(after.Ka, 4, lang)} × ${fixed(0.1, 2, lang)} ÷ ${fixed(0.1, 2, lang)} = ${sci(H, 3, lang)} mol/L · pH = ${fixed(after.pH, 2, lang)}` },
+        { text: pt ? 'A fração ionizada cai; K não mudou.' : 'The fraction ionized drops; K has not changed.', expr: `α = ${sci(H, 3, lang)} ÷ ${fixed(0.1, 2, lang)} = ${F(H / 0.1 * 100, 2, lang)} %` }
+      ],
+      answer: `pH ${fixed(before.pH, 2, lang)} → ${fixed(after.pH, 2, lang)} · α ${fixed(before.alpha * 100, 1, lang)} % → ${F(H / 0.1 * 100, 2, lang)} %`,
+      value: after.pH
+    };
+  },
+  'eq-q': (lang) => {
+    const Ka = Math.pow(10, -acid('acetic').pKa[0]);
+    const ion = 1e-3;
+    const HA = 0.1;
+    const Q = ion * ion / HA;
+    const pt = lang === 'pt';
+    const forward = Q < Ka;
+    return {
+      q: pt ? `Exemplo: uma mistura tem ácido acético ${fixed(HA, 2, lang)} mol/L e ${sci(ion, 1, lang)} mol/L de H⁺ e de acetato. Para que lado ela reage?` : `Example: a mixture holds ${fixed(HA, 2, lang)} mol/L acetic acid and ${sci(ion, 1, lang)} mol/L each of H⁺ and acetate. Which way does it react?`,
+      steps: [
+        { text: pt ? 'Q tem a mesma forma de K, com as concentrações deste momento.' : 'Q has the same form as K, with the concentrations as they are now.', expr: `Q = [H⁺][CH₃COO⁻] ÷ [CH₃COOH] = (${sci(ion, 1, lang)})² ÷ ${fixed(HA, 2, lang)} = ${sci(Q, 1, lang)}` },
+        { text: pt ? 'Compare Q com K na mesma temperatura (25 °C).' : 'Compare Q with K at the same temperature (25 °C).', expr: `Q = ${sci(Q, 1, lang)} ${forward ? '<' : '>'} Ka = ${F(Ka, 4, lang)}` },
+        forward
+          ? { text: pt ? 'Há menos produto do que no equilíbrio: a reação segue no sentido direto (mais ácido se ioniza) até Q = K.' : 'There is less product than at equilibrium: the net reaction goes forward (more acid ionizes) until Q = K.', expr: 'Q < K → CH₃COOH ⟶ H⁺ + CH₃COO⁻' }
+          : { text: pt ? 'Há mais produto do que no equilíbrio: a reação segue no sentido inverso até Q = K.' : 'There is more product than at equilibrium: the net reaction goes in reverse until Q = K.', expr: 'Q > K → H⁺ + CH₃COO⁻ ⟶ CH₃COOH' }
+      ],
+      answer: forward ? 'Q < K' : 'Q > K',
+      tail: forward ? (pt ? ' — sentido direto: mais ácido se ioniza.' : ' — forward: more acid ionizes.') : (pt ? ' — sentido inverso.' : ' — in reverse.'),
+      value: Q
+    };
+  }
 };
 
 function stepsHtml(steps) {
@@ -193,7 +349,7 @@ export function workedBlock(id, lang) {
   // An equation is not a sentence of either language.
   const q = r.eq ? esc(r.lead) + '<span translate="no">' + esc(r.eq) + '</span>' : esc(r.q);
   return '<p class="aw-q">' + q + '</p>' + stepsHtml(r.steps) +
-    '<p class="aw-a">' + esc((lang === 'pt' ? 'Resposta: ' : 'Answer: ')) + '<span translate="no">' + esc(r.answer) + '</span></p>';
+    '<p class="aw-a">' + esc((lang === 'pt' ? 'Resposta: ' : 'Answer: ')) + '<span translate="no">' + esc(r.answer) + '</span>' + esc(r.tail || '') + '</p>';
 }
 
 /* Fill every <!-- calc:id --> … <!-- /calc:id --> block of a page. */
@@ -284,7 +440,7 @@ function reviewHtml(trail, lang) {
     if (q.kind === 'computed') {
       const r = CALC[q.calc](lang);
       prompt = esc(r.q);
-      answer = '<span translate="no">' + esc(r.answer) + '</span>' + stepsHtml(r.steps);
+      answer = '<span translate="no">' + esc(r.answer) + '</span>' + esc(r.tail || '') + stepsHtml(r.steps);
     } else {
       prompt = esc(q.prompt[lang]);
       answer = esc(q.answer[lang]);

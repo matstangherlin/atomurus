@@ -12,7 +12,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function (root) {
   'use strict';
 
-  var ENGINES = ['computeMolarMass', 'computeDilution', 'computePH', 'computeIdealGas'];
+  var ENGINES = ['computeMolarMass', 'computeDilution', 'computePH', 'computeIdealGas', 'computeSolutionMass', 'computeBufferRatio'];
   var SEED_RE = /^\d{1,10}$/;
   var FORMULA_RE = /^[A-Z][A-Za-z0-9()·.]*$/;
 
@@ -67,7 +67,19 @@
     if (typeof arg !== 'string' || arg.charAt(0) !== '@') return arg;
     if (arg === '@weights') return formula().ATOMIC_WEIGHTS;
     if (arg.indexOf('@counts:') === 0) return counts(vars[arg.slice(8)]);
+    if (arg.indexOf('@acid:') === 0) return acidField(vars, arg.slice(6));
     return vars[arg.slice(1)];
+  }
+
+  /* '@acid:acid.pKa' — a field of a sourced constant in calc-core
+     (ACID_BASE_CONSTANTS), chosen by a variable; values are never typed. */
+  function acidField(vars, path) {
+    var parts = path.split('.');
+    var id = vars[parts[0]];
+    var row = calc().ACID_BASE_CONSTANTS.filter(function (r) { return r.id === id; })[0];
+    if (!row) throw new Error('no sourced constant ' + id);
+    if (parts[1] === 'pKa') return row.pKa ? row.pKa[0] : null;
+    return row[parts[1]];
   }
 
   function counts(text) {
@@ -101,6 +113,10 @@
     },
     pOHasPH: function (vars, locale) {
       return fixed(calc().computePH({ mode: 'OH', value: vars.c }).pOH, locale);
+    },
+    volumeInML: function (vars, locale) {
+      var M = calc().computeMolarMass(counts(vars.formula), formula().ATOMIC_WEIGHTS).total;
+      return words().formatNumber(vars.C * vars.V * M, 4, locale) + ' g';
     }
   };
   function fixed(n, locale) {
@@ -109,12 +125,28 @@
   }
 
   function show(value, locale) {
+    if (value && typeof value === 'object' && value.pt != null) return value[locale];
     if (typeof value === 'number') return words().plain(value, locale);
     if (FORMULA_RE.test(String(value))) return formula().formatFormulaDisplay(String(value));
     return String(value);
   }
   function fill(text, vars, locale) {
     return String(text).replace(/\{(\w+)\}/g, function (_, k) { return vars[k] == null ? '' : show(vars[k], locale); });
+  }
+
+  /* Template slots: the variables plus def.display (e.g. an acid's name and
+     pKa, read from calc-core). */
+  function shown(def, vars) {
+    var out = {};
+    Object.keys(vars).forEach(function (k) { out[k] = vars[k]; });
+    Object.keys(def.display || {}).forEach(function (k) {
+      var spec = String(def.display[k]);
+      var lower = /\|lower$/.test(spec); // mid-sentence: «ácido acético», not «Ácido acético»
+      var v = resolve(spec.replace(/\|lower$/, ''), vars);
+      if (lower && v && typeof v === 'object') v = { pt: v.pt.charAt(0).toLowerCase() + v.pt.slice(1), en: v.en.charAt(0).toLowerCase() + v.en.slice(1) };
+      out[k] = v;
+    });
+    return out;
   }
 
   /* → { ok, statement, answer, steps: [{ text, expr }], errors: [text], result } */
@@ -133,7 +165,7 @@
     });
     return {
       ok: true,
-      statement: fill(keyed(def.template, vars)[locale], vars, locale),
+      statement: fill(keyed(def.template, vars)[locale], shown(def, vars), locale),
       answer: view.answer,
       steps: view.steps,
       errors: errors,

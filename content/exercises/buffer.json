@@ -1,0 +1,36 @@
+{
+  "id": "buffer",
+  "type": "buffer",
+  "status": "draft",
+  "reviewedBy": null,
+  "title": { "pt": "Tampão: razão base/ácido", "en": "Buffers: base-to-acid ratio" },
+  "summary": {
+    "pt": "Dez exercícios de tampão a 25 °C: que razão [base conjugada]/[ácido] dá um pH desejado (Henderson–Hasselbalch), com pKa da tabela com fonte da calculadora e solução comentada gerada pelo motor.",
+    "en": "Ten buffer exercises at 25 °C: which [conjugate base]/[acid] ratio gives a target pH (Henderson–Hasselbalch), with pKa from the calculator's sourced table and a worked solution from the engine."
+  },
+  "tool": { "href": { "pt": "/calculators.pt.html#ph", "en": "/calculators.html#ph" }, "label": { "pt": "Abrir a calculadora de pH (modo tampão)", "en": "Open the pH calculator (buffer mode)" } },
+  "template": {
+    "pt": "Um tampão de {acidName} e {conj} deve ter pH {pH} a 25 °C. Qual deve ser a razão [{conj}]/[{acidName}]? (pKa = {pKa})",
+    "en": "A buffer of {acidName} and {conj} must have pH {pH} at 25 °C. What must the ratio [{conj}]/[{acidName}] be? (pKa = {pKa})"
+  },
+  "display": { "acidName": "@acid:acid.name|lower", "conj": "@acid:acid.conjugate", "pKa": "@acid:acid.pKa" },
+  "variables": {
+    "acid": { "list": ["acetic", "formic", "benzoic", "hydrofluoric"] },
+    "pH": { "list": [3.0, 3.5, 4.0, 4.5, 5.0, 5.5] }
+  },
+  "engine": { "fn": "calc-core.computeBufferRatio", "args": [{ "pKa": "@acid:acid.pKa", "pH": "@pH" }] },
+  "answer": { "step": "bf.ratio", "unit": "" },
+  "commonErrors": [],
+  "exercises": [
+    { "id": "BF01", "level": "basico", "vars": { "acid": "acetic", "pH": 4.76 } },
+    { "id": "BF02", "level": "basico", "vars": { "acid": "acetic", "pH": 5.0 } },
+    { "id": "BF03", "level": "basico", "vars": { "acid": "formic", "pH": 3.75 } },
+    { "id": "BF04", "level": "medio", "vars": { "acid": "acetic", "pH": 4.5 } },
+    { "id": "BF05", "level": "medio", "vars": { "acid": "formic", "pH": 4.0 } },
+    { "id": "BF06", "level": "medio", "vars": { "acid": "benzoic", "pH": 4.5 } },
+    { "id": "BF07", "level": "medio", "vars": { "acid": "benzoic", "pH": 3.8 } },
+    { "id": "BF08", "level": "avancado", "vars": { "acid": "hydrofluoric", "pH": 3.5 } },
+    { "id": "BF09", "level": "avancado", "vars": { "acid": "formic", "pH": 3.2 } },
+    { "id": "BF10", "level": "avancado", "vars": { "acid": "acetic", "pH": 6.0 } }
+  ]
+}

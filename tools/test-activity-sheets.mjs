@@ -27,7 +27,7 @@ assert.equal(fmtSci(3.2e-9, 'en'), '3.2 × 10⁻⁹');
 
 // ── Sources ─────────────────────────────────────────────────────────────────
 const sheets = loadSheets();
-assert.deepEqual(sheets.map((s) => s.id), ['F1', 'F2', 'F3']);
+assert.deepEqual(sheets.map((s) => s.id), ['F1', 'F2', 'F3', 'F4']);
 for (const sheet of sheets) {
   assert.equal(sheet.status, 'draft', `${sheet.id} stays a draft until the owner publishes it`);
   assert.equal(sheet.reviewedBy, null);
@@ -97,6 +97,14 @@ const EXPECT = {
     num(1, 1, lang) + ' × 10⁻⁴ mol/L',
     String(10 ** (5 - 3)) + (lang === 'pt' ? ' vezes' : ' times'),
     num(phBefore, 1, lang), num(phAfter, 1, lang)
+  ],
+  // Prompt 33: n = C·V, m = n·M, C₁V₁ = C₂V₂ — plain arithmetic here.
+  F4: (lang) => [
+    num(M('NaCl'), 2, lang) + ' g/mol',
+    num(0.1 * 0.25, 4, lang) + ' mol',
+    num(0.1 * 0.25 * M('NaCl'), 2, lang) + ' g',
+    lang === 'pt' ? 'balão volumétrico' : 'volumetric flask',
+    String(0.1 * 100 / 0.02) + ' mL'
   ]
 };
 function num2(x) { return Math.round(x * 100) / 100; }
@@ -105,7 +113,7 @@ assert.equal(ELEMENTS.filter((e) => e.cat === 'noble').length, 7);
 
 // ── Pages ───────────────────────────────────────────────────────────────────
 const pages = renderAll();
-assert.equal(pages.length, 12);
+assert.equal(pages.length, 16);
 const unstamp = (s) => s.replace(/\?v=\d+/g, '?v=0');
 for (const p of pages) assert.equal(unstamp(read('fichas/' + p.name)), unstamp(p.html), `fichas/${p.name} is current (node tools/build-activity-sheets.mjs)`);
 assert.deepEqual(fs.readdirSync(OUT_DIR).sort(), pages.map((p) => p.name).sort(), 'nothing else in fichas/');

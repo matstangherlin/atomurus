@@ -67,3 +67,15 @@ de `elements-data.js`, aritmética direta) os 40 exercícios e 150 sorteios por 
 - **Gases ideais recusam 0 °C e temperaturas negativas em °C/°F** (`validateIdeal` confere T > 0
   antes de converter para kelvin). Comportamento anterior a este prompt, mantido; correção sugerida:
   validar `toK(T, Tu) > 0`.
+
+## Tipos novos (prompt 33)
+
+- **Preparo de solução** (`content/exercises/solution-prep.json`): massa de soluto para V mL de uma
+  solução C mol/L. Motor novo `computeSolutionMass` (n = C × V, depois os passos da massa molar);
+  erro comum `volumeInML` («usou o volume em mililitros»).
+- **Tampão** (`content/exercises/buffer.json`): razão [A⁻]/[HA] para um pH-alvo, com o pKa vindo da
+  tabela com fonte do prompt 22 (`@acid:acid.pKa`; nome e base conjugada por `display`). Motor novo
+  `computeBufferRatio` (Henderson–Hasselbalch); fora de 0,1–10 o passo avisa que o tampão sai da faixa
+  útil.
+- Agora são 6 tipos × 10; `tools/test-exercises.mjs` recalcula os 60 e os sorteios de forma
+  independente.

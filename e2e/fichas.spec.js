@@ -3,7 +3,7 @@ const { test, expect } = require('@playwright/test');
 const { isolate } = require('./pt-pages-helpers');
 
 const pdfPages = (buf) => (buf.toString('latin1').match(/\/Type\s*\/Page(?!s)/g) || []).length;
-const SHEETS = ['F1', 'F2', 'F3'];
+const SHEETS = ['F1', 'F2', 'F3', 'F4'];
 
 for (const lang of ['pt', 'en']) {
   for (const id of SHEETS) {

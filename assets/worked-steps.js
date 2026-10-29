@@ -18,6 +18,11 @@
     'mm.kg': { en: 'Write the mass in grams.', pt: 'Escreva a massa em gramas.' },
     'mm.moles': { en: 'Amount of substance: n = m / M.', pt: 'Quantidade de matéria: n = m / M.' },
     'mm.mass': { en: 'Mass: m = n × M.', pt: 'Massa: m = n × M.' },
+    'sp.volume': { en: 'Write the volume in litres.', pt: 'Escreva o volume em litros.' },
+    'sp.amount': { en: 'Amount of solute the solution needs: n = C × V.', pt: 'Quantidade de soluto que a solução precisa: n = C × V.' },
+    'bf.hh': { en: 'Henderson–Hasselbalch: pH = pKa + log₁₀([A⁻]/[HA]), so log₁₀([A⁻]/[HA]) = pH − pKa.', pt: 'Henderson–Hasselbalch: pH = pKa + log₁₀([A⁻]/[HA]), então log₁₀([A⁻]/[HA]) = pH − pKa.' },
+    'bf.ratio': { en: 'Undo the logarithm to get the ratio.', pt: 'Desfaça o logaritmo para obter a razão.' },
+    'bf.range': { en: 'A buffer works well while the ratio stays between {min} and {max} (pH = pKa ± 1).', pt: 'Um tampão funciona bem enquanto a razão fica entre {min} e {max} (pH = pKa ± 1).' },
     'ig.si': { en: 'Write the data in SI units (Pa, m³, mol, K).', pt: 'Escreva os dados em unidades do SI (Pa, m³, mol, K).' },
     'ig.isolate': { en: 'Isolate {q} in PV = nRT.', pt: 'Isole {q} em PV = nRT.' },
     'ig.substitute': { en: 'Substitute, with R = {R} J·K⁻¹·mol⁻¹ (CODATA 2018).', pt: 'Substitua, com R = {R} J·K⁻¹·mol⁻¹ (CODATA 2018).' },
@@ -124,6 +129,26 @@
         case 'mm.mass':
           expr = 'm = ' + F(v.n) + ' mol × ' + F(v.M, 5) + ' g/mol = ' + F(v.m) + ' g';
           result = 'm = ' + A(v.m) + ' g';
+          break;
+        case 'sp.volume':
+          expr = 'V = ' + P(v.mL) + ' mL ÷ 1000 = ' + P(v.L) + ' L';
+          break;
+        case 'sp.amount':
+          expr = 'n = ' + P(v.C) + ' mol/L × ' + P(v.L) + ' L = ' + F(v.n) + ' mol';
+          break;
+        case 'bf.hh':
+          expr = 'log₁₀([A⁻]/[HA]) = ' + fixed(v.pH, 2, pt) + ' − ' + P(Math.round(v.pKa * 1e6) / 1e6) + ' = ' + fixed(v.pH - v.pKa, 3, pt);
+          break;
+        case 'bf.ratio':
+          expr = '[A⁻]/[HA] = 10^' + fixed(v.diff, 3, pt) + ' = ' + F(v.ratio);
+          result = '[A⁻]/[HA] = ' + A(v.ratio);
+          break;
+        case 'bf.range':
+          words.min = P(v.min);
+          words.max = P(v.max);
+          expr = v.inRange
+            ? P(v.min) + ' ≤ ' + F(v.ratio) + ' ≤ ' + P(v.max) + ' ✓'
+            : F(v.ratio) + (v.ratio < v.min ? ' < ' + P(v.min) : ' > ' + P(v.max)) + ' ✗';
           break;
         case 'ig.si':
           expr = v.given.map(function (g) {

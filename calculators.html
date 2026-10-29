@@ -2669,6 +2669,12 @@ function applyPhSpecies() {
   const species = document.getElementById('ph-species');
   if (kind) kind.addEventListener('change', updatePhFields);
   if (species) species.addEventListener('change', applyPhSpecies);
+  // A trail step can open a mode: ?ph=weakAcid, weakBase or buffer.
+  const want = new URLSearchParams(location.search).get('ph');
+  if (kind && ['weakAcid', 'weakBase', 'buffer'].indexOf(want) !== -1) {
+    kind.value = want;
+    updatePhFields();
+  }
 })();
 function phFixed(n, digits) {
   const text = Number(n).toFixed(digits);

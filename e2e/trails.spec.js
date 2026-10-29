@@ -1,5 +1,6 @@
-// Trails (prompt 32): progress is marked explicitly, survives a reload, and
-// sends nothing anywhere; step pages opened from the trail show the chip.
+// Trails (prompts 32 and 33): progress is marked explicitly, survives a
+// reload, and sends nothing anywhere; step pages opened from the trail show
+// the chip.
 const { test, expect } = require('@playwright/test');
 
 async function setup(page, lang) {
@@ -62,4 +63,29 @@ test('PT: the draft article shows the draft band, the worked examples and the ch
   // Without the trail parameters there is no chip.
   await page.goto('/explore/what-is-the-mole.pt.html?lang=pt-BR');
   await expect(page.locator('.trail-chip')).toHaveCount(0);
+});
+
+test('EN: the acid–base trail opens the pH calculator in the buffer mode, with the chip', async ({ page }) => {
+  await setup(page, 'en');
+  await page.goto('/trilhas/acido-base.html?lang=en');
+  await expect(page.locator('[data-trail-count]')).toHaveText('0 of 8 steps done');
+  await page.locator('.tr-step a', { hasText: 'buffer (Henderson–Hasselbalch)' }).click();
+  await expect(page).toHaveURL(/\/calculators\.html\?ph=buffer&trail=acido-base&step=6(&lang=en)?#ph/);
+  await expect(page.locator('.trail-chip a')).toHaveText('Trail: Acids and bases — step 6/8');
+  await expect(page.locator('#ph-kind')).toHaveValue('buffer');
+  await expect(page.locator('#ph-Ca')).toBeVisible();
+  await expect(page.locator('#ph-species')).toHaveValue('acetic');
+});
+
+test('PT: the solutions trail keeps its own progress next to the first trail', async ({ page }) => {
+  await setup(page, 'pt');
+  await page.goto('/trilhas/solucoes.pt.html?lang=pt-BR');
+  await expect(page.locator('[data-trail-count]')).toHaveText('0 de 7 etapas concluídas');
+  await page.locator('[data-trail-done="solucoes"]').click();
+  await expect(page.locator('[data-trail-count]')).toHaveText('1 de 7 etapas concluídas');
+  const stored = await page.evaluate(() => JSON.parse(localStorage.getItem('atomurus-trail-progress')));
+  expect(stored).toEqual({ solucoes: ['solucoes'] });
+  await page.goto('/explore/chemical-equilibrium.pt.html?lang=pt-BR');
+  await expect(page.locator('.art-draft')).toBeVisible();
+  await expect(page.locator('[data-calc="eq-q"] .aw-a')).toHaveText('Resposta: Q < K — sentido direto: mais ácido se ioniza.');
 });

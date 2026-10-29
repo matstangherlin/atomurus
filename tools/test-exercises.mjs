@@ -63,21 +63,34 @@ const EXPECT = {
   dilution: (v) => v.solve === 'V2'
     ? { value: v.C1 * v.V1 / v.C2, text: (lang) => 'V₂ = ' + sigText(v.C1 * v.V1 / v.C2, 4, lang) + ' mL' }
     : { value: v.C1 * v.V1 / v.V2, text: (lang) => 'C₂ = ' + sigText(v.C1 * v.V1 / v.V2, 4, lang) + ' mol/L' },
-  'ph-strong': (v) => ({ value: strongPH(v.mode, v.c), text: (lang) => 'pH = ' + fixed2(strongPH(v.mode, v.c), lang) })
+  'ph-strong': (v) => ({ value: strongPH(v.mode, v.c), text: (lang) => 'pH = ' + fixed2(strongPH(v.mode, v.c), lang) }),
+  'solution-prep': (v) => {
+    const m = v.C * (v.V / 1000) * molar(v.formula);
+    return { value: m, text: (lang) => 'm = ' + sigText(m, 4, lang) + ' g' };
+  },
+  // pKa is data (calc-core's sourced table); the arithmetic is done here.
+  buffer: (v) => {
+    const ratio = 10 ** (v.pH - PKA[v.acid]);
+    return { value: ratio, text: (lang) => '[A⁻]/[HA] = ' + sigText(ratio, 4, lang) };
+  }
 };
 // The engine's own number behind the answer.
 const ENGINE_VALUE = {
   'molar-mass': (r) => r.result.total,
   'moles-mass': (r, v) => (v.unit === 'g' ? r.result.moles : r.result.grams),
   dilution: (r) => r.result.value,
-  'ph-strong': (r) => r.result.pH
+  'ph-strong': (r) => r.result.pH,
+  'solution-prep': (r) => r.result.mass,
+  buffer: (r) => r.result.ratio
 };
 
 // ── Sources ─────────────────────────────────────────────────────────────────
 const ctx = engineContext();
 const X = ctx.AtomurusExercises;
+const PKA = Object.fromEntries(ctx.AtomurusCalcCore.ACID_BASE_CONSTANTS.filter((r) => r.pKa).map((r) => [r.id, r.pKa[0]]));
+assert.ok(ctx.AtomurusCalcCore.ACID_BASE_CONSTANTS.every((r) => /CRC|McQuarrie|OpenStax/.test(r.source)), 'every constant used by the buffer bank has a source');
 const defs = loadDefs();
-assert.deepEqual(defs.map((d) => d.id), TYPES, 'four types to start with');
+assert.deepEqual(defs.map((d) => d.id), TYPES, 'six types (prompts 30 and 33)');
 assert.deepEqual(defs.flatMap((d) => validate(d, ctx)), [], 'the sources validate');
 
 // The two weight tables agree for every element the bank uses (the site has
@@ -100,7 +113,7 @@ function check(def, vars, label) {
     assert.ok(Math.abs(got - want.value) <= 1e-9 * Math.max(1, Math.abs(want.value)), `${label}: engine ${got} = independent ${want.value}`);
     assert.equal(r.answer, want.text(lang), `${label} ${lang}: the answer reads «${want.text(lang)}»`);
     assert.doesNotMatch(r.answer + r.statement + JSON.stringify(r.steps), /NaN|undefined|Infinity/, `${label}: no NaN`);
-    assert.match(r.answer, /(g\/mol|mol|g|mL|mol\/L)$|^pH = /, `${label}: the answer has its unit`);
+    assert.match(r.answer, /(g\/mol|mol|g|mL|mol\/L)$|^pH = |^\[A⁻\]\/\[HA\] = /, `${label}: the answer has its unit (a ratio has none)`);
     if (lang === 'pt') assert.doesNotMatch(r.answer + r.statement, /\d\.\d/, `${label}: decimal comma in PT (${r.answer})`);
     else assert.doesNotMatch(r.answer + r.statement, /\d,\d/, `${label}: decimal point in EN`);
     assert.ok(r.steps.length >= 3 && r.steps.every((s) => s.text && s.expr), `${label}: steps with text and expression`);
@@ -133,6 +146,13 @@ const mm = defs.find((d) => d.id === 'molar-mass');
 const h2so4 = X.solve(mm, { formula: 'H2SO4' }, 'pt');
 assert.ok(h2so4.errors[0].includes(sigText(MASS.H + MASS.S + MASS.O, 5, 'pt') + ' g/mol'), 'H₂SO₄ with each element once');
 assert.equal(X.solve(mm, { formula: 'NaCl' }, 'pt').errors.length, 0, 'no «forgot the subscript» where there is none');
+const sp = defs.find((d) => d.id === 'solution-prep');
+assert.ok(X.solve(sp, { formula: 'NaCl', C: 0.1, V: 250 }, 'pt').errors[0].includes(sigText(0.1 * 250 * molar('NaCl'), 4, 'pt') + ' g'), 'millilitres used as litres');
+const bf = defs.find((d) => d.id === 'buffer');
+const outOfRange = X.solve(bf, { acid: 'acetic', pH: 6 }, 'pt');
+assert.ok(outOfRange.steps[2].expr.endsWith('✗'), 'a ratio past 10 is flagged (pH beyond pKa + 1)');
+assert.ok(X.solve(bf, { acid: 'acetic', pH: 5 }, 'pt').steps[2].expr.endsWith('✓'));
+assert.match(X.solve(bf, { acid: 'acetic', pH: 5 }, 'pt').statement, /ácido acético e acetato/, 'names from calc-core, lower case mid-sentence');
 const ph = defs.find((d) => d.id === 'ph-strong');
 assert.ok(X.solve(ph, { mode: 'OH', solute: 'NaOH', c: 0.01 }, 'en').errors[0].includes('2.00'), 'pOH taken for the pH');
 assert.ok(X.solve(ph, { mode: 'H', solute: 'HCl', c: 0.01 }, 'en').errors[0].includes('−2.00'), 'the sign dropped');

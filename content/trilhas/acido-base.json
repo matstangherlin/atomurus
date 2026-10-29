@@ -1,0 +1,101 @@
+{
+  "id": "acido-base",
+  "status": "draft",
+  "reviewedBy": null,
+  "level": "medio",
+  "minutes": 125,
+  "title": { "pt": "Ácido-base", "en": "Acids and bases" },
+  "summary": {
+    "pt": "Do pH de ácidos fortes ao tampão: oito etapas do site, na ordem, para entender e calcular o pH. Leia, use a calculadora, pratique, experimente no Lab e aplique numa ficha.",
+    "en": "From the pH of strong acids to buffers: eight steps of the site, in order, to understand and calculate pH. Read, use the calculator, practise, try it in the Lab and apply it on a sheet."
+  },
+  "steps": [
+    {
+      "id": "acidos-bases", "type": "article", "estMinutes": 15,
+      "title": { "pt": "Ácidos, bases e pH", "en": "Acids, bases and pH" },
+      "href": { "pt": "/explore/acids-bases-and-ph.pt.html", "en": "/explore/acids-bases-and-ph.html" }
+    },
+    {
+      "id": "ph-forte", "type": "tool", "estMinutes": 10,
+      "title": { "pt": "Calculadora de pH: ácido ou base forte", "en": "pH calculator: strong acid or base" },
+      "href": { "pt": "/calculators.pt.html#ph", "en": "/calculators.html#ph" }
+    },
+    {
+      "id": "exercicios-ph", "type": "exercises", "estMinutes": 20, "requires": ["ph-forte"],
+      "title": { "pt": "Exercícios de pH de ácido e base fortes", "en": "pH of strong acids and bases exercises" },
+      "href": { "pt": "/exercises/ph-strong.pt.html", "en": "/exercises/ph-strong.html" }
+    },
+    {
+      "id": "lab-ph", "type": "lab", "estMinutes": 20,
+      "title": { "pt": "Lab: Desafio de pH (prever, observar, explicar)", "en": "Lab: pH Challenge (predict, observe, explain)" },
+      "href": { "pt": "/app?section=lab&mode=guided&creation=ph", "en": "/app?section=lab&mode=guided&creation=ph" }
+    },
+    {
+      "id": "ph-fraco", "type": "tool", "estMinutes": 10, "requires": ["acidos-bases"],
+      "title": { "pt": "Calculadora de pH: ácido fraco e Ka", "en": "pH calculator: weak acid and Ka" },
+      "href": { "pt": "/calculators.pt.html?ph=weakAcid#ph", "en": "/calculators.html?ph=weakAcid#ph" }
+    },
+    {
+      "id": "tampao", "type": "tool", "estMinutes": 10, "requires": ["ph-fraco"],
+      "title": { "pt": "Calculadora de pH: tampão (Henderson–Hasselbalch)", "en": "pH calculator: buffer (Henderson–Hasselbalch)" },
+      "href": { "pt": "/calculators.pt.html?ph=buffer#ph", "en": "/calculators.html?ph=buffer#ph" }
+    },
+    {
+      "id": "ficha", "type": "sheet", "estMinutes": 30, "requires": ["exercicios-ph"],
+      "title": { "pt": "Ficha F3: pH do cotidiano", "en": "Sheet F3: everyday pH" },
+      "href": { "pt": "/fichas/F3.pt.html", "en": "/fichas/F3.html" }
+    },
+    {
+      "id": "revisao", "type": "review", "estMinutes": 10,
+      "title": { "pt": "Revisão e autoavaliação", "en": "Review and self-check" },
+      "href": { "pt": "#revisao", "en": "#revisao" }
+    },
+    {
+      "id": "extra-tampao", "type": "exercises", "estMinutes": 20, "optional": true, "requires": ["tampao"],
+      "title": { "pt": "Extra: exercícios de tampão", "en": "Extra: buffer exercises" },
+      "href": { "pt": "/exercises/buffer.pt.html", "en": "/exercises/buffer.html" }
+    },
+    {
+      "id": "extra-equilibrio", "type": "article", "estMinutes": 15, "optional": true,
+      "title": { "pt": "Extra: equilíbrio químico", "en": "Extra: chemical equilibrium" },
+      "href": { "pt": "/explore/chemical-equilibrium.pt.html", "en": "/explore/chemical-equilibrium.html" }
+    }
+  ],
+  "review": {
+    "recap": {
+      "pt": [
+        "pH = −log₁₀[H⁺]: cada unidade de pH é um fator de dez na concentração de H⁺.",
+        "Ácidos e bases fortes se ionizam totalmente; os fracos só em parte, medida por Ka ou pKa.",
+        "Força e concentração são coisas diferentes.",
+        "Neutro é [H⁺] = [OH⁻]; isso dá pH 7 só a 25 °C.",
+        "Um tampão de ácido fraco e base conjugada mantém o pH perto de pKa + log₁₀([A⁻]/[HA])."
+      ],
+      "en": [
+        "pH = −log₁₀[H⁺]: each pH unit is a factor of ten in the H⁺ concentration.",
+        "Strong acids and bases ionize completely; weak ones only in part, as measured by Ka or pKa.",
+        "Strength and concentration are different things.",
+        "Neutral means [H⁺] = [OH⁻]; that gives pH 7 only at 25 °C.",
+        "A buffer of a weak acid and its conjugate base keeps the pH near pKa + log₁₀([A⁻]/[HA])."
+      ]
+    },
+    "questions": [
+      { "id": "q1", "kind": "computed", "calc": "rev-ph-hcl" },
+      { "id": "q2", "kind": "computed", "calc": "rev-buffer-ratio" },
+      {
+        "id": "q3", "kind": "text",
+        "prompt": { "pt": "Uma solução tem pH 3 e outra pH 5. Quantas vezes mais H⁺ tem a primeira?", "en": "One solution has pH 3 and another pH 5. How many times more H⁺ does the first have?" },
+        "answer": { "pt": "Cem vezes: são duas unidades, e cada uma é um fator de dez.", "en": "A hundred times: two units, each a factor of ten." }
+      },
+      {
+        "id": "q4", "kind": "text",
+        "prompt": { "pt": "O ácido clorídrico 0,001 mol/L é um ácido forte ou fraco?", "en": "Is 0.001 mol/L hydrochloric acid a strong or a weak acid?" },
+        "answer": { "pt": "Forte: ele se ioniza totalmente. Está diluído, o que é outra coisa.", "en": "Strong: it ionizes completely. It is dilute, which is a different thing." }
+      },
+      {
+        "id": "q5", "kind": "text",
+        "prompt": { "pt": "A água pura quente tem pH abaixo de 7. Ela é ácida?", "en": "Hot pure water has a pH below 7. Is it acidic?" },
+        "answer": { "pt": "Não. Ela continua neutra, porque [H⁺] = [OH⁻]; o Kw é maior em temperatura mais alta, então o pH neutro fica abaixo de 7.", "en": "No. It is still neutral, because [H⁺] = [OH⁻]; Kw is larger at a higher temperature, so the neutral pH is below 7." }
+      }
+    ]
+  }
+}

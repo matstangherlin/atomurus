@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html data-ps-chrome="1" lang="en-US" data-theme="light">
+<head>
+<style>html[data-theme="dark"] #icon-theme-light,html[data-theme="light"] #icon-theme-dark{display:none!important}html[data-theme="dark"] #icon-theme-dark,html[data-theme="light"] #icon-theme-light{display:block!important}</style>
+<script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var q=new URLSearchParams(location.search);var p=q.get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem('atomurus-lang');var path=location.pathname;var isPt=/\.pt\.html$/i.test(path)||/\.pt$/i.test(path);if(!l&&isPt)l='pt';if(!l){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}if(l==='pt'){document.documentElement.lang='pt-BR';}else{document.documentElement.lang='en-US';}localStorage.setItem('atomurus-lang',l);var u=new URL(location.href);if(l==='pt'&&!isPt){if(/\.html$/i.test(path)){u.pathname=path.replace(/\.html$/i,'.pt.html');}else if(path.charAt(path.length-1)!=='/'){u.pathname=path+'.pt.html';}u.searchParams.set('lang','pt-BR');if(u.href!==location.href)location.replace(u.href);}else if(l==='en'&&isPt){if(/\.pt\.html$/i.test(path)){u.pathname=path.replace(/\.pt\.html$/i,'.html');}else{u.pathname=path.replace(/\.pt$/i,'');}u.searchParams.set('lang','en');if(u.href!==location.href)location.replace(u.href);}}catch(e){}})();</script>
+
+<meta charset="UTF-8">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1E6A50" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E0D0C" media="(prefers-color-scheme: dark)">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" type="image/png" href="../assets/atomurus-logo.png?v=202608041630">
+<link rel="apple-touch-icon" href="../assets/atomurus-logo.png?v=202608041630">
+
+<title>Chemical equilibrium: reversible reactions, K and Q, and Le Chatelier’s principle | Atomurus</title>
+<meta name="description" content="What chemical equilibrium is: reversible reactions that go on at equal rates. How the equilibrium constant K and the reaction quotient Q predict the direction of a reaction, a worked ICE-table example and Le Chatelier’s principle.">
+<meta name="keywords" content="chemical equilibrium, reversible reaction, equilibrium constant, reaction quotient, ICE table, Le Chatelier">
+<meta name="author" content="Atomurus">
+<meta property="og:title" content="Chemical equilibrium: reversible reactions, K and Q, and Le Chatelier’s principle">
+<meta property="og:description" content="What chemical equilibrium is: reversible reactions that go on at equal rates. How the equilibrium constant K and the reaction quotient Q predict the direction of a reaction, a worked ICE-table example and Le Chatelier’s principle.">
+<meta property="og:image" content="https://atomurus.com/assets/og-explore.png?v=202608041630">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://atomurus.com/explore/chemical-equilibrium">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Atomurus">
+<meta property="article:published_time" content="2026-10-29">
+<meta property="article:section" content="Chemistry Concepts">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Chemical equilibrium: reversible reactions, K and Q, and Le Chatelier’s principle">
+<meta name="twitter:description" content="What chemical equilibrium is: reversible reactions that go on at equal rates. How the equilibrium constant K and the reaction quotient Q predict the direction of a reaction, a worked ICE-table example and Le Chatelier’s principle.">
+<meta name="twitter:image" content="https://atomurus.com/assets/og-explore.png?v=202608041630">
+<link rel="canonical" href="https://atomurus.com/explore/chemical-equilibrium">
+<link rel="alternate" hreflang="en" href="https://atomurus.com/explore/chemical-equilibrium">
+<link rel="alternate" hreflang="pt-BR" href="https://atomurus.com/explore/chemical-equilibrium?lang=pt-BR">
+<link rel="alternate" hreflang="x-default" href="https://atomurus.com/explore/chemical-equilibrium">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Chemical equilibrium: reversible reactions, K and Q, and Le Chatelier’s principle",
+      "description": "What chemical equilibrium is: reversible reactions that go on at equal rates. How the equilibrium constant K and the reaction quotient Q predict the direction of a reaction, a worked ICE-table example and Le Chatelier’s principle.",
+      "image": "https://atomurus.com/assets/og-explore.png",
+      "datePublished": "2026-10-29",
+      "dateModified": "2026-10-29",
+      "inLanguage": "en",
+      "author": { "@type": "Organization", "name": "Atomurus", "url": "https://atomurus.com/" },
+      "publisher": { "@type": "Organization", "name": "Atomurus", "logo": { "@type": "ImageObject", "url": "https://atomurus.com/assets/atomurus-logo.png" } },
+      "mainEntityOfPage": { "@type": "WebPage", "@id": "https://atomurus.com/explore/chemical-equilibrium" },
+      "articleSection": "Chemistry Concepts",
+      "keywords": "chemical equilibrium, reversible reaction, equilibrium constant, reaction quotient, ICE table, Le Chatelier"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type":"ListItem","position":1,"name":"Atomurus","item":"https://atomurus.com/"},
+        {"@type":"ListItem","position":2,"name":"Explore","item":"https://atomurus.com/explore"},
+        {"@type":"ListItem","position":3,"name":"Chemical equilibrium","item":"https://atomurus.com/explore/chemical-equilibrium"}
+      ]
+    }
+  ]
+}
+</script>
+
+
+<link rel="preload" href="/assets/fonts/inter-tight-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/instrument-serif-400-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/instrument-serif-400-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202608041630">
+<script src="../i18n.js?v=202608041630" defer></script>
+<script src="/assets/trail-chip.js?v=202610291200" defer></script>
+<script src="../share-button.js?v=202608041630" defer></script>
+<script src="../page-share-init.js?v=202608041630" defer></script>
+<link rel="stylesheet" href="/assets/critical-lab.css?v=202608041630">
+<script>document.documentElement.classList.add('lc-loading');setTimeout(function(){document.documentElement.classList.remove('lc-loading')},4000);</script>
+<link rel="preload" href="../atomurus-lab-console.css?v=202608041630" as="style">
+<link rel="stylesheet" href="../atomurus-lab-console.css?v=202608041630" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
+<noscript><link rel="stylesheet" href="../atomurus-lab-console.css?v=202608041630"></noscript>
+<link rel="stylesheet" href="/assets/public-shell.css?v=202608281830">
+<script src="../assets/global-nav.js?v=202609090500"></script>
+<script src="/assets/public-workspace.js?v=202608282500"></script>
+<link rel="stylesheet" href="/assets/ui/index.css?v=202609090500">
+<link rel="stylesheet" href="../explore-article.css?v=202608041630">
+<link rel="stylesheet" href="/assets/layouts/article.css?v=202609101700">
+<link rel="stylesheet" href="/assets/ui/worked-solution.css?v=202610291200">
+<style>
+  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100vh; overflow: hidden; }
+  body { display: flex; }
+  .sidebar { width: 220px; flex-shrink: 0; display: flex; flex-direction: column; overflow: hidden; padding-bottom: 22px; }
+  .sidebar > .logo-wrap, .sidebar > .sidebar-foot { flex-shrink: 0; }
+  .sidebar-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; }
+  .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+  .sidebar-scroll::-webkit-scrollbar-thumb { background: var(--lc-rule); }
+  .logo-wrap { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
+  .logo-mark { display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .logo-mark svg circle[fill] { fill: currentColor !important; stroke: none; }
+  .nav-section { padding: 10px 0 4px; display: block; }
+  .nav-expandable .nav-row { display: flex; align-items: center; gap: 10px; padding: 5px 14px 5px 12px; cursor: pointer; font-family: var(--lc-sans); font-size: 12.5px; color: var(--lc-ink-2); transition: background .12s, color .12s; user-select: none; }
+  .nav-expandable .nav-row:hover { background: var(--lc-surface); color: var(--lc-ink); }
+  .nav-expandable.has-active .nav-row { color: var(--lc-ink); font-weight: 500; }
+  .nav-chevron { margin-left: auto; width: 11px; height: 11px; opacity: .45; transition: transform .2s; flex-shrink: 0; }
+  .nav-expandable.open .nav-chevron { transform: rotate(90deg); opacity: .75; }
+  .nav-children { display: none; margin: 2px 0 4px 12px; padding-left: 8px; border-left: 1px solid var(--lc-rule); }
+  .nav-expandable.open .nav-children { display: block; }
+  .nav-children .nav-item { padding: 6px 8px; font-size: 12.5px; }
+  .nav-children .nav-icon { width: 13px; height: 13px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; text-decoration: none; cursor: pointer; user-select: none; white-space: nowrap; position: relative; }
+  .sidebar-foot { display: flex; flex-direction: column; }
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+  .topbar { display: flex; align-items: center; gap: 14px; flex-shrink: 0; padding: 0 18px; }
+  .mobile-menu-btn { display: none; }
+  .breadcrumb { display: flex; align-items: center; gap: 7px; }
+  .breadcrumb a { color: inherit; text-decoration: none; opacity: .75; }
+  .breadcrumb a:hover { opacity: 1; color: var(--lc-ink); }
+  .content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 0 0 50px; position: relative; }
+  .content::-webkit-scrollbar { width: 6px; }
+  .content::-webkit-scrollbar-thumb { background: var(--lc-rule); }
+  @media (max-width: 760px) {
+    body { flex-direction: column; height: auto; overflow: auto; }
+    html { height: auto; overflow: auto; }
+    .sidebar { width: 100%; overflow: visible; }
+    .main { height: auto; overflow: visible; }
+    .content { overflow: visible; }
+  }
+</style>
+<link rel="stylesheet" href="/assets/print.css?v=202610281500" media="print">
+</head>
+<body class="ps-body">
+<a class="skip-link" href="#main-content" data-i18n="common.skipToContent">Skip to content</a>
+
+<!-- ════════════ SIDEBAR ════════════ -->
+<div class="ps-shell" id="ps-shell">
+<div class="topbar">
+    <a class="ps-brand logo-wrap" href="../index.html" title="Atomurus home">
+    <div class="logo-mark">
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="2.5" fill="currentColor"/>
+        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/>
+        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/>
+        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/>
+      </svg>
+    </div>
+    <div>
+      <div class="logo-text">Atomurus</div>
+      <div class="logo-tag" data-i18n="common.brandTag">chemistry lab</div>
+    </div>
+  </a>
+    <button class="mobile-menu-btn" onclick="toggleMobileSidebar()" aria-label="Open menu">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><line x1="2" y1="4.5" x2="14" y2="4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="2" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="2" y1="11.5" x2="14" y2="11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+    </button>
+    <div class="breadcrumb" hidden>
+      <a href="../index.html" data-i18n="common.footer.workspace">Workspace</a>
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="opacity:.35"><path d="M3.5 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      <a href="../explore.html" data-i18n="common.nav.explore">Explore</a>
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="opacity:.35"><path d="M3.5 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      <span>Chemical equilibrium</span>
+    </div>
+    <form class="ps-search search-box" role="search" action="../periodic-table.html" method="get">
+  <label class="lc-sr-only" for="ps-search-q">Search element</label>
+  <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+    <circle cx="5.5" cy="5.5" r="4" stroke="currentColor" stroke-width="1.4"/>
+    <line x1="8.7" y1="8.7" x2="11.5" y2="11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+  </svg>
+  <input id="ps-search-q" name="q" type="search" autocomplete="off" data-i18n-attr="placeholder:common.searchPlaceholder" placeholder="search element, symbol or Z…">
+  <button type="submit" data-i18n-attr="aria-label:common.searchAria" aria-label="Search element">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <circle cx="6" cy="6" r="4.2" stroke="currentColor" stroke-width="1.3"/>
+      <path d="M9.2 9.2 12 12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+    </svg>
+  </button>
+</form>
+    <button class="theme-btn" onclick="location.href='chemical-equilibrium.html?lang=pt-BR'" data-i18n-attr="title:common.langToggle" title="Switch language" aria-label="PT — Switch language" style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;width:auto;min-width:32px;padding:0 8px;">
+      <span>PT</span>
+    </button>
+    <button class="theme-btn" onclick="toggleTheme()" data-i18n-attr="title:common.themeToggle; aria-label:common.themeToggle" title="Toggle theme" aria-label="Toggle theme" style="margin-left:4px;">
+      <svg id="icon-theme-light" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M11.5 7.5A4.5 4.5 0 0 1 6.5 2.5 4.5 4.5 0 1 0 11.5 7.5z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/></svg>
+      <svg id="icon-theme-dark" width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M7 1v1.4M7 11.6V13M1 7h1.4M11.6 7H13M2.5 2.5l1 1M10.5 10.5l1 1M2.5 11.5l1-1M10.5 3.5l1-1" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+    </button>
+  <div class="ps-account" data-atomurus-account>
+  <span class="ps-plan-badge" data-atomurus-plan-badge hidden></span>
+  <a class="ps-userchip lc-topnav-cta" href="../login.html" data-atomurus-account-chip aria-label="Account">
+    <svg class="ps-userchip-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span data-i18n="pricing.ctaAccount">Account</span>
+  </a>
+</div>
+  </div>
+<div class="mobile-overlay" id="mobile-overlay" onclick="toggleMobileSidebar()"></div>
+<aside class="ws-sidebar sidebar ps-pub-sidebar" id="ws-sidebar" data-atomurus-sidebar>
+  <nav class="ws-nav" id="ws-nav-main" aria-label="Laboratory" data-atomurus-lab-nav>
+    <div class="ws-nav-block ws-nav-site">
+      <h2 class="ws-nav-group" data-i18n="common.nav.laboratory">Laboratory</h2>
+      <a class="ws-nav-item" href="/" data-nav="home">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M2.5 7.5 8 3l5.5 4.5M4 6.5V13h8V6.5M6.5 13V9h3v4"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.home">Home</span>
+      </a>
+      <a class="ws-nav-item" href="/periodic-table.html" data-nav="periodic">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.periodic">Periodic Table</span>
+      </a>
+      <a class="ws-nav-item" href="/viewer/atomic-models.html" data-nav="viewer">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="8" cy="8" r="2"/><ellipse cx="8" cy="8" rx="6" ry="2.5"/><ellipse cx="8" cy="8" rx="6" ry="2.5" transform="rotate(60 8 8)"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.visualizador">Viewer</span>
+      </a>
+      <a class="ws-nav-item" href="/calculators.html" data-nav="calculators">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="2" width="10" height="12" rx="1"/><path d="M5 5h6M5.5 8h1M9.5 8h1M5.5 11h1M9.5 11h1"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.calc">Calculators</span>
+      </a>
+      <a class="ws-nav-item" href="/explore.html" data-nav="explore">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.explore">Explore</span>
+      </a>
+      <a class="ws-nav-item" href="/app" data-nav="workspace">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 12l4-4 2 2 4-6"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.workspace">Workspace</span>
+      </a>
+    </div>
+  </nav>
+  <div class="ws-nav-foot sidebar-foot" id="ws-nav-foot" data-atomurus-nav-foot>
+    <a class="ws-nav-item" href="/login" data-nav="account" data-auth-nav-link="common.nav.login">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5"/></g></svg>
+      <span class="ws-nav-label" data-i18n="common.nav.login">Account</span>
+    </a>
+    <a class="ws-nav-item" href="/pricing" data-nav="plans">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 5h8v8H4zM6 3v2M10 3v2"/></g></svg>
+      <span class="ws-nav-label" data-i18n="common.nav.plans">Plans</span>
+    </a>
+  </div>
+</aside>
+<main class="main" id="main-content" tabindex="-1">
+  
+
+  <div class="data-strip">
+    <span class="ds-k">scope</span><span class="ds-v">DOC.ARTICLE</span>
+    <span class="ds-sep"></span>
+    <span class="ds-k">section</span><span class="ds-v">concepts · equilibrium</span>
+    <span class="ds-sep"></span>
+    <span class="ds-k">elements</span><span class="ds-v ds-hi">aA + bB ⇌ cC + dD</span>
+    <span class="ds-spacer"></span>
+    <span class="ds-k">standard</span><span class="ds-v">25 °C</span>
+  </div>
+
+  <div class="content" id="content">
+    <div class="art-progress" id="art-progress"><span></span></div>
+
+    <div class="art-wrap">
+      <header class="art-hero">
+        <div class="art-kicker">
+          <span>Explore Atomurus</span>
+          <span class="art-cat ui-badge">Chemistry Concepts</span>
+          <span class="art-cat ui-badge">Equilibrium</span>
+        </div>
+        <h1 class="art-title">Chemical <em>equilibrium</em>: reversible reactions, K and Q, and Le Chatelier’s principle</h1>
+        <p class="art-dek">At equilibrium a reaction looks finished, but it is not: the forward and reverse reactions go on at the same rate. Learn what K and Q say about a mixture, how to find the concentrations at equilibrium and how the balance responds when conditions change.</p>
+        <p class="art-draft" role="note">Draft — under teacher review. Not published yet.</p>
+        <div class="lab-tool-cta">
+          <p>Find the pH of a weak acid at equilibrium.</p>
+          <a href="../calculators.html?ph=weakAcid#ph">Open the pH calculator</a>
+        </div>
+        <div class="art-meta">
+          <span><strong>Atomurus</strong> · Editorial</span>
+          <span class="am-dot"></span>
+          <span>Updated 29 Oct 2026</span>
+          <span class="am-dot"></span>
+          <span>≈ 9 min read</span>
+        </div>
+<!-- ed:level -->
+<p class="article-level"><span class="article-level-chip" data-i18n="article.level.intermediate">Intermediate</span></p>
+<!-- /ed:level -->
+<!-- ed:learn -->
+<aside class="article-learn" aria-labelledby="article-learn-title">
+  <h2 id="article-learn-title" data-i18n="article.learn.title">You will learn</h2>
+  <ul>
+    <li>Explain why chemical equilibrium is dynamic</li>
+    <li>Use K and Q to predict which way a mixture reacts</li>
+    <li>Apply Le Chatelier’s principle qualitatively</li>
+  </ul>
+</aside>
+<!-- /ed:learn -->
+</header>
+
+      <div class="art-grid">
+        <article class="art-body" id="art-body">
+
+          <p class="lead">Many reactions do not simply run until the reactants are used up. They go both ways at once, and after a while the mixture stops changing even though neither reaction has stopped. That state is <strong>chemical equilibrium</strong>.</p>
+
+          <p>In this article you will see what a reversible reaction is, why equilibrium is dynamic, how the equilibrium constant K and the reaction quotient Q tell you which way a mixture will react, how to find the concentrations at equilibrium with a simple table, and what Le Chatelier’s principle predicts when the conditions change. The numbers in the examples come from the Atomurus engines, at 25 °C.</p>
+
+          <div class="art-callout">
+            <span class="ac-label">Quick definition</span>
+            A system is at <strong>chemical equilibrium</strong> when the forward and reverse reactions go on at the same rate, so the concentrations no longer change. For a reaction <span translate="no">aA + bB ⇌ cC + dD</span>, the <strong>equilibrium constant</strong> is <span translate="no">K = [C]ᶜ[D]ᵈ ÷ ([A]ᵃ[B]ᵇ)</span>, with the concentrations at equilibrium.
+          </div>
+
+          <figure class="art-fig" role="img" aria-label="Graph of concentration against time for a reversible reaction: the reactant concentration falls and the product concentration rises, both quickly at first and then more slowly, until both level off and stay constant once equilibrium is reached.">
+            <svg viewBox="0 0 640 200" width="100%" aria-hidden="true" focusable="false">
+              <path d="M60 20v150h560" fill="none" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M330 20v150" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4"/>
+              <path d="M60 32C160 72 240 88 330 90L610 90" fill="none" stroke="#B96B0C" stroke-width="3"/>
+              <path d="M60 168C160 130 240 122 330 120L610 120" fill="none" stroke="#2A4878" stroke-width="3"/>
+              <g font-family="Inter Tight, sans-serif" font-size="13" fill="currentColor">
+                <text x="470" y="82">reactant</text><text x="470" y="140">product</text>
+                <text x="340" y="36">equilibrium reached</text>
+                <text x="560" y="190">time</text>
+                <text x="66" y="16">concentration</text>
+              </g>
+            </svg>
+            <figcaption>Towards equilibrium: the concentrations change quickly at first, then level off. After the dashed line they stay constant, while both reactions go on.</figcaption>
+          </figure>
+
+          <h2><span class="h-no">§ 01</span> Reversible reactions</h2>
+          <p>Some reactions go almost entirely one way: burnt methane does not turn back into methane and oxygen on its own. Many others can go in both directions. Acetic acid in water gives hydrogen ions and acetate ions, and hydrogen ions and acetate ions join again into acetic acid. Such a reaction is written with a double arrow:</p>
+          <p class="art-eq" translate="no">CH₃COOH ⇌ H⁺ + CH₃COO⁻</p>
+          <p>The reaction to the right is the <strong>forward</strong> reaction and the one to the left the <strong>reverse</strong> reaction. Another example used in many textbooks is nitrogen dioxide, a brown gas, which joins into colourless dinitrogen tetroxide, <span translate="no">2 NO₂ ⇌ N₂O₄</span>. In a sealed tube the colour stops changing once both gases are present in fixed amounts.</p>
+
+          <h2><span class="h-no">§ 02</span> A dynamic balance</h2>
+          <p>At the start only acetic acid is present, so only the forward reaction happens. As ions form, the reverse reaction starts and speeds up, while the forward reaction slows down because less acid is left. Eventually the two rates are equal. From then on the concentrations stay constant: in every second as many molecules ionize as ions recombine.</p>
+          <p>Nothing seems to happen, yet both reactions are still going on, which is why equilibrium is called <strong>dynamic</strong>. It can also be reached from either side: starting from the ions in the matching amounts, the reverse reaction leads to a mixture of the same composition at the same temperature.</p>
+
+          <h2><span class="h-no">§ 03</span> The equilibrium constant K</h2>
+          <p>At a given temperature the concentrations at equilibrium always satisfy one relation, the equilibrium constant. The products go on top and the reactants below, each raised to its coefficient in the equation; water as the solvent, pure liquids and pure solids are left out. For acetic acid the constant is called the acid dissociation constant:</p>
+          <p class="art-eq" translate="no">Ka = [H⁺][CH₃COO⁻] ÷ [CH₃COOH] = 1.754 × 10⁻⁵ (25 °C)</p>
+          <p>This is the value for pKa = 4.756 (CRC Handbook, via OpenStax). A large K, much greater than 1, means that the products dominate at equilibrium; a small K, like this one, means that the reactants do. K depends on the temperature, and for a given reaction only on the temperature — not on the amounts you start with.</p>
+
+          <h2><span class="h-no">§ 04</span> Concentrations at equilibrium</h2>
+          <p>When K and the starting concentrations are known, the concentrations at equilibrium can be found with a table of three rows: initial, change and equilibrium, often called an ICE table. The change is written with one unknown, x, using the coefficients of the equation:</p>
+          <div class="art-worked" data-calc="eq-ice">
+<!-- calc:eq-ice -->
+<p class="aw-q">Example: an ICE table for 0.10 mol/L acetic acid: <span translate="no">CH₃COOH ⇌ H⁺ + CH₃COO⁻</span></p><ol class="wsol-steps"><li><span class="wsol-text">Initial (I), before any ionization, in mol/L.</span> <span class="wsol-expr" translate="no">[CH₃COOH] = 0.10 · [H⁺] ≈ 0 · [CH₃COO⁻] = 0</span></li><li><span class="wsol-text">Change (C): x mol/L of the acid ionizes.</span> <span class="wsol-expr" translate="no">−x · +x · +x</span></li><li><span class="wsol-text">Equilibrium (E): what is left of the acid and what has formed.</span> <span class="wsol-expr" translate="no">[CH₃COOH] = 0.10 − x · [H⁺] = x · [CH₃COO⁻] = x</span></li><li><span class="wsol-text">Put the equilibrium row into K (Ka at 25 °C, from pKa = 4.756).</span> <span class="wsol-expr" translate="no">Ka = x² ÷ (0.10 − x) = 1.754 × 10⁻⁵</span></li><li><span class="wsol-text">Solve for the one unknown: the positive root of x² + Ka·x − Ka·C = 0.</span> <span class="wsol-expr" translate="no">x = 1.316 × 10⁻³ mol/L</span></li><li><span class="wsol-text">The equilibrium concentrations.</span> <span class="wsol-expr" translate="no">[CH₃COOH] = 0.09868 mol/L · [H⁺] = [CH₃COO⁻] = 1.316 × 10⁻³ mol/L</span></li></ol><p class="aw-a">Answer: <span translate="no">x = 1.316 × 10⁻³ mol/L · pH = 2.88</span></p>
+<!-- /calc:eq-ice -->
+          </div>
+          <p>Only about 1.3 % of the acid is ionized at equilibrium, which is what makes acetic acid a weak acid. The article on <a href="acids-bases-and-ph.html">acids, bases and pH</a> reaches the same pH from the same equilibrium.</p>
+
+          <h2><span class="h-no">§ 05</span> The reaction quotient Q</h2>
+          <p>The <strong>reaction quotient</strong> Q has the same expression as K but uses the concentrations at any moment, not only at equilibrium. Comparing the two tells you which way a mixture will react: if Q &lt; K, the forward reaction goes on until Q rises to K; if Q &gt; K, the reverse reaction does; if Q = K, the mixture is already at equilibrium.</p>
+          <div class="art-worked" data-calc="eq-q">
+<!-- calc:eq-q -->
+<p class="aw-q">Example: a mixture holds 0.10 mol/L acetic acid and 1.0 × 10⁻³ mol/L each of H⁺ and acetate. Which way does it react?</p><ol class="wsol-steps"><li><span class="wsol-text">Q has the same form as K, with the concentrations as they are now.</span> <span class="wsol-expr" translate="no">Q = [H⁺][CH₃COO⁻] ÷ [CH₃COOH] = (1.0 × 10⁻³)² ÷ 0.10 = 1.0 × 10⁻⁵</span></li><li><span class="wsol-text">Compare Q with K at the same temperature (25 °C).</span> <span class="wsol-expr" translate="no">Q = 1.0 × 10⁻⁵ &lt; Ka = 1.754 × 10⁻⁵</span></li><li><span class="wsol-text">There is less product than at equilibrium: the net reaction goes forward (more acid ionizes) until Q = K.</span> <span class="wsol-expr" translate="no">Q &lt; K → CH₃COOH ⟶ H⁺ + CH₃COO⁻</span></li></ol><p class="aw-a">Answer: <span translate="no">Q &lt; K</span> — forward: more acid ionizes.</p>
+<!-- /calc:eq-q -->
+          </div>
+
+          <h2><span class="h-no">§ 06</span> Le Chatelier’s principle</h2>
+          <p>When a system at equilibrium is disturbed, it responds in the direction that partly counteracts the disturbance, until a new equilibrium is reached. This qualitative rule, <strong>Le Chatelier’s principle</strong>, covers the usual cases:</p>
+          <ul>
+            <li><strong>Concentration.</strong> Adding a reactant or removing a product makes Q smaller than K, so the forward reaction goes on. Adding acetate to acetic acid does the opposite: Q grows and the acid ionizes less, the common-ion effect behind buffers.</li>
+            <li><strong>Pressure.</strong> Compressing a mixture of gases favours the side with fewer gas molecules: compressing <span translate="no">2 NO₂ ⇌ N₂O₄</span> favours N₂O₄.</li>
+            <li><strong>Temperature.</strong> Heating or cooling changes K itself. For a reaction that releases heat in the forward direction, heating lowers K: the sealed tube of NO₂ turns darker when warmed and paler when cooled.</li>
+            <li><strong>Catalyst.</strong> A catalyst speeds up the forward and reverse reactions alike: equilibrium is reached sooner, but its position does not change.</li>
+          </ul>
+          <p>The principle says which way the mixture moves, not how far; for that you need K, as in the common-ion case:</p>
+          <div class="art-worked" data-calc="eq-common-ion">
+<!-- calc:eq-common-ion -->
+<p class="aw-q">Example: sodium acetate is added to 0.10 mol/L acetic acid until the acetate reaches 0.10 mol/L. What happens to the ionization?</p><ol class="wsol-steps"><li><span class="wsol-text">Before: the acid alone, as in the ICE table.</span> <span class="wsol-expr" translate="no">[H⁺] = 1.316 × 10⁻³ mol/L · pH = 2.88 · α = 1.3 %</span></li><li><span class="wsol-text">The added acetate makes Q larger than K: the reverse reaction goes on until Q = K again.</span> <span class="wsol-expr" translate="no">Q &gt; Ka → H⁺ + CH₃COO⁻ ⟶ CH₃COOH</span></li><li><span class="wsol-text">At the new equilibrium, with the same Ka and both concentrations close to 0.10 mol/L: [H⁺] = Ka × [CH₃COOH] ÷ [CH₃COO⁻].</span> <span class="wsol-expr" translate="no">[H⁺] = 1.754 × 10⁻⁵ × 0.10 ÷ 0.10 = 1.754 × 10⁻⁵ mol/L · pH = 4.76</span></li><li><span class="wsol-text">The fraction ionized drops; K has not changed.</span> <span class="wsol-expr" translate="no">α = 1.754 × 10⁻⁵ ÷ 0.10 = 0.018 %</span></li></ol><p class="aw-a">Answer: <span translate="no">pH 2.88 → 4.76 · α 1.3 % → 0.018 %</span></p>
+<!-- /calc:eq-common-ion -->
+          </div>
+
+          <h2><span class="h-no">§ 07</span> Common misconceptions</h2>
+          <h3>"At equilibrium the reactions have stopped"</h3>
+          <p>Both reactions go on, at the same rate. The concentrations stay constant because each change is balanced by the opposite one, not because nothing is happening.</p>
+          <h3>"At equilibrium reactants and products have equal concentrations"</h3>
+          <p>They are constant, not equal. In 0.10 mol/L acetic acid more than 98 % of the acid stays un-ionized at equilibrium; K tells how the concentrations compare.</p>
+          <h3>"Changing a concentration changes K"</h3>
+          <p>Adding or removing a substance changes Q, and the mixture shifts until Q equals K again. The new equilibrium has different concentrations but the same K. For a given reaction, only the temperature changes K.</p>
+          <h3>"A catalyst shifts the equilibrium towards the products"</h3>
+          <p>A catalyst speeds up both directions equally. Equilibrium is reached faster, with the same composition it would have had without the catalyst.</p>
+
+          <h2><span class="h-no">§ 08</span> Key takeaways</h2>
+          <ul class="art-recap">
+            <li>In a reversible reaction the forward and reverse reactions happen at the same time.</li>
+            <li>At equilibrium both rates are equal and the concentrations stay constant, but the reactions go on.</li>
+            <li>K relates the concentrations at equilibrium and, for a given reaction, changes only with the temperature.</li>
+            <li>Comparing Q with K tells which way a mixture reacts: forward if Q &lt; K, in reverse if Q &gt; K.</li>
+            <li>A disturbed equilibrium shifts to partly counteract the change; a catalyst does not shift it.</li>
+          </ul>
+
+          <div class="art-callout">
+            <span class="ac-label">Conclusion</span>
+            Equilibrium is a balance of two reactions, not the end of one. K says where that balance lies, Q which way a mixture is heading, and Le Chatelier’s principle how it responds when the conditions change.
+          </div>
+
+          <section class="art-refs">
+            <h2><span class="h-no">§ Sources</span> References and further reading</h2>
+            <ol>
+              <li>OpenStax — <em>Chemistry 2e</em>, chapter on fundamental equilibrium concepts: equilibrium constants, Le Chatelier’s principle and equilibrium calculations.</li>
+              <li>CRC <em>Handbook of Chemistry and Physics</em>, 84th ed. (2004), as tabulated in OpenStax <em>Introductory Chemistry</em>, Appendix B: pKa of acetic acid at 25 °C.</li>
+              <li>IUPAC — <em>Compendium of Chemical Terminology</em> (Gold Book): equilibrium constant.</li>
+            </ol>
+          </section>
+
+          <section class="art-related">
+            <div class="ar-label">Keep exploring</div>
+            <div class="art-related-grid">
+              <a class="ar-card" href="acids-bases-and-ph.html">
+                <div class="ar-cat">Concepts</div>
+                <div class="ar-title">Acids, bases and pH</div>
+                <div class="ar-desc">Strong and weak acids, Ka and buffers.</div>
+              </a>
+              <a class="ar-card" href="conservation-of-mass.html">
+                <div class="ar-cat">Concepts</div>
+                <div class="ar-title">Conservation of mass</div>
+                <div class="ar-desc">Why the total mass of a closed system does not change.</div>
+              </a>
+              <a class="ar-card" href="../exercises/buffer.html">
+                <div class="ar-cat">Practice</div>
+                <div class="ar-title">Buffer exercises</div>
+                <div class="ar-desc">Ten exercises with worked solutions.</div>
+              </a>
+            </div>
+          </section>
+
+          <section class="art-follow">
+            <div>
+              <div class="afl-title">Enjoyed this? Follow Atomurus</div>
+              <div class="afl-sub">New chemistry deep-dives, tools and 3D visualisations — every week.</div>
+            </div>
+            <div class="afl-links">
+              <a href="https://x.com/atomurusapp" target="_blank" rel="noopener me" aria-label="Follow Atomurus on X (Twitter), @atomurusapp">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.658l-5.214-6.817-5.967 6.817H1.68l7.73-8.835L1.254 2.25h6.828l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/></svg>
+                <span>X / Twitter</span>
+              </a>
+              <a href="https://instagram.com/atomurusapp" target="_blank" rel="noopener me" aria-label="Follow Atomurus on Instagram, @atomurusapp">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor"/></svg>
+                <span>Instagram</span>
+              </a>
+            </div>
+          </section>
+
+        </article>
+
+        <aside class="art-aside">
+          <nav class="art-toc" id="art-toc" aria-label="Article contents">
+            <div class="toc-label">In this article</div>
+          </nav>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ════════════ FOOTER ════════════ -->
+    <footer class="lc-footer">
+      <div class="lc-footer-inner">
+        <div class="lc-footer-col lc-footer-brand">
+          <div class="lc-footer-brand-row">
+            <div class="lc-topnav-mark" style="width:24px;height:24px">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.5" fill="currentColor"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/></svg>
+            </div>
+            <span class="lc-footer-brand-name">Atomurus</span>
+          </div>
+          <p class="lc-footer-brand-desc" data-i18n="common.footer.brandDesc">An instrumental chemistry laboratory for the studious, the curious and the patient.</p>
+        </div>
+        <div class="lc-footer-col">
+          <h4 data-i18n="common.footer.modules">Modules</h4>
+          <a href="../periodic-table.html" data-i18n="common.nav.periodic">Periodic Table</a>
+          <a href="../viewer/atomic-models.html" data-i18n="common.nav.viewer3d">Viewer</a>
+          <a href="../calculators.html" data-i18n="common.nav.calc">Calculators</a>
+          <a href="../explore.html" data-i18n="common.nav.explore">Explore</a>
+        </div>
+        <div class="lc-footer-col">
+          <h4 data-i18n="common.footer.project">Project</h4>
+          <a href="../about.html" data-i18n="common.footer.about">About</a>
+          <a href="../privacy.html" data-i18n="common.footer.privacy">Privacy</a>
+          <a href="../terms.html" data-i18n="common.footer.terms">Terms</a>
+          <a href="../contact.html" data-i18n="common.footer.contact">Contact</a>
+        </div>
+      </div>
+      <div class="lc-footer-bottom">        <span><span class="lc-st-dot" style="width:6px;height:6px;border-radius:50%;background:#1E6A50;display:inline-block"></span> <span data-i18n="common.footer.systemNominal">system nominal</span></span>
+        <span data-i18n="common.footer.copy">© 2026 Atomurus · v1.11</span>
+      </div>
+    </footer>
+  </div><!-- /.content -->
+</main>
+</div>
+
+<div class="lc-statusbar">
+  <span><span class="lc-st-dot"></span> ready</span>
+  <span class="lc-st-sep">·</span>
+  <span>explore / article</span>
+  <span class="lc-st-spacer"></span>
+  <a href="../explore.html">→ explore</a>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  window.toggleTheme = function() {
+    var html = document.documentElement;
+    var isDark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    try { localStorage.setItem('atomurus-theme', isDark ? 'light' : 'dark'); } catch(e){}
+  };
+  window.toggleMobileSidebar = function() {
+    var sidebar = document.querySelector('.sidebar');
+    var overlay = document.getElementById('mobile-overlay');
+    if (!sidebar) return;
+    var isOpen = sidebar.classList.contains('mobile-open');
+    sidebar.classList.toggle('mobile-open', !isOpen);
+    if (overlay) overlay.classList.toggle('show', !isOpen);
+    document.body.style.overflow = isOpen ? '' : 'hidden';
+  };
+  window.toggleNavGroup = function(name) {
+    var el = document.querySelector('.nav-expandable[data-expand="' + name + '"]');
+    if (!el) return;
+    var open = !el.classList.contains('open');
+    el.classList.toggle('open', open);
+    var row = el.querySelector('.nav-row');
+    if (row) row.setAttribute('aria-expanded', open ? 'true' : 'false');
+    try { localStorage.setItem('atomurus-nav-' + name, open ? '1' : '0'); } catch(e){}
+  };
+  (function initExpandable(){
+    document.querySelectorAll('.nav-expandable').forEach(function(el){
+      var name = el.dataset.expand;
+      var hasActive = !!el.querySelector('.nav-item.active, [aria-current="page"]');
+      var stored = null;
+      try { stored = localStorage.getItem('atomurus-nav-' + name); } catch(e){}
+      if (hasActive || stored === '1') { el.classList.add('open'); var r = el.querySelector('.nav-row'); if (r) r.setAttribute('aria-expanded','true'); }
+      var row = el.querySelector('.nav-row');
+      if (row) row.addEventListener('keydown', function(e){ if (e.key==='Enter'||e.key===' '){ e.preventDefault(); window.toggleNavGroup(name);} });
+    });
+  })();
+  function initArticle(){
+    var body = document.getElementById('art-body');
+    var toc = document.getElementById('art-toc');
+    var content = document.getElementById('content');
+    var bar = document.querySelector('#art-progress span');
+    if (!body || !toc) return;
+    var heads = body.querySelectorAll('h2');
+    var links = [];
+    heads.forEach(function(h, i){
+      if (!h.id) h.id = 'sec-' + (i + 1);
+      var txt = h.textContent.replace(/^§\s*\d+\s*/, '').replace(/^§\s*Sources\s*/,'').trim();
+      var a = document.createElement('a');
+      a.href = '#' + h.id;
+      a.textContent = txt;
+      a.addEventListener('click', function(e){ e.preventDefault(); h.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+      toc.appendChild(a);
+      links.push({ a: a, h: h });
+    });
+    function onScroll(){
+      if (bar && content){
+        var max = content.scrollHeight - content.clientHeight;
+        var pct = max > 0 ? (content.scrollTop / max) * 100 : 0;
+        bar.style.width = pct + '%';
+      }
+      var top = content.scrollTop + 100;
+      var current = null;
+      links.forEach(function(l){ if (l.h.offsetTop <= top) current = l; });
+      links.forEach(function(l){ l.a.classList.toggle('is-active', l === current); });
+    }
+    content.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    onScroll();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initArticle);
+  else initArticle();
+})();
+</script>
+</body>
+</html>

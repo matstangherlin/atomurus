@@ -125,6 +125,26 @@ const ENGINES = {
     const value = fmtNum(g, ans.decimals, lang) + ' g';
     return { value, number: g, work: 'm = n × M = ' + plain(input.moles, lang) + ' mol × ' + mm + ' g/mol = ' + value };
   },
+  // Prompt 33 (F4): preparing and diluting a solution, through calc-core.
+  'solution.amount'(input, ans, lang) {
+    const n = input.C * (input.V / 1000);
+    const value = fmtNum(n, ans.decimals, lang) + ' mol';
+    return { value, number: n, work: 'n = C × V = ' + plain(input.C, lang) + ' mol/L × ' + plain(input.V / 1000, lang) + ' L = ' + value };
+  },
+  'solution.mass'(input, ans, lang) {
+    const r = calc.computeSolutionMass(formula.parseFormulaStrict(input.formula).counts, formula.ATOMIC_WEIGHTS, { C: input.C, V: input.V });
+    if (!r.ok) throw new Error('solution.mass ' + JSON.stringify(input));
+    const value = fmtNum(r.mass, ans.decimals, lang) + ' g';
+    return { value, number: r.mass, work: 'm = C × V × M = ' + plain(input.C, lang) + ' mol/L × ' + plain(r.L, lang) + ' L × ' + fmtNum(r.M, 2, lang) + ' g/mol = ' + value };
+  },
+  'calc.dilution'(input, ans, lang) {
+    const r = calc.computeDilution(input);
+    if (!r.ok) throw new Error('calc.dilution ' + JSON.stringify(input));
+    const name = { C1: 'C₁', V1: 'V₁', C2: 'C₂', V2: 'V₂' };
+    const value = fmtNum(r.value, ans.decimals, lang) + ' ' + r.unit;
+    const known = ['C1', 'V1', 'C2', 'V2'].filter((k) => k !== input.solve).map((k) => name[k] + ' = ' + plain(input[k], lang)).join(', ');
+    return { value, number: r.value, work: 'C₁V₁ = C₂V₂; ' + known + ' → ' + name[input.solve] + ' = ' + value };
+  },
   'calc.pH'(input, ans, lang) {
     const r = calc.computePH({ mode: input.mode, value: input.value });
     if (!r.ok) throw new Error('calc.pH ' + JSON.stringify(input));

@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html data-ps-chrome="1" lang="en-US" data-theme="light">
+<head>
+<style>html[data-theme="dark"] #icon-theme-light,html[data-theme="light"] #icon-theme-dark{display:none!important}html[data-theme="dark"] #icon-theme-dark,html[data-theme="light"] #icon-theme-light{display:block!important}</style>
+<script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var q=new URLSearchParams(location.search);var p=q.get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem('atomurus-lang');var path=location.pathname;var isPt=/\.pt\.html$/i.test(path)||/\.pt$/i.test(path);if(!l&&isPt)l='pt';if(!l){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}if(l==='pt'){document.documentElement.lang='pt-BR';}else{document.documentElement.lang='en-US';}localStorage.setItem('atomurus-lang',l);var u=new URL(location.href);if(l==='pt'&&!isPt){if(/\.html$/i.test(path)){u.pathname=path.replace(/\.html$/i,'.pt.html');}else if(path.charAt(path.length-1)!=='/'){u.pathname=path+'.pt.html';}u.searchParams.set('lang','pt-BR');if(u.href!==location.href)location.replace(u.href);}else if(l==='en'&&isPt){if(/\.pt\.html$/i.test(path)){u.pathname=path.replace(/\.pt\.html$/i,'.html');}else{u.pathname=path.replace(/\.pt$/i,'');}u.searchParams.set('lang','en');if(u.href!==location.href)location.replace(u.href);}}catch(e){}})();</script>
+
+<meta charset="UTF-8">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1E6A50" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E0D0C" media="(prefers-color-scheme: dark)">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" type="image/png" href="../assets/atomurus-logo.png?v=202608041630">
+<link rel="apple-touch-icon" href="../assets/atomurus-logo.png?v=202608041630">
+
+<title>Solutions and concentration: moles per litre, preparing and diluting a solution | Atomurus</title>
+<meta name="description" content="What a solution is and how amount concentration in mol/L is defined; how to calculate the mass of solute for a given volume and concentration, how to make up the solution in a volumetric flask, and how C₁V₁ = C₂V₂ describes dilution.">
+<meta name="keywords" content="solution, concentration, molarity, mol/L, dilution, volumetric flask">
+<meta name="author" content="Atomurus">
+<meta property="og:title" content="Solutions and concentration: moles per litre, preparing and diluting a solution">
+<meta property="og:description" content="What a solution is and how amount concentration in mol/L is defined; how to calculate the mass of solute for a given volume and concentration, how to make up the solution in a volumetric flask, and how C₁V₁ = C₂V₂ describes dilution.">
+<meta property="og:image" content="https://atomurus.com/assets/og-explore.png?v=202608041630">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://atomurus.com/explore/solutions-and-concentration">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Atomurus">
+<meta property="article:published_time" content="2026-10-29">
+<meta property="article:section" content="Chemistry Concepts">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Solutions and concentration: moles per litre, preparing and diluting a solution">
+<meta name="twitter:description" content="What a solution is and how amount concentration in mol/L is defined; how to calculate the mass of solute for a given volume and concentration, how to make up the solution in a volumetric flask, and how C₁V₁ = C₂V₂ describes dilution.">
+<meta name="twitter:image" content="https://atomurus.com/assets/og-explore.png?v=202608041630">
+<link rel="canonical" href="https://atomurus.com/explore/solutions-and-concentration">
+<link rel="alternate" hreflang="en" href="https://atomurus.com/explore/solutions-and-concentration">
+<link rel="alternate" hreflang="pt-BR" href="https://atomurus.com/explore/solutions-and-concentration?lang=pt-BR">
+<link rel="alternate" hreflang="x-default" href="https://atomurus.com/explore/solutions-and-concentration">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Solutions and concentration: moles per litre, preparing and diluting a solution",
+      "description": "What a solution is and how amount concentration in mol/L is defined; how to calculate the mass of solute for a given volume and concentration, how to make up the solution in a volumetric flask, and how C₁V₁ = C₂V₂ describes dilution.",
+      "image": "https://atomurus.com/assets/og-explore.png",
+      "datePublished": "2026-10-29",
+      "dateModified": "2026-10-29",
+      "inLanguage": "en",
+      "author": { "@type": "Organization", "name": "Atomurus", "url": "https://atomurus.com/" },
+      "publisher": { "@type": "Organization", "name": "Atomurus", "logo": { "@type": "ImageObject", "url": "https://atomurus.com/assets/atomurus-logo.png" } },
+      "mainEntityOfPage": { "@type": "WebPage", "@id": "https://atomurus.com/explore/solutions-and-concentration" },
+      "articleSection": "Chemistry Concepts",
+      "keywords": "solution, concentration, molarity, mol/L, dilution, volumetric flask"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type":"ListItem","position":1,"name":"Atomurus","item":"https://atomurus.com/"},
+        {"@type":"ListItem","position":2,"name":"Explore","item":"https://atomurus.com/explore"},
+        {"@type":"ListItem","position":3,"name":"Solutions and concentration","item":"https://atomurus.com/explore/solutions-and-concentration"}
+      ]
+    }
+  ]
+}
+</script>
+
+
+<link rel="preload" href="/assets/fonts/inter-tight-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/instrument-serif-400-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/instrument-serif-400-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202608041630">
+<script src="../i18n.js?v=202608041630" defer></script>
+<script src="/assets/trail-chip.js?v=202610291200" defer></script>
+<script src="../share-button.js?v=202608041630" defer></script>
+<script src="../page-share-init.js?v=202608041630" defer></script>
+<link rel="stylesheet" href="/assets/critical-lab.css?v=202608041630">
+<script>document.documentElement.classList.add('lc-loading');setTimeout(function(){document.documentElement.classList.remove('lc-loading')},4000);</script>
+<link rel="preload" href="../atomurus-lab-console.css?v=202608041630" as="style">
+<link rel="stylesheet" href="../atomurus-lab-console.css?v=202608041630" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
+<noscript><link rel="stylesheet" href="../atomurus-lab-console.css?v=202608041630"></noscript>
+<link rel="stylesheet" href="/assets/public-shell.css?v=202608281830">
+<script src="../assets/global-nav.js?v=202609090500"></script>
+<script src="/assets/public-workspace.js?v=202608282500"></script>
+<link rel="stylesheet" href="/assets/ui/index.css?v=202609090500">
+<link rel="stylesheet" href="../explore-article.css?v=202608041630">
+<link rel="stylesheet" href="/assets/layouts/article.css?v=202609101700">
+<link rel="stylesheet" href="/assets/ui/worked-solution.css?v=202610291200">
+<style>
+  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100vh; overflow: hidden; }
+  body { display: flex; }
+  .sidebar { width: 220px; flex-shrink: 0; display: flex; flex-direction: column; overflow: hidden; padding-bottom: 22px; }
+  .sidebar > .logo-wrap, .sidebar > .sidebar-foot { flex-shrink: 0; }
+  .sidebar-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; }
+  .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+  .sidebar-scroll::-webkit-scrollbar-thumb { background: var(--lc-rule); }
+  .logo-wrap { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
+  .logo-mark { display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .logo-mark svg circle[fill] { fill: currentColor !important; stroke: none; }
+  .nav-section { padding: 10px 0 4px; display: block; }
+  .nav-expandable .nav-row { display: flex; align-items: center; gap: 10px; padding: 5px 14px 5px 12px; cursor: pointer; font-family: var(--lc-sans); font-size: 12.5px; color: var(--lc-ink-2); transition: background .12s, color .12s; user-select: none; }
+  .nav-expandable .nav-row:hover { background: var(--lc-surface); color: var(--lc-ink); }
+  .nav-expandable.has-active .nav-row { color: var(--lc-ink); font-weight: 500; }
+  .nav-chevron { margin-left: auto; width: 11px; height: 11px; opacity: .45; transition: transform .2s; flex-shrink: 0; }
+  .nav-expandable.open .nav-chevron { transform: rotate(90deg); opacity: .75; }
+  .nav-children { display: none; margin: 2px 0 4px 12px; padding-left: 8px; border-left: 1px solid var(--lc-rule); }
+  .nav-expandable.open .nav-children { display: block; }
+  .nav-children .nav-item { padding: 6px 8px; font-size: 12.5px; }
+  .nav-children .nav-icon { width: 13px; height: 13px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; text-decoration: none; cursor: pointer; user-select: none; white-space: nowrap; position: relative; }
+  .sidebar-foot { display: flex; flex-direction: column; }
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+  .topbar { display: flex; align-items: center; gap: 14px; flex-shrink: 0; padding: 0 18px; }
+  .mobile-menu-btn { display: none; }
+  .breadcrumb { display: flex; align-items: center; gap: 7px; }
+  .breadcrumb a { color: inherit; text-decoration: none; opacity: .75; }
+  .breadcrumb a:hover { opacity: 1; color: var(--lc-ink); }
+  .content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 0 0 50px; position: relative; }
+  .content::-webkit-scrollbar { width: 6px; }
+  .content::-webkit-scrollbar-thumb { background: var(--lc-rule); }
+  @media (max-width: 760px) {
+    body { flex-direction: column; height: auto; overflow: auto; }
+    html { height: auto; overflow: auto; }
+    .sidebar { width: 100%; overflow: visible; }
+    .main { height: auto; overflow: visible; }
+    .content { overflow: visible; }
+  }
+</style>
+<link rel="stylesheet" href="/assets/print.css?v=202610281500" media="print">
+</head>
+<body class="ps-body">
+<a class="skip-link" href="#main-content" data-i18n="common.skipToContent">Skip to content</a>
+
+<!-- ════════════ SIDEBAR ════════════ -->
+<div class="ps-shell" id="ps-shell">
+<div class="topbar">
+    <a class="ps-brand logo-wrap" href="../index.html" title="Atomurus home">
+    <div class="logo-mark">
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="2.5" fill="currentColor"/>
+        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/>
+        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/>
+        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/>
+      </svg>
+    </div>
+    <div>
+      <div class="logo-text">Atomurus</div>
+      <div class="logo-tag" data-i18n="common.brandTag">chemistry lab</div>
+    </div>
+  </a>
+    <button class="mobile-menu-btn" onclick="toggleMobileSidebar()" aria-label="Open menu">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><line x1="2" y1="4.5" x2="14" y2="4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="2" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="2" y1="11.5" x2="14" y2="11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+    </button>
+    <div class="breadcrumb" hidden>
+      <a href="../index.html" data-i18n="common.footer.workspace">Workspace</a>
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="opacity:.35"><path d="M3.5 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      <a href="../explore.html" data-i18n="common.nav.explore">Explore</a>
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="opacity:.35"><path d="M3.5 1.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      <span>Solutions and concentration</span>
+    </div>
+    <form class="ps-search search-box" role="search" action="../periodic-table.html" method="get">
+  <label class="lc-sr-only" for="ps-search-q">Search element</label>
+  <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+    <circle cx="5.5" cy="5.5" r="4" stroke="currentColor" stroke-width="1.4"/>
+    <line x1="8.7" y1="8.7" x2="11.5" y2="11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+  </svg>
+  <input id="ps-search-q" name="q" type="search" autocomplete="off" data-i18n-attr="placeholder:common.searchPlaceholder" placeholder="search element, symbol or Z…">
+  <button type="submit" data-i18n-attr="aria-label:common.searchAria" aria-label="Search element">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <circle cx="6" cy="6" r="4.2" stroke="currentColor" stroke-width="1.3"/>
+      <path d="M9.2 9.2 12 12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+    </svg>
+  </button>
+</form>
+    <button class="theme-btn" onclick="location.href='solutions-and-concentration.html?lang=pt-BR'" data-i18n-attr="title:common.langToggle" title="Switch language" aria-label="PT — Switch language" style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;width:auto;min-width:32px;padding:0 8px;">
+      <span>PT</span>
+    </button>
+    <button class="theme-btn" onclick="toggleTheme()" data-i18n-attr="title:common.themeToggle; aria-label:common.themeToggle" title="Toggle theme" aria-label="Toggle theme" style="margin-left:4px;">
+      <svg id="icon-theme-light" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M11.5 7.5A4.5 4.5 0 0 1 6.5 2.5 4.5 4.5 0 1 0 11.5 7.5z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/></svg>
+      <svg id="icon-theme-dark" width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M7 1v1.4M7 11.6V13M1 7h1.4M11.6 7H13M2.5 2.5l1 1M10.5 10.5l1 1M2.5 11.5l1-1M10.5 3.5l1-1" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+    </button>
+  <div class="ps-account" data-atomurus-account>
+  <span class="ps-plan-badge" data-atomurus-plan-badge hidden></span>
+  <a class="ps-userchip lc-topnav-cta" href="../login.html" data-atomurus-account-chip aria-label="Account">
+    <svg class="ps-userchip-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span data-i18n="pricing.ctaAccount">Account</span>
+  </a>
+</div>
+  </div>
+<div class="mobile-overlay" id="mobile-overlay" onclick="toggleMobileSidebar()"></div>
+<aside class="ws-sidebar sidebar ps-pub-sidebar" id="ws-sidebar" data-atomurus-sidebar>
+  <nav class="ws-nav" id="ws-nav-main" aria-label="Laboratory" data-atomurus-lab-nav>
+    <div class="ws-nav-block ws-nav-site">
+      <h2 class="ws-nav-group" data-i18n="common.nav.laboratory">Laboratory</h2>
+      <a class="ws-nav-item" href="/" data-nav="home">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M2.5 7.5 8 3l5.5 4.5M4 6.5V13h8V6.5M6.5 13V9h3v4"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.home">Home</span>
+      </a>
+      <a class="ws-nav-item" href="/periodic-table.html" data-nav="periodic">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.periodic">Periodic Table</span>
+      </a>
+      <a class="ws-nav-item" href="/viewer/atomic-models.html" data-nav="viewer">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="8" cy="8" r="2"/><ellipse cx="8" cy="8" rx="6" ry="2.5"/><ellipse cx="8" cy="8" rx="6" ry="2.5" transform="rotate(60 8 8)"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.visualizador">Viewer</span>
+      </a>
+      <a class="ws-nav-item" href="/calculators.html" data-nav="calculators">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="2" width="10" height="12" rx="1"/><path d="M5 5h6M5.5 8h1M9.5 8h1M5.5 11h1M9.5 11h1"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.calc">Calculators</span>
+      </a>
+      <a class="ws-nav-item" href="/explore.html" data-nav="explore">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.explore">Explore</span>
+      </a>
+      <a class="ws-nav-item" href="/app" data-nav="workspace">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 12l4-4 2 2 4-6"/></g></svg>
+        <span class="ws-nav-label" data-i18n="common.nav.workspace">Workspace</span>
+      </a>
+    </div>
+  </nav>
+  <div class="ws-nav-foot sidebar-foot" id="ws-nav-foot" data-atomurus-nav-foot>
+    <a class="ws-nav-item" href="/login" data-nav="account" data-auth-nav-link="common.nav.login">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5"/></g></svg>
+      <span class="ws-nav-label" data-i18n="common.nav.login">Account</span>
+    </a>
+    <a class="ws-nav-item" href="/pricing" data-nav="plans">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 5h8v8H4zM6 3v2M10 3v2"/></g></svg>
+      <span class="ws-nav-label" data-i18n="common.nav.plans">Plans</span>
+    </a>
+  </div>
+</aside>
+<main class="main" id="main-content" tabindex="-1">
+  
+
+  <div class="data-strip">
+    <span class="ds-k">scope</span><span class="ds-v">DOC.ARTICLE</span>
+    <span class="ds-sep"></span>
+    <span class="ds-k">section</span><span class="ds-v">concepts · solutions</span>
+    <span class="ds-sep"></span>
+    <span class="ds-k">elements</span><span class="ds-v ds-hi">C = n ÷ V</span>
+    <span class="ds-spacer"></span>
+    <span class="ds-k">standard</span><span class="ds-v">mol/L</span>
+  </div>
+
+  <div class="content" id="content">
+    <div class="art-progress" id="art-progress"><span></span></div>
+
+    <div class="art-wrap">
+      <header class="art-hero">
+        <div class="art-kicker">
+          <span>Explore Atomurus</span>
+          <span class="art-cat ui-badge">Chemistry Concepts</span>
+          <span class="art-cat ui-badge">Solutions</span>
+        </div>
+        <h1 class="art-title">Solutions and <em>concentration</em>: moles per litre, preparing and diluting a solution</h1>
+        <p class="art-dek">A solution is a solute spread evenly through a solvent, and its concentration says how much solute is in each litre. Learn how to calculate the mass to weigh, how to make the solution up to the mark and why diluting changes the concentration but not the amount of solute.</p>
+        <p class="art-draft" role="note">Draft — under teacher review. Not published yet.</p>
+        <div class="lab-tool-cta">
+          <p>Solve dilution problems step by step.</p>
+          <a href="../calculators.html#dilute">Open the dilution calculator</a>
+        </div>
+        <div class="art-meta">
+          <span><strong>Atomurus</strong> · Editorial</span>
+          <span class="am-dot"></span>
+          <span>Updated 29 Oct 2026</span>
+          <span class="am-dot"></span>
+          <span>≈ 8 min read</span>
+        </div>
+<!-- ed:level -->
+<p class="article-level"><span class="article-level-chip" data-i18n="article.level.beginner">Beginner</span></p>
+<!-- /ed:level -->
+<!-- ed:learn -->
+<aside class="article-learn" aria-labelledby="article-learn-title">
+  <h2 id="article-learn-title" data-i18n="article.learn.title">You will learn</h2>
+  <ul>
+    <li>Define amount concentration in mol/L</li>
+    <li>Calculate the mass of solute to prepare a solution</li>
+    <li>Use C₁V₁ = C₂V₂ for a dilution</li>
+  </ul>
+</aside>
+<!-- /ed:learn -->
+</header>
+
+      <div class="art-grid">
+        <article class="art-body" id="art-body">
+
+          <p class="lead">Sea water, a cup of coffee, the saline drip in a hospital: most of the chemistry around us happens in <strong>solutions</strong>. To work with them you need to know not only what is dissolved, but how much of it there is in a given volume — the concentration.</p>
+
+          <p>In this article you will see what a solution is, how concentration in moles per litre is defined, how to calculate the mass of solute needed to prepare a solution, how to make it up in the laboratory and how dilution changes the concentration but not the amount of solute. The worked examples are computed by the same engine as the Atomurus calculators.</p>
+
+          <div class="art-callout">
+            <span class="ac-label">Quick definition</span>
+            A <strong>solution</strong> is a homogeneous mixture of a solute dissolved in a solvent. Its <strong>amount concentration</strong> is the amount of solute per volume of solution: <span translate="no">C = n ÷ V</span>, usually in mol/L.
+          </div>
+
+          <figure class="art-fig" role="img" aria-label="A volumetric flask filled to the mark with a solution, with solute particles spread evenly through it; beside it, the definition of concentration as the amount of solute in moles divided by the volume of the solution in litres.">
+            <svg viewBox="0 0 640 180" width="100%" aria-hidden="true" focusable="false">
+              <g fill="none" stroke="currentColor" stroke-width="1.6">
+                <path d="M150 20v50l-60 90h120l-60-90V20z"/>
+                <path d="M138 52h24" stroke-width="2.4"/>
+              </g>
+              <g fill="currentColor">
+                <circle cx="120" cy="140" r="3"/><circle cx="150" cy="128" r="3"/><circle cx="175" cy="146" r="3"/><circle cx="135" cy="112" r="3"/><circle cx="165" cy="104" r="3"/><circle cx="105" cy="152" r="3"/><circle cx="190" cy="152" r="3"/><circle cx="150" cy="88" r="3"/>
+              </g>
+              <g font-family="Inter Tight, sans-serif" fill="currentColor" font-size="15">
+                <text x="250" y="70">C = n ÷ V</text>
+                <text x="250" y="100" font-size="13">n: amount of solute (mol)</text>
+                <text x="250" y="122" font-size="13">V: volume of solution (L)</text>
+                <text x="250" y="144" font-size="13">C: concentration (mol/L)</text>
+              </g>
+            </svg>
+            <figcaption>A solution made up to the mark of a volumetric flask: the solute is spread evenly, and its concentration is the amount per litre of solution.</figcaption>
+          </figure>
+
+          <h2><span class="h-no">§ 01</span> What a solution is</h2>
+          <p>A solution is a mixture that looks the same everywhere, down to the scale of molecules. The substance present in the larger amount, usually a liquid, is the <strong>solvent</strong>; what is dissolved in it is the <strong>solute</strong>. When water is the solvent, the solution is called <strong>aqueous</strong>.</p>
+          <p>Salt water, sugar water and vinegar are aqueous solutions. Air is a solution of gases, and some alloys are solid solutions. In chemistry lessons, though, most solutions are solids or liquids dissolved in water, and that is the case this article follows.</p>
+
+          <h2><span class="h-no">§ 02</span> Concentration in moles per litre</h2>
+          <p>Knowing what is dissolved is not enough: a spoonful of salt in a glass of water and in a bucket make very different solutions. <strong>Concentration</strong> says how much solute there is in a given volume of solution.</p>
+          <p>Chemists usually count the solute in moles, so the most common measure is the <strong>amount concentration</strong>, in moles per litre of solution: <span translate="no">C = n ÷ V</span>. A 0.1 mol/L solution of sodium chloride contains 0.1 mol of NaCl in every litre of solution. Concentration can also be given as mass per volume (g/L) or as a percentage, but mol/L is the one that connects directly to chemical equations.</p>
+          <p>Note that V is the volume of the <strong>solution</strong>, not of the solvent added. Dissolving a solid usually changes the volume a little, which is why solutions are made up to a mark, as the next sections show.</p>
+
+          <h2><span class="h-no">§ 03</span> How much solute to weigh</h2>
+          <p>To prepare a solution you start from the volume and the concentration you want. Their product gives the amount of solute, <span translate="no">n = C × V</span>, and the molar mass turns that amount into the mass to weigh, <span translate="no">m = n × M</span>:</p>
+          <div class="art-worked" data-calc="sol-prep">
+<!-- calc:sol-prep -->
+<p class="aw-q">Example: the mass of NaCl for 250 mL of a 0.1 mol/L solution</p><ol class="wsol-steps"><li><span class="wsol-text">Write the volume in litres.</span> <span class="wsol-expr" translate="no">V = 250 mL ÷ 1000 = 0.25 L</span></li><li><span class="wsol-text">Amount of solute the solution needs: n = C × V.</span> <span class="wsol-expr" translate="no">n = 0.1 mol/L × 0.25 L = 0.025 mol</span></li><li><span class="wsol-text">Count the atoms of each element in the formula.</span> <span class="wsol-expr" translate="no">Na: 1 · Cl: 1</span></li><li><span class="wsol-text">Look up each atomic mass in g/mol (abridged standard atomic weights, CIAAW).</span> <span class="wsol-expr" translate="no">A(Na) = 22.99 · A(Cl) = 35.45</span></li><li><span class="wsol-text">Multiply each atomic mass by its number of atoms.</span> <span class="wsol-expr" translate="no">1 × 22.99 = 22.99 · 1 × 35.45 = 35.45</span></li><li><span class="wsol-text">Add the contributions: the sum is the molar mass.</span> <span class="wsol-expr" translate="no">M = 22.99 + 35.45 = 58.44 g/mol</span></li><li><span class="wsol-text">Mass: m = n × M.</span> <span class="wsol-expr" translate="no">m = 0.025 mol × 58.44 g/mol = 1.461 g</span></li></ol><p class="aw-a">Answer: <span translate="no">m = 1.461 g</span></p>
+<!-- /calc:sol-prep -->
+          </div>
+          <p>The volume must be in litres for the units to work: mol/L multiplied by L leaves mol. Using millilitres gives an answer a thousand times too large.</p>
+
+          <h2><span class="h-no">§ 04</span> Making up the solution</h2>
+          <p>In the laboratory a solution of exact concentration is made in a <strong>volumetric flask</strong>, a flask with a single line on its narrow neck. The weighed solute is first dissolved in a little water, the liquid is transferred to the flask, water is added up to the mark and the flask is closed and turned over several times to mix.</p>
+          <p>Measuring 250 mL of water and then adding the solid does not work, because the final volume would no longer be 250 mL. The mark on the flask fixes the volume of the solution itself.</p>
+          <p>The calculation can also go the other way: from the mass that was dissolved and the volume of the solution you can find the concentration.</p>
+          <div class="art-worked" data-calc="sol-conc">
+<!-- calc:sol-conc -->
+<p class="aw-q">Example: 5.85 g of NaCl dissolved and made up to 500 mL. What is the concentration?</p><ol class="wsol-steps"><li><span class="wsol-text">Add the contributions: the sum is the molar mass.</span> <span class="wsol-expr" translate="no">M = 22.99 + 35.45 = 58.44 g/mol</span></li><li><span class="wsol-text">Amount of substance: n = m / M.</span> <span class="wsol-expr" translate="no">n = 5.85 g ÷ 58.44 g/mol = 0.1001 mol</span></li><li><span class="wsol-text">Divide by the volume of the solution, in litres.</span> <span class="wsol-expr" translate="no">C = 0.1001 mol ÷ 0.500 L = 0.2002 mol/L</span></li></ol><p class="aw-a">Answer: <span translate="no">C = 0.2002 mol/L</span></p>
+<!-- /calc:sol-conc -->
+          </div>
+
+          <h2><span class="h-no">§ 05</span> Dilution</h2>
+          <p>Adding solvent to a solution <strong>dilutes</strong> it: the volume grows while the amount of solute stays the same. Because n = C × V before and after, <span translate="no">C₁V₁ = C₂V₂</span>, where 1 is the solution you start from and 2 the diluted one.</p>
+          <div class="art-worked" data-calc="sol-dilute">
+<!-- calc:sol-dilute -->
+<p class="aw-q">Example: what volume of a 2 mol/L stock solution is needed to make 250 mL of a 0.2 mol/L solution?</p><ol class="wsol-steps"><li><span class="wsol-text">Diluting does not change the amount of solute, so C₁V₁ = C₂V₂. The data:</span> <span class="wsol-expr" translate="no">C₁ = 2 mol/L · C₂ = 0.2 mol/L · V₂ = 250 mL</span></li><li><span class="wsol-text">Isolate V₁.</span> <span class="wsol-expr" translate="no">V₁ = C₂V₂ / C₁</span></li><li><span class="wsol-text">Substitute (both volumes in the same unit).</span> <span class="wsol-expr" translate="no">V₁ = (0.2 mol/L × 250 mL) / 2 mol/L = 25 mL</span></li></ol><p class="aw-a">Answer: <span translate="no">V₁ = 25 mL</span></p>
+<!-- /calc:sol-dilute -->
+          </div>
+          <p>Dilution is how laboratories make weaker solutions from a concentrated stock, and both volumes can be in millilitres, as long as they are in the same unit.</p>
+
+          <h2><span class="h-no">§ 06</span> Common misconceptions</h2>
+          <h3>"Concentration is the amount of solute"</h3>
+          <p>Concentration is the amount of solute per volume of solution. Half a litre and two litres of the same 0.1 mol/L solution have the same concentration, but the larger volume contains four times as much solute.</p>
+          <h3>"Dissolving 1 mol in 1 L of water gives 1 mol/L"</h3>
+          <p>Not exactly: the concentration refers to the volume of the solution, which is rarely the volume of water added. That is why a solution is made up to the mark of a volumetric flask instead of being mixed with a measured litre of water.</p>
+          <h3>"Diluting removes some of the solute"</h3>
+          <p>Diluting adds solvent and leaves the amount of solute unchanged; only the concentration falls. This is exactly why C₁V₁ = C₂V₂ holds.</p>
+          <h3>"A dilute solution is a weak solution"</h3>
+          <p>Dilute and concentrated describe how much solute is present. Weak and strong, for acids and bases, describe how much of it ionizes. A dilute solution of a strong acid is still a strong acid.</p>
+
+          <h2><span class="h-no">§ 07</span> Key takeaways</h2>
+          <ul class="art-recap">
+            <li>A solution is a homogeneous mixture of a solute in a solvent; with water as solvent it is aqueous.</li>
+            <li>Amount concentration is C = n ÷ V, in moles per litre of solution.</li>
+            <li>To prepare a solution, find n = C × V (V in litres) and weigh m = n × M.</li>
+            <li>Make it up to the mark of a volumetric flask, so that V is the volume of the solution.</li>
+            <li>Dilution keeps the amount of solute: C₁V₁ = C₂V₂.</li>
+          </ul>
+
+          <div class="art-callout">
+            <span class="ac-label">Conclusion</span>
+            Concentration turns a solution into a measured quantity: with C, V and the molar mass you can prepare a solution, check one and dilute it — the everyday work of any chemistry laboratory.
+          </div>
+
+          <section class="art-refs">
+            <h2><span class="h-no">§ Sources</span> References and further reading</h2>
+            <ol>
+              <li>OpenStax — <em>Chemistry 2e</em>, chapter on the composition of substances and solutions: molarity and the dilution of solutions.</li>
+              <li>IUPAC — <em>Compendium of Chemical Terminology</em> (Gold Book): amount concentration.</li>
+              <li>CIAAW/IUPAC — abridged standard atomic weights (the values used by the Atomurus calculators).</li>
+            </ol>
+          </section>
+
+          <section class="art-related">
+            <div class="ar-label">Keep exploring</div>
+            <div class="art-related-grid">
+              <a class="ar-card" href="what-is-the-mole.html">
+                <div class="ar-cat">Concepts</div>
+                <div class="ar-title">What is the mole</div>
+                <div class="ar-desc">Amount of substance, molar mass and the Avogadro constant.</div>
+              </a>
+              <a class="ar-card" href="acids-bases-and-ph.html">
+                <div class="ar-cat">Concepts</div>
+                <div class="ar-title">Acids, bases and pH</div>
+                <div class="ar-desc">Strong and weak acids, Ka and buffers.</div>
+              </a>
+              <a class="ar-card" href="../exercises/solution-prep.html">
+                <div class="ar-cat">Practice</div>
+                <div class="ar-title">Preparing a solution exercises</div>
+                <div class="ar-desc">Ten exercises with worked solutions.</div>
+              </a>
+            </div>
+          </section>
+
+          <section class="art-follow">
+            <div>
+              <div class="afl-title">Enjoyed this? Follow Atomurus</div>
+              <div class="afl-sub">New chemistry deep-dives, tools and 3D visualisations — every week.</div>
+            </div>
+            <div class="afl-links">
+              <a href="https://x.com/atomurusapp" target="_blank" rel="noopener me" aria-label="Follow Atomurus on X (Twitter), @atomurusapp">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.658l-5.214-6.817-5.967 6.817H1.68l7.73-8.835L1.254 2.25h6.828l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/></svg>
+                <span>X / Twitter</span>
+              </a>
+              <a href="https://instagram.com/atomurusapp" target="_blank" rel="noopener me" aria-label="Follow Atomurus on Instagram, @atomurusapp">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor"/></svg>
+                <span>Instagram</span>
+              </a>
+            </div>
+          </section>
+
+        </article>
+
+        <aside class="art-aside">
+          <nav class="art-toc" id="art-toc" aria-label="Article contents">
+            <div class="toc-label">In this article</div>
+          </nav>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ════════════ FOOTER ════════════ -->
+    <footer class="lc-footer">
+      <div class="lc-footer-inner">
+        <div class="lc-footer-col lc-footer-brand">
+          <div class="lc-footer-brand-row">
+            <div class="lc-topnav-mark" style="width:24px;height:24px">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.5" fill="currentColor"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/></svg>
+            </div>
+            <span class="lc-footer-brand-name">Atomurus</span>
+          </div>
+          <p class="lc-footer-brand-desc" data-i18n="common.footer.brandDesc">An instrumental chemistry laboratory for the studious, the curious and the patient.</p>
+        </div>
+        <div class="lc-footer-col">
+          <h4 data-i18n="common.footer.modules">Modules</h4>
+          <a href="../periodic-table.html" data-i18n="common.nav.periodic">Periodic Table</a>
+          <a href="../viewer/atomic-models.html" data-i18n="common.nav.viewer3d">Viewer</a>
+          <a href="../calculators.html" data-i18n="common.nav.calc">Calculators</a>
+          <a href="../explore.html" data-i18n="common.nav.explore">Explore</a>
+        </div>
+        <div class="lc-footer-col">
+          <h4 data-i18n="common.footer.project">Project</h4>
+          <a href="../about.html" data-i18n="common.footer.about">About</a>
+          <a href="../privacy.html" data-i18n="common.footer.privacy">Privacy</a>
+          <a href="../terms.html" data-i18n="common.footer.terms">Terms</a>
+          <a href="../contact.html" data-i18n="common.footer.contact">Contact</a>
+        </div>
+      </div>
+      <div class="lc-footer-bottom">        <span><span class="lc-st-dot" style="width:6px;height:6px;border-radius:50%;background:#1E6A50;display:inline-block"></span> <span data-i18n="common.footer.systemNominal">system nominal</span></span>
+        <span data-i18n="common.footer.copy">© 2026 Atomurus · v1.11</span>
+      </div>
+    </footer>
+  </div><!-- /.content -->
+</main>
+</div>
+
+<div class="lc-statusbar">
+  <span><span class="lc-st-dot"></span> ready</span>
+  <span class="lc-st-sep">·</span>
+  <span>explore / article</span>
+  <span class="lc-st-spacer"></span>
+  <a href="../explore.html">→ explore</a>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  window.toggleTheme = function() {
+    var html = document.documentElement;
+    var isDark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    try { localStorage.setItem('atomurus-theme', isDark ? 'light' : 'dark'); } catch(e){}
+  };
+  window.toggleMobileSidebar = function() {
+    var sidebar = document.querySelector('.sidebar');
+    var overlay = document.getElementById('mobile-overlay');
+    if (!sidebar) return;
+    var isOpen = sidebar.classList.contains('mobile-open');
+    sidebar.classList.toggle('mobile-open', !isOpen);
+    if (overlay) overlay.classList.toggle('show', !isOpen);
+    document.body.style.overflow = isOpen ? '' : 'hidden';
+  };
+  window.toggleNavGroup = function(name) {
+    var el = document.querySelector('.nav-expandable[data-expand="' + name + '"]');
+    if (!el) return;
+    var open = !el.classList.contains('open');
+    el.classList.toggle('open', open);
+    var row = el.querySelector('.nav-row');
+    if (row) row.setAttribute('aria-expanded', open ? 'true' : 'false');
+    try { localStorage.setItem('atomurus-nav-' + name, open ? '1' : '0'); } catch(e){}
+  };
+  (function initExpandable(){
+    document.querySelectorAll('.nav-expandable').forEach(function(el){
+      var name = el.dataset.expand;
+      var hasActive = !!el.querySelector('.nav-item.active, [aria-current="page"]');
+      var stored = null;
+      try { stored = localStorage.getItem('atomurus-nav-' + name); } catch(e){}
+      if (hasActive || stored === '1') { el.classList.add('open'); var r = el.querySelector('.nav-row'); if (r) r.setAttribute('aria-expanded','true'); }
+      var row = el.querySelector('.nav-row');
+      if (row) row.addEventListener('keydown', function(e){ if (e.key==='Enter'||e.key===' '){ e.preventDefault(); window.toggleNavGroup(name);} });
+    });
+  })();
+  function initArticle(){
+    var body = document.getElementById('art-body');
+    var toc = document.getElementById('art-toc');
+    var content = document.getElementById('content');
+    var bar = document.querySelector('#art-progress span');
+    if (!body || !toc) return;
+    var heads = body.querySelectorAll('h2');
+    var links = [];
+    heads.forEach(function(h, i){
+      if (!h.id) h.id = 'sec-' + (i + 1);
+      var txt = h.textContent.replace(/^§\s*\d+\s*/, '').replace(/^§\s*Sources\s*/,'').trim();
+      var a = document.createElement('a');
+      a.href = '#' + h.id;
+      a.textContent = txt;
+      a.addEventListener('click', function(e){ e.preventDefault(); h.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+      toc.appendChild(a);
+      links.push({ a: a, h: h });
+    });
+    function onScroll(){
+      if (bar && content){
+        var max = content.scrollHeight - content.clientHeight;
+        var pct = max > 0 ? (content.scrollTop / max) * 100 : 0;
+        bar.style.width = pct + '%';
+      }
+      var top = content.scrollTop + 100;
+      var current = null;
+      links.forEach(function(l){ if (l.h.offsetTop <= top) current = l; });
+      links.forEach(function(l){ l.a.classList.toggle('is-active', l === current); });
+    }
+    content.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    onScroll();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initArticle);
+  else initArticle();
+})();
+</script>
+</body>
+</html>
