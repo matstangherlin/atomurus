@@ -70,10 +70,27 @@
     node.parentNode.insertBefore(slot, node.nextSibling);
     return slot;
   }
+  // Tool pages with view tabs: one toolbar at the right end of the tab row
+  // holds Save / Note (study-save.js fills [data-rm-save-slot]) and Share.
+  function rmTools() {
+    var tools = document.querySelector('[data-rm-tools]');
+    if (tools) return tools;
+    var tabs = document.querySelector('.vz-tabs, .pt-tabs');
+    if (!tabs) return null;
+    tools = document.createElement('div');
+    tools.className = 'rm-tools';
+    tools.setAttribute('data-rm-tools', '');
+    var save = document.createElement('div');
+    save.className = 'rm-save-slot';
+    save.setAttribute('data-rm-save-slot', '');
+    tools.appendChild(save);
+    tabs.parentNode.insertBefore(tools, tabs);
+    return tools;
+  }
   function findAnchor() {
     if (document.documentElement.hasAttribute('data-rm')) {
-      var tabs = document.querySelector('.vz-tabs, .pt-tabs');
-      if (tabs) return slotBefore(tabs, 'rm-share-slot--tabs');
+      var tools = rmTools();
+      if (tools) return tools;
       var meta = document.querySelector('.art-meta');
       if (meta) return meta;
       var lead = document.querySelector('.lc-doc-desc, .rm-page-lead, .ph-desc');
@@ -128,7 +145,7 @@
   function loadStudyCloud() {
     if (window.__atomurusStudyBoot) return;
     var script = document.createElement('script');
-    script.src = '/study-boot.js?v=202608280600';
+    script.src = '/study-boot.js?v=202611042255';
     script.defer = true;
     document.head.appendChild(script);
   }
