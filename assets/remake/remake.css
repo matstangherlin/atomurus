@@ -2157,3 +2157,86 @@ html[data-rm] body.rm.rm .rm-save-slot #atomurus-study-save { margin: 0 !importa
   html[data-rm] body.rm.rm .pt-tabs,
   html[data-rm] body.rm.rm .vz-tabs { flex-wrap: nowrap !important; }
 }
+
+/* 8.5b article body components (Matérias) ───────────────────────────── */
+html[data-rm] body.rm.rm .art-body .ac-label,
+html[data-rm] body.rm.rm .art-callout .ac-label {
+  display: block; margin: 0 0 8px !important;
+  font: 700 13px/1.3 var(--rm-font) !important; letter-spacing: 0 !important; text-transform: none !important;
+  color: var(--rm-green) !important;
+}
+html[data-rm] body.rm.rm .art-callout { border-color: var(--rm-line) !important; }
+html[data-rm] body.rm.rm .art-callout p { margin: 0 !important; font-size: 16px !important; line-height: 1.6 !important; color: var(--rm-ink) !important; }
+/* diagrams: legacy monospace labels → brand faces; viewBox is widened by site-nav.js when a label spills */
+html[data-rm] body.rm.rm .art-fig svg { overflow: visible; max-width: 100%; height: auto; }
+html[data-rm] body.rm.rm .art-fig svg text { font-family: var(--rm-font) !important; letter-spacing: 0 !important; }
+html[data-rm] body.rm.rm .art-fig svg text[font-family*="serif"]:not([font-family*="sans"]) { font-family: var(--rm-font) !important; font-weight: 700; }
+html[data-rm][data-theme="dark"] body.rm.rm .art-fig svg [fill="#1a1a1a"], html[data-rm][data-theme="dark"] body.rm.rm .art-fig svg [fill="#111"] { fill: var(--rm-ink); }
+/* key / value fact rows */
+html[data-rm] body.rm.rm .art-facts { padding: 6px 24px !important; }
+html[data-rm] body.rm.rm .art-facts .af-row { display: flex !important; justify-content: space-between; align-items: baseline; gap: 16px; padding: 13px 0 !important; border: 0 !important; border-bottom: 1px solid var(--rm-line) !important; background: none !important; }
+html[data-rm] body.rm.rm .art-facts .af-row:last-child { border-bottom: 0 !important; }
+html[data-rm] body.rm.rm .art-facts .af-k { flex: none; max-width: 45%; font: 400 15px/1.4 var(--rm-font) !important; color: var(--rm-ink-2) !important; text-transform: none !important; letter-spacing: 0 !important; }
+html[data-rm] body.rm.rm .art-facts .af-v { font: 600 15px/1.4 var(--rm-font) !important; color: var(--rm-ink) !important; text-align: right; text-transform: none !important; letter-spacing: 0 !important; }
+/* timeline rows (lists of dated milestones, tagged by site-nav.js) */
+html[data-rm] body.rm.rm .art-body ul.rm-timeline { list-style: none !important; margin: 20px 0 28px !important; padding: 0 !important; border-top: 1px solid var(--rm-line); }
+html[data-rm] body.rm.rm .art-body ul.rm-timeline > li { display: grid !important; grid-template-columns: 112px minmax(0, 1fr); gap: 16px; margin: 0 !important; padding: 16px 0 !important; border-bottom: 1px solid var(--rm-line); }
+html[data-rm] body.rm.rm .art-body ul.rm-timeline > li::before, html[data-rm] body.rm.rm .art-body ul.rm-timeline > li::marker { content: none !important; display: none !important; }
+html[data-rm] body.rm.rm .art-body .rm-tl-year { font: 700 15px/1.6 var(--rm-font); color: var(--rm-green); font-variant-numeric: tabular-nums; }
+@media (max-width: 560px) { html[data-rm] body.rm.rm .art-body ul.rm-timeline > li { grid-template-columns: 64px minmax(0, 1fr); gap: 12px; } }
+/* "Continue exploring" cards */
+html[data-rm] body.rm.rm .art-related { border-top: 0 !important; padding-top: 0 !important; }
+html[data-rm] body.rm.rm .art-related .ar-label { margin: 0 0 14px !important; font: 700 19px/1.3 var(--rm-font) !important; letter-spacing: -0.01em !important; text-transform: none !important; color: var(--rm-ink) !important; }
+html[data-rm] body.rm.rm .art-related-grid { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 12px !important; }
+@media (max-width: 640px) { html[data-rm] body.rm.rm .art-related-grid { grid-template-columns: minmax(0, 1fr) !important; } }
+html[data-rm] body.rm.rm .art-body a.ar-card, html[data-rm] body.rm.rm a.ar-card {
+  display: block; padding: 18px 20px !important; border: 1px solid var(--rm-line) !important; border-radius: 14px !important;
+  background: var(--rm-paper) !important; text-decoration: none !important; color: var(--rm-ink) !important; box-shadow: none !important;
+  transition: border-color .15s, background .15s;
+}
+html[data-rm] body.rm.rm a.ar-card:hover { border-color: var(--rm-line-strong) !important; background: var(--rm-surface) !important; transform: none !important; }
+html[data-rm] body.rm.rm a.ar-card * { font-family: var(--rm-font) !important; letter-spacing: 0 !important; text-transform: none !important; text-decoration: none !important; }
+html[data-rm] body.rm.rm a.ar-card .ar-cat { margin: 0 0 4px !important; font-size: 13px !important; font-weight: 400 !important; color: var(--rm-ink-3) !important; }
+html[data-rm] body.rm.rm a.ar-card .ar-title { font-size: 17px !important; font-weight: 700 !important; color: var(--rm-ink) !important; line-height: 1.3 !important; }
+html[data-rm] body.rm.rm a.ar-card .ar-title::after { content: " →"; color: var(--rm-green); }
+html[data-rm] body.rm.rm a.ar-card .ar-desc { margin-top: 6px !important; font-size: 14px !important; line-height: 1.5 !important; color: var(--rm-ink-2) !important; }
+/* follow box */
+html[data-rm] body.rm.rm .art-follow { padding: 24px !important; border: 1px solid var(--rm-line) !important; background: var(--rm-paper) !important; }
+html[data-rm] body.rm.rm .art-follow .afl-links a { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px !important; border: 1px solid var(--rm-line-strong) !important; background: var(--rm-bg) !important; color: var(--rm-ink) !important; text-decoration: none !important; font-size: 14px !important; font-weight: 600 !important; }
+html[data-rm] body.rm.rm .art-follow .afl-links a:hover { background: var(--rm-surface) !important; }
+html[data-rm] body.rm.rm .art-follow .afl-sub { color: var(--rm-ink-2) !important; font-size: 15px !important; }
+/* references */
+html[data-rm] body.rm.rm .art-refs ol, html[data-rm] body.rm.rm .art-refs ul { padding-left: 22px !important; }
+html[data-rm] body.rm.rm .art-refs li { margin: 8px 0 !important; color: var(--rm-ink-2) !important; font-size: 15px !important; }
+/* legacy console strips */
+html[data-rm] body.rm.rm .data-strip, html[data-rm] body.rm.rm .lc-statusbar { display: none !important; }
+@media (max-width: 560px) {
+  html[data-rm] body.rm.rm .art-facts .af-row { flex-direction: column; align-items: flex-start; gap: 2px; }
+  html[data-rm] body.rm.rm .art-facts .af-k { max-width: none; font-size: 14px !important; }
+  html[data-rm] body.rm.rm .art-facts .af-v { text-align: left; }
+}
+/* element page, narrow screens: key data right after the hero, long text after */
+@media (max-width: 900px) {
+  html[data-rm] body.rm.rm .rm-el-body { flex-direction: column; flex-wrap: nowrap; }
+  html[data-rm] body.rm.rm .rm-el-aside { order: -1; flex: none; width: 100%; align-self: stretch; }
+  html[data-rm] body.rm.rm .rm-el-main { flex: none; width: 100%; }
+}
+/* isotopes: wide comparison table scrolls inside its card on phones instead of being clipped */
+html[data-rm] body.rm.rm .iso-details { min-width: 0; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* Legacy console typography left inside tool pages (isotopes, isomerism,
+   element modal, calculator chips): one text face, no letter-spaced caps.
+   Code, formulas and electron configurations keep the mono face. */
+html[data-rm] body.rm.rm :is(.main, #modal) :is(*:not(code, kbd, pre, samp, svg, svg *, .rm-mono, [class*="config"], [class*="formula"], [class*="badge"], .ps-plan-badge)) {
+  font-family: var(--rm-font) !important;
+  letter-spacing: 0 !important;
+}
+html[data-rm] body.rm.rm :is(.main, #modal) :is(.m-section-lbl, .f-label, .modal-mass-lbl, .app-tag, .iso-stat-lbl, .iso-insight-name, .iso-group-count, .iso-tree-title, .mol-card-tag, .iso-3d-tab, .iso-selector-title, .calc-chip, .calc-help, .atom-explore-btn, th, [class*="-lbl"], [class*="-label"], [class*="kicker"]) {
+  text-transform: none !important;
+}
+html[data-rm] body.rm.rm .main td { font-variant-numeric: tabular-nums; }
+html[data-rm] body.rm.rm .main .iso-badge { font-family: var(--rm-font) !important; letter-spacing: 0.02em !important; font-weight: 700; }
+html[data-rm] body.rm.rm .iso-details table { display: table !important; width: 100% !important; max-width: none !important; }
+@media (max-width: 720px) { html[data-rm] body.rm.rm .iso-details table { min-width: 560px; } }
+/* element modal (periodic table): sentence-case actions and badge */
+html[data-rm] body.rm.rm #modal :is(button, a, .modal-cta-corner, [class*="cat"]) { text-transform: none !important; letter-spacing: 0 !important; }

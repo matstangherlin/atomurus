@@ -113,6 +113,10 @@
       if      (f === 'state')    node.textContent = state;
       else if (f === 'category') node.textContent = cat;
       else if (f === 'desc')     node.textContent = desc;
+      else if (f === 'disc') {
+        var tr = function (v) { return (v && typeof elDisc === 'function') ? elDisc({ disc: v }) : v; };
+        node.textContent = [tr(el.disc), tr(el.year)].filter(function (v, i, a) { return v && a.indexOf(v) === i; }).join(', ');
+      }
     });
 
     // ── Nuclide notation (mass number above, atomic number below) ─
@@ -316,7 +320,7 @@
   function loadStudyCloud() {
     if (window.__atomurusStudyBoot) return;
     var script = document.createElement('script');
-    script.src = '/study-boot.js?v=202608280600';
+    script.src = '/study-boot.js?v=202611042255';
     script.defer = true;
     document.head.appendChild(script);
   }
@@ -357,6 +361,13 @@
   function boot() {
     ensureElementMenu();
     render();
+    // EN overlay (elements-data-en.js) is fetched async; if it was not
+    // ready for the first render, render again once it lands so the lead,
+    // discovery and content sections never stay in Portuguese.
+    var lang = (window.I18N && I18N.lang) || 'en';
+    if (lang === 'en' && typeof elDesc !== 'function' && typeof window.__ATOMURUS_ENSURE_ELEMENTS_EN === 'function') {
+      window.__ATOMURUS_ENSURE_ELEMENTS_EN().then(render).catch(function () {});
+    }
   }
 
   if (document.readyState === 'loading') {

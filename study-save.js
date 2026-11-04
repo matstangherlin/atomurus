@@ -433,16 +433,22 @@
   }
 
 
-  function bindPopoverDismiss(host) {
-    if (host.dataset.popoverBound === '1') return;
-    host.dataset.popoverBound = '1';
+  var popoverDismissBound = false;
+  function bindPopoverDismiss() {
+    // One pair of document listeners for the page; the host is re-created
+    // on every mount (e.g. each molecule switch), so look it up each time.
+    if (popoverDismissBound) return;
+    popoverDismissBound = true;
     document.addEventListener('click', function (event) {
-      if (!host.classList.contains('open')) return;
+      var host = document.getElementById(HOST_ID);
+      if (!host || !host.classList.contains('is-popover') || !host.classList.contains('open')) return;
       if (host.contains(event.target)) return;
       host.classList.remove('open');
     });
     document.addEventListener('keydown', function (event) {
-      if (event.key === 'Escape' && host.classList.contains('open')) host.classList.remove('open');
+      if (event.key !== 'Escape') return;
+      var host = document.getElementById(HOST_ID);
+      if (host && host.classList.contains('is-popover')) host.classList.remove('open');
     });
   }
 
@@ -540,7 +546,7 @@
       pop.appendChild(setBox);
       host.appendChild(pop);
       host.classList.add('is-popover');
-      bindPopoverDismiss(host);
+      bindPopoverDismiss();
     }
     if (parent.classList && parent.classList.contains('art-aside')) parent.appendChild(host);
     else parent.insertBefore(host, parent.firstChild);
@@ -746,6 +752,9 @@
           savedItem = data.item || null;
           paintSaved(button, labels, true);
           markSavedHost(host, true);
+          // Pop-over mode: show the next steps (note, Study Set, cards)
+          // right after an explicit save.
+          if (host.classList.contains('is-popover')) host.classList.add('open');
         }).catch(function (err) {
           paintSaved(button, labels, false);
           handleError(err, msg, labels, 'save', ctx);

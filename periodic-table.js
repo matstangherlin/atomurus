@@ -733,7 +733,7 @@ function openModal(el) {
   }
   document.getElementById('m-desc').textContent = (typeof elDesc === 'function' ? elDesc(el) : el.desc);
   document.getElementById('m-disc').textContent = (typeof elDisc === 'function' ? elDisc(el) : el.disc);
-  document.getElementById('m-year').textContent = el.year;
+  document.getElementById('m-year').textContent = (typeof elDisc === 'function' && el.year) ? elDisc({ disc: el.year }) : el.year;
   document.getElementById('m-en').textContent   = el.en;
   document.getElementById('m-state').textContent  = stateName(el.state);
   document.getElementById('m-period').textContent = el.period;
@@ -2928,7 +2928,7 @@ function renderCompareLegacy() {
     { label: _T('ptable.mMelt',           'Ponto de Fusão'), v1: ex1 ? ex1.melt : dash, v2: ex2 ? ex2.melt : dash },
     { label: _T('ptable.mBoil',           'Ponto de Ebulição'), v1: ex1 ? ex1.boil : dash, v2: ex2 ? ex2.boil : dash },
     { label: _T('ptable.mDensity',        'Densidade'),      v1: ex2_1 ? ex2_1.density : dash, v2: ex2_2 ? ex2_2.density : dash },
-    { label: _T('ptable.mYear',           'Ano de Descoberta'), v1: el1 ? el1.year : dash, v2: el2 ? el2.year : dash }
+    { label: _T('ptable.mYear',           'Ano de Descoberta'), v1: el1 ? (typeof elDisc === 'function' ? elDisc({ disc: el1.year }) : el1.year) : dash, v2: el2 ? (typeof elDisc === 'function' ? elDisc({ disc: el2.year }) : el2.year) : dash }
   ];
 
   // Render as grid rows: property label spans both value cells as a header,
@@ -3013,7 +3013,7 @@ function renderCompare() {
     { key: 'melt',    numeric: true,  dec: 1, unit: '\u00b0C', label: _T('ptable.mMelt',           'Melting Point'), v1: ex1 ? cmpDisplay(ex1.melt) : cmpDash(), v2: ex2 ? cmpDisplay(ex2.melt) : cmpDash() },
     { key: 'boil',    numeric: true,  dec: 1, unit: '\u00b0C', label: _T('ptable.mBoil',           'Boiling Point'), v1: ex1 ? cmpDisplay(ex1.boil) : cmpDash(), v2: ex2 ? cmpDisplay(ex2.boil) : cmpDash() },
     { key: 'density', numeric: true,  dec: 3, unit: 'g/cm\u00b3', label: _T('ptable.mDensity',      'Density'), v1: ex2_1 ? cmpDisplay(ex2_1.density) : cmpDash(), v2: ex2_2 ? cmpDisplay(ex2_2.density) : cmpDash() },
-    { key: 'year',    numeric: false,                         label: _T('ptable.mYear',           'Discovery Year'), v1: el1 ? cmpDisplay(el1.year) : cmpDash(), v2: el2 ? cmpDisplay(el2.year) : cmpDash() }
+    { key: 'year',    numeric: false,                         label: _T('ptable.mYear',           'Discovery Year'), v1: el1 ? cmpDisplay(typeof elDisc === 'function' ? elDisc({ disc: el1.year }) : el1.year) : cmpDash(), v2: el2 ? cmpDisplay(typeof elDisc === 'function' ? elDisc({ disc: el2.year }) : el2.year) : cmpDash() }
   ];
 
   const tbody = document.getElementById('comp-tbody');

@@ -6,7 +6,7 @@
     "samples": [
       {
         "cycle": 1,
-        "heapMB": 3.17
+        "heapMB": 3.16
       },
       {
         "cycle": 5,
@@ -37,7 +37,7 @@
       }
     ],
     "growthMB": 0.44,
-    "msPerRoundMedian": 478
+    "msPerRoundMedian": 417
   },
   "authStress": {
     "cycles": 5,
@@ -80,14 +80,14 @@
         "geometries": 2,
         "textures": 0,
         "calls": 2,
-        "heapMB": 3.47
+        "heapMB": 3.42
       },
       {
         "switch": 20,
         "geometries": 2,
         "textures": 0,
         "calls": 2,
-        "heapMB": 3.49
+        "heapMB": 3.47
       }
     ]
   }

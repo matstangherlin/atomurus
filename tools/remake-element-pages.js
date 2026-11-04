@@ -157,7 +157,7 @@ function build(el, data) {
   const boil = tempLabel(ex.boil);
   if (boil) facts.push(factRow('boil', L.boil, `<span data-rm-num="${esc(boil)}">${esc(ptNum(boil))}</span>`));
   const disc = [el.disc, el.year].filter((v, idx, arr) => v && arr.indexOf(v) === idx).join(', ');
-  if (disc) facts.push(factRow('discovered', L.discovered, esc(disc)));
+  if (disc) facts.push(factRow('discovered', L.discovered, `<span data-page-field="disc">${esc(disc)}</span>`));
 
   const pager = `
       <nav class="rm-pager" aria-label="${esc(L.neighbours)}" data-i18n-attr="aria-label:el.rm.neighbours">
