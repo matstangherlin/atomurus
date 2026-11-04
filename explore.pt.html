@@ -218,177 +218,117 @@
 </div>
 
 <!-- ════════════ CONTENT (scroll) ════════════ -->
-<div class="content">
+<div class="content rm-explore">
+  <h1 class="rm-page-title" data-i18n="explore.rm.title">Matérias</h1>
+  <p class="rm-page-lead" data-i18n="explore.rm.lead">Textos curtos pra entender a matéria de verdade — com modelos 3D no meio do caminho quando ajuda.</p>
 
-<!-- ════════════ HERO + SEARCH ════════════ -->
-<header class="ex-hero">
-  <div class="ex-hero-inner">
-    <div class="ex-kicker">
-      <span data-i18n="explore.kicker">Explorar Atomurus</span>
-      <span class="pill">§ 04 — conhecimento</span>
+  <a class="rm-feature" href="/explore/what-is-an-atom.html">
+    <div class="rm-feature-copy">
+      <span class="rm-feature-kicker" data-i18n="explore.rm.start">Comece por aqui</span>
+      <span class="rm-feature-title" data-i18n="explore.rm.featTitle">O que é um Átomo</span>
+      <span class="rm-feature-text" data-i18n="explore.rm.featText">Prótons, nêutrons e elétrons — e como a ideia de átomo mudou de Dalton até o modelo quântico.</span>
+      <span class="rm-feature-cta" data-i18n="explore.rm.read">Ler matéria →</span>
     </div>
-    <h1 class="ex-title">Química para <em>explorar</em>.</h1>
-    <p class="ex-desc">Artigos, histórias e conceitos de química — do que é a tabela periódica a grandes acidentes industriais. Conteúdo aprofundado para estudar, pesquisar e se aprofundar, escrito para quem é curioso de verdade.</p>
+    <div class="rm-feature-art">
+      <svg width="280" height="280" viewBox="0 0 280 280" aria-hidden="true">
+        <circle cx="140" cy="140" r="54" fill="none" stroke="#3D372C" stroke-width="1.5"/>
+        <circle cx="140" cy="140" r="104" fill="none" stroke="#3D372C" stroke-width="1.5"/>
+        <circle cx="132" cy="134" r="9" fill="#9A4338"/><circle cx="148" cy="134" r="9" fill="#908A7C"/><circle cx="140" cy="148" r="9" fill="#9A4338"/><circle cx="128" cy="149" r="9" fill="#908A7C"/><circle cx="152" cy="148" r="9" fill="#9A4338"/><circle cx="140" cy="132" r="9" fill="#908A7C"/>
+        <circle cx="140" cy="86" r="6" fill="#34A872"/><circle cx="140" cy="194" r="6" fill="#34A872"/>
+        <circle cx="36" cy="140" r="6" fill="#34A872"/><circle cx="244" cy="140" r="6" fill="#34A872"/><circle cx="140" cy="36" r="6" fill="#34A872"/><circle cx="140" cy="244" r="6" fill="#34A872"/>
+      </svg>
+    </div>
+  </a>
 
-    <div class="ex-search-wrap">
-      <div class="ex-search" id="ex-search" role="search">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-          <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/>
-          <line x1="11" y1="11" x2="14.5" y2="14.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-        <input id="ex-search-input" type="search" autocomplete="off" spellcheck="false"
-               placeholder="Buscar artigos, temas, conceitos… (ex.: bhopal, tabela periódica, isomeria)"
-               aria-label="Buscar no Atomurus">
-        <button type="button" class="ex-search-clear" id="ex-search-clear" aria-label="Limpar busca" title="Limpar">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-        </button>
-        <kbd class="ex-search-kbd">/</kbd>
+  <div class="rm-filter" role="group" aria-label="Filtrar matérias" data-i18n-attr="aria-label:explore.rm.filter" data-rm-filter>
+    <button class="rm-chip" type="button" aria-pressed="true" data-filter="all" data-i18n="explore.rm.all">Todas</button>
+    <button class="rm-chip" type="button" aria-pressed="false" data-filter="c" data-i18n="explore.rm.concepts">Conceitos</button>
+    <button class="rm-chip" type="button" aria-pressed="false" data-filter="h" data-i18n="explore.rm.history">História e segurança</button>
+  </div>
+
+  <div class="rm-art-grid" data-rm-articles>
+    <a class="rm-card rm-art-card" href="/explore/what-is-an-atom.html" data-tag="c">
+      <span class="rm-art-tag" data-i18n="explore.rm.tagConcepts">Conceitos</span>
+      <span class="rm-art-title" data-i18n="explore.rm.a1t">O que é um Átomo</span>
+      <span class="rm-art-text" data-i18n="explore.rm.a1d">Prótons, nêutrons e elétrons, e os modelos de Dalton ao quântico.</span>
+    </a>
+    <a class="rm-card rm-art-card" href="/explore/what-is-the-periodic-table.html" data-tag="c">
+      <span class="rm-art-tag" data-i18n="explore.rm.tagConcepts">Conceitos</span>
+      <span class="rm-art-title" data-i18n="explore.rm.a2t">O que é a Tabela Periódica</span>
+      <span class="rm-art-text" data-i18n="explore.rm.a2d">Como os 118 elementos se organizam, de Mendeleev a Moseley, e as tendências que dão sentido a ela.</span>
+    </a>
+    <a class="rm-card rm-art-card" href="/explore/what-are-isotopes.html" data-tag="c">
+      <span class="rm-art-tag" data-i18n="explore.rm.tagConcepts">Conceitos</span>
+      <span class="rm-art-title" data-i18n="explore.rm.a3t">O que são Isótopos</span>
+      <span class="rm-art-text" data-i18n="explore.rm.a3d">Mesmo elemento, nêutrons diferentes — e por que as massas atômicas têm casas decimais.</span>
+    </a>
+    <a class="rm-card rm-art-card" href="/explore/what-is-chemical-bonding.html" data-tag="c">
+      <span class="rm-art-tag" data-i18n="explore.rm.tagConcepts">Conceitos</span>
+      <span class="rm-art-title" data-i18n="explore.rm.a4t">O que é Ligação Química</span>
+      <span class="rm-art-text" data-i18n="explore.rm.a4d">Por que os átomos se ligam: ligações iônicas, covalentes e metálicas.</span>
+    </a>
+    <a class="rm-card rm-art-card" href="/explore/what-is-radioactivity.html" data-tag="c">
+      <span class="rm-art-tag" data-i18n="explore.rm.tagConcepts">Conceitos</span>
+      <span class="rm-art-title" data-i18n="explore.rm.a5t">O que é Radioatividade</span>
+      <span class="rm-art-text" data-i18n="explore.rm.a5d">Becquerel, Marie Curie, radiações alfa, beta e gama, e meia-vida.</span>
+    </a>
+    <a class="rm-card rm-art-card" href="/explore/what-is-isomerism.html" data-tag="c">
+      <span class="rm-art-tag" data-i18n="explore.rm.tagConcepts">Conceitos</span>
+      <span class="rm-art-title" data-i18n="explore.rm.a6t">O que é Isomeria</span>
+      <span class="rm-art-text" data-i18n="explore.rm.a6d">Mesma fórmula, moléculas diferentes — constitucional e estereoisomeria com exemplos.</span>
+    </a>
+    <a class="rm-card rm-art-card" href="/explore/chernobyl-disaster.html" data-tag="h">
+      <span class="rm-art-tag is-history" data-i18n="explore.rm.tagHistory">História · segurança</span>
+      <span class="rm-art-title" data-i18n="explore.rm.a7t">O Desastre de Chernobyl</span>
+      <span class="rm-art-text" data-i18n="explore.rm.a7d">O reator RBMK, a explosão de 1986 e o que mudou na segurança nuclear.</span>
+    </a>
+    <a class="rm-card rm-art-card" href="/explore/bhopal-disaster.html" data-tag="h">
+      <span class="rm-art-tag is-history" data-i18n="explore.rm.tagHistory">História · segurança</span>
+      <span class="rm-art-title" data-i18n="explore.rm.a8t">Desastre de Bhopal</span>
+      <span class="rm-art-text" data-i18n="explore.rm.a8d">A química do isocianato de metila e a maior tragédia industrial da história.</span>
+    </a>
+  </div>
+
+  <section class="rm-iso-guide">
+    <div class="rm-iso-guide-copy">
+      <h2 data-i18n="explore.rm.isoTitle">Guia de isomeria</h2>
+      <p data-i18n="explore.rm.isoLead">Mesma fórmula, moléculas diferentes. Cada tipo tem uma página com exemplos que você gira em 3D.</p>
+      <a class="rm-btn rm-btn-primary" href="/viewer/isomerism.html" data-i18n="explore.rm.isoCta">Ver os isômeros em 3D</a>
+    </div>
+    <div class="rm-iso-guide-cols">
+      <div>
+        <h3 data-i18n="explore.rm.constitutional">Constitucional</h3>
+        <p data-i18n="explore.rm.constitutionalLead">Os átomos se ligam em outra ordem.</p>
+      <a class="rm-iso-link" href="/viewer/isomerism/constitutional/chain.html"><span data-i18n="explore.rm.chain">Cadeia</span><span class="rm-iso-ex rm-mono" data-i18n="explore.rm.exChain">butano · isobutano</span></a>
+      <a class="rm-iso-link" href="/viewer/isomerism/constitutional/position.html"><span data-i18n="explore.rm.position">Posição</span><span class="rm-iso-ex rm-mono" data-i18n="explore.rm.exPosition">1-buteno · 2-buteno</span></a>
+      <a class="rm-iso-link" href="/viewer/isomerism/constitutional/function.html"><span data-i18n="explore.rm.function">Função</span><span class="rm-iso-ex rm-mono" data-i18n="explore.rm.exFunction">etanol · éter</span></a>
+      <a class="rm-iso-link" href="/isomerism/constitutional/metamerism.html"><span data-i18n="explore.rm.metamerism">Metameria</span><span class="rm-iso-ex" aria-hidden="true">→</span></a>
+      <a class="rm-iso-link" href="/isomerism/constitutional/tautomerism.html"><span data-i18n="explore.rm.tautomerism">Tautomeria</span><span class="rm-iso-ex" aria-hidden="true">→</span></a>
       </div>
-      <div class="ex-search-meta">
-        <span class="ex-count" id="ex-count">Mostrando <strong>todos</strong> os artigos</span>
-        <div class="ex-jump">
-          <a href="#artigos">artigos</a>
-          <a href="#ferramentas">ferramentas</a>
-        </div>
+      <div>
+        <h3 data-i18n="explore.rm.spatial">Espacial</h3>
+        <p data-i18n="explore.rm.spatialLead">Mesma ordem, outra arrumação no espaço.</p>
+      <a class="rm-iso-link" href="/viewer/isomerism/spatial/geometric.html"><span data-i18n="explore.rm.geometric">Geométrica (cis/trans)</span><span class="rm-iso-ex rm-mono" data-i18n="explore.rm.exGeometric">2-buteno</span></a>
+      <a class="rm-iso-link" href="/viewer/isomerism/spatial/optical.html"><span data-i18n="explore.rm.optical">Óptica</span><span class="rm-iso-ex rm-mono" data-i18n="explore.rm.exOptical">ácido lático</span></a>
       </div>
     </div>
-  </div>
-</header>
-
-<!-- ── ARTIGOS ─────────────────────────────────────────────── -->
-<section class="ex-section" id="artigos">
-  <div class="ex-section-head">
-    <h2><span class="h-no">§ 01</span> <span>Artigos &amp; histórias</span></h2>
-    <span class="ex-section-sub">conteúdo aprofundado de química</span>
-  </div>
-
-  <div class="ex-pills" id="ex-cat-pills" role="tablist">
-    <button class="ex-pill active" data-cat="all">todos</button>
-    <button class="ex-pill" data-cat="conceitos">conceitos</button>
-    <button class="ex-pill" data-cat="historia">história</button>
-    <button class="ex-pill" data-cat="seguranca">segurança</button>
-  </div>
-
-  <div class="ex-card-grid" id="ex-articles">
-    <a class="ex-card ui-card ui-card-interactive" data-cat="conceitos" data-search="atomo o que e um atomo estrutura atomica proton neutron eletron nucleo camada eletronica numero atomico massa atomica particulas subatomicas dalton thomson rutherford bohr modelo quantico ion cation anion elemento materia quimica basica" href="explore/what-is-an-atom.html?lang=pt-BR">
-      <div class="ex-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="2.2" fill="currentColor"/><ellipse cx="10" cy="10" rx="8.5" ry="3.6" stroke="currentColor" stroke-width="1.2" fill="none"/><ellipse cx="10" cy="10" rx="8.5" ry="3.6" stroke="currentColor" stroke-width="1.2" fill="none" transform="rotate(60 10 10)"/><ellipse cx="10" cy="10" rx="8.5" ry="3.6" stroke="currentColor" stroke-width="1.2" fill="none" transform="rotate(120 10 10)"/></svg></div>
-      <div class="ex-card-body">
-        <div class="ex-card-kicker">conceitos</div>
-        <div class="ex-card-title">O que é um Átomo</div>
-        <div class="ex-card-desc">Prótons, nêutrons e elétrons, e os modelos de Dalton ao quântico — o bloco de construção de toda a matéria.</div>
-      </div>
-    </a>
-
-    <a class="ex-card ui-card ui-card-interactive" data-cat="conceitos" data-search="isotopos o que sao isotopos estaveis radioativos radioisotopos massa atomica neutrons massa atomica relativa carbono-14 carbono-12 deuterio tritio uranio-235 uranio-238 meia-vida datacao por carbono medicina nuclear abundancia media ponderada" href="explore/what-are-isotopes.html?lang=pt-BR">
-      <div class="ex-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="6.5" stroke="currentColor" stroke-width="1.2" fill="none" opacity=".55"/><circle cx="7.6" cy="10" r="2.1" fill="currentColor"/><circle cx="11.8" cy="8.4" r="2.1" fill="currentColor" opacity=".75"/><circle cx="11.6" cy="11.8" r="2.1" fill="currentColor" opacity=".5"/></svg></div>
-      <div class="ex-card-body">
-        <div class="ex-card-kicker">conceitos</div>
-        <div class="ex-card-title">O que são Isótopos</div>
-        <div class="ex-card-desc">Mesmo elemento, nêutrons diferentes — isótopos estáveis e radioativos, e por que as massas atômicas são decimais.</div>
-      </div>
-    </a>
-
-    <a class="ex-card ui-card ui-card-interactive" data-cat="conceitos" data-search="radioatividade decaimento radioativo meia-vida radiacao alfa beta gama henri becquerel marie curie pierre curie rutherford isotopos quimica nuclear uranio radio polonio radiacao ionizante sievert becquerel datacao por carbono medicina nuclear" href="explore/what-is-radioactivity.html?lang=pt-BR">
-      <div class="ex-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><ellipse cx="10" cy="10" rx="8" ry="3.4" stroke="currentColor" stroke-width="1.2" opacity=".55"/><circle cx="10" cy="10" r="2.4" fill="currentColor"/><circle cx="16.4" cy="6.6" r="1.3" fill="currentColor" opacity=".8"/><circle cx="4.6" cy="14" r="1.1" fill="currentColor" opacity=".55"/></svg></div>
-      <div class="ex-card-body">
-        <div class="ex-card-kicker">conceitos</div>
-        <div class="ex-card-title">O que é Radioatividade</div>
-        <div class="ex-card-desc">Como átomos instáveis decaem — Becquerel, Marie Curie, radiações alfa, beta e gama, e meia-vida.</div>
-      </div>
-    </a>
-
-    <a class="ex-card ui-card ui-card-interactive" data-cat="conceitos" data-search="ligacao quimica ionica covalente metalica regra do octeto eletrons de valencia configuracao eletronica eletronegatividade polaridade ligacao covalente polar estrutura molecular vsepr lewis agua cloreto de sodio metano forcas intermoleculares ligacao de hidrogenio" href="explore/what-is-chemical-bonding.html?lang=pt-BR">
-      <div class="ex-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="5.5" cy="10" r="3" fill="currentColor" opacity=".9"/><circle cx="14.5" cy="10" r="3" fill="currentColor" opacity=".55"/><line x1="8.5" y1="10" x2="11.5" y2="10" stroke="currentColor" stroke-width="1.7"/></svg></div>
-      <div class="ex-card-body">
-        <div class="ex-card-kicker">conceitos</div>
-        <div class="ex-card-title">O que é Ligação Química</div>
-        <div class="ex-card-desc">Por que os átomos se ligam e como os elétrons formam ligações iônicas, covalentes e metálicas — a cola de toda a matéria.</div>
-      </div>
-    </a>
-
-    <a class="ex-card ui-card ui-card-interactive" data-cat="historia seguranca" data-search="chernobyl desastre reator rbmk explosao 1986 contaminacao radioativa zona de exclusao pripyat liquidadores sarcofago cesio-137 iodo-131 estroncio-90 seguranca nuclear ucrânia uniao sovietica fusao radiacao precipitacao radioativa" href="explore/chernobyl-disaster.html?lang=pt-BR">
-      <div class="ex-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><g fill="currentColor" opacity=".85"><polygon points="10,2.8 7.7,8.2 12.3,8.2"/><polygon points="10,2.8 7.7,8.2 12.3,8.2" transform="rotate(120 10 10)"/><polygon points="10,2.8 7.7,8.2 12.3,8.2" transform="rotate(240 10 10)"/></g><circle cx="10" cy="10" r="1.8" fill="currentColor"/></svg></div>
-      <div class="ex-card-body">
-        <div class="ex-card-kicker">história · segurança</div>
-        <div class="ex-card-title">O Desastre de Chernobyl</div>
-        <div class="ex-card-desc">O reator RBMK falho, a explosão de 1986 e a precipitação radioativa que reformulou a segurança nuclear.</div>
-      </div>
-    </a>
-
-    <a class="ex-card ui-card ui-card-interactive" data-cat="historia seguranca" data-search="bhopal isocianato de metila mic union carbide acidente desastre tragedia madre teresa calcuta 1984 seguranca quimica industrial india" href="explore/bhopal-disaster.html?lang=pt-BR">
-      <div class="ex-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2l8 14H2L10 2z" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linejoin="round"/><line x1="10" y1="8" x2="10" y2="12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="10" cy="14" r=".9" fill="currentColor"/></svg></div>
-      <div class="ex-card-body">
-        <div class="ex-card-kicker">história · segurança</div>
-        <div class="ex-card-title">Desastre de Bhopal</div>
-        <div class="ex-card-desc">A química do isocianato de metila e a maior tragédia industrial da história — com a visita de Madre Teresa aos sobreviventes.</div>
-      </div>
-    </a>
-
-    <a class="ex-card ui-card ui-card-interactive" data-cat="conceitos" data-search="tabela periodica elementos quimicos mendeleev moseley numero atomico periodos grupos blocos tendencias periodicas lei periodica configuracao eletronica" href="explore/what-is-the-periodic-table.html?lang=pt-BR">
-      <div class="ex-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="1.5" y="1.5" width="7" height="7" rx="1.5" fill="currentColor" opacity=".9"/><rect x="11.5" y="1.5" width="7" height="7" rx="1.5" fill="currentColor" opacity=".5"/><rect x="1.5" y="11.5" width="7" height="7" rx="1.5" fill="currentColor" opacity=".5"/><rect x="11.5" y="11.5" width="7" height="7" rx="1.5" fill="currentColor" opacity=".3"/></svg></div>
-      <div class="ex-card-body">
-        <div class="ex-card-kicker">conceitos</div>
-        <div class="ex-card-title">O que é a Tabela Periódica</div>
-        <div class="ex-card-desc">Como os 118 elementos são organizados, a história de Mendeleev a Moseley e as tendências que dão sentido à tabela.</div>
-      </div>
-    </a>
-
-    <a class="ex-card ui-card ui-card-interactive" data-cat="conceitos" data-search="isomeria isomeros isomeria plana constitucional cadeia posicao funcao metameria tautomeria estereoisomeria espacial geometrica cis trans optica quiralidade enantiomeros quimica organica" href="explore/what-is-isomerism.html?lang=pt-BR">
-      <div class="ex-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="5" cy="10" r="2.5" fill="currentColor" opacity=".85"/><circle cx="15" cy="10" r="2.5" fill="currentColor" opacity=".85"/><line x1="10" y1="1" x2="10" y2="19" stroke="currentColor" stroke-width="1" stroke-dasharray="2,1.5" opacity=".5"/></svg></div>
-      <div class="ex-card-body">
-        <div class="ex-card-kicker">conceitos</div>
-        <div class="ex-card-title">O que é Isomeria</div>
-        <div class="ex-card-desc">Mesma fórmula, moléculas diferentes — isomeria constitucional e estereoisomeria explicadas com exemplos.</div>
-      </div>
-    </a>
-  </div>
-
-  <!-- empty state -->
-  <div class="ex-empty" id="ex-empty">
-    <strong>Nenhum resultado.</strong>
-    <span>Tente outra palavra-chave — um tema (bhopal), um conceito (isomeria) ou uma categoria (história).</span>
-  </div>
-
-  <p class="ex-more">Mais artigos a caminho — novos temas de história, conceitos e segurança química são publicados regularmente.</p>
-</section>
-
-<!-- ── FERRAMENTAS DO LABORATÓRIO ──────────────────────────── -->
-<section class="ex-section" id="ferramentas">
-  <div class="ex-section-head">
-    <h2><span class="h-no">§ 02</span> <span>Ferramentas do laboratório</span></h2>
-    <span class="ex-section-sub">explore os elementos e modelos</span>
-  </div>
-  <div class="ex-card-grid">
-    <a class="ex-card ui-card ui-card-interactive" href="periodic-table.html">
-      <div class="ex-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="1.5" y="1.5" width="7" height="7" rx="1.5" fill="currentColor" opacity=".9"/><rect x="11.5" y="1.5" width="7" height="7" rx="1.5" fill="currentColor" opacity=".5"/><rect x="1.5" y="11.5" width="7" height="7" rx="1.5" fill="currentColor" opacity=".5"/><rect x="11.5" y="11.5" width="7" height="7" rx="1.5" fill="currentColor" opacity=".3"/></svg></div>
-      <div class="ex-card-body">
-        <div class="ex-card-kicker">ferramenta</div>
-        <div class="ex-card-title" data-i18n="common.nav.periodic">Tabela Periódica</div>
-        <div class="ex-card-desc">Todos os 118 elementos com dados completos, mapa de calor e tendências.</div>
-      </div>
-    </a>
-    <a class="ex-card ui-card ui-card-interactive" href="viewer/atomic-models.html">
-      <div class="ex-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="1.6" fill="currentColor"/><ellipse cx="10" cy="10" rx="8" ry="3.5" stroke="currentColor" stroke-width="1.2" fill="none"/><ellipse cx="10" cy="10" rx="8" ry="3.5" stroke="currentColor" stroke-width="1.2" fill="none" transform="rotate(60 10 10)"/><ellipse cx="10" cy="10" rx="8" ry="3.5" stroke="currentColor" stroke-width="1.2" fill="none" transform="rotate(120 10 10)"/></svg></div>
-      <div class="ex-card-body">
-        <div class="ex-card-kicker">ferramenta</div>
-        <div class="ex-card-title" data-i18n="common.nav.visualizador">Visualizador 3D</div>
-        <div class="ex-card-desc">Modelos atômicos, moléculas, alótropos e isomeria em 3D interativo.</div>
-      </div>
-    </a>
-    <a class="ex-card ui-card ui-card-interactive" href="calculators.html">
-      <div class="ex-card-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="2" width="14" height="16" rx="2" stroke="currentColor" stroke-width="1.3" fill="none"/><line x1="6" y1="6" x2="14" y2="6" stroke="currentColor" stroke-width="1.2"/><line x1="6" y1="10" x2="14" y2="10" stroke="currentColor" stroke-width="1.2"/><line x1="6" y1="14" x2="11" y2="14" stroke="currentColor" stroke-width="1.2"/></svg></div>
-      <div class="ex-card-body">
-        <div class="ex-card-kicker">ferramenta</div>
-        <div class="ex-card-title" data-i18n="common.nav.calc">Calculadoras</div>
-        <div class="ex-card-desc">Massa molar, pH, diluição, leis dos gases e mais — em uma console científica.</div>
-      </div>
-    </a>
-  </div>
-</section>
-
-<!-- ════════════ FOOTER ════════════ -->
-
-</div><!-- /.content -->
+  </section>
+  <script>
+  (function () {
+    var bar = document.querySelector('[data-rm-filter]');
+    if (!bar) return;
+    bar.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-filter]');
+      if (!b) return;
+      var f = b.getAttribute('data-filter');
+      bar.querySelectorAll('[data-filter]').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      document.querySelectorAll('[data-rm-articles] [data-tag]').forEach(function (a) {
+        a.hidden = !(f === 'all' || a.getAttribute('data-tag') === f);
+      });
+    });
+  })();
+  </script>
+</div>
 </main>
 <footer class="rm-footer" data-rm-footer>
   <div class="rm-footer-in">
