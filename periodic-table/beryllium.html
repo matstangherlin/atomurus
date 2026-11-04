@@ -106,6 +106,7 @@
 <script src="/assets/public-workspace.js?v=202611041043"></script>
 <script src="../lazy-ads.js?v=202611041043" defer></script>
 <script>window.PAGE_Z = 4;</script>
+<script src="/assets/remake/elements-lite.js?v=202611041200" defer></script>
 <script src="../element-page.js?v=202611041043" defer></script>
 <style>
   *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -200,64 +201,68 @@
     <span class="ds-k">cat</span><span class="ds-v ds-hi" data-page-field="category">Metal alcalino-terroso</span>
   </div>
 
-  <div class="content lc-el-page">
+  <div class="content lc-el-page rm-el" data-rm-el="4">
+    <nav class="rm-crumbs" aria-label="Você está em" data-i18n-attr="aria-label:el.rm.crumbs"><a href="../periodic-table.html" data-i18n="common.rm.periodic">Tabela periódica</a> <span aria-hidden="true">/</span> <span data-rm-cat="alt">Alcalinoterrosos</span> <span aria-hidden="true">/</span> <span class="rm-crumbs-here" data-rm-elname="4">Berílio</span></nav>
 
-    <div class="lc-el-header">
-      <div class="lc-el-header-l">
-        <div class="kicker lc-el-kicker">
-          <span>Element 4</span><span class="sep">·</span><span>Metal alcalino-terroso</span>
-        </div>
-        <h1 class="lc-el-name">Berílio <span class="lc-el-sym-inline">Be</span></h1>
-        <div class="lat lc-el-lat">beryllium · Berílio</div>
+    <section class="rm-el-hero">
+      <div class="rm-el-tile" data-cat="alt">
+        <span class="rm-el-tile-z">4</span>
+        <span class="rm-el-tile-sym">Be</span>
+        <span class="rm-el-tile-mass"><span data-rm-num="9.0122">9,0122</span></span>
       </div>
-      <div class="lc-el-card">
-        <div class="lc-el-card-top">
-          <span class="lc-el-card-z">Z · 4</span>
-          <span class="lc-el-card-cat" style="background:var(--c-alkaline);border:1px solid var(--c-alkaline-b)"></span>
-        </div>
-        <div class="lc-el-card-sym">Be</div>
-        <div class="lc-el-card-mass">
-          <span data-i18n="el.massLabel">mass</span>
-          <span class="v">9.012</span>
-        </div>
+      <div class="rm-el-head">
+        <p class="rm-kicker rm-el-kicker kicker" data-rm-kicker data-cat="alt" data-group="2" data-period="2">Metal alcalinoterroso · Grupo 2 · Período 2</p>
+        <h1 class="lc-el-name">Berílio</h1>
+        <p class="rm-el-lead desc" data-page-field="desc">Metal alcalino-terroso rígido e leve, usado em ligas aeroespaciais e janelas de raio-X.</p>
       </div>
-    </div>
-
-    <!-- Hidden mirror for legacy element-page.js (it queries .wrap h1 and .lat). -->
-    <div class="wrap" style="display:none;position:absolute;visibility:hidden">
-      <div class="el-mirror-name">Berílio <span>Be</span></div>
-      <div class="lat">beryllium · Berílio</div>
-    </div>
-
-    <div class="lc-el-props">
-      <div class="lc-el-prop"><span class="k" data-i18n="el.atomicNumber">Atomic number (Z)</span><span class="v mono">4</span></div>
-      <div class="lc-el-prop"><span class="k" data-i18n="el.symbol">Symbol</span><span class="v">Be</span></div>
-      <div class="lc-el-prop"><span class="k" data-i18n="el.atomicMass">Atomic mass</span><span class="v mono">9.012 u</span></div>
-      <div class="lc-el-prop"><span class="k" data-i18n="el.physicalState">Physical state</span><span class="v" data-page-field="state">Sólido</span></div>
-      <div class="lc-el-prop"><span class="k" data-i18n="el.category">Category</span><span class="v" data-page-field="category">Metal alcalino-terroso</span></div>
-      <div class="lc-el-prop"><span class="k" data-i18n="el.electronegativity">Electronegativity</span><span class="v mono">1.57</span></div>
-      <div class="lc-el-prop"><span class="k" data-i18n="el.period">Period</span><span class="v mono">2</span></div>
-      <div class="lc-el-prop"><span class="k" data-i18n="el.group">Group</span><span class="v mono">2</span></div>
-      <div class="lc-el-prop"><span class="k" data-i18n="el.discovered">Discovered</span><span class="v mono">Vauquelin · 1798</span></div>
-      <div class="lc-el-prop"><span class="k" data-i18n="el.latinName">Latin name</span><span class="v mono">beryllium</span></div>
-    </div>
-
-    <div class="lc-el-desc-block">
-      <div class="lc-el-desc-lbl" data-i18n="el.descLabel">Description</div>
-      <div class="lc-el-desc-body">
-        <p class="desc" data-page-field="desc">Metal alcalino-terroso rígido e leve, usado em ligas aeroespaciais e janelas de raio-X.</p>
+      <div class="rm-el-actions">
+        <div class="rm-save-slot" data-rm-save-slot></div>
+        <a class="rm-btn rm-btn-primary" href="/viewer/atomic-models.html?model=bohr" data-i18n="el.rm.view3d">Ver átomo em 3D</a>
       </div>
-    </div>
+    </section>
 
-    <div class="lc-el-nav"><button type="button" class="aco-manage-cookies" data-consent-manage data-i18n="common.consent.manage">Gerenciar cookies</button>
-      <a class="prev" href="lithium.html"><span class="dir"><span data-i18n="el.navPrev">← Prev</span> · Z 3</span><span class="nm">Lítio <span class="sym">Li</span></span></a>
-      <a href="../periodic-table.html" style="flex:0 0 auto;background:var(--lc-paper);padding:14px 22px;text-decoration:none;display:flex;align-items:center;gap:8px;font-family:var(--lc-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--lc-ink-3);">
-        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="4.5" height="4.5" rx="1" fill="currentColor" opacity=".9"/><rect x="7.5" y="1" width="4.5" height="4.5" rx="1" fill="currentColor" opacity=".5"/><rect x="1" y="7.5" width="4.5" height="4.5" rx="1" fill="currentColor" opacity=".5"/><rect x="7.5" y="7.5" width="4.5" height="4.5" rx="1" fill="currentColor" opacity=".3"/></svg>
-        <span data-i18n="el.bcTable">Table</span>
-      </a>
-      <a class="next" href="borium.html"><span class="dir"><span data-i18n="el.navNext">Next</span> · Z 5 →</span><span class="nm">Boro <span class="sym">B</span></span></a>
-    </div>
+    <div class="rm-el-body">
+      <div class="rm-el-main">
+      <section class="rm-el-sec" aria-labelledby="rm-iso-h">
+        <h2 id="rm-iso-h" data-i18n="el.rm.isotopes">Isótopos</h2>
+        <div class="rm-iso-list">
+          <div class="rm-iso">
+            <div class="rm-iso-row"><span><strong>⁹Be</strong> <span class="rm-muted" data-i18n="el.rm.stable">estável</span></span><span class="rm-iso-pct" data-rm-num="100.0%">100,0%</span></div>
+            <div class="rm-iso-bar"><span style="width:100.00%"></span></div>
+          </div>
+          <p class="rm-iso-note"><span data-i18n="el.rm.radioactive">radioativo</span>: <strong>⁷Be</strong> <span data-i18n="el.rm.halfLife">meia-vida</span> <span class="rm-mono">53.22 d</span> · <strong>¹⁰Be</strong> <span data-i18n="el.rm.halfLife">meia-vida</span> <span class="rm-mono">1.39 My</span></p>
+        </div>
+      </section>
+        <div class="lc-el-desc-block" aria-hidden="true"></div>
 
+      <nav class="rm-pager" aria-label="Elementos vizinhos" data-i18n-attr="aria-label:el.rm.neighbours">
+        <a class="rm-pager-link" href="lithium.html" data-rm-z="3"><span class="rm-pager-dir" data-i18n="el.rm.prev">← Anterior</span><span class="rm-pager-name">3 · <span data-rm-elname="3">Lítio</span></span></a>
+        <a class="rm-pager-link rm-pager-next" href="borium.html" data-rm-z="5"><span class="rm-pager-dir" data-i18n="el.rm.next">Próximo →</span><span class="rm-pager-name"><span data-rm-elname="5">Boro</span> · 5</span></a>
+      </nav>
+      </div>
+
+      <aside class="rm-el-aside">
+        <div class="rm-card rm-el-facts">
+          <h2 data-i18n="el.rm.data">Dados</h2>
+          <dl class="rm-dl">
+            <div><dt data-i18n="el.rm.mass">Massa atômica</dt><dd><span data-rm-num="9.0122">9,0122</span> u</dd></div>
+            <div><dt data-i18n="el.rm.config">Configuração</dt><dd class="rm-mono">[He] 2s²</dd></div>
+            <div><dt data-i18n="el.rm.en">Eletronegatividade</dt><dd><span data-rm-num="1.57">1,57</span></dd></div>
+            <div><dt data-i18n="el.rm.state">Estado a 25 °C</dt><dd><span data-page-field="state">Sólido</span></dd></div>
+            <div><dt data-i18n="el.rm.density">Densidade</dt><dd><span data-rm-num="1.85">1,85</span> g/cm³</dd></div>
+            <div><dt data-i18n="el.rm.melt">Fusão</dt><dd><span data-rm-num="1287 °C">1287 °C</span></dd></div>
+            <div><dt data-i18n="el.rm.boil">Ebulição</dt><dd><span data-rm-num="2469 °C">2469 °C</span></dd></div>
+            <div><dt data-i18n="el.rm.discovered">Descoberta</dt><dd>Vauquelin, 1798</dd></div>
+          </dl>
+          <p class="rm-el-sources" data-i18n="el.rm.sources">Fontes: IUPAC 2024, NIST.</p>
+        </div>
+        <div class="rm-card-dark rm-el-cta">
+          <p class="rm-el-cta-title" data-rm-tpl="el.rm.calcTitle">Calcule com berílio</p>
+          <p class="rm-el-cta-copy" data-rm-tpl="el.rm.calcCopy">Qualquer fórmula com Be: a calculadora já usa a massa certa.</p>
+          <a href="/calculators.html?formula=Be#molar" data-i18n="el.rm.calcLink">Abrir massa molar →</a>
+        </div>
+      </aside>
+    </div>
   </div>
 </main>
 <footer class="rm-footer" data-rm-footer>

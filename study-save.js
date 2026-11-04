@@ -258,7 +258,8 @@
   }
 
   function hostParent() {
-    return document.querySelector('.lc-el-header-l, .content-inner, .lc-doc-prose, article, .main') || document.body;
+    return document.querySelector('[data-rm-save-slot]') ||
+      document.querySelector('.lc-el-header-l, .content-inner, .lc-doc-prose, article, .main') || document.body;
   }
 
   function setMsg(node, text, href, hrefLabel) {
