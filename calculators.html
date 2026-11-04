@@ -1426,6 +1426,20 @@ window.addEventListener('keydown', e => {
     if (tab) tab.click();
   }
 })();
+// prefill molar mass from ?formula= (links from the home search and element pages)
+(function(){
+  let f = '';
+  try { f = (new URLSearchParams(location.search).get('formula') || '').trim(); } catch (e) {}
+  if (!f || f.length > 80) return;
+  const input = document.getElementById('mm-input');
+  if (!input) return;
+  const tab = document.querySelector('[data-target="molar"]');
+  if (tab && !tab.classList.contains('active')) tab.click();
+  input.value = f;
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+  const run = document.querySelector('#tab-molar .calc-btn-run');
+  if (run) run.click();
+})();
 
 // ═════════════════════════════════════════
 // FORMATTING
