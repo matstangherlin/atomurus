@@ -178,7 +178,7 @@ test.describe('A1.0 mobile layout', () => {
     await expect(page.locator('.app-element-row')).toHaveCount(118);
     await page.locator('[data-mode="table"]').click();
     const pan = await page.evaluate(() => {
-      const box = document.querySelector('[data-pan-x]');
+      const box = document.querySelector('.app-table-view [data-pan-x]');
       const cell = document.querySelector('.app-pcell').getBoundingClientRect();
       return { pans: box.scrollWidth > box.clientWidth, sw: document.scrollingElement.scrollWidth, iw: innerWidth, cellW: cell.width, cellH: cell.height };
     });

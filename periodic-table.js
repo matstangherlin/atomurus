@@ -6632,7 +6632,8 @@ function showPage(page, navEl) {
   if (navEl) navEl.classList.add('active');
 
   // breadcrumb
-  document.getElementById('bc-current').textContent = PAGE_NAMES[page] || page;
+  const bcCurrent = document.getElementById('bc-current');
+  if (bcCurrent) bcCurrent.textContent = PAGE_NAMES[page] || page;
 
   // pages
   const pgPeriodic = document.getElementById('pg-periodic');

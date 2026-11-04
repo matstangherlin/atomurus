@@ -297,7 +297,7 @@
   // richer than the generic page-share fallback.
   function renderShareButton(el, name) {
     if (typeof window.injectShareButton !== 'function') return;
-    var topbar = document.querySelector('.topbar');
+    var topbar = document.querySelector('.rm-el-actions') || document.querySelector('.topbar');
     if (!topbar) return;
     var tpl  = (window.I18N && I18N.t) ? I18N.t('el.shareTextTemplate') : null;
     if (!tpl) tpl = 'Check out {name} ({symbol}) — element {z} on the periodic table';

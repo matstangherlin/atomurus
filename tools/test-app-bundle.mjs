@@ -56,9 +56,9 @@ test('performance budget: initial JS and CSS', () => {
   assert.ok(manifest.css.bytes <= BUDGET.cssBytes, `CSS ${manifest.css.bytes} B > ${BUDGET.cssBytes}`);
 });
 
-test('only the three app typefaces ship', () => {
+test('only the two app typefaces ship (Figtree, JetBrains Mono)', () => {
   const fonts = readdirSync(path.join(APP, 'assets/fonts'));
-  assert.ok(fonts.every((f) => f === 'fonts.css' || /^(instrument-serif|inter-tight|jetbrains-mono)/.test(f)), fonts.join(', '));
+  assert.ok(fonts.every((f) => f === 'fonts.css' || /^(figtree|jetbrains-mono)/.test(f)), fonts.join(', '));
 });
 
 test('no remote-webview shortcut in the Capacitor preparation', () => {

@@ -52,25 +52,16 @@ function icon(id) {
   return svg;
 }
 
-/* Remake 2026 brand mark: two tilted orbits around an ink nucleus. */
+/* Brand mark: the Atomurus emblem (same file as the PWA icon). */
 function brandMark(doc) {
-  const ns = 'http://www.w3.org/2000/svg';
-  const svg = doc.createElementNS(ns, 'svg');
-  svg.setAttribute('class', 'app-brand-mark');
-  svg.setAttribute('viewBox', '0 0 28 28');
-  svg.setAttribute('aria-hidden', 'true');
-  [['-30', '1'], ['30', '.45']].forEach(([deg, opacity]) => {
-    const e = doc.createElementNS(ns, 'ellipse');
-    e.setAttribute('cx', '14'); e.setAttribute('cy', '14'); e.setAttribute('rx', '12'); e.setAttribute('ry', '5');
-    e.setAttribute('fill', 'none'); e.setAttribute('stroke', 'currentColor'); e.setAttribute('stroke-width', '1.8');
-    e.setAttribute('transform', `rotate(${deg} 14 14)`); e.setAttribute('opacity', opacity);
-    svg.appendChild(e);
-  });
-  const core = doc.createElementNS(ns, 'circle');
-  core.setAttribute('class', 'app-brand-core');
-  core.setAttribute('cx', '14'); core.setAttribute('cy', '14'); core.setAttribute('r', '3');
-  svg.appendChild(core);
-  return svg;
+  const img = doc.createElement('img');
+  img.className = 'app-brand-mark';
+  img.src = '/assets/icons/icon-192.png';
+  img.alt = '';
+  img.width = 28;
+  img.height = 28;
+  img.decoding = 'async';
+  return img;
 }
 
 export function createAppShell({ root, services, registry = FEATURE_REGISTRY, win = globalThis.window, prefs = {} }) {

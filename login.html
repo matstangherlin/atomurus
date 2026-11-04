@@ -12,34 +12,34 @@
 <meta name="apple-mobile-web-app-title" content="Atomurus">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex,nofollow">
-<link rel="icon" type="image/png" href="assets/atomurus-logo.png?v=202611041043">
-<link rel="apple-touch-icon" href="assets/atomurus-logo.png?v=202611041043">
+<link rel="icon" type="image/png" href="assets/atomurus-logo.png?v=202611041722">
+<link rel="apple-touch-icon" href="assets/atomurus-logo.png?v=202611041722">
   <title>Login — Atomurus</title>
 <meta name="description" content="Atomurus login and account creation with email and password.">
 <meta property="og:title" content="Login — Atomurus">
 <meta property="og:description" content="Atomurus login and account creation with email and password.">
 <link rel="canonical" href="https://atomurus.com/login">
 <link rel="preload" href="/assets/fonts/figtree-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202611041043">
-<script src="auth-sync.js?v=202611041043"></script>
-<script src="auth-client.js?v=202611041043"></script>
-<script src="consent.js?v=202611041043" defer></script>
-<script defer src="ads-gate.js?v=202611041043"></script>
-<script src="cookie-consent.js?v=202611041043" defer></script>
-<script src="i18n.js?v=202611041043" defer></script>
-<script src="meta-i18n.js?v=202611041043" defer></script>
-<link rel="stylesheet" href="/assets/critical-lab.css?v=202611041043">
-<link rel="stylesheet" href="/assets/critical-lab.css?v=202611041043">
-<link rel="stylesheet" href="atomurus-lab-console.css?v=202611041043" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="atomurus-lab-console.css?v=202611041043"></noscript>
-<link rel="stylesheet" href="/assets/public-shell.css?v=202611041043">
-<link rel="stylesheet" href="/assets/ui/index.css?v=202611041043">
-<link rel="stylesheet" href="/assets/layouts/auth.css?v=202611041043">
-<script src="assets/global-nav.js?v=202611041043"></script>
-<script src="/assets/public-workspace.js?v=202611041043"></script>
-<script src="atomurus-mobile-nav.js?v=202611041043" defer></script>
-<link rel="stylesheet" href="/assets/remake/remake.css?v=202611041200">
-<script src="/assets/remake/site-nav.js?v=202611041200" defer></script>
+<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202611041722">
+<script src="auth-sync.js?v=202611041722"></script>
+<script src="auth-client.js?v=202611041722"></script>
+<script src="consent.js?v=202611041722" defer></script>
+<script defer src="ads-gate.js?v=202611041722"></script>
+<script src="cookie-consent.js?v=202611041722" defer></script>
+<script src="i18n.js?v=202611041722" defer></script>
+<script src="meta-i18n.js?v=202611041722" defer></script>
+<link rel="stylesheet" href="/assets/critical-lab.css?v=202611041722">
+<link rel="stylesheet" href="/assets/critical-lab.css?v=202611041722">
+<link rel="stylesheet" href="atomurus-lab-console.css?v=202611041722" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="atomurus-lab-console.css?v=202611041722"></noscript>
+<link rel="stylesheet" href="/assets/public-shell.css?v=202611041722">
+<link rel="stylesheet" href="/assets/ui/index.css?v=202611041722">
+<link rel="stylesheet" href="/assets/layouts/auth.css?v=202611041722">
+<script src="assets/global-nav.js?v=202611041722"></script>
+<script src="/assets/public-workspace.js?v=202611041722"></script>
+<script src="atomurus-mobile-nav.js?v=202611041722" defer></script>
+<link rel="stylesheet" href="/assets/remake/remake.css?v=202611041722">
+<script src="/assets/remake/site-nav.js?v=202611041722" defer></script>
 </head>
 
 <body class="rm ps-body lc-doc">
@@ -48,46 +48,9 @@
 <header class="rm-header rm-header--minimal" data-rm-header>
   <div class="rm-header-in">
     <a class="rm-brand" href="/" aria-label="Atomurus">
-      <svg class="rm-brand-mark" width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true"><ellipse cx="14" cy="14" rx="12" ry="5" stroke="currentColor" stroke-width="1.8" transform="rotate(-30 14 14)"/><ellipse cx="14" cy="14" rx="12" ry="5" stroke="currentColor" stroke-width="1.8" transform="rotate(30 14 14)" opacity=".45"/><circle class="rm-brand-core" cx="14" cy="14" r="3"/></svg>
+      <img class="rm-brand-mark" src="/assets/brand/atomurus-mark-56.png" srcset="/assets/brand/atomurus-mark-96.png 2x" width="32" height="32" alt="" decoding="async">
       <span class="rm-brand-name">Atomurus</span>
     </a>
-    <button class="rm-burger" type="button" aria-expanded="false" aria-controls="rm-nav" data-rm-burger>
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path class="rm-burger-open" d="M4 7h16M4 12h16M4 17h16"/><path class="rm-burger-close" d="M6 6l12 12M18 6 6 18"/></svg>
-      <span class="rm-sr" data-i18n="common.rm.menu">Menu</span>
-    </button>
-    <div class="rm-navwrap" id="rm-nav" data-rm-nav>
-      <nav class="rm-nav" aria-label="Main" data-i18n-attr="aria-label:common.rm.mainNav">
-        <a class="rm-link" data-rm-section="periodic" href="/periodic-table.html"><span data-i18n="common.rm.periodic">Periodic table</span></a>
-        <div class="rm-dd" data-rm-section="models">
-          <a class="rm-link rm-dd-toggle" href="/viewer/atomic-models.html" aria-haspopup="true" aria-expanded="false"><span data-i18n="common.rm.models3d">3D models</span><svg class="rm-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
-          <div class="rm-dd-menu"><div class="rm-dd-panel">
-            <a class="rm-dd-item" href="/viewer/atomic-models.html"><span class="rm-dd-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(-30 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(30 12 12)"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg></span><span><span class="rm-dd-title" data-i18n="common.rm.atomicModels">Atomic models</span><span class="rm-dd-desc" data-i18n="common.rm.atomicModelsDesc">From Dalton to the quantum model</span></span></a>
-            <a class="rm-dd-item" href="/viewer/molecules.html"><span class="rm-dd-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="7" cy="14" r="3"/><circle cx="17" cy="9" r="3"/><circle cx="15" cy="19" r="2"/><path d="m9.7 12.8 4.6-2.6M8.6 16.4l4.6 2"/></svg></span><span><span class="rm-dd-title" data-i18n="common.rm.molecules">Molecules</span><span class="rm-dd-desc" data-i18n="common.rm.moleculesDesc">Water, CO₂, ethanol and 39 more</span></span></a>
-            <a class="rm-dd-item" href="/viewer/allotropes.html"><span class="rm-dd-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 20 7.5v9L12 21l-8-4.5v-9z"/><path d="M12 3v18M4 7.5l16 9M20 7.5l-16 9"/></svg></span><span><span class="rm-dd-title" data-i18n="common.rm.allotropes">Allotropes</span><span class="rm-dd-desc" data-i18n="common.rm.allotropesDesc">Graphite, diamond, fullerene…</span></span></a>
-            <a class="rm-dd-item" href="/viewer/isomerism.html"><span class="rm-dd-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 3v18" stroke-dasharray="2 2"/><circle cx="6" cy="9" r="2.5"/><circle cx="18" cy="9" r="2.5"/><path d="M6 11.5V18M18 11.5V18"/></svg></span><span><span class="rm-dd-title" data-i18n="common.rm.isomerism">Isomerism</span><span class="rm-dd-desc" data-i18n="common.rm.isomerismDesc">Isomers side by side</span></span></a>
-          </div></div>
-        </div>
-        <div class="rm-dd" data-rm-section="calculators">
-          <a class="rm-link rm-dd-toggle" href="/calculators.html" aria-haspopup="true" aria-expanded="false"><span data-i18n="common.rm.calculators">Calculators</span><svg class="rm-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
-          <div class="rm-dd-menu"><div class="rm-dd-panel rm-dd-narrow">
-            <a class="rm-dd-item" href="/calculators.html#molar"><span><span class="rm-dd-title" data-i18n="common.rm.molarMass">Molar mass</span><span class="rm-dd-desc" data-i18n="common.rm.molarMassDesc">Step by step, with hydrates</span></span></a>
-            <a class="rm-dd-item" href="/calculators.html#ideal"><span><span class="rm-dd-title" data-i18n="common.rm.idealGas">Ideal gas</span><span class="rm-dd-desc">PV = nRT</span></span></a>
-            <a class="rm-dd-item" href="/calculators.html#dilute"><span><span class="rm-dd-title" data-i18n="common.rm.dilution">Dilution</span><span class="rm-dd-desc">C₁V₁ = C₂V₂</span></span></a>
-            <a class="rm-dd-item" href="/calculators.html#ph"><span><span class="rm-dd-title" data-i18n="common.rm.ph">pH and pOH</span><span class="rm-dd-desc" data-i18n="common.rm.phDesc">Acid, base or neutral</span></span></a>
-            <a class="rm-dd-foot" href="/calculators.html" data-i18n="common.rm.allCalcs">See all calculators →</a>
-          </div></div>
-        </div>
-        <a class="rm-link" data-rm-section="explore" href="/explore.html"><span data-i18n="common.rm.articles">Articles</span></a>
-        <a class="rm-link" data-rm-section="plans" href="/pricing.html"><span data-i18n="common.rm.plans">Plans</span></a>
-      </nav>
-      <div class="rm-actions">
-        <a class="rm-link rm-signin" href="/login"><span data-i18n="common.rm.signIn">Sign in</span></a>
-        <div class="rm-account ps-account" data-atomurus-account>
-          <span class="ps-plan-badge" data-atomurus-plan-badge hidden></span>
-          <a class="rm-btn rm-btn-primary rm-cta is-guest-cta" href="/signup" data-atomurus-account-chip aria-label="Create free account"><span data-i18n="common.auth.createAccount">Create free account</span></a>
-        </div>
-      </div>
-    </div>
   </div>
 </header>
 <main class="ps-main" id="ps-main">
@@ -106,6 +69,7 @@
       <a href="privacy.html"><span data-i18n="common.footer.privacy">Privacy</span></a>
       <a href="terms.html"><span data-i18n="common.footer.terms">Terms</span></a>
       <a href="pricing.html"><span data-i18n="common.footer.pricing">Pricing</span></a>
+      <button type="button" class="auth-rail-cookies" data-consent-manage data-i18n="common.consent.manage">Manage cookies</button>
     </div>
   </aside>
 
@@ -284,10 +248,10 @@ setTimeout(function(){
   if(boot) boot.hidden=true;
 },8000);
 </script>
-<script src="auth-login.js?v=202611041043"></script>
+<script src="auth-login.js?v=202611041722"></script>
 <script type="text/javascript">
     (window.atomurusRunAutoTag||function(){})({ zoneId: '6p1sooifu8' });
 </script>
-<script src="lazy-ads.js?v=202611041043" defer></script>
+<script src="lazy-ads.js?v=202611041722" defer></script>
 </body>
 </html>

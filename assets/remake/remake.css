@@ -178,8 +178,7 @@ html[data-rm] body.rm.rm .main > .content > .content-inner { max-width: none; ma
   flex: none;
 }
 .rm-brand:hover { color: var(--rm-ink); }
-.rm-brand-mark { color: var(--rm-green); display: block; }
-.rm-brand-core { fill: var(--rm-ink); }
+.rm-brand-mark { display: block; width: 32px; height: 32px; border-radius: 8px; flex: none; }
 .rm-brand-name { font-size: 19px; font-weight: 700; letter-spacing: -0.01em; }
 .rm-navwrap {
   flex: 1 1 auto;
@@ -429,7 +428,8 @@ html[data-rm] body.rm.rm .main > .content > .content-inner { max-width: none; ma
   box-sizing: border-box;
 }
 .rm-footer-brand { max-width: 320px; }
-.rm-footer-name { margin: 0; font-size: 17px; font-weight: 700; color: var(--rm-ink); }
+.rm-footer-name { margin: 0; display: flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 700; color: var(--rm-ink); }
+.rm-footer-mark { display: block; width: 24px; height: 24px; border-radius: 6px; }
 .rm-footer-tag { margin: 8px 0 0; font-size: 14px; line-height: 1.55; color: var(--rm-ink-2); }
 .rm-footer-nav { display: flex; flex-wrap: wrap; gap: 12px 28px; align-items: flex-start; }
 .rm-foot-link {
@@ -890,7 +890,9 @@ html[data-rm] body.rm.rm .rm-el-facts h2 { margin: 12px 0 8px; font-size: 17px; 
 }
 
 /* page scroll: the legacy app-like shell locked html/body to 100vh */
-html[data-rm], html[data-rm] body.rm.rm { height: auto !important; min-height: 100%; overflow-x: hidden !important; overflow-y: visible !important; }
+/* overflow-x: clip (not hidden) so html/body never become scroll containers:
+   that keeps the header's position: sticky working. */
+html[data-rm], html[data-rm] body.rm.rm { height: auto !important; min-height: 100%; overflow-x: clip !important; overflow-y: visible !important; }
 html[data-rm] body.rm.rm .main > .content { overflow: visible !important; height: auto !important; }
 html[data-rm] body.rm.rm .rm-el-head h1.lc-el-name, html[data-rm] body.rm.rm .rm-hero-title { font-weight: 700 !important; }
 
@@ -1483,7 +1485,22 @@ html[data-rm] body.rm.rm .iso-section-title { font-size: 22px !important; }
 
 /* 8.8 calculators ──────────────────────────────────────────────────── */
 html[data-rm] body.rm.rm .content-inner:has(> .calc-shell) { display: flex; flex-direction: column; }
-html[data-rm] body.rm.rm .content-inner > .pro-lab-discover { display: none !important; }
+html[data-rm] body.rm.rm .content-inner > .pro-lab-discover {
+  order: 11;
+  margin: 12px 0 0 !important;
+  padding: 18px 24px !important;
+  border: 1px solid var(--rm-line) !important;
+  border-radius: 16px !important;
+  background: var(--rm-paper) !important;
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  font-family: var(--rm-font) !important;
+  box-shadow: none !important;
+}
+html[data-rm] body.rm.rm .content-inner > .pro-lab-discover * { font-family: var(--rm-font) !important; letter-spacing: 0 !important; }
+html[data-rm] body.rm.rm .content-inner > .pro-lab-discover p { margin: 0 !important; flex: 1 1 360px; font-size: 15px !important; }
 html[data-rm] body.rm.rm .content-inner > .solver-discover {
   order: 10;
   margin: 32px 0 0 !important;
@@ -1767,3 +1784,71 @@ html[data-rm] #aco-cookie-banner .aco-body { font-size: 14px !important; color: 
 html[data-rm] #aco-cookie-banner button { height: 40px; border-radius: 10px !important; font: 600 14px/1 var(--rm-font) !important; }
 html[data-rm] #aco-cookie-banner button.aco-equal { background: var(--rm-green) !important; border-color: var(--rm-green) !important; color: var(--rm-on-green) !important; }
 html[data-rm] #aco-cookie-banner button:not(.aco-equal) { background: transparent !important; border: 1px solid var(--rm-line-strong) !important; color: var(--rm-ink) !important; }
+
+/* periodic-table pages: element search in the page header (top right) */
+html[data-rm] body.rm.rm main.main .content:has(> .rm-ptable-search),
+html[data-rm] body.rm.rm main.main .content:has(.rm-ptable-search) { position: relative; }
+html[data-rm] body.rm.rm .rm-ptable-search {
+  position: absolute;
+  top: 60px;
+  right: var(--rm-gutter);
+  width: 300px;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: none !important;
+  z-index: 20;
+}
+html[data-rm] body.rm.rm .rm-ptable-search > svg { position: absolute; left: 16px; top: 15px; color: var(--rm-ink-2); pointer-events: none; }
+html[data-rm] body.rm.rm .rm-ptable-search input {
+  width: 100%;
+  height: 46px;
+  box-sizing: border-box;
+  padding: 0 14px 0 44px !important;
+  border-radius: 12px !important;
+  border: 1px solid var(--rm-line-strong) !important;
+  background: var(--rm-paper) !important;
+  font: 400 16px var(--rm-font) !important;
+  color: var(--rm-ink) !important;
+}
+html[data-rm] body.rm.rm .rm-ptable-search .search-suggestions { top: calc(100% + 6px); left: 0; right: 0; border-radius: 12px; font-family: var(--rm-font); }
+@media (max-width: 860px) {
+  html[data-rm] body.rm.rm .rm-ptable-search { position: relative; top: auto; right: auto; width: 100%; margin-top: 20px !important; }
+}
+html[data-rm] body.rm.rm .auth-rail-links .auth-rail-cookies { padding: 0; border: 0; background: none; color: #908A7C; font: 400 14px var(--rm-font); cursor: pointer; }
+html[data-rm] body.rm.rm .auth-rail-links .auth-rail-cookies:hover { color: #F2EFE7; }
+
+/* share button (share-button.js) in its remake slots */
+html[data-rm] body.rm.rm .rm-share-slot { display: flex; justify-content: flex-end; position: relative; z-index: 30; }
+html[data-rm] body.rm.rm .rm-share-slot--tabs { height: 0; }
+html[data-rm] body.rm.rm .rm-share-slot--tabs > .share-host { position: absolute; right: 0; top: 30px; }
+html[data-rm] body.rm.rm .rm-share-slot--lead { justify-content: flex-start; margin-top: 20px; }
+html[data-rm] body.rm.rm .rm-share-slot .share-trigger,
+html[data-rm] body.rm.rm .rm-el-actions .share-trigger,
+html[data-rm] body.rm.rm .art-meta .share-trigger {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 8px !important;
+  height: 40px !important;
+  width: auto !important;
+  padding: 0 14px !important;
+  border-radius: 10px !important;
+  border: 1px solid var(--rm-line-strong) !important;
+  background: var(--rm-paper) !important;
+  color: var(--rm-ink) !important;
+  font: 600 14px/1 var(--rm-font) !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  box-shadow: none !important;
+}
+html[data-rm] body.rm.rm .rm-el-actions .share-trigger { height: 48px !important; padding: 0 18px !important; font-size: 15px !important; }
+html[data-rm] body.rm.rm .rm-share-slot .share-trigger-label,
+html[data-rm] body.rm.rm .rm-el-actions .share-trigger-label,
+html[data-rm] body.rm.rm .art-meta .share-trigger-label { display: inline !important; }
+html[data-rm] body.rm.rm .share-menu { border-radius: 14px !important; font-family: var(--rm-font) !important; box-shadow: var(--rm-shadow-pop) !important; }
+html[data-rm] body.rm.rm .art-meta .share-host { margin-left: 8px; }
+@media (max-width: 720px) {
+  html[data-rm] body.rm.rm .rm-share-slot--tabs { height: auto; justify-content: flex-start; margin-top: 16px; }
+  html[data-rm] body.rm.rm .rm-share-slot--tabs > .share-host { position: static; }
+}
+html[data-rm] body.rm.rm .rm-save-slot #atomurus-study-save button { height: 48px !important; padding: 0 18px !important; font-size: 15px !important; }

@@ -2107,7 +2107,7 @@ const DICT = {
         mCloseAria:      'Close (ESC)',
         mCloseTitle:     'Close (ESC)',
         // Search & topbar
-        searchPlaceholder: 'Search element (name or Z)…',
+        searchPlaceholder: 'Name, symbol or number',
         // Physical states (used in modal/compare/canvas — translated via stateName helper)
         stateSolid:   'Solid',
         stateLiquid:  'Liquid',
@@ -4451,7 +4451,7 @@ const DICT = {
         mNavCompareLbl:  'Comparar',
         mCloseAria:      'Fechar (ESC)',
         mCloseTitle:     'Fechar (ESC)',
-        searchPlaceholder: 'Buscar elemento (nome ou Z)…',
+        searchPlaceholder: 'Nome, símbolo ou número',
         stateSolid:   'Sólido',
         stateLiquid:  'Líquido',
         stateGas:     'Gasoso',

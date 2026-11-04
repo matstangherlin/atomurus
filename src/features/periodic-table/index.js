@@ -36,7 +36,7 @@ export default {
     const view = el('div', { class: 'app-table-view', 'aria-busy': 'true' },
       el('div', { class: 'ui-skeleton' }), el('div', { class: 'ui-skeleton' }), el('div', { class: 'ui-skeleton' }));
 
-    const chips = el('div', { class: 'app-chips', role: 'group', 'aria-label': t('table.categories'), 'data-table-cats': true },
+    const chips = el('div', { class: 'app-chips', role: 'group', 'aria-label': t('table.categories'), 'data-table-cats': true, 'data-pan-x': 'chips' },
       CATEGORIES.map((id) => el('button', { class: 'app-chip', type: 'button', 'data-cat': id, 'aria-pressed': 'false' },
         el('span', { class: 'app-chip-dot', 'data-cat': id, 'aria-hidden': 'true' }), t(`cat.${id}`))));
     const card = el('aside', { class: 'app-element-card', hidden: true, 'aria-live': 'polite', 'data-element-card': true });

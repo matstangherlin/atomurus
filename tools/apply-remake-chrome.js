@@ -60,7 +60,11 @@ function headerFor(rel) {
     );
   }
   if (isMinimal(rel)) {
+    // Sign-in keeps only the brand: no navigation, no account chip.
     html = html.replace('<header class="rm-header"', '<header class="rm-header rm-header--minimal"');
+    const cut = html.indexOf('    <button class="rm-burger"');
+    const end = html.lastIndexOf('  </div>\n</header>');
+    if (cut !== -1 && end > cut) html = html.slice(0, cut) + html.slice(end);
   }
   return html;
 }
@@ -91,7 +95,28 @@ function stripLegacyChrome(shellInner) {
   inner = removeAllWithClass(inner, 'ws-drawer-backdrop');
   inner = removeAllWithClass(inner, 'mobile-overlay');
   inner = removeAllWithClass(inner, 'lc-footer', 'footer');
+  inner = removeAllWithClass(inner, 'aco-manage-wrap');
+  inner = inner.replace(/<button type="button" class="aco-manage-cookies"[^>]*>[^<]*<\/button>\s*/g, '');
   return inner;
+}
+
+/* The periodic-table pages drive their element search from #search-input,
+   which used to live in the legacy top bar: keep it, now in the page header. */
+const PTABLE_SEARCH = `<div class="search-box rm-ptable-search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="search-input" type="search" placeholder="Name, symbol or number"
+             data-i18n-attr="placeholder:ptable.searchPlaceholder; aria-label:ptable.searchPlaceholder" aria-label="Name, symbol or number"
+             oninput="handleSearchInput(this.value)" onfocus="updateSearchSuggestions(this.value)" onkeydown="handleSearchKey(event)" autocomplete="off">
+      <div class="search-suggestions" id="search-suggestions" role="listbox" aria-label="Search suggestions"></div>
+    </div>`;
+
+function ensurePtableSearch(html, rel) {
+  if (!/^periodic-table(\.pt)?\.html$|^periodic-table\/(compare|heatmap|isotopes|trends)(\.pt)?\.html$/.test(rel)) return html;
+  if (html.includes('id="search-input"')) return html;
+  const desc = html.match(/<p class="ph-desc"[^>]*>[\s\S]*?<\/p>/);
+  if (!desc) return html;
+  const at = desc.index + desc[0].length;
+  return html.slice(0, at) + '\n        ' + PTABLE_SEARCH + html.slice(at);
 }
 
 function ensureHeadAssets(html) {
@@ -110,7 +135,7 @@ function applyRemake(html, file) {
   const rel = relOf(file);
   const shell = findElementWithClass(html, 'ps-shell');
   if (!shell || !/id=["']ps-shell["']/.test(shell.html.slice(0, shell.html.indexOf('>') + 1))) {
-    return { html, status: 'skip-no-shell' };
+    return applyRemakeUnbalanced(html, rel);
   }
   const openEnd = shell.html.indexOf('>') + 1;
   const closeStart = shell.html.lastIndexOf('</div>');
@@ -119,14 +144,43 @@ function applyRemake(html, file) {
   const footer = isMinimal(rel) ? '' : readTpl('site-footer.html') + '\n';
   const nextShell = open + '\n' + headerFor(rel) + '\n' + inner.trim() + '\n' + footer + '</div>';
   let next = html.slice(0, shell.start) + nextShell + html.slice(shell.end);
+  next = ensurePtableSearch(next, rel);
   next = addBodyClass(next, 'rm');
   next = addHtmlAttr(next, 'data-rm', '1');
   next = ensureHeadAssets(next);
   return { html: next, status: next === html ? 'unchanged' : 'remade' };
 }
 
+
+/* Some hand-written pages leave a <div> open inside #ps-shell, so the shell
+   cannot be cut out as one balanced element. Work element by element instead:
+   strip the legacy chrome, put the header right after the shell's opening
+   tag and the footer right after </main>. */
+function applyRemakeUnbalanced(html, rel) {
+  const open = html.match(/<div\b[^>]*\bid=["']ps-shell["'][^>]*>/);
+  if (!open) return { html, status: 'skip-no-shell' };
+  const at = open.index + open[0].length;
+  let head = html.slice(0, at);
+  let body = stripLegacyChrome(html.slice(at));
+  const footer = isMinimal(rel) ? '' : readTpl('site-footer.html') + '\n';
+  const mainEnd = body.indexOf('</main>');
+  if (footer && mainEnd !== -1) {
+    const cut = mainEnd + '</main>'.length;
+    body = body.slice(0, cut) + '\n' + footer + body.slice(cut).replace(/^\s*\n/, '');
+  }
+  let next = head + '\n' + headerFor(rel) + '\n' + body.replace(/^\s*/, '');
+  next = addBodyClass(next, 'rm');
+  next = addHtmlAttr(next, 'data-rm', '1');
+  next = ensureHeadAssets(next);
+  return { html: next, status: next === html ? 'unchanged' : 'remade' };
+}
+
+/* Signed-in workspace pages keep the workspace chrome (sidebar), like /app. */
+const WORKSPACE_PAGES = new Set(['account.html']);
+
 function applyFile(file) {
   if (SKIP_FILES.has(path.basename(file))) return { status: 'skip-app', changed: false };
+  if (WORKSPACE_PAGES.has(relOf(file))) return { status: 'skip-workspace', changed: false };
   const original = fs.readFileSync(file, 'utf8');
   const result = applyRemake(original, file);
   if (result.html !== original) fs.writeFileSync(file, result.html);

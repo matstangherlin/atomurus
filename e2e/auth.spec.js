@@ -8,7 +8,7 @@ test('signed-out workspace shows Pro navigation and explains locked features', a
   await expect(page.locator('#ws-nav-main a[data-nav="home"]')).toContainText(/Home|Início/);
   await expect(page.locator('#ws-nav-main a[data-nav="periodic"]')).toBeVisible();
   await expect(page.locator('#ws-nav-main a[data-nav="viewer"]')).toBeVisible();
-  await expect(page.locator('#ws-userchip')).toContainText(/Create account|Criar conta/, { timeout: 15_000 });
+  await expect(page.locator('#ws-userchip')).toContainText(/Create (free )?account|Criar conta/, { timeout: 15_000 });
   await expect(page).toHaveURL(/\/app/);
   await page.locator('#ws-study-nav a[href="/app?section=study"]').first().click();
   await expect(page).toHaveURL(/section=study/);
@@ -200,6 +200,6 @@ test('logout from the workspace stays on /app as a guest', async ({ page }) => {
   await expect(page.locator('#app-logout-aside')).toBeVisible({ timeout: 15_000 });
   await page.locator('#app-logout-aside').click();
   await expect(page).toHaveURL(/\/app/);
-  await expect(page.locator('#ws-userchip')).toContainText(/Create account|Criar conta/, { timeout: 15_000 });
+  await expect(page.locator('#ws-userchip')).toContainText(/Create (free )?account|Criar conta/, { timeout: 15_000 });
   await expect(page.locator('#app-logout-aside')).toHaveCount(0);
 });

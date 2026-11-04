@@ -10,6 +10,17 @@ Atomurus is a static chemistry site published on Netlify. The project mixes hand
 - Element pages use `elements-data.js`, `elements-data-en.js`, `element-page.js` and generated chunks in `assets/element-content/`.
 - Authentication uses **Supabase Auth** through Netlify Functions. The browser API is `auth-client.js` (`window.AtomurusAuth`). See `SUPABASE-SETUP.md`.
 
+## Remake 2026 (visual layer)
+
+The public site follows the Claude Design "Atomurus — Remake" screens:
+
+- **One top navigation, no sidebar.** `templates/chrome/site-header.html` and `site-footer.html` are written into every public page by `tools/apply-remake-chrome.js` (runs in `npm run build`, after `inject-ui-chrome.js`). Edit the templates, never the copies in the pages.
+- **Design system:** `assets/remake/remake.css` (tokens, header/footer, primitives, and a skin for the legacy page components) and `assets/remake/site-nav.js` (dropdowns, mobile drawer, footer language/theme switches). Figtree is the only text face; old family names in `assets/fonts/fonts.css` are aliases to it.
+- **Rebuilt pages:** home (`index.html` + `assets/remake/home.js`), articles index (`explore.html` / `explore.pt.html`), and the 118 element pages (`tools/remake-element-pages.js`, data baked from `elements-data.js` and `isotopes-data.js`). The periodic table, calculators, 3D viewers, articles, login and document pages keep their markup and scripts and are restyled by `remake.css`.
+- **Data for the mini table:** `tools/build-remake-data.js` → `assets/remake/elements-lite.js` (also regenerates the tile colours block inside `remake.css`).
+- **App shell (`src/`):** Home and Periodic table features follow the "App" screens; category colours live in `src/ui/tokens/colors.css`.
+- Copy lives in `tools/i18n-dict-source.js` under `common.rm`, `home.rm`, `el.rm` and `explore.rm`.
+
 ## Build Flow
 
 1. `node tools/build-element-content-chunks.js`

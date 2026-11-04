@@ -50,14 +50,35 @@
     return 'page_share';
   }
 
+  // Remake 2026: there is no tool top bar any more, so the compact share
+  // button lives next to the content it shares — right end of the view
+  // tabs (viewers, periodic table), the article meta line, or under the
+  // page lead on document pages. Legacy bars stay as a last resort.
+  function slotBefore(node, cls) {
+    var slot = document.querySelector('.rm-share-slot');
+    if (slot) return slot;
+    slot = document.createElement('div');
+    slot.className = 'rm-share-slot ' + cls;
+    node.parentNode.insertBefore(slot, node);
+    return slot;
+  }
+  function slotAfter(node, cls) {
+    var slot = document.querySelector('.rm-share-slot');
+    if (slot) return slot;
+    slot = document.createElement('div');
+    slot.className = 'rm-share-slot ' + cls;
+    node.parentNode.insertBefore(slot, node.nextSibling);
+    return slot;
+  }
   function findAnchor() {
-    // Two top-bar variants across the site:
-    //   .topbar      — element pages, atomic-model pages,
-    //                  periodic-table tabs, calculators, viewers
-    //   .lc-topnav   — home (index.html)
-    // The compact share button lands BEFORE the language toggle in
-    // whichever exists. That's the empty real-estate the user
-    // identified in the top-right.
+    if (document.documentElement.hasAttribute('data-rm')) {
+      var tabs = document.querySelector('.vz-tabs, .pt-tabs');
+      if (tabs) return slotBefore(tabs, 'rm-share-slot--tabs');
+      var meta = document.querySelector('.art-meta');
+      if (meta) return meta;
+      var lead = document.querySelector('.lc-doc-desc, .rm-page-lead, .ph-desc');
+      if (lead) return slotAfter(lead, 'rm-share-slot--lead');
+    }
     return document.querySelector('.topbar') ||
            document.querySelector('.lc-topnav');
   }
