@@ -35,3 +35,23 @@ export function filterElements(elements, query, lang = 'en') {
     el.sym.toLowerCase().startsWith(q) ||
     String(lang === 'pt' ? el.pt : el.en).toLowerCase().includes(q));
 }
+
+/* Remake 2026 categories (same mapping as the public site's tiles). */
+export const CATEGORIES = Object.freeze(['alc', 'alt', 'tra', 'pos', 'smt', 'nmt', 'hal', 'nob', 'lan', 'act']);
+const CAT_SETS = {
+  alc: [3, 11, 19, 37, 55, 87],
+  alt: [4, 12, 20, 38, 56, 88],
+  nob: [2, 10, 18, 36, 54, 86, 118],
+  hal: [9, 17, 35, 53, 85, 117],
+  nmt: [1, 6, 7, 8, 15, 16, 34],
+  smt: [5, 14, 32, 33, 51, 52],
+  pos: [13, 31, 49, 50, 81, 82, 83, 84, 113, 114, 115, 116]
+};
+export function categoryOf(z) {
+  for (const id of ['alc', 'alt', 'nob', 'hal', 'nmt', 'smt', 'pos']) {
+    if (CAT_SETS[id].includes(z)) return id;
+  }
+  if (z >= 57 && z <= 71) return 'lan';
+  if (z >= 89 && z <= 103) return 'act';
+  return 'tra';
+}

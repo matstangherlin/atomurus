@@ -16,8 +16,8 @@ const STATE = { 'Sólido': 'solid', 'Líquido': 'liquid', 'Gasoso': 'gas', 'Sint
 export function buildElementIndex() {
   const src = readFileSync(path.join(ROOT, 'elements-data.js'), 'utf8');
   const sandbox = createContext({ console, window: {}, localStorage: { getItem: () => null } });
-  runInContext(`${src}\nthis.__B = { ELEMENTS, _elNamesEN };`, sandbox);
-  const { ELEMENTS, _elNamesEN } = sandbox.__B;
+  runInContext(`${src}\nthis.__B = { ELEMENTS, _elNamesEN, ELEMENT_LATIN };`, sandbox);
+  const { ELEMENTS, _elNamesEN, ELEMENT_LATIN } = sandbox.__B;
   const elements = ELEMENTS.map((el) => ({
     z: el.z,
     sym: el.sym,
@@ -30,7 +30,8 @@ export function buildElementIndex() {
     group: el.group ?? null,
     period: el.period ?? null,
     state: STATE[el.state] || 'unknown',
-    chi: typeof el.en === 'number' ? el.en : null
+    chi: typeof el.en === 'number' ? el.en : null,
+    slug: ELEMENT_LATIN[el.z] || null
   }));
   return `${JSON.stringify({ version: 1, source: 'elements-data.js', elements })}\n`;
 }

@@ -106,8 +106,11 @@ function assertHomePreviewPayload() {
   if (html.includes('elements-data.js')) {
     fail('index.html still depends on elements-data.js');
   }
-  if (!html.includes('home-preview-data.js')) {
-    fail('index.html is not loading home-preview-data.js');
+  if (!html.includes('assets/remake/elements-lite.js')) {
+    fail('index.html is not loading assets/remake/elements-lite.js (home mini table data)');
+  }
+  if (!fs.existsSync(path.join(ROOT, 'assets', 'remake', 'elements-lite.js'))) {
+    fail('assets/remake/elements-lite.js is missing — run node tools/build-remake-data.js');
   }
 }
 
@@ -437,8 +440,8 @@ function assertUiV2() {
   if (!read('index.html').includes('assets/ui/index.css')) {
     fail('index.html must load UI V2 after the Home migration');
   }
-  if (!read('index.html').includes('assets/layouts/home.css')) {
-    fail('index.html must load assets/layouts/home.css');
+  if (!read('index.html').includes('assets/remake/remake.css')) {
+    fail('index.html must load assets/remake/remake.css');
   }
   if (!read('app.html').includes('assets/ui/index.css')) {
     fail('app.html must load UI V2 after the workspace alignment step');
@@ -587,12 +590,12 @@ function assertUiV2() {
   if (/auth\.access|secure HttpOnly cookie|managed authentication|secure account flow/.test(loginHtml)) {
     fail('login.html must not keep developer-console copy in the primary UI');
   }
-  if (!read('periodic-table.html').includes('data-i18n="common.brandTag">chemistry lab')) {
-    fail('periodic-table.html must put chemistry lab in the DOM');
+  if (!read('periodic-table.html').includes('id="search-input"')) {
+    fail('periodic-table.html must keep the element search (#search-input)');
   }
   const login = read('login.html');
-  if (!/lc-topnav-cta"[^>]*periodic-table/.test(login) || !/Open lab/.test(login)) {
-    fail('login.html must keep Open lab → periodic-table');
+  if (!login.includes('rm-header--minimal')) {
+    fail('login.html must use the minimal remake header (brand only)');
   }
   const app = read('app.html');
   if (app.includes('id="ps-shell"') || app.includes('public-shell.css')) {
@@ -612,8 +615,8 @@ function assertUiV2() {
     fail('workspace layout CSS must not restyle study charts or Pro Lab science');
   }
   const home = read('index.html');
-  if (!home.includes('assets/layouts/home.css') || !home.includes('assets/product-catalog.js')) {
-    fail('index.html must load home layout CSS and the product catalog');
+  if (!home.includes('assets/remake/home.js') || !home.includes('assets/product-catalog.js')) {
+    fail('index.html must load the remake home script and the product catalog');
   }
   if (/html\.lang-pt-pending\s*\[data-i18n\]/.test(home) || /classList\.add\(['"]lang-pt-pending['"]\)/.test(home)) {
     fail('index.html must not use lang-pt-pending to hide copy');
@@ -630,9 +633,6 @@ function assertUiV2() {
   if (catalog.calculators !== calcTargets.size) {
     fail(`catalog calculators (${catalog.calculators}) must match calculators.html tabs (${calcTargets.size})`);
   }
-  if (!home.includes(`data-catalog="calculators">${catalog.calculators}`)) {
-    fail('Home calculator fallback must match the generated catalog');
-  }
   const explore = read('explore.html');
   if (!explore.includes('assets/layouts/explore.css')) {
     fail('explore.html must load assets/layouts/explore.css');
@@ -640,17 +640,8 @@ function assertUiV2() {
   if ([...explore.matchAll(/<style>[\s\S]*?<\/style>/g)].some((m) => m[0].includes('.ex-card'))) {
     fail('explore.html must not keep .ex-card in a page style block');
   }
-  if (!explore.includes('id="ex-search-input"') || !explore.includes('id="ex-articles"')) {
-    fail('explore.html must keep #ex-search-input and #ex-articles');
-  }
-  const exploreScript = [...explore.matchAll(/<script>([\s\S]*?)<\/script>/g)]
-    .map((m) => m[1])
-    .find((s) => s.includes("getElementById('ex-search-input')"));
-  if (!exploreScript) fail('explore.html must keep the article search script');
-  try {
-    new Function(exploreScript);
-  } catch (err) {
-    fail(`explore.html article search script must parse: ${err.message}`);
+  if (!explore.includes('data-rm-articles') || (explore.match(/class="rm-card rm-art-card"/g) || []).length !== catalog.articles) {
+    fail('explore.html must list every catalog article in the remake grid');
   }
   const calc = read('calculators.html');
   if (!calc.includes('assets/layouts/calculators.css')) {

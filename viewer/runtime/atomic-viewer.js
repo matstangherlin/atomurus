@@ -18,7 +18,7 @@
   function updateRendererBg(){
     if (paper()) paper().applyClear(renderer);
     else {
-      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const isDark = ((window.atomurusPaperLab && window.atomurusPaperLab.isDark) ? window.atomurusPaperLab.isDark() : document.documentElement.getAttribute('data-theme') === 'dark');
       renderer.setClearColor(isDark ? 0x0E0D0C : 0xF2EFE7, 1);
     }
     if (paper() && paper().setGround) {
@@ -515,7 +515,7 @@
       const g = new THREE.Group(); electrons = []; trackedAtoms = []; bondCount = 0;
       g.add(makeNucleus(6, 6));
 
-      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const isDark = ((window.atomurusPaperLab && window.atomurusPaperLab.isDark) ? window.atomurusPaperLab.isDark() : document.documentElement.getAttribute('data-theme') === 'dark');
       const COL = _qShellColors3D(isDark);
       const occ = _qOccupancy(el);
       const PTS_PER_E = 220;
@@ -1116,7 +1116,7 @@
     const c = document.createElement('canvas');
     c.width = 128; c.height = 64;
     const ctx = c.getContext('2d');
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const isDark = ((window.atomurusPaperLab && window.atomurusPaperLab.isDark) ? window.atomurusPaperLab.isDark() : document.documentElement.getAttribute('data-theme') === 'dark');
     ctx.font = 'bold 44px "DM Sans", sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -1593,7 +1593,7 @@
     resize2dMini();
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const W = p2dCanvas.width / dpr, H = p2dCanvas.height / dpr;
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const isDark = ((window.atomurusPaperLab && window.atomurusPaperLab.isDark) ? window.atomurusPaperLab.isDark() : document.documentElement.getAttribute('data-theme') === 'dark');
     p2dCtx.clearRect(0, 0, W, H);
     // Background
     p2dCtx.fillStyle = paper() ? paper().fillCss() : (isDark ? '#0E0D0C' : '#F2EFE7');
@@ -1810,7 +1810,7 @@
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const W = view2dCanvas.width  / dpr;
     const H = view2dCanvas.height / dpr;
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const isDark = ((window.atomurusPaperLab && window.atomurusPaperLab.isDark) ? window.atomurusPaperLab.isDark() : document.documentElement.getAttribute('data-theme') === 'dark');
 
     view2dCtx.clearRect(0, 0, W, H);
     view2dCtx.fillStyle = paper() ? paper().fillCss() : (isDark ? '#0E0D0C' : '#F2EFE7');

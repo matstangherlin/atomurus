@@ -10,7 +10,7 @@
 //   app/styles-[hash].css tokens + components + app-shell layout
 //   vendor/three/         Three.js packaged locally (loaded only by viewers)
 //   assets/app/           element index (cacheable static data)
-//   assets/fonts/         Instrument Serif, Inter Tight, JetBrains Mono only
+//   assets/fonts/         Figtree and JetBrains Mono only (remake 2026)
 //   build-manifest.json   sizes, initial vs lazy JS, per-feature chunks
 //
 // The API stays remote (https://atomurus.com/api via the runtime config).
@@ -22,7 +22,7 @@ import { gzipSync } from 'node:zlib';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'dist/app');
-const APP_FONTS = new Set(['Instrument Serif', 'Inter Tight', 'JetBrains Mono']);
+const APP_FONTS = new Set(['Figtree', 'JetBrains Mono']);
 
 function copy(from, to) {
   mkdirSync(path.dirname(path.join(OUT, to)), { recursive: true });
@@ -33,7 +33,7 @@ function appFontsCss() {
   const css = readFileSync(path.join(ROOT, 'assets/fonts/fonts.css'), 'utf8');
   const blocks = css.match(/@font-face\s*\{[^}]*\}/g) || [];
   const kept = blocks.filter((b) => APP_FONTS.has((b.match(/font-family:\s*'([^']+)'/) || [])[1]));
-  const files = kept.map((b) => (b.match(/url\(\/assets\/fonts\/([^)]+)\)/) || [])[1]).filter(Boolean);
+  const files = [...new Set(kept.map((b) => (b.match(/url\(\/assets\/fonts\/([^)]+)\)/) || [])[1]).filter(Boolean))];
   return { css: `/* App subset of assets/fonts/fonts.css */\n${kept.join('\n')}\n`, files };
 }
 
@@ -116,6 +116,7 @@ export async function buildAppBundle() {
   for (const f of fonts.files) copy(`assets/fonts/${f}`, `assets/fonts/${f}`);
   copy('assets/app/elements.json', 'assets/app/elements.json');
   for (const icon of ['icon-192.png', 'icon-512.png', 'icon-maskable-512.png']) copy(`assets/icons/${icon}`, `assets/icons/${icon}`);
+  copy('assets/brand/atomurus-mark-96.png', 'assets/brand/atomurus-mark-96.png');
   copy('node_modules/three/build/three.module.js', 'vendor/three/three.module.js');
 
   const initialJs = chunks.filter((c) => c.initial);

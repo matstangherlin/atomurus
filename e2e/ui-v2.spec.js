@@ -11,7 +11,7 @@ test.beforeEach(async ({ page }) => {
 test('UI V2 gallery: buttons, focus-visible, disabled, forms, dialog, mobile', async ({ page }) => {
   await page.goto('/dev/ui');
   await expect(page.locator('.ui-display')).toBeVisible();
-  await expect(page.locator('.ui-brand-name')).toHaveCSS('font-family', /Instrument Serif/i);
+  await expect(page.locator('.ui-brand-name')).toHaveCSS('font-family', /Figtree/i);
 
   const primary = page.locator('#ui-buttons .ui-btn-primary').first();
   const accent = page.locator('#ui-buttons .ui-btn-accent').first();
@@ -102,7 +102,7 @@ test('Home through workspace chrome load UI V2; element pages stay legacy', asyn
   );
   expect(appUi).toBe(true);
   await expect.poll(async () => page.locator('.ws-brand-name').evaluate((el) => getComputedStyle(el).fontFamily))
-    .toMatch(/Instrument Serif/i);
+    .toMatch(/Figtree|Instrument Serif/i);
 
   await page.goto('/periodic-table/hydrogenium.html');
   const elementUi = await page.evaluate(() =>
@@ -125,7 +125,7 @@ test('Portuguese pages paint without hiding i18n copy', async ({ page }) => {
   await expect(page.locator('html.lang-pt-pending')).toHaveCount(0);
   await expect(page.locator('#ct-periodic h1.ph-title')).toBeVisible();
   await page.goto('/viewer/atomic-models.html?lang=pt-BR');
-  await expect(page.locator('.ph-kicker').first()).toBeVisible();
+  await expect(page.locator('h1.ph-title').first()).toBeVisible();
   await expect(page.locator('.ph-kicker').first()).not.toContainText('§');
   await page.goto('/config.html');
   await expect(page.locator('[data-i18n="config.pagePrivacyDesc"]')).not.toContainText(/No accounts/i);
@@ -159,7 +159,7 @@ test('key pages emit shared chrome in source HTML', async ({ request }) => {
   }
   const explore = await (await request.get('/explore.html')).text();
   expect(explore).toContain('assets/layouts/explore.css');
-  expect(explore).toContain('id="ex-search-input"');
+  expect(explore).toContain('data-rm-articles');
   const calculators = await (await request.get('/calculators.html')).text();
   expect(calculators).toContain('assets/layouts/calculators.css');
   expect(calculators).toContain('data-target="molar"');
@@ -172,7 +172,7 @@ test('key pages emit shared chrome in source HTML', async ({ request }) => {
   expect(article).toContain('assets/ui/index.css');
   expect(article).toContain('assets/layouts/article.css');
   const home = await (await request.get('/index.html')).text();
-  expect(home).toContain('assets/layouts/home.css');
+  expect(home).toContain('assets/remake/remake.css');
   expect(home).toContain('assets/product-catalog.js');
   expect(home).not.toMatch(/5 instruments|5 Calculators/);
   expect(home).not.toMatch(/html\.lang-pt-pending\s*\[data-i18n\]/);
@@ -185,7 +185,8 @@ test('key pages emit shared chrome in source HTML', async ({ request }) => {
   const privacy = await (await request.get('/privacy.html')).text();
   expect(privacy).not.toMatch(/there is no login|we do not run a user database/);
   const table = await (await request.get('/periodic-table.html')).text();
-  expect(table).toMatch(/data-i18n="common\.brandTag">chemistry lab/);
+  expect(table).toContain('id="search-input"');
+  expect(table).toContain('data-rm-header');
   expect(table).toContain('assets/layouts/periodic-table.css');
   expect(table).toContain('id="ptable"');
   const atomic = await (await request.get('/viewer/atomic-models.html')).text();
@@ -204,8 +205,8 @@ test('key pages emit shared chrome in source HTML', async ({ request }) => {
   expect(app).toContain('id="ws-search-q"');
   expect(app).toContain('id="ws-userchip"');
   const login = await (await request.get('/login.html')).text();
-  expect(login).toMatch(/lc-topnav-cta"[^>]*periodic-table/);
-  expect(login).toContain('Open lab');
+  expect(login).toContain('rm-header--minimal');
+  expect(login).not.toContain('data-atomurus-account');
   expect(login).toContain('assets/ui/index.css');
   expect(login).toContain('assets/layouts/auth.css');
   expect(login).not.toMatch(/auth\.access|secure HttpOnly cookie|managed authentication|secure account flow/);

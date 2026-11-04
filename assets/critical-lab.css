@@ -32,6 +32,8 @@ html,body{margin:0}
   --lc-amber:     #B96B0C;
   --lc-mono: 'JetBrains Mono', ui-monospace, 'DM Mono', monospace;
   --lc-sans: 'Inter Tight', system-ui, -apple-system, sans-serif;
+  --purple: #6D28D9;
+  --purple-light: rgba(124,58,237,.10);
 
   --bg: var(--lc-bg);
   --bg-gradient: var(--lc-bg);
@@ -67,6 +69,8 @@ html,body{margin:0}
   --lc-green:     #34A872;
   --lc-green-soft: rgba(52,168,114,.14);
   --lc-amber:     #E8941C;
+  --purple: #A78BFA;
+  --purple-light: rgba(124,58,237,.18);
 
   --bg: var(--lc-bg);
   --bg-gradient: var(--lc-bg);
@@ -147,8 +151,8 @@ LANDING PAGE (no sidebar — topnav + grid)
   top: 0;
   z-index: 80;
   background: rgba(242,239,231,.92);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--lc-rule);
   padding: 0 28px;
   height: 56px;
@@ -175,6 +179,13 @@ LANDING PAGE (no sidebar — topnav + grid)
   justify-content: center;
 }
 [data-theme="dark"] .lc-topnav-mark { background: var(--lc-green); color: var(--lc-paper); }
+/* Brand mark (2026): the Atomurus emblem replaces the drawn orbit glyph. */
+.lc-topnav-mark, .lc-mobile-menu-brand .lc-topnav-mark, [data-theme="dark"] .lc-topnav-mark {
+  background: transparent url(/assets/brand/atomurus-mark-96.png) center / contain no-repeat;
+  border-radius: 0;
+  overflow: visible;
+}
+.lc-topnav-mark > svg { visibility: hidden; }
 .lc-topnav-name {
   font-family: var(--lc-mono);
   font-size: 11px;

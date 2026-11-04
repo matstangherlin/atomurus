@@ -46,27 +46,50 @@ const ROUTES = [
   { name: 'workspace', path: '/app' }
 ];
 
+const CREATE = /Create (free )?account|Criar conta/i;
+
 test.describe('shell parity guest desktop', () => {
   test.use({ viewport: { width: 1280, height: 800 } });
 
   for (const route of ROUTES) {
-    test(`${route.name} keeps 64×248 chrome and Create account`, async ({ page }) => {
+    test(`${route.name} keeps its chrome and Create account`, async ({ page }) => {
       await installApi(page, { kind: 'guest', signedIn: false });
       await page.goto(route.path);
-      await expect(page.locator('[data-atomurus-account-chip], #ws-userchip')).toContainText(/Create account|Criar conta/i, { timeout: 15_000 });
-      const chrome = await chromeMetrics(page);
-      expect(chrome.top).toBeTruthy();
-      expect(chrome.top.h).toBeGreaterThanOrEqual(60);
-      expect(chrome.top.h).toBeLessThanOrEqual(68);
-      expect(chrome.side).toBeTruthy();
-      expect(chrome.side.w).toBeGreaterThanOrEqual(240);
-      expect(chrome.side.w).toBeLessThanOrEqual(256);
-      expect(chrome.brand).toMatch(/Atomurus/i);
-      expect(chrome.search).toBeTruthy();
-      expect(chrome.lang).toBeTruthy();
-      expect(chrome.theme).toBeTruthy();
-      expect(chrome.account).toBeTruthy();
-      expect(chrome.accountText).toMatch(/Create account|Criar conta/i);
+      await expect(page.locator('[data-atomurus-account-chip], #ws-userchip')).toContainText(CREATE, { timeout: 15_000 });
+      if (route.name === 'workspace') {
+        /* /app keeps the workspace chrome: 64px top bar + 248px sidebar. */
+        const chrome = await chromeMetrics(page);
+        expect(chrome.top).toBeTruthy();
+        expect(chrome.top.h).toBeGreaterThanOrEqual(60);
+        expect(chrome.top.h).toBeLessThanOrEqual(68);
+        expect(chrome.side).toBeTruthy();
+        expect(chrome.side.w).toBeGreaterThanOrEqual(240);
+        expect(chrome.side.w).toBeLessThanOrEqual(256);
+        expect(chrome.brand).toMatch(/Atomurus/i);
+        expect(chrome.search).toBeTruthy();
+        expect(chrome.account).toBeTruthy();
+        expect(chrome.accountText).toMatch(CREATE);
+      } else {
+        /* Public pages: remake top navigation, no sidebar. */
+        const m = await page.evaluate(() => {
+          const header = document.querySelector('[data-rm-header]');
+          const r = header.getBoundingClientRect();
+          return {
+            h: r.height,
+            brand: (document.querySelector('.rm-brand-name') || {}).textContent || '',
+            sidebar: document.querySelectorAll('#ws-sidebar, [data-atomurus-sidebar]').length,
+            signin: Boolean(document.querySelector('.rm-signin')),
+            items: document.querySelectorAll('.rm-nav > [data-rm-section]').length
+          };
+        });
+        expect(m.h).toBeGreaterThanOrEqual(64);
+        expect(m.h).toBeLessThanOrEqual(76);
+        expect(m.brand).toMatch(/Atomurus/i);
+        expect(m.sidebar).toBe(0);
+        expect(m.signin).toBe(true);
+        expect(m.items).toBe(5);
+        await expect(page.locator('.rm-cta')).toContainText(CREATE);
+      }
       await saveShot(page, `shell-guest-${route.name}`);
     });
   }
@@ -116,12 +139,10 @@ test('Free chip stays FREE on Home and Workspace', async ({ page }) => {
   await expect(page.locator('#ws-plan-badge')).toContainText(/FREE/);
 });
 
-test('Molecules keeps Viewer current in the global sidebar', async ({ page }) => {
+test('Molecules keeps 3D models current in the top navigation', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto('/viewer/molecules.html');
-  const current = page.locator('#ws-sidebar [data-atomurus-lab-nav] a[aria-current="page"]');
-  await expect(current).toHaveCount(1);
-  await expect(current).toContainText(/Viewer/i);
-  await expect(page.locator('#ws-sidebar [data-nav="viewer"]')).toHaveClass(/is-active|active/);
+  await expect(page.locator('.rm-nav > .is-active')).toHaveCount(1);
+  await expect(page.locator('.rm-dd[data-rm-section="models"]')).toHaveClass(/is-active/);
   await expect(page.locator('.vz-tabs a[aria-current="page"], .vz-tab.active').first()).toContainText(/Molecules/i);
 });

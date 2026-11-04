@@ -31,8 +31,11 @@
   CPK[0xb3ff3a] = 0x8AAA4A;
   CPK[0xa62929] = 0x8A3A3A;
 
+  // Remake 2026: the 3D stage is always the dark "instrument" panel
+  // (html[data-rm]); legacy pages follow the site theme.
   function isDark() {
-    return document.documentElement.getAttribute('data-theme') === 'dark';
+    var root = document.documentElement;
+    return root.getAttribute('data-theme') === 'dark' || root.hasAttribute('data-rm');
   }
 
   function clearColor() {

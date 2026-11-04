@@ -24,8 +24,10 @@
   if (!lab || !lab.createRenderer) renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
 
   function updateBg() {
-    var dark = document.documentElement.getAttribute('data-theme') === 'dark';
-    renderer.setClearColor(dark ? 0x0E0D0C : 0xffffff, 1);
+    // Remake 2026: the 3D stage is the dark instrument panel in both themes.
+    var root = document.documentElement;
+    var dark = root.getAttribute('data-theme') === 'dark' || root.hasAttribute('data-rm');
+    renderer.setClearColor(dark ? 0x14120E : 0xffffff, 1);
   }
   updateBg();
   window.addEventListener('atomurus:themechange', updateBg);

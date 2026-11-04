@@ -548,7 +548,12 @@ module.exports = {
   patchEmittedChrome,
   patchPublicSidebar,
   findAnyGlobalSidebar,
-  ensureViewerLocalNav
+  ensureViewerLocalNav,
+  findElementWithClass,
+  findBalancedFrom,
+  addBodyClass,
+  addHtmlAttr,
+  walkDir
 };
 
 if (require.main === module) {

@@ -14,7 +14,7 @@ return (function(){
   function updateBg(){
     if (paper()) paper().applyClear(renderer);
     else {
-      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const isDark = ((window.atomurusPaperLab && window.atomurusPaperLab.isDark) ? window.atomurusPaperLab.isDark() : document.documentElement.getAttribute('data-theme') === 'dark');
       renderer.setClearColor(isDark ? 0x0E0D0C : 0xF2EFE7, 1);
     }
     if (paper() && paper().setGround) {
@@ -439,7 +439,7 @@ return (function(){
     if (viewMode !== '2d') return;
     const dpr = viewer2d.width / Math.max(1, viewer2d.clientWidth || viewer2d.width);
     const W = viewer2d.width / dpr, H = viewer2d.height / dpr;
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const isDark = ((window.atomurusPaperLab && window.atomurusPaperLab.isDark) ? window.atomurusPaperLab.isDark() : document.documentElement.getAttribute('data-theme') === 'dark');
 
     ctx2d.save();
     ctx2d.clearRect(0, 0, W, H);

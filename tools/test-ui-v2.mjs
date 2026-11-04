@@ -82,7 +82,10 @@ for (const rel of chromePages) {
   const html = read(rel);
   if (!html.includes('id="ps-shell"')) fail(`${rel} must contain #ps-shell in source`);
   if (!html.includes('data-ps-chrome')) fail(`${rel} must mark emitted chrome`);
-  if (!html.includes('data-atomurus-sidebar')) fail(`${rel} must emit the official sidebar`);
+  if (!html.includes('data-rm-header')) fail(`${rel} must emit the remake top navigation`);
+  if (!html.includes('data-rm-footer')) fail(`${rel} must emit the remake footer`);
+  if (html.includes('data-atomurus-sidebar')) fail(`${rel} must not keep the legacy sidebar`);
+  if (!html.includes('assets/remake/remake.css')) fail(`${rel} must load the remake stylesheet`);
   if (!html.includes('assets/global-nav.js')) fail(`${rel} must load global-nav.js`);
 }
 if (!read('app.html').includes('data-atomurus-sidebar')) {
@@ -124,10 +127,10 @@ if (!login.includes('id="ps-shell"')) fail('login.html must contain #ps-shell in
 if (!login.includes('data-ps-chrome')) fail('login.html must mark emitted chrome');
 if (!login.includes('assets/ui/index.css')) fail('login.html must load UI V2');
 if (!login.includes('assets/layouts/auth.css')) fail('login.html must load auth layout CSS');
-if (!login.includes('Open lab')) fail('login CTA must stay Open lab');
+if (!login.includes('rm-header--minimal')) fail('login.html must use the minimal (brand-only) remake header');
 if (/Matheus|matheusstan/i.test(login)) fail('login.html must not suggest a personal name');
 if (read('login.html').includes('data-atomurus-account')) {
-  fail('login.html must not replace Open lab with the Account chip');
+  fail('login.html must not show the Account chip');
 }
 if (!read('index.html').includes('data-atomurus-account')) {
   fail('index.html must emit the Account chip');
@@ -138,8 +141,8 @@ if (!read('periodic-table.html').includes('data-atomurus-account')) {
 if (!read('calculators.html').includes('data-atomurus-account')) {
   fail('calculators.html must emit the Account chip');
 }
-if (!read('calculators.html').includes('data-atomurus-sidebar')) {
-  fail('calculators.html must emit the official sidebar');
+if (!read('calculators.html').includes('data-rm-header')) {
+  fail('calculators.html must emit the remake top navigation');
 }
 {
   const calc = read('calculators.html');
@@ -310,8 +313,20 @@ for (const file of walkHtml(root)) {
   if (!html.includes('id="ps-shell"')) {
     fail(`${rel} loads public-workspace.js but has no #ps-shell`);
   }
-  if (!html.includes('data-atomurus-sidebar')) {
-    fail(`${rel} must emit the official #ws-sidebar`);
+  if (rel === 'account.html') {
+    /* Signed-in Account Center keeps the workspace chrome, like /app. */
+    if (!html.includes('data-atomurus-sidebar')) fail('account.html must keep the workspace sidebar');
+    continue;
+  }
+  const minimalHeader = html.includes('rm-header--minimal');
+  if (!html.includes('data-rm-header')) {
+    fail(`${rel} must emit the remake top navigation`);
+  }
+  if (!minimalHeader && !html.includes('data-rm-footer')) {
+    fail(`${rel} must emit the remake footer`);
+  }
+  if (html.includes('data-atomurus-sidebar')) {
+    fail(`${rel} must not keep the legacy sidebar`);
   }
   if (/<aside class="sidebar" id="sidebar">/.test(html)) {
     fail(`${rel} still has the Bloomberg sidebar`);
@@ -345,7 +360,6 @@ for (const name of fs.readdirSync(i18nDir)) {
 
 const home = read('index.html');
 if (!home.includes('assets/ui/index.css')) fail('index.html must load UI V2');
-if (!home.includes('assets/layouts/home.css')) fail('index.html must load home layout CSS');
 if (!home.includes('assets/product-catalog.js')) fail('index.html must load the product catalog');
 if (/html\.lang-pt-pending\s*\[data-i18n\]/.test(home)) {
   fail('index.html must not hide [data-i18n] behind lang-pt-pending');
@@ -356,17 +370,15 @@ if (/classList\.add\(['"]lang-pt-pending['"]\)/.test(home)) {
 if (/5 instruments|5 Calculators/.test(home)) {
   fail('index.html must not keep HUD calculator counts');
 }
-if ((home.match(/class="lc-mod-card/g) || []).length !== 4) {
-  fail('index.html must keep four pillar cards');
+/* Remake 2026 home: hero + search, interactive mini table, three tools, plans. */
+if (!home.includes('id="quick-search"') || !home.includes('data-rm-search')) {
+  fail('index.html must keep the #quick-search hero search');
 }
-if (!/class="lc-mod-card[^"]*" href="explore\.html"/.test(home)) {
-  fail('first Home pillar must be Explore');
+if (!home.includes('data-rm-mini') || !home.includes('assets/remake/elements-lite.js') || !home.includes('assets/remake/home.js')) {
+  fail('index.html must render the interactive mini periodic table');
 }
-if (!/class="lc-mod-card[^"]*" href="\/app"/.test(home)) {
-  fail('Home Study pillar must open /app');
-}
-if (!home.includes('id="preview-grid"') || !home.includes('id="quick-search"') || !home.includes('id="theme-toggle"')) {
-  fail('index.html must keep preview grid, #quick-search and #theme-toggle');
+for (const href of ['/periodic-table.html', '/calculators.html', '/viewer/molecules.html', '/explore.html', '/pricing.html']) {
+  if (!home.includes(`href="${href}"`)) fail(`index.html must link ${href}`);
 }
 
 const catalogJs = read('assets/product-catalog.js');
@@ -377,12 +389,6 @@ const calcMarkup = read('calculators.html').replace(/<script\b[\s\S]*?<\/script>
 const calcTargets = new Set([...calcMarkup.matchAll(/\sdata-target="([^"$]+)"/g)].map((m) => m[1]));
 if (catalog.calculators !== calcTargets.size) {
   fail(`catalog calculators (${catalog.calculators}) must match calculators.html tabs (${calcTargets.size})`);
-}
-if (!home.includes(`data-catalog="calculators">${catalog.calculators}`)) {
-  fail('Home calculator fallback must match the generated catalog');
-}
-if (!home.includes(`data-catalog="elements">${catalog.elements}`)) {
-  fail('Home elements fallback must match the generated catalog');
 }
 
 function assertExploreSearchScriptParses(html, label) {
@@ -405,14 +411,15 @@ if (!explore.includes('assets/layouts/explore.css')) fail('explore.html must loa
 if ([...explore.matchAll(/<style>[\s\S]*?<\/style>/g)].some((m) => m[0].includes('.ex-card'))) {
   fail('explore.html must not keep .ex-card in a page style block');
 }
-if (!explore.includes('id="ex-search-input"') || !explore.includes('id="ex-articles"')) {
-  fail('explore.html must keep #ex-search-input and #ex-articles');
+/* Remake 2026 articles index: featured article, filter chips, card grid, isomerism guide. */
+for (const [label, html] of [['explore.html', explore], ['explore.pt.html', read('explore.pt.html')]]) {
+  if (!html.includes('class="rm-feature"') || !html.includes('data-rm-filter') || !html.includes('data-rm-articles')) {
+    fail(`${label} must keep the featured article, filter chips and article grid`);
+  }
+  if ((html.match(/class="rm-card rm-art-card"/g) || []).length !== catalog.articles) {
+    fail(`${label} must list every article in the catalog (${catalog.articles})`);
+  }
 }
-if (!explore.includes('class="ex-title"') || !explore.includes('class="ex-pill active"')) {
-  fail('explore.html must keep .ex-title and .ex-pill');
-}
-assertExploreSearchScriptParses(explore, 'explore.html');
-assertExploreSearchScriptParses(read('explore.pt.html'), 'explore.pt.html');
 
 const calc = read('calculators.html');
 if (!calc.includes('assets/ui/index.css')) fail('calculators.html must load UI V2');
@@ -458,9 +465,6 @@ if (!table.includes('id="search-input"') || !table.includes('id="ptable"')) {
 }
 if (!table.includes('id="dl-action-btn"') || !table.includes('class="pt-tab active"')) {
   fail('periodic-table.html must keep #dl-action-btn and .pt-tab');
-}
-if (!table.includes('data-i18n="common.brandTag">chemistry lab')) {
-  fail('periodic-table.html must keep chemistry lab in the DOM');
 }
 for (const rel of [
   'periodic-table.pt.html',

@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html data-ps-chrome="1" lang="pt-BR" data-theme="light">
+<html data-rm="1" data-ps-chrome="1" lang="pt-BR" data-theme="light">
 <head>
 <style>html[data-theme="dark"] #icon-theme-light,html[data-theme="light"] #icon-theme-dark{display:none!important}html[data-theme="dark"] #icon-theme-dark,html[data-theme="light"] #icon-theme-light{display:block!important}</style>
 <script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var KEY='atomurus-lang';var p=new URLSearchParams(location.search).get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem(KEY);if(l!=='pt'&&l!=='en'){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}try{localStorage.setItem(KEY,l);}catch(e){}if(l==='pt'){document.documentElement.lang='pt-BR';}else{document.documentElement.lang='en-US';}}catch(e){}})();</script>
 <script>(function(){var h=location.hash||'',q=location.search||'',hp,sp,lang='?lang=pt-BR';try{hp=new URLSearchParams(h.length>1?h.slice(1):'');}catch(e){hp=new URLSearchParams();}try{sp=new URLSearchParams(q.length>1?q.slice(1):'');}catch(e){sp=new URLSearchParams();}function pick(n){return hp.get(n)||sp.get(n)||'';}var type=(pick('type')||'').toLowerCase();if((pick('error_code')||'').toLowerCase()==='otp_expired'){location.replace('/login'+lang+h);return;}if(pick('access_token')&&pick('refresh_token')&&type==='recovery'){location.replace('/reset-password'+lang+h);return;}if(/^#(confirmation_token|recovery_token)=/.test(h)){location.replace('/login'+lang+h);return;}if(/[?&]token_hash=/.test(q)){location.replace('/login'+(lang?lang+'&'+q.slice(1):q));}})();</script>
 <meta name="google-adsense-account" content="ca-pub-9495821870733084">
-<script src="consent.js?v=202608041630" defer></script>
-<script defer src="ads-gate.js?v=202608041630"></script>
-<script src="cookie-consent.js?v=202608041630" defer></script>
+<script src="consent.js?v=202611042200" defer></script>
+<script defer src="ads-gate.js?v=202611042200"></script>
+<script src="cookie-consent.js?v=202611042200" defer></script>
 <meta charset="UTF-8">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1E6A50" media="(prefers-color-scheme: light)">
@@ -17,13 +17,13 @@
 <meta name="apple-mobile-web-app-title" content="Atomurus">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/png" href="assets/atomurus-logo.png?v=202608041630">
-<link rel="apple-touch-icon" href="assets/atomurus-logo.png?v=202608041630">
+<link rel="icon" type="image/png" href="assets/atomurus-logo.png?v=202611042200">
+<link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
 <title data-i18n="home.metaTitle">Atomurus: Laboratório de Química Interativo — Tabela Periódica, Modelos 3D, Calculadoras e Artigos</title>
 <meta name="description" data-i18n-attr="content:home.metaDesc" content="Laboratório de química gratuito: 118 elementos, tendências, visualizadores 3D e calculadoras básicas sem conta. Salve o estudo com uma conta gratuita. Resolva e analise no Atomurus Pro.">
 <meta property="og:title" content="Atomurus: Laboratório de Química Interativo — Tabela Periódica, Modelos 3D, Calculadoras e Artigos">
 <meta property="og:description" content="Laboratório de química gratuito: 118 elementos, tendências, visualizadores 3D e calculadoras básicas sem conta. Salve o estudo com uma conta gratuita. Resolva e analise no Atomurus Pro.">
-<meta property="og:image" content="https://atomurus.com/assets/og-home.png?v=202608041630">
+<meta property="og:image" content="https://atomurus.com/assets/og-home.png?v=202611042200">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:url" content="https://atomurus.com/?lang=pt-BR">
@@ -34,7 +34,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Atomurus: Laboratório de Química Interativo — Tabela Periódica, Modelos 3D, Calculadoras e Artigos">
 <meta name="twitter:description" content="Laboratório de química gratuito: 118 elementos, tendências, visualizadores 3D e calculadoras básicas sem conta. Salve o estudo com uma conta gratuita. Resolva e analise no Atomurus Pro.">
-<meta name="twitter:image" content="https://atomurus.com/assets/og-home.png?v=202608041630">
+<meta name="twitter:image" content="https://atomurus.com/assets/og-home.png?v=202611042200">
 <link rel="canonical" href="https://atomurus.com/?lang=pt-BR">
 <link rel="alternate" hreflang="en" href="https://atomurus.com/?lang=en">
 <link rel="alternate" hreflang="pt-BR" href="https://atomurus.com/?lang=pt-BR">
@@ -71,7 +71,7 @@
       "url": "https://atomurus.com/",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://atomurus.com/assets/atomurus-logo.png?v=202608041630",
+        "url": "https://atomurus.com/assets/atomurus-logo.png?v=202611042200",
         "width": 512,
         "height": 512
       },
@@ -100,34 +100,31 @@
 }
 </script>
 
-<link rel="preload" href="/assets/fonts/inter-tight-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/assets/fonts/instrument-serif-400-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202608041630">
+<link rel="preload" href="/assets/fonts/figtree-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202611042200">
 
-<script src="lazy-ads.js?v=202608041630" defer></script>
+<script src="lazy-ads.js?v=202611042200" defer></script>
 
 <!-- reCAPTCHA v3 -->
-<script src="recaptcha.js?v=202608041630" defer></script>
+<script src="recaptcha.js?v=202611042200" defer></script>
 
-<link rel="stylesheet" href="/assets/critical-lab.css?v=202608041630">
+<link rel="stylesheet" href="/assets/critical-lab.css?v=202611042200">
 <script>document.documentElement.classList.add('lc-loading');setTimeout(function(){document.documentElement.classList.remove('lc-loading')},4000);</script>
-<link rel="preload" href="atomurus-lab-console.css?v=202608041630" as="style">
-<link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
-<noscript><link rel="stylesheet" href="atomurus-lab-console.css?v=202608041630"></noscript>
-<link rel="stylesheet" href="/assets/public-shell.css?v=202608281830">
-<script src="assets/global-nav.js?v=202609090500"></script>
-<script src="/assets/public-workspace.js?v=202608282500"></script>
-<link rel="stylesheet" href="/assets/ui/index.css?v=202609090500">
-<link rel="stylesheet" href="/assets/layouts/home.css?v=202609090500">
-<script src="atomurus-mobile-nav.js?v=202608041630" defer></script>
+<link rel="preload" href="atomurus-lab-console.css?v=202611042200" as="style">
+<link rel="stylesheet" href="atomurus-lab-console.css?v=202611042200" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
+<noscript><link rel="stylesheet" href="atomurus-lab-console.css?v=202611042200"></noscript>
+<link rel="stylesheet" href="/assets/public-shell.css?v=202611042200">
+<script src="assets/global-nav.js?v=202611042200"></script>
+<script src="/assets/public-workspace.js?v=202611042200"></script>
+<link rel="stylesheet" href="/assets/ui/index.css?v=202611042200">
+<script src="atomurus-mobile-nav.js?v=202611042200" defer></script>
 <!-- i18n (EN default, PT fallback) — must load before page scripts that use I18N.t -->
-<script src="i18n.js?v=202608041630" defer></script>
-<script src="share-button.js?v=202608041630" defer></script>
-<script src="page-share-init.js?v=202608041630" defer></script>
-<script src="meta-i18n.js?v=202608041630" defer></script>
+<script src="i18n.js?v=202611042200" defer></script>
+<script src="share-button.js?v=202611042200" defer></script>
+<script src="page-share-init.js?v=202611042200" defer></script>
+<script src="meta-i18n.js?v=202611042200" defer></script>
 <!-- Compact preview payload for the landing-page mini periodic table -->
-<script src="home-preview-data.js?v=202608041630" defer></script>
-<script src="assets/product-catalog.js?v=202609090500" defer></script>
+<script src="assets/product-catalog.js?v=202611042200" defer></script>
 
 <style>
   /* Landing page only overrides — the page doesn't have a sidebar */
@@ -135,624 +132,207 @@
   body { display: block; height: auto; overflow-x: hidden; padding-bottom: 22px; }
   /* hide the .sidebar/.main reset rules that don't apply here */
 </style>
+<link rel="stylesheet" href="/assets/remake/remake.css?v=202611042200">
+<script src="/assets/remake/site-nav.js?v=202611042200" defer></script>
 </head>
 
-<body class="ps-body lc-landing">
+<body class="rm ps-body lc-landing">
 
 <!-- ════════════ TOPNAV ════════════ -->
 <div class="ps-shell" id="ps-shell">
-<nav class="lc-topnav">
-  <a class="lc-topnav-brand" href="index.html">
-    <div class="lc-topnav-mark">
-      <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
-        <circle cx="8" cy="8" r="2.5" fill="currentColor"/>
-        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/>
-        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/>
-        <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/>
-      </svg>
-    </div>
-    <div>
-      <div class="lc-topnav-name">Atomurus</div>
-      <div class="lc-topnav-tag" data-i18n="common.brandTag">laboratório de química</div>
-    </div>
-  </a>
-
-  <div class="lc-topnav-links">
-    <a class="lc-topnav-link" href="periodic-table.html">
-      <span class="lc-tn-no">01</span> <span data-i18n="common.nav.periodic">Tabela Periódica</span>
+<header class="rm-header" data-rm-header>
+  <div class="rm-header-in">
+    <a class="rm-brand" href="/" aria-label="Atomurus">
+      <img class="rm-brand-mark" src="/assets/brand/atomurus-mark-48.png" srcset="/assets/brand/atomurus-mark-96.png 2x" width="34" height="34" alt="" decoding="async">
+      <span class="rm-brand-name">Atomurus</span>
     </a>
-    <div class="lc-topnav-link lc-topnav-dropdown" tabindex="0"
-         id="topnav-viewer-trigger"
-         role="button"
-         aria-haspopup="menu"
-         aria-expanded="false"
-         aria-controls="topnav-viewer-menu">
-      <span class="lc-tn-no">02</span> <span data-i18n="common.nav.visualizador">Visualizador</span>
-      <svg class="lc-tn-chevron" width="9" height="9" viewBox="0 0 9 9" fill="none" aria-hidden="true"><path d="M2 3.5l2.5 2.5L7 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <div class="lc-topnav-menu" role="menu" id="topnav-viewer-menu" aria-labelledby="topnav-viewer-trigger">
-        <a href="viewer/atomic-models.html" role="menuitem">
-          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="1.5" fill="currentColor"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/><ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/></svg>
-          <span data-i18n="common.nav.atomicModels">Modelos Atômicos</span>
-        </a>
-        <a href="viewer/molecules.html" role="menuitem">
-          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="4" cy="4" r="2" fill="currentColor"/><circle cx="12" cy="6" r="2" fill="currentColor" opacity=".7"/><circle cx="8" cy="12" r="2" fill="currentColor" opacity=".5"/><line x1="4" y1="4" x2="12" y2="6" stroke="currentColor" stroke-width="1"/><line x1="12" y1="6" x2="8" y2="12" stroke="currentColor" stroke-width="1"/><line x1="4" y1="4" x2="8" y2="12" stroke="currentColor" stroke-width="1"/></svg>
-          <span data-i18n="common.nav.molecules">Moléculas</span>
-        </a>
-        <a href="viewer/allotropes.html" role="menuitem">
-          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><polygon points="8,2 14,6 12,13 4,13 2,6" stroke="currentColor" stroke-width="1.2" fill="none"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/></svg>
-          <span data-i18n="common.nav.allotropes">Alótropos</span>
-        </a>
-        <a href="viewer/isomerism/constitutional/function.html" role="menuitem">
-          <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
-            <circle cx="4" cy="8" r="2" fill="currentColor" opacity=".85"/>
-            <circle cx="12" cy="8" r="2" fill="currentColor" opacity=".85"/>
-            <line x1="4" y1="8" x2="4" y2="3.5" stroke="currentColor" stroke-width="1.1"/>
-            <line x1="12" y1="8" x2="12" y2="3.5" stroke="currentColor" stroke-width="1.1"/>
-            <line x1="4" y1="8" x2="4" y2="12.5" stroke="currentColor" stroke-width="1.1"/>
-            <line x1="12" y1="8" x2="12" y2="12.5" stroke="currentColor" stroke-width="1.1"/>
-            <line x1="8" y1="1" x2="8" y2="15" stroke="currentColor" stroke-width="1" stroke-dasharray="2,1.5" opacity=".5"/>
-          </svg>
-          <span data-i18n="common.nav.isomerism">Isomeria</span>
-        </a>
-      </div>
-    </div>
-    <a class="lc-topnav-link" href="calculators.html">
-      <span class="lc-tn-no">03</span> <span data-i18n="common.nav.calc">Calculadoras</span>
-    </a>
-    <a class="lc-topnav-link" href="explore.html">
-      <span class="lc-tn-no">04</span> <span data-i18n="common.nav.explore">Explorar</span>
-    </a>
-    <a class="lc-topnav-link" href="pricing.html">
-      <span class="lc-tn-no">05</span> <span data-i18n="common.nav.pricing">Planos</span>
-    </a>
-  </div>
-
-  <div class="lc-topnav-spacer"></div>
-
-  <div class="lc-topnav-search" id="quick-search-trigger">
-    <label for="quick-search" class="lc-sr-only"
-           data-i18n="common.searchAria">Buscar elemento</label>
-    <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true">
-      <circle cx="4.5" cy="4.5" r="3.5" stroke="currentColor" stroke-width="1.2"/>
-      <line x1="7.2" y1="7.2" x2="10" y2="10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-    </svg>
-    <input class="lc-tn-search-input" id="quick-search" type="text"
-           placeholder="search element, symbol or Z…" autocomplete="off"
-           data-i18n-attr="placeholder:common.searchPlaceholder">
-    <span class="lc-kbd" aria-hidden="true">⌘K</span>
-  </div>
-
-  <button class="lc-topnav-btn lc-topnav-lang" data-i18n-toggle
-          data-i18n-attr="title:common.langToggle; aria-label:common.langToggle"
-          title="Switch language" aria-label="Switch language"
-          style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.5px;">
-    <span data-i18n-toggle-label>PT</span>
-  </button>
-
-  <button class="lc-topnav-btn" id="theme-toggle" type="button"
-          data-i18n-attr="title:common.themeToggle; aria-label:common.themeToggle"
-          title="Toggle theme" aria-label="Toggle theme">
-    <svg id="icon-theme-light" width="14" height="14" viewBox="0 0 14 14" fill="none" style="display:block">
-      <path d="M11.5 7.5A4.5 4.5 0 0 1 6.5 2.5 4.5 4.5 0 1 0 11.5 7.5z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/>
-    </svg>
-    <svg id="icon-theme-dark" width="14" height="14" viewBox="0 0 14 14" fill="none" style="display:none">
-      <circle cx="7" cy="7" r="2.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
-      <path d="M7 1v1.4M7 11.6V13M1 7h1.4M11.6 7H13M2.5 2.5l1 1M10.5 10.5l1 1M2.5 11.5l1-1M10.5 3.5l1-1" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>
-    </svg>
-  </button>
-
-  <div class="ps-account" data-atomurus-account>
-  <span class="ps-plan-badge" data-atomurus-plan-badge hidden></span>
-  <a class="ps-userchip lc-topnav-cta" href="login.html" data-atomurus-account-chip aria-label="Account">
-    <svg class="ps-userchip-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span data-i18n="pricing.ctaAccount">Conta</span>
-  </a>
-</div>
-  
-</nav>
-<aside class="ws-sidebar sidebar ps-pub-sidebar" id="ws-sidebar" data-atomurus-sidebar>
-  <nav class="ws-nav" id="ws-nav-main" aria-label="Laboratory" data-atomurus-lab-nav>
-    <div class="ws-nav-block ws-nav-site">
-      <h2 class="ws-nav-group" data-i18n="common.nav.laboratory">Laboratório</h2>
-      <a class="ws-nav-item" href="/" data-nav="home">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M2.5 7.5 8 3l5.5 4.5M4 6.5V13h8V6.5M6.5 13V9h3v4"/></g></svg>
-        <span class="ws-nav-label" data-i18n="common.nav.home">Início</span>
-      </a>
-      <a class="ws-nav-item" href="/periodic-table.html" data-nav="periodic">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/></g></svg>
-        <span class="ws-nav-label" data-i18n="common.nav.periodic">Tabela Periódica</span>
-      </a>
-      <a class="ws-nav-item" href="/viewer/atomic-models.html" data-nav="viewer">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="8" cy="8" r="2"/><ellipse cx="8" cy="8" rx="6" ry="2.5"/><ellipse cx="8" cy="8" rx="6" ry="2.5" transform="rotate(60 8 8)"/></g></svg>
-        <span class="ws-nav-label" data-i18n="common.nav.visualizador">Visualizador</span>
-      </a>
-      <a class="ws-nav-item" href="/calculators.html" data-nav="calculators">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="2" width="10" height="12" rx="1"/><path d="M5 5h6M5.5 8h1M9.5 8h1M5.5 11h1M9.5 11h1"/></g></svg>
-        <span class="ws-nav-label" data-i18n="common.nav.calc">Calculadoras</span>
-      </a>
-      <a class="ws-nav-item" href="/explore.html" data-nav="explore">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z"/></g></svg>
-        <span class="ws-nav-label" data-i18n="common.nav.explore">Explorar</span>
-      </a>
-      <a class="ws-nav-item" href="/app" data-nav="workspace">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 12l4-4 2 2 4-6"/></g></svg>
-        <span class="ws-nav-label" data-i18n="common.nav.workspace">Workspace</span>
-      </a>
-    </div>
-  </nav>
-  <div class="ws-nav-foot sidebar-foot" id="ws-nav-foot" data-atomurus-nav-foot>
-    <a class="ws-nav-item" href="/login" data-nav="account" data-auth-nav-link="common.nav.login">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M8 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.5 13.5c.6-2.2 2.3-3.5 4.5-3.5s3.9 1.3 4.5 3.5"/></g></svg>
-      <span class="ws-nav-label" data-i18n="common.nav.login">Conta</span>
-    </a>
-    <a class="ws-nav-item" href="/pricing" data-nav="plans">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 5h8v8H4zM6 3v2M10 3v2"/></g></svg>
-      <span class="ws-nav-label" data-i18n="common.nav.plans">Planos</span>
-    </a>
-  </div>
-</aside>
-<main class="ps-main" id="ps-main">
-
-
-<!-- ════════════ DATA STRIP ════════════ -->
-<div class="data-strip">
-  <span class="ds-k" data-i18n="home.strip.workspace">workspace</span><span class="ds-v" data-i18n="home.strip.workspaceVal">ATOMURUS / LAB</span>
-  <span class="ds-sep"></span>
-  <span class="ds-k" data-i18n="home.strip.elements">elementos</span><span class="ds-v">118</span>
-  <span class="ds-sep"></span>
-  <span class="ds-k" data-i18n="home.strip.modules">módulos</span><span class="ds-v" data-i18n="home.strip.modulesVal">quatro pilares</span>
-  <span class="ds-sep"></span>
-  <span class="ds-k" data-i18n="home.strip.lastSync">última sync</span><span class="ds-v" id="ds-time" data-i18n="home.strip.loading">— ms atrás</span>
-  <span class="ds-spacer"></span>
-  <span class="ds-k" data-i18n="home.strip.data">dados</span><span class="ds-v ds-hi" data-i18n="home.strip.dataVal">IUPAC 2024 · CODATA 2022</span>
-</div>
-
-<!-- ════════════ HERO ════════════ -->
-<header class="lc-hero">
-  <div class="lc-hero-left">
-    <div class="lc-hero-kicker">
-      <span data-i18n="home.hero.welcome">laboratório de química</span>
-    </div>
-
-    <h1 class="lc-hero-title">
-      <span data-i18n="home.hero.t1">Um laboratório</span><br><span data-i18n="home.hero.t2">de química,</span><br><em data-i18n="home.hero.t3">instrumental.</em>
-    </h1>
-
-    <p class="lc-hero-desc" data-i18n="home.hero.desc">Um workspace de química para 118 elementos, tendências periódicas, visualizadores 3D, calculadoras básicas e artigos Explore. Uma conta gratuita salva o estudo. O Pro é para resolver e analisar.</p>
-
-    <div class="lc-hero-actions">
-      <a class="lc-btn-primary ui-btn ui-btn-accent" href="periodic-table.html">
-        <span data-i18n="home.hero.ctaPrimary">Abrir tabela periódica</span>
-      </a>
-      <a class="lc-btn-ghost ui-btn" href="viewer/atomic-models.html">
-        <span data-i18n="home.hero.ctaGhost">Visualizador</span>
-        <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
-          <path d="M2 5.5h7M6.5 3l3 2.5-3 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-        </svg>
-      </a>
-    </div>
-
-    <div class="lc-hero-stats">
-      <div class="lc-hero-stat">
-        <div class="lc-hero-stat-n" data-catalog="elements">118</div>
-        <div class="lc-hero-stat-l" data-i18n="home.hero.statElements">Elementos</div>
-      </div>
-      <div class="lc-hero-stat">
-        <div class="lc-hero-stat-n" data-catalog="models">47</div>
-        <div class="lc-hero-stat-l" data-i18n="home.hero.statModels">Modelos 3D</div>
-      </div>
-      <div class="lc-hero-stat">
-        <div class="lc-hero-stat-n" data-catalog="calculators">8</div>
-        <div class="lc-hero-stat-l" data-i18n="home.hero.statCalc">Calculadoras</div>
-      </div>
-      <div class="lc-hero-stat">
-        <div class="lc-hero-stat-n" data-catalog="articles">8</div>
-        <div class="lc-hero-stat-l" data-i18n="home.hero.statArticles">Artigos</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- HERO VISUAL -->
-  <div class="lc-hero-right">
-    <div class="lc-preview lc-bracket">
-      <span class="lc-br-bl"></span><span class="lc-br-br"></span>
-      <div class="lc-preview-head">
-        <div class="dots">
-          <span class="dot ok"></span><span class="dot"></span><span class="dot"></span>
+    <button class="rm-burger" type="button" aria-expanded="false" aria-controls="rm-nav" data-rm-burger>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path class="rm-burger-open" d="M4 7h16M4 12h16M4 17h16"/><path class="rm-burger-close" d="M6 6l12 12M18 6 6 18"/></svg>
+      <span class="rm-sr" data-i18n="common.rm.menu">Menu</span>
+    </button>
+    <div class="rm-navwrap" id="rm-nav" data-rm-nav>
+      <nav class="rm-nav" aria-label="Main" data-i18n-attr="aria-label:common.rm.mainNav">
+        <a class="rm-link" data-rm-section="periodic" href="/periodic-table.html"><span data-i18n="common.rm.periodic">Tabela periódica</span></a>
+        <div class="rm-dd" data-rm-section="models">
+          <a class="rm-link rm-dd-toggle" href="/viewer/atomic-models.html" aria-haspopup="true" aria-expanded="false"><span data-i18n="common.rm.models3d">Modelos 3D</span><svg class="rm-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
+          <div class="rm-dd-menu"><div class="rm-dd-panel">
+            <a class="rm-dd-item" href="/viewer/atomic-models.html"><span class="rm-dd-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(-30 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(30 12 12)"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg></span><span><span class="rm-dd-title" data-i18n="common.rm.atomicModels">Modelos atômicos</span><span class="rm-dd-desc" data-i18n="common.rm.atomicModelsDesc">De Dalton ao modelo quântico</span></span></a>
+            <a class="rm-dd-item" href="/viewer/molecules.html"><span class="rm-dd-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="7" cy="14" r="3"/><circle cx="17" cy="9" r="3"/><circle cx="15" cy="19" r="2"/><path d="m9.7 12.8 4.6-2.6M8.6 16.4l4.6 2"/></svg></span><span><span class="rm-dd-title" data-i18n="common.rm.molecules">Moléculas</span><span class="rm-dd-desc" data-i18n="common.rm.moleculesDesc">Água, CO₂, etanol e outras 39</span></span></a>
+            <a class="rm-dd-item" href="/viewer/allotropes.html"><span class="rm-dd-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 20 7.5v9L12 21l-8-4.5v-9z"/><path d="M12 3v18M4 7.5l16 9M20 7.5l-16 9"/></svg></span><span><span class="rm-dd-title" data-i18n="common.rm.allotropes">Alótropos</span><span class="rm-dd-desc" data-i18n="common.rm.allotropesDesc">Grafite, diamante, fulereno…</span></span></a>
+            <a class="rm-dd-item" href="/viewer/isomerism.html"><span class="rm-dd-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 3v18" stroke-dasharray="2 2"/><circle cx="6" cy="9" r="2.5"/><circle cx="18" cy="9" r="2.5"/><path d="M6 11.5V18M18 11.5V18"/></svg></span><span><span class="rm-dd-title" data-i18n="common.rm.isomerism">Isomeria</span><span class="rm-dd-desc" data-i18n="common.rm.isomerismDesc">Isômeros lado a lado</span></span></a>
+          </div></div>
         </div>
-        <span data-i18n="home.hero.previewHead">Tabela periódica</span>
-      </div>
-
-      <div class="lc-preview-grid" id="preview-grid"></div>
-
-      <div class="lc-preview-foot">
-        <span data-i18n="home.hero.previewFootL">grp 1–18 · prd 1–7</span>
-        <span class="hi" data-i18n="home.hero.previewFootR">118 elementos · IUPAC 2024</span>
+        <div class="rm-dd" data-rm-section="calculators">
+          <a class="rm-link rm-dd-toggle" href="/calculators.html" aria-haspopup="true" aria-expanded="false"><span data-i18n="common.rm.calculators">Calculadoras</span><svg class="rm-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
+          <div class="rm-dd-menu"><div class="rm-dd-panel rm-dd-narrow">
+            <a class="rm-dd-item" href="/calculators.html#molar"><span><span class="rm-dd-title" data-i18n="common.rm.molarMass">Massa molar</span><span class="rm-dd-desc" data-i18n="common.rm.molarMassDesc">Passo a passo, com hidratos</span></span></a>
+            <a class="rm-dd-item" href="/calculators.html#ideal"><span><span class="rm-dd-title" data-i18n="common.rm.idealGas">Gás ideal</span><span class="rm-dd-desc">PV = nRT</span></span></a>
+            <a class="rm-dd-item" href="/calculators.html#dilute"><span><span class="rm-dd-title" data-i18n="common.rm.dilution">Diluição</span><span class="rm-dd-desc">C₁V₁ = C₂V₂</span></span></a>
+            <a class="rm-dd-item" href="/calculators.html#ph"><span><span class="rm-dd-title" data-i18n="common.rm.ph">pH e pOH</span><span class="rm-dd-desc" data-i18n="common.rm.phDesc">Ácido, base ou neutro</span></span></a>
+            <a class="rm-dd-foot" href="/calculators.html" data-i18n="common.rm.allCalcs">Ver todas as calculadoras →</a>
+          </div></div>
+        </div>
+        <a class="rm-link" data-rm-section="explore" href="/explore.html"><span data-i18n="common.rm.articles">Matérias</span></a>
+        <a class="rm-link" data-rm-section="plans" href="/pricing.html"><span data-i18n="common.rm.plans">Planos</span></a>
+      </nav>
+      <div class="rm-actions">
+        <a class="rm-link rm-signin" href="/login"><span data-i18n="common.rm.signIn">Entrar</span></a>
+        <div class="rm-account ps-account" data-atomurus-account>
+          <span class="ps-plan-badge" data-atomurus-plan-badge hidden></span>
+          <a class="rm-btn rm-btn-primary rm-cta is-guest-cta" href="/signup" data-atomurus-account-chip aria-label="Create free account"><span data-i18n="common.auth.createAccount">Criar conta grátis</span></a>
+        </div>
       </div>
     </div>
   </div>
 </header>
+<main class="ps-main rm-home" id="ps-main">
 
-<!-- ════════════ MODULES ════════════ -->
-<section class="lc-modules">
-  <div class="lc-modules-head">
-    <div class="lc-modules-h-left">
-      <span class="lc-modules-kicker" data-i18n="home.modules.kicker">Quatro pilares</span>
-      <h2 class="lc-modules-title" data-i18n="home.modules.title">Explorar, visualizar, resolver e estudar.</h2>
-    </div>
-    <div class="lc-modules-h-right">
-      <span class="hi" data-catalog="articles">8</span> <span data-i18n="home.modules.articlesLabel">artigos</span>
-      ·
-      <span class="hi" data-catalog="models">47</span> <span data-i18n="home.modules.modelsLabel">modelos 3D</span>
-    </div>
+<section class="rm-container rm-hero">
+  <div class="rm-hero-copy">
+    <h1 class="rm-hero-title" data-i18n="home.rm.title">Química pra entender, não só decorar.</h1>
+    <p class="rm-hero-lead" data-i18n="home.rm.lead">Toque em qualquer elemento para ver o que ele é. Gire moléculas em 3D, confira a massa molar passo a passo e leia a história por trás de cada descoberta. Não precisa de conta pra começar.</p>
   </div>
-
-  <div class="lc-modules-grid">
-
-    <a class="lc-mod-card ui-card ui-card-interactive lc-bracket" href="explore.html">
-      <span class="lc-br-bl"></span><span class="lc-br-br"></span>
-      <div class="lc-mod-head">
-      <span class="lc-mod-no" data-i18n="home.modules.card1.no">Explorar</span>
-        <span class="lc-mod-status ui-badge" data-i18n="home.modules.status">Aberto</span>
-      </div>
-      <div class="lc-mod-icon">
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <path d="M6 5.5h8.2c1.1 0 1.8.3 1.8 1.2v19.8c0-.9-.7-1.2-1.8-1.2H6V5.5Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
-          <path d="M26 5.5h-8.2c-1.1 0-1.8.3-1.8 1.2v19.8c0-.9.7-1.2 1.8-1.2H26V5.5Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
-          <path d="M9 10h4.5M9 14h4.5M18.5 10H23M18.5 14H23M18.5 18H23" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <h3 class="lc-mod-name" data-i18n="home.modules.card1.name">Explorar</h3>
-      <p class="lc-mod-desc" data-i18n="home.modules.card1.desc">Artigos e leituras guiadas para conceitos e história da química, incluindo tabela periódica, isomeria e Bhopal/isocianato de metila.</p>
-      <span class="lc-mod-go ui-btn ui-btn-accent" data-i18n="home.modules.card1.cta">Ler artigos</span>
-      <div class="lc-mod-meta">
-        <span><span data-catalog="articles">8</span> <span data-i18n="home.modules.card1.m1">artigos</span></span>
-        <span data-i18n="home.modules.card1.m2">conceitos</span>
-        <span data-i18n="home.modules.card1.m3">história</span>
-      </div>
-    </a>
-
-    <a class="lc-mod-card ui-card ui-card-interactive lc-bracket" href="viewer/atomic-models.html">
-      <span class="lc-br-bl"></span><span class="lc-br-br"></span>
-      <div class="lc-mod-head">
-      <span class="lc-mod-no" data-i18n="home.modules.card2.no">Visualizar</span>
-        <span class="lc-mod-status ui-badge" data-i18n="home.modules.card2.badge">Aberto</span>
-      </div>
-      <div class="lc-mod-icon">
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <circle cx="16" cy="16" r="3.5" fill="currentColor"/>
-          <ellipse cx="16" cy="16" rx="13" ry="5.5" stroke="currentColor" stroke-width="1.3" fill="none"/>
-          <ellipse cx="16" cy="16" rx="13" ry="5.5" stroke="currentColor" stroke-width="1.3" fill="none" transform="rotate(60 16 16)"/>
-          <ellipse cx="16" cy="16" rx="13" ry="5.5" stroke="currentColor" stroke-width="1.3" fill="none" transform="rotate(120 16 16)"/>
-        </svg>
-      </div>
-      <h3 class="lc-mod-name" data-i18n="home.modules.card2.name">Visualizar</h3>
-      <p class="lc-mod-desc" data-i18n="home.modules.card2.desc">Modelos atômicos, moléculas, alótropos e isomeria em 3D interativo — abertos no lab público.</p>
-      <span class="lc-mod-go ui-btn ui-btn-accent" data-i18n="home.modules.card2.cta">Abrir modelos</span>
-      <div class="lc-mod-meta">
-        <span><span data-catalog="atomicModels">5</span> <span data-i18n="home.modules.card2.m1">modelos atômicos</span></span>
-        <span><span data-catalog="molecules">42</span> <span data-i18n="home.modules.card2.m2">moléculas</span></span>
-        <span data-i18n="home.modules.card2.m3">isomeria + alótropos</span>
-      </div>
-    </a>
-
-    <a class="lc-mod-card ui-card ui-card-interactive lc-bracket" href="calculators.html">
-      <span class="lc-br-bl"></span><span class="lc-br-br"></span>
-      <div class="lc-mod-head">
-      <span class="lc-mod-no" data-i18n="home.modules.card3.no">Resolver</span>
-        <span class="lc-mod-status ui-badge" data-i18n="home.modules.status">Aberto</span>
-      </div>
-      <div class="lc-mod-icon">
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <rect x="5" y="2.5" width="22" height="27" rx="2.5" stroke="currentColor" stroke-width="1.6" fill="none"/>
-          <rect x="9" y="6" width="14" height="6" rx="1" fill="currentColor" opacity=".15"/>
-          <circle cx="11.5" cy="17" r="1.2" fill="currentColor"/>
-          <circle cx="16" cy="17" r="1.2" fill="currentColor"/>
-          <circle cx="20.5" cy="17" r="1.2" fill="currentColor"/>
-          <circle cx="11.5" cy="22" r="1.2" fill="currentColor"/>
-          <circle cx="16" cy="22" r="1.2" fill="currentColor"/>
-          <circle cx="20.5" cy="22" r="1.2" fill="currentColor"/>
-        </svg>
-      </div>
-      <h3 class="lc-mod-name" data-i18n="home.modules.card3.name">Resolver</h3>
-      <p class="lc-mod-desc" data-i18n="home.modules.card3.desc">Massa molar, diluição, científica, unidades, gás e pH continuam abertas. O Laboratório de Reações e o solver termo são Pro.</p>
-      <span class="lc-mod-go ui-btn ui-btn-accent" data-i18n="home.modules.card3.cta">Usar calculadoras</span>
-      <div class="lc-mod-meta">
-        <span><span data-catalog="calculators">8</span> <span data-i18n="home.modules.card3.m1">calculadoras</span></span>
-        <span data-i18n="home.modules.card3.m2">Parser de fórmulas ao vivo</span>
-        <span data-i18n="home.modules.card3.m3">Unidades SI</span>
-      </div>
-    </a>
-
-    <a class="lc-mod-card ui-card ui-card-interactive lc-bracket" href="/app">
-      <span class="lc-br-bl"></span><span class="lc-br-br"></span>
-      <div class="lc-mod-head">
-      <span class="lc-mod-no" data-i18n="home.modules.card4.no">Workspace</span>
-        <span class="lc-mod-status ui-badge" data-i18n="home.modules.card4.badge">Convidado</span>
-      </div>
-      <div class="lc-mod-icon">
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <rect x="3" y="3" width="11" height="26" rx="1.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
-          <rect x="16" y="7" width="13" height="22" rx="1.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
-          <path d="M8 10v10M22.5 12v8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <h3 class="lc-mod-name" data-i18n="home.modules.card4.name">Workspace</h3>
-      <p class="lc-mod-desc" data-i18n="home.modules.card4.desc">Abra seu workspace de química. Estudo, Pro Lab e Atividade ficam no mesmo produto — entre na conta quando quiser guardar.</p>
-      <span class="lc-mod-go ui-btn ui-btn-accent" data-i18n="home.modules.card4.cta">Abrir workspace</span>
-      <div class="lc-mod-meta">
-        <span data-i18n="home.modules.card4.m1">workspace convidado</span>
-        <span data-i18n="home.modules.card4.m2">study sets</span>
-        <span data-i18n="home.modules.card4.m3">sem conta para olhar</span>
-      </div>
-    </a>
-
-  </div>
+  <form class="rm-hero-search" role="search" action="/periodic-table.html" method="get" data-rm-search>
+    <label class="rm-hero-search-label" for="quick-search" data-i18n="home.rm.searchLabel">Procurar</label>
+    <div class="rm-search-field">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input class="rm-input" id="quick-search" name="q" type="search" autocomplete="off" placeholder="Element, formula or topic" data-i18n-attr="placeholder:home.rm.searchPh">
+    </div>
+    <p class="rm-try"><span data-i18n="home.rm.try">Tente:</span> <a class="rm-quick" href="/periodic-table/carboneum.html" data-i18n="home.rm.tryCarbon">Carbono</a><a class="rm-quick" href="/calculators.html#molar">H₂SO₄</a><a class="rm-quick" href="/explore/what-is-isomerism.html" data-i18n="home.rm.tryIsomerism">Isomeria</a><a class="rm-quick" href="/periodic-table/aurum.html" data-i18n="home.rm.tryGold">Ouro</a></p>
+  </form>
 </section>
 
-<!-- ════════════ MANIFEST ════════════ -->
-<section class="lc-manifest">
-  <div class="lc-manifest-grid">
-    <div class="lc-manifest-label" data-i18n="home.manifest.kicker">manifesto</div>
-    <p class="lc-manifest-body" data-i18n-html="home.manifest.bodyHtml">
-      Most chemistry tools talk <em>about</em> matter. Atomurus shows it happening — from element data to 3D structures, calculations and articles, with the right typography for study and the right amount of nothing in between. <em>Built for studying, not for impressing.</em>
-    </p>
-  </div>
-</section>
-
-<!-- ════════════ FOOTER ════════════ -->
-<footer class="lc-footer">
-  <div class="lc-footer-inner">
-    <div class="lc-footer-col lc-footer-brand">
-      <div class="lc-footer-brand-row">
-        <div class="lc-topnav-mark" style="width:24px;height:24px">
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-            <circle cx="8" cy="8" r="2.5" fill="currentColor"/>
-            <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none"/>
-            <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(60 8 8)"/>
-            <ellipse cx="8" cy="8" rx="6.5" ry="2.8" stroke="currentColor" stroke-width="1.1" fill="none" transform="rotate(120 8 8)"/>
-          </svg>
+<section id="tabela" class="rm-container rm-home-table-wrap">
+  <div class="rm-card rm-home-table">
+    <div class="rm-home-table-head">
+      <h2 data-i18n="home.rm.tableTitle">Tabela periódica</h2>
+      <a class="rm-link-arrow" href="/periodic-table.html" data-i18n="home.rm.tableOpen">Abrir a tabela completa →</a>
+    </div>
+    <div class="rm-mini-scroll">
+      <div class="rm-mini" id="rm-mini" data-rm-mini>
+        <div class="rm-mini-ph" style="grid-column:3;grid-row:6">57–71</div>
+        <div class="rm-mini-ph" style="grid-column:3;grid-row:7">89–103</div>
+        <div class="rm-mini-sel" aria-live="polite">
+          <div class="rm-mini-sel-tile" data-sel-tile>
+            <span data-sel-z>6</span>
+            <span class="rm-mini-sel-sym" data-sel-sym>C</span>
+            <span data-sel-mass>12.011</span>
+          </div>
+          <div class="rm-mini-sel-info">
+            <p class="rm-kicker" data-sel-cat>Nonmetals</p>
+            <p class="rm-mini-sel-name" data-sel-name>Carbon</p>
+            <p class="rm-mini-sel-where" data-sel-where>Group 14 · Period 2 · atomic mass 12.011 u</p>
+            <div class="rm-mini-sel-actions">
+              <a class="rm-btn rm-btn-primary rm-btn-sm" href="/periodic-table/carboneum.html" data-sel-link data-i18n="home.rm.viewElement">Ver página do elemento</a>
+              <a class="rm-btn rm-btn-ghost rm-btn-sm" href="/periodic-table/compare.html" data-i18n="home.rm.compare">Comparar</a>
+            </div>
+          </div>
         </div>
-        <span class="lc-footer-brand-name">Atomurus</span>
-      </div>
-      <p class="lc-footer-brand-desc" data-i18n="common.footer.brandDesc">Um laboratório de química instrumental para os estudiosos, os curiosos e os pacientes.</p>
-      <div class="lc-footer-social" aria-label="Social">
-        <a href="https://instagram.com/atomurusapp" target="_blank" rel="noopener me" aria-label="Instagram @atomurusapp" title="Instagram @atomurusapp">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.7"/>
-            <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/>
-            <circle cx="17.5" cy="6.5" r="1.1" fill="currentColor"/>
-          </svg>
-        </a>
-        <a href="https://x.com/atomurusapp" target="_blank" rel="noopener me" aria-label="X (Twitter) @atomurusapp" title="X (Twitter) @atomurusapp">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.658l-5.214-6.817-5.967 6.817H1.68l7.73-8.835L1.254 2.25h6.828l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/>
-          </svg>
-        </a>
       </div>
     </div>
-    <div class="lc-footer-col">
-      <h4 data-i18n="common.footer.modules">Módulos</h4>
-      <a href="periodic-table.html" data-i18n="common.nav.periodic">Tabela Periódica</a>
-      <a href="viewer/atomic-models.html" data-i18n="common.nav.viewer3d">Visualizador</a>
-      <a href="calculators.html" data-i18n="common.nav.calc">Calculadoras</a>
-      <a href="explore.html" data-i18n="common.nav.explore">Explorar</a>
-    </div>
-    <div class="lc-footer-col">
-      <h4 data-i18n="common.footer.workspace">Workspace</h4>
-      <a href="config.html" data-i18n="common.footer.settings">Configurações</a>
-      <a href="/app" data-i18n="common.nav.workspace">Workspace</a>
-      <a href="periodic-table.html#search" data-i18n="common.footer.elementSearch">Buscar elemento</a>
-      <a href="calculators.html#molar" data-i18n="common.footer.molarMass">Massa molar</a>
-    </div>
-    <div class="lc-footer-col">
-      <h4 data-i18n="common.footer.project">Projeto</h4>
-      <a href="about.html" data-i18n="common.footer.about">Sobre</a>
-      <a href="privacy.html" data-i18n="common.footer.privacy">Privacidade</a>
-      <a href="terms.html" data-i18n="common.footer.terms">Termos</a>
-      <a href="contact.html" data-i18n="common.footer.contact">Contato</a>
-    </div>
-    <div class="lc-footer-col">
-      <h4 data-i18n="common.footer.data">Dados</h4>
-      <a href="https://iupac.org/" target="_blank" rel="noopener">IUPAC 2024</a>
-      <a href="https://physics.nist.gov/cuu/Constants/" target="_blank" rel="noopener">CODATA 2022</a>
-      <a href="https://www.nist.gov/" target="_blank" rel="noopener">NIST</a>
-    </div>
+    <div class="rm-mini-cats" role="group" aria-label="Highlight category" data-i18n-attr="aria-label:home.rm.highlight" data-rm-cats></div>
   </div>
-  <div class="lc-footer-bottom"><button type="button" class="aco-manage-cookies" data-consent-manage data-i18n="common.consent.manage">Gerenciar cookies</button>
-    <span><span class="lc-st-dot" style="width:6px;height:6px;border-radius:50%;background:#1E6A50;display:inline-block"></span> <span data-i18n="common.footer.systemNominal">sistema nominal</span></span>
-    <span data-i18n="common.footer.copy">© 2026 Atomurus</span>
-  </div>
-</footer>
+</section>
 
-<!-- ════════════ STATUS BAR ════════════ -->
-<div class="lc-statusbar">
-  <span><span class="lc-st-dot"></span> <span data-i18n="home.status.ready">pronto</span></span>
-  <span class="lc-st-sep">·</span>
-  <span data-i18n="home.status.workspace">workspace inicial</span>
-  <span class="lc-st-sep">·</span>
-  <span data-i18n="home.status.modulesReg">Explorar · Visualizar · Resolver · Estudar</span>
-  <span class="lc-st-spacer"></span>
-  <a href="periodic-table.html" data-i18n="common.stLinkPeriodic">→ tabela-periódica</a>
-  <span class="lc-st-sep">·</span>
-  <a href="viewer/atomic-models.html" data-i18n="common.stLinkViewer">→ visualizador-3d</a>
-  <span class="lc-st-sep">·</span>
-  <a href="calculators.html" data-i18n="common.stLinkCalc">→ calculadoras</a>
-  <span class="lc-st-sep">·</span>
-  <a href="explore.html" data-i18n="common.stLinkExplore">→ explorar</a>
-</div>
+<section id="ferramentas" class="rm-container rm-home-tools">
+  <h2 class="rm-section-title" data-i18n="home.rm.beyondTitle">Além da tabela</h2>
+  <p class="rm-section-lead" data-i18n="home.rm.beyondLead">Tudo aberto, sem cadastro. A conta serve pra guardar o que você estudou.</p>
+  <div class="rm-tools-grid">
+    <article class="rm-card-dark rm-tool rm-tool-molar">
+      <div>
+        <h3 data-i18n="home.rm.molarTitle">Massa molar</h3>
+        <p class="rm-tool-lead" data-i18n="home.rm.molarLead">Digite a fórmula e veja de onde vem cada grama.</p>
+      </div>
+      <a class="rm-tool-formula" href="/calculators.html#molar"><span class="rm-mono">H₂SO₄</span><span class="rm-tool-enter">Enter ↵</span></a>
+      <div class="rm-tool-rows">
+        <div><span>H <span class="rm-dim" data-rm-num="2 × 1.008">2 × 1.008</span></span><span data-rm-num="2.016">2.016</span></div>
+        <div><span>S <span class="rm-dim" data-rm-num="1 × 32.06">1 × 32.06</span></span><span data-rm-num="32.060">32.060</span></div>
+        <div><span>O <span class="rm-dim" data-rm-num="4 × 15.999">4 × 15.999</span></span><span data-rm-num="63.996">63.996</span></div>
+        <div class="rm-tool-total"><span data-i18n="home.rm.total">Total</span><span><span data-rm-num="98.07">98.07</span> <small>g/mol</small></span></div>
+      </div>
+      <a class="rm-tool-link" href="/calculators.html" data-i18n="home.rm.openCalcs">Abrir calculadoras →</a>
+    </article>
+
+    <article class="rm-card rm-tool">
+      <div>
+        <h3 data-i18n="home.rm.modelsTitle">Modelos 3D</h3>
+        <p class="rm-tool-lead" data-i18n="home.rm.modelsLead">Átomos, moléculas, alótropos e isômeros que você gira com o dedo.</p>
+      </div>
+      <a class="rm-tool-stage" href="/viewer/molecules.html">
+        <svg width="260" height="190" viewBox="0 0 260 190" role="img" aria-label="Ball-and-stick model of ethanol" data-i18n-attr="aria-label:home.rm.ethanolAria">
+          <g class="rm-eth-bond" stroke-width="6" stroke-linecap="round">
+            <line x1="82" y1="100" x2="150" y2="84"/><line x1="150" y1="84" x2="206" y2="118"/>
+            <line x1="82" y1="100" x2="40" y2="70"/><line x1="82" y1="100" x2="52" y2="146"/><line x1="82" y1="100" x2="96" y2="40"/>
+            <line x1="150" y1="84" x2="140" y2="30"/><line x1="150" y1="84" x2="160" y2="146"/>
+            <line x1="206" y1="118" x2="236" y2="88"/>
+          </g>
+          <g class="rm-eth-h" stroke-width="1.5">
+            <circle cx="40" cy="70" r="13"/><circle cx="52" cy="146" r="13"/><circle cx="96" cy="40" r="13"/>
+            <circle cx="140" cy="30" r="13"/><circle cx="160" cy="146" r="13"/><circle cx="236" cy="88" r="13"/>
+          </g>
+          <circle class="rm-eth-c" cx="82" cy="100" r="22"/><circle cx="75" cy="93" r="5" fill="#F2EFE7" opacity=".25"/>
+          <circle class="rm-eth-c" cx="150" cy="84" r="22"/><circle cx="143" cy="77" r="5" fill="#F2EFE7" opacity=".25"/>
+          <circle cx="206" cy="118" r="20" fill="#9A4338"/><circle cx="200" cy="112" r="5" fill="#F2EFE7" opacity=".3"/>
+        </svg>
+        <span class="rm-tool-stage-cap rm-mono" data-i18n="home.rm.ethanol">C₂H₅OH · etanol</span>
+      </a>
+      <a class="rm-link-arrow rm-tool-foot" href="/viewer/molecules.html" data-i18n="home.rm.openViewer">Abrir visualizador →</a>
+    </article>
+
+    <article class="rm-card rm-tool rm-tool-read">
+      <h3 data-i18n="home.rm.readTitle">Pra ler com calma</h3>
+      <p class="rm-tool-lead" data-i18n="home.rm.readLead">Conceitos e histórias da química, sem enrolação.</p>
+      <a class="rm-row-link" href="/explore/what-is-the-periodic-table.html"><span data-i18n="home.rm.art1">O que é a Tabela Periódica</span><small data-i18n="home.rm.tagConcepts">Conceitos</small></a>
+      <a class="rm-row-link" href="/explore/what-is-isomerism.html"><span data-i18n="home.rm.art2">O que é Isomeria</span><small data-i18n="home.rm.tagConcepts">Conceitos</small></a>
+      <a class="rm-row-link" href="/explore/chernobyl-disaster.html"><span data-i18n="home.rm.art3">O Desastre de Chernobyl</span><small data-i18n="home.rm.tagHistory">História</small></a>
+      <a class="rm-row-link" href="/explore/bhopal-disaster.html"><span data-i18n="home.rm.art4">Desastre de Bhopal</span><small data-i18n="home.rm.tagHistory">História</small></a>
+      <a class="rm-link-arrow rm-tool-foot rm-tool-foot-rule" href="/explore.html" data-i18n="home.rm.allArticles">Ver todas as matérias →</a>
+    </article>
+  </div>
+</section>
+
+<section id="planos" class="rm-container rm-home-plans">
+  <div class="rm-plans-copy">
+    <h2 class="rm-section-title" data-i18n="home.rm.plansTitle">Grátis pra estudar. Pro pra resolver.</h2>
+    <p data-i18n="home.rm.plansLead">Contas novas ganham 30 dias de Pro, sem cartão. Depois, a conta continua grátis.</p>
+  </div>
+  <div class="rm-plans-grid">
+    <div class="rm-plan">
+      <p class="rm-plan-name" data-i18n="home.rm.free">Grátis</p>
+      <p class="rm-plan-price" data-i18n="home.rm.freePrice">R$0</p>
+      <p class="rm-plan-copy" data-i18n="home.rm.freeCopy">Tabela, páginas dos 118 elementos, modelos 3D, calculadoras básicas e artigos. Com conta: notas, flashcards e histórico.</p>
+      <a class="rm-btn rm-btn-ghost" href="/signup" data-i18n="home.rm.freeCta">Criar conta</a>
+    </div>
+    <div class="rm-plan rm-plan-pro">
+      <p class="rm-plan-name" data-i18n="home.rm.pro">Pro</p>
+      <p class="rm-plan-price"><span data-i18n="home.rm.proPrice">R$180</span><small data-i18n="home.rm.perYear"> /ano</small></p>
+      <p class="rm-plan-copy" data-i18n="home.rm.proCopy">Solver de química, laboratório de reações, estequiometria, termodinâmica e Smart Review. Dá uns R$15 por mês.</p>
+      <a class="rm-btn rm-btn-primary" href="/pricing.html" data-i18n="home.rm.proCta">Testar 30 dias grátis</a>
+    </div>
+  </div>
+</section>
 
 </main>
+<footer class="rm-footer" data-rm-footer>
+  <div class="rm-footer-in">
+    <div class="rm-footer-brand">
+      <p class="rm-footer-name"><img class="rm-footer-mark" src="/assets/brand/atomurus-mark-32.png" srcset="/assets/brand/atomurus-mark-64.png 2x" width="26" height="26" alt="" loading="lazy" decoding="async">Atomurus</p>
+      <p class="rm-footer-tag" data-i18n="common.rm.footerTag">Dados de IUPAC, CODATA e NIST. Feito para quem estuda química.</p>
+    </div>
+    <nav class="rm-footer-nav" aria-label="Footer" data-i18n-attr="aria-label:common.rm.footerNav">
+      <a class="rm-foot-link" href="/about.html" data-i18n="common.rm.about">Sobre</a>
+      <a class="rm-foot-link" href="/contact.html" data-i18n="common.rm.contact">Contato</a>
+      <a class="rm-foot-link" href="/privacy.html" data-i18n="common.rm.privacy">Privacidade</a>
+      <a class="rm-foot-link" href="/terms.html" data-i18n="common.rm.terms">Termos</a>
+      <button class="rm-foot-link" type="button" data-consent-manage data-i18n="common.consent.manage">Gerenciar cookies</button>
+      <button class="rm-foot-link" type="button" data-rm-theme data-i18n="common.rm.theme">Tema escuro</button>
+      <button class="rm-foot-link" type="button" data-rm-lang data-i18n="common.rm.otherLang">English</button>
+    </nav>
+  </div>
+</footer>
 </div>
-<script>
-// ── theme
-function toggleTheme() {
-  const html = document.documentElement;
-  const isDark = html.getAttribute('data-theme') === 'dark';
-  const next = isDark ? 'light' : 'dark';
-  html.setAttribute('data-theme', next);
-  localStorage.setItem('atomurus-theme', next);
-  updateThemeIcons();
-}
-function updateThemeIcons() {
-  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  document.getElementById('icon-theme-light').style.display = isDark ? 'none' : 'block';
-  document.getElementById('icon-theme-dark').style.display  = isDark ? 'block' : 'none';
-}
-(function(){
-  const saved = localStorage.getItem('atomurus-theme');
-  if (saved) document.documentElement.setAttribute('data-theme', saved);
-  updateThemeIcons();
-  const tBtn = document.getElementById('theme-toggle');
-  if (tBtn) tBtn.addEventListener('click', toggleTheme);
-})();
-
-// ── topnav dropdown a11y (Visualizador menu)
-(function(){
-  const dd = document.getElementById('topnav-viewer-trigger');
-  if (!dd) return;
-  const menu = document.getElementById('topnav-viewer-menu');
-  const items = menu ? menu.querySelectorAll('[role="menuitem"]') : [];
-  const set = (v) => dd.setAttribute('aria-expanded', v ? 'true' : 'false');
-
-  dd.addEventListener('focusin', () => set(true));
-  dd.addEventListener('focusout', (e) => {
-    if (!dd.contains(e.relatedTarget)) set(false);
-  });
-  dd.addEventListener('mouseenter', () => set(true));
-  dd.addEventListener('mouseleave', () => {
-    if (!dd.contains(document.activeElement)) set(false);
-  });
-  dd.addEventListener('keydown', (e) => {
-    if (e.target === dd && (e.key === 'Enter' || e.key === ' ')) {
-      e.preventDefault();
-      set(true);
-      if (items[0]) items[0].focus();
-    } else if (e.key === 'Escape') {
-      e.preventDefault();
-      set(false);
-      dd.focus();
-      dd.blur();
-    }
-  });
-})();
-
-// ── live timestamp
-function tickTime() {
-  const t = new Date();
-  const hh = String(t.getHours()).padStart(2,'0');
-  const mm = String(t.getMinutes()).padStart(2,'0');
-  const ss = String(t.getSeconds()).padStart(2,'0');
-  const suffix = (window.I18N && I18N.t('home.strip.timeSuffix')) || 'local';
-  const el = document.getElementById('ds-time');
-  el.textContent = `${hh}:${mm}:${ss} ${suffix}`;
-  // The placeholder "— ms ago" carries data-i18n; remove it after first tick
-  // so the language switcher doesn't overwrite the live clock on re-apply.
-  if (el.hasAttribute('data-i18n')) el.removeAttribute('data-i18n');
-}
-tickTime(); setInterval(tickTime, 1000);
-if (window.I18N) I18N.onChange(tickTime);
-
-// ── Preview mini-grid (118 elements, sourced from home-preview-data.js)
-//    Map periodic-table category keys → compact preview keys
-const CAT_KEY = {
-  alkali:'ak', alkaline:'aa', transition:'tr', posttrans:'pt',
-  metalloid:'mt', nonmetal:'nm', polyatomic:'nm', noble:'nb',
-  lanthanide:'la', actinide:'ac'
-};
-const CAT_COLORS = {
-  ak:['#FFCACA','#7A1010'], aa:['#FFE0B0','#6A3800'], tr:['#E4E0D4','#38321C'],
-  pt:['#D8EACC','#284A0A'], mt:['#DDD8FF','#2E1E78'], nm:['#C8EBC8','#1A4E1A'],
-  nb:['#FFF0B0','#6A4800'], la:['#F0D4E8','#5C004A'], ac:['#ECD0DA','#5E1228'],
-  hl:['#14120E','#F8F5EC'],
-};
-function buildPreview(){
-  const grid = document.getElementById('preview-grid');
-  if (!grid || typeof HOME_PREVIEW_ELEMENTS === 'undefined') return;
-  // Index elements by their (col, row) from a minimal landing-page payload.
-  const cells = {};
-  HOME_PREVIEW_ELEMENTS.forEach(el => {
-    cells[`${el.col}-${el.row}`] = {
-      z: el.z,
-      sym: el.sym,
-      name: el.name,
-      cat: CAT_KEY[el.cat] || 'nm'
-    };
-  });
-  grid.innerHTML = '';
-  // Rows 1-7 = main table, 8 = visual gap (single spanning cell), 9-10 = f-block
-  for (let r = 1; r <= 10; r++) {
-    if (r === 8) {
-      // One element spanning all 18 columns — fixes the row height to 10px exactly,
-      // no matter how the grid sizing behaves with aspect-ratio'd cells.
-      const gap = document.createElement('div');
-      gap.className = 'lc-preview-gap';
-      grid.appendChild(gap);
-      continue;
-    }
-    for (let c = 1; c <= 18; c++) {
-      const d = document.createElement('div');
-      d.className = 'lc-preview-cell';
-      const k = `${c}-${r}`;
-      if (cells[k]) {
-        const [bg, fg] = CAT_COLORS[cells[k].cat];
-        d.style.background = bg;
-        d.style.color = fg;
-        // La (z=57) and Ac (z=89) sit at col 3 / rows 6-7 in the main table.
-        // Display the f-block range instead of the element symbol — same
-        // convention used by the full periodic table.
-        if (cells[k].z === 57) {
-          d.innerHTML = `<span class="z" style="font-size:.85em;line-height:1;">57–71</span>`;
-          d.title = 'Lanthanides (57–71)';
-        } else if (cells[k].z === 89) {
-          d.innerHTML = `<span class="z" style="font-size:.85em;line-height:1;">89–103</span>`;
-          d.title = 'Actinides (89–103)';
-        } else {
-          d.innerHTML = `<span class="z">${cells[k].z}</span>${cells[k].sym}`;
-          d.title = cells[k].name + ' (' + cells[k].sym + ') · Z=' + cells[k].z;
-        }
-      } else {
-        d.classList.add('empty');
-      }
-      grid.appendChild(d);
-    }
-  }
-}
-// home-preview-data.js is loaded with defer, so HOME_PREVIEW_ELEMENTS isn't yet defined when
-// this inline script runs. Build on DOMContentLoaded — same firing point as
-// when defer scripts finish executing.
-function fillCatalog() {
-  const c = window.ATOMURUS_CATALOG;
-  if (!c) return;
-  document.querySelectorAll('[data-catalog]').forEach((el) => {
-    const key = el.getAttribute('data-catalog');
-    if (c[key] != null) el.textContent = String(c[key]);
-  });
-}
-function bootHomeVisuals() {
-  fillCatalog();
-  buildPreview();
-}
-if (typeof HOME_PREVIEW_ELEMENTS !== 'undefined' && window.ATOMURUS_CATALOG) bootHomeVisuals();
-else document.addEventListener('DOMContentLoaded', bootHomeVisuals);
-
-// ── quick search: navigate to periodic-table.html with the symbol/Z as hash
-const qs = document.getElementById('quick-search');
-qs.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') {
-    const v = qs.value.trim();
-    if (v) location.href = 'periodic-table.html#q=' + encodeURIComponent(v);
-  }
-});
-// ⌘K / Ctrl+K focuses the search
-window.addEventListener('keydown', (e) => {
-  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
-    e.preventDefault();
-    qs.focus();
-    qs.select();
-  }
-});
-</script>
+<script src="/assets/remake/elements-lite.js?v=202611042200" defer></script>
+<script src="/assets/remake/home.js?v=202611042200" defer></script>
 <script type="text/javascript">
     (window.atomurusRunAutoTag||function(){})({ zoneId: '6p1sooifu8' });
 </script>

@@ -45,7 +45,7 @@
   background: var(--color-surface);
 }
 
-.ui-empty-state .ui-h3 { font-family: var(--font-serif); font-weight: 400; }
+.ui-empty-state .ui-h3 { font-family: var(--font-display); font-weight: var(--weight-display); }
 
 .ui-spinner {
   display: inline-block;

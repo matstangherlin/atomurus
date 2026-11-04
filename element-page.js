@@ -68,7 +68,9 @@
 
     // ── Body content ──────────────────────────────────────────────
     var kicker = document.querySelector('.kicker');
-    if (kicker) kicker.textContent = W.element + ' ' + el.z + ' · ' + cat;
+    if (kicker && kicker.hasAttribute('data-rm-kicker')) kicker.textContent = remakeKicker(kicker, lang);
+    else if (kicker) kicker.textContent = W.element + ' ' + el.z + ' · ' + cat;
+    renderRemake(el, name, lang);
 
     // Update BOTH the visible H1 (.lc-el-name) and the legacy hidden mirror
     // (.wrap .el-mirror-name). The previous version only queried `.wrap h1`
@@ -139,6 +141,61 @@
     // elements are i18n'd by THIS file (not by i18n.js's apply), so we drop
     // the class here too to ensure they become visible in sync.
     document.documentElement.classList.remove('lang-pt-pending');
+  }
+
+
+  // ── Remake 2026 layout helpers ──────────────────────────────────
+  function rmT(key, fallback) {
+    try {
+      if (window.I18N && I18N.t) {
+        var v = I18N.t(key);
+        if (v && v !== key) return v;
+      }
+    } catch (_) {}
+    return fallback;
+  }
+
+  function rmCat(id) {
+    var cats = window.RM_CATS || [];
+    for (var i = 0; i < cats.length; i++) if (cats[i].id === id) return cats[i];
+    return null;
+  }
+
+  function remakeKicker(node, lang) {
+    var pt = lang !== 'en';
+    var c = rmCat(node.getAttribute('data-cat'));
+    var group = node.getAttribute('data-group');
+    var period = node.getAttribute('data-period');
+    var parts = [];
+    if (c) parts.push(c.one[pt ? 0 : 1]);
+    else parts.push(node.textContent.split(' · ')[0]);
+    if (group) parts.push(rmT('el.rm.group', pt ? 'Grupo' : 'Group') + ' ' + group);
+    if (period) parts.push(rmT('el.rm.period', pt ? 'Período' : 'Period') + ' ' + period);
+    return parts.join(' · ');
+  }
+
+  function renderRemake(el, name, lang) {
+    var pt = lang !== 'en';
+    var lower = pt ? name.toLowerCase() : name.toLowerCase();
+    document.querySelectorAll('[data-rm-num]').forEach(function (n) {
+      var raw = n.getAttribute('data-rm-num');
+      n.textContent = pt ? raw.replace(/\./g, ',') : raw;
+    });
+    document.querySelectorAll('[data-rm-tpl]').forEach(function (n) {
+      var tpl = rmT(n.getAttribute('data-rm-tpl'), null);
+      if (!tpl) return;
+      n.textContent = tpl.replace('{name}', lower).replace('{sym}', el.sym);
+    });
+    var lite = window.RM_ELEMENTS || null;
+    document.querySelectorAll('[data-rm-elname]').forEach(function (n) {
+      var z = Number(n.getAttribute('data-rm-elname'));
+      if (z === el.z) { n.textContent = name; return; }
+      if (lite && lite[z - 1]) n.textContent = lite[z - 1][pt ? 2 : 3];
+    });
+    document.querySelectorAll('[data-rm-cat]').forEach(function (n) {
+      var c = rmCat(n.getAttribute('data-rm-cat'));
+      if (c) n.textContent = pt ? c.pt : c.en;
+    });
   }
 
   function renderNuclideNotation(el) {
@@ -240,7 +297,7 @@
   // richer than the generic page-share fallback.
   function renderShareButton(el, name) {
     if (typeof window.injectShareButton !== 'function') return;
-    var topbar = document.querySelector('.topbar');
+    var topbar = document.querySelector('.rm-el-actions') || document.querySelector('.topbar');
     if (!topbar) return;
     var tpl  = (window.I18N && I18N.t) ? I18N.t('el.shareTextTemplate') : null;
     if (!tpl) tpl = 'Check out {name} ({symbol}) — element {z} on the periodic table';

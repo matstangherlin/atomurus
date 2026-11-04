@@ -10,10 +10,8 @@ const ROOT = path.resolve(__dirname, '..');
 const VERSION = '202607081927';
 
 const KEEP_FONTS = new Set([
-  '/assets/fonts/inter-tight-normal-latin.woff2',
-  '/assets/fonts/instrument-serif-400-italic-latin.woff2',
-  // Explore article titles use the upright Instrument Serif.
-  '/assets/fonts/instrument-serif-400-normal-latin.woff2',
+  // Remake 2026: Figtree is the only text face.
+  '/assets/fonts/figtree-normal-latin.woff2',
 ]);
 
 const SKIP_DIRS = new Set(['node_modules', '.git', 'netlify', 'tools', 'scripts', 'supabase', 'hanzi-logic', 'src', 'dist']);
