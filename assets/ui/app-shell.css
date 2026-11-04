@@ -65,7 +65,7 @@ html.app-root body {
   letter-spacing: -0.01em;
 }
 
-.app-brand-mark { display: block; width: 28px; height: 28px; border-radius: 7px; flex: none; }
+.app-brand-mark { display: block; width: 30px; height: 30px; flex: none; object-fit: contain; }
 
 /* ---- main (the scroll owner) -------------------------------------------- */
 .app-main {

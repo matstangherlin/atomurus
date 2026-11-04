@@ -52,11 +52,11 @@ function icon(id) {
   return svg;
 }
 
-/* Brand mark: the Atomurus emblem (same file as the PWA icon). */
+/* Brand mark: the Atomurus emblem, transparent PNG (light and dark themes). */
 function brandMark(doc) {
   const img = doc.createElement('img');
   img.className = 'app-brand-mark';
-  img.src = '/assets/icons/icon-192.png';
+  img.src = '/assets/brand/atomurus-mark-96.png';
   img.alt = '';
   img.width = 28;
   img.height = 28;

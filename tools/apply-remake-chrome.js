@@ -127,6 +127,8 @@ function ensureHeadAssets(html) {
     html = html.replace(/<\/head>/i, `<script src="${JS_SRC}" defer></script>\n</head>`);
   }
   html = html.replace(/<link rel="preload" href="\/assets\/fonts\/instrument-serif-[^"]+"[^>]*>\n?/g, '');
+  // iOS fills a transparent home-screen icon with black: use the opaque one.
+  html = html.replace(/<link rel="apple-touch-icon" href="[^"]*atomurus-logo\.png[^"]*">/g, '<link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">');
   html = html.replace(/<link rel="preload" href="\/assets\/fonts\/inter-tight-normal-latin\.woff2"[^>]*>/g, FIGTREE_PRELOAD);
   return html;
 }

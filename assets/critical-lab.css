@@ -181,9 +181,9 @@ LANDING PAGE (no sidebar — topnav + grid)
 [data-theme="dark"] .lc-topnav-mark { background: var(--lc-green); color: var(--lc-paper); }
 /* Brand mark (2026): the Atomurus emblem replaces the drawn orbit glyph. */
 .lc-topnav-mark, .lc-mobile-menu-brand .lc-topnav-mark, [data-theme="dark"] .lc-topnav-mark {
-  background: #050807 url(/assets/brand/atomurus-mark-96.png) center / cover no-repeat;
-  border-radius: 7px;
-  overflow: hidden;
+  background: transparent url(/assets/brand/atomurus-mark-96.png) center / contain no-repeat;
+  border-radius: 0;
+  overflow: visible;
 }
 .lc-topnav-mark > svg { visibility: hidden; }
 .lc-topnav-name {

@@ -116,6 +116,7 @@ export async function buildAppBundle() {
   for (const f of fonts.files) copy(`assets/fonts/${f}`, `assets/fonts/${f}`);
   copy('assets/app/elements.json', 'assets/app/elements.json');
   for (const icon of ['icon-192.png', 'icon-512.png', 'icon-maskable-512.png']) copy(`assets/icons/${icon}`, `assets/icons/${icon}`);
+  copy('assets/brand/atomurus-mark-96.png', 'assets/brand/atomurus-mark-96.png');
   copy('node_modules/three/build/three.module.js', 'vendor/three/three.module.js');
 
   const initialJs = chunks.filter((c) => c.initial);

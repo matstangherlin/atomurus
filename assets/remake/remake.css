@@ -178,7 +178,7 @@ html[data-rm] body.rm.rm .main > .content > .content-inner { max-width: none; ma
   flex: none;
 }
 .rm-brand:hover { color: var(--rm-ink); }
-.rm-brand-mark { display: block; width: 32px; height: 32px; border-radius: 8px; flex: none; }
+.rm-brand-mark { display: block; width: 34px; height: 34px; flex: none; object-fit: contain; }
 .rm-brand-name { font-size: 19px; font-weight: 700; letter-spacing: -0.01em; }
 .rm-navwrap {
   flex: 1 1 auto;
@@ -429,7 +429,7 @@ html[data-rm] body.rm.rm .main > .content > .content-inner { max-width: none; ma
 }
 .rm-footer-brand { max-width: 320px; }
 .rm-footer-name { margin: 0; display: flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 700; color: var(--rm-ink); }
-.rm-footer-mark { display: block; width: 24px; height: 24px; border-radius: 6px; }
+.rm-footer-mark { display: block; width: 26px; height: 26px; object-fit: contain; }
 .rm-footer-tag { margin: 8px 0 0; font-size: 14px; line-height: 1.55; color: var(--rm-ink-2); }
 .rm-footer-nav { display: flex; flex-wrap: wrap; gap: 12px 28px; align-items: flex-start; }
 .rm-foot-link {
