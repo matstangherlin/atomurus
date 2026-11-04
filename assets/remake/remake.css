@@ -1305,3 +1305,178 @@ html[data-rm] body.rm.rm .art-refs, html[data-rm] body.rm.rm .art-related, html[
 html[data-rm] body.rm.rm .art-aside #atomurus-study-save { margin: 32px 0 0; padding-top: 24px; border-top: 1px solid var(--rm-line); font-family: var(--rm-font); }
 html[data-rm] body.rm.rm .art-aside #atomurus-study-save * { font-family: var(--rm-font); }
 html[data-rm] body.rm.rm .art-aside #atomurus-study-save button { height: 44px; padding: 0 16px; border-radius: 10px; border-color: var(--rm-line-strong); background: var(--rm-paper); font-size: 14px; font-weight: 600; }
+
+/* 8.6 3D viewers (viewer/*) ─────────────────────────────────────────── */
+html[data-rm] body.rm.rm .av-substrip,
+html[data-rm] body.rm.rm .ph-note { display: none !important; }
+html[data-rm] body.rm.rm .viewer {
+  --viewer-bg: transparent;
+  --canvas-bg-1: #14120E;
+  --ctrl-bg: rgba(20, 18, 14, .72);
+  --ctrl-border: #3D372C;
+  --ctrl-text: #F2EFE7;
+  --ctrl-hover-bg: #2E2A22;
+  --ctrl-active-bg: #F2EFE7;
+  --ctrl-active-text: #14120E;
+  display: grid !important;
+  grid-template-columns: minmax(200px, 220px) minmax(0, 1fr) minmax(240px, 280px);
+  grid-auto-rows: auto;
+  column-gap: 24px;
+  row-gap: 16px;
+  align-items: start;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+  margin: 0 0 24px !important;
+}
+html[data-rm] body.rm.rm .viewer > .panel {
+  grid-column: 1;
+  grid-row: 1 / span 4;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: none !important;
+  border: 0 !important;
+  max-height: 640px;
+  overflow: auto;
+  scrollbar-width: thin;
+}
+html[data-rm] body.rm.rm .viewer > .canvas-wrap {
+  grid-column: 2;
+  grid-row: 1;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #14120E;
+  min-height: 0;
+}
+html[data-rm] body.rm.rm .viewer > .info-bar {
+  grid-column: 3;
+  grid-row: 1 / span 3;
+  display: block !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: none !important;
+  border: 0 !important;
+  font-family: var(--rm-font) !important;
+}
+html[data-rm] body.rm.rm .viewer > :not(.panel):not(.canvas-wrap):not(.info-bar) { grid-column: 2; }
+html[data-rm] body.rm.rm .viewer canvas#viewer3d,
+html[data-rm] body.rm.rm .viewer canvas#viewer2d-full { height: 540px !important; }
+/* list column */
+html[data-rm] body.rm.rm .viewer .panel-label {
+  margin: 18px 0 8px !important;
+  padding: 0 14px;
+  font: 700 13px/1.2 var(--rm-font) !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  color: var(--rm-ink) !important;
+}
+html[data-rm] body.rm.rm .viewer .panel > .panel-label:first-of-type { margin-top: 4px !important; }
+html[data-rm] body.rm.rm .viewer .pill-row { display: flex !important; flex-direction: column; gap: 2px !important; flex-wrap: nowrap !important; margin: 0 0 8px !important; }
+html[data-rm] body.rm.rm .viewer .pill {
+  width: 100%;
+  text-align: left;
+  justify-content: flex-start;
+  padding: 11px 14px !important;
+  border-radius: 10px !important;
+  border: 1px solid transparent !important;
+  background: transparent !important;
+  color: var(--rm-ink) !important;
+  font: 500 15px/1.3 var(--rm-font) !important;
+  letter-spacing: 0 !important;
+  box-shadow: none !important;
+}
+html[data-rm] body.rm.rm .viewer .pill:hover { background: var(--rm-surface) !important; }
+html[data-rm] body.rm.rm .viewer .pill.active {
+  background: var(--rm-paper) !important;
+  border-color: var(--rm-line) !important;
+  font-weight: 600 !important;
+}
+html[data-rm] body.rm.rm .viewer .pill.sm { font-size: 14px !important; padding: 8px 14px !important; color: var(--rm-ink-2) !important; }
+html[data-rm] body.rm.rm .viewer input[type="search"],
+html[data-rm] body.rm.rm .viewer .mol-search,
+html[data-rm] body.rm.rm .viewer .allo-search {
+  width: 100%;
+  height: 44px;
+  box-sizing: border-box;
+  margin: 0 0 4px !important;
+  padding: 0 14px !important;
+  border-radius: 10px !important;
+  border: 1px solid var(--rm-line-strong) !important;
+  background: var(--rm-paper) !important;
+  color: var(--rm-ink) !important;
+  font: 400 15px var(--rm-font) !important;
+}
+/* stage controls */
+html[data-rm] body.rm.rm .viewer .viewer-controls,
+html[data-rm] body.rm.rm .viewer .viewer-mode-toggle,
+html[data-rm] body.rm.rm .viewer .viewer-zoom {
+  background: rgba(20, 18, 14, .72) !important;
+  border: 1px solid #3D372C !important;
+  box-shadow: none !important;
+  border-radius: 12px !important;
+}
+html[data-rm] body.rm.rm .viewer .vc-btn { color: #F2EFE7 !important; border-radius: 8px !important; font-family: var(--rm-font) !important; }
+html[data-rm] body.rm.rm .viewer .vc-btn:hover { background: #2E2A22 !important; }
+html[data-rm] body.rm.rm .viewer .vc-btn.active { background: #F2EFE7 !important; color: #14120E !important; }
+html[data-rm] body.rm.rm .viewer .vc-sep { background: #3D372C !important; }
+/* info column */
+html[data-rm] body.rm.rm .viewer .info-name { margin: 0 0 8px !important; font: 700 28px/1.15 var(--rm-font) !important; letter-spacing: -0.02em !important; color: var(--rm-ink) !important; text-transform: none !important; }
+html[data-rm] body.rm.rm .viewer .info-desc { margin: 0 0 16px !important; font: 400 16px/1.55 var(--rm-font) !important; color: var(--rm-ink-2) !important; }
+html[data-rm] body.rm.rm .viewer .info-stats,
+html[data-rm] body.rm.rm .viewer .info-meta { font: 400 15px/1.5 var(--rm-font) !important; color: var(--rm-ink) !important; letter-spacing: 0 !important; text-transform: none !important; }
+html[data-rm] body.rm.rm .viewer .info-stats { display: flex; flex-direction: column; gap: 0; border-top: 1px solid var(--rm-line); }
+html[data-rm] body.rm.rm .viewer .info-stats > * { display: flex; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--rm-line); background: none !important; border-radius: 0 !important; margin: 0 !important; font-family: var(--rm-font) !important; font-size: 15px !important; letter-spacing: 0 !important; text-transform: none !important; }
+html[data-rm] body.rm.rm .viewer .info-meta { margin-top: 12px !important; font-size: 13px !important; color: var(--rm-ink-2) !important; }
+html[data-rm] body.rm.rm .viewer .info-hint { margin-top: 12px !important; font: 400 13px/1.5 var(--rm-font) !important; color: var(--rm-ink-2) !important; letter-spacing: 0 !important; text-transform: none !important; }
+html[data-rm] body.rm.rm .viewer .pro-lab-discover {
+  margin-top: 20px !important;
+  padding: 16px !important;
+  border-radius: 14px !important;
+  background: var(--rm-green-soft) !important;
+  border: 0 !important;
+  font-family: var(--rm-font) !important;
+}
+html[data-rm] body.rm.rm .viewer .pro-lab-discover * { font-family: var(--rm-font) !important; letter-spacing: 0 !important; }
+/* CPK legend under the stage */
+html[data-rm] body.rm.rm .legend-card { background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; margin: 0 0 0 calc(min(220px, 20%) + 24px) !important; }
+html[data-rm] body.rm.rm .legend-card .legend-title { display: none !important; }
+html[data-rm] body.rm.rm .legend-card .legend-grid { display: flex !important; flex-wrap: wrap; gap: 6px 16px !important; }
+html[data-rm] body.rm.rm .legend-card .legend-item { height: auto; padding: 0 !important; border: 0 !important; background: none !important; font: 400 14px var(--rm-font) !important; color: var(--rm-ink-2) !important; }
+html[data-rm] body.rm.rm .legend-card .legend-dot { width: 12px !important; height: 12px !important; border-radius: 50% !important; }
+@media (max-width: 1100px) {
+  html[data-rm] body.rm.rm .viewer { grid-template-columns: minmax(180px, 200px) minmax(0, 1fr); }
+  html[data-rm] body.rm.rm .viewer > .info-bar { grid-column: 1 / -1; grid-row: auto; }
+}
+@media (max-width: 760px) {
+  html[data-rm] body.rm.rm .viewer { display: flex !important; flex-direction: column; }
+  html[data-rm] body.rm.rm .viewer > .panel { max-height: none; overflow: visible; order: 2; }
+  html[data-rm] body.rm.rm .viewer > .canvas-wrap { order: 1; }
+  html[data-rm] body.rm.rm .viewer > .info-bar { order: 3; }
+  html[data-rm] body.rm.rm .viewer .pill-row { flex-direction: row !important; flex-wrap: wrap !important; }
+  html[data-rm] body.rm.rm .viewer .pill { width: auto; border-color: var(--rm-line) !important; border-radius: 999px !important; padding: 8px 14px !important; font-size: 14px !important; }
+  html[data-rm] body.rm.rm .viewer canvas#viewer3d,
+  html[data-rm] body.rm.rm .viewer canvas#viewer2d-full { height: 380px !important; }
+  html[data-rm] body.rm.rm .legend-card { margin-left: 0 !important; }
+}
+html[data-rm] body.rm.rm .vz-tab, html[data-rm] body.rm.rm .pt-tab { min-width: 0 !important; width: auto !important; flex: none !important; justify-content: flex-start !important; }
+
+/* 8.7 isomerism viewer pages ───────────────────────────────────────── */
+html[data-rm] body.rm.rm #atomurus-study-save { font-family: var(--rm-font) !important; }
+html[data-rm] body.rm.rm #atomurus-study-save button { font: 600 14px/1 var(--rm-font) !important; letter-spacing: 0 !important; height: 40px; padding: 0 14px !important; border-radius: 10px !important; border-color: var(--rm-line-strong) !important; background: var(--rm-paper) !important; color: var(--rm-ink) !important; }
+html[data-rm] body.rm.rm .iso-group-toggle,
+html[data-rm] body.rm.rm .sub-tabs { border-radius: 14px !important; background: var(--rm-paper) !important; border-color: var(--rm-line) !important; box-shadow: none !important; }
+html[data-rm] body.rm.rm .iso-group-btn.active,
+html[data-rm] body.rm.rm .sub-tab.active { border-radius: 10px !important; background: var(--rm-green-soft) !important; border-color: transparent !important; color: var(--rm-green) !important; }
+html[data-rm] body.rm.rm .iso-group-btn, html[data-rm] body.rm.rm .sub-tab { font-family: var(--rm-font) !important; }
+html[data-rm] body.rm.rm .sub-tab .sub-num { display: none !important; }
+html[data-rm] body.rm.rm .iso-lab,
+html[data-rm] body.rm.rm .mol-card,
+html[data-rm] body.rm.rm .iso-3d-panel,
+html[data-rm] body.rm.rm .iso-selector { border-radius: 16px !important; border-color: var(--rm-line) !important; box-shadow: none !important; }
+html[data-rm] body.rm.rm .iso-3d-panel { overflow: hidden; }
+html[data-rm] body.rm.rm .iso-3d-stage { background: #14120E !important; }
+html[data-rm] body.rm.rm .mol-card-name, html[data-rm] body.rm.rm .iso-section-title, html[data-rm] body.rm.rm .iso-lab-head-txt { font-family: var(--rm-font) !important; font-weight: 700 !important; letter-spacing: -0.01em; }
+html[data-rm] body.rm.rm .mol-card-name { font-size: 20px !important; }
+html[data-rm] body.rm.rm .iso-section-title { font-size: 22px !important; }

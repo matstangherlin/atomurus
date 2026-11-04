@@ -16,7 +16,7 @@
   function updateBg(){
     if (paper()) paper().applyClear(renderer);
     else {
-      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const isDark = ((window.atomurusPaperLab && window.atomurusPaperLab.isDark) ? window.atomurusPaperLab.isDark() : document.documentElement.getAttribute('data-theme') === 'dark');
       renderer.setClearColor(isDark ? 0x0E0D0C : 0xF2EFE7, 1);
     }
     if (paper() && paper().setGround) {
