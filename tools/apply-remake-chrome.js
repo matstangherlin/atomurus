@@ -180,9 +180,75 @@ function applyRemakeUnbalanced(html, rel) {
 /* Signed-in workspace pages keep the workspace chrome (sidebar), like /app. */
 const WORKSPACE_PAGES = new Set(['account.html']);
 
+/* Standalone pages (no #ps-shell, no i18n runtime): the compact 3D viewer
+   linked from the Bhopal article. Swap its own bar and footer for the remake
+   chrome, with the copy baked in the page's language. */
+const STANDALONE_PAGES = new Set(['explore/viewer/methyl-isocyanate.html', 'explore/viewer/methyl-isocyanate.pt.html']);
+
+function bakeCopy(html, lang) {
+  const { DICT } = require('./i18n-dict-source');
+  const dict = DICT[lang] || DICT.en;
+  const get = (key) => key.split('.').reduce((o, k) => (o && o[k] != null ? o[k] : null), dict);
+  return html.replace(/(data-i18n="([^"]+)"[^>]*>)([^<]*)(<)/g, (m, open, key, text, lt) => {
+    const v = get(key);
+    return typeof v === 'string' ? open + v + lt : m;
+  });
+}
+
+function applyStandalone(html, rel) {
+  const lang = /\.pt\.html$/.test(rel) ? 'pt' : 'en';
+  let next = html;
+  const bar = findElementWithClass(next, 'mvwr-top');
+  let back = '';
+  if (bar) {
+    const link = bar.html.match(/<a class="mvwr-back"[\s\S]*?<\/a>/);
+    if (link) back = '<nav class="rm-crumbs rm-back-crumb">' + link[0].replace('class="mvwr-back"', 'class="mvwr-back rm-back-link"') + '</nav>\n';
+    next = next.slice(0, bar.start) + next.slice(bar.end);
+  }
+  const kept = next.match(/<nav class="rm-crumbs rm-back-crumb">[\s\S]*?<\/nav>\n?/);
+  if (!back && kept) back = kept[0].replace(/\n?$/, '\n');
+  next = removeAllWithClass(next, 'rm-header', 'header');
+  next = removeAllWithClass(next, 'rm-footer', 'footer');
+  next = removeAllWithClass(next, 'lc-footer', 'footer');
+  next = removeAllWithClass(next, 'aco-manage-wrap');
+  next = next.replace(/<nav class="rm-crumbs rm-back-crumb">[\s\S]*?<\/nav>\n?/, '');
+  next = next.replace(/<body([^>]*)>\s*/i, (m) => m.trimEnd() + '\n' + bakeCopy(headerFor(rel), lang) + '\n\n');
+  next = next.replace(/(<main class="mvwr-shell"[^>]*>)\s*/, '$1\n' + back);
+  next = next.replace(/<\/main>\s*/, '</main>\n' + bakeCopy(readTpl('site-footer.html'), lang) + '\n');
+  next = addBodyClass(next, 'rm');
+  next = addHtmlAttr(next, 'data-rm', '1');
+  next = ensureHeadAssets(next);
+  return { html: next, status: next === html ? 'unchanged' : 'remade' };
+}
+
+/* Signed-in workspace (/app, /account): keeps its own chrome and sidebar,
+   but takes the remake skin (html[data-rm-ws] section of remake.css). */
+function applyWorkspace(html) {
+  // Appended after the existing attributes: tests pin `<html lang=… data-theme=…`.
+  let next = html.replace(/<html\b([^>]*)>/i, (m, attrs) => /\bdata-rm-ws=/.test(attrs)
+    ? `<html${attrs.replace(/\s*data-rm-ws="1"/, '')} data-rm-ws="1">`
+    : `<html${attrs} data-rm-ws="1">`);
+  if (!/assets\/remake\/remake\.css/.test(next)) {
+    next = next.replace(/<\/head>/i, `<link rel="stylesheet" href="${CSS_HREF}">\n</head>`);
+  }
+  next = next.replace(/<link rel="preload" href="\/assets\/fonts\/instrument-serif-[^"]+"[^>]*>\n?/g, '');
+  next = next.replace(/<link rel="apple-touch-icon" href="[^"]*atomurus-logo\.png[^"]*">/g, '<link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">');
+  return next;
+}
+
 function applyFile(file) {
-  if (SKIP_FILES.has(path.basename(file))) return { status: 'skip-app', changed: false };
-  if (WORKSPACE_PAGES.has(relOf(file))) return { status: 'skip-workspace', changed: false };
+  if (path.basename(file) === 'app.html' || WORKSPACE_PAGES.has(relOf(file))) {
+    const original = fs.readFileSync(file, 'utf8');
+    const next = applyWorkspace(original);
+    if (next !== original) fs.writeFileSync(file, next);
+    return { status: 'workspace', changed: next !== original };
+  }
+  if (STANDALONE_PAGES.has(relOf(file))) {
+    const original = fs.readFileSync(file, 'utf8');
+    const r = applyStandalone(original, relOf(file));
+    if (r.html !== original) fs.writeFileSync(file, r.html);
+    return { status: r.status, changed: r.html !== original };
+  }
   const original = fs.readFileSync(file, 'utf8');
   const result = applyRemake(original, file);
   if (result.html !== original) fs.writeFileSync(file, result.html);

@@ -987,7 +987,7 @@ html[data-rm] body.rm.rm .ptable .el {
   padding: 5px 6px 5px !important;
   border-radius: 6px !important;
   border: 1px solid rgba(20, 18, 14, .08) !important;
-  color: #14120E !important;
+  color: #14120E; /* no !important: heatmap modes paint their own inline colours */
   box-shadow: none;
 }
 html[data-rm] body.rm.rm .ptable .el:hover {
@@ -1852,3 +1852,208 @@ html[data-rm] body.rm.rm .art-meta .share-host { margin-left: 8px; }
   html[data-rm] body.rm.rm .rm-share-slot--tabs > .share-host { position: static; }
 }
 html[data-rm] body.rm.rm .rm-save-slot #atomurus-study-save button { height: 48px !important; padding: 0 18px !important; font-size: 15px !important; }
+
+/* 8.11 embedded viewers (?embed=1 inside another page's iframe) ─────── */
+html.embed-mode[data-rm], html.embed-mode[data-rm] body.rm.rm { height: 100vh !important; overflow: hidden !important; }
+html.embed-mode[data-rm] body.rm.rm .rm-header,
+html.embed-mode[data-rm] body.rm.rm .rm-footer,
+html.embed-mode[data-rm] body.rm.rm #atomurus-study-save,
+html.embed-mode[data-rm] body.rm.rm .rm-share-slot,
+html.embed-mode[data-rm] body.rm.rm .pro-lab-discover,
+html.embed-mode[data-rm] body.rm.rm .solver-discover,
+html.embed-mode[data-rm] body.rm.rm .lab-readmore,
+html.embed-mode[data-rm] body.rm.rm .ph-title,
+html.embed-mode[data-rm] body.rm.rm .ph-desc,
+html.embed-mode[data-rm] body.rm.rm .vz-tabs,
+html.embed-mode[data-rm] body.rm.rm .legend-card,
+html.embed-mode[data-rm] body.rm.rm .viewer > .info-bar,
+html.embed-mode[data-rm] body.rm.rm #aco-cookie-banner { display: none !important; }
+html.embed-mode[data-rm] body.rm.rm .ps-shell { min-height: 0; height: 100vh; }
+html.embed-mode[data-rm] body.rm.rm main.main > .content { padding: 0 !important; max-width: none !important; height: 100vh; overflow: hidden !important; }
+html.embed-mode[data-rm] body.rm.rm .viewer { grid-template-columns: minmax(170px, 200px) minmax(0, 1fr) !important; height: 100vh; margin: 0 !important; column-gap: 0; }
+html.embed-mode[data-rm] body.rm.rm .viewer > .panel { padding: 14px 10px !important; max-height: 100vh; }
+html.embed-mode[data-rm] body.rm.rm .viewer > .canvas-wrap { border-radius: 0; height: 100vh; }
+html.embed-mode[data-rm] body.rm.rm .viewer canvas#viewer3d,
+html.embed-mode[data-rm] body.rm.rm .viewer canvas#viewer2d-full { height: 100vh !important; }
+
+/* 8.12 legacy "lc-el" pages (atomic-model detail pages) ──────────────── */
+html[data-rm] body.rm.rm .lc-el-header { border-color: var(--rm-line) !important; }
+html[data-rm] body.rm.rm .lc-el-kicker, html[data-rm] body.rm.rm .lc-el-page .kicker {
+  font: 600 15px/1.3 var(--rm-font) !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  color: var(--rm-green) !important;
+}
+html[data-rm] body.rm.rm .lc-el-kicker::before, html[data-rm] body.rm.rm .lc-el-page .kicker::before { display: none !important; }
+html[data-rm] body.rm.rm .lc-el-page h1.lc-el-name {
+  font: 700 clamp(44px, 6vw, 72px)/1 var(--rm-font) !important;
+  letter-spacing: -0.03em !important;
+  color: var(--rm-ink) !important;
+}
+html[data-rm] body.rm.rm .lc-el-lat { font: 400 17px/1.4 var(--rm-font) !important; font-style: normal !important; color: var(--rm-ink-2) !important; margin-top: 10px !important; }
+html[data-rm] body.rm.rm .lc-el-card { border-radius: 18px !important; border-color: var(--rm-line) !important; background: var(--rm-paper) !important; box-shadow: none !important; }
+html[data-rm] body.rm.rm .lc-el-card * { font-family: var(--rm-font) !important; letter-spacing: 0 !important; }
+html[data-rm] body.rm.rm .lc-el-props { border-radius: 16px !important; border-color: var(--rm-line) !important; overflow: hidden; }
+html[data-rm] body.rm.rm .lc-el-prop { background: var(--rm-paper) !important; }
+html[data-rm] body.rm.rm .lc-el-prop .k { font: 400 15px/1.3 var(--rm-font) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--rm-ink-2) !important; }
+html[data-rm] body.rm.rm .lc-el-prop .v { font: 600 15px/1.3 var(--rm-font) !important; color: var(--rm-ink) !important; }
+html[data-rm] body.rm.rm .lc-el-desc-lbl,
+html[data-rm] body.rm.rm .lc-el-page .section-label,
+html[data-rm] body.rm.rm .lc-el-page [class*="-lbl"] { font: 700 13px/1.3 var(--rm-font) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--rm-ink) !important; }
+html[data-rm] body.rm.rm .lc-el-page h2, html[data-rm] body.rm.rm .lc-el-page h3 { font-family: var(--rm-font) !important; font-weight: 700 !important; letter-spacing: -0.01em !important; text-transform: none !important; }
+html[data-rm] body.rm.rm .lc-el-page h2 { font-size: 22px !important; }
+html[data-rm] body.rm.rm .lc-el-page p { font-family: var(--rm-font) !important; }
+html[data-rm] body.rm.rm .lc-el-nav { border-radius: 14px !important; border-color: var(--rm-line) !important; overflow: hidden; }
+html[data-rm] body.rm.rm .lc-el-nav * { font-family: var(--rm-font) !important; letter-spacing: 0 !important; text-transform: none !important; }
+html[data-rm] body.rm.rm .lc-el-nav .nm { font-size: 16px !important; font-weight: 600 !important; }
+html[data-rm] body.rm.rm .lc-el-page iframe { border-radius: 16px !important; border: 1px solid var(--rm-line) !important; background: #14120E; }
+
+/* 8.13 headings with a light second half (404, docs): one weight */
+html[data-rm] body.rm.rm .lc-doc-title *,
+html[data-rm] body.rm.rm .ph-title *,
+html[data-rm] body.rm.rm .art-title * { font-weight: inherit !important; font-family: inherit !important; font-style: normal !important; }
+html[data-rm] body.rm.rm .lc-doc-card .lbl { font: 700 13px/1.3 var(--rm-font) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--rm-ink) !important; }
+html[data-rm] body.rm.rm .lc-doc-card { border-radius: 14px !important; }
+
+/* 8.14 pricing cards */
+html[data-rm] body.rm.rm .lc-doc-prose [class*="price"] [class*="amount"],
+html[data-rm] body.rm.rm .price-amount,
+html[data-rm] body.rm.rm .price-card [class*="price-num"] { font-family: var(--rm-font) !important; font-weight: 700 !important; letter-spacing: -0.02em !important; }
+html[data-rm] body.rm.rm .lc-doc-prose a.ui-btn,
+html[data-rm] body.rm.rm .lc-doc-prose button.ui-btn,
+html[data-rm] body.rm.rm .price-card a[class*="btn"] {
+  border-radius: 10px !important;
+  font: 600 15px/1 var(--rm-font) !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  min-height: 46px;
+  padding: 0 18px !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+html[data-rm] body.rm.rm .price-card { border-radius: 18px !important; box-shadow: none !important; }
+html[data-rm] body.rm.rm .price-card.pro { border: 2px solid var(--rm-green) !important; background: var(--rm-green-soft) !important; }
+html[data-rm] body.rm.rm .price-card .tag, html[data-rm] body.rm.rm .price-popular, html[data-rm] body.rm.rm .price-save { font: 600 13px/1.2 var(--rm-font) !important; letter-spacing: 0 !important; text-transform: none !important; }
+html[data-rm] body.rm.rm .price-card h3 { font: 700 18px/1.3 var(--rm-font) !important; }
+html[data-rm] body.rm.rm .price-card .amount > span:first-child { font: 700 40px/1.05 var(--rm-font) !important; letter-spacing: -0.02em !important; }
+html[data-rm] body.rm.rm .price-card .amount small { font: 400 14px/1.4 var(--rm-font) !important; color: var(--rm-ink-2) !important; }
+html[data-rm] body.rm.rm .price-actions .ui-btn { border-radius: 10px !important; min-height: 46px; padding: 0 18px !important; font: 600 15px/1 var(--rm-font) !important; letter-spacing: 0 !important; text-transform: none !important; display: inline-flex !important; align-items: center; }
+html[data-rm] body.rm.rm .price-actions .ui-btn-primary { background: var(--rm-green) !important; color: var(--rm-on-green) !important; border-color: var(--rm-green) !important; }
+html[data-rm] body.rm.rm .price-actions .ui-btn-primary * { color: inherit !important; }
+html[data-rm] body.rm.rm .price-ladder-item { border-radius: 14px !important; }
+html[data-rm] body.rm.rm .price-ladder-item .amt, html[data-rm] body.rm.rm .price-ladder-item [id$="-amt"], html[data-rm] body.rm.rm .price-ladder-item strong { font-family: var(--rm-font) !important; font-weight: 700 !important; }
+
+/* legacy drawn brand glyphs → the Atomurus emblem */
+html[data-rm] body.rm.rm .logo-mark,
+html[data-rm] body.rm.rm .lc-topnav-mark {
+  background: transparent url(/assets/brand/atomurus-mark-96.png) center / contain no-repeat !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+html[data-rm] body.rm.rm .logo-mark > svg,
+html[data-rm] body.rm.rm .lc-topnav-mark > svg { visibility: hidden; }
+html[data-rm] body.rm.rm .about-brand { font: 700 20px/1.2 var(--rm-font) !important; }
+html[data-rm] body.rm.rm .about-stat-val { font: 700 28px/1.1 var(--rm-font) !important; letter-spacing: -0.02em !important; }
+html[data-rm] body.rm.rm .about-stat-lbl { font: 400 13px/1.3 var(--rm-font) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--rm-ink-2) !important; }
+html[data-rm] body.rm.rm .settings-section { border-radius: 16px !important; }
+html[data-rm] body.rm.rm .settings-section-title { font: 700 15px/1.3 var(--rm-font) !important; letter-spacing: 0 !important; text-transform: none !important; }
+
+/* 8.15 standalone article viewer (explore/viewer/methyl-isocyanate) */
+html[data-rm] body.rm.rm .mvwr-shell { font-family: var(--rm-font); }
+html[data-rm] body.rm.rm .rm-back-crumb { margin: 0 0 24px; }
+html[data-rm] body.rm.rm .rm-back-link { display: inline-flex !important; align-items: center; gap: 6px; padding: 0 !important; border: 0 !important; background: none !important; color: var(--rm-ink-2) !important; font: 400 14px/1.3 var(--rm-font) !important; letter-spacing: 0 !important; text-transform: none !important; text-decoration: none; }
+html[data-rm] body.rm.rm .rm-back-link:hover { color: var(--rm-ink) !important; }
+html[data-rm] body.rm.rm .mvwr-kicker { font: 600 14px/1.3 var(--rm-font) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--rm-green) !important; }
+html[data-rm] body.rm.rm .mvwr-title { font: 700 clamp(36px, 5vw, 52px)/1.06 var(--rm-font) !important; letter-spacing: -0.03em !important; color: var(--rm-ink) !important; }
+html[data-rm] body.rm.rm .mvwr-title em { font-style: normal !important; color: inherit !important; }
+html[data-rm] body.rm.rm .mvwr-dek { font: 400 18px/1.55 var(--rm-font) !important; color: var(--rm-ink-2) !important; }
+html[data-rm] body.rm.rm .mvwr-shell button,
+html[data-rm] body.rm.rm .mvwr-shell [class*="legend"],
+html[data-rm] body.rm.rm .mvwr-shell [class*="hint"],
+html[data-rm] body.rm.rm .mvwr-shell dt,
+html[data-rm] body.rm.rm .mvwr-shell th { font-family: var(--rm-font) !important; letter-spacing: 0 !important; text-transform: none !important; }
+html[data-rm] body.rm.rm .mvwr-shell [class*="stage"], html[data-rm] body.rm.rm .mvwr-shell [class*="canvas"] { border-radius: 16px; }
+html[data-rm] body.rm.rm .article-level-chip { border-radius: 999px !important; font: 500 13px/1 var(--rm-font) !important; letter-spacing: 0 !important; text-transform: none !important; padding: 7px 12px !important; background: var(--rm-green-soft) !important; color: var(--rm-green) !important; border: 0 !important; }
+html[data-rm] body.rm.rm .article-learn { border-radius: 14px !important; background: var(--rm-paper) !important; border: 1px solid var(--rm-line) !important; }
+html[data-rm] body.rm.rm .mvwr-stage { background: #14120E !important; border-color: #14120E !important; }
+html[data-rm] body.rm.rm .mvwr-ctrls button { background: rgba(20, 18, 14, .72) !important; color: #F2EFE7 !important; border: 1px solid #3D372C !important; border-radius: 10px !important; }
+html[data-rm] body.rm.rm .mvwr-hint { color: #908A7C !important; }
+
+/* 9 ── signed-in workspace skin (/app, /account): html[data-rm-ws] ──── */
+html[data-rm-ws] body { font-family: var(--rm-font); -webkit-font-smoothing: antialiased; }
+html[data-rm-ws] .ws-brand-name,
+html[data-rm-ws] .lc-topnav-name {
+  font: 700 19px/1.1 var(--rm-font) !important;
+  letter-spacing: -0.01em !important;
+  text-transform: none !important;
+  color: var(--rm-ink) !important;
+}
+html[data-rm-ws] .ws-brand-tag,
+html[data-rm-ws] .lc-topnav-tag,
+html[data-rm-ws] .lc-tn-no { display: none !important; }
+html[data-rm-ws] .lc-topnav-mark {
+  width: 32px !important;
+  height: 32px !important;
+  background: transparent url(/assets/brand/atomurus-mark-96.png) center / contain no-repeat !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+}
+html[data-rm-ws] .lc-topnav-mark > svg { visibility: hidden; }
+html[data-rm-ws] .lc-topnav-link { font: 500 15px/1.2 var(--rm-font) !important; letter-spacing: 0 !important; text-transform: none !important; border-radius: 8px !important; }
+html[data-rm-ws] .ws-nav-group {
+  font: 700 13px/1.2 var(--rm-font) !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  color: var(--rm-ink) !important;
+}
+html[data-rm-ws] .ws-nav-item {
+  font: 500 15px/1.25 var(--rm-font) !important;
+  letter-spacing: 0 !important;
+  border-radius: 10px !important;
+  color: var(--rm-ink) !important;
+  box-shadow: none !important;
+}
+html[data-rm-ws] .ws-nav-item:hover { background: var(--rm-surface) !important; }
+html[data-rm-ws] .ws-nav-item[aria-current="page"],
+html[data-rm-ws] .ws-nav-item.is-active,
+html[data-rm-ws] .ws-nav-item.active {
+  background: var(--rm-paper) !important;
+  border: 1px solid var(--rm-line) !important;
+  color: var(--rm-ink) !important;
+  font-weight: 600 !important;
+}
+html[data-rm-ws] .ws-nav-item[aria-current="page"]::before,
+html[data-rm-ws] .ws-nav-item.is-active::before { display: none !important; }
+html[data-rm-ws] .ws-nav-item.is-upgrade { background: var(--rm-green) !important; color: var(--rm-on-green) !important; border: 0 !important; }
+html[data-rm-ws] .ws-search input,
+html[data-rm-ws] .ws-search { border-radius: 12px !important; font-family: var(--rm-font) !important; }
+html[data-rm-ws] .ws-icon-btn { border-radius: 10px !important; }
+html[data-rm-ws] .ws-userchip.is-guest-cta,
+html[data-rm-ws] .ps-userchip.is-guest-cta {
+  background: var(--rm-green) !important;
+  color: var(--rm-on-green) !important;
+  border-color: var(--rm-green) !important;
+  border-radius: 10px !important;
+  font: 600 14px/1 var(--rm-font) !important;
+  letter-spacing: 0 !important;
+}
+html[data-rm-ws] .ws-userchip.is-guest-cta svg, html[data-rm-ws] .ps-userchip.is-guest-cta svg { display: none !important; }
+html[data-rm-ws] .ws-main h1, html[data-rm-ws] .ws-main h2, html[data-rm-ws] .ws-main h3,
+html[data-rm-ws] .ac-main h1, html[data-rm-ws] .ac-main h2, html[data-rm-ws] .ac-main h3,
+html[data-rm-ws] .ws-title {
+  font-family: var(--rm-font) !important;
+  font-style: normal !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+}
+html[data-rm-ws] .ui-btn, html[data-rm-ws] .ws-btn { border-radius: 10px !important; font-family: var(--rm-font) !important; letter-spacing: 0 !important; text-transform: none !important; }
+html[data-rm-ws] .ui-btn-primary, html[data-rm-ws] .ws-btn-primary { background: var(--rm-green) !important; border-color: var(--rm-green) !important; color: var(--rm-on-green) !important; }
+html[data-rm-ws] .ui-card, html[data-rm-ws] .ws-card { border-radius: 16px !important; }
+html[data-rm-ws][data-theme="dark"] { --rm-ink: #F2EFE7; }
+html[data-rm] body.rm.rm .art-follow, html[data-rm] body.rm.rm .art-follow * { font-family: var(--rm-font) !important; letter-spacing: 0 !important; text-transform: none !important; }
+html[data-rm] body.rm.rm .art-follow { border-radius: 16px !important; }
+html[data-rm] body.rm.rm .art-follow h2, html[data-rm] body.rm.rm .art-follow h3, html[data-rm] body.rm.rm .art-follow [class*="title"] { font-weight: 700 !important; }
+html[data-rm] body.rm.rm .art-follow a { border-radius: 10px !important; }
