@@ -36,9 +36,9 @@
 }
 
 .ui-dialog-title {
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-size: var(--text-2xl);
-  font-weight: 400;
+  font-weight: var(--weight-display);
   margin: 0;
 }
 

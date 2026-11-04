@@ -28,9 +28,9 @@ import { createTranslator } from './strings.js';
 
 const ICONS = {
   home: 'M3 9.5 10 4l7 5.5M5 8.5V16h10V8.5M8 16v-4h4v4',
-  explore: 'M4 4h5v5H4zM11 4h5v5h-5zM4 11h5v5H4zM11 11h5v5h-5z',
+  explore: 'M10 17a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM12.9 7.1l-1.7 4.1-4.1 1.7 1.7-4.1z',
   lab: 'M8 3h4M9 3v5l-4.5 7.5A1 1 0 0 0 5.4 17h9.2a1 1 0 0 0 .9-1.5L11 8V3',
-  study: 'M3 5.5 10 3l7 2.5-7 2.5zM6 7v4.5c0 1.2 1.8 2.5 4 2.5s4-1.3 4-2.5V7',
+  study: 'M7 6.5h8.5V17H7zM4.5 14V4H13',
   account: 'M10 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM4.5 17c.7-2.7 2.8-4.3 5.5-4.3s4.8 1.6 5.5 4.3'
 };
 
@@ -52,6 +52,27 @@ function icon(id) {
   return svg;
 }
 
+/* Remake 2026 brand mark: two tilted orbits around an ink nucleus. */
+function brandMark(doc) {
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = doc.createElementNS(ns, 'svg');
+  svg.setAttribute('class', 'app-brand-mark');
+  svg.setAttribute('viewBox', '0 0 28 28');
+  svg.setAttribute('aria-hidden', 'true');
+  [['-30', '1'], ['30', '.45']].forEach(([deg, opacity]) => {
+    const e = doc.createElementNS(ns, 'ellipse');
+    e.setAttribute('cx', '14'); e.setAttribute('cy', '14'); e.setAttribute('rx', '12'); e.setAttribute('ry', '5');
+    e.setAttribute('fill', 'none'); e.setAttribute('stroke', 'currentColor'); e.setAttribute('stroke-width', '1.8');
+    e.setAttribute('transform', `rotate(${deg} 14 14)`); e.setAttribute('opacity', opacity);
+    svg.appendChild(e);
+  });
+  const core = doc.createElementNS(ns, 'circle');
+  core.setAttribute('class', 'app-brand-core');
+  core.setAttribute('cx', '14'); core.setAttribute('cy', '14'); core.setAttribute('r', '3');
+  svg.appendChild(core);
+  return svg;
+}
+
 export function createAppShell({ root, services, registry = FEATURE_REGISTRY, win = globalThis.window, prefs = {} }) {
   const doc = root.ownerDocument;
   const scope = createScope('app-shell', win);
@@ -66,7 +87,7 @@ export function createAppShell({ root, services, registry = FEATURE_REGISTRY, wi
   /* ---- frame ------------------------------------------------------------ */
   const title = h('span', { class: 'app-topbar-title' }, 'Atomurus');
   const topbar = h('header', { class: 'app-topbar', 'data-app-topbar': true },
-    h('a', { class: 'app-brand', href: hashFor('home'), 'aria-label': 'Atomurus' }, h('span', { class: 'app-brand-mark', 'aria-hidden': 'true' }), title));
+    h('a', { class: 'app-brand', href: hashFor('home'), 'aria-label': 'Atomurus' }, brandMark(doc), title));
 
   const navLinks = new Map();
   const nav = h('nav', { class: 'app-nav', 'aria-label': 'Primary', 'data-app-nav': true },

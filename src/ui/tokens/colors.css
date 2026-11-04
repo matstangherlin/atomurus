@@ -27,6 +27,21 @@
   --color-on-ink: #F8F5EC;
   --color-focus: #1E6A50;
   --color-ring: rgba(30, 106, 80, .22);
+
+  /* Element categories (remake palette; same tiles in light and dark) */
+  --cat-alc: #F1D6C6;
+  --cat-alt: #F0E0BC;
+  --cat-tra: #E4DFD0;
+  --cat-pos: #D9E0E2;
+  --cat-smt: #E1E6C9;
+  --cat-nmt: #CFE4D5;
+  --cat-hal: #C9E0DC;
+  --cat-nob: #E0D7E8;
+  --cat-lan: #EED5CF;
+  --cat-act: #E6D0C6;
+  --cat-ink: #14120E;
+  --color-panel-dark: #14120E;
+  --color-on-panel-dark: #F2EFE7;
 }
 
 [data-theme="dark"] {

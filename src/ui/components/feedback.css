@@ -35,8 +35,8 @@
 
 .ui-error-state .ui-h3 {
   margin: 0;
-  font-family: var(--font-serif);
-  font-weight: 400;
+  font-family: var(--font-display);
+  font-weight: var(--weight-display);
 }
 
 .ui-text-muted { color: var(--color-text-muted); }

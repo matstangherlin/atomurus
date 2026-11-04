@@ -41,9 +41,9 @@
 
 .ui-overlay-title {
   margin: 0;
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-size: var(--text-2xl);
-  font-weight: 400;
+  font-weight: var(--weight-display);
 }
 
 .ui-overlay-body {
