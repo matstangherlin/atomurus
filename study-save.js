@@ -258,7 +258,21 @@
   }
 
   function hostParent() {
-    var order = ['[data-rm-save-slot]', '.art-aside', '.lc-el-header-l', '.content-inner', '.lc-doc-prose', 'article', '.main'];
+    if (!document.querySelector('[data-rm-save-slot]') && document.documentElement.hasAttribute('data-rm')) {
+      // Same toolbar page-share-init.js builds: right end of the view tabs.
+      var tabs = document.querySelector('.vz-tabs, .pt-tabs');
+      if (tabs && !document.querySelector('[data-rm-tools]')) {
+        var tools = document.createElement('div');
+        tools.className = 'rm-tools';
+        tools.setAttribute('data-rm-tools', '');
+        var slot = document.createElement('div');
+        slot.className = 'rm-save-slot';
+        slot.setAttribute('data-rm-save-slot', '');
+        tools.appendChild(slot);
+        tabs.parentNode.insertBefore(tools, tabs);
+      }
+    }
+    var order = ['[data-rm-save-slot]', '.art-aside', '.lc-el-header-l', '.content-inner', 'main.main > .content', '.lc-doc-prose', 'article', '.main'];
     for (var i = 0; i < order.length; i++) {
       var found = document.querySelector(order[i]);
       if (found) return found;
@@ -413,8 +427,22 @@
         fillFields(host, item);
         paintSaved(button, labels, true);
         markSavedHost(host, true);
-        if (item.note || (item.tags && item.tags.length)) host.classList.add('open');
+        if ((item.note || (item.tags && item.tags.length)) && !host.classList.contains('is-popover')) host.classList.add('open');
       }).catch(function () { /* unsigned / locked */ });
+    });
+  }
+
+
+  function bindPopoverDismiss(host) {
+    if (host.dataset.popoverBound === '1') return;
+    host.dataset.popoverBound = '1';
+    document.addEventListener('click', function (event) {
+      if (!host.classList.contains('open')) return;
+      if (host.contains(event.target)) return;
+      host.classList.remove('open');
+    });
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && host.classList.contains('open')) host.classList.remove('open');
     });
   }
 
@@ -503,6 +531,17 @@
     host.appendChild(setBox);
 
     var parent = hostParent();
+    if (parent.matches && parent.matches('[data-rm-save-slot]')) {
+      // Remake toolbar: note, tags and Study Sets open as one pop-over from
+      // the Note button instead of pushing the page content down.
+      var pop = document.createElement('div');
+      pop.className = 'study-save-pop';
+      pop.appendChild(fields);
+      pop.appendChild(setBox);
+      host.appendChild(pop);
+      host.classList.add('is-popover');
+      bindPopoverDismiss(host);
+    }
     if (parent.classList && parent.classList.contains('art-aside')) parent.appendChild(host);
     else parent.insertBefore(host, parent.firstChild);
 

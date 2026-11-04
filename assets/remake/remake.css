@@ -216,7 +216,10 @@ html[data-rm] body.rm.rm .main > .content > .content-inner { max-width: none; ma
   padding-top: 8px;
   display: none;
   z-index: 70;
+  width: max-content;
+  max-width: none !important; /* legacy lab CSS sets body * { max-width: 100% } */
 }
+.rm-dd-panel, .rm-dd-item, .rm-dd-item > span { max-width: none !important; }
 .rm-dd:hover .rm-dd-menu,
 .rm-dd:focus-within .rm-dd-menu,
 .rm-dd.is-open .rm-dd-menu { display: block; }
@@ -375,7 +378,7 @@ html[data-rm] body.rm.rm .main > .content > .content-inner { max-width: none; ma
   }
   .rm-nav > .rm-link.is-active,
   .rm-dd.is-active > .rm-link { color: var(--rm-green); }
-  .rm-dd-menu { position: static; padding: 0; display: none; }
+  .rm-dd-menu { position: static; padding: 0; display: none; width: auto; }
   .rm-dd:hover .rm-dd-menu,
   .rm-dd:focus-within .rm-dd-menu { display: none; }
   .rm-dd.is-open .rm-dd-menu { display: block; }
@@ -2057,3 +2060,100 @@ html[data-rm] body.rm.rm .art-follow, html[data-rm] body.rm.rm .art-follow * { f
 html[data-rm] body.rm.rm .art-follow { border-radius: 16px !important; }
 html[data-rm] body.rm.rm .art-follow h2, html[data-rm] body.rm.rm .art-follow h3, html[data-rm] body.rm.rm .art-follow [class*="title"] { font-weight: 700 !important; }
 html[data-rm] body.rm.rm .art-follow a { border-radius: 10px !important; }
+
+/* tool pages: Save / Note / Share toolbar at the right end of the view tabs */
+html[data-rm] body.rm.rm .rm-tools {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  gap: 8px;
+  height: 0;
+  position: relative;
+  z-index: 30;
+}
+html[data-rm] body.rm.rm .rm-tools > * { position: relative; top: 30px; }
+html[data-rm] body.rm.rm .rm-tools .rm-share-slot { position: relative; top: 30px; height: auto; }
+html[data-rm] body.rm.rm .rm-tools > .share-host { position: relative; }
+html[data-rm] body.rm.rm .rm-tools .share-trigger {
+  display: inline-flex !important; align-items: center; gap: 8px !important; height: 40px !important; width: auto !important;
+  padding: 0 14px !important; border-radius: 10px !important; border: 1px solid var(--rm-line-strong) !important;
+  background: var(--rm-paper) !important; color: var(--rm-ink) !important; font: 600 14px/1 var(--rm-font) !important;
+  letter-spacing: 0 !important; text-transform: none !important; box-shadow: none !important;
+}
+html[data-rm] body.rm.rm .rm-tools .share-trigger-label { display: inline !important; }
+html[data-rm] body.rm.rm .rm-tools #atomurus-study-save { position: relative; margin: 0 !important; }
+html[data-rm] body.rm.rm .rm-tools #atomurus-study-save .study-save-row { flex-wrap: nowrap; }
+html[data-rm] body.rm.rm .rm-tools #atomurus-study-save .study-save-msg:empty { display: none; }
+@media (max-width: 720px) {
+  html[data-rm] body.rm.rm .rm-tools { height: auto; justify-content: flex-start; flex-wrap: wrap; margin-top: 16px; }
+  html[data-rm] body.rm.rm .rm-tools > *, html[data-rm] body.rm.rm .rm-tools .rm-share-slot { top: 0; }
+  html[data-rm] body.rm.rm .rm-tools #atomurus-study-save.is-popover .study-save-pop { left: 0; right: auto; }
+}
+html[data-rm] body.rm.rm .rm-tools { align-items: center; }
+html[data-rm] body.rm.rm .rm-tools > * { top: 0; transform: translateY(50px); }
+html[data-rm] body.rm.rm .rm-tools .share-host { margin: 0 !important; }
+html[data-rm] body.rm.rm .rm-tools .rm-save-slot #atomurus-study-save button { height: 40px !important; padding: 0 14px !important; font-size: 14px !important; margin: 0 !important; }
+@media (max-width: 720px) {
+  html[data-rm] body.rm.rm .rm-tools > * { transform: none; }
+}
+html[data-rm] body.rm.rm .viewer .panel *:not(code):not(kbd):not(sub):not(sup) { font-family: var(--rm-font) !important; letter-spacing: 0 !important; text-transform: none !important; }
+html[data-rm][data-theme="dark"] body.rm.rm .viewer > .canvas-wrap,
+html[data-rm][data-theme="dark"] body.rm.rm .iso-3d-stage,
+html[data-rm][data-theme="dark"] body.rm.rm .mvwr-stage { box-shadow: 0 0 0 1px var(--rm-line); }
+html[data-rm][data-theme="dark"] body.rm.rm .rm-card-dark,
+html[data-rm][data-theme="dark"] body.rm.rm .rm-feature,
+html[data-rm][data-theme="dark"] body.rm.rm .calc-result,
+html[data-rm][data-theme="dark"] body.rm.rm .auth-rail { box-shadow: inset 0 0 0 1px var(--rm-line); }
+/* share trigger sits in the toolbar flow (legacy compact skin offsets it) */
+html[data-rm] body.rm.rm .rm-tools .share-trigger,
+html[data-rm] body.rm.rm .rm-share-slot .share-trigger,
+html[data-rm] body.rm.rm .rm-el-actions .share-trigger { position: static !important; left: auto !important; right: auto !important; margin: 0 !important; transform: none !important; }
+/* isotopes page: grid tracks must be allowed to shrink on phones */
+html[data-rm] body.rm.rm .iso-wrap > * { min-width: 0; }
+@media (max-width: 900px) {
+  html[data-rm] body.rm.rm .iso-wrap { grid-template-columns: minmax(0, 1fr) !important; }
+}
+html[data-rm] body.rm.rm .rm-tools .share-host,
+html[data-rm] body.rm.rm .rm-share-slot .share-host,
+html[data-rm] body.rm.rm .rm-el-actions .share-host,
+html[data-rm] body.rm.rm .art-meta .share-host { width: auto !important; min-width: 0 !important; height: auto !important; justify-content: flex-start !important; }
+
+/* study-save pop-over (Save / Note in the remake toolbars and element hero) */
+html[data-rm] body.rm.rm #atomurus-study-save.is-popover { position: relative; }
+html[data-rm] body.rm.rm #atomurus-study-save.is-popover .study-save-pop {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  width: min(360px, calc(100vw - 32px)) !important;
+  max-width: none !important;
+  box-sizing: border-box;
+  padding: 16px;
+  border: 1px solid var(--rm-line);
+  border-radius: 14px;
+  background: var(--rm-paper);
+  box-shadow: var(--rm-shadow-pop);
+  z-index: 45;
+  text-align: left;
+}
+html[data-rm] body.rm.rm #atomurus-study-save.is-popover.open .study-save-pop { display: grid; gap: 12px; }
+html[data-rm] body.rm.rm #atomurus-study-save.is-popover .study-save-fields,
+html[data-rm] body.rm.rm #atomurus-study-save.is-popover .study-set-box {
+  position: static !important; width: auto !important; padding: 0 !important; border: 0 !important; box-shadow: none !important; background: none !important; margin: 0 !important; max-width: none !important;
+}
+html[data-rm] body.rm.rm #atomurus-study-save.is-popover .study-set-box .study-save-row { flex-wrap: wrap; }
+html[data-rm] body.rm.rm #atomurus-study-save.is-popover .study-save-pop button { width: auto !important; white-space: nowrap; }
+html[data-rm] body.rm.rm #atomurus-study-save.is-popover label { font: 600 13px/1.3 var(--rm-font) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--rm-ink) !important; }
+html[data-rm] body.rm.rm #atomurus-study-save.is-popover textarea,
+html[data-rm] body.rm.rm #atomurus-study-save.is-popover input { border-radius: 10px !important; border: 1px solid var(--rm-line-strong) !important; background: var(--rm-bg) !important; padding: 10px 12px !important; font: 400 15px var(--rm-font) !important; }
+html[data-rm] body.rm.rm .rm-el-actions #atomurus-study-save.is-popover .study-save-pop { right: auto; left: 0; }
+html[data-rm] body.rm.rm #atomurus-study-save .study-save-msg { font: 400 13px/1.4 var(--rm-font) !important; letter-spacing: 0 !important; }
+html[data-rm] body.rm.rm #atomurus-study-save .study-save-row > button { display: inline-flex !important; align-items: center; gap: 6px; white-space: nowrap !important; width: auto !important; }
+html[data-rm] body.rm.rm .rm-tools .share-host,
+html[data-rm] body.rm.rm .rm-el-actions .share-host { flex: none !important; }
+html[data-rm] body.rm.rm .rm-tools .rm-save-slot { flex: none; }
+html[data-rm] body.rm.rm .rm-save-slot #atomurus-study-save { margin: 0 !important; padding: 0 !important; max-width: none !important; width: auto !important; }
+@media (max-width: 720px) {
+  html[data-rm] body.rm.rm .pt-tabs,
+  html[data-rm] body.rm.rm .vz-tabs { flex-wrap: nowrap !important; }
+}
