@@ -258,8 +258,12 @@
   }
 
   function hostParent() {
-    return document.querySelector('[data-rm-save-slot]') ||
-      document.querySelector('.lc-el-header-l, .content-inner, .lc-doc-prose, article, .main') || document.body;
+    var order = ['[data-rm-save-slot]', '.art-aside', '.lc-el-header-l', '.content-inner', '.lc-doc-prose', 'article', '.main'];
+    for (var i = 0; i < order.length; i++) {
+      var found = document.querySelector(order[i]);
+      if (found) return found;
+    }
+    return document.body;
   }
 
   function setMsg(node, text, href, hrefLabel) {
@@ -499,7 +503,8 @@
     host.appendChild(setBox);
 
     var parent = hostParent();
-    parent.insertBefore(host, parent.firstChild);
+    if (parent.classList && parent.classList.contains('art-aside')) parent.appendChild(host);
+    else parent.insertBefore(host, parent.firstChild);
 
     var lastSet = null;
 
