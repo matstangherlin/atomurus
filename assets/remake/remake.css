@@ -741,6 +741,7 @@ html[data-rm] body.rm.rm .rm-tool h3 { margin: 0; font-size: 20px; }
 .rm-plan-price { font-size: 36px; font-weight: 700; letter-spacing: -0.02em; }
 .rm-plan-price small { font-size: 16px; font-weight: 500; color: var(--rm-ink-2); letter-spacing: 0; }
 .rm-plan-copy { font-size: 15px; line-height: 1.55; color: var(--rm-ink-2); }
+.rm-plan-eq { margin-top: -4px; font-size: 14px; font-weight: 600; color: var(--rm-green); }
 .rm-plan .rm-btn { margin-top: 8px; }
 .rm-plan-pro { border: 2px solid var(--rm-green); background: var(--rm-green-soft); padding: 23px; }
 .rm-plan-pro .rm-plan-name { color: var(--rm-green); }

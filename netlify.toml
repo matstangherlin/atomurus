@@ -798,6 +798,34 @@
   query  = { lang = "pt-BR" }
 
 [[redirects]]
+  from   = "/explore/history-of-chemistry"
+  to     = "/explore/history-of-chemistry.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/explore/marie-curie"
+  to     = "/explore/marie-curie.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/explore/lavoisier-chemical-revolution"
+  to     = "/explore/lavoisier-chemical-revolution.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/explore/haber-bosch-process"
+  to     = "/explore/haber-bosch-process.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
   from   = "/explore/what-is-a-mole"
   to     = "/explore/what-is-a-mole.pt.html"
   status = 200

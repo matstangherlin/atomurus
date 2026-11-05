@@ -3,7 +3,7 @@ import { resolvePricingContext } from '../lib/geo-pricing.mjs';
 import { accessForUser } from '../lib/plan-access.mjs';
 import { json, jsonWithCookies, options, publicUser, PLAN_PRICING } from '../lib/netlify-identity-utils.mjs';
 
-export default async function handler(request) {
+export default async function handler(request, context) {
   if (request.method === 'OPTIONS') return options();
   if (request.method !== 'GET') {
     return json(405, { ok: false, error: 'Method not allowed' });
@@ -14,7 +14,7 @@ export default async function handler(request) {
   const session = await authSession(request);
   const user = session?.user ? publicUser(session.user) : null;
   const access = accessForUser(session?.user || {});
-  const pricingContext = resolvePricingContext(request);
+  const pricingContext = resolvePricingContext(request, {}, context);
 
   return jsonWithCookies(
     200,

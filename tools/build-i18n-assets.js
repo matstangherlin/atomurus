@@ -28,8 +28,16 @@ function buildChunk(ns) {
 }
 
 function writeChunk(ns, chunk) {
-  const outPath = path.join(OUT_DIR, `${ns}.json`);
-  fs.writeFileSync(outPath, JSON.stringify(chunk), 'utf8');
+  const json = JSON.stringify(chunk);
+  fs.writeFileSync(path.join(OUT_DIR, `${ns}.json`), json, 'utf8');
+  // Script form of the same chunk. Pages load it with <script defer> before
+  // i18n.js (see tools/inject-i18n-chunks.js), so translations are already in
+  // memory when i18n.js runs — no synchronous XHR freezing the page.
+  fs.writeFileSync(
+    path.join(OUT_DIR, `${ns}.js`),
+    `(window.__ATOMURUS_I18N__=window.__ATOMURUS_I18N__||{})[${JSON.stringify(ns)}]=${json};\n`,
+    'utf8'
+  );
 }
 
 function main() {
