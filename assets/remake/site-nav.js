@@ -189,10 +189,49 @@
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitFigures);
   }
 
+  // 3D viewers: build the right-hand column (model name + notes + Pro card +
+  // article link) and pull the colour legend under the stage, matching the
+  // remake layout. Elements keep their ids, so the runtimes still update them.
+  var MODEL_YEARS = { dalton: '1808', thomson: '1904', rutherford: '1911', bohr: '1913', quantum: '1926' };
+  function enhanceViewer() {
+    var viewer = document.querySelector('.viewer');
+    if (!viewer || !viewer.querySelector(':scope > .canvas-wrap') || viewer.classList.contains('rm-vw')) return;
+    if (document.documentElement.classList.contains('embed-mode')) return;
+    viewer.classList.add('rm-vw');
+    var side = document.createElement('div');
+    side.className = 'rm-vw-side';
+    var info = viewer.querySelector(':scope > .info-bar');
+    if (info) side.appendChild(info);
+    var detail = document.getElementById('model-detail');
+    if (detail) side.appendChild(detail);
+    var pro = document.querySelector('.content-inner > [data-pro-lab-tool]');
+    if (pro) side.appendChild(pro);
+    var read = document.querySelector('.content-inner > .lab-readmore a, .lab-readmore-card a');
+    if (read) {
+      var a = document.createElement('a');
+      a.className = 'rm-vw-read';
+      a.href = read.getAttribute('href');
+      if (read.hasAttribute('data-i18n')) a.setAttribute('data-i18n', read.getAttribute('data-i18n'));
+      a.textContent = read.textContent;
+      side.appendChild(a);
+    }
+    viewer.appendChild(side);
+    document.querySelectorAll('.content-inner > .legend-card, .content-inner > #atom-legend, .content-inner > #mol-legend').forEach(function (card) {
+      var wrap = viewer.querySelector(':scope > .canvas-wrap');
+      wrap.parentNode.insertBefore(card, wrap.nextSibling);
+    });
+    viewer.querySelectorAll('.pill[data-model]').forEach(function (pill) {
+      var y = MODEL_YEARS[pill.getAttribute('data-model')];
+      if (y) pill.setAttribute('data-rm-year', y);
+    });
+    try { window.dispatchEvent(new Event('resize')); } catch (e) {}
+  }
+
   function run() {
     document.querySelectorAll('[data-rm-header]').forEach(initHeader);
     initFooter();
     enhanceArticle();
+    enhanceViewer();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);

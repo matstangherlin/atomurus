@@ -6,8 +6,9 @@ test('signed-out workspace shows Pro navigation and explains locked features', a
   await page.goto('/app');
   await expect(page.locator('#ws-study-nav')).toContainText(/Study|Estudo/, { timeout: 15_000 });
   await expect(page.locator('#ws-nav-main a[data-nav="home"]')).toContainText(/Home|Início/);
-  await expect(page.locator('#ws-nav-main a[data-nav="periodic"]')).toBeVisible();
-  await expect(page.locator('#ws-nav-main a[data-nav="viewer"]')).toBeVisible();
+  await expect(page.locator('#ws-nav-main a[data-nav="periodic"]')).toHaveAttribute('href', /periodic-table/);
+  await expect(page.locator('[data-rm-ws-sitenav] a[href^="/periodic-table.html"]')).toBeVisible();
+  await expect(page.locator('[data-rm-ws-sitenav] a[data-rm-ws-lab]')).toBeVisible();
   await expect(page.locator('#ws-userchip')).toContainText(/Create (free )?account|Criar conta/, { timeout: 15_000 });
   await expect(page).toHaveURL(/\/app/);
   await page.locator('#ws-study-nav a[href="/app?section=study"]').first().click();
@@ -56,7 +57,7 @@ test('login preserves next and lands on /app', async ({ page }) => {
   await page.locator('#auth-login-submit').click();
   await page.waitForURL(/\/app/, { timeout: 15_000 });
   expect(page.url()).toMatch(/section=library/);
-  await expect(page.locator('#ws-nav-main a').first()).toBeVisible({ timeout: 15_000 });
+  await expect(page.locator('#ws-study-nav .ws-study-nav-item').first()).toBeVisible({ timeout: 15_000 });
 });
 
 test('wrong password stays on login and unsticks the submit button', async ({ page }) => {
@@ -125,7 +126,7 @@ test('signed-in visitor on /login is sent to /app', async ({ page }) => {
   await installApi(page, { kind: 'pro', signedIn: true });
   await page.goto('/login');
   await page.waitForURL(/\/app/, { timeout: 15_000 });
-  await expect(page.locator('#ws-nav-main a').first()).toBeVisible({ timeout: 15_000 });
+  await expect(page.locator('#ws-study-nav .ws-study-nav-item').first()).toBeVisible({ timeout: 15_000 });
 });
 
 function watchAuthLeaks(page, secret) {
@@ -197,8 +198,10 @@ test('expired auth hash on the home page opens login with a new-link button', as
 test('logout from the workspace stays on /app as a guest', async ({ page }) => {
   await installApi(page, { kind: 'pro', signedIn: true });
   await page.goto('/app');
-  await expect(page.locator('#app-logout-aside')).toBeVisible({ timeout: 15_000 });
-  await page.locator('#app-logout-aside').click();
+  // Desktop: sign out lives in the account menu (no sidebar in the Lab design).
+  await expect(page.locator('#ws-userchip')).toContainText(/Pro User/i, { timeout: 15_000 });
+  await page.locator('#ws-userchip').click();
+  await page.locator('#ws-account-menu [data-atomurus-signout]').click();
   await expect(page).toHaveURL(/\/app/);
   await expect(page.locator('#ws-userchip')).toContainText(/Create (free )?account|Criar conta/, { timeout: 15_000 });
   await expect(page.locator('#app-logout-aside')).toHaveCount(0);

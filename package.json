@@ -17,7 +17,7 @@
     "build:app": "node tools/build-app-bundle.mjs",
     "test:plan": "node tools/test-feature-catalog.mjs && node tools/test-plan-access.mjs && node tools/test-lab-tool-access.mjs",
     "test:auth": "node tools/test-auth-provider.mjs && node tools/test-auth-flows.mjs && node tools/test-auth-recovery.mjs && node tools/test-auth-rate-limit.mjs && node tools/test-auth-sync.mjs",
-    "test:study": "node tools/test-study-cloud.mjs",
+    "test:study": "node tools/test-study-cloud.mjs && node tools/test-study-journey.mjs",
     "test:review": "node tools/test-review.mjs",
     "test:insights": "node tools/test-insights.mjs",
     "test:billing": "node tools/test-billing-geo.mjs && node tools/test-billing-lifecycle.mjs && node tools/test-account-plan-ui.mjs",

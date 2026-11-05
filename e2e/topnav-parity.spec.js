@@ -24,7 +24,7 @@ const ROUTES = [
   { name: 'pricing', path: '/pricing.html', section: 'plans' }
 ];
 
-const TOP_LEVEL = ['periodic', 'models', 'calculators', 'explore', 'plans'];
+const TOP_LEVEL = ['periodic', 'models', 'calculators', 'lab', 'explore', 'plans'];
 
 async function navMetrics(page) {
   return page.evaluate(() => {

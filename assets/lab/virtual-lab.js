@@ -3229,7 +3229,8 @@
         if (!spec) return '';
         var on = highlight && highlight[id] ? ' is-wanted' : '';
         return '<button type="button" class="lab-chip lab-chip-eq' + on + '" data-add-vessel="' + esc(id) + '">' +
-          esc(lang === 'pt' ? spec.labelPt : spec.labelEn) + '</button>';
+          '<span class="lab-chip-name">' + esc(lang === 'pt' ? spec.labelPt : spec.labelEn) + '</span>' +
+          (spec.capacityMl ? '<span class="lab-chip-cap">' + esc(spec.capacityMl) + ' mL</span>' : '') + '</button>';
       }).join('') + '</div>';
     }
 
@@ -3389,30 +3390,48 @@
         '<p class="lab-dock-note">' + esc(copy('Click to drop it on the board, then drag it anywhere.', 'Clique para soltar na bancada e depois arraste para onde quiser.')) + '</p>';
     }
 
+    function dockCount(key) {
+      if (key === 'create') return CREATIONS.length;
+      if (key === 'ready') return READY.length;
+      if (key === 'materials') {
+        return Object.keys(SUBSTANCES).filter(function (id) { return SUBSTANCES[id] && SUBSTANCES[id].inventory !== false; }).length;
+      }
+      return (EQUIPMENT_GROUPS[key] || []).filter(function (id) { return EQUIPMENT[id]; }).length;
+    }
+
     function dockHtml(results) {
       var wanted = wantedNow();
+      var panelHtml = '<div class="lab-dock-panel"' + (dockOpen ? '' : ' hidden') + ' data-dock-panel>' +
+        '<div class="lab-dock-head"><h2>' + esc(dockTitle(dockOpen) || copy('Tools', 'Ferramentas')) + '</h2>' +
+        '<button type="button" class="lab-dock-close" data-dock-close aria-label="' + esc(copy('Close', 'Fechar')) + '">×</button></div>' +
+        '<div class="lab-dock-body" data-dock-body>' + (dockOpen ? dockBodyHtml(dockOpen, results) : '') + '</div>' +
+        '</div>';
       return '<div class="lab-dock' + (dockOpen ? ' is-open' : '') + '" data-lab-dock>' +
         '<div class="lab-dock-rail" role="toolbar" aria-label="' + esc(copy('Lab tools', 'Ferramentas do Lab')) + '">' +
+        '<div class="lab-dock-modes">' +
         '<button type="button" class="lab-dock-btn lab-dock-mode' + (boardTool === 'select' ? ' is-on' : '') + '" data-board-tool="select" ' +
         'title="' + esc(copy('Select', 'Selecionar')) + ' (V)" aria-pressed="' + (boardTool === 'select' ? 'true' : 'false') + '">' +
         icon('cursor') + '<span class="lab-dock-name">' + esc(copy('Select', 'Selecionar')) + '</span></button>' +
         '<button type="button" class="lab-dock-btn lab-dock-mode' + (boardTool === 'hand' ? ' is-on' : '') + '" data-board-tool="hand" ' +
         'title="' + esc(copy('Hand', 'Mão')) + ' (H · hold Space)" aria-pressed="' + (boardTool === 'hand' ? 'true' : 'false') + '">' +
-        icon('hand') + '<span class="lab-dock-name">' + esc(copy('Hand', 'Mão')) + '</span></button>' +
+        icon('hand') + '<span class="lab-dock-name">' + esc(copy('Pan', 'Mover')) + '</span></button>' +
+        '</div>' +
         '<i class="lab-dock-rule"></i>' +
+        '<p class="lab-dock-label">' + esc(copy('Add to the bench', 'Adicionar à bancada')) + '</p>' +
         dockGroups().map(function (group) {
           var on = dockOpen === group.key;
           var badge = group.key === 'create' && wanted.creation ? '<i class="lab-dock-dot" aria-hidden="true"></i>' : '';
+          var count = dockCount(group.key);
           return '<button type="button" class="lab-dock-btn' + (on ? ' is-on' : '') + '" data-dock="' + esc(group.key) + '"' +
             ' aria-expanded="' + (on ? 'true' : 'false') + '" title="' + esc(group.title) + '">' +
-            icon(group.icon) + badge + '<span class="lab-dock-name">' + esc(group.title) + '</span></button>';
+            icon(group.icon) + badge + '<span class="lab-dock-name">' + esc(group.title) + '</span>' +
+            (count ? '<span class="lab-dock-count">' + esc(count) + '</span>' : '') + '</button>' +
+            (on ? panelHtml : '');
         }).join('') +
+        (dockOpen ? '' : panelHtml) +
         '</div>' +
-        '<div class="lab-dock-panel"' + (dockOpen ? '' : ' hidden') + ' data-dock-panel>' +
-        '<div class="lab-dock-head"><h2>' + esc(dockTitle(dockOpen) || copy('Tools', 'Ferramentas')) + '</h2>' +
-        '<button type="button" class="lab-dock-close" data-dock-close aria-label="' + esc(copy('Close', 'Fechar')) + '">×</button></div>' +
-        '<div class="lab-dock-body" data-dock-body>' + (dockOpen ? dockBodyHtml(dockOpen, results) : '') + '</div>' +
-        '</div></div>';
+        '<p class="lab-dock-tip">' + esc(copy('Click an item to drop it in the middle of the bench, then drag it anywhere.', 'Clique em um item para colocá-lo no centro da bancada e depois arraste para onde quiser.')) + '</p>' +
+        '</div>';
     }
 
     function stepChips(plan) {
@@ -3848,13 +3867,25 @@
           '<p>' + esc(container.label || container.id) + ' → ' + esc(rig.condenser.label || rig.condenser.id) + ' → ' + esc(rig.receiver.label || rig.receiver.id) + '</p>' +
           '<button type="button" class="ws-btn ws-btn-sm ws-btn-primary" data-lab-distill>' + esc(copy('Distil', 'Destilar')) + '</button></div>'
         : '';
-      return reactionBlock + brewBlock + growBlock + rigBlock + refluxBlock + filterBlock +
-        '<div class="lab-kv"><span>' + esc(copy('Vessel', 'Vidro')) + '</span><strong>' + esc(labelFor(container, lang)) + '</strong></div>' +
+      /* Remake layout: vessel name + capacity, a large pH reading, the volume
+         as a fill bar, then the remaining readings as rows. Every reading
+         keeps its .lab-kv row so the copy stays scannable and testable. */
+      var capMl = Number(container.capacityMl || specOf(container.type).capacityMl) || 0;
+      var volMl = Number(container.volumeMl) || 0;
+      var phVal = container.ph == null ? null : Number(container.ph);
+      var phWord = phVal == null || isNaN(phVal) ? '' : (phVal < 6.5 ? copy('acidic', 'ácido') : (phVal > 7.5 ? copy('basic', 'básico') : copy('neutral', 'neutro')));
+      var volPct = capMl ? Math.max(0, Math.min(100, Math.round(volMl / capMl * 100))) : 0;
+      return '<div class="lab-insp-head"><span class="lab-insp-k">' + esc(copy('Vessel', 'Recipiente')) + '</span>' +
+        '<strong class="lab-insp-name">' + esc(labelFor(container, lang)) + '</strong>' +
+        (capMl ? '<span class="lab-insp-cap">' + esc(capMl) + ' mL</span>' : '') + '</div>' +
+        '<div class="lab-kv lab-kv-ph"><span>pH</span><strong>' + esc(container.ph == null ? '—' : container.ph) + '</strong>' +
+        (phWord ? '<em>' + esc(phWord) + '</em>' : '') + '</div>' +
+        reactionBlock + brewBlock + growBlock + rigBlock + refluxBlock + filterBlock +
+        '<div class="lab-kv lab-kv-vol"><span>' + esc(copy('Volume', 'Volume')) + '</span><strong>' + esc(container.volumeMl) + (capMl ? ' / ' + esc(capMl) : '') + ' mL</strong></div>' +
+        (capMl ? '<div class="lab-volbar" aria-hidden="true"><i style="width:' + volPct + '%"></i></div>' : '') +
         '<div class="lab-kv lab-kv-stack"><span>' + esc(copy('Contents', 'Conteúdo')) + '</span></div>' + contentsHtml +
-        '<div class="lab-kv"><span>' + esc(copy('Volume', 'Volume')) + '</span><strong>' + esc(container.volumeMl) + ' mL</strong></div>' +
         '<div class="lab-kv"><span>' + esc(copy('Mass', 'Massa')) + '</span><strong>' + esc(Math.round(containerMass(container) * 10) / 10) + ' g</strong></div>' +
         '<div class="lab-kv"><span>' + esc(copy('Temperature', 'Temperatura')) + '</span><strong>' + esc(container.temperatureC) + ' °C</strong></div>' +
-        '<div class="lab-kv"><span>pH</span><strong>' + esc(container.ph == null ? '—' : container.ph) + '</strong></div>' +
         (container.phEstimated ? '<p class="ws-lede">' + esc(copy(
           'Estimated by the ideal model: total solute is above 1 mol/L.',
           'Valor estimado pelo modelo ideal: o soluto total passa de 1 mol/L.'
@@ -3870,19 +3901,36 @@
         (dropFrom ? '<p class="lab-pour-hint">' + esc(copy('Burette ready. Click a vessel for a 1 mL drop.', 'Bureta pronta. Clique em um vidro para uma gota de 1 mL.')) + '</p>' : '') +
         (connectFrom ? '<p class="lab-pour-hint">' + esc(copy('Connecting: click a compatible port or vessel.', 'Conectando: clique em um porto ou vidro compatível.')) + '</p>' : '') +
         '<p class="ws-lede">' + esc(copy('Virtual laboratory simulation. Values are educational, not experimental.', 'Simulação de laboratório virtual. Os valores são educacionais, não experimentais.')) + '</p>' +
+        '<div class="lab-insp-actions">' +
+        ((specOf(container.type).ports || []).length ? '<button type="button" class="ws-btn ws-btn-sm' + (connectFrom === container.id ? ' is-on' : '') + '" data-lab-connect>' + esc(copy('Connect', 'Conectar')) + '</button>' : '') +
+        (hasCap(container, 'pour') ? '<button type="button" class="ws-btn ws-btn-sm" data-lab-pour>' + esc(copy('Transfer', 'Transferir')) + '</button>' : '') +
+        (hasCap(container, 'heat') ? '<button type="button" class="ws-btn ws-btn-sm" data-heat="20">' + esc(copy('Heat', 'Aquecer')) + '</button>' : '') +
+        (canHold(container) ? '<button type="button" class="ws-btn ws-btn-sm" data-lab-open-materials>' + esc(copy('Add material', 'Adicionar material')) + '</button>' : '') +
+        '</div>' +
         '<div class="lab-measures">' +
         (hasCap(container, 'aspirate') ? '<button type="button" class="ws-btn ws-btn-sm" data-lab-aspirate>' + esc(copy('Aspirate', 'Aspirar')) + '</button>' : '') +
         (hasCap(container, 'dispense') || hasCap(container, 'dispense_exact') ? '<button type="button" class="ws-btn ws-btn-sm" data-lab-dispense>' + esc(copy('Dispense', 'Dispensar')) + '</button>' : '') +
         (hasCap(container, 'dispense_controlled') ? '<button type="button" class="ws-btn ws-btn-sm" data-lab-drop>' + esc(copy('Drop 1 mL', 'Gota 1 mL')) + '</button>' : '') +
         (hasCap(container, 'grind') ? '<button type="button" class="ws-btn ws-btn-sm" data-lab-grind>' + esc(copy('Grind', 'Triturar')) + '</button>' : '') +
         (hasCap(container, 'separate') ? '<button type="button" class="ws-btn ws-btn-sm" data-lab-drain>' + esc(copy('Open valve', 'Abrir válvula')) + '</button>' : '') +
-        ((specOf(container.type).ports || []).length ? '<button type="button" class="ws-btn ws-btn-sm' + (connectFrom === container.id ? ' is-on' : '') + '" data-lab-connect>' + esc(copy('Connect', 'Conectar')) + '</button>' : '') +
 
         '<button type="button" class="ws-btn ws-btn-sm" data-measure="volume">' + esc(copy('Volume', 'Volume')) + '</button>' +
         '<button type="button" class="ws-btn ws-btn-sm" data-measure="mass">' + esc(copy('Mass', 'Massa')) + '</button>' +
         '<button type="button" class="ws-btn ws-btn-sm" data-measure="temperature">' + esc(copy('Temperature', 'Temperatura')) + '</button>' +
         '<button type="button" class="ws-btn ws-btn-sm" data-measure="ph">pH</button>' +
         '</div>';
+    }
+
+    function benchCountText() {
+      var n = (session.containers || []).length;
+      return n === 1 ? copy('1 item on the bench', '1 item na bancada') : copy(n + ' items on the bench', n + ' itens na bancada');
+    }
+
+    function lastStepHtml() {
+      var obs = session.observations || [];
+      var last = obs.length ? obs[obs.length - 1] : null;
+      if (!last) return esc(copy('Drag to select · Space or H to pan · Ctrl+scroll to zoom', 'Arraste para selecionar · Espaço ou H para mover · Ctrl+scroll para zoom'));
+      return '<span>' + esc(copy('Last step:', 'Último passo:')) + '</span> <b>' + esc(last.text) + '</b>';
     }
 
     function notesHtml() {
@@ -4427,6 +4475,10 @@
       }
       if (inspector) inspector.innerHTML = inspectorHtml();
       if (notes) notes.innerHTML = notesHtml();
+      var countChip = node.querySelector('[data-lab-count]');
+      if (countChip) countChip.textContent = benchCountText();
+      var lastChip = node.querySelector('[data-lab-last]');
+      if (lastChip) lastChip.innerHTML = lastStepHtml();
       if (guide) guide.innerHTML = tutorialHtml();
       if (dockBody && dockOpen) {
         var keepTop = dockBody.scrollTop;
@@ -4462,7 +4514,13 @@
         if (wantDot && !dot) createBtn.insertAdjacentHTML('afterbegin', '<i class="lab-dock-dot" aria-hidden="true"></i>');
         if (!wantDot && dot) dot.remove();
       }
-      if (panel) panel.hidden = !dockOpen;
+      if (panel) {
+        panel.hidden = !dockOpen;
+        var activeBtn = dockOpen ? dock.querySelector('[data-dock="' + dockOpen + '"]') : null;
+        var rail = dock.querySelector('.lab-dock-rail');
+        if (activeBtn && activeBtn.nextSibling !== panel) activeBtn.parentNode.insertBefore(panel, activeBtn.nextSibling);
+        else if (!activeBtn && rail && panel.parentNode !== rail) rail.appendChild(panel);
+      }
       if (head) head.textContent = dockTitle(dockOpen) || copy('Tools', 'Ferramentas');
       if (body) {
         var bodyTop = body.scrollTop;
@@ -4509,6 +4567,18 @@
         ? '<span class="lab-bar-note" title="' + esc(copy('Create an account to save sessions. This demo stays on this device.', 'Crie uma conta para salvar sessões. Esta demonstração fica neste dispositivo.')) + '">' +
           esc(copy('On this device', 'Neste dispositivo')) + '</span>'
         : '';
+      var guidedCards = CREATIONS.slice(0, 4).map(function (row) {
+        var level = lang === 'pt' ? row.difficulty.pt : row.difficulty.en;
+        var advanced = /intermedi|advanc|avan/i.test(row.difficulty.en || '');
+        var blurb = row.learningObjectives ? (lang === 'pt' ? row.learningObjectives.pt : row.learningObjectives.en) : (lang === 'pt' ? row.lede.pt : row.lede.en);
+        return '<article class="lab-guided-card">' +
+          '<span class="lab-guided-level' + (advanced ? ' is-mid' : '') + '">' + esc(level) + '</span>' +
+          '<h3>' + esc(labelOf(row, lang)) + '</h3>' +
+          '<p>' + esc(blurb) + '</p>' +
+          '<div class="lab-guided-foot"><span>' + esc((row.tutorial || []).length) + ' ' + esc(copy('steps', 'passos')) + '</span>' +
+          '<button type="button" class="lab-guided-go" data-start-creation="' + esc(row.id) + '">' + esc(copy('Start', 'Começar')) + ' →</button></div>' +
+          '</article>';
+      }).join('');
       var guided = CREATIONS.map(function (row) {
         return '<a class="ws-lab-card lab-creation-card" href="/app?section=lab&mode=guided&creation=' + esc(row.id) + '">' +
           '<span class="ws-lab-badge">' + esc(row.category) + '</span>' +
@@ -4557,6 +4627,14 @@
 
       node.innerHTML =
         '<div class="lab-board" data-lab-root>' +
+        '<header class="lab-hero">' +
+        '<p class="lab-hero-kicker">' + esc(copy('Virtual lab', 'Laboratório virtual')) + '</p>' +
+        '<h1 class="lab-hero-title">' + esc(copy('Build, mix and observe.', 'Monte, misture e observe.')) + '</h1>' +
+        '<p class="lab-hero-lead">' + esc(copy(
+          'Put glassware on the bench, add materials and follow volume, mass, temperature and pH in real time. No account needed to start.',
+          'Coloque vidraria na bancada, adicione materiais e acompanhe volume, massa, temperatura e pH em tempo real. Sem conta para começar.'
+        )) + '</p>' +
+        '</header>' +
         /* A mini-toolbar, not a page header: history, what this board is, whether
            it is saved, sound, and the two board-wide actions. */
         '<div class="lab-board-bar">' +
@@ -4566,12 +4644,13 @@
         '</div>' +
         '<div class="lab-bar-title">' +
         '<strong data-lab-title>' + esc(session.title || copy('Creation board', 'Bancada de criação')) + '</strong>' +
-        '<span class="lab-save-state" data-lab-saved>' + esc(copy('Saved', 'Salvo')) + '</span>' + guestChip +
+        '<span class="lab-save-pill' + (guest ? ' is-device' : '') + '"><i aria-hidden="true"></i><span class="lab-save-state" data-lab-saved>' + esc(copy('Saved', 'Salvo')) + '</span>' + guestChip + '</span>' +
         '</div>' +
         '<form class="lab-search lab-bar-search" data-lab-search role="search">' +
         '<label class="lc-sr-only" for="lab-q">' + esc(copy('What would you like to create?', 'O que você quer criar?')) + '</label>' +
-        '<input id="lab-q" name="q" type="search" value="' + esc(searchValue) + '" placeholder="' + esc(copy('What would you like to create?', 'O que você quer criar?')) + '" autocomplete="off">' +
-        '<button type="submit" class="ws-btn ws-btn-sm ws-btn-secondary">' + esc(copy('Search', 'Pesquisar')) + '</button>' +
+        '<span class="lab-search-ico" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.6" stroke="currentColor" stroke-width="1.5"/><path d="M10.4 10.4 14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>' +
+        '<input id="lab-q" name="q" type="search" value="' + esc(searchValue) + '" placeholder="' + esc(copy('What would you like to create? e.g. 0.5 mol/L NaCl solution', 'O que você quer criar? ex.: solução de NaCl 0,5 mol/L')) + '" autocomplete="off">' +
+        '<button type="submit" class="ws-btn ws-btn-sm ws-btn-secondary">' + esc(copy('Create', 'Criar')) + '</button>' +
         '</form>' +
         '<div class="lab-bar-group lab-toolbar">' +
         '<button type="button" class="lab-icon-btn" data-lab-sound aria-pressed="true" title="' + esc(copy('Sound on', 'Som ligado')) + '">' + icon('sound') + '</button>' +
@@ -4587,6 +4666,8 @@
         '<div class="lab-board-stage" data-lab-stage tabindex="0">' +
         '<div class="lab-board-world" data-lab-world data-lab-bench>' + boardHtml() + '</div>' +
         '</div>' +
+        '<span class="lab-count-chip" data-lab-count>' + esc(benchCountText()) + '</span>' +
+        '<p class="lab-last-step" data-lab-last>' + lastStepHtml() + '</p>' +
         '<p class="lab-hint">' + esc(copy(
           'Drag to select · Space or H to pan · Ctrl+scroll to zoom · Ctrl+1 fits',
           'Arraste para selecionar · Espaço ou H para mover · Ctrl+scroll para zoom · Ctrl+1 ajusta'
@@ -4606,6 +4687,12 @@
         '<div data-lab-notebook-pane hidden><ol class="lab-notes" data-lab-notes>' + notesHtml() + '</ol></div>' +
         '</div></aside>' +
         '</div>' +
+        '<section class="lab-guided" aria-labelledby="lab-guided-title">' +
+        '<div class="lab-guided-head"><div><h2 id="lab-guided-title">' + esc(copy('Guided experiments', 'Experimentos guiados')) + '</h2>' +
+        '<p>' + esc(copy('Step by step, with the why behind each step.', 'Passo a passo, com o porquê de cada etapa.')) + '</p></div>' +
+        '<a class="lab-guided-all" href="/app?section=creations">' + esc(copy('See all experiments', 'Ver todos os experimentos')) + ' →</a></div>' +
+        '<div class="lab-guided-grid">' + guidedCards + '</div>' +
+        '</section>' +
         '</div>';
       bind(node);
       markSurface(true);
@@ -4683,7 +4770,7 @@
       rootEl.addEventListener('click', function (event) {
         try {
           var t = event.target && event.target.closest
-            ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-redo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel], [data-ready], [data-lab-zoom], [data-lab-fit], [data-lab-fit-all], [data-lab-zoom-menu], [data-lab-zoom-to], [data-lab-fit-selection], [data-board-tool], [data-lab-aspirate], [data-lab-dispense], [data-lab-drop], [data-lab-grind], [data-lab-drain], [data-lab-connect], [data-lab-duplicate], [data-lab-delete], [data-lab-rotate], [data-dock], [data-dock-close], [data-side], [data-lab-sound], [data-lab-focus], [data-start-creation], [data-stop-creation], [data-step-add], [data-lab-hint], [data-step-connect], [data-step-heat], [data-step-distill], [data-lab-distill], [data-lab-filter], [data-lab-reflux], [data-step-reflux], [data-step-reflux-connect], [data-lab-remove], [data-lab-stack], [data-lab-ferment], [data-step-ferment], [data-lab-crystallise], [data-step-crystallise], [data-step-filter]')
+            ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-redo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel], [data-ready], [data-lab-zoom], [data-lab-fit], [data-lab-fit-all], [data-lab-zoom-menu], [data-lab-zoom-to], [data-lab-fit-selection], [data-board-tool], [data-lab-aspirate], [data-lab-dispense], [data-lab-drop], [data-lab-grind], [data-lab-drain], [data-lab-connect], [data-lab-duplicate], [data-lab-delete], [data-lab-rotate], [data-dock], [data-dock-close], [data-lab-open-materials], [data-side], [data-lab-sound], [data-lab-focus], [data-start-creation], [data-stop-creation], [data-step-add], [data-lab-hint], [data-step-connect], [data-step-heat], [data-step-distill], [data-lab-distill], [data-lab-filter], [data-lab-reflux], [data-step-reflux], [data-step-reflux-connect], [data-lab-remove], [data-lab-stack], [data-lab-ferment], [data-step-ferment], [data-lab-crystallise], [data-step-crystallise], [data-step-filter]')
             : null;
           if (!t) return;
           if (t.hasAttribute('data-lab-sound')) {
@@ -4695,6 +4782,12 @@
           if (t.hasAttribute('data-dock-close')) {
             dockOpen = '';
             syncDock();
+            return;
+          }
+          if (t.hasAttribute('data-lab-open-materials')) {
+            dockOpen = 'materials';
+            syncDock();
+            playSound('select');
             return;
           }
           if (t.getAttribute('data-dock')) {

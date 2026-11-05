@@ -70,6 +70,34 @@
         "en": ["Recognize methyl isocyanate as the Bhopal gas", "See the linear N=C=O group in the model", "Notice the methyl carbon that reacts with water"],
         "pt": ["Reconhecer o isocianato de metila como o gás de Bhopal", "Ver o grupo linear N=C=O no modelo", "Notar o carbono da metila que reage com a água"]
       }
+    },
+    "explore/what-is-a-mole.html": {
+      "level": "beginner",
+      "learn": {
+        "en": ["Define the mole and Avogadro’s number", "Use molar mass to convert grams and moles", "Count particles in a sample"],
+        "pt": ["Definir mol e número de Avogadro", "Usar a massa molar para converter gramas e mols", "Contar partículas numa amostra"]
+      }
+    },
+    "explore/what-are-acids-and-bases.html": {
+      "level": "intermediate",
+      "learn": {
+        "en": ["Define acids and bases (Arrhenius and Brønsted–Lowry)", "Read and calculate pH", "Tell strong from weak acids and describe neutralization"],
+        "pt": ["Definir ácidos e bases (Arrhenius e Brønsted–Lowry)", "Ler e calcular o pH", "Distinguir ácidos fortes de fracos e descrever a neutralização"]
+      }
+    },
+    "explore/what-is-a-chemical-reaction.html": {
+      "level": "beginner",
+      "learn": {
+        "en": ["Recognize a chemical reaction and its signs", "Read and balance a chemical equation", "Name the main reaction types and energy changes"],
+        "pt": ["Reconhecer uma reação química e seus sinais", "Ler e balancear uma equação química", "Nomear os principais tipos de reação e as trocas de energia"]
+      }
+    },
+    "explore/what-are-states-of-matter.html": {
+      "level": "beginner",
+      "learn": {
+        "en": ["Describe solids, liquids, gases and plasma at the particle level", "Name the phase changes and the energy they need", "Read a simple phase diagram and use PV = nRT"],
+        "pt": ["Descrever sólidos, líquidos, gases e plasma no nível das partículas", "Nomear as mudanças de estado e a energia que exigem", "Ler um diagrama de fases simples e usar PV = nRT"]
+      }
     }
   }
 }

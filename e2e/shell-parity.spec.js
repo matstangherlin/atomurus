@@ -57,16 +57,16 @@ test.describe('shell parity guest desktop', () => {
       await page.goto(route.path);
       await expect(page.locator('[data-atomurus-account-chip], #ws-userchip')).toContainText(CREATE, { timeout: 15_000 });
       if (route.name === 'workspace') {
-        /* /app keeps the workspace chrome: 64px top bar + 248px sidebar. */
+        /* /app: site top bar (same items as the public header, Lab
+           current) and no desktop sidebar — the Lab design. */
         const chrome = await chromeMetrics(page);
         expect(chrome.top).toBeTruthy();
         expect(chrome.top.h).toBeGreaterThanOrEqual(60);
-        expect(chrome.top.h).toBeLessThanOrEqual(68);
-        expect(chrome.side).toBeTruthy();
-        expect(chrome.side.w).toBeGreaterThanOrEqual(240);
-        expect(chrome.side.w).toBeLessThanOrEqual(256);
+        expect(chrome.top.h).toBeLessThanOrEqual(70);
+        expect(chrome.side.w).toBe(0);
         expect(chrome.brand).toMatch(/Atomurus/i);
-        expect(chrome.search).toBeTruthy();
+        await expect(page.locator('[data-rm-ws-sitenav] a')).toHaveCount(6);
+        await expect(page.locator('.rm-ws-signin')).toBeVisible();
         expect(chrome.account).toBeTruthy();
         expect(chrome.accountText).toMatch(CREATE);
       } else {
@@ -87,7 +87,7 @@ test.describe('shell parity guest desktop', () => {
         expect(m.brand).toMatch(/Atomurus/i);
         expect(m.sidebar).toBe(0);
         expect(m.signin).toBe(true);
-        expect(m.items).toBe(5);
+        expect(m.items).toBe(6);
         await expect(page.locator('.rm-cta')).toContainText(CREATE);
       }
       await saveShot(page, `shell-guest-${route.name}`);

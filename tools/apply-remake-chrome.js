@@ -223,14 +223,56 @@ function applyStandalone(html, rel) {
 
 /* Signed-in workspace (/app, /account): keeps its own chrome and sidebar,
    but takes the remake skin (html[data-rm-ws] section of remake.css). */
-function applyWorkspace(html) {
+// The workspace top bar carries the same site navigation as the public
+// header (with "Lab" marked current), so /app reads as part of the site and
+// the left drawer is only needed on phones.
+function workspaceSiteNav() {
+  const link = (href, key, label, extra) => `    <a class="rm-ws-link" href="${href}"${extra || ''}><span data-i18n="${key}">${label}</span></a>`;
+  return [
+    '<nav class="rm-ws-sitenav" aria-label="Main" data-i18n-attr="aria-label:common.rm.mainNav" data-rm-ws-sitenav>',
+    link('/periodic-table.html', 'common.rm.periodic', 'Periodic table'),
+    link('/viewer/atomic-models.html', 'common.rm.models3d', '3D models'),
+    link('/calculators.html', 'common.rm.calculators', 'Calculators'),
+    link('/app?section=lab', 'common.rm.lab', 'Lab', ' data-rm-ws-lab'),
+    link('/explore.html', 'common.rm.articles', 'Articles'),
+    link('/pricing.html', 'common.rm.plans', 'Plans'),
+    '  </nav>'
+  ].join('\n');
+}
+
+function injectWorkspaceSiteNav(html) {
+  let next = html.replace(/\n?\s*<nav class="rm-ws-sitenav"[\s\S]*?<\/nav>/, '');
+  next = next.replace(/(<a class="ws-brand"[\s\S]*?<\/a>)/, (m) => `${m}\n    ${workspaceSiteNav()}`);
+  // Guests get the same "Sign in" link as the public header (CSS shows it
+  // only while the account chip is the guest CTA).
+  next = next.replace(/\n?\s*<a class="rm-ws-signin"[^>]*>[^<]*<\/a>/, '');
+  next = next.replace(/(<div class="ws-topbar-actions">)/, '$1\n      <a class="rm-ws-signin" href="/login?next=%2Fapp" data-i18n="common.rm.signIn">Sign in</a>');
+  // Site footer under the workspace content (design: lab page footer).
+  next = next.replace(/\n?\s*<footer class="rm-ws-foot"[\s\S]*?<\/footer>/, '');
+  next = next.replace(/(<div class="ws-private" id="app-study"[^>]*><\/div>\s*<\/div>)/, `$1
+    <footer class="rm-ws-foot" data-rm-ws-foot>
+      <span>© 2026 Atomurus</span>
+      <nav aria-label="Footer" data-i18n-attr="aria-label:common.rm.footerNav">
+        <a href="/about.html" data-i18n="common.rm.about">About</a>
+        <a href="/contact.html" data-i18n="common.rm.contact">Contact</a>
+        <a href="/privacy.html" data-i18n="common.rm.privacy">Privacy</a>
+        <a href="/terms.html" data-i18n="common.rm.terms">Terms</a>
+      </nav>
+    </footer>`);
+  return next;
+}
+
+function applyWorkspace(html, isApp) {
   // Appended after the existing attributes: tests pin `<html lang=… data-theme=…`.
-  let next = html.replace(/<html\b([^>]*)>/i, (m, attrs) => /\bdata-rm-ws=/.test(attrs)
-    ? `<html${attrs.replace(/\s*data-rm-ws="1"/, '')} data-rm-ws="1">`
-    : `<html${attrs} data-rm-ws="1">`);
+  // /app also gets data-rm-app: the Lab design (site top bar, no desktop
+  // sidebar) applies there only; /account keeps its own column.
+  const extra = isApp ? ' data-rm-ws="1" data-rm-app="1"' : ' data-rm-ws="1"';
+  let next = html.replace(/<html\b([^>]*)>/i, (m, attrs) =>
+    `<html${attrs.replace(/\s*data-rm-ws="1"/, '').replace(/\s*data-rm-app="1"/, '')}${extra}>`);
   if (!/assets\/remake\/remake\.css/.test(next)) {
     next = next.replace(/<\/head>/i, `<link rel="stylesheet" href="${CSS_HREF}">\n</head>`);
   }
+  next = injectWorkspaceSiteNav(next);
   next = next.replace(/<link rel="preload" href="\/assets\/fonts\/instrument-serif-[^"]+"[^>]*>\n?/g, '');
   next = next.replace(/<link rel="apple-touch-icon" href="[^"]*atomurus-logo\.png[^"]*">/g, '<link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">');
   return next;
@@ -239,7 +281,7 @@ function applyWorkspace(html) {
 function applyFile(file) {
   if (path.basename(file) === 'app.html' || WORKSPACE_PAGES.has(relOf(file))) {
     const original = fs.readFileSync(file, 'utf8');
-    const next = applyWorkspace(original);
+    const next = applyWorkspace(original, path.basename(file) === 'app.html');
     if (next !== original) fs.writeFileSync(file, next);
     return { status: 'workspace', changed: next !== original };
   }

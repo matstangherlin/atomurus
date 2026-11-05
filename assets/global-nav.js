@@ -156,6 +156,21 @@
       '<span class="ws-nav-label" data-i18n="' + i18nKey + '">' + fallback + '</span></a>';
   }
 
+  // Desktop /app shows the sidebar as an icon rail: mirror each label into
+  // data-rm-tip so the remake CSS can show it as a hover tooltip.
+  function syncRailTips() {
+    try {
+      document.querySelectorAll('#ws-sidebar .ws-nav-item').forEach(function (a) {
+        var l = a.querySelector('.ws-nav-label');
+        if (l && l.textContent.trim()) a.setAttribute('data-rm-tip', l.textContent.trim());
+      });
+    } catch (e) {}
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(syncRailTips, 0); });
+  else setTimeout(syncRailTips, 0);
+  window.addEventListener('load', syncRailTips);
+  try { if (window.I18N && I18N.onChange) I18N.onChange(function () { setTimeout(syncRailTips, 0); }); } catch (e) {}
+
   function paintFoot(opts) {
     var foot = document.getElementById('ws-nav-foot') || document.querySelector('[data-atomurus-nav-foot]');
     if (!foot) return;
@@ -183,6 +198,7 @@
         item('signin', guestLoginHref(), 'common.auth.signIn', 'Sign in', '', ICONS.account, '') +
         item('plans', '/pricing', 'common.nav.plans', 'Plans', '', ICONS.plan, '');
       applyI18n(foot);
+      syncRailTips();
       return;
     }
 
@@ -207,6 +223,7 @@
       });
     }
     applyI18n(foot);
+    syncRailTips();
   }
 
   function signOut() {

@@ -199,7 +199,7 @@ test('Overview hierarchy: Pro due hero and Free workspace copy', async ({ page }
   await expect(page.locator('#app-study').getByRole('link', { name: /Start Smart Review|Começar Smart Review/i })).toBeVisible();
   await expect(page.locator('#app-study').getByRole('link', { name: /Open Insights|Abrir Insights/i })).toBeVisible();
   await expect(page.locator('#app-study')).not.toContainText(/Nothing in progress yet|Nada em andamento/);
-  await expect(page.locator('#ws-nav-main .ws-nav-group').first()).toBeVisible();
+  await expect(page.locator('[data-rm-ws-sitenav]')).toBeVisible();
   await expect(page.locator('#ws-study-nav .ws-study-nav-item').first()).toBeVisible();
   await saveShot(page, 'desktop-overview-pro-hero');
 

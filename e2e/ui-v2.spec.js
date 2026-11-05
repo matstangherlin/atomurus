@@ -131,7 +131,8 @@ test('Portuguese pages paint without hiding i18n copy', async ({ page }) => {
   await expect(page.locator('[data-i18n="config.pagePrivacyDesc"]')).not.toContainText(/No accounts/i);
   await page.goto('/app.html?lang=pt-BR');
   await expect(page.locator('html.lang-pt-pending')).toHaveCount(0);
-  await expect(page.locator('#ws-search-q')).toBeVisible();
+  await expect(page.locator('#ws-search-q')).toBeAttached();
+  await expect(page.locator('[data-rm-ws-sitenav] a[data-rm-ws-lab]')).toHaveText(/Laboratório/);
 });
 
 test('key pages emit shared chrome in source HTML', async ({ request }) => {
