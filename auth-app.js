@@ -1800,6 +1800,16 @@
       '</div>';
   }
 
+  /* Duolingo-style path on top of Study (assets/study-journey-ui.js); the
+     library, sets and practice hub stay below it. */
+  function mountJourney(node) {
+    try {
+      if (window.AtomurusJourneyUI && node) window.AtomurusJourneyUI.mount(node);
+    } catch (err) {
+      if (window.console) console.warn('journey', err);
+    }
+  }
+
   function renderGuestStudyHub() {
     var node = $('app-study');
     if (!node) return;
@@ -3051,15 +3061,72 @@
     }
 
     var empty = !blocks.replace(/<section[^>]*>|<\/section>|<h2[^>]*>[^<]*<\/h2>/g, '').replace(/<div class="ws-grid">\s*<\/div>/g, '').trim();
-    node.innerHTML = sectionHead(t('navWork'), t('workLede'), false) +
+    var pt = langIsPt();
+    var cc = function (en, ptText) { return pt ? ptText : en; };
+    /* Lab design ("Meu trabalho"): page hero, a "continue" card for the most
+       recent bench, recent calculations, then every item as one card grid. */
+    var heroHtml = '<header class="lab-hero rm-app-hero rm-work-hero"><p class="lab-hero-kicker">' + escapeHtml(cc('Virtual lab', 'Laboratório virtual')) + '</p>' +
+      '<h1 class="lab-hero-title rm-app-hero-title">' + escapeHtml(t('navWork')) + '</h1>' +
+      '<p class="lab-hero-lead">' + escapeHtml(cc('Everything you made and everything you can pick up again.', 'Tudo o que você criou e tudo o que dá para retomar.')) + '</p></header>';
+    var topHtml = '';
+    if (tab === 'home' && !q) {
+      var last = boardRows[0];
+      var cont = '';
+      if (last) {
+        var lastHref = last.creationId
+          ? '/app?section=lab&creation=' + encodeURIComponent(last.creationId) + '&session=' + encodeURIComponent(last.id)
+          : '/app?section=lab&session=' + encodeURIComponent(last.id);
+        var lastPieces = Array.isArray(last.containers) ? last.containers.length : 0;
+        var lastWhen = last.updatedAt ? new Date(last.updatedAt) : null;
+        cont = '<section class="rm-work-continue">' +
+          '<div class="rm-work-preview" aria-hidden="true"><svg viewBox="0 0 220 130" width="100%" height="100%"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round">' +
+          '<path d="M52 40h34v66a6 6 0 0 1-6 6H58a6 6 0 0 1-6-6z"/><path d="M118 40h10v22l18 44a6 6 0 0 1-5.6 8h-35a6 6 0 0 1-5.5-8l18-44z"/><path d="M168 30h10v80h-10z"/><path d="M160 112h26"/></g>' +
+          '<path d="M53 84h32v22a5 5 0 0 1-5 5H58a5 5 0 0 1-5-5z" fill="#3DBE84" fill-opacity=".25"/></svg></div>' +
+          '<div class="rm-work-cont-body"><p class="rm-work-cont-k">' + escapeHtml(cc('Continue', 'Continuar')) + '</p>' +
+          (last.creationId ? '<span class="rm-work-chip is-creation">' + escapeHtml(cc('Guided creation', 'Criação guiada')) + '</span>' : '<span class="rm-work-chip">' + escapeHtml(cc('Lab session', 'Sessão do Lab')) + '</span>') +
+          '<h2>' + escapeHtml(last.title || cc('Open bench', 'Bancada aberta')) + '</h2>' +
+          '<p class="rm-work-cont-meta">' + escapeHtml([lastPieces ? lastPieces + ' ' + t(lastPieces === 1 ? 'workPiece' : 'workPieces') : '', lastWhen && !isNaN(lastWhen.getTime()) ? cc('edited ', 'editado ') + lastWhen.toLocaleString(pt ? 'pt-BR' : 'en-US', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : ''].filter(Boolean).join(' · ')) + '</p>' +
+          '<div class="rm-work-cont-actions"><a class="ws-btn ws-btn-primary" href="' + escapeHtml(lastHref) + '">' + escapeHtml(cc('Open on the bench', 'Abrir na bancada')) + '</a>' +
+          '<a class="ws-btn" href="/app?section=lab&mode=bench">' + escapeHtml(cc('New session', 'Nova sessão')) + '</a></div></div></section>';
+      } else {
+        cont = '<section class="rm-work-continue is-empty"><div class="rm-work-cont-body"><p class="rm-work-cont-k">' + escapeHtml(cc('Continue', 'Continuar')) + '</p>' +
+          '<h2>' + escapeHtml(cc('Nothing on the bench yet', 'Nada na bancada ainda')) + '</h2>' +
+          '<p class="rm-work-cont-meta">' + escapeHtml(cc('Sessions you build in the Lab show up here.', 'As sessões que você monta no Laboratório aparecem aqui.')) + '</p>' +
+          '<div class="rm-work-cont-actions"><a class="ws-btn ws-btn-primary" href="/app?section=lab&mode=bench">' + escapeHtml(cc('Open the bench', 'Abrir a bancada')) + '</a></div></div></section>';
+      }
+      var calcRows = histItems.slice(0, 4).map(function (item) {
+        var payload = item.payload || {};
+        var formula = payload.formula || payload.input || '';
+        var result = payload.result || payload.output || '';
+        return '<div class="rm-work-calc"><div><span class="rm-work-calc-k">' + escapeHtml(item.title || '') + '</span>' +
+          (formula ? '<span class="rm-work-calc-f">' + escapeHtml(formula) + '</span>' : '') + '</div>' +
+          (result ? '<b>' + escapeHtml(result) + '</b>' : '') + '</div>';
+      }).join('');
+      var calc = '<section class="rm-work-calcs"><div class="rm-work-calcs-h"><h2>' + escapeHtml(cc('Calculation history', 'Histórico de cálculos')) + '</h2>' +
+        '<a href="/app?section=work&tab=history">' + escapeHtml(cc('See all', 'Ver tudo')) + '</a></div>' +
+        (calcRows || '<p class="rm-work-calc-empty">' + escapeHtml(cc('Calculations you save from the calculators show up here.', 'Os cálculos que você salva nas calculadoras aparecem aqui.')) + '</p>') + '</section>';
+      topHtml = '<div class="rm-work-top">' + cont + calc + '</div>';
+    }
+    node.innerHTML = heroHtml + topHtml +
+      '<div class="rm-work-bar">' + workFilterHtml(tab) +
       '<form class="lab-search ws-work-search" action="/app" method="get">' +
       '<input type="hidden" name="section" value="work">' +
       (tab === 'home' ? '' : '<input type="hidden" name="tab" value="' + escapeHtml(tab) + '">') +
       '<label class="lc-sr-only" for="ws-work-q">' + escapeHtml(t('workSearch')) + '</label>' +
       '<input id="ws-work-q" name="q" type="search" placeholder="' + escapeHtml(t('workSearch')) + '" autocomplete="off" value="' + escapeHtml(q) + '">' +
-      '<button type="submit" class="ws-btn ws-btn-secondary">' + escapeHtml(t('search')) + '</button></form>' +
-      workFilterHtml(tab) +
-      (blocks || '<p class="ws-lede">' + escapeHtml(t(q ? 'workNoMatch' : 'workEmpty')) + '</p>');
+      '<button type="submit" class="ws-btn ws-btn-secondary">' + escapeHtml(t('search')) + '</button></form></div>' +
+      (blocks ? '<div class="rm-work-grid">' + blocks + '</div>' : '<p class="ws-lede">' + escapeHtml(t(q ? 'workNoMatch' : 'workEmpty')) + '</p>');
+    var chipFor = {
+      sessions: ['', cc('Lab session', 'Sessão do Lab')], creations: ['is-creation', cc('Creation', 'Criação')],
+      notebook: ['is-notebook', cc('Notebook', 'Caderno')], notes: ['is-note', cc('Note', 'Nota')], history: ['is-calc', cc('Calculation', 'Cálculo')]
+    };
+    node.querySelectorAll('[data-work-group]').forEach(function (group) {
+      var chip = chipFor[group.getAttribute('data-work-group')];
+      if (!chip) return;
+      group.querySelectorAll(':scope > .ws-grid > *').forEach(function (card) {
+        card.insertAdjacentHTML('afterbegin', '<span class="rm-work-chip ' + chip[0] + '">' + escapeHtml(chip[1]) + '</span>');
+      });
+    });
     node.querySelectorAll('[data-work-group="notebook"] .ws-study-item, [data-work-group="notes"] .ws-study-item').forEach(function (wrap, idx) {
       if (noteItems[idx % noteItems.length]) fillNoteRow(wrap, noteItems[idx % noteItems.length]);
     });
@@ -3309,7 +3376,7 @@
         renderLockedInsights();
         return;
       }
-      if (section === 'study') { renderGuestStudyHub(); return; }
+      if (section === 'study') { renderGuestStudyHub(); mountJourney(node); return; }
       if (section === 'library' || section === 'work' || section === 'sets' || section === 'notes' || section === 'history' || section === 'progress') {
         renderGuestEmpty(section);
         return;
@@ -3341,7 +3408,7 @@
     }
     try {
       if (section === 'work') { await renderWork(node, api, user); return; }
-      if (section === 'study') { await renderStudyHome(node, api, user); return; }
+      if (section === 'study') { await renderStudyHome(node, api, user); mountJourney(node); return; }
       if (section === 'overview') { await renderOverview(node, api, user); return; }
       if (section === 'library') { await renderLibrary(node, api); return; }
       if (section === 'sets') { await renderSetsSection(node, api); return; }

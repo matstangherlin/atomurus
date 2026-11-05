@@ -2680,7 +2680,7 @@ const DICT = {
           insightsNav: 'Insights',
           continueNav: 'Continuar',
           navGroupStudy: 'Estudo',
-          navGroupLab: 'Lab',
+          navGroupLab: 'Laboratório',
           navCreations: 'Criações',
           navNotebook: 'Caderno',
           virtualLab: 'Lab virtual',
