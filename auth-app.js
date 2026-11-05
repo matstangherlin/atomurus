@@ -509,7 +509,7 @@
       reviewShort: 'Revisão', labShort: 'Lab', insightsNav: 'Insights', continueNav: 'Continuar',
       stateNew: 'Novo', stateLearning: 'Aprendendo', stateReview: 'Revisão',
       focusCards: '{n} cards',
-      navGroupStudy: 'Estudo', navGroupLab: 'Lab', navGroupActivity: 'Atividade',
+      navGroupStudy: 'Estudo', navGroupLab: 'Laboratório', navGroupActivity: 'Atividade',
       workspaceNav: 'Workspace', planBilling: 'Plano e cobrança', accountOverview: 'Visão geral',
       accountPreferences: 'Preferências', displayNameLabel: 'Nome',
       preferencesNote: 'Idioma e tema ficam neste dispositivo.',

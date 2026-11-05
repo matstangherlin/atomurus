@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-title" content="Atomurus">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex,nofollow">
-<link rel="icon" type="image/png" href="assets/atomurus-logo.png?v=202611050330">
+<link rel="icon" type="image/png" href="assets/atomurus-logo.png?v=202611050344">
 <link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
 <title>Workspace — Atomurus</title>
 <meta name="description" content="Your Atomurus workspace — Virtual Lab, creations, notebook and study in one laboratory.">
@@ -21,32 +21,32 @@
 <meta property="og:description" content="Your Atomurus workspace — Virtual Lab, creations, notebook and study in one laboratory.">
 <link rel="canonical" href="https://atomurus.com/app">
 <link rel="preload" href="/assets/fonts/figtree-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202611050330">
-<script src="auth-sync.js?v=202611050330"></script>
-<script src="auth-client.js?v=202611050330"></script>
-<script src="ads-gate.js?v=202611050330"></script>
-<script src="cookie-consent.js?v=202611050330" defer></script>
-<script src="i18n.js?v=202611050330" defer></script>
-<script src="meta-i18n.js?v=202611050330" defer></script>
-<link rel="stylesheet" href="/assets/critical-lab.css?v=202611050330">
-<link rel="stylesheet" href="atomurus-lab-console.css?v=202611050330">
-<link rel="stylesheet" href="assets/workspace-foundation.css?v=202611050330">
-<link rel="stylesheet" href="assets/app-workspace.css?v=202611050330">
-<link rel="stylesheet" href="/assets/ui/index.css?v=202611050330">
-<link rel="stylesheet" href="/assets/layouts/workspace.css?v=202611050330">
-<script src="/assets/pro-features.js?v=202611050330"></script>
-<script src="/assets/global-nav.js?v=202611050330"></script>
-<script src="workspace-logic.js?v=202611050330" defer></script>
-<script src="workspace-ui.js?v=202611050330" defer></script>
-<script src="/assets/core/atomurus-core.js?v=202611050330" defer></script>
-<script src="study-client.js?v=202611050330" defer></script>
-<script src="assets/study-curriculum.js?v=202611050330" defer></script>
-<script src="assets/study-practice.js?v=202611050330" defer></script>
-<script src="pro-lab.js?v=202611050330" defer></script>
-<script src="/assets/lab/virtual-lab.js?v=202611050330" defer></script>
-<script src="/assets/guest-nudge.js?v=202611050330" defer></script>
-<script src="auth-app.js?v=202611050330" defer></script>
-<link rel="stylesheet" href="/assets/remake/remake.css?v=202611050330">
+<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202611050344">
+<script src="auth-sync.js?v=202611050344"></script>
+<script src="auth-client.js?v=202611050344"></script>
+<script src="ads-gate.js?v=202611050344"></script>
+<script src="cookie-consent.js?v=202611050344" defer></script>
+<script src="i18n.js?v=202611050344" defer></script>
+<script src="meta-i18n.js?v=202611050344" defer></script>
+<link rel="stylesheet" href="/assets/critical-lab.css?v=202611050344">
+<link rel="stylesheet" href="atomurus-lab-console.css?v=202611050344">
+<link rel="stylesheet" href="assets/workspace-foundation.css?v=202611050344">
+<link rel="stylesheet" href="assets/app-workspace.css?v=202611050344">
+<link rel="stylesheet" href="/assets/ui/index.css?v=202611050344">
+<link rel="stylesheet" href="/assets/layouts/workspace.css?v=202611050344">
+<script src="/assets/pro-features.js?v=202611050344"></script>
+<script src="/assets/global-nav.js?v=202611050344"></script>
+<script src="workspace-logic.js?v=202611050344" defer></script>
+<script src="workspace-ui.js?v=202611050344" defer></script>
+<script src="/assets/core/atomurus-core.js?v=202611050344" defer></script>
+<script src="study-client.js?v=202611050344" defer></script>
+<script src="assets/study-curriculum.js?v=202611050344" defer></script>
+<script src="assets/study-practice.js?v=202611050344" defer></script>
+<script src="pro-lab.js?v=202611050344" defer></script>
+<script src="/assets/lab/virtual-lab.js?v=202611050344" defer></script>
+<script src="/assets/guest-nudge.js?v=202611050344" defer></script>
+<script src="auth-app.js?v=202611050344" defer></script>
+<link rel="stylesheet" href="/assets/remake/remake.css?v=202611050344">
 </head>
 <body class="ws-body">
 <a class="ws-skip" href="#app-study" id="ws-skip">Skip to content</a>
@@ -85,6 +85,7 @@
       </button>
     </form>
     <div class="ws-topbar-actions">
+      <a class="rm-ws-signin" href="/login?next=%2Fapp" data-i18n="common.rm.signIn">Sign in</a>
       <button class="ws-icon-btn" type="button" data-i18n-toggle data-i18n-attr="title:common.langToggle; aria-label:common.langToggle" title="Switch language" aria-label="Switch language">
         <span data-i18n-toggle-label>PT</span>
       </button>
@@ -160,6 +161,15 @@
       <div class="ws-error" id="app-error" role="alert" data-i18n="common.ws.loadError">Could not load the workspace. Please try again in a moment.</div>
       <div class="ws-private" id="app-study" tabindex="-1"></div>
     </div>
+    <footer class="rm-ws-foot" data-rm-ws-foot>
+      <span>© 2026 Atomurus</span>
+      <nav aria-label="Footer" data-i18n-attr="aria-label:common.rm.footerNav">
+        <a href="/about.html" data-i18n="common.rm.about">About</a>
+        <a href="/contact.html" data-i18n="common.rm.contact">Contact</a>
+        <a href="/privacy.html" data-i18n="common.rm.privacy">Privacy</a>
+        <a href="/terms.html" data-i18n="common.rm.terms">Terms</a>
+      </nav>
+    </footer>
   </main>
 
   <nav class="ws-bottom" id="ws-bottom" aria-label="Primary"></nav>

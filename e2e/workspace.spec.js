@@ -434,13 +434,13 @@ test('Study Hub Pro with due cards and insights stays a learning home', async ({
 test('Guest workspace footer opens signup, not login', async ({ page }) => {
   await installApi(page, { kind: 'guest', signedIn: false });
   await gotoWorkspace(page, '/app');
-  const signup = page.locator('#ws-nav-foot a[data-nav="signup"]');
+  // Desktop: the top bar carries Sign in + Create account (no sidebar).
+  await expect(page.locator('.rm-ws-signin')).toBeVisible();
+  await expect(page.locator('.rm-ws-signin')).toHaveAttribute('href', /\/login/);
+  const signup = page.locator('#ws-userchip');
   await expect(signup).toBeVisible();
-  const footBox = await signup.boundingBox();
-  expect(footBox).toBeTruthy();
-  expect(footBox.y).toBeGreaterThan(64);
-  expect(footBox.y + footBox.height).toBeLessThan(800);
   await expect(signup).toHaveAttribute('href', /\/signup/);
+  await expect(page.locator('#ws-nav-foot a[data-nav="signup"]')).toHaveAttribute('href', /\/signup/);
   await expect(page.locator('#ws-nav-foot a[data-nav="signin"]')).toHaveAttribute('href', /\/login/);
   await expect(page.locator('#ws-nav-foot a[data-nav="plans"]')).toHaveAttribute('href', /\/pricing/);
   await signup.click();
@@ -454,9 +454,10 @@ test('Signed-in Account and Plan leave Workspace', async ({ page }) => {
   await gotoWorkspace(page, '/app');
   await expect(page.locator('#ws-nav-foot a[data-nav="account"]')).toHaveAttribute('href', /\/account/);
   await expect(page.locator('#ws-userchip')).toHaveAttribute('href', /\/account/);
-  await expect(page.locator('#ws-nav-foot a.is-upgrade')).toBeVisible();
+  await expect(page.locator('#ws-nav-foot a.is-upgrade')).toHaveCount(1);
   await expect(page.locator('#ws-study-nav a[href*="section=account"]')).toHaveCount(0);
-  await page.locator('#ws-nav-foot a[data-nav="account"]').click();
+  await page.locator('#ws-userchip').click();
+  await page.locator('#ws-account-menu a[href="/account"]').click();
   await expect(page).toHaveURL(/\/account/);
   await expect(page.locator('#app-study')).toContainText(/Account|Conta/);
 });
@@ -537,7 +538,8 @@ test('Workspace navigation is three areas and nothing else', async ({ page }) =>
   expect(Math.abs(sections.y - tools.y)).toBeLessThan(6);
   expect(tools.x).toBeGreaterThan(sections.x + sections.width - 2);
   await expect(page.locator('.ws-local-nav .ws-study-nav-item svg').first()).toBeHidden();
-  await expect(page.locator('.ws-context-nav .ws-study-nav-item svg').first()).toBeVisible();
+  // The areas are a segmented control (Lab design): labels only.
+  await expect(page.locator('.ws-context-nav .ws-study-nav-item svg').first()).toBeHidden();
 
   // No destination is offered twice on the same line, in any area.
   async function navHrefs() {
@@ -903,22 +905,23 @@ test('Lab fills the viewport as a canvas, not a card on a page', async ({ page }
   await gotoWorkspace(page, '/app');
   await page.waitForSelector('.lab-beaker');
 
-  // None of the page chrome a board should not carry.
+  // Lab design: one short page hero, no breadcrumbs or section headers.
   await expect(page.locator('#app-study .ws-crumb')).toHaveCount(0);
-  await expect(page.locator('#app-study h1')).toHaveCount(0);
-  await expect(page.locator('#app-study .ws-lab-hero')).toHaveCount(0);
+  await expect(page.locator('#app-study h1')).toHaveCount(1);
+  await expect(page.locator('#app-study h1')).toHaveText(/Build, mix and observe|Monte, misture e observe/);
   await expect(page.locator('#app-study .ws-section-head')).toHaveCount(0);
   await expect(page.locator('.ws-local-nav')).toHaveCount(0);
+  await expect(page.locator('.lab-guided-card [data-start-creation]')).toHaveCount(4);
 
-  // The document itself does not scroll; the board took the height instead.
+  // The document does not scroll (the workspace column does) and the bench
+  // keeps a working height.
   const page_scroll = await page.evaluate(() => ({
     doc: document.documentElement.scrollHeight - document.documentElement.clientHeight,
     stage: document.querySelector('[data-lab-stage]').getBoundingClientRect(),
     viewport: window.innerHeight
   }));
   expect(page_scroll.doc).toBeLessThanOrEqual(1);
-  expect(page_scroll.stage.height).toBeGreaterThan(page_scroll.viewport * 0.6);
-  expect(page_scroll.stage.bottom).toBeLessThanOrEqual(page_scroll.viewport + 1);
+  expect(page_scroll.stage.height).toBeGreaterThan(page_scroll.viewport * 0.55);
 
   // The paper grid belongs to the world: it scales with zoom.
   const gridAt100 = await page.locator('[data-lab-stage]').evaluate((el) => getComputedStyle(el).backgroundSize);
@@ -932,13 +935,14 @@ test('Lab fills the viewport as a canvas, not a card on a page', async ({ page }
   await page.locator('[data-side="notebook"]').click();
   await expect(page.locator('.lab-side-body .lab-notes')).toBeVisible();
 
-  // Focus mode hides the global sidebar and the same button brings it back.
-  await expect(page.locator('.ws-sidebar')).toBeVisible();
+  // Focus mode hides the page hero and guided list; the same button brings them back.
+  await expect(page.locator('.lab-hero')).toBeVisible();
   await page.locator('[data-lab-focus]').click();
-  await expect(page.locator('.ws-sidebar')).toBeHidden();
+  await expect(page.locator('.lab-hero')).toBeHidden();
+  await expect(page.locator('.lab-guided')).toBeHidden();
   await expect(page.locator('[data-lab-focus]')).toHaveAttribute('aria-pressed', 'true');
   await page.locator('[data-lab-focus]').click();
-  await expect(page.locator('.ws-sidebar')).toBeVisible();
+  await expect(page.locator('.lab-hero')).toBeVisible();
 
   // Leaving the Lab gives the page back its normal scrolling behaviour.
   await gotoWorkspace(page, '/app?section=study');

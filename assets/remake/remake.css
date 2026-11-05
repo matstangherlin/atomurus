@@ -2342,32 +2342,16 @@ html[data-rm-ws] .ws-topbar .ws-icon-btn { width: 38px; height: 38px; border-col
 html[data-rm-ws] .ws-topbar .ws-userchip:not(.is-guest-cta) { height: 40px; padding: 0 14px !important; border-radius: 10px !important; border-color: var(--rm-line-strong) !important; background: var(--rm-paper) !important; font-family: var(--rm-font) !important; }
 html[data-rm-ws] .ws-topbar .ws-userchip-name { font: 600 14px var(--rm-font) !important; }
 @media (min-width: 1024px) {
-  /* desktop: the site links live in the top bar, so the left column becomes
-     a slim icon rail (labels stay in the DOM for screen readers/tooltips) */
-  html[data-rm-ws] .ws-shell { grid-template-columns: 72px minmax(0, 1fr) !important; grid-template-areas: "topbar topbar" "sidebar main" !important; --ws-topbar: 68px; }
-  html[data-rm-ws] .is-lab-focus .ws-shell { grid-template-columns: 0 minmax(0, 1fr) !important; }
-  html[data-rm-ws] .ws-sidebar { width: 72px !important; padding: 12px 10px !important; background: var(--rm-bg) !important; border-right: 1px solid var(--rm-line) !important; align-items: center; overflow: visible !important; }
-  html[data-rm-ws] .ws-sidebar .ws-nav, html[data-rm-ws] .ws-sidebar .ws-nav-block, html[data-rm-ws] .ws-sidebar .ws-nav-foot { align-items: center; gap: 6px !important; padding: 0 !important; border: 0 !important; overflow: visible !important; }
-  html[data-rm-ws] .ws-sidebar .ws-nav-foot { padding-top: 10px !important; border-top: 1px solid var(--rm-line) !important; }
-  html[data-rm-ws] .ws-sidebar .ws-nav-group { font-size: 0 !important; line-height: 0 !important; height: 1px !important; width: 28px; margin: 2px 0 6px !important; padding: 0 !important; background: var(--rm-line) !important; overflow: hidden; }
-  html[data-rm-ws] .ws-sidebar .ws-nav-item {
-    position: relative; width: 48px !important; height: 48px !important; min-height: 48px !important; padding: 0 !important; margin: 0 !important;
-    justify-content: center !important; border-radius: 12px !important; color: var(--rm-ink-2) !important;
-  }
-  html[data-rm-ws] .ws-sidebar .ws-nav-item svg { width: 20px !important; height: 20px !important; }
-  html[data-rm-ws] .ws-sidebar .ws-nav-item:hover { background: var(--rm-surface) !important; color: var(--rm-ink) !important; }
-  html[data-rm-ws] .ws-sidebar .ws-nav-item.is-upgrade { background: var(--rm-green) !important; color: var(--rm-on-green) !important; }
-  html[data-rm-ws] .ws-sidebar .ws-nav-label { position: absolute !important; width: 1px !important; height: 1px !important; overflow: hidden !important; clip: rect(0 0 0 0) !important; white-space: nowrap !important; }
-  html[data-rm-ws] .ws-sidebar .ws-nav-item[data-rm-tip]:hover::after {
-    content: attr(data-rm-tip); position: absolute; left: calc(100% + 10px); top: 50%; transform: translateY(-50%);
-    padding: 6px 10px; border-radius: 8px; background: var(--rm-ink); color: var(--rm-bg); font: 600 13px/1 var(--rm-font); white-space: nowrap; z-index: 60; pointer-events: none;
-  }
+  /* desktop (design "Laboratório"): the site links live in the top bar and
+     the app sections are a segmented control, so there is no left column */
+  html[data-rm-ws] .ws-shell { grid-template-columns: minmax(0, 1fr) !important; grid-template-areas: "topbar" "main" !important; --ws-topbar: 68px; }
+  html[data-rm-ws] .ws-sidebar { display: none !important; }
   html[data-rm-ws] .ws-menu-btn { display: none !important; }
+  html[data-rm-ws] .ws-search { display: none !important; }
 }
 @media (min-width: 1024px) and (max-width: 1380px) {
   html[data-rm-ws] .ws-topbar { gap: 12px !important; }
   html[data-rm-ws] .rm-ws-link { padding: 0 8px; font-size: 14px; }
-  html[data-rm-ws] .ws-search { flex: 0 1 150px !important; max-width: 150px !important; min-width: 96px !important; }
 }
 @media (min-width: 1024px) and (max-width: 1180px) {
   html[data-rm-ws] .ws-topbar [data-i18n-toggle] { display: none !important; }
@@ -2495,4 +2479,223 @@ html[data-rm-ws] .ws-main .ws-lede { font: 400 17px/1.55 var(--rm-font) !importa
   .rm-nav .rm-link { padding: 10px 8px; font-size: 14px; }
   .rm-actions { gap: 8px; }
   .rm-actions .rm-cta { padding-left: 14px; padding-right: 14px; font-size: 14px; }
+}
+
+/* 9e ── Laboratório (design "Atomurus — Laboratório remake") ─────────── */
+html[data-rm-ws] .rm-ws-signin { display: none; align-items: center; height: 40px; padding: 0 12px; border-radius: 8px; font: 500 15px/1 var(--rm-font); color: var(--rm-ink); text-decoration: none; }
+html[data-rm-ws] .rm-ws-signin:hover { background: var(--rm-surface); }
+html[data-rm-ws] .ws-topbar-actions:has(.is-guest-cta) .rm-ws-signin { display: inline-flex; }
+html[data-rm-ws] .ws-topbar [data-i18n-toggle],
+html[data-rm-ws] .ws-topbar button[onclick="toggleTheme()"] { border-color: transparent !important; color: var(--rm-ink-2) !important; }
+html[data-rm-ws] .ws-topbar .ws-userchip.is-guest-cta { height: 40px; padding: 0 18px !important; border-radius: 10px !important; font: 600 15px var(--rm-font) !important; }
+/* page frame */
+html[data-rm-ws] .ws-main,
+html[data-rm-ws].is-lab-surface .ws-main { display: block !important; overflow-y: auto !important; padding: 40px max(24px, calc((100% - 1272px) / 2)) 0 !important; position: relative; }
+html[data-rm-ws] .ws-content,
+html[data-rm-ws].is-lab-surface .ws-content { max-width: none !important; display: block !important; min-height: 0; }
+html[data-rm-ws].is-lab-surface #app-study,
+html[data-rm-ws].is-lab-surface .lab-board { display: block !important; }
+html[data-rm-ws] .rm-ws-foot { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 64px; padding: 24px 0 28px; border-top: 1px solid var(--rm-line); font: 400 14px var(--rm-font); color: var(--rm-ink-2); }
+html[data-rm-ws] .rm-ws-foot nav { display: flex; gap: 20px; flex-wrap: wrap; }
+html[data-rm-ws] .rm-ws-foot a { color: var(--rm-ink-2); text-decoration: none; }
+html[data-rm-ws] .rm-ws-foot a:hover { color: var(--rm-ink); }
+/* sections as a segmented control */
+html[data-rm-ws] .ws-study-nav { border: 0 !important; margin: 0 0 24px !important; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+html[data-rm-ws] .ws-study-nav .ws-context-nav { display: inline-flex !important; gap: 2px !important; padding: 4px !important; border-radius: 14px !important; background: var(--rm-surface) !important; }
+html[data-rm-ws] .ws-study-nav .ws-context-nav .ws-study-nav-item {
+  height: 40px !important; padding: 0 20px !important; border: 0 !important; border-radius: 10px !important; margin: 0 !important;
+  color: var(--rm-ink-2) !important; font: 500 15px/1 var(--rm-font) !important; background: transparent !important;
+}
+html[data-rm-ws] .ws-study-nav .ws-context-nav .ws-study-nav-item svg { display: none !important; }
+html[data-rm-ws] .ws-study-nav .ws-context-nav .ws-study-nav-item.is-active { background: var(--rm-paper) !important; color: var(--rm-ink) !important; font-weight: 600 !important; box-shadow: 0 1px 2px rgba(20, 18, 14, .08) !important; }
+html[data-rm-ws][data-theme="dark"] .ws-study-nav .ws-context-nav .ws-study-nav-item.is-active { background: #2B271F !important; }
+@media (min-width: 1024px) {
+  html[data-rm-ws].is-lab-surface .ws-study-nav { position: absolute; top: 130px; right: max(24px, calc((100% - 1272px) / 2)); margin: 0 !important; z-index: 5; }
+}
+/* hero */
+html[data-rm-ws] .lab-hero { max-width: 660px; margin: 0 0 28px; }
+html[data-rm-ws] .lab-hero-kicker { margin: 0 0 8px; font: 600 14px/1.3 var(--rm-font); color: var(--rm-green); }
+html[data-rm-ws] .lab-hero .lab-hero-title { margin: 0 0 12px !important; font: 700 clamp(32px, 3.4vw, 48px)/1.08 var(--rm-font) !important; letter-spacing: -0.03em !important; color: var(--rm-ink) !important; }
+html[data-rm-ws] .lab-hero-lead { margin: 0; font: 400 17px/1.55 var(--rm-font); color: var(--rm-ink-2); }
+/* toolbar card */
+html[data-rm-ws] .lab-board-bar { padding: 10px 12px !important; margin: 0 0 24px !important; border: 1px solid var(--rm-line); border-radius: 18px; background: var(--rm-paper); flex-wrap: nowrap !important; gap: 10px !important; }
+html[data-rm-ws] .lab-board-bar .lab-tool-btn { width: 42px !important; height: 42px !important; }
+html[data-rm-ws] .lab-bar-title { display: flex; align-items: center; gap: 10px; padding-right: 12px; margin-right: 2px; border-right: 1px solid var(--rm-line); white-space: nowrap; }
+html[data-rm-ws] .lab-bar-title strong { font-size: 17px !important; }
+html[data-rm-ws] .lab-save-pill { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 999px; background: var(--rm-green-soft); color: var(--rm-green); font: 600 12.5px/1 var(--rm-font); white-space: nowrap; }
+html[data-rm-ws] .lab-save-pill > i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+html[data-rm-ws] .lab-save-pill .lab-save-state { font: inherit !important; color: inherit !important; }
+html[data-rm-ws] .lab-save-pill .lab-save-state.is-pending { opacity: .7; }
+html[data-rm-ws] .lab-save-pill .lab-bar-note { border: 0 !important; background: none !important; padding: 0 !important; margin: 0 !important; font: inherit !important; color: inherit !important; text-transform: lowercase; }
+html[data-rm-ws] .lab-bar-search { position: relative; flex: 1 1 auto; display: flex; gap: 10px; min-width: 0; margin: 0 !important; }
+html[data-rm-ws] .lab-search-ico { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--rm-ink-2); display: inline-flex; pointer-events: none; }
+html[data-rm-ws] .lab-bar-search input { flex: 1 1 auto; min-width: 0; height: 46px !important; padding-left: 40px !important; background: var(--rm-bg) !important; }
+html[data-rm-ws] .lab-board-bar .ws-btn, html[data-rm-ws] .lab-board-bar .lab-icon-btn { height: 46px !important; min-height: 46px !important; }
+html[data-rm-ws] .lab-board-bar .lab-icon-btn { width: 46px !important; }
+html[data-rm-ws] .lab-board-bar .lab-toolbar { flex: none; gap: 8px; }
+/* three columns */
+html[data-rm-ws] .lab-stage-shell { display: grid !important; grid-template-columns: 232px minmax(0, 1fr) 348px; gap: 16px !important; height: clamp(560px, calc(100vh - 210px), 720px); align-items: stretch; }
+html[data-rm-ws].is-lab-surface .lab-stage-shell { flex: none; }
+html[data-rm-ws] .lab-stage-frame { min-height: 0; }
+html[data-rm-ws] .lab-stage-shell .lab-board-stage,
+html[data-rm-ws].is-lab-surface .lab-board-stage { height: 100% !important; border-radius: 18px !important; }
+/* left: add-to-bench panel */
+html[data-rm-ws] .lab-dock { display: flex !important; flex-direction: column; gap: 0 !important; min-height: 0; padding: 14px; border: 1px solid var(--rm-line); border-radius: 18px; background: var(--rm-paper); overflow-y: auto; scrollbar-width: thin; }
+html[data-rm-ws] .lab-dock-rail { display: flex !important; flex-direction: column; gap: 2px !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; overflow: visible !important; }
+html[data-rm-ws] .lab-dock-modes { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; padding: 4px; margin: 0 0 12px; border-radius: 12px; background: var(--rm-surface); }
+html[data-rm-ws] .lab-dock-rail .lab-dock-btn.lab-dock-mode { flex-direction: row !important; justify-content: center !important; width: auto !important; min-height: 40px !important; gap: 6px !important; padding: 0 8px !important; border-radius: 9px !important; background: transparent !important; color: var(--rm-ink-2) !important; }
+html[data-rm-ws] .lab-dock-rail .lab-dock-btn.lab-dock-mode .lab-dock-icon { width: 16px; height: 16px; }
+html[data-rm-ws] .lab-dock-rail .lab-dock-btn.lab-dock-mode .lab-dock-name { font: 500 14px/1 var(--rm-font) !important; }
+html[data-rm-ws] .lab-dock-rail .lab-dock-btn.lab-dock-mode.is-on { background: var(--rm-paper) !important; color: var(--rm-ink) !important; box-shadow: 0 1px 2px rgba(20, 18, 14, .08) !important; }
+html[data-rm-ws][data-theme="dark"] .lab-dock-rail .lab-dock-btn.lab-dock-mode.is-on { background: #2B271F !important; }
+html[data-rm-ws] .lab-dock-rule { display: none !important; }
+html[data-rm-ws] .lab-dock-label { margin: 2px 10px 6px; font: 600 13px/1.3 var(--rm-font); color: var(--rm-ink-2); }
+html[data-rm-ws] .lab-dock-rail .lab-dock-btn:not(.lab-dock-mode) {
+  flex-direction: row !important; align-items: center !important; justify-content: flex-start !important; gap: 12px !important;
+  width: 100% !important; min-height: 46px !important; padding: 6px 10px 6px 6px !important; border-radius: 12px !important;
+  border: 0 !important; background: transparent !important; color: var(--rm-ink) !important; text-align: left;
+}
+html[data-rm-ws] .lab-dock-rail .lab-dock-btn:not(.lab-dock-mode) .lab-dock-icon { flex: none; width: 32px; height: 32px; padding: 7px; border-radius: 9px; background: var(--rm-surface); box-sizing: border-box; }
+html[data-rm-ws] .lab-dock-rail .lab-dock-btn:not(.lab-dock-mode) .lab-dock-name { flex: 1 1 auto; font: 500 15px/1.25 var(--rm-font) !important; text-align: left !important; letter-spacing: 0 !important; }
+html[data-rm-ws] .lab-dock-count { flex: none; font: 500 12px/1 var(--rm-mono); color: var(--rm-ink-3); }
+html[data-rm-ws] .lab-dock-rail .lab-dock-btn:not(.lab-dock-mode):hover { background: var(--rm-surface) !important; }
+html[data-rm-ws] .lab-dock-rail .lab-dock-btn:not(.lab-dock-mode).is-on { background: var(--rm-surface) !important; font-weight: 600; }
+html[data-rm-ws] .lab-dock-rail .lab-dock-btn:not(.lab-dock-mode).is-on .lab-dock-name { font-weight: 700 !important; }
+html[data-rm-ws] .lab-dock-rail .lab-dock-btn:not(.lab-dock-mode).is-on .lab-dock-icon { background: var(--rm-paper); }
+html[data-rm-ws] .lab-dock-dot { top: 6px !important; left: 30px; right: auto !important; }
+html[data-rm-ws] .lab-dock-panel { position: static !important; width: auto !important; max-height: none !important; margin: 2px 0 8px; padding: 0 0 0 44px; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; overflow: visible !important; }
+html[data-rm-ws] .lab-dock-head { padding: 0 !important; border: 0 !important; justify-content: flex-end !important; min-height: 0; }
+html[data-rm-ws] .lab-dock-head h2 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+html[data-rm-ws] .lab-dock-close { width: 24px !important; height: 24px !important; font-size: 16px !important; color: var(--rm-ink-3) !important; margin: -4px 0 0; }
+html[data-rm-ws] .lab-dock-body { padding: 0 !important; overflow: visible !important; }
+html[data-rm-ws] .lab-dock-body .lab-chips { display: flex; flex-direction: column; flex-wrap: nowrap; gap: 0; }
+html[data-rm-ws] .lab-dock-body .lab-chip-eq { display: flex !important; justify-content: space-between; align-items: center; gap: 10px; width: 100%; min-height: 36px !important; padding: 6px 8px !important; border: 0 !important; border-radius: 8px !important; background: none !important; text-align: left; font: 500 14px/1.3 var(--rm-font) !important; color: var(--rm-ink) !important; }
+html[data-rm-ws] .lab-dock-body .lab-chip-eq:hover { background: var(--rm-surface) !important; }
+html[data-rm-ws] .lab-dock-body .lab-chip-eq.is-wanted { background: var(--rm-green-soft) !important; color: var(--rm-green) !important; }
+html[data-rm-ws] .lab-chip-cap { flex: none; font: 500 12px/1 var(--rm-mono); color: var(--rm-ink-3); }
+html[data-rm-ws] .lab-dock-body .lab-chip-group { margin: 0 0 8px; }
+html[data-rm-ws] .lab-dock-body .lab-chip-group-title { display: block; margin: 6px 0 4px 8px; font: 600 12px var(--rm-font); color: var(--rm-ink-3); letter-spacing: 0; text-transform: none; }
+html[data-rm-ws] .lab-dock-body .lab-chip:not(.lab-chip-eq) { justify-content: flex-start; width: 100%; min-height: 34px !important; padding: 6px 8px !important; border: 0 !important; border-radius: 8px !important; background: none !important; font: 500 14px var(--rm-font) !important; color: var(--rm-ink) !important; }
+html[data-rm-ws] .lab-dock-body .lab-chip:not(.lab-chip-eq):hover { background: var(--rm-surface) !important; }
+html[data-rm-ws] .lab-dock-note { margin: 6px 8px 0 !important; font: 400 12px/1.4 var(--rm-font) !important; color: var(--rm-ink-3) !important; }
+html[data-rm-ws] .lab-dock-tip { margin: auto 0 0; padding: 12px 14px; border-radius: 12px; background: var(--rm-surface); font: 400 13px/1.5 var(--rm-font); color: var(--rm-ink-2); }
+html[data-rm-ws] .lab-dock-rail + .lab-dock-tip { margin-top: 16px; }
+/* stage chips */
+html[data-rm-ws] .lab-count-chip { position: absolute; top: 14px; left: 14px; z-index: 4; padding: 5px 10px; border: 1px solid var(--rm-line); border-radius: 999px; background: var(--rm-paper); font: 500 12.5px/1 var(--rm-font); color: var(--rm-ink-2); pointer-events: none; }
+html[data-rm-ws] .lab-last-step { position: absolute; left: 14px; bottom: 14px; z-index: 4; max-width: calc(100% - 280px); margin: 0; padding: 9px 14px; border: 1px solid var(--rm-line); border-radius: 12px; background: var(--rm-paper); font: 400 13px/1.35 var(--rm-font); color: var(--rm-ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
+html[data-rm-ws] .lab-last-step b { color: var(--rm-ink); font-weight: 600; }
+html[data-rm-ws] .lab-stage-frame > .lab-hint { display: none !important; }
+html[data-rm-ws] .lab-hud-right { right: 14px !important; bottom: 14px !important; }
+/* right: dark inspector */
+html[data-rm-ws] .lab-side { display: flex !important; flex-direction: column; min-height: 0; padding: 14px !important; border: 0 !important; border-radius: 18px !important; background: #14120E !important; color: #F2EFE7 !important; box-shadow: none !important; }
+html[data-rm-ws][data-theme="dark"] .lab-side { background: #1B1915 !important; box-shadow: 0 0 0 1px var(--rm-line) !important; }
+html[data-rm-ws] .lab-side-tabs { display: grid !important; grid-template-columns: repeat(3, 1fr); gap: 2px !important; padding: 4px !important; border: 1px solid rgba(242, 239, 231, .1) !important; border-radius: 12px; background: rgba(242, 239, 231, .04) !important; }
+html[data-rm-ws] .lab-side-tabs button { height: 38px !important; min-height: 0 !important; padding: 0 6px !important; border: 0 !important; border-radius: 9px !important; margin: 0 !important; color: #BEB8A8 !important; font: 500 13.5px/1 var(--rm-font) !important; white-space: nowrap; }
+html[data-rm-ws] .lab-side-tabs button.is-on, html[data-rm-ws] .lab-side-tabs button[aria-selected="true"] { background: #3A352B !important; color: #F2EFE7 !important; font-weight: 600 !important; }
+html[data-rm-ws] .lab-side-body { flex: 1 1 auto; min-height: 0; padding: 18px 4px 4px !important; overflow-y: auto; color: #F2EFE7 !important; scrollbar-width: thin; }
+html[data-rm-ws] .lab-side-body [data-lab-inspector] { display: flex; flex-direction: column; }
+html[data-rm-ws] .lab-side-body .lab-insp-head { position: relative; display: flex; flex-direction: column; gap: 4px; padding: 0 0 16px; border-bottom: 1px solid rgba(242, 239, 231, .12); }
+html[data-rm-ws] .lab-insp-k { font: 400 12.5px var(--rm-font); color: #A9A392; }
+html[data-rm-ws] .lab-insp-name { font: 700 19px/1.2 var(--rm-font); color: #F2EFE7; }
+html[data-rm-ws] .lab-insp-cap { position: absolute; top: 0; right: 0; padding: 4px 8px; border: 1px solid rgba(242, 239, 231, .25); border-radius: 8px; font: 500 12px/1 var(--rm-mono); color: #DAD5C8; }
+html[data-rm-ws] .lab-side-body .lab-kv { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(242, 239, 231, .1); font: 400 14px var(--rm-font); }
+html[data-rm-ws] .lab-side-body .lab-kv > span { color: #BEB8A8 !important; }
+html[data-rm-ws] .lab-side-body .lab-kv > strong { color: #F2EFE7 !important; font: 500 14px var(--rm-mono) !important; text-align: right; }
+html[data-rm-ws] .lab-side-body .lab-kv.lab-kv-ph { align-items: baseline; justify-content: flex-start; gap: 10px; padding: 16px 0 14px; }
+html[data-rm-ws] .lab-side-body .lab-kv.lab-kv-ph > span { font-size: 15px; }
+html[data-rm-ws] .lab-side-body .lab-kv.lab-kv-ph > strong { font: 600 56px/1 var(--rm-mono) !important; color: #3DBE84 !important; letter-spacing: -0.02em; text-align: left; }
+html[data-rm-ws] .lab-side-body .lab-kv.lab-kv-ph > em { margin-left: auto; font: 400 14px var(--rm-font); font-style: normal; color: #BEB8A8; }
+html[data-rm-ws] .lab-side-body .lab-kv.lab-kv-vol { border-bottom: 0; padding-bottom: 8px; }
+html[data-rm-ws] .lab-volbar { height: 6px; margin: 0 0 6px; border-radius: 3px; background: rgba(242, 239, 231, .12); overflow: hidden; }
+html[data-rm-ws] .lab-volbar > i { display: block; height: 100%; border-radius: 3px; background: #3DBE84; }
+html[data-rm-ws] .lab-side-body .lab-kv.lab-kv-stack { border-bottom: 0; padding-bottom: 4px; }
+html[data-rm-ws] .lab-side-body .lab-contents { margin: 0; padding: 0 0 10px; list-style: none; border-bottom: 1px solid rgba(242, 239, 231, .1); }
+html[data-rm-ws] .lab-side-body .lab-content-row { display: flex; align-items: center; gap: 8px; padding: 4px 0; font: 400 14px var(--rm-font); color: #F2EFE7; }
+html[data-rm-ws] .lab-side-body .lab-content-row b { margin-left: auto; font: 500 13px var(--rm-mono); }
+html[data-rm-ws] .lab-side-body .lab-content-drop { border: 0 !important; background: none !important; color: #A9A392 !important; }
+html[data-rm-ws] .lab-side-body .ws-lede { margin: 10px 0 0 !important; font: 400 12px/1.5 var(--rm-font) !important; color: #8E8978 !important; max-width: none !important; }
+html[data-rm-ws] .lab-insp-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 18px 0 6px; order: 50; }
+html[data-rm-ws] .lab-side-body .lab-insp-actions .ws-btn { height: 44px !important; min-height: 44px !important; padding: 0 10px !important; justify-content: center; border: 1px solid rgba(242, 239, 231, .16) !important; border-radius: 10px !important; background: rgba(242, 239, 231, .03) !important; color: #F2EFE7 !important; font: 600 14.5px/1 var(--rm-font) !important; }
+html[data-rm-ws] .lab-side-body .lab-insp-actions .ws-btn:hover, html[data-rm-ws] .lab-side-body .lab-insp-actions .ws-btn.is-on { background: rgba(242, 239, 231, .1) !important; }
+html[data-rm-ws] .lab-side-body .lab-measures { order: 51; display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+html[data-rm-ws] .lab-side-body .lab-measures .ws-btn { height: 30px !important; min-height: 30px !important; padding: 0 10px !important; border: 1px solid rgba(242, 239, 231, .12) !important; border-radius: 8px !important; background: none !important; color: #BEB8A8 !important; font: 500 12.5px/1 var(--rm-font) !important; }
+html[data-rm-ws] .lab-side-body > [data-lab-inspector-pane] .ws-lede:last-of-type { order: 60; }
+html[data-rm-ws] .lab-side-body .lab-reaction, html[data-rm-ws] .lab-side-body .lab-rig, html[data-rm-ws] .lab-side-body .lab-multi { margin: 12px 0 0; padding: 12px; border-radius: 12px; background: rgba(242, 239, 231, .06); color: #F2EFE7; }
+html[data-rm-ws] .lab-side-body .lab-reaction-tag { color: #3DBE84 !important; font: 700 12px var(--rm-font) !important; letter-spacing: 0 !important; text-transform: none !important; }
+html[data-rm-ws] .lab-side-body .lab-notes { color: #F2EFE7; font: 400 13.5px/1.5 var(--rm-font); }
+html[data-rm-ws] .lab-side-body .lab-notes time { color: #A9A392; font-family: var(--rm-mono); }
+html[data-rm-ws] .lab-side-body [data-lab-guide-host] { color: #F2EFE7; }
+html[data-rm-ws] .lab-side-body [data-lab-guide-host] h2, html[data-rm-ws] .lab-side-body [data-lab-guide-host] h3 { color: #F2EFE7 !important; }
+html[data-rm-ws] .lab-side-body .lab-do-chip { border-color: rgba(242, 239, 231, .2) !important; background: rgba(242, 239, 231, .05) !important; color: #F2EFE7 !important; }
+html[data-rm-ws] .lab-side-body .lab-pour-hint { color: #3DBE84 !important; }
+/* guided experiments */
+html[data-rm-ws] .lab-guided { margin: 56px 0 0; }
+html[data-rm-ws] .lab-guided-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin: 0 0 16px; }
+html[data-rm-ws] .lab-guided-head h2 { margin: 0 0 4px !important; font: 700 26px/1.2 var(--rm-font) !important; letter-spacing: -0.02em !important; color: var(--rm-ink) !important; }
+html[data-rm-ws] .lab-guided-head p { margin: 0; font: 400 15px var(--rm-font); color: var(--rm-ink-2); }
+html[data-rm-ws] .lab-guided-all { font: 600 15px var(--rm-font); color: var(--rm-green); text-decoration: none; white-space: nowrap; }
+html[data-rm-ws] .lab-guided-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+html[data-rm-ws] .lab-guided-card { display: flex; flex-direction: column; gap: 10px; padding: 20px; border: 1px solid var(--rm-line); border-radius: 16px; background: var(--rm-paper); }
+html[data-rm-ws] .lab-guided-level { align-self: flex-start; padding: 4px 10px; border-radius: 999px; background: var(--rm-green-soft); color: var(--rm-green); font: 600 12px/1.2 var(--rm-font); }
+html[data-rm-ws] .lab-guided-level.is-mid { background: #F2DFB8; color: #7A4E0E; }
+html[data-rm-ws][data-theme="dark"] .lab-guided-level.is-mid { background: #3B2F18; color: #E9C77F; }
+html[data-rm-ws] .lab-guided-card h3 { margin: 0 !important; font: 700 18px/1.3 var(--rm-font) !important; color: var(--rm-ink) !important; }
+html[data-rm-ws] .lab-guided-card p { margin: 0; font: 400 14.5px/1.5 var(--rm-font); color: var(--rm-ink-2); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+html[data-rm-ws] .lab-guided-foot { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 10px; }
+html[data-rm-ws] .lab-guided-foot > span { font: 500 13px var(--rm-mono); color: var(--rm-ink-3); }
+html[data-rm-ws] .lab-guided-go { border: 0; background: none; padding: 4px 0; color: var(--rm-green); font: 600 14.5px var(--rm-font); cursor: pointer; }
+/* focus mode: the bench takes the page */
+html[data-rm-ws].is-lab-focus .lab-hero,
+html[data-rm-ws].is-lab-focus .lab-guided,
+html[data-rm-ws].is-lab-focus .ws-study-nav,
+html[data-rm-ws].is-lab-focus .rm-ws-foot { display: none !important; }
+html[data-rm-ws].is-lab-focus .ws-main { padding-top: 16px !important; }
+html[data-rm-ws].is-lab-focus .lab-stage-shell { height: calc(100vh - 68px - 120px); }
+/* medium and small screens */
+@media (max-width: 1180px) {
+  html[data-rm-ws] .lab-stage-shell { grid-template-columns: 210px minmax(0, 1fr) 300px; }
+  html[data-rm-ws] .lab-guided-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  html[data-rm-ws] .lab-board-bar { flex-wrap: wrap !important; }
+  html[data-rm-ws] .lab-bar-search { order: 5; flex-basis: 100%; }
+}
+@media (max-width: 1023px) {
+  html[data-rm-ws] .ws-main, html[data-rm-ws].is-lab-surface .ws-main { padding: 24px 16px 96px !important; }
+  html[data-rm-ws] .lab-stage-shell { display: flex !important; flex-direction: column; height: auto; }
+  html[data-rm-ws] .lab-stage-frame { order: 1; }
+  html[data-rm-ws] .lab-dock { order: 2; overflow: visible; }
+  html[data-rm-ws] .lab-side { order: 3; }
+  html[data-rm-ws] .lab-stage-shell .lab-board-stage, html[data-rm-ws].is-lab-surface .lab-board-stage { height: clamp(380px, 56vh, 520px) !important; }
+  html[data-rm-ws] .lab-dock-rail { flex-direction: row !important; flex-wrap: wrap; gap: 8px !important; }
+  html[data-rm-ws] .lab-dock-modes, html[data-rm-ws] .lab-dock-tip { display: none; }
+  html[data-rm-ws] .lab-dock-label { flex-basis: 100%; margin: 0 0 4px; font-size: 17px; font-weight: 700; color: var(--rm-ink); }
+  html[data-rm-ws] .lab-dock-rail .lab-dock-btn:not(.lab-dock-mode) { width: auto !important; min-height: 40px !important; padding: 0 14px !important; border: 1px solid var(--rm-line-strong) !important; border-radius: 999px !important; }
+  html[data-rm-ws] .lab-dock-rail .lab-dock-btn:not(.lab-dock-mode) .lab-dock-icon, html[data-rm-ws] .lab-dock-count { display: none; }
+  html[data-rm-ws] .lab-dock-rail .lab-dock-btn:not(.lab-dock-mode).is-on { background: var(--rm-ink) !important; color: var(--rm-bg) !important; border-color: var(--rm-ink) !important; }
+  html[data-rm-ws] .lab-dock-panel { order: 99; flex-basis: 100%; padding: 6px 0 0; }
+  html[data-rm-ws] .lab-dock-body .lab-chips { flex-direction: row; overflow-x: auto; gap: 10px; padding-bottom: 6px; scrollbar-width: none; }
+  html[data-rm-ws] .lab-dock-body .lab-chip-eq { flex: 0 0 128px; flex-direction: column; align-items: flex-start !important; min-height: 92px !important; padding: 14px !important; border: 1px solid var(--rm-line) !important; border-radius: 14px !important; background: var(--rm-paper) !important; }
+  html[data-rm-ws] .lab-guided-grid { grid-template-columns: minmax(0, 1fr); }
+  html[data-rm-ws] .lab-guided-head { align-items: center; }
+  html[data-rm-ws] .lab-guided-head p { display: none; }
+  html[data-rm-ws] .lab-hero-lead { font-size: 16px; }
+  html[data-rm-ws] .lab-last-step { display: none; }
+  html[data-rm-ws] .rm-ws-foot { margin-top: 40px; }
+}
+@media (max-width: 560px) {
+  html[data-rm-ws] .lab-bar-title { border-right: 0; padding-right: 0; }
+  html[data-rm-ws] .lab-board-bar { padding: 10px !important; }
+  html[data-rm-ws] .lab-board-bar .lab-toolbar { width: 100%; }
+  html[data-rm-ws] .lab-board-bar .lab-toolbar .ws-btn { flex: 1 1 auto; }
+  html[data-rm-ws] .ws-study-nav .ws-context-nav { display: grid !important; grid-template-columns: repeat(3, 1fr); width: 100%; }
+  html[data-rm-ws] .ws-study-nav .ws-context-nav .ws-study-nav-item { padding: 0 8px !important; justify-content: center; font-size: 14px !important; }
+}
+
+@media (min-width: 1024px) {
+  html[data-rm-ws] .ws-topbar { padding: 0 max(24px, calc((100% - 1320px) / 2)) !important; }
+  html[data-rm-ws] .ws-topbar-actions { margin-left: auto !important; }
+}
+@media (max-width: 560px) {
+  html[data-rm-ws] .ws-topbar-actions:has(.is-guest-cta) .rm-ws-signin { display: none; }
+  html[data-rm-ws] .ws-topbar .ws-userchip.is-guest-cta { height: 38px; padding: 0 12px !important; font-size: 14px !important; white-space: nowrap; }
+  html[data-rm-ws] .ws-brand-name { font-size: 18px !important; }
 }

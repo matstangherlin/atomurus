@@ -241,8 +241,25 @@ function workspaceSiteNav() {
 }
 
 function injectWorkspaceSiteNav(html) {
-  const cleaned = html.replace(/\n?\s*<nav class="rm-ws-sitenav"[\s\S]*?<\/nav>/, '');
-  return cleaned.replace(/(<a class="ws-brand"[\s\S]*?<\/a>)/, (m) => `${m}\n    ${workspaceSiteNav()}`);
+  let next = html.replace(/\n?\s*<nav class="rm-ws-sitenav"[\s\S]*?<\/nav>/, '');
+  next = next.replace(/(<a class="ws-brand"[\s\S]*?<\/a>)/, (m) => `${m}\n    ${workspaceSiteNav()}`);
+  // Guests get the same "Sign in" link as the public header (CSS shows it
+  // only while the account chip is the guest CTA).
+  next = next.replace(/\n?\s*<a class="rm-ws-signin"[^>]*>[^<]*<\/a>/, '');
+  next = next.replace(/(<div class="ws-topbar-actions">)/, '$1\n      <a class="rm-ws-signin" href="/login?next=%2Fapp" data-i18n="common.rm.signIn">Sign in</a>');
+  // Site footer under the workspace content (design: lab page footer).
+  next = next.replace(/\n?\s*<footer class="rm-ws-foot"[\s\S]*?<\/footer>/, '');
+  next = next.replace(/(<div class="ws-private" id="app-study"[^>]*><\/div>\s*<\/div>)/, `$1
+    <footer class="rm-ws-foot" data-rm-ws-foot>
+      <span>© 2026 Atomurus</span>
+      <nav aria-label="Footer" data-i18n-attr="aria-label:common.rm.footerNav">
+        <a href="/about.html" data-i18n="common.rm.about">About</a>
+        <a href="/contact.html" data-i18n="common.rm.contact">Contact</a>
+        <a href="/privacy.html" data-i18n="common.rm.privacy">Privacy</a>
+        <a href="/terms.html" data-i18n="common.rm.terms">Terms</a>
+      </nav>
+    </footer>`);
+  return next;
 }
 
 function applyWorkspace(html) {
