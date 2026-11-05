@@ -13,12 +13,24 @@ function normalizeLanguage(value) {
   return null;
 }
 
-export function countryFromRequest(request) {
-  return normalizeCountry(
-    request.headers.get('x-country') ||
-    request.headers.get('x-nf-geo-country') ||
-    request.headers.get('cf-ipcountry')
-  );
+function countryFromGeoHeader(value) {
+  if (!value) return null;
+  try {
+    const decoded = JSON.parse(Buffer.from(String(value), 'base64').toString('utf8'));
+    return normalizeCountry(decoded?.country?.code);
+  } catch (_err) {
+    return null;
+  }
+}
+
+// Netlify passes the visitor's country on `context.geo` and, for older
+// runtimes, in x-country / x-nf-geo. Cloudflare's header is a fallback.
+export function countryFromRequest(request, context) {
+  return normalizeCountry(context?.geo?.country?.code) ||
+    normalizeCountry(request.headers.get('x-country')) ||
+    countryFromGeoHeader(request.headers.get('x-nf-geo')) ||
+    normalizeCountry(request.headers.get('x-nf-geo-country')) ||
+    normalizeCountry(request.headers.get('cf-ipcountry'));
 }
 
 export function languageFromRequest(request) {
@@ -33,18 +45,21 @@ export function languageFromRequest(request) {
   return preferred || 'en';
 }
 
-export function resolvePricingContext(request, overrides = {}) {
-  const country = normalizeCountry(overrides.country) || countryFromRequest(request);
-  const language = normalizeLanguage(overrides.language) || languageFromRequest(request);
-  const explicitCurrency = String(overrides.currency || '').trim().toLowerCase();
-  const currency = explicitCurrency === 'brl' || explicitCurrency === 'usd'
-    ? explicitCurrency
-    : (BR_COUNTRIES.has(country) || language === 'pt' ? 'brl' : 'usd');
+// Currency follows the visitor's country only: reais inside Brazil, dollars
+// everywhere else, whatever the page language. Language is a fallback for
+// requests with no country at all (local dev, unknown networks).
+export function currencyForCountry(country, language) {
+  if (country) return BR_COUNTRIES.has(country) ? 'brl' : 'usd';
+  return language === 'pt' ? 'brl' : 'usd';
+}
 
+export function resolvePricingContext(request, overrides = {}, context) {
+  const country = normalizeCountry(overrides.country) || countryFromRequest(request, context);
+  const language = normalizeLanguage(overrides.language) || languageFromRequest(request);
   return {
     country: country || null,
     language,
-    currency,
+    currency: currencyForCountry(country, language),
     source: country ? 'geo' : (language === 'pt' ? 'language' : 'default')
   };
 }

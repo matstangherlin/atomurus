@@ -211,7 +211,8 @@ function assertPerfGuards() {
   if (index.includes('class="ws-body"')) {
     fail('index.html must stay a public landing page');
   }
-  if (!/atomurus-lab-console\.css[^>]*media=["']print["']/.test(index) &&
+  if (/atomurus-lab-console\.css/.test(index) &&
+      !/atomurus-lab-console\.css[^>]*media=["']print["']/.test(index) &&
       !/media=["']print["'][^>]*atomurus-lab-console\.css/.test(index)) {
     fail('index.html is not loading atomurus-lab-console.css asynchronously');
   }
@@ -517,7 +518,16 @@ function assertUiV2() {
   }
   const i18nDir = path.join(ROOT, 'assets', 'i18n');
   for (const name of fs.readdirSync(i18nDir)) {
-    if (name.endsWith('.js')) fail('assets/i18n must publish JSON only; stale JS chunks lag the dictionary');
+    if (name.endsWith('.js')) {
+      // Script twins of the JSON chunks (loaded with <script defer> so i18n.js
+      // needs no synchronous XHR). They must match their JSON exactly.
+      const json = path.join(i18nDir, name.replace(/\.js$/, '.json'));
+      if (!fs.existsSync(json)) fail(`assets/i18n/${name} has no matching JSON chunk`);
+      const ns = name.replace(/\.js$/, '');
+      const expected = `(window.__ATOMURUS_I18N__=window.__ATOMURUS_I18N__||{})[${JSON.stringify(ns)}]=${fs.readFileSync(json, 'utf8')};\n`;
+      if (read(`assets/i18n/${name}`) !== expected) fail(`assets/i18n/${name} is stale — run node tools/build-i18n-assets.js`);
+      continue;
+    }
     if (!name.endsWith('.json')) continue;
     const chunk = read(`assets/i18n/${name}`);
     if (/does not offer user accounts|we do not run a user database|completely open, no accounts required/.test(chunk)) {

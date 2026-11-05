@@ -314,8 +314,9 @@ for (const file of walkHtml(root)) {
     fail(`${rel} loads public-workspace.js but has no #ps-shell`);
   }
   if (rel === 'account.html') {
-    /* Signed-in Account Center keeps the workspace chrome, like /app. */
-    if (!html.includes('data-atomurus-sidebar')) fail('account.html must keep the workspace sidebar');
+    /* Account Center follows the public remake chrome (Claude Design “Conta”). */
+    if (!html.includes('data-rm-header')) fail('account.html must use the remake top navigation');
+    if (html.includes('id="ws-sidebar"')) fail('account.html must not bring back the workspace sidebar');
     continue;
   }
   const minimalHeader = html.includes('rm-header--minimal');
@@ -350,7 +351,15 @@ if (/No accounts/.test(read('config.html')) || /No accounts/.test(read('config.p
 
 const i18nDir = path.join(root, 'assets', 'i18n');
 for (const name of fs.readdirSync(i18nDir)) {
-  if (name.endsWith('.js')) fail('assets/i18n must publish JSON only; stale JS chunks lag the dictionary');
+  if (name.endsWith('.js')) {
+    // Script twin of a JSON chunk (see tools/build-i18n-assets.js); must match it.
+    const ns = name.replace(/\.js$/, '');
+    const json = read(`assets/i18n/${ns}.json`);
+    if (read(`assets/i18n/${name}`) !== `(window.__ATOMURUS_I18N__=window.__ATOMURUS_I18N__||{})[${JSON.stringify(ns)}]=${json};\n`) {
+      fail(`assets/i18n/${name} is stale`);
+    }
+    continue;
+  }
   if (!name.endsWith('.json')) continue;
   const chunk = read(`assets/i18n/${name}`);
   if (/does not offer user accounts|we do not run a user database|completely open, no accounts required/.test(chunk)) {

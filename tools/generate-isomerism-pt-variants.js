@@ -63,6 +63,38 @@ function replaceOne(html, pattern, replacement, label) {
   return next;
 }
 
+function ptJsonLd(page) {
+  const name = page.title.replace(/\s*\|\s*Atomurus$/, '');
+  const base = page.canonical.split('?')[0];
+  const data = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': ['WebPage', 'LearningResource'],
+        '@id': base + '#webpage',
+        name,
+        description: page.description,
+        url: page.canonical,
+        inLanguage: 'pt-BR',
+        learningResourceType: 'Interactive resource',
+        educationalLevel: ['secondary education', 'higher education'],
+        about: { '@type': 'Thing', name: 'Isomeria', sameAs: 'https://en.wikipedia.org/wiki/Isomer' },
+        isAccessibleForFree: true,
+        isPartOf: { '@id': 'https://atomurus.com/#website' }
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Atomurus', item: 'https://atomurus.com/?lang=pt-BR' },
+          { '@type': 'ListItem', position: 2, name: 'Isomeria', item: 'https://atomurus.com/viewer/isomerism?lang=pt-BR' },
+          { '@type': 'ListItem', position: 3, name, item: page.canonical }
+        ]
+      }
+    ]
+  };
+  return '<script type="application/ld+json">\n' + JSON.stringify(data, null, 2) + '\n</script>';
+}
+
 function buildVariant(page) {
   const sourcePath = path.join(ROOT, page.source);
   const targetPath = path.join(ROOT, page.target);
@@ -100,6 +132,8 @@ function buildVariant(page) {
     /<meta property="og:locale" content="[^"]*">/g,
     '<meta property="og:locale" content="pt_BR">'
   );
+  // Structured data: the EN source carries English JSON-LD; swap in the PT one.
+  html = html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, ptJsonLd(page));
   html = html.replace(/What is an isomer\?/g, 'O que é um isômero?');
   html = html.replace(/Read the isomerism article →/g, 'Ler o artigo de isomeria →');
 

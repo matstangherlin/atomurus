@@ -97,10 +97,10 @@ test('table, calculators, explore, viewer, element, login and pricing share the 
   await expectRemakeChrome(page, 'explore');
   await expect(page.locator('.rm-page-title')).toHaveText(/Articles/);
   await expect(page.locator('.rm-feature')).toHaveAttribute('href', /what-is-an-atom/);
-  await expect(page.locator('[data-rm-articles] .rm-art-card')).toHaveCount(12);
+  await expect(page.locator('[data-rm-articles] .rm-art-card')).toHaveCount(16);
   await page.locator('[data-rm-filter] [data-filter="h"]').click();
-  await expect(page.locator('[data-rm-articles] .rm-art-card:visible')).toHaveCount(2);
-  await expect(page.locator('[data-rm-articles] .rm-art-card:visible').first()).toContainText(/Chernobyl|Bhopal/);
+  await expect(page.locator('[data-rm-articles] .rm-art-card:visible')).toHaveCount(6);
+  await expect(page.locator('[data-rm-articles] .rm-art-card:visible').first()).toContainText(/History of Chemistry|Marie Curie|Chernobyl|Bhopal/);
   await saveShot(page, 'desktop-public-explore');
 
   await page.goto('/viewer/atomic-models.html');

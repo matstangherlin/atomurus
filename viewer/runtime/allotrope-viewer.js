@@ -10,7 +10,7 @@
   if (paper()) paper().capDpr(renderer);
   else renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
   const camera = new THREE.PerspectiveCamera(50, 2, 0.1, 100);
-  camera.position.set(0, 0.35, 10);
+  camera.position.set(0, 0.35, 7.6);
   const scene = new THREE.Scene();
   let paperGround = null;
   function updateBg(){
@@ -41,7 +41,7 @@
   let currentGroup = new THREE.Group();
   scene.add(currentGroup);
 
-  let isDragging=false,lastX=0,lastY=0,rotX=0,rotY=0,autoRotate=!((paper() && paper().prefersReducedMotion && paper().prefersReducedMotion()));
+  let isDragging=false,lastX=0,lastY=0,rotX=0.42,rotY=0.5,autoRotate=!((paper() && paper().prefersReducedMotion && paper().prefersReducedMotion()));
   const intro = paper() && paper().introSpin ? paper().introSpin({ ms: 3200 }) : null;
   function spinning(){
     if (!intro) return autoRotate;
@@ -51,7 +51,8 @@
   }
   let rotVelX = 0, rotVelY = 0;
   const ROT_DAMPING = 0.92, ROT_SENS = 0.0085;
-  const DEFAULT_CAM_Z = 10;
+  const DEFAULT_CAM_Z = 7.6;  // framed close, as in the design
+  const DEFAULT_TILT = 0.42;
 
   canvas.addEventListener('mousedown', e => {
     if (intro) intro.userToggle();
@@ -202,9 +203,9 @@
         const cx = (Math.min(...xs) + Math.max(...xs)) / 2;
         const cz = (Math.min(...zs) + Math.max(...zs)) / 2;
         pos.forEach(p => { p.x -= cx; p.z -= cz; });
-        const shade = li === 1 ? 0x555555 : 0x333333;
+        const shade = li === 1 ? 0x9A958A : 0x8A8578;
         addAtoms(g, pos, shade, 0.16, 10);
-        addBondsNear(g, pos, b * 1.1, 0x666666, 0.055);
+        addBondsNear(g, pos, b * 1.1, 0x6A655B, 0.055);
       });
     }
     else if (key === 'diamond'){
@@ -245,9 +246,9 @@
       const sampleLen = Math.sqrt(uniqVerts[0][0]**2 + uniqVerts[0][1]**2 + uniqVerts[0][2]**2);
       const scale = targetR / sampleLen;
       const pts = uniqVerts.map(v => new THREE.Vector3(v[0]*scale, v[1]*scale, v[2]*scale));
-      addAtoms(g, pts, 0x333333, 0.18, 14);
+      addAtoms(g, pts, 0x8A8578, 0.18, 14);
       const bondDist = 2 * scale * 1.08;
-      addBondsNear(g, pts, bondDist, 0x666666, 0.055);
+      addBondsNear(g, pts, bondDist, 0x6A655B, 0.055);
     }
     else if (key === 'graphene'){
       const rows = 4, cols = 5;
@@ -259,8 +260,8 @@
           pos.push(new THREE.Vector3(x, 0, z));
         }
       }
-      addAtoms(g, pos, 0x222222, 0.18, 12);
-      addBondsNear(g, pos, 1.5, 0x444444, 0.055);
+      addAtoms(g, pos, 0x8A8578, 0.18, 12);
+      addBondsNear(g, pos, 1.5, 0x6A655B, 0.055);
     }
     else if (key === 'nanotube'){
       const R = 1.5, segs = 10, rings = 8;
@@ -273,8 +274,8 @@
           pos.push(new THREE.Vector3(x, y, z));
         }
       }
-      addAtoms(g, pos, 0x333333, 0.16, 12);
-      addBondsNear(g, pos, 1.0, 0x555555, 0.05);
+      addAtoms(g, pos, 0x8A8578, 0.16, 12);
+      addBondsNear(g, pos, 1.0, 0x6A655B, 0.05);
     }
     else if (key === 'o2'){
       const a1 = makeSphere(0.5, 0xee3333), a2 = makeSphere(0.5, 0xee3333);
@@ -369,7 +370,7 @@
       currentGroup = buildAllotrope(currentAllotrope);
       scene.add(currentGroup);
     }
-    rotX = 0; rotY = 0;
+    rotX = DEFAULT_TILT; rotY = 0.5;
     camera.position.set(0, 0.35, DEFAULT_CAM_Z);
     if (intro) intro.restart();
     if (!intro || !intro.isHeld()) {
@@ -453,7 +454,7 @@
     autoRotate = !autoRotate; updateRotateBtn();
   };
   window.resetView = function(){
-    rotX = 0; rotY = 0;
+    rotX = DEFAULT_TILT; rotY = 0.5;
     camera.position.set(0, 0.35, DEFAULT_CAM_Z);
     if (intro && intro.isHeld()) {
       autoRotate = true; updateRotateBtn();

@@ -4,9 +4,9 @@
 <style>html[data-theme="dark"] #icon-theme-light,html[data-theme="light"] #icon-theme-dark{display:none!important}html[data-theme="dark"] #icon-theme-dark,html[data-theme="light"] #icon-theme-light{display:block!important}</style>
 <script>(function(){try{var t=localStorage.getItem('atomurus-theme');if(t)document.documentElement.setAttribute('data-theme',t);var q=new URLSearchParams(location.search);var p=q.get('lang');var n=null;if(p){var pl=p.toLowerCase();n=pl.indexOf('pt')===0?'pt':(pl.indexOf('en')===0?'en':null);}var l=n||localStorage.getItem('atomurus-lang');var path=location.pathname;var isPt=/\.pt\.html$/i.test(path)||/\.pt$/i.test(path);if(!l&&isPt)l='pt';if(!l){var nav=(navigator.language||navigator.userLanguage||'').toLowerCase();l=nav.indexOf('pt')===0?'pt':'en';}if(l==='pt'){document.documentElement.lang='pt-BR';}else{document.documentElement.lang='en-US';}localStorage.setItem('atomurus-lang',l);var u=new URL(location.href);if(l==='pt'&&!isPt){if(/\.html$/i.test(path)){u.pathname=path.replace(/\.html$/i,'.pt.html');}else if(path.charAt(path.length-1)!=='/'){u.pathname=path+'.pt.html';}u.searchParams.set('lang','pt-BR');if(u.href!==location.href)location.replace(u.href);}else if(l==='en'&&isPt){if(/\.pt\.html$/i.test(path)){u.pathname=path.replace(/\.pt\.html$/i,'.html');}else{u.pathname=path.replace(/\.pt$/i,'');}u.searchParams.set('lang','en');if(u.href!==location.href)location.replace(u.href);}}catch(e){}})();</script>
 <meta name="google-adsense-account" content="ca-pub-9495821870733084">
-<script src="consent.js?v=202611051101" defer></script>
-<script defer src="ads-gate.js?v=202611051101"></script>
-<script src="cookie-consent.js?v=202611051101" defer></script>
+<script src="consent.js?v=202611052133" defer></script>
+<script defer src="ads-gate.js?v=202611052133"></script>
+<script src="cookie-consent.js?v=202611052133" defer></script>
 <meta charset="UTF-8">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1E6A50" media="(prefers-color-scheme: light)">
@@ -16,13 +16,13 @@
 <meta name="apple-mobile-web-app-title" content="Atomurus">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/png" href="assets/atomurus-logo.png?v=202611051101">
+<link rel="icon" type="image/png" href="assets/atomurus-logo.png?v=202611052133">
 <link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
 <title>Explore — Chemistry articles and knowledge | Atomurus</title>
-<meta name="description" content="Explore chemistry articles, history and concepts on Atomurus: what the periodic table is, what isomerism is, the Bhopal disaster and much more. In-depth content to study and research.">
+<meta name="description" content="Chemistry articles on Atomurus: atoms, bonding, reactions, the periodic table and the history of chemistry, from alchemy and Lavoisier to Marie Curie.">
 <meta property="og:title" content="Explore — Chemistry articles and knowledge | Atomurus">
 <meta property="og:description" content="Chemistry articles, history and concepts — from the periodic table to major industrial accidents. In-depth content to study and research.">
-<meta property="og:image" content="https://atomurus.com/assets/og-explore.png?v=202611051101">
+<meta property="og:image" content="https://atomurus.com/assets/og-explore.png?v=202611052133">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:url" content="https://atomurus.com/explore">
@@ -31,7 +31,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Explore — Chemistry articles and knowledge | Atomurus">
 <meta name="twitter:description" content="Chemistry articles, history and concepts — from the periodic table to major industrial accidents.">
-<meta name="twitter:image" content="https://atomurus.com/assets/og-explore.png?v=202611051101">
+<meta name="twitter:image" content="https://atomurus.com/assets/og-explore.png?v=202611052133">
 <link rel="canonical" href="https://atomurus.com/explore">
 <link rel="alternate" hreflang="en" href="https://atomurus.com/explore">
 <link rel="alternate" hreflang="pt-BR" href="https://atomurus.com/explore?lang=pt-BR">
@@ -65,7 +65,11 @@
         {"@type":"ListItem","position":9,"url":"https://atomurus.com/explore/what-is-a-mole","name":"What is a Mole"},
         {"@type":"ListItem","position":10,"url":"https://atomurus.com/explore/what-are-acids-and-bases","name":"Acids and Bases"},
         {"@type":"ListItem","position":11,"url":"https://atomurus.com/explore/what-is-a-chemical-reaction","name":"What is a Chemical Reaction"},
-        {"@type":"ListItem","position":12,"url":"https://atomurus.com/explore/what-are-states-of-matter","name":"States of Matter"}
+        {"@type":"ListItem","position":12,"url":"https://atomurus.com/explore/what-are-states-of-matter","name":"States of Matter"},
+        {"@type":"ListItem","position":13,"url":"https://atomurus.com/explore/history-of-chemistry","name":"History of Chemistry"},
+        {"@type":"ListItem","position":14,"url":"https://atomurus.com/explore/marie-curie","name":"Marie Curie"},
+        {"@type":"ListItem","position":15,"url":"https://atomurus.com/explore/lavoisier-chemical-revolution","name":"Lavoisier and the Chemical Revolution"},
+        {"@type":"ListItem","position":16,"url":"https://atomurus.com/explore/haber-bosch-process","name":"The Haber–Bosch Process"}
       ]
     },
     {
@@ -79,23 +83,22 @@
 }
 </script>
 <link rel="preload" href="/assets/fonts/figtree-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202611051101">
-<script src="lazy-ads.js?v=202611051101" defer></script>
-<script src="recaptcha.js?v=202611051101" defer></script>
-<script src="i18n.js?v=202611051101" defer></script>
-<script src="meta-i18n.js?v=202611051101" defer></script>
-<script src="study-boot.js?v=202611051101" defer></script>
-<link rel="stylesheet" href="/assets/critical-lab.css?v=202611051101">
+<link rel="stylesheet" href="/assets/fonts/fonts.css?v=202611052133">
+<script src="lazy-ads.js?v=202611052133" defer></script>
+<script src="recaptcha.js?v=202611052133" defer></script>
+<script src="/assets/i18n/common.js?v=202611052133" defer data-i18n-chunk></script>
+<script src="/assets/i18n/explore.js?v=202611052133" defer data-i18n-chunk></script>
+<script src="i18n.js?v=202611052133" defer></script>
+<script src="meta-i18n.js?v=202611052133" defer></script>
+<script src="study-boot.js?v=202611052133" defer></script>
+<link rel="stylesheet" href="/assets/critical-lab.css?v=202611052133">
 <script>document.documentElement.classList.add('lc-loading');setTimeout(function(){document.documentElement.classList.remove('lc-loading')},4000);</script>
-<link rel="preload" href="atomurus-lab-console.css?v=202611051101" as="style">
-<link rel="stylesheet" href="atomurus-lab-console.css?v=202611051101" media="print" onload="this.media='all';document.documentElement.classList.remove('lc-loading')">
-<noscript><link rel="stylesheet" href="atomurus-lab-console.css?v=202611051101"></noscript>
-<link rel="stylesheet" href="/assets/public-shell.css?v=202611051101">
-<script src="assets/global-nav.js?v=202611051101"></script>
-<script src="/assets/public-workspace.js?v=202611051101"></script>
-<link rel="stylesheet" href="/assets/ui/index.css?v=202611051101">
-<link rel="stylesheet" href="/assets/layouts/explore.css?v=202611051101">
-<script src="atomurus-mobile-nav.js?v=202611051101" defer></script>
+<link rel="stylesheet" href="/assets/public-shell.css?v=202611052133">
+<script src="assets/global-nav.js?v=202611052133"></script>
+<script src="/assets/public-workspace.js?v=202611052133"></script>
+<link rel="stylesheet" href="/assets/ui/index.css?v=202611052133">
+<link rel="stylesheet" href="/assets/layouts/explore.css?v=202611052133">
+<script src="atomurus-mobile-nav.js?v=202611052133" defer></script>
 <style>
   *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100vh; overflow: hidden; }
@@ -158,8 +161,8 @@
   }
 
 </style>
-<link rel="stylesheet" href="/assets/remake/remake.css?v=202611051101">
-<script src="/assets/remake/site-nav.js?v=202611051101" defer></script>
+<link rel="stylesheet" href="/assets/remake/remake.css?v=202611052133">
+<script src="/assets/remake/site-nav.js?v=202611052133" defer></script>
 </head>
 
 <body class="rm ps-body">
@@ -306,6 +309,26 @@
       <span class="rm-art-title" data-i18n="explore.rm.a12t">States of Matter</span>
       <span class="rm-art-text" data-i18n="explore.rm.a12d">Solid, liquid, gas and plasma, phase changes and PV = nRT.</span>
     </a>
+    <a class="rm-card rm-art-card" href="/explore/history-of-chemistry.html" data-tag="h">
+      <span class="rm-art-tag is-history" data-i18n="explore.rm.tagHistoryOnly">History</span>
+      <span class="rm-art-title" data-i18n="explore.rm.a13t">History of Chemistry</span>
+      <span class="rm-art-text" data-i18n="explore.rm.a13d">From fire, metals and alchemy to atoms and the modern lab.</span>
+    </a>
+    <a class="rm-card rm-art-card" href="/explore/marie-curie.html" data-tag="h">
+      <span class="rm-art-tag is-history" data-i18n="explore.rm.tagHistoryOnly">History</span>
+      <span class="rm-art-title" data-i18n="explore.rm.a14t">Marie Curie</span>
+      <span class="rm-art-text" data-i18n="explore.rm.a14d">Polonium, radium and Nobel Prizes in two different sciences.</span>
+    </a>
+    <a class="rm-card rm-art-card" href="/explore/lavoisier-chemical-revolution.html" data-tag="h">
+      <span class="rm-art-tag is-history" data-i18n="explore.rm.tagHistoryOnly">History</span>
+      <span class="rm-art-title" data-i18n="explore.rm.a15t">Lavoisier and the Chemical Revolution</span>
+      <span class="rm-art-text" data-i18n="explore.rm.a15d">Oxygen, combustion and the conservation of mass.</span>
+    </a>
+    <a class="rm-card rm-art-card" href="/explore/haber-bosch-process.html" data-tag="h">
+      <span class="rm-art-tag is-history" data-i18n="explore.rm.tagHistoryOnly">History</span>
+      <span class="rm-art-title" data-i18n="explore.rm.a16t">The Haber–Bosch Process</span>
+      <span class="rm-art-text" data-i18n="explore.rm.a16d">Ammonia from the air: the reaction that feeds half the world.</span>
+    </a>
     <a class="rm-card rm-art-card" href="/explore/chernobyl-disaster.html" data-tag="h">
       <span class="rm-art-tag is-history" data-i18n="explore.rm.tagHistory">History · safety</span>
       <span class="rm-art-title" data-i18n="explore.rm.a7t">The Chernobyl Disaster</span>
@@ -331,8 +354,8 @@
       <a class="rm-iso-link" href="/viewer/isomerism/constitutional/chain.html"><span data-i18n="explore.rm.chain">Chain</span><span class="rm-iso-ex rm-mono" data-i18n="explore.rm.exChain">butane · isobutane</span></a>
       <a class="rm-iso-link" href="/viewer/isomerism/constitutional/position.html"><span data-i18n="explore.rm.position">Position</span><span class="rm-iso-ex rm-mono" data-i18n="explore.rm.exPosition">1-butene · 2-butene</span></a>
       <a class="rm-iso-link" href="/viewer/isomerism/constitutional/function.html"><span data-i18n="explore.rm.function">Function</span><span class="rm-iso-ex rm-mono" data-i18n="explore.rm.exFunction">ethanol · ether</span></a>
-      <a class="rm-iso-link" href="/isomerism/constitutional/metamerism.html"><span data-i18n="explore.rm.metamerism">Metamerism</span><span class="rm-iso-ex" aria-hidden="true">→</span></a>
-      <a class="rm-iso-link" href="/isomerism/constitutional/tautomerism.html"><span data-i18n="explore.rm.tautomerism">Tautomerism</span><span class="rm-iso-ex" aria-hidden="true">→</span></a>
+      <a class="rm-iso-link" href="/viewer/isomerism/constitutional/metamerism.html"><span data-i18n="explore.rm.metamerism">Metamerism</span><span class="rm-iso-ex" aria-hidden="true">→</span></a>
+      <a class="rm-iso-link" href="/viewer/isomerism/constitutional/tautomerism.html"><span data-i18n="explore.rm.tautomerism">Tautomerism</span><span class="rm-iso-ex" aria-hidden="true">→</span></a>
       </div>
       <div>
         <h3 data-i18n="explore.rm.spatial">Spatial</h3>

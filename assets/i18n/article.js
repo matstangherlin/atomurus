@@ -1,0 +1,1 @@
+(window.__ATOMURUS_I18N__=window.__ATOMURUS_I18N__||{})["article"]={"en":{"level":{"beginner":"Beginner","intermediate":"Intermediate","advanced":"Advanced"},"learn":{"title":"You will learn"}},"pt":{"level":{"beginner":"Iniciante","intermediate":"Intermediário","advanced":"Avançado"},"learn":{"title":"Você vai aprender"}}};

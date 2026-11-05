@@ -516,7 +516,10 @@
     };
   }
 
+  // The remake stage is a plain dark panel (Claude Design "Modelos 3D"): no
+  // floor disc under the models. Callers still get an Object3D to add/remove.
   function ground(THREE, opts) {
+    if (!(opts && opts.force)) { var empty = new THREE.Group(); empty.name = 'paper-ground-off'; return empty; }
     opts = opts || {};
     var scale = opts.scale || 1;
     var radius = opts.radius != null ? opts.radius : 4.4 * scale;

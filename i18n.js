@@ -82,6 +82,12 @@
   }
 
   function loadChunkData(ns) {
+    // Fast path: the page already loaded /assets/i18n/<ns>.js with <script defer>.
+    var preloaded = window.__ATOMURUS_I18N__ && window.__ATOMURUS_I18N__[ns];
+    if (preloaded) return preloaded;
+    // Fallback (a namespace the HTML did not declare): synchronous request.
+    // It blocks the main thread, so pages should list their namespaces —
+    // tools/inject-i18n-chunks.js does that at build time.
     // Cache-bust the JSON chunk with the same ?v= used on the i18n.js script tag,
     // so translation updates never get stuck in the browser cache.
     var ver = '';

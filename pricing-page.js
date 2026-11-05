@@ -1,14 +1,13 @@
 (function () {
   'use strict';
 
-  var CURRENCY_KEY = 'atomurus-pricing-currency';
   var PERIOD_KEY = 'atomurus-pricing-period';
 
   var COPY = {
     en: {
       title: 'Solve, visualize, analyze and study chemistry.',
       desc: 'Atomurus Pro adds reaction balancing, stoichiometry, advanced analysis, Smart Review and the Chemistry Solver.',
-      currencyNote: 'Prices follow country and language. New accounts start with 30 days of Pro. No card is required to begin the trial.',
+      currencyNote: 'Prices are in reais in Brazil and in dollars in every other country, based on where you are. New accounts start with 30 days of Pro. No card is required to begin the trial.',
       statusGuest: 'public lab · free access',
       freeTag: 'Free forever',
       freeName: 'Atomurus Free',
@@ -161,7 +160,7 @@
     pt: {
       title: 'Resolva, visualize, analise e estude química.',
       desc: 'O Atomurus Pro adiciona balanceamento de reações, estequiometria, análise avançada, Smart Review e o Chemistry Solver.',
-      currencyNote: 'Os preços seguem país e idioma. Contas novas começam com 30 dias de Pro. Não é preciso cartão para iniciar o trial.',
+      currencyNote: 'Preços em reais no Brasil e em dólares nos demais países, conforme a sua localização. Contas novas começam com 30 dias de Pro. Não é preciso cartão para iniciar o trial.',
       statusGuest: 'lab público · acesso gratuito',
       freeTag: 'Grátis para sempre',
       freeName: 'Atomurus Free',
@@ -449,11 +448,15 @@
     return user && (user.displayName || user.fullName || user.username || user.email) || 'Workspace';
   }
 
+  // Currency is decided by country (BRL in Brazil, USD elsewhere) and is not
+  // a visitor choice: see assets/geo-currency.js and netlify/lib/geo-pricing.mjs.
   function selectedCurrency() {
-    var stored = readStorage(CURRENCY_KEY, '');
-    if (stored === 'brl' || stored === 'usd') return stored;
+    if (window.AtomurusCurrency && typeof window.AtomurusCurrency.current === 'function') {
+      return window.AtomurusCurrency.current();
+    }
     var pricingContext = activeState().pricingContext;
-    return pricingContext && pricingContext.currency === 'brl' ? 'brl' : 'usd';
+    if (pricingContext && pricingContext.currency) return pricingContext.currency === 'brl' ? 'brl' : 'usd';
+    return (document.documentElement.lang || '').toLowerCase().indexOf('pt') === 0 ? 'brl' : 'usd';
   }
 
   function selectedPeriod() {
@@ -576,11 +579,7 @@
   }
 
   function syncToggleButtons() {
-    var currency = selectedCurrency();
     var period = selectedPeriod();
-    document.querySelectorAll('[data-currency]').forEach(function (button) {
-      button.classList.toggle('active', button.getAttribute('data-currency') === currency);
-    });
     document.querySelectorAll('[data-period]').forEach(function (button) {
       var label = button.getAttribute('data-period') === 'monthly' ? t('periodMonthly') : t('periodAnnual');
       if (button.textContent !== label) button.textContent = label;
@@ -659,7 +658,6 @@
           'Accept': 'application/json'
         },
         body: JSON.stringify({
-          currency: selectedCurrency(),
           period: selectedPeriod()
         })
       });
@@ -677,12 +675,6 @@
   }
 
   function bind() {
-    document.querySelectorAll('[data-currency]').forEach(function (button) {
-      button.addEventListener('click', function () {
-        writeStorage(CURRENCY_KEY, button.getAttribute('data-currency') === 'brl' ? 'brl' : 'usd');
-        hydrateCopy(selectedCurrency());
-      });
-    });
     document.querySelectorAll('[data-period]').forEach(function (button) {
       button.addEventListener('click', function () {
         writeStorage(PERIOD_KEY, button.getAttribute('data-period') === 'monthly' ? 'monthly' : 'annual');

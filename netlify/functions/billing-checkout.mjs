@@ -4,7 +4,7 @@ import { billingPlanKey } from '../lib/billing-stripe.mjs';
 import { json, jsonWithCookies, options, publicUser, readJsonBody, statusFromError, verifySameOrigin } from '../lib/netlify-identity-utils.mjs';
 import { requireUser } from '../lib/require-user.mjs';
 
-export default async function handler(request) {
+export default async function handler(request, context) {
   if (request.method === 'OPTIONS') return options();
   if (request.method !== 'POST') {
     return json(405, { ok: false, error: 'Method not allowed' });
@@ -23,9 +23,11 @@ export default async function handler(request) {
   try {
     const body = await readJsonBody(request, 4096);
     const user = publicUser(auth.user);
-    const context = resolvePricingContext(request, { currency: body.currency, language: body.language });
+    // The server picks the currency from the visitor's country; the client
+    // cannot ask for reais from outside Brazil (or dollars from inside it).
+    const pricing = resolvePricingContext(request, { language: body.language }, context);
     const period = normalizeBillingPeriod(body.period);
-    const currency = String(body.currency || context.currency || 'usd').trim().toLowerCase() === 'brl' ? 'brl' : 'usd';
+    const currency = pricing.currency;
     const planKey = billingPlanKey(currency, period);
     const checkout = await createCheckoutSession({
       request,

@@ -8,6 +8,34 @@
   },
   "learnTitle": { "en": "You will learn", "pt": "Você vai aprender" },
   "articles": {
+    "explore/history-of-chemistry.html": {
+      "level": "beginner",
+      "learn": {
+        "en": ["Follow chemistry from ancient crafts and alchemy to a modern science", "See why the chemical revolution of the 1770s–1780s was a turning point", "Connect Dalton, Mendeleev and the discovery of the atom’s structure"],
+        "pt": ["Acompanhar a química dos ofícios antigos e da alquimia até a ciência moderna", "Entender por que a revolução química de 1770–1780 foi uma virada", "Ligar Dalton, Mendeleev e a descoberta da estrutura do átomo"]
+      }
+    },
+    "explore/marie-curie.html": {
+      "level": "beginner",
+      "learn": {
+        "en": ["Follow Marie Curie’s life from Warsaw to the Sorbonne", "Understand how she discovered polonium and radium by measuring radiation", "See why she is the only person with Nobel Prizes in two different sciences"],
+        "pt": ["Acompanhar a vida de Marie Curie de Varsóvia à Sorbonne", "Entender como ela descobriu o polônio e o rádio medindo radiação", "Ver por que ela é a única pessoa com Nobel em duas ciências diferentes"]
+      }
+    },
+    "explore/lavoisier-chemical-revolution.html": {
+      "level": "intermediate",
+      "learn": {
+        "en": ["Understand the phlogiston theory and the fact it could not explain", "Follow the experiments that showed combustion is a reaction with oxygen", "Use the law of conservation of mass and Lavoisier’s idea of an element"],
+        "pt": ["Entender a teoria do flogisto e o fato que ela não explicava", "Acompanhar os experimentos que mostraram que a combustão é uma reação com oxigênio", "Usar a lei da conservação da massa e a ideia de elemento de Lavoisier"]
+      }
+    },
+    "explore/haber-bosch-process.html": {
+      "level": "intermediate",
+      "learn": {
+        "en": ["Explain why nitrogen from the air is hard to use", "Apply Le Chatelier’s principle to the conditions of the Haber–Bosch process", "Weigh its role in feeding the world against its costs"],
+        "pt": ["Explicar por que o nitrogênio do ar é difícil de aproveitar", "Aplicar o princípio de Le Chatelier às condições do processo Haber–Bosch", "Pesar o papel dele na alimentação do mundo contra os seus custos"]
+      }
+    },
     "explore/what-is-an-atom.html": {
       "level": "beginner",
       "learn": {
