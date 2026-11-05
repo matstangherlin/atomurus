@@ -87,7 +87,7 @@ test.describe('shell parity guest desktop', () => {
         expect(m.brand).toMatch(/Atomurus/i);
         expect(m.sidebar).toBe(0);
         expect(m.signin).toBe(true);
-        expect(m.items).toBe(5);
+        expect(m.items).toBe(6);
         await expect(page.locator('.rm-cta')).toContainText(CREATE);
       }
       await saveShot(page, `shell-guest-${route.name}`);

@@ -798,6 +798,34 @@
   query  = { lang = "pt-BR" }
 
 [[redirects]]
+  from   = "/explore/what-is-a-mole"
+  to     = "/explore/what-is-a-mole.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/explore/what-are-acids-and-bases"
+  to     = "/explore/what-are-acids-and-bases.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/explore/what-is-a-chemical-reaction"
+  to     = "/explore/what-is-a-chemical-reaction.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/explore/what-are-states-of-matter"
+  to     = "/explore/what-are-states-of-matter.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
   from   = "/explore/what-are-isotopes"
   to     = "/explore/what-are-isotopes.pt.html"
   status = 200

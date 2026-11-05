@@ -223,6 +223,28 @@ function applyStandalone(html, rel) {
 
 /* Signed-in workspace (/app, /account): keeps its own chrome and sidebar,
    but takes the remake skin (html[data-rm-ws] section of remake.css). */
+// The workspace top bar carries the same site navigation as the public
+// header (with "Lab" marked current), so /app reads as part of the site and
+// the left drawer is only needed on phones.
+function workspaceSiteNav() {
+  const link = (href, key, label, extra) => `    <a class="rm-ws-link" href="${href}"${extra || ''}><span data-i18n="${key}">${label}</span></a>`;
+  return [
+    '<nav class="rm-ws-sitenav" aria-label="Main" data-i18n-attr="aria-label:common.rm.mainNav" data-rm-ws-sitenav>',
+    link('/periodic-table.html', 'common.rm.periodic', 'Periodic table'),
+    link('/viewer/atomic-models.html', 'common.rm.models3d', '3D models'),
+    link('/calculators.html', 'common.rm.calculators', 'Calculators'),
+    link('/app?section=lab', 'common.rm.lab', 'Lab', ' data-rm-ws-lab'),
+    link('/explore.html', 'common.rm.articles', 'Articles'),
+    link('/pricing.html', 'common.rm.plans', 'Plans'),
+    '  </nav>'
+  ].join('\n');
+}
+
+function injectWorkspaceSiteNav(html) {
+  const cleaned = html.replace(/\n?\s*<nav class="rm-ws-sitenav"[\s\S]*?<\/nav>/, '');
+  return cleaned.replace(/(<a class="ws-brand"[\s\S]*?<\/a>)/, (m) => `${m}\n    ${workspaceSiteNav()}`);
+}
+
 function applyWorkspace(html) {
   // Appended after the existing attributes: tests pin `<html lang=… data-theme=…`.
   let next = html.replace(/<html\b([^>]*)>/i, (m, attrs) => /\bdata-rm-ws=/.test(attrs)
@@ -231,6 +253,7 @@ function applyWorkspace(html) {
   if (!/assets\/remake\/remake\.css/.test(next)) {
     next = next.replace(/<\/head>/i, `<link rel="stylesheet" href="${CSS_HREF}">\n</head>`);
   }
+  next = injectWorkspaceSiteNav(next);
   next = next.replace(/<link rel="preload" href="\/assets\/fonts\/instrument-serif-[^"]+"[^>]*>\n?/g, '');
   next = next.replace(/<link rel="apple-touch-icon" href="[^"]*atomurus-logo\.png[^"]*">/g, '<link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">');
   return next;
