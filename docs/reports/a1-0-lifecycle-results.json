@@ -6,22 +6,22 @@
     "samples": [
       {
         "cycle": 1,
-        "heapMB": 3.1
+        "heapMB": 3.16
       },
       {
         "cycle": 5,
-        "heapMB": 3.35
+        "heapMB": 3.41
       },
       {
         "cycle": 10,
-        "heapMB": 3.57
+        "heapMB": 3.63
       },
       {
         "cycle": 20,
-        "heapMB": 3.61
+        "heapMB": 3.68
       }
     ],
-    "growthMB_5_to_20": 0.26
+    "growthMB_5_to_20": 0.27
   },
   "navigationStress": {
     "rounds": 10,
@@ -37,7 +37,7 @@
       }
     ],
     "growthMB": 0.43,
-    "msPerRoundMedian": 228
+    "msPerRoundMedian": 314
   },
   "authStress": {
     "cycles": 5,
@@ -80,14 +80,14 @@
         "geometries": 2,
         "textures": 0,
         "calls": 2,
-        "heapMB": 3.5
+        "heapMB": 3.48
       },
       {
         "switch": 20,
         "geometries": 2,
         "textures": 0,
         "calls": 2,
-        "heapMB": 3.47
+        "heapMB": 3.43
       }
     ]
   }

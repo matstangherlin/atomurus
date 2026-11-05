@@ -145,6 +145,9 @@ test('Account Pro shows Manage subscription and opens portal URL', async ({ page
   await expect(page).toHaveURL(/\/account/);
   await expect(page.locator('#ws-plan-card')).toContainText(/Atomurus Pro/);
   await expect(page.locator('#ws-plan-card')).toContainText(/Active|Ativo/);
+  // The overview card links to Plan & Billing; the portal button lives there.
+  await page.locator('.ac-tab[href="/account?tab=plan"]').click();
+  await expect(page).toHaveURL(/tab=plan/);
   const portal = page.locator('#ws-billing-portal');
   await expect(portal).toBeVisible();
   await saveShot(page, 'desktop-account-pro');
@@ -165,7 +168,9 @@ test('Account cancel-scheduled stays Pro until period end', async ({ page }) => 
   await gotoWorkspace(page, '/account');
   await expect(page).toHaveURL(/\/account/);
   await expect(page.locator('#ws-plan-card')).toContainText(/Atomurus Pro/);
-  await expect(page.locator('#ws-plan-card')).toContainText(/will not renew|não renov/i);
+  await expect(page.locator('#ws-plan-card')).toContainText(/Not renewing|Não renova/i);
+  await gotoWorkspace(page, '/account?tab=plan');
+  await expect(page.locator('#ws-plan-card')).toContainText(/will not renew|não será renovada/i);
   await expect(page.locator('#ws-billing-portal')).toBeVisible();
 });
 

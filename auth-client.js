@@ -483,4 +483,19 @@
 
   bindAuthSync();
   window.__ATOMURUS_AUTH__ = copyState();
+
+  /* /app: start the session check and the dashboard request while the rest of
+     the page is still downloading, and in parallel instead of one after the
+     other. auth-app.js consumes both promises once (see loadWorkspace). */
+  try {
+    var appPath = location.pathname.replace(/\/+$/, '');
+    if (appPath === '/app' || appPath === '/app.html') {
+      window.__atomurusSessionPrefetch = getSession().catch(function (err) { return { error: err }; });
+      window.__atomurusDashPrefetch = fetch('/api/private/dashboard', { credentials: 'include', headers: { Accept: 'application/json' } })
+        .then(function (res) {
+          return res.json().catch(function () { return {}; }).then(function (data) { return { res: res, data: data }; });
+        })
+        .catch(function (err) { return { error: err }; });
+    }
+  } catch (_err) {}
 })();

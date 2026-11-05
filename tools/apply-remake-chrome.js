@@ -178,7 +178,7 @@ function applyRemakeUnbalanced(html, rel) {
 }
 
 /* Signed-in workspace pages keep the workspace chrome (sidebar), like /app. */
-const WORKSPACE_PAGES = new Set(['account.html']);
+const WORKSPACE_PAGES = new Set([]);
 
 /* Standalone pages (no #ps-shell, no i18n runtime): the compact 3D viewer
    linked from the Bhopal article. Swap its own bar and footer for the remake

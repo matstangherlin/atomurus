@@ -33,7 +33,8 @@ assert.doesNotMatch(auth, /userChip\.href = user \? '\/app\?section=account'/);
 const account = read('account.html');
 assert.match(account, /id="app-study"/);
 assert.match(account, /account-center\.js/);
-assert.match(account, /id="ws-nav-foot"/);
+assert.match(account, /class="rm-header/);
+assert.doesNotMatch(account, /id="ws-sidebar"/);
 assert.match(account, /data-atomurus-account/);
 
 const center = read('assets/account-center.js');

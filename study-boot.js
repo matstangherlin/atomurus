@@ -4,7 +4,7 @@
   if (window.__atomurusStudyBoot) return;
   window.__atomurusStudyBoot = true;
 
-  var version = '202611050411';
+  var version = '202611051101';
   var files = [
     '/workspace-logic.js?v=' + version,
     '/workspace-ui.js?v=' + version,
@@ -14,19 +14,14 @@
     '/study-progress.js?v=' + version
   ];
 
-  function loadNext(index) {
-    if (index >= files.length) return;
-    var src = files[index];
-    if (document.querySelector('script[src="' + src + '"]')) {
-      loadNext(index + 1);
-      return;
-    }
+  /* Download all six in parallel; async = false keeps execution in this order
+     (each file depends on the ones before it). Loading them one after another
+     cost a full round trip per file on every page. */
+  files.forEach(function (src) {
+    if (document.querySelector('script[src="' + src + '"]')) return;
     var script = document.createElement('script');
     script.src = src;
-    script.onload = function () { loadNext(index + 1); };
-    script.onerror = function () { loadNext(index + 1); };
+    script.async = false;
     document.head.appendChild(script);
-  }
-
-  loadNext(0);
+  });
 })();
