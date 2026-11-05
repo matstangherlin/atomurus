@@ -262,11 +262,13 @@ function injectWorkspaceSiteNav(html) {
   return next;
 }
 
-function applyWorkspace(html) {
+function applyWorkspace(html, isApp) {
   // Appended after the existing attributes: tests pin `<html lang=… data-theme=…`.
-  let next = html.replace(/<html\b([^>]*)>/i, (m, attrs) => /\bdata-rm-ws=/.test(attrs)
-    ? `<html${attrs.replace(/\s*data-rm-ws="1"/, '')} data-rm-ws="1">`
-    : `<html${attrs} data-rm-ws="1">`);
+  // /app also gets data-rm-app: the Lab design (site top bar, no desktop
+  // sidebar) applies there only; /account keeps its own column.
+  const extra = isApp ? ' data-rm-ws="1" data-rm-app="1"' : ' data-rm-ws="1"';
+  let next = html.replace(/<html\b([^>]*)>/i, (m, attrs) =>
+    `<html${attrs.replace(/\s*data-rm-ws="1"/, '').replace(/\s*data-rm-app="1"/, '')}${extra}>`);
   if (!/assets\/remake\/remake\.css/.test(next)) {
     next = next.replace(/<\/head>/i, `<link rel="stylesheet" href="${CSS_HREF}">\n</head>`);
   }
@@ -279,7 +281,7 @@ function applyWorkspace(html) {
 function applyFile(file) {
   if (path.basename(file) === 'app.html' || WORKSPACE_PAGES.has(relOf(file))) {
     const original = fs.readFileSync(file, 'utf8');
-    const next = applyWorkspace(original);
+    const next = applyWorkspace(original, path.basename(file) === 'app.html');
     if (next !== original) fs.writeFileSync(file, next);
     return { status: 'workspace', changed: next !== original };
   }

@@ -268,7 +268,7 @@ async function preparePage(page, extras = {}) {
 async function waitForWorkspace(page) {
   // Desktop /app has no sidebar (Lab design): the section control is the
   // first thing the workspace paints on every viewport.
-  await expect(page.locator('#ws-study-nav .ws-study-nav-item').first()).toBeVisible({ timeout: 20_000 });
+  await expect(page.locator('#ws-study-nav .ws-study-nav-item:visible, #ws-nav-main a:visible').first()).toBeVisible({ timeout: 20_000 });
   const loading = page.locator('#app-loading');
   if (await loading.count()) await expect(loading).toBeHidden();
 }

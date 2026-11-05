@@ -7,7 +7,7 @@ test('signed-out workspace shows Pro navigation and explains locked features', a
   await expect(page.locator('#ws-study-nav')).toContainText(/Study|Estudo/, { timeout: 15_000 });
   await expect(page.locator('#ws-nav-main a[data-nav="home"]')).toContainText(/Home|Início/);
   await expect(page.locator('#ws-nav-main a[data-nav="periodic"]')).toHaveAttribute('href', /periodic-table/);
-  await expect(page.locator('[data-rm-ws-sitenav] a[href="/periodic-table.html"]')).toBeVisible();
+  await expect(page.locator('[data-rm-ws-sitenav] a[href^="/periodic-table.html"]')).toBeVisible();
   await expect(page.locator('[data-rm-ws-sitenav] a[data-rm-ws-lab]')).toBeVisible();
   await expect(page.locator('#ws-userchip')).toContainText(/Create (free )?account|Criar conta/, { timeout: 15_000 });
   await expect(page).toHaveURL(/\/app/);

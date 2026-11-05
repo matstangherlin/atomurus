@@ -612,6 +612,8 @@ test('Lab board selects with a marquee, moves the group and restacks', async ({ 
   await installApi(page, { kind: 'free' });
   await gotoWorkspace(page, '/app?section=lab&mode=bench');
   await page.waitForSelector('.lab-beaker');
+  // The Lab page scrolls (hero above the bench): bring the bench into view.
+  await page.locator('[data-lab-stage]').evaluate((el) => el.scrollIntoView({ block: 'start' }));
   await page.locator('[data-lab-fit]').click();
   await expect(page.locator('[data-lab-stage]')).not.toHaveAttribute('data-lab-camera', 'moving');
 
@@ -954,6 +956,8 @@ test('Lab zoom and pan behave like a board', async ({ page }) => {
   await installApi(page, { kind: 'free' });
   await gotoWorkspace(page, '/app?section=lab&mode=bench');
   await page.waitForSelector('.lab-beaker');
+  // The Lab page scrolls (hero above the bench): bring the bench into view.
+  await page.locator('[data-lab-stage]').evaluate((el) => el.scrollIntoView({ block: 'start' }));
   const settled = () => expect(page.locator('[data-lab-stage]')).not.toHaveAttribute('data-lab-camera', 'moving');
   const zoomNow = async () => parseInt(await page.locator('[data-lab-zoom-label]').innerText(), 10);
   const camera = () => page.evaluate(() => {
@@ -1026,6 +1030,7 @@ test('Lab zoom and pan behave like a board', async ({ page }) => {
 
   // Fitting one piece goes closer than fitting the whole board.
   await page.locator('[data-vessel="beaker-a"]').click();
+  await page.locator('[data-lab-stage]').evaluate((el) => el.scrollIntoView({ block: 'start' }));
   await page.locator('[data-lab-zoom-menu]').click();
   await expect(page.locator('[data-lab-fit-selection]')).toBeEnabled();
   await page.locator('[data-lab-fit-selection]').click();
