@@ -697,7 +697,7 @@ assert.match(studySave, /\.calc-panel/);
 assert.match(studySave, /insertBefore\(host, panel\.firstChild\)/);
 
 const studyBoot = readFileSync(new URL('../study-boot.js', import.meta.url), 'utf8');
-assert.match(studyBoot, /onload/);
+assert.match(studyBoot, /async = false/); // parallel download, ordered execution
 assert.match(studyBoot, /study-client\.js/);
 assert.match(studyBoot, /study-save\.js/);
 assert.match(studyBoot, /study-progress\.js/);

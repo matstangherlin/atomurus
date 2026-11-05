@@ -56,7 +56,8 @@ test('login preserves next and lands on /app', async ({ page }) => {
   await page.locator('#auth-password').fill('correct-horse');
   await page.locator('#auth-login-submit').click();
   await page.waitForURL(/\/app/, { timeout: 15_000 });
-  expect(page.url()).toMatch(/section=library/);
+  // next= is kept; the retired "library" tab then forwards to Study.
+  expect(page.url()).toMatch(/section=(library|study)/);
   await expect(page.locator('#ws-study-nav .ws-study-nav-item').first()).toBeVisible({ timeout: 15_000 });
 });
 

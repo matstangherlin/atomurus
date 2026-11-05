@@ -1210,8 +1210,30 @@
   function labelFor(container, lang) {
     if (!container) return '';
     var spec = EQUIPMENT[container.type];
+    if (spec && !container.letter && container.label) {
+      /* Sessions saved by older versions kept the finished name ("Beaker A")
+         instead of the letter, which pinned them to one language. */
+      var m = /^(.*)\s([A-Z])$/.exec(String(container.label));
+      if (m && (m[1] === spec.labelEn || m[1] === spec.labelPt)) return (lang === 'pt' ? spec.labelPt : spec.labelEn) + ' ' + m[2];
+    }
     if (!spec || !container.letter) return container.label || container.type || '';
     return (lang === 'pt' ? spec.labelPt : spec.labelEn) + ' ' + container.letter;
+  }
+
+  /* Appearance is computed in English (it is also matched on elsewhere);
+     translate it only for display. */
+  var APPEARANCE_PT = {
+    'clear': 'límpida', 'empty': 'vazio', 'mineral emulsion': 'emulsão mineral', 'emulsion': 'emulsão',
+    'fragrance accord': 'acorde de fragrância', 'blue solution': 'solução azul', 'white powder': 'pó branco',
+    'effervescent mixture': 'mistura efervescente', 'saline solution': 'solução salina', 'neutralized mixture': 'mistura neutralizada',
+    'acidic solution': 'solução ácida', 'basic solution': 'solução básica', 'dry sample': 'amostra seca',
+    'warm suspension': 'suspensão morna', 'suspension': 'suspensão', 'pale green solution with copper': 'solução verde-clara com cobre',
+    'colourless solution with copper': 'solução incolor com cobre', 'indicator, acid colour': 'indicador, cor ácida',
+    'indicator, basic colour': 'indicador, cor básica'
+  };
+  function appearanceLabel(value, lang) {
+    var v = String(value || '');
+    return lang === 'pt' ? (APPEARANCE_PT[v] || v) : v;
   }
 
   function defaultPos(index) {
@@ -3894,7 +3916,7 @@
           'Open system: CO₂ from the acid and bicarbonate leaves the vessel. Extra bicarbonate is a weak base, not a strong one.',
           'Sistema aberto: o CO₂ do ácido com bicarbonato sai do recipiente. O bicarbonato que sobra é base fraca, não base forte.'
         )) + '</p>' : '') +
-        '<div class="lab-kv"><span>' + esc(copy('Appearance', 'Aparência')) + '</span><strong>' + esc(container.appearance) + '</strong></div>' +
+        '<div class="lab-kv"><span>' + esc(copy('Appearance', 'Aparência')) + '</span><strong>' + esc(appearanceLabel(container.appearance, lang)) + '</strong></div>' +
         (container.product ? '<div class="lab-kv lab-kv-product"><span>' + esc(copy('Created', 'Criado')) + '</span><strong>' + esc(lang === 'pt' ? (container.productPt || container.product) : container.product) + '</strong></div>' : '') +
         (pourFrom ? '<p class="lab-pour-hint">' + esc(copy('Pouring: click another vessel to transfer.', 'Transferindo: clique em outro vidro para despejar.')) + '</p>' : '') +
         (pipetteFrom ? '<p class="lab-pour-hint">' + esc(copy('Pipette loaded. Click a vessel to dispense.', 'Pipeta carregada. Clique em um vidro para dispensar.')) + '</p>' : '') +

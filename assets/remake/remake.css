@@ -2937,3 +2937,22 @@ html[data-theme="dark"] .rm-work-chip.is-calc { background: #1E3140; color: #A8C
 .rm-jn-guest p { margin: 0; font: 400 14px/1.5 var(--rm-font); color: var(--rm-ink); }
 html[data-rm-ws][data-rm-app] .rm-jn-guest .ws-btn { justify-content: center; height: 44px; display: inline-flex; align-items: center; font: 600 15px var(--rm-font) !important; }
 @media (max-width: 1023px) { .rm-jn-guest { order: 2; } }
+/* dark theme: glassware drawn as light outlines (dark ink on a dark bench was nearly invisible) */
+html[data-rm-ws][data-rm-app][data-theme="dark"] .lab-board-stage { --lab-glass-ink: #D8D2C2; }
+html[data-rm-ws][data-rm-app][data-theme="dark"] .lab-svg-glass > * { fill: rgba(242, 239, 231, .06); }
+html[data-rm-ws][data-rm-app][data-theme="dark"] .lab-svg-shine > * { stroke: rgba(242, 239, 231, .35); }
+html[data-rm-ws][data-rm-app][data-theme="dark"] .lab-svg-surface { fill: rgba(242, 239, 231, .12); }
+html[data-rm-ws][data-rm-app][data-theme="dark"] .lab-glass-name { color: #F2EFE7; }
+/* inspector / panels: thin dark scrollbars instead of the white system bar */
+html[data-rm-ws][data-rm-app] .lab-side-body,
+html[data-rm-ws][data-rm-app] .lab-dock { scrollbar-width: thin; scrollbar-color: rgba(242, 239, 231, .22) transparent; }
+html[data-rm-ws][data-rm-app] .lab-dock { scrollbar-color: var(--rm-line-strong) transparent; }
+html[data-rm-ws][data-rm-app] .lab-side-body::-webkit-scrollbar { width: 6px; }
+html[data-rm-ws][data-rm-app] .lab-side-body::-webkit-scrollbar-track { background: transparent; }
+html[data-rm-ws][data-rm-app] .lab-side-body::-webkit-scrollbar-thumb { background: rgba(242, 239, 231, .22); border-radius: 3px; }
+@media (max-width: 560px) {
+  html[data-rm-ws][data-rm-app] .lab-guided-head { flex-wrap: wrap; }
+  html[data-rm-ws][data-rm-app] .lab-guided-all { white-space: normal; font-size: 14px; }
+}
+/* /account (workspace skin): base text colour follows the theme */
+html[data-rm-ws] body { color: var(--rm-ink); background: var(--rm-bg); }

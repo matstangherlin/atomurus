@@ -3530,7 +3530,13 @@
       return;
     }
     try {
-      var session = await client.getSession({ force: true });
+      /* auth-client.js already started both requests at page load. */
+      var early = window.__atomurusSessionPrefetch;
+      var earlyDash = window.__atomurusDashPrefetch;
+      window.__atomurusSessionPrefetch = null;
+      window.__atomurusDashPrefetch = null;
+      var session = early ? await early : null;
+      if (!session || session.error) session = await client.getSession({ force: true });
       if (!session.signedIn) {
         await loadStudyCloud(null);
         var guestLoading = $('app-loading');
@@ -3538,17 +3544,21 @@
         markReady();
         return;
       }
-      var dash = await fetch('/api/private/dashboard', { credentials: 'include', headers: { Accept: 'application/json' } }).then(function (res) {
-        return res.json().then(function (data) {
-          if (!res.ok || data.ok === false) {
-            var err = new Error(data.error || 'Request failed');
-            err.status = res.status;
-            err.code = data.code;
-            throw err;
-          }
-          return data;
+      var dashResult = earlyDash ? await earlyDash : null;
+      /* The early request ran before the session was known; a 401 there may
+         just mean the session cookie was refreshed in between, so retry once. */
+      if (!dashResult || dashResult.error || !dashResult.res || dashResult.res.status === 401) {
+        dashResult = await fetch('/api/private/dashboard', { credentials: 'include', headers: { Accept: 'application/json' } }).then(function (res) {
+          return res.json().catch(function () { return {}; }).then(function (data) { return { res: res, data: data }; });
         });
-      });
+      }
+      var dash = dashResult.data || {};
+      if (!dashResult.res.ok || dash.ok === false) {
+        var dashErr = new Error(dash.error || 'Request failed');
+        dashErr.status = dashResult.res.status;
+        dashErr.code = dash.code;
+        throw dashErr;
+      }
       var user = dash.user || client.getCurrentUser() || {};
       await loadStudyCloud(user);
       var loading = $('app-loading');
