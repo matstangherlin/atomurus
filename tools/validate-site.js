@@ -211,7 +211,8 @@ function assertPerfGuards() {
   if (index.includes('class="ws-body"')) {
     fail('index.html must stay a public landing page');
   }
-  if (!/atomurus-lab-console\.css[^>]*media=["']print["']/.test(index) &&
+  if (/atomurus-lab-console\.css/.test(index) &&
+      !/atomurus-lab-console\.css[^>]*media=["']print["']/.test(index) &&
       !/media=["']print["'][^>]*atomurus-lab-console\.css/.test(index)) {
     fail('index.html is not loading atomurus-lab-console.css asynchronously');
   }

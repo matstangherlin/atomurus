@@ -182,6 +182,18 @@
     });
   }
 
+  /* Heavy embeds (the 3D viewer iframe on the atomic-model pages) start
+     loading once the page itself has painted and loaded. */
+  function deferredFrames() {
+    var frames = document.querySelectorAll('iframe[data-defer-src]');
+    if (!frames.length) return;
+    function go() {
+      frames.forEach(function (f) { if (!f.getAttribute('src')) f.setAttribute('src', f.getAttribute('data-defer-src')); });
+    }
+    if (document.readyState === 'complete') setTimeout(go, 0);
+    else window.addEventListener('load', function () { setTimeout(go, 0); });
+  }
+
   function enhanceArticle() {
     if (!document.querySelector('.art-body')) return;
     timelines();
@@ -232,6 +244,7 @@
     initFooter();
     enhanceArticle();
     enhanceViewer();
+    deferredFrames();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);

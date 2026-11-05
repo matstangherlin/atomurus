@@ -2245,7 +2245,7 @@ html[data-rm] body.rm.rm #modal :is(button, a, .modal-cta-corner, [class*="cat"]
 /* 8.6b 3D viewers, v2 — wider page, stage sized to the screen, compact head,
    right column with the model notes (design: "Modelos 3D"). site-nav.js
    moves the info bar, model notes, Pro card and legend into place. */
-html[data-rm]:has(.viewer > .canvas-wrap) { --rm-max: 1440px; }
+/* Same 1200px column as the header (the design keeps one width everywhere). */
 html[data-rm] body.rm.rm:has(.viewer > .canvas-wrap) .ph-kicker,
 html[data-rm] body.rm.rm:has(.viewer > .canvas-wrap) .content-inner > .lab-readmore,
 html[data-rm] body.rm.rm:has(.viewer > .canvas-wrap) .content-inner > .lab-readmore-card { display: none !important; }
@@ -3151,3 +3151,48 @@ html[data-rm] body.rm.rm .ac-card-foot { display: flex; justify-content: space-b
   html[data-rm] body.rm.rm .ac-card:has(.ac-fields) > .ac-avatar { display: none; }
   html[data-rm] body.rm.rm .ac-field input, html[data-rm] body.rm.rm .ac-input-at { height: 50px; border-radius: 12px; }
 }
+/* 9i ── Tabela periódica: Claude Design board (colour by, axes, legend below) */
+html[data-rm] body.rm.rm .rm-pt-bar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 4px 0 28px; }
+html[data-rm] body.rm.rm .rm-pt-bar-label { font: 600 15px/1 var(--rm-font); color: var(--rm-ink); }
+html[data-rm] body.rm.rm .rm-pt-seg { display: inline-flex; gap: 2px; padding: 4px; border-radius: 12px; background: var(--rm-surface); }
+html[data-rm] body.rm.rm .rm-pt-seg button { height: 36px; padding: 0 14px; border: 0; border-radius: 8px; background: transparent; color: var(--rm-ink-2); font: 500 14px/1 var(--rm-font); cursor: pointer; white-space: nowrap; }
+html[data-rm] body.rm.rm .rm-pt-seg button:hover { color: var(--rm-ink); }
+html[data-rm] body.rm.rm .rm-pt-seg button.is-on { background: var(--rm-paper); color: var(--rm-ink); font-weight: 600; box-shadow: 0 1px 2px rgba(20, 18, 14, .08); }
+html[data-rm][data-theme="dark"] body.rm.rm .rm-pt-seg button.is-on { background: #2B271F; }
+/* export buttons: quiet icon group at the right of the bar */
+html[data-rm] body.rm.rm .rm-pt-bar .rm-pt-export { margin: 0 0 0 auto !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; gap: 4px !important; }
+html[data-rm] body.rm.rm .rm-pt-export .dl-btn, html[data-rm] body.rm.rm .rm-pt-export .dl-action { height: 36px !important; min-height: 36px !important; padding: 0 10px !important; border: 1px solid var(--rm-line) !important; border-radius: 10px !important; background: var(--rm-paper) !important; color: var(--rm-ink-2) !important; font: 500 13px/1 var(--rm-font) !important; box-shadow: none !important; }
+html[data-rm] body.rm.rm .rm-pt-export .dl-btn.active { color: var(--rm-ink) !important; border-color: var(--rm-line-strong) !important; }
+html[data-rm] body.rm.rm .rm-pt-export .dl-action { color: var(--rm-green) !important; }
+html[data-rm] body.rm.rm .rm-pt-export .dl-divider { display: none !important; }
+/* axes */
+html[data-rm] body.rm.rm .table-wrap-outer.rm-pt-has-axes { position: relative; padding-top: 26px !important; padding-left: 30px !important; }
+html[data-rm] body.rm.rm .rm-pt-axes { position: absolute; inset: 0; pointer-events: none; }
+html[data-rm] body.rm.rm .rm-pt-g, html[data-rm] body.rm.rm .rm-pt-p { position: absolute; display: flex; align-items: center; justify-content: center; font: 500 13px/1 var(--rm-font); color: var(--rm-ink-3); font-variant-numeric: tabular-nums; }
+html[data-rm] body.rm.rm .rm-pt-g { height: 18px; }
+html[data-rm] body.rm.rm .rm-pt-p { width: 22px; }
+/* f-block labels and the gap above them */
+html[data-rm] body.rm.rm .ptable .row-spacer { height: 18px; }
+html[data-rm] body.rm.rm .ptable .f-label { justify-content: flex-start !important; padding: 0 0 0 2px !important; font: 400 13px/1.2 var(--rm-font) !important; font-style: normal !important; color: var(--rm-ink-2) !important; }
+html[data-rm] body.rm.rm #fblock-connector-svg { display: none !important; }
+/* legend under the table */
+html[data-rm] body.rm.rm .rm-pt-legend { display: flex; flex-wrap: wrap; gap: 8px; margin: 28px 0 0; padding: 20px 0 0; border-top: 1px solid var(--rm-line); }
+html[data-rm] body.rm.rm #tab-tabela.rm-pt-heat .rm-pt-legend { display: none; }
+html[data-rm] body.rm.rm .rm-pt-chip { display: inline-flex !important; align-items: center; gap: 8px; height: 36px; padding: 0 14px !important; border: 1px solid var(--rm-line) !important; border-radius: 999px !important; background: var(--rm-paper) !important; color: var(--rm-ink) !important; font: 500 14px/1 var(--rm-font) !important; cursor: pointer; }
+html[data-rm] body.rm.rm .rm-pt-chip:hover { border-color: var(--rm-line-strong) !important; }
+html[data-rm] body.rm.rm .rm-pt-chip.active-filter { background: var(--rm-ink) !important; border-color: var(--rm-ink) !important; color: var(--rm-bg) !important; }
+html[data-rm] body.rm.rm .rm-pt-dot { width: 12px; height: 12px; border-radius: 4px; box-shadow: inset 0 0 0 1px rgba(20, 18, 14, .12); }
+html[data-rm] body.rm.rm .ptable.rm-pt-filtering .el:not(.rm-pt-hit) { opacity: .22; }
+html[data-rm] body.rm.rm .ptable .el { transition: opacity .15s; }
+html[data-rm] body.rm.rm #tab-tabela .hm-settings-legend { margin: -12px 0 20px; }
+@media (max-width: 760px) {
+  html[data-rm] body.rm.rm .rm-pt-bar { gap: 8px; }
+  html[data-rm] body.rm.rm .rm-pt-seg { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+  html[data-rm] body.rm.rm .rm-pt-bar .rm-pt-export { margin-left: 0 !important; }
+}
+html[data-rm] body.rm.rm .table-wrap-outer.rm-pt-has-axes { overflow: visible; }
+@media (min-width: 900px) {
+  html[data-rm] body.rm.rm .table-wrap-outer.rm-pt-has-axes .ptable { width: 100%; min-width: 0 !important; grid-template-columns: repeat(18, minmax(0, 1fr)) !important; }
+}
+html[data-rm] body.rm.rm #tab-tabela .heatmap-gradient { background: linear-gradient(90deg, #F3EEDD, #CFE4D5 35%, #7FB698 68%, #1E6A50) !important; }
+html[data-rm] body.rm.rm #tab-tabela .hm-settings-legend { display: inline-flex; padding: 8px 14px !important; border-radius: 999px !important; }

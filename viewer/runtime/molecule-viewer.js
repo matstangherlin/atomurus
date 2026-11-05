@@ -17,15 +17,8 @@ return (function(){
       const isDark = ((window.atomurusPaperLab && window.atomurusPaperLab.isDark) ? window.atomurusPaperLab.isDark() : document.documentElement.getAttribute('data-theme') === 'dark');
       renderer.setClearColor(isDark ? 0x0E0D0C : 0xF2EFE7, 1);
     }
-    if (paper() && paper().setGround) {
-      paperGround = paper().setGround(scene, THREE, paperGround, paper().moleculeGroundOpts(paperMolForGround));
-    } else {
-      if (paperGround) scene.remove(paperGround);
-      if (paper() && typeof THREE !== 'undefined') {
-        paperGround = paper().ground(THREE, paper().moleculeGroundOpts(paperMolForGround));
-        scene.add(paperGround);
-      }
-    }
+    // The remake stage is a plain dark panel: no floor under the molecule.
+    if (paperGround) { scene.remove(paperGround); paperGround = null; }
   }
 
   const camera = new THREE.PerspectiveCamera(paper() ? 42 : 50, 2, 0.1, 100);
@@ -113,14 +106,30 @@ return (function(){
   function paperOrbit() {
     return paper() ? { rotX: 0.35, rotY: 0.6 } : { rotX: 0.18, rotY: 0.35 };
   }
+  // Frame the molecule close, as in the design: it should fill the stage.
+  // Rotate around the molecule's own centre so it stays in the middle of the stage.
+  function molCentroid(mol) {
+    const c = [0, 0, 0];
+    if (!mol || !mol.atoms || !mol.atoms.length) return c;
+    mol.atoms.forEach(function (a) { c[0] += a.pos[0]; c[1] += a.pos[1]; c[2] += a.pos[2]; });
+    return c.map(function (v) { return v / mol.atoms.length; });
+  }
   function paperCamZ() {
-    if (paper() && paper().camZForMol) return paper().camZForMol(molData[currentMolecule]);
-    return DEFAULT_CAM_Z;
+    const mol = molData[currentMolecule];
+    if (!mol || !mol.atoms) return DEFAULT_CAM_Z;
+    const ctr = molCentroid(mol);
+    let ext = 0.9;
+    mol.atoms.forEach(function (a) {
+      const p = [a.pos[0] - ctr[0], a.pos[1] - ctr[1], a.pos[2] - ctr[2]];
+      const d = Math.sqrt(p[0] * p[0] + p[1] * p[1] + p[2] * p[2]) + atomRadius(a);
+      if (d > ext) ext = d;
+    });
+    return Math.max(3.4, Math.min(16, ext * 3.1));
   }
   function applyDefaultOrbit() {
     const o = paperOrbit();
     rotX = o.rotX; rotY = o.rotY;
-    camera.position.set(0, 0.35, paperCamZ());
+    camera.position.set(0, 0, paperCamZ());
   }
 
   function makeSphere(r,color,seg){
@@ -298,10 +307,11 @@ return (function(){
     const g=new THREE.Group(); trackedAtoms=[];
     const mol=molData[key];
     const sx = mirrorMode ? -1 : 1;
+    const ctr = molCentroid(mol);
     const meshes=mol.atoms.map(a=>{
       const radius=atomRadius(a);
       const m=makeSphere(radius,a.color);
-      const pos = [a.pos[0]*sx, a.pos[1], a.pos[2]];
+      const pos = [(a.pos[0]-ctr[0])*sx, a.pos[1]-ctr[1], a.pos[2]-ctr[2]];
       m.position.fromArray(pos);
       const label = COLOR_TO_ELEMENT[a.color] || '';
       trackedAtoms.push({mesh:m, label, radius, color:a.color, pos});
@@ -360,52 +370,61 @@ return (function(){
     if (viewMode === '2d') draw2DMolecule(0);
   };
 
-  // ── Label sprites ──
-  function makeLabelSprite(text, atomRadius){
+  // ── Element letters on the atoms ──
+  // Each atom shows its symbol on the face turned to the camera. The sprite
+  // sits on the sphere's surface (updated every frame), so atoms in front hide
+  // the letters of atoms behind them, like printed balls in a real kit.
+  const labelLayer = new THREE.Group();
+  scene.add(labelLayer);
+  const _wp = new THREE.Vector3();
+  const _dir = new THREE.Vector3();
+  const letterTextures = {};
+  function letterTexture(text, color){
+    const key = text + '|' + color;
+    if (letterTextures[key]) return letterTextures[key];
     const c = document.createElement('canvas');
-    c.width = 160; c.height = 80;
+    c.width = 128; c.height = 128;
     const ctx = c.getContext('2d');
-    ctx.clearRect(0, 0, 160, 80);
-    ctx.fillStyle = '#F8F5EC';
-    ctx.strokeStyle = '#14120E';
-    ctx.lineWidth = 3;
-    roundRect(ctx, 8, 14, 144, 52, 12);
-    ctx.fill();
-    ctx.stroke();
-    ctx.font = '700 42px "Inter Tight", "DM Sans", sans-serif';
+    ctx.font = '700 ' + (text.length > 1 ? 62 : 74) + 'px Figtree, "Segoe UI", system-ui, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillStyle = '#14120E';
-    ctx.fillText(text, 80, 42);
-    const tex = new THREE.CanvasTexture(c); tex.needsUpdate = true;
-    const sp = new THREE.Sprite(new THREE.SpriteMaterial({map:tex, transparent:true, depthTest:false, depthWrite:false}));
-    const r = atomRadius || 0.5;
-    const w = Math.max(0.55, r * 1.85);
-    sp.scale.set(w, w * 0.5, 1);
-    sp.renderOrder = 999;
+    ctx.fillStyle = color;
+    ctx.fillText(text, 64, 68);
+    const tex = new THREE.CanvasTexture(c);
+    tex.needsUpdate = true;
+    letterTextures[key] = tex;
+    return tex;
+  }
+  function makeLabelSprite(text, atomColor){
+    const ink = labelColor(atomColor) === '#111' ? '#14120E' : '#F8F5EC';
+    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: letterTexture(text, ink), transparent: true, depthTest: true, depthWrite: false }));
+    sp.renderOrder = 10;
     return sp;
   }
-  function roundRect(ctx, x, y, w, h, r){
-    const rad = Math.min(r, w / 2, h / 2);
-    ctx.beginPath();
-    ctx.moveTo(x + rad, y);
-    ctx.arcTo(x + w, y, x + w, y + h, rad);
-    ctx.arcTo(x + w, y + h, x, y + h, rad);
-    ctx.arcTo(x, y + h, x, y, rad);
-    ctx.arcTo(x, y, x + w, y, rad);
-    ctx.closePath();
-  }
   function refreshLabels(){
-    trackedAtoms.forEach(a=>{
-      if (a.labelSprite){ a.mesh.remove(a.labelSprite); a.labelSprite = null; }
+    trackedAtoms.forEach(a => {
+      if (a.labelSprite) { labelLayer.remove(a.labelSprite); a.labelSprite.material.dispose(); a.labelSprite = null; }
     });
     if (!labelsVisible) return;
-    trackedAtoms.forEach(a=>{
+    trackedAtoms.forEach(a => {
       if (!a.label) return;
-      const sp = makeLabelSprite(a.label, a.radius);
-      const localY = (paper() && paper().sphereMesh) ? (1 + 0.28 / Math.max(a.radius, 0.08)) : (a.radius + 0.28);
-      sp.position.set(0, localY, 0);
-      a.mesh.add(sp); a.labelSprite = sp;
+      a.labelSprite = makeLabelSprite(a.label, a.color);
+      labelLayer.add(a.labelSprite);
+    });
+    updateLabels();
+  }
+  function updateLabels(){
+    if (!labelsVisible) return;
+    currentGroup.updateMatrixWorld(true);
+    trackedAtoms.forEach(a => {
+      const sp = a.labelSprite;
+      if (!sp) return;
+      a.mesh.getWorldPosition(_wp);
+      const r = Math.max(a.radius, 0.12);
+      _dir.copy(camera.position).sub(_wp).normalize();
+      sp.position.copy(_wp).addScaledVector(_dir, r * 1.02);
+      const size = Math.max(0.24, r * 1.15);
+      sp.scale.set(size, size, 1);
     });
   }
 
@@ -949,6 +968,7 @@ return (function(){
     }
     currentGroup.rotation.y = rotY;
     currentGroup.rotation.x = rotX;
+    updateLabels();
     renderer.render(scene, camera);
   }
 
