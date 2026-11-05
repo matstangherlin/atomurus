@@ -14,7 +14,7 @@
       },
       {
         "cycle": 10,
-        "heapMB": 3.58
+        "heapMB": 3.57
       },
       {
         "cycle": 20,
@@ -37,7 +37,7 @@
       }
     ],
     "growthMB": 0.43,
-    "msPerRoundMedian": 357
+    "msPerRoundMedian": 328
   },
   "authStress": {
     "cycles": 5,
@@ -80,7 +80,7 @@
         "geometries": 0,
         "textures": 0,
         "calls": 0,
-        "heapMB": 3.16
+        "heapMB": 3.22
       },
       {
         "switch": 20,
