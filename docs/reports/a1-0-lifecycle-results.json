@@ -37,7 +37,7 @@
       }
     ],
     "growthMB": 0.43,
-    "msPerRoundMedian": 257
+    "msPerRoundMedian": 277
   },
   "authStress": {
     "cycles": 5,
@@ -80,14 +80,14 @@
         "geometries": 2,
         "textures": 0,
         "calls": 2,
-        "heapMB": 3.44
+        "heapMB": 3.48
       },
       {
         "switch": 20,
         "geometries": 2,
         "textures": 0,
         "calls": 2,
-        "heapMB": 3.42
+        "heapMB": 3.43
       }
     ]
   }
