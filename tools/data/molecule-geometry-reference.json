@@ -1,0 +1,441 @@
+{
+  "consultedAt": "2026-10-26",
+  "scale": "Moléculas reescritas por tools/build-molecule-coords.mjs usam 1 unidade = 1 Å. Moléculas que este teste já aprovava conservam a escala didática anterior (água O–H 1,121; CO2 1,60; benzeno C–C 1,20; metano e CHFClBr 1,732).",
+  "molecules": {
+    "water": {
+      "verified": true,
+      "source": "NIST CCCBDB aHOH equilibrium 104.48°. https://cccbdb.nist.gov/expangle2.asp?descript=aHOH&all=0 O comprimento O–H 1.121 é a escala didática já existente e não vem do NIST.",
+      "angles": [{ "atoms": [1, 0, 2], "deg": 104.48, "tol": 0.5 }],
+      "bonds": [
+        { "atoms": [0, 1], "length": 1.121, "tol": 0.02 },
+        { "atoms": [0, 2], "length": 1.121, "tol": 0.02 }
+      ]
+    },
+    "methane": {
+      "verified": true,
+      "source": "Tetraedro regular: arccos(-1/3) = 109.471°. A página experimental do metano no NIST não foi aberta.",
+      "tetrahedral": { "center": 0, "ligands": [1, 2, 3, 4], "deg": 109.471, "tol": 0.5 }
+    },
+    "ammonia": {
+      "verified": false,
+      "source": "O modelo atual já tem H–N–H 107°. A página NIST da amônia não foi aberta; tolerância larga para não reescrever.",
+      "angles": [
+        { "atoms": [1, 0, 2], "deg": 107, "tol": 2 },
+        { "atoms": [1, 0, 3], "deg": 107, "tol": 2 },
+        { "atoms": [2, 0, 3], "deg": 107, "tol": 2 }
+      ]
+    },
+    "co2": {
+      "verified": true,
+      "source": "O=C=O linear, ângulo 180° por geometria. O comprimento 1.60 é escala didática e não entra no teste.",
+      "angles": [{ "atoms": [1, 0, 2], "deg": 180, "tol": 0.5 }]
+    },
+    "sf6": {
+      "verified": true,
+      "source": "Octaedro regular: 90° e 180°. Comprimento S–F 1.10 é escala didática e não entra no teste.",
+      "octahedral": { "center": 0, "axes": [[1, 2], [3, 4], [5, 6]], "tol": 0.5 }
+    },
+    "benzene": {
+      "verified": true,
+      "source": "Hexágono regular plano, C–C–C 120°. O comprimento 1.20 é escala didática e não entra no teste.",
+      "angles": [
+        { "atoms": [1, 0, 5], "deg": 120, "tol": 0.5 },
+        { "atoms": [0, 1, 2], "deg": 120, "tol": 0.5 },
+        { "atoms": [1, 2, 3], "deg": 120, "tol": 0.5 },
+        { "atoms": [2, 3, 4], "deg": 120, "tol": 0.5 },
+        { "atoms": [3, 4, 5], "deg": 120, "tol": 0.5 },
+        { "atoms": [4, 5, 0], "deg": 120, "tol": 0.5 }
+      ],
+      "planes": [{ "atoms": [0, 1, 2, 3, 4, 5], "max": 0.05 }]
+    },
+    "ethylene": {
+      "verified": false,
+      "source": "Modelo didático atual com C–C–H ~128° (ideal ~122°). Tolerância ±8° para não reescrever uma molécula fora da auditoria. Página NIST do eteno não aberta.",
+      "angles": [
+        { "atoms": [1, 0, 4], "deg": 122, "tol": 8 },
+        { "atoms": [1, 0, 5], "deg": 122, "tol": 8 },
+        { "atoms": [0, 1, 2], "deg": 122, "tol": 8 },
+        { "atoms": [0, 1, 3], "deg": 122, "tol": 8 }
+      ],
+      "planes": [{ "atoms": [0, 1, 2, 3, 4, 5], "max": 0.05 }]
+    },
+    "formaldehyde": {
+      "verified": false,
+      "source": "Modelo atual O–C–H 124.4°, dentro de ±4° de ~122°. Página NIST não aberta.",
+      "angles": [
+        { "atoms": [1, 0, 2], "deg": 122, "tol": 4 },
+        { "atoms": [1, 0, 3], "deg": 122, "tol": 4 }
+      ],
+      "planes": [{ "atoms": [0, 1, 2, 3], "max": 0.05 }]
+    },
+    "acetylene": {
+      "verified": true,
+      "source": "H–C≡C–H linear, ângulo 180° por geometria.",
+      "angles": [
+        { "atoms": [1, 0, 2], "deg": 180, "tol": 1 },
+        { "atoms": [0, 1, 3], "deg": 180, "tol": 1 }
+      ]
+    },
+    "hcn": {
+      "verified": true,
+      "source": "H–C≡N linear, ângulo 180° por geometria. Comprimentos didáticos não entram no teste.",
+      "angles": [{ "atoms": [0, 1, 2], "deg": 180, "tol": 1 }]
+    },
+    "cs2": {
+      "verified": true,
+      "source": "S=C=S linear, ângulo 180° por geometria.",
+      "angles": [{ "atoms": [0, 1, 2], "deg": 180, "tol": 1 }]
+    },
+    "hcl": {
+      "verified": false,
+      "source": "Comprimento didático 1.40 mantido. Página NIST não aberta.",
+      "bonds": [{ "atoms": [0, 1], "length": 1.4, "tol": 0.05 }]
+    },
+    "nacl": {
+      "verified": false,
+      "source": "Par iônico didático, distância 2.30 mantida. Página NIST não aberta.",
+      "bonds": [{ "atoms": [0, 1], "length": 2.3, "tol": 0.05 }]
+    },
+    "n2": {
+      "verified": false,
+      "source": "Comprimento didático 1.60 mantido. Página NIST não aberta.",
+      "bonds": [{ "atoms": [0, 1], "length": 1.6, "tol": 0.05 }]
+    },
+    "o2": {
+      "verified": false,
+      "source": "Comprimento didático 1.60 mantido. Página NIST não aberta.",
+      "bonds": [{ "atoms": [0, 1], "length": 1.6, "tol": 0.05 }]
+    },
+    "co": {
+      "verified": false,
+      "source": "Comprimento didático 1.20 mantido. Página NIST não aberta.",
+      "bonds": [{ "atoms": [0, 1], "length": 1.2, "tol": 0.05 }]
+    },
+    "chfclbr": {
+      "verified": true,
+      "source": "Os seis ângulos já são o tetraedro regular arccos(-1/3). Os quatro comprimentos iguais a 1.732 não são experimentais e ficam de fora do teste.",
+      "tetrahedral": { "center": 0, "ligands": [1, 2, 3, 4], "deg": 109.471, "tol": 0.5 }
+    },
+    "fe2o3": {
+      "verified": false,
+      "source": "Fragmento didático de hematita, não uma molécula de gás. Sem estrutura de cristal consultada; o teste só trava a geometria atual.",
+      "angles": [
+        { "atoms": [2, 0, 3], "deg": 71.1, "tol": 2 },
+        { "atoms": [2, 0, 4], "deg": 48.5, "tol": 2 },
+        { "atoms": [3, 0, 4], "deg": 48.5, "tol": 2 },
+        { "atoms": [2, 1, 3], "deg": 71.1, "tol": 2 },
+        { "atoms": [2, 1, 4], "deg": 48.5, "tol": 2 },
+        { "atoms": [3, 1, 4], "deg": 48.5, "tol": 2 },
+        { "atoms": [0, 2, 1], "deg": 108.9, "tol": 2 },
+        { "atoms": [0, 3, 1], "deg": 108.9, "tol": 2 },
+        { "atoms": [0, 4, 1], "deg": 108.9, "tol": 2 }
+      ]
+    },
+    "methyl-isocyanate": {
+      "verified": false,
+      "source": "N=C=O é linear (180°). C–N–C atual 133.5° fica numa tolerância larga (±8° em torno de 140°). Página NIST não aberta.",
+      "angles": [
+        { "atoms": [1, 2, 3], "deg": 180, "tol": 1 },
+        { "atoms": [0, 1, 2], "deg": 140, "tol": 8 }
+      ]
+    },
+    "ethanol": {
+      "verified": true,
+      "source": "NIST CCCBDB exp2x casno=64175, 1998Cou/Bou: rCC 1.512 Å, rCO 1.431 Å, rOH 0.971 Å, aCCO 107.8°, aHOC 105.4°. https://cccbdb.nist.gov/exp2x.asp?casno=64175&charge=0",
+      "bonds": [
+        { "atoms": [0, 1], "length": 1.512, "tol": 0.02 },
+        { "atoms": [1, 2], "length": 1.431, "tol": 0.02 },
+        { "atoms": [2, 3], "length": 0.971, "tol": 0.02 }
+      ],
+      "angles": [
+        { "atoms": [0, 1, 2], "deg": 107.8, "tol": 0.5 },
+        { "atoms": [1, 2, 3], "deg": 105.4, "tol": 0.5 }
+      ]
+    },
+    "methanol": {
+      "verified": true,
+      "source": "NIST CCCBDB exp2x casno=67561, 1955Ven/Gor: rCO 1.427 Å, rOH 0.956 Å, aHOC 108.87°. https://cccbdb.nist.gov/exp2x.asp?casno=67561&charge=0",
+      "bonds": [
+        { "atoms": [0, 1], "length": 1.427, "tol": 0.02 },
+        { "atoms": [1, 2], "length": 0.956, "tol": 0.02 }
+      ],
+      "angles": [{ "atoms": [0, 1, 2], "deg": 108.87, "tol": 0.5 }]
+    },
+    "dimethylether": {
+      "verified": true,
+      "source": "NIST CCCBDB expgeom2 casno=115106, 2003Nii/Hay: rCO 1.411 Å, aCOC 111.2°. https://cccbdb.nist.gov/expgeom2.asp?casno=115106&charge=0",
+      "bonds": [
+        { "atoms": [0, 1], "length": 1.411, "tol": 0.03 },
+        { "atoms": [1, 2], "length": 1.411, "tol": 0.03 }
+      ],
+      "angles": [{ "atoms": [0, 1, 2], "deg": 111.2, "tol": 0.5 }]
+    },
+    "butane": {
+      "verified": false,
+      "source": "NIST CCCBDB exp2x casno=106978, 1998Kuc: rCC 1.531 Å e aCCC 113.8° (verificados). O diedro testado é o confôrmero anti, 180°. A linha de diedro aberta nessa página é o gauche, 64.9°, embora o cabeçalho indique Anti / C2h. https://cccbdb.nist.gov/exp2x.asp?casno=106978&charge=0",
+      "bonds": [
+        { "atoms": [0, 1], "length": 1.531, "tol": 0.03 },
+        { "atoms": [1, 2], "length": 1.531, "tol": 0.03 },
+        { "atoms": [2, 3], "length": 1.531, "tol": 0.03 }
+      ],
+      "angles": [
+        { "atoms": [0, 1, 2], "deg": 113.8, "tol": 1 },
+        { "atoms": [1, 2, 3], "deg": 113.8, "tol": 1 }
+      ],
+      "dihedrals": [{ "atoms": [0, 1, 2, 3], "deg": 180, "tol": 5 }]
+    },
+    "propane": {
+      "verified": false,
+      "source": "rCC 1.531 Å e aCCC 113.8° copiados do n-butano NIST (1998Kuc). A página do propano não foi aberta.",
+      "bonds": [
+        { "atoms": [0, 1], "length": 1.531, "tol": 0.04 },
+        { "atoms": [1, 2], "length": 1.531, "tol": 0.04 }
+      ],
+      "angles": [{ "atoms": [0, 1, 2], "deg": 113.8, "tol": 2 }]
+    },
+    "isobutane": {
+      "verified": false,
+      "source": "aCCC 111.15° é o valor usual do isobutano; a lista NIST aCCC não foi reaberta nesta etapa. rCC 1.535 Å sem página aberta.",
+      "bonds": [
+        { "atoms": [0, 1], "length": 1.535, "tol": 0.04 },
+        { "atoms": [0, 2], "length": 1.535, "tol": 0.04 },
+        { "atoms": [0, 3], "length": 1.535, "tol": 0.04 }
+      ],
+      "angles": [
+        { "atoms": [1, 0, 2], "deg": 111.15, "tol": 1 },
+        { "atoms": [1, 0, 3], "deg": 111.15, "tol": 1 },
+        { "atoms": [2, 0, 3], "deg": 111.15, "tol": 1 },
+        { "atoms": [1, 0, 4], "deg": 107.7, "tol": 2 }
+      ]
+    },
+    "but1ene": {
+      "verified": false,
+      "source": "C=C–C 125° e C=C 1.34 Å sem página do buteno. C–C–C 113.8° e a ideia de cadeia estendida vêm do n-butano NIST.",
+      "bonds": [
+        { "atoms": [0, 1], "length": 1.34, "tol": 0.04 },
+        { "atoms": [1, 2], "length": 1.508, "tol": 0.04 }
+      ],
+      "angles": [
+        { "atoms": [0, 1, 2], "deg": 125, "tol": 3 },
+        { "atoms": [1, 2, 3], "deg": 113.8, "tol": 2 }
+      ]
+    },
+    "but2ene": {
+      "verified": false,
+      "source": "But-2-eno genérico desenhado no confôrmero trans (diedro 180°). C=C–C 125° sem página específica.",
+      "angles": [
+        { "atoms": [0, 1, 2], "deg": 125, "tol": 3 },
+        { "atoms": [1, 2, 3], "deg": 125, "tol": 3 }
+      ],
+      "dihedrals": [{ "atoms": [0, 1, 2, 3], "deg": 180, "tol": 8 }],
+      "bonds": [{ "atoms": [1, 2], "length": 1.34, "tol": 0.04 }]
+    },
+    "cis2butene": {
+      "verified": false,
+      "source": "cis: diedro C–C=C–C 0° e C=C–C 125°. Sem página específica.",
+      "angles": [
+        { "atoms": [0, 1, 2], "deg": 125, "tol": 3 },
+        { "atoms": [1, 2, 3], "deg": 125, "tol": 3 }
+      ],
+      "dihedrals": [{ "atoms": [0, 1, 2, 3], "deg": 0, "tol": 8 }]
+    },
+    "trans2butene": {
+      "verified": false,
+      "source": "trans: diedro C–C=C–C 180° e C=C–C 125°. Sem página específica.",
+      "angles": [
+        { "atoms": [0, 1, 2], "deg": 125, "tol": 3 },
+        { "atoms": [1, 2, 3], "deg": 125, "tol": 3 }
+      ],
+      "dihedrals": [{ "atoms": [0, 1, 2, 3], "deg": 180, "tol": 8 }]
+    },
+    "bromobutane": {
+      "verified": false,
+      "source": "No carbono quiral, C–C–C = 112° (cabe em 109.5±4 e na faixa de alcano) e C–C–Br / C–C–H = 109.47°. O C–C–C seguinte usa 113.8° do n-butano NIST. C–Br 1.94 Å sem página.",
+      "angles": [
+        { "atoms": [0, 1, 2], "deg": 112, "tol": 2 },
+        { "atoms": [1, 2, 3], "deg": 113.8, "tol": 2 },
+        { "atoms": [0, 1, 4], "deg": 109.47, "tol": 4 },
+        { "atoms": [2, 1, 4], "deg": 109.47, "tol": 4 },
+        { "atoms": [4, 1, 8], "deg": 109.47, "tol": 4 },
+        { "atoms": [0, 1, 8], "deg": 109.47, "tol": 4 }
+      ],
+      "bonds": [
+        { "atoms": [0, 1], "length": 1.531, "tol": 0.05 },
+        { "atoms": [1, 4], "length": 1.94, "tol": 0.06 }
+      ]
+    },
+    "acetone": {
+      "verified": true,
+      "source": "NIST CCCBDB listgeomexpx casno=67641, 1998Kuc: rCC 1.520 Å, rCO 1.214 Å, aCCC 116.0°, aCCO 122.0°. https://cccbdb.nist.gov/listgeomexpx.asp?casno=67641",
+      "bonds": [
+        { "atoms": [0, 1], "length": 1.52, "tol": 0.02 },
+        { "atoms": [1, 2], "length": 1.52, "tol": 0.02 },
+        { "atoms": [1, 3], "length": 1.214, "tol": 0.02 }
+      ],
+      "angles": [
+        { "atoms": [0, 1, 2], "deg": 116, "tol": 0.5 },
+        { "atoms": [0, 1, 3], "deg": 122, "tol": 0.5 },
+        { "atoms": [2, 1, 3], "deg": 122, "tol": 0.5 }
+      ],
+      "planes": [{ "atoms": [0, 1, 2, 3], "max": 0.05 }]
+    },
+    "aceticacid": {
+      "verified": false,
+      "source": "NIST CCCBDB exp2x casno=64197, 1976Hellwege(II/7): rCC 1.517, rC=O 1.212, rC–O 1.361, aCC=O 126.6, aC–C–O 110.6, aOCO 123. A construção com 126.6 e 110.6 produz O=C–O 122.8°. C–O–H 106° não estava na página. https://cccbdb.nist.gov/exp2x.asp?casno=64197&charge=0",
+      "bonds": [
+        { "atoms": [0, 1], "length": 1.517, "tol": 0.02 },
+        { "atoms": [1, 2], "length": 1.212, "tol": 0.02 },
+        { "atoms": [1, 3], "length": 1.361, "tol": 0.02 }
+      ],
+      "angles": [
+        { "atoms": [0, 1, 2], "deg": 126.6, "tol": 0.5 },
+        { "atoms": [0, 1, 3], "deg": 110.6, "tol": 0.5 },
+        { "atoms": [2, 1, 3], "deg": 123, "tol": 1.5 },
+        { "atoms": [1, 3, 4], "deg": 106, "tol": 3 }
+      ]
+    },
+    "h2o2": {
+      "verified": true,
+      "source": "NIST CCCBDB expgeom2x casno=7722841, 1962Red/Ols: rOO 1.475 Å, rOH 0.950 Å, aHOO 94.8°, dHOOH 119.8°. O prompt citava diedro 111° (CRC, página não aberta); o valor gravado é o NIST, 0.8° fora da janela 111±8. https://cccbdb.nist.gov/expgeom2x.asp?casno=7722841",
+      "bonds": [
+        { "atoms": [0, 1], "length": 1.475, "tol": 0.02 },
+        { "atoms": [0, 2], "length": 0.95, "tol": 0.02 },
+        { "atoms": [1, 3], "length": 0.95, "tol": 0.02 }
+      ],
+      "angles": [
+        { "atoms": [1, 0, 2], "deg": 94.8, "tol": 0.5 },
+        { "atoms": [0, 1, 3], "deg": 94.8, "tol": 0.5 }
+      ],
+      "dihedrals": [{ "atoms": [2, 0, 1, 3], "deg": 119.8, "tol": 1, "absolute": true }]
+    },
+    "so2": {
+      "verified": false,
+      "source": "O–S–O 119.5° e S–O 1.431 Å são o alvo do prompt. A página NIST do SO2 não abriu nesta etapa.",
+      "bonds": [
+        { "atoms": [0, 1], "length": 1.431, "tol": 0.04 },
+        { "atoms": [0, 2], "length": 1.431, "tol": 0.04 }
+      ],
+      "angles": [{ "atoms": [1, 0, 2], "deg": 119.5, "tol": 2 }]
+    },
+    "pcl3": {
+      "verified": false,
+      "source": "Cl–P–Cl 100.3° e P–Cl 2.04 Å sem página aberta nesta etapa. Os três ângulos são iguais por construção.",
+      "bonds": [
+        { "atoms": [0, 1], "length": 2.04, "tol": 0.04 },
+        { "atoms": [0, 2], "length": 2.04, "tol": 0.04 },
+        { "atoms": [0, 3], "length": 2.04, "tol": 0.04 }
+      ],
+      "angles": [
+        { "atoms": [1, 0, 2], "deg": 100.3, "tol": 1 },
+        { "atoms": [1, 0, 3], "deg": 100.3, "tol": 1 },
+        { "atoms": [2, 0, 3], "deg": 100.3, "tol": 1 }
+      ]
+    },
+    "hno3": {
+      "verified": false,
+      "source": "O–N–O 130°/115°, grupo plano e N–O–H 102°, com comprimentos 1.21/1.20/1.41 Å. Página NIST não aberta.",
+      "bonds": [
+        { "atoms": [0, 1], "length": 1.21, "tol": 0.05 },
+        { "atoms": [0, 2], "length": 1.2, "tol": 0.05 },
+        { "atoms": [0, 3], "length": 1.41, "tol": 0.05 }
+      ],
+      "angles": [
+        { "atoms": [1, 0, 2], "deg": 130, "tol": 2 },
+        { "atoms": [1, 0, 3], "deg": 115, "tol": 2 },
+        { "atoms": [2, 0, 3], "deg": 115, "tol": 2 },
+        { "atoms": [0, 3, 4], "deg": 102, "tol": 3 }
+      ],
+      "planes": [{ "atoms": [0, 1, 2, 3, 4], "max": 0.05 }]
+    },
+    "h2so4": {
+      "verified": false,
+      "source": "O=S=O 123°, O=S–OH 106°, HO–S–OH ~109°, S–O–H 108°, S=O 1.43 Å e S–OH 1.57 Å. Página NIST não aberta.",
+      "bonds": [
+        { "atoms": [0, 1], "length": 1.43, "tol": 0.04 },
+        { "atoms": [0, 2], "length": 1.43, "tol": 0.04 },
+        { "atoms": [0, 3], "length": 1.57, "tol": 0.04 },
+        { "atoms": [0, 4], "length": 1.57, "tol": 0.04 }
+      ],
+      "angles": [
+        { "atoms": [1, 0, 2], "deg": 123, "tol": 2 },
+        { "atoms": [1, 0, 3], "deg": 106, "tol": 3 },
+        { "atoms": [3, 0, 4], "deg": 109.4, "tol": 4 },
+        { "atoms": [0, 3, 5], "deg": 108, "tol": 3 },
+        { "atoms": [0, 4, 6], "deg": 108, "tol": 3 }
+      ]
+    },
+    "h3po4": {
+      "verified": false,
+      "source": "O–P–O do tetraedro regular e P–O–H 110°. Comprimentos P=O 1.48 Å e P–OH 1.55 Å sem página. Fora da tabela da auditoria: o P–O–H atual (~150–164°) contradiz o ácido.",
+      "angles": [
+        { "atoms": [1, 0, 2], "deg": 109.47, "tol": 2 },
+        { "atoms": [2, 0, 3], "deg": 109.47, "tol": 2 },
+        { "atoms": [0, 2, 5], "deg": 110, "tol": 3 },
+        { "atoms": [0, 3, 6], "deg": 110, "tol": 3 },
+        { "atoms": [0, 4, 7], "deg": 110, "tol": 3 }
+      ]
+    },
+    "cyclohexane": {
+      "verified": true,
+      "source": "NIST CCCBDB exp2x casno=110827, 1998Kuc, cadeira: rCC 1.530 Å, aCCC 111.28°, dCCCC 55.26°. Os C–H usam um z-matrix aproximado (H–C–H ~109°), não os 106.65°/108.83°/110.55° axiais e equatoriais da mesma página. https://cccbdb.nist.gov/exp2x.asp?casno=110827&charge=0",
+      "bonds": [
+        { "atoms": [0, 1], "length": 1.53, "tol": 0.02 },
+        { "atoms": [1, 2], "length": 1.53, "tol": 0.02 },
+        { "atoms": [2, 3], "length": 1.53, "tol": 0.02 },
+        { "atoms": [3, 4], "length": 1.53, "tol": 0.02 },
+        { "atoms": [4, 5], "length": 1.53, "tol": 0.02 },
+        { "atoms": [5, 0], "length": 1.53, "tol": 0.02 }
+      ],
+      "angles": [
+        { "atoms": [5, 0, 1], "deg": 111.28, "tol": 1.5 },
+        { "atoms": [0, 1, 2], "deg": 111.28, "tol": 1.5 },
+        { "atoms": [1, 2, 3], "deg": 111.28, "tol": 1.5 },
+        { "atoms": [2, 3, 4], "deg": 111.28, "tol": 1.5 },
+        { "atoms": [3, 4, 5], "deg": 111.28, "tol": 1.5 },
+        { "atoms": [4, 5, 0], "deg": 111.28, "tol": 1.5 }
+      ],
+      "dihedrals": [
+        { "atoms": [0, 1, 2, 3], "deg": 55.26, "tol": 2 },
+        { "atoms": [1, 2, 3, 4], "deg": -55.26, "tol": 2 }
+      ],
+      "planes": [{ "atoms": [0, 1, 2, 3, 4, 5], "min": 0.15, "max": 0.35 }]
+    },
+    "lacticacid": {
+      "verified": false,
+      "source": "Centro quiral no tetraedro regular arccos(-1/3). Comprimentos e a carboxila são modelo; página do ácido láctico não aberta.",
+      "angles": [
+        { "atoms": [0, 1, 2], "deg": 109.471, "tol": 1 },
+        { "atoms": [0, 1, 3], "deg": 109.471, "tol": 1 },
+        { "atoms": [2, 1, 3], "deg": 109.471, "tol": 1 },
+        { "atoms": [0, 1, 8], "deg": 109.471, "tol": 1 },
+        { "atoms": [2, 1, 8], "deg": 109.471, "tol": 1 },
+        { "atoms": [3, 1, 8], "deg": 109.471, "tol": 1 }
+      ]
+    },
+    "alanine": {
+      "verified": false,
+      "source": "Carbono alfa no tetraedro regular arccos(-1/3). Comprimentos são modelo; página da alanina não aberta.",
+      "angles": [
+        { "atoms": [0, 1, 2], "deg": 109.471, "tol": 1 },
+        { "atoms": [0, 1, 3], "deg": 109.471, "tol": 1 },
+        { "atoms": [2, 1, 3], "deg": 109.471, "tol": 1 },
+        { "atoms": [0, 1, 9], "deg": 109.471, "tol": 1 },
+        { "atoms": [2, 1, 9], "deg": 109.471, "tol": 1 },
+        { "atoms": [3, 1, 9], "deg": 109.471, "tol": 1 }
+      ]
+    },
+    "glyceraldehyde": {
+      "verified": false,
+      "source": "Carbono quiral (átomo 3) no tetraedro regular. Aldeído plano a 120°. Página do gliceraldeído não aberta.",
+      "angles": [
+        { "atoms": [0, 3, 4], "deg": 109.471, "tol": 1 },
+        { "atoms": [0, 3, 5], "deg": 109.471, "tol": 1 },
+        { "atoms": [0, 3, 7], "deg": 109.471, "tol": 1 },
+        { "atoms": [4, 3, 5], "deg": 109.471, "tol": 1 },
+        { "atoms": [4, 3, 7], "deg": 109.471, "tol": 1 },
+        { "atoms": [5, 3, 7], "deg": 109.471, "tol": 1 }
+      ],
+      "planes": [{ "atoms": [0, 1, 2, 3], "max": 0.05 }]
+    }
+  }
+}
