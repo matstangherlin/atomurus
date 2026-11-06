@@ -48,9 +48,9 @@ test('pH 1e-8 em português mostra 6.98 e a autoionização', async ({ page }) =
   });
   await page.goto('/calculators.pt.html#ph');
   await page.locator('#ph-mode').selectOption('H');
-  await page.locator('#ph-H').fill('1e-8');
+  await page.locator('#ph-H').fill('1.0e-8');
   await page.locator('#tab-ph .calc-btn-run').click();
-  await expect(page.locator('#ph-result-body')).toContainText('6.98');
+  await expect(page.locator('#ph-result-body')).toContainText('6,98');
   await expect(page.locator('[data-ph-autoion]')).toContainText('autoionização');
   await expect(page.locator('#ph-result-body')).toContainText('levemente ácida');
   await page.locator('#ph-mode').selectOption('pH');
@@ -61,4 +61,26 @@ test('pH 1e-8 em português mostra 6.98 e a autoionização', async ({ page }) =
   await page.locator('#tab-ph .calc-btn-run').click();
   await expect(page.locator('#ph-result-body')).toContainText('neutra');
   expect(errors).toEqual([]);
+});
+
+test('weak acid, exact R and significant figures', async ({ page }) => {
+  await page.goto('/calculators.html#ph');
+  await page.locator('#ph-mode').selectOption('weakA');
+  await page.locator('#ph-weak-C').fill('0.10');
+  await page.locator('#ph-weak-K').fill('1.8e-5');
+  await page.locator('#tab-ph .calc-btn-run').click();
+  await expect(page.locator('#ph-result-body')).toContainText('2.88');
+  await expect(page.locator('#ph-result-body')).toContainText('1.3 %');
+  await page.goto('/calculators.html#ideal');
+  await page.reload();
+  await page.locator('#ig-solve').selectOption('n');
+  await page.locator('#ig-P').fill('1.00');
+  await page.locator('#ig-P-u').selectOption('atm');
+  await page.locator('#ig-V').fill('22.4');
+  await page.locator('#ig-V-u').selectOption('L');
+  await page.locator('#ig-T').fill('0.0');
+  await page.locator('#ig-T-u').selectOption('C');
+  await page.locator('#tab-ideal .calc-btn-run').click();
+  await expect(page.locator('#ig-result-body .calc-result-v.big')).toContainText('0.999');
+  await expect(page.locator('#ig-result-body')).toContainText('8.314462618');
 });

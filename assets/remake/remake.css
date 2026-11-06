@@ -3272,3 +3272,8 @@ html[data-rm] body.rm.rm .iso-x-bonds .iso-x-bonds-t { display: block; font: 600
   html[data-rm] body.rm.rm .iso-x-3d canvas { height: 300px; }
   html[data-rm] body.rm.rm .iso-x-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+/* 9k ── calculators: step-by-step block and precision notes */
+html[data-rm] body.rm.rm .calc-steps { margin: 14px 0 6px; padding: 12px 14px; border: 1px solid var(--rm-line); border-radius: 12px; background: var(--rm-bg); }
+html[data-rm] body.rm.rm .calc-steps summary { cursor: pointer; font: 600 13.5px/1.3 var(--rm-font); color: var(--rm-ink); }
+html[data-rm] body.rm.rm .calc-step { margin: 8px 0 0; font: 500 13.5px/1.55 var(--rm-mono); color: var(--rm-ink); overflow-wrap: anywhere; }
+html[data-rm] body.rm.rm [data-sig] { color: var(--rm-green) !important; }

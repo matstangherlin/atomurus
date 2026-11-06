@@ -23,9 +23,21 @@ assert.equal(core.validateIdeal({ solve: 'V', P: 101325, V: 1, n: 1, T: -10, Pu:
 assert.equal(core.validateIdeal({ solve: 'P', P: 1, V: 1, n: 1, T: 0, Pu: 'Pa', Vu: 'm3', Tu: 'K' }).ok, false);
 assert.equal(core.validateIdeal({ solve: 'n', P: 0, V: 1, n: 1, T: 300, Pu: 'Pa', Vu: 'L', Tu: 'K' }).ok, false);
 assert.equal(core.validateIdeal({ solve: 'T', P: 1, V: -1, n: 1, T: 300, Pu: 'Pa', Vu: 'L', Tu: 'K' }).ok, false);
-assert.equal(core.validateIdeal({ solve: 'P', P: 1, V: 1, n: 1, T: 300, Pu: 'bar', Vu: 'L', Tu: 'K' }).code, 'igUnknownUnit');
-assert.equal(core.toPascals(1, 'bar'), null);
+assert.equal(core.validateIdeal({ solve: 'P', P: 1, V: 1, n: 1, T: 300, Pu: 'xyz', Vu: 'L', Tu: 'K' }).code, 'igUnknownUnit');
+assert.equal(core.toPascals(1, 'xyz'), null);
+assert.equal(core.toPascals(1, 'bar'), 1e5);
+assert.equal(core.toPascals(760, 'Torr'), 101325);
+assert.equal(core.R_IDEAL, 8.314462618);
+assert.equal(core.validateIdeal({ solve: 'n', P: 1, V: 22.4, n: NaN, T: 0, Pu: 'atm', Vu: 'L', Tu: 'C' }).ok, true);   // 0 °C is fine
+assert.equal(core.validateIdeal({ solve: 'n', P: 1, V: 22.4, n: NaN, T: -300, Pu: 'atm', Vu: 'L', Tu: 'C' }).ok, false);
 assert.equal(core.toM3(1, 'gal'), null);
+assert.equal(core.toM3(1, 'dm3'), 0.001);
+// weak acid: acetic acid 0.10 mol/L, Ka 1.8e-5 → pH 2.87, α ≈ 1.3 %
+const weak = core.computeWeak({ C: 0.1, K: 1.8e-5 });
+assert.ok(Math.abs(weak.pH - 2.875) < 0.002, weak.pH);
+assert.ok(weak.approxOk);
+assert.ok(Math.abs(core.computeWeak({ C: 0.1, pK: 4.75, type: 'base' }).pH - 11.12) < 0.01);
+assert.equal(core.computeWeak({ C: 0.01, K: 0.1 }).approxOk, false);
 assert.equal(core.toK(1, 'R'), null);
 
 const ideal = core.validateIdeal({ solve: 'P', P: 1, V: 10, n: 2.5, T: 350, Pu: 'atm', Vu: 'L', Tu: 'K' });
