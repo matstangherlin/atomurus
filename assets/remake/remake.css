@@ -3359,3 +3359,58 @@ html[data-rm] body.rm.rm .rm-pt-src b { color: var(--rm-ink-2); font-weight: 600
   html[data-rm] body.rm.rm .rm-pt-scale-name { flex-basis: 100%; }
   html[data-rm] body.rm.rm .rm-pt-scale-bar { flex: 1 1 60px; min-width: 60px; }
 }
+/* 9n ── allotropes (design board "Alótropos 3D"): element chips, forms with
+   a short line, stage caption, notes column and the measured-structure card */
+html[data-rm] body.rm.rm .allo-elems { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 20px; }
+html[data-rm] body.rm.rm .allo-chip { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; border: 1px solid var(--rm-line); border-radius: 999px; background: var(--rm-paper); color: var(--rm-ink); font: 600 14px/1 var(--rm-font); cursor: pointer; }
+html[data-rm] body.rm.rm .allo-chip:hover { border-color: var(--rm-line-strong); }
+html[data-rm] body.rm.rm .allo-chip[aria-pressed="true"] { background: var(--rm-ink); border-color: var(--rm-ink); color: var(--rm-bg); }
+html[data-rm] body.rm.rm .allo-chip:focus-visible, html[data-rm] body.rm.rm .allo-row-btn:focus-visible { outline: 2px solid var(--rm-mint); outline-offset: 2px; }
+html[data-rm] body.rm.rm .allo-dot { width: 10px; height: 10px; border-radius: 50%; flex: none; box-shadow: inset 0 0 0 1px rgba(20, 18, 14, .12); }
+html[data-rm] body.rm.rm .viewer .allo-btn { display: flex !important; flex-direction: column; align-items: flex-start; gap: 2px; padding: 12px 14px !important; }
+html[data-rm] body.rm.rm .viewer .allo-btn .allo-n { font: 600 16px/1.25 var(--rm-font); color: var(--rm-ink); }
+html[data-rm] body.rm.rm .viewer .allo-btn .allo-d { font: 400 13px/1.35 var(--rm-font); color: var(--rm-ink-2) !important; }
+html[data-rm] body.rm.rm .viewer .canvas-wrap { position: relative; }
+html[data-rm] body.rm.rm .allo-stage-label { position: absolute; left: 20px; top: 18px; margin: 0; font: 500 14px/1.2 var(--rm-mono); color: var(--rm-dark-muted); pointer-events: none; z-index: 2; }
+html[data-rm] body.rm.rm .allo-stage-count { position: absolute; left: 20px; bottom: 18px; margin: 0; font: 400 13px/1.2 var(--rm-font); color: var(--rm-dark-dim); pointer-events: none; z-index: 2; }
+html[data-rm] body.rm.rm .allo-kicker { margin: 0 0 6px; font: 600 14px/1.3 var(--rm-font); color: var(--rm-green); }
+html[data-rm] body.rm.rm .allo-side .info-desc { color: var(--rm-ink) !important; opacity: .86; }
+html[data-rm] body.rm.rm .allo-side-facts { margin: 4px 0 0; border-bottom: 1px solid var(--rm-line); }
+html[data-rm] body.rm.rm .allo-side-facts > div { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-top: 1px solid var(--rm-line); font: 400 15px/1.4 var(--rm-font); }
+html[data-rm] body.rm.rm .allo-side-facts dt { color: var(--rm-ink-2); flex: none; }
+html[data-rm] body.rm.rm .allo-side-facts dd { margin: 0; font-weight: 600; color: var(--rm-ink); text-align: right; }
+html[data-rm] body.rm.rm .allo-el-link { display: inline-block; margin-top: 18px; font: 600 15px/1.4 var(--rm-font); color: var(--rm-green); }
+html[data-rm] body.rm.rm .allo-facts .mol-facts-head h2 { font-size: 20px; }
+html[data-rm] body.rm.rm .allo-extra { display: flex; flex-wrap: wrap; gap: 8px 28px; margin: 16px 0 0; }
+html[data-rm] body.rm.rm .allo-extra > div { display: flex; gap: 8px; align-items: baseline; font: 400 14px/1.4 var(--rm-font); }
+html[data-rm] body.rm.rm .allo-extra dt { color: var(--rm-ink-3); }
+html[data-rm] body.rm.rm .allo-extra dd { margin: 0; font-weight: 600; color: var(--rm-ink); font-variant-numeric: tabular-nums; }
+html[data-rm] body.rm.rm .allo-muted { color: var(--rm-ink-3); font-weight: 400; }
+html[data-rm] body.rm.rm .allo-compare { margin-top: 22px; }
+html[data-rm] body.rm.rm .allo-compare tr.is-on td { background: var(--rm-green-soft); }
+html[data-rm] body.rm.rm .allo-compare td:first-child { padding-left: 8px; }
+html[data-rm] body.rm.rm .allo-row-btn { padding: 0; border: 0; background: none; font: 600 14px/1.4 var(--rm-font); color: var(--rm-ink); cursor: pointer; text-align: left; text-decoration: underline; text-decoration-color: var(--rm-line-strong); text-underline-offset: 3px; }
+html[data-rm] body.rm.rm .allo-compare tr.is-on .allo-row-btn { text-decoration: none; }
+html[data-rm] body.rm.rm .allo-sources { display: flex; gap: 8px; margin: 8px 0 0; font: 400 13px/1.55 var(--rm-font); color: var(--rm-ink-3); }
+html[data-rm] body.rm.rm .allo-sources span { font-weight: 600; }
+html[data-rm] body.rm.rm .allo-sources ul { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 0 6px; }
+html[data-rm] body.rm.rm .allo-sources li + li::before { content: '·'; margin-right: 6px; }
+@media (max-width: 760px) {
+  html[data-rm] body.rm.rm .viewer .allo-btn { flex-direction: row; align-items: center; padding: 8px 14px !important; }
+  html[data-rm] body.rm.rm .viewer .allo-btn .allo-n { font-size: 14px; }
+  html[data-rm] body.rm.rm .viewer .allo-btn .allo-d { display: none; }
+  html[data-rm] body.rm.rm .allo-stage-label { left: 14px; top: 14px; font-size: 12.5px; }
+  html[data-rm] body.rm.rm .allo-stage-count { display: none; }
+  html[data-rm] body.rm.rm .allo-sources { flex-direction: column; gap: 2px; }
+  html[data-rm] body.rm.rm .allo-sources ul { flex-direction: column; }
+  html[data-rm] body.rm.rm .allo-sources li + li::before { content: none; }
+  html[data-rm] body.rm.rm .viewer .allo-btn.active { border-color: var(--rm-ink) !important; }
+}
+/* the allotrope page has no legend row under the stage: keep the list and the
+   notes column on the stage row so no empty rows open a gap above the card */
+@media (min-width: 1181px) {
+  html[data-rm] body.rm.rm .viewer.rm-vw:has(#allo-variants) > .rm-vw-side,
+  html[data-rm] body.rm.rm .viewer.rm-vw:has(#allo-variants) > .panel { grid-row: 1 !important; }
+}
+html[data-rm] body.rm.rm .allo-compare table { display: table !important; width: 100% !important; max-width: none !important; }
+html[data-rm] body.rm.rm .allo-facts { margin-top: 8px; }

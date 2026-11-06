@@ -405,6 +405,11 @@ function buildElementEnVariant(srcAbs, ctx) {
     `$1"${escAttr(breadcrumb3)}"`
   );
 
+  // Numbers and half-lives in English before any script runs (the runtime
+  // swaps them too, but crawlers and slow phones see this first).
+  out = out.replace(/(data-rm-num="([^"]*)"[^>]*>)[^<]*/g, (_m, open, raw) => open + raw);
+  out = out.replace(/(data-hl-en="([^"]*)"[^>]*>)[^<]*/g, (_m, open, en) => open + en);
+
   const dstAbs = srcAbs.replace(/\.html$/, '.en.html');
   fs.writeFileSync(dstAbs, out, 'utf8');
   return true;

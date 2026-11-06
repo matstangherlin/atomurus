@@ -185,6 +185,9 @@
       var raw = n.getAttribute('data-rm-num');
       n.textContent = pt ? raw.replace(/\./g, ',') : raw;
     });
+    document.querySelectorAll('[data-hl-pt]').forEach(function (n) {
+      n.textContent = n.getAttribute(pt ? 'data-hl-pt' : 'data-hl-en');
+    });
     document.querySelectorAll('[data-rm-tpl]').forEach(function (n) {
       var tpl = rmT(n.getAttribute('data-rm-tpl'), null);
       if (!tpl) return;
@@ -320,7 +323,7 @@
   function loadStudyCloud() {
     if (window.__atomurusStudyBoot) return;
     var script = document.createElement('script');
-    script.src = '/study-boot.js?v=202611060422';
+    script.src = '/study-boot.js?v=202611061201';
     script.defer = true;
     document.head.appendChild(script);
   }

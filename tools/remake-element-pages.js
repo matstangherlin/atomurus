@@ -39,13 +39,46 @@ const ALLOTROPES = {
   6: ['carbon', ['graphite', 'diamond', 'graphene', 'fullerene']],
   8: ['oxygen', ['o2', 'ozone']],
   15: ['phosphorus', ['p_white', 'p_red', 'p_black']],
-  16: ['sulfur', ['s_rhombic', 's_mono']]
+  16: ['sulfur', ['s_rhombic', 's_mono', 's_plastic']]
 };
 
 const SUP = { 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹' };
 const sup = (n) => String(n).split('').map((c) => SUP[c] || c).join('');
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const ptNum = (s) => String(s).replace(/\./g, ',');
+
+/* Half-lives are stored as "2.60 y", "5,730 y", "1.39 My", "1.5e17 y",
+   "14.28 d"… Spell them out per language: "2,60 anos" / "2.60 years". */
+const SUPDIG = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+const HL_UNITS = {
+  y: { pt: ['ano', 'anos'], en: ['year', 'years'] },
+  ky: { pt: ['mil anos', 'mil anos'], en: ['thousand years', 'thousand years'] },
+  My: { pt: ['milhão de anos', 'milhões de anos'], en: ['million years', 'million years'] },
+  Gy: { pt: ['bilhão de anos', 'bilhões de anos'], en: ['billion years', 'billion years'] },
+  Ty: { pt: ['trilhão de anos', 'trilhões de anos'], en: ['trillion years', 'trillion years'] },
+  d: { pt: ['dia', 'dias'], en: ['day', 'days'] },
+  h: { pt: ['hora', 'horas'], en: ['hour', 'hours'] },
+  min: { pt: ['min', 'min'], en: ['min', 'min'] },
+  s: { pt: ['s', 's'], en: ['s', 's'] },
+  ms: { pt: ['ms', 'ms'], en: ['ms', 'ms'] }
+};
+function localNum(str, lang) {
+  const [int, frac] = str.split('.');
+  const grouped = int.length > 3 ? int.replace(/\B(?=(\d{3})+(?!\d))/g, lang === 'pt' ? '.' : ',') : int;
+  return grouped + (frac ? (lang === 'pt' ? ',' : '.') + frac : '');
+}
+function halfLifeText(raw, lang) {
+  const m = String(raw).trim().match(/^([\d.,]+)(?:e([+-]?\d+))?\s*(ky|My|Gy|Ty|min|ms|y|d|h|s)$/);
+  if (!m || !HL_UNITS[m[3]]) return String(raw);
+  const mant = m[1].replace(/,/g, '');
+  const value = Number(mant) * (m[2] ? Math.pow(10, Number(m[2])) : 1);
+  const words = HL_UNITS[m[3]][lang];
+  // "1 ano", but "1,39 milhão de anos": in Portuguese the large-number words stay singular below 2
+  const big = /^(My|Gy|Ty)$/.test(m[3]);
+  const unit = (value === 1 || (lang === 'pt' && big && value < 2 && !m[2])) ? words[0] : words[1];
+  const exp = m[2] ? ' × 10' + String(Number(m[2])).split('').map((c) => (c === '-' ? '⁻' : SUPDIG[c])).join('') : '';
+  return `${localNum(mant, lang)}${exp} ${unit}`;
+}
 
 function massLabel(m) {
   const s = String(m);
@@ -92,7 +125,7 @@ function isotopesSection(z, sym, data) {
   });
   let notes = '';
   if (radio.length) {
-    const items = radio.map((x) => `<strong>${sup(x.a)}${esc(sym)}</strong> <span data-i18n="el.rm.halfLife">${esc(L.halfLife)}</span> <span class="rm-mono">${esc(x.hlf)}</span>`).join(' · ');
+    const items = radio.map((x) => `<strong>${sup(x.a)}${esc(sym)}</strong> <span data-i18n="el.rm.halfLife">${esc(L.halfLife)}</span> <span class="rm-hl" data-hl-pt="${esc(halfLifeText(x.hlf, 'pt'))}" data-hl-en="${esc(halfLifeText(x.hlf, 'en'))}">${esc(halfLifeText(x.hlf, 'pt'))}</span>`).join(' · ');
     notes = natural.length
       ? `\n          <p class="rm-iso-note"><span data-i18n="el.rm.radioactive">${esc(L.radioactive)}</span>: ${items}</p>`
       : `\n          <p class="rm-iso-note"><span data-i18n="el.rm.noStable">${esc(L.noStable)}</span> ${items}</p>`;
@@ -244,4 +277,4 @@ if (require.main === module) {
   console.log('remake element pages:', counts);
 }
 
-module.exports = { build, loadData };
+module.exports = { build, loadData, halfLifeText };

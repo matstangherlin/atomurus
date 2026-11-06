@@ -187,9 +187,9 @@
   }
 
   function loadLabGate() {
-    loadScript('/assets/access-policy.js?v=202611060422', 'data-access-policy');
-    loadScript('/assets/lab-tool-gate.js?v=202611060422', 'data-lab-tool-gate');
-    loadScript('/assets/guest-nudge.js?v=202611060422', 'data-guest-nudge');
+    loadScript('/assets/access-policy.js?v=202611061201', 'data-access-policy');
+    loadScript('/assets/lab-tool-gate.js?v=202611061201', 'data-lab-tool-gate');
+    loadScript('/assets/guest-nudge.js?v=202611061201', 'data-guest-nudge');
   }
 
   function run() {
