@@ -222,7 +222,8 @@ return (function(){
     0xff8833:'P', 0xffdd44:'P', 0xcc3311:'P',
     0xcc6633:'Fe',
     0xb3ff3a:'F',
-    0xa62929:'Br'
+    0xa62929:'Br',
+    0x940094:'I'
   };
 
   // Dynamic lab data: formula, molar mass and elemental composition derived
@@ -347,8 +348,83 @@ return (function(){
     }
     updateRotateBtn();
     refreshLabels();
+    publishAnalysis();
     if (liveLoop && liveLoop.wake) liveLoop.wake();
   }
+
+  // ── Analysis (geometry, polarity) and the net dipole arrow ──
+  let dipoleVisible = false;
+  let lastAnalysis = null;
+  function modelSnapshot(){
+    const mol = molData[currentMolecule];
+    return {
+      key: currentMolecule,
+      mirror: mirrorMode,
+      molecule: mol,
+      atoms: trackedAtoms.map(a => ({ el: a.label, pos: a.pos.slice() })),
+      bonds: (mol && mol.bonds) || []
+    };
+  }
+  function publishAnalysis(){
+    const snap = modelSnapshot();
+    const MI = window.AtomurusMolInsight;
+    lastAnalysis = MI && snap.atoms.length ? MI.analyze(snap) : null;
+    snap.analysis = lastAnalysis;
+    drawDipole();
+    try { window.dispatchEvent(new CustomEvent('atomurus:molecule', { detail: snap })); } catch (_) {}
+  }
+  function drawDipole(){
+    const old = currentGroup.getObjectByName('dipole');
+    if (old) currentGroup.remove(old);
+    const btn = document.getElementById('vc-dipole');
+    if (btn) { btn.classList.toggle('active', dipoleVisible); btn.setAttribute('aria-pressed', dipoleVisible ? 'true' : 'false'); }
+    if (!dipoleVisible || !lastAnalysis || lastAnalysis.ionic) return;
+    const mu = lastAnalysis.dipole;
+    if (mu.magnitude < 0.12) return;
+    let ext = 0.8;
+    trackedAtoms.forEach(a => { ext = Math.max(ext, Math.hypot(a.pos[0], a.pos[1], a.pos[2])); });
+    const L = Math.max(1.3, Math.min(ext * 1.5, 0.9 + mu.magnitude * 0.9));
+    const dir = new THREE.Vector3(mu.vector[0], mu.vector[1], mu.vector[2]).normalize();
+    const color = paper() ? 0x1E6A50 : 0x2a9d6a;
+    const mat = new THREE.MeshBasicMaterial({ color, depthTest: false, transparent: true, opacity: 0.95 });
+    const g = new THREE.Group(); g.name = 'dipole'; g.renderOrder = 20;
+    const shaftLen = L - 0.24;
+    const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, shaftLen, 12), mat);
+    shaft.position.y = -L / 2 + shaftLen / 2;
+    const head = new THREE.Mesh(new THREE.ConeGeometry(0.085, 0.24, 18), mat);
+    head.position.y = L / 2 - 0.12;
+    // the cross at the tail marks the positive end (δ+)
+    const cross = new THREE.Mesh(new THREE.CylinderGeometry(0.026, 0.026, 0.22, 10), mat);
+    cross.rotation.z = Math.PI / 2;
+    cross.position.y = -L / 2 + 0.12;
+    [shaft, head, cross].forEach(m => { m.renderOrder = 20; g.add(m); });
+    g.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
+    currentGroup.add(g);
+  }
+  window.toggleDipole = function(force){
+    dipoleVisible = typeof force === 'boolean' ? force : !dipoleVisible;
+    drawDipole();
+    try { window.dispatchEvent(new CustomEvent('atomurus:dipole', { detail: { visible: dipoleVisible } })); } catch (_) {}
+    if (liveLoop && liveLoop.wake) liveLoop.wake();
+    return dipoleVisible;
+  };
+  // Lets other scripts add a molecule (e.g. one built from a typed structure).
+  window.AtomurusMolViewer = {
+    register: function (key, data) {
+      if (!isSafeMolKey(key) || !data || !Array.isArray(data.atoms)) return false;
+      molData[key] = data;
+      return true;
+    },
+    show: function (key) { return window.setMolecule(key); },
+    current: function () { return currentMolecule; },
+    snapshot: function () {
+      const s = modelSnapshot();
+      if (!lastAnalysis && window.AtomurusMolInsight && s.atoms.length) lastAnalysis = window.AtomurusMolInsight.analyze(s);
+      s.analysis = lastAnalysis;
+      return s;
+    },
+    dipoleVisible: function () { return dipoleVisible; }
+  };
 
   window.setMolRep = function(style){
     if (style !== 'ball' && style !== 'space' && style !== 'stick') return;
@@ -367,6 +443,7 @@ return (function(){
       scene.add(currentGroup);
     }
     refreshLabels();
+    drawDipole();
     if (viewMode === '2d') draw2DMolecule(0);
   };
 
@@ -730,7 +807,14 @@ return (function(){
     if (!window.history || !window.history.replaceState) return;
     try {
       const url = new URL(window.location.href);
-      url.searchParams.set('mol', key);
+      const md = molData[key];
+      if (md && md.custom) {
+        url.searchParams.delete('mol');
+        if (md.source) url.searchParams.set('build', md.source);
+      } else {
+        url.searchParams.delete('build');
+        url.searchParams.set('mol', key);
+      }
       window.history.replaceState({ mol:key }, '', url);
     } catch (_) {}
   }
@@ -753,16 +837,22 @@ return (function(){
     mirrorMode = false;
     rebuildScene();
     const md = molData[key];
-    const tName  = _i18nTr('molecules.mol.' + key + '.name',  md.name);
-    const tDesc  = _i18nTr('molecules.mol.' + key + '.desc',  md.desc);
-    const tShort = _i18nTr('molecules.mol.' + key + '.short', key);
+    // a molecule built on the page has no dictionary entry: use its own text
+    const tName  = md.custom ? md.name : _i18nTr('molecules.mol.' + key + '.name',  md.name);
+    const tDesc  = md.custom ? (md.desc || '') : _i18nTr('molecules.mol.' + key + '.desc',  md.desc);
+    const tShort = md.custom ? (md.source || 'custom') : _i18nTr('molecules.mol.' + key + '.short', key);
     const lAtoms = _i18nTr('molecules.metaAtoms',    'atoms');
     const lBonds = _i18nTr('molecules.metaBonds',    'bonds');
     const lGeom  = _i18nTr('molecules.metaGeometry', 'geometry');
     const nameEl = document.getElementById('model-name');
     const descEl = document.getElementById('model-desc');
-    nameEl.setAttribute('data-i18n', 'molecules.mol.' + key + '.name');
-    descEl.setAttribute('data-i18n', 'molecules.mol.' + key + '.desc');
+    if (md.custom) {
+      nameEl.removeAttribute('data-i18n');
+      descEl.removeAttribute('data-i18n');
+    } else {
+      nameEl.setAttribute('data-i18n', 'molecules.mol.' + key + '.name');
+      descEl.setAttribute('data-i18n', 'molecules.mol.' + key + '.desc');
+    }
     nameEl.textContent = tName;
     descEl.textContent = tDesc;
     const statsEl = document.getElementById('model-stats');
@@ -923,6 +1013,7 @@ return (function(){
     else if (k === '-' || k === '_') zoomBy(1);
     else if (k === '2') setViewerMode(viewMode === '2d' ? '3d' : '2d');
     else if (k === 'p') toggle2DAnim();
+    else if (k === 'd') toggleDipole();
   });
 
   window.addEventListener('atomurus:themechange', () => {
@@ -1013,6 +1104,7 @@ return (function(){
   if (labelsBtn) labelsBtn.classList.toggle('active', labelsVisible);
   return fetchMolecule(initialMol).then(function () {
     if (bootReq === molRequest) applyMolecule(initialMol, true);
+    try { window.dispatchEvent(new CustomEvent('atomurus:molviewer-ready')); } catch (_) {}
   });
 })();
   };
