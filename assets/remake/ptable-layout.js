@@ -15,17 +15,22 @@
   if (!table || !tab || tab.querySelector('.rm-pt-bar')) return;
 
   var COPY = {
-    en: { colorBy: 'Colour by', category: 'Category', electronegativity: 'Electronegativity', mass: 'Atomic mass', state: 'State', lan: 'Lanthanides', act: 'Actinides', groups: 'Groups', periods: 'Periods' },
-    pt: { colorBy: 'Colorir por', category: 'Categoria', electronegativity: 'Eletronegatividade', mass: 'Massa atômica', state: 'Estado', lan: 'Lantanídeos', act: 'Actinídeos', groups: 'Grupos', periods: 'Períodos' }
+    en: { colorBy: 'Colour by', category: 'Category', electronegativity: 'Electronegativity', mass: 'Atomic mass', state: 'State', lan: 'Lanthanides', act: 'Actinides', groups: 'Groups', periods: 'Periods', more: 'More properties', noData: 'no value', pred: '≈ predicted', source: 'Source', solid: 'Solid', liquid: 'Liquid', gas: 'Gas', stateNote: 'At 25 °C and 1 atm.' },
+    pt: { colorBy: 'Colorir por', category: 'Categoria', electronegativity: 'Eletronegatividade', mass: 'Massa atômica', state: 'Estado', lan: 'Lantanídeos', act: 'Actinídeos', groups: 'Grupos', periods: 'Períodos', more: 'Mais propriedades', noData: 'sem valor', pred: '≈ previsto', source: 'Fonte', solid: 'Sólido', liquid: 'Líquido', gas: 'Gás', stateNote: 'A 25 °C e 1 atm.' }
   };
   var MODES = ['category', 'electronegativity', 'mass', 'state'];
+  var MORE = ['covalent', 'ionization', 'affinity', 'density', 'melt', 'boil'];
+  var P = window.AtomurusElementProps || null;
+  function propLabel(mode) { return P && P.PROPS[mode] ? P.PROPS[mode].label[lang()] : t(mode); }
+  function normMode(v) { return v === 'radius' || v === 'atomic_radius' ? 'covalent' : (v === 'en' ? 'electronegativity' : v); }
 
   function lang() { return (document.documentElement.lang || '').toLowerCase().indexOf('pt') === 0 ? 'pt' : 'en'; }
   function t(key) { return (COPY[lang()] || COPY.en)[key]; }
   function current() {
     var v = 'category';
     try { v = localStorage.getItem('atomurus-heatmap') || 'category'; } catch (e) {}
-    return v;
+    v = normMode(v);
+    return MODES.indexOf(v) >= 0 || MORE.indexOf(v) >= 0 ? v : 'category';
   }
 
   /* 0 · softer property palette, in the remake's colours (cream → green for
@@ -45,27 +50,101 @@
       HM_STATE_COLORS.gas = '#B79BC9';
     }
   } catch (e) {}
+  // Raw fields of one element, as the shared data layer stores them.
+  function rawData(z) {
+    var el = (typeof ELEMENTS !== 'undefined') ? ELEMENTS.find(function (e) { return e.z === z; }) : null;
+    if (!el) return null;
+    var ex = (typeof getExtra === 'function' ? getExtra(z) : {}) || {};
+    var ex2 = (typeof getExtra2 === 'function' ? getExtra2(z) : {}) || {};
+    return { en: el.en, mass: el.mass, density: ex2.density, melt: ex.melt, boil: ex.boil,
+      ionization: typeof getIonization === 'function' ? getIonization(z) : undefined };
+  }
+  if (P && typeof window.heatmapPropValue === 'function') {
+    var baseValue = window.heatmapPropValue;
+    // One reader for every scale: right units (density g/L → g/cm³), Cordero
+    // covalent radii, electron affinity.
+    window.heatmapPropValue = function (z, prop) {
+      var mode = normMode(prop);
+      if (!P.PROPS[mode]) return baseValue(z, prop);
+      return P.value(mode, z, rawData(z));
+    };
+  }
+  var lastRange = null;
   if (typeof window.applyHeatmap === 'function' && typeof window.heatmapPropValue === 'function') {
     var baseApply = window.applyHeatmap;
     window.applyHeatmap = function (prop) {
+      prop = normMode(prop);
       baseApply(prop);
-      if (prop === 'state') return;
+      clearValues();
+      if (prop === 'state') { renderScale(prop); return; }
       var cards = table.querySelectorAll('.el[data-z]');
       var vals = [], min = Infinity, max = -Infinity;
       cards.forEach(function (card) {
-        var v = window.heatmapPropValue(+card.getAttribute('data-z'), prop);
+        var z = +card.getAttribute('data-z');
+        var v = window.heatmapPropValue(z, prop);
         vals.push(v);
-        if (v != null) { if (v < min) min = v; if (v > max) max = v; }
+        // the colour range comes from measured values only
+        if (v != null && !(P && P.predicted(prop, z))) { if (v < min) min = v; if (v > max) max = v; }
       });
+      lastRange = { prop: prop, min: min, max: max };
       cards.forEach(function (card, i) {
-        var v = vals[i];
-        if (v == null) return;
+        var v = vals[i], z = +card.getAttribute('data-z');
+        if (v == null) { card.classList.add('rm-pt-nodata'); return; }
         var tt = max === min ? 0.5 : (v - min) / (max - min);
         card.style.background = scaleColor(tt);
         card.style.borderColor = 'transparent';
         card.style.color = tt > 0.62 ? '#F8F5EC' : '#14120E';
+        if (P && P.PROPS[prop]) {
+          var span = document.createElement('span');
+          span.className = 'rm-pt-val';
+          var pred = P.predicted(prop, z);
+          if (pred) card.classList.add('rm-pt-pred');
+          var raw = rawData(z);
+          span.textContent = prop === 'mass' && raw ? String(raw.mass).replace('.', lang() === 'pt' ? ',' : '.') : P.format(prop, v, lang(), z);
+          card.appendChild(span);
+        }
       });
+      renderScale(prop);
     };
+  }
+  function clearValues() {
+    table.querySelectorAll('.rm-pt-val').forEach(function (n) { n.remove(); });
+    table.querySelectorAll('.rm-pt-pred, .rm-pt-nodata').forEach(function (n) { n.classList.remove('rm-pt-pred', 'rm-pt-nodata'); });
+  }
+
+  if (typeof window.removeHeatmap === 'function') {
+    var baseRemove = window.removeHeatmap;
+    window.removeHeatmap = function () { baseRemove.apply(this, arguments); clearValues(); lastRange = null; scaleBox.hidden = true; };
+  }
+
+  /* scale legend for property views: range with unit, no-data swatch, source */
+  var scaleBox = document.createElement('div');
+  scaleBox.className = 'rm-pt-scale';
+  scaleBox.hidden = true;
+  function esc(x) { return String(x).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function renderScale(prop) {
+    prop = normMode(prop || current());
+    if (prop === 'category') { scaleBox.hidden = true; return; }
+    scaleBox.hidden = false;
+    if (prop === 'state') {
+      var st = (typeof HM_STATE_COLORS !== 'undefined') ? HM_STATE_COLORS : {};
+      scaleBox.innerHTML = '<div class="rm-pt-scale-row">' + ['solid', 'liquid', 'gas'].map(function (k) {
+        return '<span class="rm-pt-state"><i style="background:' + (st[k] || '#ccc') + '"></i>' + esc(t(k)) + '</span>';
+      }).join('') + '<span class="rm-pt-state"><i class="is-none"></i>' + esc(t('noData')) + '</span></div>' +
+        '<p class="rm-pt-src">' + esc(t('stateNote')) + '</p>';
+      return;
+    }
+    var meta = P && P.PROPS[prop];
+    if (!meta || !lastRange || lastRange.prop !== prop || !isFinite(lastRange.min)) { scaleBox.hidden = true; return; }
+    var lo = P.format(prop, lastRange.min, lang(), 0), hi = P.format(prop, lastRange.max, lang(), 0);
+    var unit = meta.unit ? ' ' + meta.unit : '';
+    var grad = 'linear-gradient(90deg,' + [0, 0.33, 0.66, 1].map(function (x) { return scaleColor(x) + ' ' + Math.round(x * 100) + '%'; }).join(',') + ')';
+    scaleBox.innerHTML =
+      '<div class="rm-pt-scale-row"><b class="rm-pt-scale-name">' + esc(meta.label[lang()]) + (meta.unit ? ' <span>(' + esc(meta.unit) + ')</span>' : '') + '</b>' +
+      '<span class="rm-pt-scale-lo">' + esc(lo + unit) + '</span><span class="rm-pt-scale-bar" style="background:' + grad + '"></span><span class="rm-pt-scale-hi">' + esc(hi + unit) + '</span>' +
+      '<span class="rm-pt-state"><i class="is-none"></i>' + esc(t('noData')) + '</span>' +
+      (['density', 'melt', 'boil', 'electronegativity'].indexOf(prop) >= 0 ? '<span class="rm-pt-state"><i class="is-pred"></i>' + esc(t('pred')) + '</span>' : '') +
+      '</div><p class="rm-pt-src"><b>' + esc(t('source')) + ':</b> ' + esc(meta.source[lang()]) + '</p>';
   }
 
   /* 1 · colour-by bar (+ export buttons on the right) */
@@ -82,10 +161,22 @@
       if (activeGroup) clearGroup();
       if (typeof window.setHeatmap === 'function') window.setHeatmap(mode);
       else try { localStorage.setItem('atomurus-heatmap', mode); } catch (e) {}
+      if (mode === 'category') clearValues();
       sync();
     });
     seg.appendChild(b);
   });
+  var more = document.createElement('select');
+  more.className = 'rm-pt-more';
+  more.addEventListener('change', function () {
+    var mode = more.value;
+    if (!mode) return;
+    if (activeGroup) clearGroup();
+    if (typeof window.setHeatmap === 'function') window.setHeatmap(mode);
+    else try { localStorage.setItem('atomurus-heatmap', mode); } catch (e) {}
+    sync();
+  });
+  bar.appendChild(more);
   var dl = document.getElementById('dl-bar');
   if (dl) { dl.classList.add('rm-pt-export'); bar.appendChild(dl); }
   tab.insertBefore(bar, tab.firstChild);
@@ -123,6 +214,7 @@
   });
   if (oldLegend) oldLegend.remove();
   if (wrap) wrap.parentNode.insertBefore(legend, wrap.nextSibling);
+  legend.parentNode && legend.parentNode.insertBefore(scaleBox, legend);
 
   var activeGroup = null;
   function clearGroup() {
@@ -200,7 +292,13 @@
       b.classList.toggle('is-on', on);
       b.setAttribute('aria-checked', on ? 'true' : 'false');
     });
+    more.setAttribute('aria-label', t('more'));
+    more.innerHTML = '<option value="">' + esc(t('more')) + '</option>' + MORE.map(function (m) {
+      return '<option value="' + m + '"' + (m === mode ? ' selected' : '') + '>' + esc(propLabel(m)) + '</option>';
+    }).join('');
+    more.classList.toggle('is-on', MORE.indexOf(mode) >= 0);
     tab.classList.toggle('rm-pt-heat', mode !== 'category');
+    renderScale(mode);
     labelFblock();
     labelLegend();
   }
@@ -213,5 +311,8 @@
   if (window.ResizeObserver) new ResizeObserver(schedule).observe(table);
   else window.addEventListener('resize', schedule);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
-  if (window.I18N && typeof window.I18N.onChange === 'function') window.I18N.onChange(function () { sync(); schedule(); });
+  if (window.I18N && typeof window.I18N.onChange === 'function') window.I18N.onChange(function () {
+    if (current() !== 'category' && typeof window.applyHeatmap === 'function') window.applyHeatmap(current());
+    sync(); schedule();
+  });
 })();
