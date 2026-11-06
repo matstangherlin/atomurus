@@ -49,13 +49,13 @@
     // server-rendered HTML and the JS-runtime override will disagree.
     var titleStr, shortDesc, longDesc;
     if (lang === 'en') {
-      titleStr  = name + ' (' + el.sym + '): Element ' + el.z + ', Properties and Applications | Atomurus';
+      titleStr  = name + ' (' + el.sym + '): Element ' + el.z + ', Properties and Uses | Atomurus';
       shortDesc = name + ' (' + el.sym + ') — element ' + el.z + ', atomic mass ' + el.mass + ' u. ' + cat + '.';
-      longDesc  = 'Discover ' + name + ' (' + el.sym + '), element ' + el.z + ' of the periodic table: atomic mass ' + el.mass + ' u, properties, applications, electron configuration and curiosities at Atomurus.';
+      longDesc  = 'Discover ' + name + ' (' + el.sym + '), element ' + el.z + ' of the periodic table: atomic mass ' + el.mass + ' u, properties, uses, electron configuration and curiosities.';
     } else {
-      titleStr  = name + ' (' + el.sym + '): Elemento ' + el.z + ', Propriedades e Aplicações | Atomurus';
-      shortDesc = name + ' (' + el.sym + ') — elemento ' + el.z + ', massa atômica ' + el.mass + ' u. ' + cat + '.';
-      longDesc  = 'Conheça o ' + name + ' (' + el.sym + '), elemento ' + el.z + ' da tabela periódica: massa atômica ' + el.mass + ' u, propriedades, aplicações, configuração eletrônica e curiosidades no Atomurus.';
+      titleStr  = name + ' (' + el.sym + '): Elemento ' + el.z + ', Propriedades e Usos | Atomurus';
+      shortDesc = name + ' (' + el.sym + ') — elemento ' + el.z + ', massa atômica ' + String(el.mass).replace('.', ',') + ' u. ' + cat + '.';
+      longDesc  = 'Conheça o ' + name + ' (' + el.sym + '), elemento ' + el.z + ' da tabela periódica: massa atômica ' + String(el.mass).replace('.', ',') + ' u, propriedades, usos, configuração eletrônica e curiosidades.';
     }
     document.title = titleStr;
 
@@ -184,6 +184,12 @@
     document.querySelectorAll('[data-rm-num]').forEach(function (n) {
       var raw = n.getAttribute('data-rm-num');
       n.textContent = pt ? raw.replace(/\./g, ',') : raw;
+    });
+    document.querySelectorAll('[data-hl-pt]').forEach(function (n) {
+      n.textContent = n.getAttribute(pt ? 'data-hl-pt' : 'data-hl-en');
+    });
+    document.querySelectorAll('[data-l10n-pt]').forEach(function (n) {
+      n.textContent = n.getAttribute(pt ? 'data-l10n-pt' : 'data-l10n-en');
     });
     document.querySelectorAll('[data-rm-tpl]').forEach(function (n) {
       var tpl = rmT(n.getAttribute('data-rm-tpl'), null);
@@ -320,7 +326,7 @@
   function loadStudyCloud() {
     if (window.__atomurusStudyBoot) return;
     var script = document.createElement('script');
-    script.src = '/study-boot.js?v=202611060422';
+    script.src = '/study-boot.js?v=202611061456';
     script.defer = true;
     document.head.appendChild(script);
   }

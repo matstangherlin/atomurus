@@ -13,7 +13,7 @@
     "build:ui": "node tools/build-ui.mjs",
     "build:core": "node tools/build-core-bundle.mjs",
     "build:app-data": "node tools/build-app-data.mjs",
-    "build": "node tools/build-formula-parser.mjs && node tools/build-ui.mjs && node tools/build-core-bundle.mjs && node tools/build-app-data.mjs && node tools/build-critical-css.js && node tools/build-home-preview-data.js && node tools/build-remake-data.js && node tools/build-product-catalog.js && node tools/build-i18n-assets.js && node tools/build-element-content-chunks.js && node tools/generate-isomerism-pt-variants.js && node tools/patch-perf-async-css.js && node tools/inject-ui-chrome.js && node tools/apply-remake-chrome.js && node bump-version.js && node build-i18n.js && node tools/inject-i18n-chunks.js && node tools/drop-legacy-css.js",
+    "build": "node tools/build-formula-parser.mjs && node tools/build-ui.mjs && node tools/build-core-bundle.mjs && node tools/build-app-data.mjs && node tools/build-critical-css.js && node tools/build-home-preview-data.js && node tools/build-remake-data.js && node tools/build-product-catalog.js && node tools/build-i18n-assets.js && node tools/build-element-content-chunks.js && node tools/generate-isomerism-pt-variants.js && node tools/patch-perf-async-css.js && node tools/inject-ui-chrome.js && node tools/apply-remake-chrome.js && node bump-version.js && node build-i18n.js && node tools/inject-i18n-chunks.js && node tools/drop-legacy-css.js && node tools/seo-normalize.js",
     "build:app": "node tools/build-app-bundle.mjs",
     "test:plan": "node tools/test-feature-catalog.mjs && node tools/test-plan-access.mjs && node tools/test-lab-tool-access.mjs",
     "test:auth": "node tools/test-auth-provider.mjs && node tools/test-auth-flows.mjs && node tools/test-auth-recovery.mjs && node tools/test-auth-rate-limit.mjs && node tools/test-auth-sync.mjs",
@@ -22,11 +22,12 @@
     "test:insights": "node tools/test-insights.mjs",
     "test:billing": "node tools/test-billing-geo.mjs && node tools/test-billing-lifecycle.mjs && node tools/test-account-plan-ui.mjs",
     "test:lang": "node tools/test-lang-redirects.mjs && node tools/test-pt-terminology.mjs",
-    "test:editorial": "node tools/test-editorial-blocks.mjs && node tools/test-isomerism-quiz.mjs && node tools/test-isomer-engine.mjs && node tools/test-mol-insight.mjs",
-    "test:ux": "node tools/test-workspace-ux.mjs && node tools/test-study-hub.mjs && node tools/test-viz-prototype.mjs && node tools/test-virtual-lab.mjs && node tools/test-lab-ph.mjs && node tools/test-account-nav.mjs && node tools/test-periodic-search.mjs && npm run test:lang",
+    "test:editorial": "node tools/test-editorial-blocks.mjs && node tools/test-isomerism-quiz.mjs && node tools/test-isomer-engine.mjs && node tools/test-mol-insight.mjs && node tools/test-allotropes.mjs",
+    "test:ux": "node tools/test-workspace-ux.mjs && node tools/test-study-hub.mjs && node tools/test-viz-prototype.mjs && node tools/test-virtual-lab.mjs && node tools/test-lab-ph.mjs && node tools/test-account-nav.mjs && node tools/test-periodic-search.mjs && node tools/test-site-search.mjs && npm run test:lang",
     "test:consent": "node tools/test-consent.mjs",
     "test:content": "node tools/test-content-facts.mjs",
-    "test:data": "node tools/test-element-data.mjs && node tools/test-element-props.mjs",
+    "test:seo": "node tools/test-seo.mjs",
+    "test:data": "node tools/test-element-data.mjs && node tools/test-element-props.mjs && node tools/test-atom-structure.mjs",
     "test:pro-lab": "node tools/test-pro-lab.mjs",
     "test:solver": "node tools/test-solver.mjs && node tools/test-formula-parser.mjs",
     "test:calc": "node tools/test-calc-validation.mjs && node tools/test-sigfigs.mjs",
@@ -57,9 +58,10 @@
     "validate": "node tools/validate-site.js",
     "warm:cache": "node tools/warm-edge-cache.js",
     "smoke:prod": "node tools/smoke-prod.js",
-    "ci": "npm run build && npm run test:plan && npm run test:auth && npm run test:study && npm run test:review && npm run test:insights && npm run test:billing && npm run test:ux && npm run test:lang && npm run test:editorial && npm run test:consent && npm run test:content && npm run test:data && npm run test:pro-lab && npm run test:solver && npm run test:calc && npm run test:lab-access && npm run test:ui-v2 && npm run test:a1 && npm run validate",
+    "ci": "npm run build && npm run test:plan && npm run test:auth && npm run test:study && npm run test:review && npm run test:insights && npm run test:billing && npm run test:ux && npm run test:lang && npm run test:editorial && npm run test:consent && npm run test:content && npm run test:seo && npm run test:data && npm run test:pro-lab && npm run test:solver && npm run test:calc && npm run test:lab-access && npm run test:ui-v2 && npm run test:a1 && npm run validate",
     "test:isomers": "node tools/test-isomer-engine.mjs",
-    "test:molecules": "node tools/test-mol-insight.mjs"
+    "test:molecules": "node tools/test-mol-insight.mjs",
+    "test:allotropes": "node tools/test-allotropes.mjs"
   },
   "dependencies": {
     "stripe": "^22.3.0"

@@ -86,14 +86,14 @@ const CAT_PT = {
 // Google shows them fully in the SERP. Long names (Praseodímio,
 // Rutherfórdio) end up around 72 chars — still safe.
 function ptTitle(el) {
-  return `${el.name} (${el.sym}): Elemento ${el.z}, Propriedades e Aplicações | Atomurus`;
+  return `${el.name} (${el.sym}): Elemento ${el.z}, Propriedades e Usos | Atomurus`;
 }
 function ptDescription(el) {
-  return `Conheça o ${el.name} (${el.sym}), elemento ${el.z} da tabela periódica: massa atômica ${el.mass} u, propriedades, aplicações, configuração eletrônica e curiosidades no Atomurus.`;
+  return `Conheça o ${el.name} (${el.sym}), elemento ${el.z} da tabela periódica: massa atômica ${String(el.mass).replace('.', ',')} u, propriedades, usos, configuração eletrônica e curiosidades.`;
 }
 function ptOgDescription(el) {
   const cat = CAT_PT[el.cat] || el.cat;
-  return `${el.name} (${el.sym}) — elemento ${el.z}, massa atômica ${el.mass} u. ${cat}.`;
+  return `${el.name} (${el.sym}) — elemento ${el.z}, massa atômica ${String(el.mass).replace('.', ',')} u. ${cat}.`;
 }
 
 // ── HTML escaping for attribute context ────────────────────────────

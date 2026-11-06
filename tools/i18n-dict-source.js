@@ -38,6 +38,12 @@ const DICT = {
         cookies: 'Cookies',
         otherLang: 'Português',
         theme: 'Dark theme',
+        themeGroup: 'Theme',
+        search: 'Search',
+        searchOpen: 'Search elements, tools and articles',
+        searchTitle: 'Search (/)',
+        themeLight: 'Light theme',
+        themeDark: 'Dark theme',
         workspace: 'My studies'
       },
         brandTag: 'chemistry lab',
@@ -480,8 +486,8 @@ const DICT = {
           proEq: '≈ $5 a month',
           proCta: 'Try 30 days free'
         },
-        metaTitle: 'Atomurus: Interactive Chemistry Lab — Periodic Table and 3D Models',
-        metaDesc:  'Free chemistry lab: an interactive periodic table of 118 elements, 3D atomic and molecular models, calculators and articles. Save your study with a free account.',
+        metaTitle: 'Atomurus: Chemistry Lab — Periodic Table and 3D Models',
+        metaDesc:  'Free chemistry lab: an interactive periodic table of 118 elements, 3D atoms and molecules, calculators and articles. Save your study with a free account.',
         strip: {
           workspace:    'workspace',
           workspaceVal: 'ATOMURUS / LAB',
@@ -902,12 +908,17 @@ const DICT = {
         }
       },
       allotropes: {
-        metaTitle:        'Allotropes: Graphite, Diamond, Graphene and Fullerene in 3D | Atomurus',
+        metaTitle:        'Allotropes in 3D: Graphite, Diamond and Fullerene | Atomurus',
         metaDesc:         'Explore carbon allotropes (graphite, diamond, graphene, fullerene, nanotubes), oxygen (O₂, ozone), sulfur and phosphorus in interactive 3D models.',
         breadcrumb:       'Allotropes',
         kicker:           'visualization',
         title:            'Allotropes',
-        desc:             'Different structural forms of the same chemical element — carbon yields graphite (hexagonal layers), diamond (tetrahedral), fullerene C₆₀ (truncated icosahedron) and graphene (2D). Same atom, radically different properties.',
+        desc:             'The same element, arranged in different ways. Graphite and diamond are both pure carbon: only the way the atoms bond changes. Each model is built from measured bond lengths, angles and lattice constants.',
+        elemGroup:        'Element',
+        sideKicker:       'Allotrope of carbon',
+        sideName:         'Graphite',
+        sideLink:         'Open the carbon page →',
+        stageLabel:       'C · graphite',
         dsModule:         'allotropic structures',
         avPage:           'page',
         avPageVal:        'allotropes',
@@ -1297,8 +1308,8 @@ const DICT = {
           viewerHint:       'Drag to rotate · scroll to zoom · toggle 3D/2D in the top-left corner'
         },
         dalton: {
-          metaTitle:    'Dalton Atomic Model (1803): Solid Sphere — Interactive 3D | Atomurus',
-          metaDesc:     'The Dalton atomic model (1803): the indivisible solid sphere. Quantitative atomic theory based on fixed proportions. Interactive 3D visualization, history and properties.',
+          metaTitle:    'Dalton Atomic Model (1803): Solid Sphere in 3D | Atomurus',
+          metaDesc:     'The Dalton atomic model (1803): the indivisible solid sphere and the first quantitative atomic theory, built on fixed proportions. In 3D, with its history.',
           name:         "Dalton's Model",
           subtitle:     'The Solid Sphere',
           tag:          'Pre-subatomic',
@@ -1311,8 +1322,8 @@ const DICT = {
           limitation:   'Does not explain electricity, why substances conduct current, nor predict subatomic particles. Works for stoichiometry, fails in electrochemistry.'
         },
         thomson: {
-          metaTitle:    'Thomson Atomic Model (1897): Plum Pudding — Interactive 3D | Atomurus',
-          metaDesc:     'The Thomson atomic model (1897): the plum pudding. The discovery of the electron showed the atom was not indivisible. Interactive 3D visualization and historical context.',
+          metaTitle:    'Thomson Atomic Model (1897): Plum Pudding in 3D | Atomurus',
+          metaDesc:     'The Thomson atomic model (1897): the plum pudding. Discovering the electron showed the atom is not indivisible. In 3D, with its historical context.',
           name:         'Thomson Model',
           subtitle:     'Plum Pudding',
           tag:          'Electron Discovered',
@@ -1325,8 +1336,8 @@ const DICT = {
           limitation:   'Does not explain the Geiger-Marsden experiment (1909) — when alpha particles hit a gold foil, some deflect at huge angles, which would be impossible if the positive charge were diffuse like "pudding".'
         },
         rutherford: {
-          metaTitle:    'Rutherford Atomic Model (1911): The Nucleus — Interactive 3D | Atomurus',
-          metaDesc:     'The Rutherford atomic model (1911): the discovery of the atomic nucleus. The gold foil experiment revealed the dense central nucleus. Interactive 3D visualization included.',
+          metaTitle:    'Rutherford Atomic Model (1911): The Nucleus in 3D | Atomurus',
+          metaDesc:     'The Rutherford atomic model (1911): the gold foil experiment and the discovery of the small, dense atomic nucleus. Interactive 3D model included.',
           name:         'Rutherford Model',
           subtitle:     'The Nucleus',
           tag:          'Nucleus Discovered',
@@ -1339,7 +1350,7 @@ const DICT = {
           limitation:   'An electron in a circular orbit emits electromagnetic radiation (centripetal acceleration), would lose energy continuously and spiral into the nucleus in ~10⁻¹¹ seconds. Furthermore, it does not explain discrete atomic spectra.'
         },
         bohr: {
-          metaTitle:    'Bohr Atomic Model (1913): Quantized Orbits — Interactive 3D | Atomurus',
+          metaTitle:    'Bohr Atomic Model (1913): Quantized Orbits in 3D | Atomurus',
           metaDesc:     'The Bohr atomic model (1913): quantized electron orbits. Explains the hydrogen spectrum. The standard model taught in schools. Interactive 3D visualization.',
           name:         'Bohr Model',
           subtitle:     'Quantized Orbits',
@@ -1354,7 +1365,7 @@ const DICT = {
           limitation:   'Only works perfectly for hydrogen (1 proton, 1 electron). For multi-electron atoms, predictions become imprecise. Electrons do not actually "orbit" — it is a classical simplification of a quantum phenomenon.'
         },
         quantum: {
-          metaTitle:    'Quantum Atomic Model (1926): Wave Mechanics — Interactive 3D | Atomurus',
+          metaTitle:    'Quantum Atomic Model (1926): Orbitals in 3D | Atomurus',
           metaDesc:     'The quantum atomic model (1924–1926): De Broglie and Schrödinger wave mechanics. Orbitals as probability clouds. Interactive 3D visualization.',
           name:         'Quantum Model',
           subtitle:     'Wave Mechanics',
@@ -1375,18 +1386,21 @@ const DICT = {
         }
       },
       atomicModels: {
-        metaTitle:        'Atomic Models: Dalton, Thomson, Rutherford, Bohr and Quantum | Atomurus',
+        metaTitle:        'Atomic Models in 3D: from Dalton to Quantum | Atomurus',
         metaDesc:         'Historical atomic models in interactive 3D: Dalton (1803), Thomson (1897), Rutherford (1911), Bohr (1913) and Quantum (Schrödinger 1926).',
-        breadcrumb:       'Atomic Models',
+        breadcrumb:       'Atomic models',
         kicker:           'visualization',
-        title:            'Atomic Models',
-        desc:             'Five historical models of the atom in 3D. Switch Dalton, Thomson, Rutherford, Bohr or Quantum.',
+        title:            'Atomic models',
+        desc:             'Five historical models of the atom in 3D, for any element of the periodic table. Switch Dalton, Thomson, Rutherford, Bohr or Quantum.',
         readArticle:      'Read the article: What is an atom →',
         readArticleLead: 'Timeline, orbitals and quantum numbers live in the article.',
-        tabAtomic:        'Atomic Models',
+        tabAtomic:        'Atomic models',
         tabMolecules:     'Molecules',
         tabAllotropes:    'Allotropes',
         panelSelectModel: 'Select historical model',
+        panelElement:     'Element',
+        elPrev:           'Previous element',
+        elNext:           'Next element',
         panelByElement:   'By Element',
         panelByFormula:   'Or by Chemical Formula',
         panelSelectElem:  'Select the element',
@@ -1563,6 +1577,8 @@ const DICT = {
           nucleus:    'nucleus',
           nuclei:     'nuclei',
           noNucleus:  'no nucleus',
+          protons:    'protons',
+          neutrons:   'neutrons',
           electron:   'electron',
           electrons:  'electrons',
           modelLabel: 'model',
@@ -1601,20 +1617,20 @@ const DICT = {
           },
           bohr: {
             who:  'Niels Bohr',
-            idea: 'Electrons occupy only quantized energy levels (shells K, L, M…). Jumping between levels absorbs or emits a photon of exact energy. For carbon: 2 electrons in shell K and 4 in shell L.',
+            idea: 'Electrons occupy only quantized energy levels (shells K, L, M…). Jumping between levels absorbs or emits a photon of exact energy. Each shell holds at most 2n² electrons (K 2, L 8, M 18…).',
             ok:   'Explains the hydrogen emission spectrum and atomic stability; basis of the electron-shell chemistry taught today.',
             limit:'Fails for the fine spectra of multi-electron atoms, and fixed orbits contradict the uncertainty principle (1927).'
           },
           quantum: {
             who:  'Schrödinger · Heisenberg · de Broglie',
-            idea: 'Electrons behave as standing waves described by the wavefunction ψ — |ψ|² gives only the probability of finding them. Carbon (1s² 2s² 2p²): two electrons in the dense spherical 1s, two in the wider 2s (with a radial node) and two unpaired electrons in perpendicular 2p lobes (Hund’s rule).',
+            idea: 'Electrons behave as standing waves described by the wavefunction ψ — |ψ|² gives only the probability of finding them. Each subshell has its own shape — s spheres, p dumbbells, d four-leaf lobes, f more intricate lobes — and electrons fill them in order of energy (Aufbau), one per orbital before pairing up (Hund’s rule).',
             ok:   'The current model: explains the spectra of every element, chemical bonding, orbital shapes (s, p, d, f) and the structure of the periodic table.',
             limit:'There are no defined trajectories — the cloud shows where each electron is likely to be (the drawn boundary holds ~90% probability).'
           }
         }
       },
       calc: {
-        metaTitle: 'Chemistry Calculators: Scientific, Molar Mass, Dilution, Ideal Gas, pH | Atomurus',
+        metaTitle: 'Chemistry Calculators: Molar Mass, Gases and pH | Atomurus',
         metaDesc:  'Chemistry calculators open to everyone: molar mass, dilution, ideal gas (PV=nRT), pH, units and scientific. The Reaction Workbench and thermodynamics are Pro.',
         bcLab:     'laboratory',
         instrumentsLabel: 'instruments',
@@ -1901,7 +1917,7 @@ const DICT = {
         natureSolution: '{nature} solution'
       },
       ptable: {
-        metaTitle: 'Interactive Periodic Table: 118 Elements and Properties | Atomurus',
+        metaTitle: 'Interactive Periodic Table: All 118 Elements | Atomurus',
         metaDesc:  'Complete dynamic and interactive periodic table: 118 chemical elements with atomic properties, Bohr model, isotopes, comparisons and visual trends.',
         // Topbar / breadcrumb
         bcWorkspace: 'Workspace',
@@ -1941,7 +1957,7 @@ const DICT = {
         subDescIsotopes:   'Complete isotope table by element: natural abundance, half-life and decay mode of the isotopes of the 118 elements of the periodic table.',
         // Sub-page meta titles (used for <title>, og:title, twitter:title)
         subMetaHeatmap:    'Periodic Table Heatmap: 118 Elements by Property | Atomurus',
-        subMetaTrends:     'Periodic Trends: Electronegativity, Atomic Radius, Ionization | Atomurus',
+        subMetaTrends:     'Periodic Trends: Electronegativity, Radius, Ionization | Atomurus',
         subMetaCompare:    'Compare Chemical Elements Side by Side | Atomurus',
         subMetaIsotopes:   'Isotope Table: Abundance and Half-Life of Elements | Atomurus',
         // Tabs
@@ -2144,6 +2160,8 @@ const DICT = {
         mCloseTitle:     'Close (ESC)',
         // Search & topbar
         searchPlaceholder: 'Name, symbol or number',
+        chartLoadError: 'The chart could not load. Check your connection and try again.',
+        chartRetry:     'Try again',
         // Physical states (used in modal/compare/canvas — translated via stateName helper)
         stateSolid:   'Solid',
         stateLiquid:  'Liquid',
@@ -2240,7 +2258,8 @@ const DICT = {
             o2: { n: 'Dioxygen O₂', d: 'The oxygen we breathe' },
             ozone: { n: 'Ozone O₃', d: 'Shield against UV' },
             s_rhombic: { n: 'Rhombic α-S₈', d: 'Stable at room temperature' },
-            s_mono: { n: 'Monoclinic β-S₈', d: 'Stable from 96 to 119 °C' },
+            s_mono: { n: 'Monoclinic β-S₈', d: 'Stable from 95.3 to 119.6 °C' },
+            s_plastic: { n: 'Plastic Sₙ', d: 'Helical chains, rubbery' },
             p_white: { n: 'White P₄', d: 'Toxic and flammable' },
             p_red: { n: 'Red phosphorus', d: 'Stable in air' },
             p_black: { n: 'Black phosphorus', d: 'Layers, like graphite' }
@@ -2255,7 +2274,13 @@ const DICT = {
           melt: 'Melting point',
           boil: 'Boiling point',
           discovered: 'Discovery',
-          sources: 'Sources: IUPAC 2024, NIST.',
+          sources: 'Sources: IUPAC 2024, NIST, CRC Handbook; covalent radius: Cordero et al. (2008). ≈ predicted.',
+          covalent: 'Covalent radius',
+          ionization: 'Ionization energy',
+          affinity: 'Electron affinity',
+          shellsTitle: 'Electron shells',
+          shellsOuter: '{n} in the outer shell ({shell}).',
+          shellsLink: 'See it in the 5 atomic models →',
           formsTitle: 'Forms of {name}',
           formsLead: 'Allotropes are versions of the same element with different structures. Tap to open each one in the viewer.',
           isotopes: 'Isotopes',
@@ -2462,6 +2487,12 @@ const DICT = {
         cookies: 'Cookies',
         otherLang: 'English',
         theme: 'Tema escuro',
+        themeGroup: 'Tema',
+        search: 'Buscar',
+        searchOpen: 'Buscar elementos, ferramentas e matérias',
+        searchTitle: 'Buscar (/)',
+        themeLight: 'Tema claro',
+        themeDark: 'Tema escuro',
         workspace: 'Meus estudos'
       },
         brandTag: 'laboratório de química',
@@ -2801,7 +2832,7 @@ const DICT = {
       },
       pricing: {
         metaTitle: 'Atomurus Pro — Solver de Química, Smart Review e Pro Lab',
-        metaDesc:  'O Atomurus Pro adiciona o Chemistry Solver, balanceamento de reações, estequiometria, termodinâmica e Smart Review. Contas novas ganham 30 dias de Pro, sem cartão.',
+        metaDesc:  'O Atomurus Pro traz o Chemistry Solver, balanceamento, estequiometria, termodinâmica e Smart Review. Contas novas ganham 30 dias de Pro, sem cartão.',
         kicker:    'Atomurus Pro',
         titleHtml: 'Resolva, visualize, analise e <em>estude</em> química.',
         desc:      'O Lab Aberto continua grátis para explorar e visualizar química. Uma conta gratuita salva o seu trabalho. O Pro adiciona o Chemistry Solver, análise avançada e inteligência de estudo — com 30 dias de trial em toda conta nova. Não é preciso cartão para começar o trial.',
@@ -3320,7 +3351,12 @@ const DICT = {
         breadcrumb:       'Alótropos',
         kicker:           'visualização',
         title:            'Alótropos',
-        desc:             'Formas estruturais diferentes de um mesmo elemento químico — o carbono forma grafite (camadas hexagonais), diamante (tetraédrico), fulereno C₆₀ (icosaedro truncado) e grafeno (2D). Mesmo átomo, propriedades radicalmente distintas.',
+        desc:             'O mesmo elemento, arrumado de jeitos diferentes. Grafite e diamante são os dois carbono puro: só muda o jeito como os átomos se ligam. Cada modelo é montado com comprimentos de ligação, ângulos e constantes de rede medidos.',
+        elemGroup:        'Elemento',
+        sideKicker:       'Alótropo do carbono',
+        sideName:         'Grafite',
+        sideLink:         'Ver a página do carbono →',
+        stageLabel:       'C · grafite',
         dsModule:         'estruturas alotrópicas',
         avPage:           'página',
         avPageVal:        'alótropos',
@@ -3710,8 +3746,8 @@ const DICT = {
           viewerHint:       'Arraste para rotacionar · scroll para zoom · alterne 3D/2D no canto superior esquerdo'
         },
         dalton: {
-          metaTitle:    'Modelo Atômico de Dalton (1803): Esfera Maciça — 3D Interativo | Atomurus',
-          metaDesc:     'Modelo atômico de Dalton (1803): a esfera maciça e indivisível. Teoria atômica quantitativa baseada em proporções fixas. Visualização 3D, história e propriedades.',
+          metaTitle:    'Modelo Atômico de Dalton (1803): Esfera Maciça | Atomurus',
+          metaDesc:     'Modelo atômico de Dalton (1803): a esfera maciça e indivisível, primeira teoria atômica quantitativa, baseada em proporções fixas. Em 3D e com a história.',
           name:         'Modelo de Dalton',
           subtitle:     'A Esfera Maciça',
           tag:          'Pré-subatômico',
@@ -3738,7 +3774,7 @@ const DICT = {
           limitation:   'Não explica o experimento de Geiger-Marsden (1909) — quando partículas alfa atingem uma folha de ouro, algumas deflectem em ângulos enormes, o que seria impossível se a carga positiva fosse difusa como "pudim".'
         },
         rutherford: {
-          metaTitle:    'Modelo Atômico de Rutherford (1911): O Núcleo — 3D Interativo | Atomurus',
+          metaTitle:    'Modelo Atômico de Rutherford (1911): O Núcleo | Atomurus',
           metaDesc:     'Modelo atômico de Rutherford (1911): a descoberta do núcleo atômico. O experimento da folha de ouro revelou o núcleo central denso. Visualização 3D incluída.',
           name:         'Modelo de Rutherford',
           subtitle:     'O Núcleo',
@@ -3752,7 +3788,7 @@ const DICT = {
           limitation:   'Um elétron em órbita circular emite radiação eletromagnética (aceleração centrípeta), perderia energia continuamente e espiralizaria para o núcleo em ~10⁻¹¹ segundos. Além disso, não explica os espectros atômicos discretos.'
         },
         bohr: {
-          metaTitle:    'Modelo Atômico de Bohr (1913): Órbitas Quantizadas — 3D | Atomurus',
+          metaTitle:    'Modelo Atômico de Bohr (1913): Órbitas em 3D | Atomurus',
           metaDesc:     'Modelo atômico de Bohr (1913): órbitas quantizadas dos elétrons. Explica o espectro do hidrogênio. Modelo ensinado no ENEM e vestibulares. Visualização 3D.',
           name:         'Modelo de Bohr',
           subtitle:     'Órbitas Quantizadas',
@@ -3767,7 +3803,7 @@ const DICT = {
           limitation:   'Só funciona perfeitamente para o hidrogênio (1 próton, 1 elétron). Para átomos multieletrônicos, as previsões ficam imprecisas. Os elétrons não "orbitam" realmente — é uma simplificação clássica de um fenômeno quântico.'
         },
         quantum: {
-          metaTitle:    'Modelo Atômico Quântico (1926): Mecânica Ondulatória — 3D | Atomurus',
+          metaTitle:    'Modelo Atômico Quântico (1926): Orbitais em 3D | Atomurus',
           metaDesc:     'Modelo atômico quântico (1924-1926): mecânica ondulatória de De Broglie e Schrödinger. Orbitais como nuvens de probabilidade. Visualização 3D interativa.',
           name:         'Modelo Quântico',
           subtitle:     'Mecânica Ondulatória',
@@ -3788,18 +3824,21 @@ const DICT = {
         }
       },
       atomicModels: {
-        metaTitle:        'Modelos Atômicos: Dalton, Thomson, Rutherford, Bohr e Quântico | Atomurus',
+        metaTitle:        'Modelos Atômicos em 3D: de Dalton ao Quântico | Atomurus',
         metaDesc:         'Modelos atômicos históricos em 3D interativo: Dalton (1803), Thomson (1897), Rutherford (1911), Bohr (1913) e Quântico (Schrödinger 1926).',
-        breadcrumb:       'Modelos Atômicos',
+        breadcrumb:       'Modelos atômicos',
         kicker:           'visualização',
-        title:            'Modelos Atômicos',
-        desc:             'Cinco modelos históricos do átomo em 3D. Troque Dalton, Thomson, Rutherford, Bohr ou Quântico.',
+        title:            'Modelos atômicos',
+        desc:             'Cinco modelos históricos do átomo em 3D, para qualquer elemento da tabela periódica. Troque Dalton, Thomson, Rutherford, Bohr ou Quântico.',
         readArticle:      'Ler o artigo: O que é um átomo →',
         readArticleLead: 'A linha do tempo, os orbitais e os números quânticos estão no artigo.',
-        tabAtomic:        'Modelos Atômicos',
+        tabAtomic:        'Modelos atômicos',
         tabMolecules:     'Moléculas',
         tabAllotropes:    'Alótropos',
         panelSelectModel: 'Selecione o modelo histórico',
+        panelElement:     'Elemento',
+        elPrev:           'Elemento anterior',
+        elNext:           'Próximo elemento',
         panelByElement:   'Por Elemento',
         panelByFormula:   'Ou por Fórmula Química',
         panelSelectElem:  'Selecione o elemento',
@@ -3968,6 +4007,8 @@ const DICT = {
           nucleus:    'núcleo',
           nuclei:     'núcleos',
           noNucleus:  'sem núcleo',
+          protons:    'prótons',
+          neutrons:   'nêutrons',
           electron:   'elétron',
           electrons:  'elétrons',
           modelLabel: 'modelo',
@@ -4006,20 +4047,20 @@ const DICT = {
           },
           bohr: {
             who:  'Niels Bohr',
-            idea: 'Os elétrons só ocupam níveis de energia quantizados (camadas K, L, M…). Saltar entre níveis absorve ou emite um fóton de energia exata. Para o carbono: 2 elétrons na camada K e 4 na camada L.',
+            idea: 'Os elétrons só ocupam níveis de energia quantizados (camadas K, L, M…). Saltar entre níveis absorve ou emite um fóton de energia exata. Cada camada comporta no máximo 2n² elétrons (K 2, L 8, M 18…).',
             ok:   'Explica o espectro de emissão do hidrogênio e a estabilidade atômica; base da química de camadas eletrônicas ensinada até hoje.',
             limit:'Falha nos espectros finos de átomos multieletrônicos, e órbitas fixas contradizem o princípio da incerteza (1927).'
           },
           quantum: {
             who:  'Schrödinger · Heisenberg · de Broglie',
-            idea: 'Os elétrons se comportam como ondas estacionárias descritas pela função de onda ψ — |ψ|² dá apenas a probabilidade de encontrá-los. Carbono (1s² 2s² 2p²): dois elétrons no 1s esférico e denso, dois no 2s mais largo (com um nó radial) e dois desemparelhados em lóbulos 2p perpendiculares (regra de Hund).',
+            idea: 'Os elétrons se comportam como ondas estacionárias descritas pela função de onda ψ — |ψ|² dá apenas a probabilidade de encontrá-los. Cada subnível tem sua forma — s em esfera, p em halteres, d em quatro lóbulos, f em lóbulos mais complexos — e os elétrons os preenchem por ordem de energia (Aufbau), um por orbital antes de formar pares (regra de Hund).',
             ok:   'O modelo atual: explica os espectros de todos os elementos, as ligações químicas, os formatos dos orbitais (s, p, d, f) e a estrutura da tabela periódica.',
             limit:'Não há trajetórias definidas — a nuvem mostra onde cada elétron provavelmente está (a fronteira desenhada contém ~90% de probabilidade).'
           }
         }
       },
       calc: {
-        metaTitle: 'Calculadoras de Química: massa molar, diluição, gases e pH | Atomurus',
+        metaTitle: 'Calculadoras de Química: massa molar, gases e pH | Atomurus',
         metaDesc:  'Calculadoras de química abertas a todos: massa molar, diluição, gás ideal (PV=nRT), pH, unidades e científica. Laboratório de Reações e termodinâmica são Pro.',
         bcLab:     'laboratório',
         instrumentsLabel: 'instrumentos',
@@ -4300,7 +4341,7 @@ const DICT = {
         natureSolution: 'solução {nature}'
       },
       ptable: {
-        metaTitle: 'Tabela Periódica Interativa: 118 Elementos, Propriedades e 3D | Atomurus',
+        metaTitle: 'Tabela Periódica Interativa: os 118 Elementos | Atomurus',
         metaDesc:  'Tabela periódica dinâmica e interativa completa: 118 elementos químicos com propriedades atômicas, modelo de Bohr, isótopos, comparações e tendências visuais.',
         bcWorkspace: 'Workspace',
         bcCurrent:   'Tabela Periódica',
@@ -4333,7 +4374,7 @@ const DICT = {
         subTitleIsotopes:  'Isótopos',
         subDescIsotopes:   'Tabela completa de isótopos por elemento: abundância natural, meia-vida e modo de decaimento dos isótopos dos 118 elementos da tabela periódica.',
         subMetaHeatmap:    'Mapa de Calor da Tabela Periódica por Propriedade | Atomurus',
-        subMetaTrends:     'Tendências Periódicas: Eletronegatividade, Raio e Ionização | Atomurus',
+        subMetaTrends:     'Tendências Periódicas: Eletronegatividade e Raio | Atomurus',
         subMetaCompare:    'Comparar Elementos Químicos Lado a Lado | Atomurus',
         subMetaIsotopes:   'Tabela de Isótopos: Abundância e Meia-Vida | Atomurus',
         tabTable:    'Tabela',
@@ -4525,6 +4566,8 @@ const DICT = {
         mCloseAria:      'Fechar (ESC)',
         mCloseTitle:     'Fechar (ESC)',
         searchPlaceholder: 'Nome, símbolo ou número',
+        chartLoadError: 'Não foi possível carregar o gráfico. Verifique a conexão e tente de novo.',
+        chartRetry:     'Tentar de novo',
         stateSolid:   'Sólido',
         stateLiquid:  'Líquido',
         stateGas:     'Gasoso',
@@ -4615,10 +4658,11 @@ const DICT = {
             o2: { n: 'Oxigênio O₂', d: 'O oxigênio que respiramos' },
             ozone: { n: 'Ozônio O₃', d: 'Escudo contra o UV' },
             s_rhombic: { n: 'Rômbico α-S₈', d: 'Estável à temperatura ambiente' },
-            s_mono: { n: 'Monoclínico β-S₈', d: 'Estável de 96 a 119 °C' },
+            s_mono: { n: 'Monoclínico β-S₈', d: 'Estável de 95,3 a 119,6 °C' },
+            s_plastic: { n: 'Plástico Sₙ', d: 'Cadeias em hélice, elástico' },
             p_white: { n: 'Branco P₄', d: 'Tóxico e inflamável' },
             p_red: { n: 'Vermelho', d: 'Estável no ar' },
-            p_black: { n: 'Preto', d: 'Camadas, como o grafite' }
+            p_black: { n: 'Negro', d: 'Camadas, como o grafite' }
           },
           crumbs: 'Você está em',
           data: 'Dados',
@@ -4630,7 +4674,13 @@ const DICT = {
           melt: 'Fusão',
           boil: 'Ebulição',
           discovered: 'Descoberta',
-          sources: 'Fontes: IUPAC 2024, NIST.',
+          sources: 'Fontes: IUPAC 2024, NIST, CRC Handbook; raio covalente: Cordero et al. (2008). ≈ previsto.',
+          covalent: 'Raio covalente',
+          ionization: 'Energia de ionização',
+          affinity: 'Afinidade eletrônica',
+          shellsTitle: 'Camadas eletrônicas',
+          shellsOuter: '{n} na camada mais externa ({shell}).',
+          shellsLink: 'Ver nos 5 modelos atômicos →',
           formsTitle: 'Formas do {name}',
           formsLead: 'Alótropos são versões do mesmo elemento com estruturas diferentes. Toque para abrir cada uma no visualizador.',
           isotopes: 'Isótopos',

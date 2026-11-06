@@ -333,8 +333,12 @@ function patchHead(shell, page) {
   return h;
 }
 
-const PT_REDIRECT = (target) => `<!DOCTYPE html>
+// Redirect stub: not indexed; the canonical is the Portuguese viewer page.
+const PT_REDIRECT = (target, canonicalPath, title) => `<!DOCTYPE html>
 <html lang="pt-BR"><head><meta charset="UTF-8">
+<title>${title || 'Isomeria | Atomurus'}</title>
+<meta name="robots" content="noindex, follow">
+${canonicalPath ? `<link rel="canonical" href="https://atomurus.com${canonicalPath}?lang=pt-BR">` : ''}
 <script>location.replace('${target}?lang=pt-BR'+location.hash);</script>
 </head><body></body></html>
 `;
@@ -365,7 +369,8 @@ for (const page of PAGES) {
 
   const ptPath = filePath.replace('.html', '.pt.html');
   const base = path.basename(rel, '.html');
-  fs.writeFileSync(ptPath, PT_REDIRECT(base + '.html'), 'utf8');
+  // rel is e.g. isomerism/constitutional/chain.html → canonical /viewer/isomerism/constitutional/chain
+  fs.writeFileSync(ptPath, PT_REDIRECT(base + '.html', '/viewer/' + rel.replace(/\.html$/, '')), 'utf8');
   console.log('Redirect', rel.replace('.html', '.pt.html'));
 }
 

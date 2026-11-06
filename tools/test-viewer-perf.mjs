@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { createRequire } from 'node:module';
 import { readFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -29,7 +30,14 @@ assert(lab.includes('bindStats'), 'dev renderer.info hook');
 assert(allotrope.includes('addInstancedSpheres'), 'allotrope instanced atoms');
 assert(allotrope.includes('addInstancedBonds'), 'allotrope instanced bonds');
 assert(allotrope.includes('addBondList'), 'sequential bond helper for S8 / P red');
-assert(allotrope.includes('sPos[(i+1)%N]'), 'S8 keeps sequential ring bonds, not nearby chords');
+{
+  // S8 (and red P) bonds come from explicit lists in the data module: the ring
+  // is bonded in sequence, never by "nearby" distance, which would add chords
+  const A = createRequire(import.meta.url)(join(root, 'assets/chem/allotrope-data.js'));
+  const s8 = A.model('s_rhombic');
+  assert(s8.bonds.length === 8 && s8.bonds.every((b, i) => b[0] === i && b[1] === (i + 1) % 8), 'S8 keeps sequential ring bonds, not nearby chords');
+  assert(allotrope.includes('m.bonds.forEach'), 'allotrope runtime draws the listed bonds');
+}
 assert(allotrope.includes('replaceChild'), 'allotrope dispose on rebuild');
 assert(allotrope.includes('liveLoop.wake'), 'allotrope wakes render loop on rebuild');
 assert(molecule.includes('replaceChild'), 'molecule dispose on rebuild');
