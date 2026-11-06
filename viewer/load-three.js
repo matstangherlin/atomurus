@@ -256,12 +256,12 @@
   // canvas is near the viewport, load one allowlisted runtime — never a
   // free-form path. Public access does not mean eager-loading every model.
   var VIEWER_RUNTIME_SRC = {
-    'atomic-viewer.js': '/viewer/runtime/atomic-viewer.js?v=202611060339',
-    'molecule-viewer.js': '/viewer/runtime/molecule-viewer.js?v=202611060339',
-    'allotrope-viewer.js': '/viewer/runtime/allotrope-viewer.js?v=202611060339',
-    'isomerism-3d.js': '/viewer/isomerism/isomerism-3d.js?v=202611060339'
+    'atomic-viewer.js': '/viewer/runtime/atomic-viewer.js?v=202611060408',
+    'molecule-viewer.js': '/viewer/runtime/molecule-viewer.js?v=202611060408',
+    'allotrope-viewer.js': '/viewer/runtime/allotrope-viewer.js?v=202611060408',
+    'isomerism-3d.js': '/viewer/isomerism/isomerism-3d.js?v=202611060408'
   };
-  var PAPER_LAB_SRC = '/viewer/runtime/paper-lab.js?v=202611060339';
+  var PAPER_LAB_SRC = '/viewer/runtime/paper-lab.js?v=202611060408';
   var runtimePending = Object.create(null);
   var paperLabPending = null;
 

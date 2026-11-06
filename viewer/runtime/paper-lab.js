@@ -30,6 +30,7 @@
   CPK[0xcc6633] = 0xA05A3A;
   CPK[0xb3ff3a] = 0x8AAA4A;
   CPK[0xa62929] = 0x8A3A3A;
+  CPK[0x940094] = 0x7A4A8A;
 
   // Remake 2026: the 3D stage is always the dark "instrument" panel
   // (html[data-rm]); legacy pages follow the site theme.

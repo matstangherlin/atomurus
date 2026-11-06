@@ -883,7 +883,7 @@
   // NH2, NH, N, CN, halogens), bonds (-, =, #) and parentheses for branches.
   function parseCondensed(s) {
     var mol = { atoms: [], bonds: [] }, declH = [], pending = [];
-    var re = /(HOOC|COOH|COO|CHO|OHC|CONH2|Cl|Br|CN|CO(?!H)|H3C|H2C|C(?:H(\d?))?|OH|O|NH2|NH|N|F|I|HO|H)(\d*)|(\()|(\))|([=#-])/g;
+    var re = /(C6H5|HOOC|COOH|COO|CHO|OHC|CONH2|Cl|Br|CN|CO(?!H)|H3C|H2C|C(?:H(\d?))?|OH|O|NH2|NH|N|F|I|HO|H)(\d*)|(\()|(\))|([=#-])/g;
     var MONO = { OH: 1, HO: 1, NH2: 1, F: 1, Cl: 1, Br: 1, I: 1 };
     var m, used = 0, prev = -1, order = 1, stack = [], groupStart = [];
     function addAtom(el, h) { mol.atoms.push({ el: el }); declH.push(h == null ? -1 : h); return mol.atoms.length - 1; }
@@ -921,7 +921,15 @@
       var tok = m[1], rep = m[3] ? parseInt(m[3], 10) : 1;
       for (var r = 0; r < rep; r++) {
         var head = -1, tail = -1;
-        if (tok === 'COOH' || tok === 'HOOC') { head = addAtom('C'); var o1 = addAtom('O'), o2 = addAtom('O'); link(head, o1, 2); link(head, o2, 1); tail = head; }
+        if (tok === 'C6H5') {
+          // phenyl ring (Kekulé form), bonded through its first carbon
+          head = addAtom('C');
+          var ring = [head];
+          for (var q = 1; q < 6; q++) { ring.push(addAtom('C')); link(ring[q - 1], ring[q], q % 2 ? 2 : 1); }
+          link(ring[5], head, 1);
+          tail = head;
+        }
+        else if (tok === 'COOH' || tok === 'HOOC') { head = addAtom('C'); var o1 = addAtom('O'), o2 = addAtom('O'); link(head, o1, 2); link(head, o2, 1); tail = head; }
         else if (tok === 'COO') { head = addAtom('C'); var o3 = addAtom('O'), o4 = addAtom('O'); link(head, o3, 2); link(head, o4, 1); tail = o4; }
         else if (tok === 'CHO' || tok === 'OHC') { head = addAtom('C'); link(head, addAtom('O'), 2); tail = head; }
         else if (tok === 'CO') { head = addAtom('C'); link(head, addAtom('O'), 2); tail = head; }
@@ -1021,37 +1029,58 @@
       if (t === 1) return 120;
       return full.atoms[i].el === 'O' ? 108 : 109.47;
     }
+    // aromatic rings: every ring bond 1.397 Å (benzene), not Kekulé lengths
+    var arom = aromaticAtoms(mol);
+    function BL(i, j, o) {
+      if (i < full.heavy && j < full.heavy && arom[i] && arom[j]) return 1.397;
+      return bondLength(full.atoms[i].el, full.atoms[j].el, o);
+    }
     var T = {}, W = {};
     function setT(i, j, d, w) { var k = i < j ? i + ',' + j : j + ',' + i; T[k] = d; W[k] = w; }
-    full.bonds.forEach(function (b) { setT(b.a, b.b, bondLength(full.atoms[b.a].el, full.atoms[b.b].el, b.o), 4); });
+    full.bonds.forEach(function (b) { setT(b.a, b.b, BL(b.a, b.b, b.o), 4); });
     for (var c = 0; c < n; c++) {
       var nb = adj[c];
       for (var x = 0; x < nb.length; x++) for (var y = x + 1; y < nb.length; y++) {
         var i = nb[x][0], j = nb[y][0];
-        var di = bondLength(full.atoms[c].el, full.atoms[i].el, nb[x][1]);
-        var dj = bondLength(full.atoms[c].el, full.atoms[j].el, nb[y][1]);
+        var di = BL(c, i, nb[x][1]);
+        var dj = BL(c, j, nb[y][1]);
         var th = hyb(c) * Math.PI / 180;
-        setT(i, j, Math.sqrt(di * di + dj * dj - 2 * di * dj * Math.cos(th)), 2);
+        setT(i, j, Math.sqrt(di * di + dj * dj - 2 * di * dj * Math.cos(th)), hyb(c) === 180 ? 6 : (hyb(c) === 120 ? 3 : 2));
       }
     }
-    // planar double bonds: 1–4 distances (first substituents trans, unless opts.cis)
-    full.bonds.forEach(function (b) {
+    // planar double bonds: 1–4 distances (first substituents trans, unless
+    // opts.cis; inside a ring the two ring neighbours are always cis)
+    var ringB = ringBonds(mol), ringA = ringAtoms(mol);
+    full.bonds.forEach(function (b, bk) {
       if (b.o !== 2) return;
+      var inRing = bk < mol.bonds.length && ringB[bk];
       var sa = adj[b.a].filter(function (x) { return x[0] !== b.b; }).map(function (x) { return x[0]; });
       var sb = adj[b.b].filter(function (x) { return x[0] !== b.a; }).map(function (x) { return x[0]; });
       if (!sa.length || !sb.length) return;
       sa.sort(function (p, q) { return (Z[full.atoms[q].el] - Z[full.atoms[p].el]) || (adj[q].length - adj[p].length); });
       sb.sort(function (p, q) { return (Z[full.atoms[q].el] - Z[full.atoms[p].el]) || (adj[q].length - adj[p].length); });
       var cis = opts.cis && opts.cis.indexOf(b.a) >= 0;
+      // exact 1–4 distances of a planar sp2–sp2 unit with 120° angles
+      var d0 = BL(b.a, b.b, 2);
+      var s3 = Math.sqrt(3) / 2;
       sa.forEach(function (p, ia) {
         sb.forEach(function (q, ib) {
-          var trans = (ia === ib) !== !!cis;
-          setT(p, q, trans ? 3.75 : 2.95, 1.5);
+          var trans = inRing ? (!!ringA[p] !== !!ringA[q]) : ((ia === ib) !== !!cis);
+          var d1 = BL(b.a, p, 1);
+          var d2 = BL(b.b, q, 1);
+          var dx = d0 + d2 / 2 + d1 / 2, dy = trans ? (d1 + d2) * s3 : (d1 - d2) * s3;
+          setT(p, q, Math.sqrt(dx * dx + dy * dy), 2);
         });
       });
     });
     // Start from the 2D drawing (untangled), lift it into 3D, relax; keep the
     // best of a few seeds (lowest stress).
+    // graph distances (for the non-bonded minimum distances)
+    var G = [];
+    for (var g0 = 0; g0 < n; g0++) {
+      G[g0] = []; G[g0][g0] = 0; var gq = [g0];
+      while (gq.length) { var gv = gq.shift(); adj[gv].forEach(function (x) { if (G[g0][x[0]] == null) { G[g0][x[0]] = G[g0][gv] + 1; gq.push(x[0]); } }); }
+    }
     var flat = layout2d(mol);
     function relax(seed) {
       var rnd = seeded(seed);
@@ -1075,8 +1104,9 @@
           var t, w;
           if (T[key] != null) { t = T[key]; w = W[key]; }
           else {
-            var hh = full.atoms[a].el === 'H' || full.atoms[bb].el === 'H';
-            var minD = hh ? 2.4 : 3.1;
+            var nH = (full.atoms[a].el === 'H' ? 1 : 0) + (full.atoms[bb].el === 'H' ? 1 : 0);
+            var near = G[a][bb] === 3; // 1–4 pairs (gauche, ring para) sit closer
+            var minD = nH === 2 ? 2.2 : (nH === 1 ? (near ? 2.4 : 2.5) : (near ? 2.45 : 2.9));
             if (dist >= minD) continue;
             t = minD; w = 0.6;
           }
@@ -1095,6 +1125,36 @@
       if (!best || r.stress < best.stress) best = r;
     });
     var P = best.P;
+    // sp centres (triple or cumulated bonds) exactly linear: rotate the far
+    // fragment about the centre until the three atoms are collinear
+    for (var c3 = 0; c3 < n; c3++) {
+      if (hyb(c3) !== 180 || adj[c3].length !== 2) continue;
+      var ia = adj[c3][0][0], ja = adj[c3][1][0];
+      var side = {}, stk = [ja], cyc = false; side[ja] = true;
+      while (stk.length) {
+        var sv = stk.pop();
+        adj[sv].forEach(function (x) { if (x[0] === c3) { if (sv !== ja) cyc = true; return; } if (!side[x[0]]) { side[x[0]] = true; stk.push(x[0]); } });
+      }
+      if (cyc || side[ia]) continue;
+      var pc = P[c3];
+      var want = [pc[0] - P[ia][0], pc[1] - P[ia][1], pc[2] - P[ia][2]];
+      var have = [P[ja][0] - pc[0], P[ja][1] - pc[1], P[ja][2] - pc[2]];
+      var lw = Math.sqrt(want[0] * want[0] + want[1] * want[1] + want[2] * want[2]) || 1;
+      var lh = Math.sqrt(have[0] * have[0] + have[1] * have[1] + have[2] * have[2]) || 1;
+      want = want.map(function (v) { return v / lw; }); have = have.map(function (v) { return v / lh; });
+      var ax = [have[1] * want[2] - have[2] * want[1], have[2] * want[0] - have[0] * want[2], have[0] * want[1] - have[1] * want[0]];
+      var sn = Math.sqrt(ax[0] * ax[0] + ax[1] * ax[1] + ax[2] * ax[2]);
+      var cs = have[0] * want[0] + have[1] * want[1] + have[2] * want[2];
+      if (sn < 1e-9) continue;
+      ax = ax.map(function (v) { return v / sn; });
+      var ang = Math.atan2(sn, cs), co = Math.cos(ang), si = Math.sin(ang);
+      Object.keys(side).forEach(function (k) {
+        var v = [P[k][0] - pc[0], P[k][1] - pc[1], P[k][2] - pc[2]];
+        var kd = ax[0] * v[0] + ax[1] * v[1] + ax[2] * v[2];
+        var cr = [ax[1] * v[2] - ax[2] * v[1], ax[2] * v[0] - ax[0] * v[2], ax[0] * v[1] - ax[1] * v[0]];
+        P[k] = [0, 1, 2].map(function (q) { return pc[q] + v[q] * co + cr[q] * si + ax[q] * kd * (1 - co); });
+      });
+    }
     var cx = 0, cy = 0, cz = 0;
     P.forEach(function (p) { cx += p[0]; cy += p[1]; cz += p[2]; });
     cx /= n; cy /= n; cz /= n;
