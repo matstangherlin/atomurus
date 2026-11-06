@@ -91,6 +91,10 @@
   function syncFooterLabels() {
     var dark = document.documentElement.getAttribute('data-theme') === 'dark';
     var pt = (document.documentElement.lang || '').toLowerCase().indexOf('pt') === 0;
+    document.querySelectorAll('[data-rm-theme-set]').forEach(function (btn) {
+      var on = (btn.getAttribute('data-rm-theme-set') === 'dark') === dark;
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
     document.querySelectorAll('[data-rm-theme]').forEach(function (btn) {
       btn.setAttribute('aria-pressed', dark ? 'true' : 'false');
       btn.removeAttribute('data-i18n');
@@ -102,12 +106,17 @@
     document.addEventListener('click', function (event) {
       var target = event.target && event.target.closest ? event.target : null;
       if (!target) return;
+      var setBtn = target.closest('[data-rm-theme-set]');
       var themeBtn = target.closest('[data-rm-theme]');
-      if (themeBtn) {
+      if (setBtn || themeBtn) {
         event.preventDefault();
-        var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', next);
-        try { localStorage.setItem('atomurus-theme', next); } catch (e) {}
+        var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        var next = setBtn ? setBtn.getAttribute('data-rm-theme-set') : (cur === 'dark' ? 'light' : 'dark');
+        if (next !== cur) {
+          document.documentElement.setAttribute('data-theme', next);
+          try { localStorage.setItem('atomurus-theme', next); } catch (e) {}
+          try { window.dispatchEvent(new CustomEvent('atomurus:themechange', { detail: { isDark: next === 'dark' } })); } catch (e) {}
+        }
         syncFooterLabels();
         return;
       }
@@ -128,6 +137,10 @@
     syncFooterLabels();
     try {
       if (window.I18N && typeof window.I18N.onChange === 'function') window.I18N.onChange(syncFooterLabels);
+    } catch (e) {}
+    // other switches (the viewers' T key, page scripts) change data-theme too
+    try {
+      new MutationObserver(syncFooterLabels).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     } catch (e) {}
   }
 

@@ -38,6 +38,9 @@ const DICT = {
         cookies: 'Cookies',
         otherLang: 'Português',
         theme: 'Dark theme',
+        themeGroup: 'Theme',
+        themeLight: 'Light theme',
+        themeDark: 'Dark theme',
         workspace: 'My studies'
       },
         brandTag: 'chemistry lab',
@@ -2468,6 +2471,9 @@ const DICT = {
         cookies: 'Cookies',
         otherLang: 'English',
         theme: 'Tema escuro',
+        themeGroup: 'Tema',
+        themeLight: 'Tema claro',
+        themeDark: 'Tema escuro',
         workspace: 'Meus estudos'
       },
         brandTag: 'laboratório de química',

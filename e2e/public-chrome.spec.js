@@ -210,6 +210,41 @@ test('molecules, allotropes and 404 use the list + stage layout and document pat
   await saveShot(page, 'desktop-public-404');
 });
 
+test('header light / dark switch: visible, in step with the footer, kept on phones and /app', async ({ page }) => {
+  await page.goto('/index.html');
+  const light = page.locator('.rm-header .rm-theme-opt[data-rm-theme-set="light"]');
+  const dark = page.locator('.rm-header .rm-theme-opt[data-rm-theme-set="dark"]');
+  await expect(light).toBeVisible();
+  await expect(light).toHaveAttribute('aria-pressed', 'true');
+  await dark.click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await expect(dark).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('[data-rm-theme]')).toHaveText(/Light theme/);
+  expect(await page.evaluate(() => localStorage.getItem('atomurus-theme'))).toBe('dark');
+  // the footer link moves the header switch too
+  await page.locator('[data-rm-theme]').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await expect(light).toHaveAttribute('aria-pressed', 'true');
+
+  // phones: next to the menu button, without opening the drawer
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/calculators.html');
+  await expect(page.locator('.rm-header .rm-theme-switch')).toBeVisible();
+  await page.locator('.rm-header .rm-theme-opt[data-rm-theme-set="dark"]').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  // (beforeEach resets the stored theme on every load, so check the store, not a reload)
+  expect(await page.evaluate(() => localStorage.getItem('atomurus-theme'))).toBe('dark');
+
+  // /app has its own top bar with the same switch
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/app');
+  const appLight = page.locator('.ws-topbar .rm-theme-opt[data-rm-theme-set="light"]');
+  await expect(appLight).toBeVisible();
+  await appLight.click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await expect(appLight).toHaveAttribute('aria-pressed', 'true');
+});
+
 test('footer theme switch and the mobile drawer', async ({ page }) => {
   await page.goto('/index.html');
   await page.locator('[data-rm-theme]').click();

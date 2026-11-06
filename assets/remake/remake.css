@@ -339,6 +339,50 @@ html[data-rm] body.rm.rm .main > .content > .content-inner { max-width: none; ma
 .rm-header.is-open .rm-burger .rm-burger-close { display: inline; }
 
 .rm-header--minimal { position: static; border-bottom: 0; background: transparent; }
+/* light / dark switch: both options always visible, the active one inverted.
+   The state comes from html[data-theme], so it is right before any script runs. */
+.rm-theme-switch {
+  order: 3;
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  flex: none;
+  border: 1px solid var(--rm-line-strong);
+  border-radius: 999px;
+  background: var(--rm-paper);
+}
+.rm-theme-opt {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--rm-ink-2);
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease;
+}
+.rm-theme-opt:hover { background: var(--rm-surface); color: var(--rm-ink); }
+.rm-theme-opt:focus-visible { outline: 2px solid var(--rm-mint); outline-offset: 2px; }
+html:not([data-theme="dark"]) .rm-theme-opt[data-rm-theme-set="light"],
+html[data-theme="dark"] .rm-theme-opt[data-rm-theme-set="dark"] {
+  background: var(--rm-ink);
+  color: var(--rm-bg);
+  box-shadow: 0 1px 3px rgba(20, 18, 14, .22);
+}
+.rm-header--minimal .rm-theme-switch { order: 0; }
+@media (max-width: 1023px) {
+  .rm-theme-switch { order: 0; }
+  .rm-header-in > .rm-burger { margin-left: 0; }
+}
+@media (max-width: 380px) {
+  .rm-theme-opt { width: 30px; height: 30px; }
+}
 .rm-header--minimal .rm-navwrap,
 .rm-header--minimal .rm-burger { display: none !important; }
 
@@ -3414,3 +3458,5 @@ html[data-rm] body.rm.rm .allo-sources li + li::before { content: '·'; margin-r
 }
 html[data-rm] body.rm.rm .allo-compare table { display: table !important; width: 100% !important; max-width: none !important; }
 html[data-rm] body.rm.rm .allo-facts { margin-top: 8px; }
+/* /app top bar: the same light / dark switch as the site header */
+html[data-rm-ws][data-rm-app] .ws-topbar .rm-theme-switch { order: 0; margin-left: 0; }
