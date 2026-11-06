@@ -53,7 +53,8 @@ test('periodic table search prefers the symbol and shows 118 cards', async ({ pa
   await page.goto('/periodic-table.html');
   await expect(page.locator('.el[data-z="1"]')).toHaveAttribute('style', /background:\s*(hsl|rgb)\(/);
   await expect(page.locator('.el[data-z="118"]')).toHaveAttribute('style', /var\(--surface\)/);
-  await expect(page.locator('.hm-settings-legend .hm-unit')).toHaveText('kJ/mol');
+  // the remake page shows the property scale (unit and source) under the table
+  await expect(page.locator('.rm-pt-scale')).toContainText('kJ/mol');
 
   await page.goto('/config.html');
   await page.locator('#heatmap-select').selectOption('state');
@@ -61,7 +62,7 @@ test('periodic table search prefers the symbol and shows 118 cards', async ({ pa
   await expect(page.locator('.el[data-z="1"]')).toHaveAttribute('data-state', 'gas');
   await expect(page.locator('.el[data-z="26"]')).toHaveAttribute('data-state', 'solid');
   await expect(page.locator('.el[data-z="80"]')).toHaveAttribute('data-state', 'liquid');
-  await expect(page.locator('.hm-settings-legend .hm-state-legend')).toBeVisible();
+  await expect(page.locator('.rm-pt-scale .rm-pt-state').first()).toBeVisible();
 
   expect(errors).toEqual([]);
 });
