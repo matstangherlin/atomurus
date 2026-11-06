@@ -49,13 +49,13 @@
     // server-rendered HTML and the JS-runtime override will disagree.
     var titleStr, shortDesc, longDesc;
     if (lang === 'en') {
-      titleStr  = name + ' (' + el.sym + '): Element ' + el.z + ', Properties and Applications | Atomurus';
+      titleStr  = name + ' (' + el.sym + '): Element ' + el.z + ', Properties and Uses | Atomurus';
       shortDesc = name + ' (' + el.sym + ') — element ' + el.z + ', atomic mass ' + el.mass + ' u. ' + cat + '.';
-      longDesc  = 'Discover ' + name + ' (' + el.sym + '), element ' + el.z + ' of the periodic table: atomic mass ' + el.mass + ' u, properties, applications, electron configuration and curiosities at Atomurus.';
+      longDesc  = 'Discover ' + name + ' (' + el.sym + '), element ' + el.z + ' of the periodic table: atomic mass ' + el.mass + ' u, properties, uses, electron configuration and curiosities.';
     } else {
-      titleStr  = name + ' (' + el.sym + '): Elemento ' + el.z + ', Propriedades e Aplicações | Atomurus';
-      shortDesc = name + ' (' + el.sym + ') — elemento ' + el.z + ', massa atômica ' + el.mass + ' u. ' + cat + '.';
-      longDesc  = 'Conheça o ' + name + ' (' + el.sym + '), elemento ' + el.z + ' da tabela periódica: massa atômica ' + el.mass + ' u, propriedades, aplicações, configuração eletrônica e curiosidades no Atomurus.';
+      titleStr  = name + ' (' + el.sym + '): Elemento ' + el.z + ', Propriedades e Usos | Atomurus';
+      shortDesc = name + ' (' + el.sym + ') — elemento ' + el.z + ', massa atômica ' + String(el.mass).replace('.', ',') + ' u. ' + cat + '.';
+      longDesc  = 'Conheça o ' + name + ' (' + el.sym + '), elemento ' + el.z + ' da tabela periódica: massa atômica ' + String(el.mass).replace('.', ',') + ' u, propriedades, usos, configuração eletrônica e curiosidades.';
     }
     document.title = titleStr;
 
@@ -326,7 +326,7 @@
   function loadStudyCloud() {
     if (window.__atomurusStudyBoot) return;
     var script = document.createElement('script');
-    script.src = '/study-boot.js?v=202611061355';
+    script.src = '/study-boot.js?v=202611061456';
     script.defer = true;
     document.head.appendChild(script);
   }

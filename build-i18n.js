@@ -316,9 +316,9 @@ function buildElementEnVariant(srcAbs, ctx) {
   // Keep title under ~70 chars and longDesc under ~160 chars so Google
   // shows them fully in the SERP. Surfaces long-tail queries: "properties",
   // "atomic mass", "applications", "element <Z>".
-  const title     = `${nameEN} (${el.sym}): Element ${z}, Properties and Applications | Atomurus`;
+  const title     = `${nameEN} (${el.sym}): Element ${z}, Properties and Uses | Atomurus`;
   const shortDesc = `${nameEN} (${el.sym}) — element ${z}, atomic mass ${el.mass} u. ${catEN}.`;
-  const longDesc  = `Discover ${nameEN} (${el.sym}), element ${z} of the periodic table: atomic mass ${el.mass} u, properties, applications, electron configuration and curiosities at Atomurus.`;
+  const longDesc  = `Discover ${nameEN} (${el.sym}), element ${z} of the periodic table: atomic mass ${el.mass} u, properties, uses, electron configuration and curiosities.`;
   const breadcrumb3 = `${nameEN} (${el.sym})`;
 
   let out = src;

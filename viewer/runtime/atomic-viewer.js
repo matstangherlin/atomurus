@@ -252,8 +252,9 @@
     return pts;
   }
   function regenQuantumPoints(){
-    _quantumMiniPts = genQuantumPoints(24, 170, 2600);
-    _quantumFullPts = genQuantumPoints(40, 380, 7000);
+    // generated on first draw (the mini panel may not exist, the 2D view may never open)
+    _quantumMiniPts = null;
+    _quantumFullPts = null;
   }
 
   // Build an interleaved proton/neutron sequence so particles intermix on the Fibonacci sphere
@@ -280,6 +281,21 @@
     const clusterR = paper()
       ? Math.min(0.98, 0.52 * Math.cbrt(big)) * scale
       : Math.max(0.30, Math.pow(total, 1/3) * 0.34) * scale;
+    // big nuclei (heavy elements): two instanced meshes instead of one mesh
+    // per nucleon — uranium went from 238 draw calls to 2
+    if (paper() && paper().addInstancedSpheres && total > 12) {
+      const pPos = [], nPos = [];
+      for (let i = 0; i < total; i++) {
+        const phi   = Math.acos(1 - 2 * (i + 0.5) / total);
+        const theta = Math.PI * (1 + Math.sqrt(5)) * (i + 0.5);
+        const v = new THREE.Vector3(clusterR * Math.cos(theta) * Math.sin(phi), clusterR * Math.sin(theta) * Math.sin(phi), clusterR * Math.cos(phi));
+        (order[i] === 'p' ? pPos : nPos).push(v);
+      }
+      const segs = total > 60 ? 10 : 14;
+      if (pPos.length) paper().addInstancedSpheres(g, THREE, pPos, PROTON_COLOR, partR, segs);
+      if (nPos.length) paper().addInstancedSpheres(g, THREE, nPos, NEUTRON_COLOR, partR, segs, { roughness: 0.4, metalness: 0.1 });
+      return g;
+    }
     for (let i = 0; i < total; i++) {
       const isProton = order[i] === 'p';
       const color = isProton ? PROTON_COLOR : NEUTRON_COLOR;
@@ -419,7 +435,7 @@
       const eR = (paper() ? 0.12 : 0.22) * Math.max(0.5, Math.min(1, Math.sqrt(10 / Math.max(10, el))));
       for (let i = 0; i < el; i++) {
         const p = points[i % points.length];
-        const eg = makeLabeledParticle(eR, ELECTRON_COLOR(), '−', 20);
+        const eg = makeLabeledParticle(eR, ELECTRON_COLOR(), '−', el > 24 ? 10 : 20);
         eg.position.set(p[0], p[1], p[2]);
         eg.userData = { orbitR: 0, phase: 0, speed: 0 };
         g.add(eg);
@@ -455,7 +471,7 @@
         ring.rotation.set(orb.eX, orb.eY, orb.eZ);
         g.add(ring);
         for (let i = 0; i < count; i++) {
-          const eg = makeLabeledParticle(paper() ? 0.11 : 0.20, ELECTRON_COLOR(), '−', 20);
+          const eg = makeLabeledParticle(paper() ? 0.11 : 0.20, ELECTRON_COLOR(), '−', el > 24 ? 10 : 20);
           eg.userData = {
             orbitR: orb.r,
             phase: (i / count) * Math.PI * 2,
@@ -480,17 +496,26 @@
       const limit = paper() ? 3.15 : 4.2;
       const fit = Math.min(1, limit / last);
       const eSize = (paper() ? 0.11 : 0.22) / Math.sqrt(fit);
+      // many electrons: proxies that move every frame + one instanced mesh to draw them
+      const instanced = el > 24 && paper() && paper().addInstancedSpheres;
       shellCounts.forEach((count, i) => {
         if (count <= 0) return;
         const r = r0 + step * i;
         const tilt = TILTS[i % TILTS.length];
         g.add(makeOrbit(r, ORBIT_COLOR, 0.55, tilt));
         for (let k = 0; k < count; k++) {
-          const eg = makeLabeledParticle(eSize, ELECTRON_COLOR(), '−', 24);
+          const eg = instanced ? new THREE.Object3D() : makeLabeledParticle(eSize, ELECTRON_COLOR(), '−', 24);
           eg.userData = { orbitR: r, phase: (k / count) * Math.PI * 2, speed: 1.05 / (1 + 0.5 * i), tilt: tilt };
-          electrons.push(eg); g.add(eg);
+          const a0 = eg.userData.phase;
+          eg.position.set(Math.cos(a0) * r, Math.sin(a0) * r * Math.cos(tilt), Math.sin(a0) * r * Math.sin(tilt));
+          electrons.push(eg);
+          if (!instanced) g.add(eg);
         }
       });
+      if (instanced) {
+        const mesh = paper().addInstancedSpheres(g, THREE, electrons.map(e => e.position), ELECTRON_COLOR(), eSize, 10);
+        g.userData.eInstanced = mesh;
+      }
       if (fit < 1) g.scale.setScalar(fit);
       return g;
     },
@@ -509,7 +534,8 @@
         ? { core: [0.48, 0.73, 0.62], open: [0.90, 0.67, 0.35], val: [0.91, 0.89, 0.83] }
         : { core: [0.12, 0.42, 0.31], open: [0.73, 0.42, 0.05], val: [0.08, 0.07, 0.05] };
       const subs = atomConfig();
-      const per = Math.max(10, Math.min(220, Math.floor(16000 / el)));
+      // ~9k points at most: dense enough for uranium, light on phones
+      const per = Math.max(10, Math.min(220, Math.floor(9000 / el)));
       const clouds = AS.cloud(subs, per);
       const fit = _qFit(clouds);
 
@@ -925,7 +951,11 @@
     });
     if (tab==='atomic')         setAtomModel(currentAtomModel, true);
     else if (tab==='molecule')  setMolecule(currentMolecule, true);
-    else if (tab==='allotrope') setAllotrope(currentAllotrope, true);
+    else if (tab==='allotrope') {
+      // the allotrope list is built the first time the tab opens (not at page load)
+      if (!document.querySelector('#allo-variants .allo-btn')) setAlloElement('carbon');
+      else setAllotrope(currentAllotrope, true);
+    }
   };
 
   window.setAtomModel = function(key, skipBtnUpdate){
@@ -1530,6 +1560,22 @@
   }
   window.addEventListener('atomurus:atom-element', function(e){ if (e && e.detail) setAtomElement(e.detail.z); });
 
+  // Strings that depend on the language, without rebuilding the 3D scene.
+  function refreshAtomTexts(){
+    const key = currentAtomModel;
+    if (!key || !modelMeta[key]) return;
+    const nameEl = document.getElementById('model-name');
+    const descEl = document.getElementById('model-desc');
+    if (nameEl) { nameEl.removeAttribute('data-i18n'); nameEl.textContent = modelMeta[key].name; }
+    if (descEl) { descEl.removeAttribute('data-i18n'); descEl.textContent = modelMeta[key].desc; }
+    const nameOverlay = document.getElementById('atom-name-3d');
+    if (nameOverlay) { const labels = _modelLabels(); nameOverlay.textContent = (labels[key] || key).toUpperCase(); }
+    renderModelDetail(key);
+    update2DPanel(key);
+    if (viewMode === '2d') draw2DAtomFull(key, anim2dEnabled ? t : _t2dFrozen);
+    try { window.dispatchEvent(new CustomEvent('atomurus:atom-state', { detail: { model: key, z: atomZ, charge: charge } })); } catch (e) {}
+  }
+
   // ══════════════════════════════════════════
   // 2D ATOMIC DIAGRAM PANEL
   // ══════════════════════════════════════════
@@ -1731,7 +1777,7 @@
 
     } else if (modelKey === 'quantum') {
       // Stable cached subshell clouds (1s/2s/2p) — drift rotation only
-      if (!_quantumMiniPts) regenQuantumPoints();
+      if (!_quantumMiniPts) _quantumMiniPts = genQuantumPoints(24, 170, 1800);
       const driftA = tt * 0.06;
       const pts = _quantumMiniPts;
       const shellCol = _qShellColors2D(isDark);
@@ -1936,7 +1982,7 @@
 
     } else if (modelKey === 'quantum'){
       // Stable cached subshell clouds (1s/2s/2p), slow drift rotation
-      if (!_quantumFullPts) regenQuantumPoints();
+      if (!_quantumFullPts) _quantumFullPts = genQuantumPoints(40, 380, 4500);
       const shellCol = _qShellColors2D(isDark);
       const driftA = tt * 0.06;
       const pts = _quantumFullPts;
@@ -2162,9 +2208,8 @@
   const _validModels = ['dalton','thomson','rutherford','bohr','quantum'];
   const _initModel = (window.__ATOM_INIT_MODEL && _validModels.indexOf(window.__ATOM_INIT_MODEL) !== -1)
                        ? window.__ATOM_INIT_MODEL : 'bohr';
-  setAtomModel(_initModel, true);
-  setAlloElement('carbon');
-  setAtomModel(_initModel);        // back to atomic tab default, list in step with ?model=
+  // one scene at load: the atom (the allotrope tab builds its own when opened)
+  setAtomModel(_initModel);        // list in step with ?model=
   updateInfoMeta();
   updateSubstrip();
   update2DPanel(_initModel);
@@ -2179,7 +2224,7 @@
     if (window.I18N && window.I18N.onChange) {
       // I18N loads deferred — re-render the JS-driven strings (info-bar,
       // detail card, meta, substrip) once it's available, not only on change.
-      if (currentTab === 'atomic' && currentAtomModel) window.setAtomModel(currentAtomModel, true);
+      if (currentTab === 'atomic' && currentAtomModel) refreshAtomTexts();
       updateInfoMeta();
       updateSubstrip();
       window.I18N.onChange(function(){
@@ -2190,7 +2235,7 @@
           if (nameEl) nameEl.textContent = modelMeta[currentAtomModel].name;
           if (descEl) descEl.textContent = modelMeta[currentAtomModel].desc;
           // Re-render the centered overlay (BOHR · 1913, etc.)
-          if (typeof setAtomModel === 'function') setAtomModel(currentAtomModel, true);
+          refreshAtomTexts();
         }
         updateChargeUI();
         updateInfoMeta();
@@ -2227,6 +2272,7 @@
 
   // Render loop — 3D + 2D animation, rotation inertia
   let t = 0;
+  const _eDummy = new THREE.Object3D(), _eMat = new THREE.Matrix4(), _eScale = new THREE.Vector3();
   function tickFrame(){
     if (_docHidden) return;
     if (viewMode === '2d') {
@@ -2272,6 +2318,20 @@
         }
       });
       currentGroup.children.forEach(c => { if (c.userData.isCloud) c.rotation.y += 0.0025; });
+      const eInst = currentGroup.userData && currentGroup.userData.eInstanced;
+      if (eInst) {
+        for (let i = 0; i < electrons.length; i++) {
+          _eDummy.position.copy(electrons[i].position);
+          _eDummy.updateMatrix();
+          // keep the instance scale (radius) set by addInstancedSpheres
+          eInst.getMatrixAt(i, _eMat);
+          _eScale.setFromMatrixScale(_eMat);
+          _eDummy.scale.copy(_eScale);
+          _eDummy.updateMatrix();
+          eInst.setMatrixAt(i, _eDummy.matrix);
+        }
+        eInst.instanceMatrix.needsUpdate = true;
+      }
     }
     renderer.render(scene, camera);
 
