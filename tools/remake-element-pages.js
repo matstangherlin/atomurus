@@ -214,7 +214,7 @@ function build(el, data) {
       </div>
       <div class="rm-el-actions">
         <div class="rm-save-slot" data-rm-save-slot></div>
-        <a class="rm-btn rm-btn-primary" href="/viewer/atomic-models.html?model=bohr" data-i18n="el.rm.view3d">${esc(L.view3d)}</a>
+        <a class="rm-btn rm-btn-primary" href="/viewer/atomic-models.html?model=bohr&amp;el=${encodeURIComponent(el.sym)}" data-i18n="el.rm.view3d">${esc(L.view3d)}</a>
       </div>
     </section>
 

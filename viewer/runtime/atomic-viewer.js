@@ -187,97 +187,73 @@
     return g;
   }
 
+  // ── The atom on stage: any element Z = 1…118 (default carbon-12). The page
+  //    script (assets/chem/atom-lab.js) owns the choice; AtomurusAtom
+  //    (assets/chem/atom-structure.js) gives configuration, shells, neutrons.
+  const AS = window.AtomurusAtom || null;
+  let atomZ = (window.AtomurusAtomLab && window.AtomurusAtomLab.z && window.AtomurusAtomLab.z()) || 6;
+  function eCount(){ return Math.max(0, atomZ - charge); }
+  function atomN(){ return AS ? AS.neutrons(atomZ) : 6; }
+  function atomConfig(){ return AS ? AS.configuration(atomZ, Math.min(charge, atomZ)) : [{ n: 1, l: 0, e: Math.min(2, eCount()) }, { n: 2, l: 1, e: Math.max(0, eCount() - 2) }]; }
+  function atomShells(){ return AS ? AS.shells(atomConfig()) : [Math.min(2, eCount()), Math.max(0, eCount() - 2)]; }
+
   // ── Quantum subshell machinery (shared by the 3D cloud and 2D diagrams) ──
-  // Carbon's real ground state is 1s² 2s² 2p². Each subshell is sampled from
-  // its hydrogen-like radial probability density P(r) = r²·R(r)² (visual
-  // scale units, not picometers):
-  //   1s — dense sphere, peak ~1.1        →  P ∝ r²·e^(−2r/a₁)
-  //   2s — sphere with RADIAL NODE at 2a₂ →  P ∝ r²·(2−r/a₂)²·e^(−r/a₂)
-  //   2p — dumbbell lobes, peak ~4a₃      →  P ∝ r⁴·e^(−r/a₃) · cos²θ
-  const _Q_A1S = 1.1, _Q_A2S = 0.75, _Q_A2P = 0.8;
-  function _qPdf1s(r){ return r * r * Math.exp(-2 * r / _Q_A1S); }
-  function _qPdf2s(r){ const rho = r / _Q_A2S, f = 2 - rho; return r * r * f * f * Math.exp(-rho); }
-  function _qPdf2p(r){ return Math.pow(r, 4) * Math.exp(-r / _Q_A2P); }
-
-  // Inverse-CDF sampler over a tabulated radial pdf — stable, no rejection loops.
-  function _radialSampler(pdf, rMax, bins){
-    bins = bins || 160;
-    const cdf = new Float32Array(bins);
-    let acc = 0;
-    for (let i = 0; i < bins; i++) {
-      acc += pdf((i + 0.5) * rMax / bins);
-      cdf[i] = acc;
-    }
-    return function(){
-      const u = Math.random() * acc;
-      let lo = 0, hi = bins - 1;
-      while (lo < hi) { const mid = (lo + hi) >> 1; if (cdf[mid] < u) lo = mid + 1; else hi = mid; }
-      return (lo + Math.random()) * rMax / bins;
-    };
-  }
-
-  // Aufbau + Hund: how el electrons fill 1s / 2s / 2p (px, py, pz singly first).
-  function _qOccupancy(el){
-    const s1 = Math.min(el, 2);
-    const s2 = Math.min(2, Math.max(0, el - 2));
-    const rest = Math.min(6, Math.max(0, el - 4));
-    const p = [0, 0, 0];
-    for (let i = 0; i < rest; i++) p[i % 3]++;
-    return { s1: s1, s2: s2, p: p };
-  }
+  // Subshells are sampled by AtomurusAtom.cloud (hydrogen-like |R_nl|², real
+  // s/p/d/f angular shapes); this file only colours and draws them.
 
   // Subshell tints (keyed so cached 2D points survive theme switches).
-  function _qShellColors3D(isDark){
-    return isDark
-      ? { s1: [0.48, 0.73, 0.62], s2: [0.91, 0.89, 0.83], p: [0.91, 0.89, 0.83] }
-      : { s1: [0.12, 0.42, 0.31], s2: [0.35, 0.33, 0.29], p: [0.08, 0.07, 0.05] };
-  }
   function _qShellColors2D(isDark){
     return isDark
-      ? { s1: '122,186,158', s2: '232,226,212', p: '232,226,212' }
-      : { s1: '30,106,80',  s2: '90,85,76',    p: '20,18,14' };
+      ? { core: '122,186,158', open: '230,170,90', val: '232,226,212', s1: '122,186,158', s2: '232,226,212', p: '232,226,212' }
+      : { core: '30,106,80',  open: '185,107,12', val: '20,18,14',    s1: '30,106,80',  s2: '90,85,76',    p: '20,18,14' };
   }
 
   // ── Stable subshell-aware point caches for the 2D Quantum cloud
   // (generated once per model/charge change so the cloud doesn't flicker)
   let _quantumMiniPts = null;
   let _quantumFullPts = null;
-  function genQuantumPoints(scalePx, density){
-    const el = Math.max(0, 6 - charge);
-    const occ = _qOccupancy(el);
+  // Subshell role for the colours: inner (core) shells, the valence shell
+  // (highest n) and d/f subshells still being filled.
+  function _qRole(sub, subs){
+    let top = 0;
+    subs.forEach(function(x){ if (x.n > top) top = x.n; });
+    if (sub.n === top) return 'val';
+    if (sub.l >= 2 && sub.e < 2 * (2 * sub.l + 1)) return 'open';
+    return 'core';
+  }
+  // Fit factor: the radius holding 95% of the outermost subshell sits at
+  // ~2.7 scene units for every atom, so H and U both fill the stage.
+  function _qFit(clouds){
+    let r = 0;
+    clouds.forEach(function(c){ if (c.r95 > r) r = c.r95; });
+    return r > 0 ? 2.7 / r : 1;
+  }
+  function genQuantumPoints(scalePx, density, cap){
+    const subs = atomConfig();
+    const e = eCount();
+    if (!AS || !e) return [];
+    const per = Math.max(6, Math.min(density, Math.floor(cap / e)));
+    const clouds = AS.cloud(subs, per);
+    const fit = _qFit(clouds);
     const pts = [];
-    const rand1s = _radialSampler(_qPdf1s, 3.0);
-    const rand2s = _radialSampler(_qPdf2s, 5.6);
-    const rand2p = _radialSampler(_qPdf2p, 6.2);
-    function push(r, a, key){
-      // p-lobe points slightly bigger/brighter so the dumbbells read clearly
-      // against the isotropic 2s background at the same radius
-      const isP = key === 'p';
-      pts.push({
-        r: r * scalePx, a: a,
-        op: (isP ? 0.45 : 0.30) + Math.random() * 0.5,
-        sz: (isP ? 1.3 : 1.0) + Math.random(),
-        k: key
-      });
-    }
-    for (let i = 0; i < occ.s1 * density; i++) push(rand1s(), Math.random() * Math.PI * 2, 's1');
-    for (let i = 0; i < occ.s2 * density; i++) push(rand2s(), Math.random() * Math.PI * 2, 's2');
-    // 2p lobes: px along x, py along y (cos²α in-plane); pz points at the
-    // viewer — drawn as a foreshortened central halo when occupied (ions).
-    occ.p.forEach(function(n, axis){
-      for (let i = 0; i < n * density; i++) {
-        if (axis === 2) { push(rand2p() * 0.45, Math.random() * Math.PI * 2, 'p'); continue; }
-        let a;
-        do { a = Math.random() * Math.PI * 2; } while (Math.random() > Math.pow(Math.cos(a), 2));
-        if (axis === 1) a += Math.PI / 2;
-        push(rand2p(), a, 'p');
+    clouds.forEach(function(c){
+      const role = _qRole(c, subs);
+      const isP = c.l > 0;
+      for (let i = 0; i < c.points.length; i += 3) {
+        const x = c.points[i] * fit, y = c.points[i + 1] * fit;
+        pts.push({
+          r: Math.hypot(x, y) * scalePx, a: Math.atan2(y, x),
+          op: (role === 'core' ? 0.22 : (isP ? 0.45 : 0.30)) + Math.random() * 0.5,
+          sz: (isP ? 1.3 : 1.0) + Math.random(),
+          k: role
+        });
       }
     });
     return pts;
   }
   function regenQuantumPoints(){
-    _quantumMiniPts = genQuantumPoints(24, 170);
-    _quantumFullPts = genQuantumPoints(40, 380);
+    _quantumMiniPts = genQuantumPoints(24, 170, 2600);
+    _quantumFullPts = genQuantumPoints(40, 380, 7000);
   }
 
   // Build an interleaved proton/neutron sequence so particles intermix on the Fibonacci sphere
@@ -299,9 +275,10 @@
     const total = z + n;
     if (total === 0) return g;
     const order = buildNucleonOrder(z, n);
-    const partR = paper() ? 0.16 * scale : 0.22 * scale;
+    const big = Math.max(1, total / 12);
+    const partR = (paper() ? 0.16 : 0.22) * scale * Math.max(0.62, Math.pow(big, -0.14));
     const clusterR = paper()
-      ? 0.52 * scale
+      ? Math.min(0.98, 0.52 * Math.cbrt(big)) * scale
       : Math.max(0.30, Math.pow(total, 1/3) * 0.34) * scale;
     for (let i = 0; i < total; i++) {
       const isProton = order[i] === 'p';
@@ -394,9 +371,9 @@
   };
 
   // ═══ ATOMIC MODELS ═══
-  // Each model is built around Carbon as the canonical example (Z=6):
-  //   - 6 protons (red, +) + 6 neutrons (green) packed as nucleus
-  //   - 6 electrons (blue, –) — distribution depends on the historical model
+  // Each model is built around the chosen element (carbon-12 by default):
+  //   - Z protons (+) and the neutrons of the most abundant isotope
+  //   - Z − charge electrons — distribution depends on the historical model
   // Inspired by the user's reference images: real-looking nuclei made of
   // distinct proton/neutron spheres, with electrons on solid tube orbits.
   const atomicModels = {
@@ -429,9 +406,20 @@
       const points = paper()
         ? [[0.72,0.42,0.28],[-0.82,0.18,0.62],[0.18,-0.98,0.36],[-0.36,0.82,-0.52],[0.9,-0.28,-0.72],[-0.64,-0.72,0.44],[0.5,-0.5,0.9],[-0.3,-0.6,-0.8],[0.9,0.7,-0.2],[-0.8,0.8,0.1]]
         : [[0.8,0.5,0.3],[-0.9,0.2,0.7],[0.2,-1.1,0.4],[-0.4,0.9,-0.6],[1.0,-0.3,-0.8],[-0.7,-0.8,0.5],[0.5,-0.5,0.9],[-0.3,-0.6,-0.8],[0.9,0.7,-0.2],[-0.8,0.8,0.1]];
+      // more electrons than hand-placed spots: spread them through the sphere
+      if (el > points.length) {
+        points.length = 0;
+        const gold = Math.PI * (3 - Math.sqrt(5));
+        for (let i = 0; i < el; i++) {
+          const y = 1 - 2 * (i + 0.5) / el, rr = Math.sqrt(1 - y * y), th = gold * i;
+          const k = 0.45 + 0.55 * Math.cbrt((i % 7 + 1) / 7);
+          points.push([Math.cos(th) * rr * k * 0.95, y * k * 0.95, Math.sin(th) * rr * k * 0.95]);
+        }
+      }
+      const eR = (paper() ? 0.12 : 0.22) * Math.max(0.5, Math.min(1, Math.sqrt(10 / Math.max(10, el))));
       for (let i = 0; i < el; i++) {
         const p = points[i % points.length];
-        const eg = makeLabeledParticle(paper() ? 0.12 : 0.22, ELECTRON_COLOR(), '−', 20);
+        const eg = makeLabeledParticle(eR, ELECTRON_COLOR(), '−', 20);
         eg.position.set(p[0], p[1], p[2]);
         eg.userData = { orbitR: 0, phase: 0, speed: 0 };
         g.add(eg);
@@ -441,17 +429,20 @@
     },
     rutherford: (el = 6) => {
       const g = new THREE.Group(); electrons = []; trackedAtoms = []; bondCount = 0;
-      g.add(makeNucleus(6, 6));
+      g.add(makeNucleus(atomZ, atomN()));
 
       const orbitR = paper() ? 2.05 : 2.6;
       const orbits = [
         { r: orbitR, eX: Math.PI / 6,    eY: 0,            eZ: Math.PI / 4 },
         { r: orbitR, eX: -Math.PI / 5,   eY: Math.PI / 3,  eZ: 0 },
-        { r: orbitR, eX: Math.PI / 2.5,  eY: Math.PI / 1.5, eZ: 0.5 }
-      ];
+        { r: orbitR, eX: Math.PI / 2.5,  eY: Math.PI / 1.5, eZ: 0.5 },
+        { r: orbitR * 1.12, eX: -Math.PI / 2.6, eY: -Math.PI / 4, eZ: 1.1 },
+        { r: orbitR * 1.12, eX: Math.PI / 1.7,  eY: Math.PI / 5,  eZ: -0.7 },
+        { r: orbitR * 1.12, eX: 0.15,           eY: -Math.PI / 1.4, eZ: 1.6 }
+      ].slice(0, Math.max(3, Math.min(6, Math.ceil(el / 10))));
 
-      const baseCount = Math.floor(el / 3);
-      const remainder = el % 3;
+      const baseCount = Math.floor(el / orbits.length);
+      const remainder = el % orbits.length;
 
       orbits.forEach((orb, idx) => {
         const count = baseCount + (idx < remainder ? 1 : 0);
@@ -479,86 +470,58 @@
     },
     bohr: (el = 6) => {
       const g = new THREE.Group(); electrons = []; trackedAtoms = []; bondCount = 0;
-      g.add(makeNucleus(6, 6));
+      g.add(makeNucleus(atomZ, atomN()));
 
-      const kCount = Math.min(el, 2);
-      const lCount = Math.min(8, Math.max(0, el - 2));
-      const mCount = Math.max(0, el - 10);
-
-      const orbDef = [];
-      if (kCount > 0) orbDef.push({ r: paper() ? 1.35 : 1.8, count: kCount, tilt: paper() ? 0.12 : 0,            speed: 1.05 });
-      if (lCount > 0) orbDef.push({ r: paper() ? 2.25 : 3.0, count: lCount, tilt: paper() ? -0.18 : Math.PI*0.06, speed: 0.7  });
-      if (mCount > 0) orbDef.push({ r: paper() ? 3.15 : 4.2, count: mCount, tilt: paper() ? 0.08 : -Math.PI*0.06, speed: 0.5  });
-
-      orbDef.forEach((od) => {
-        g.add(makeOrbit(od.r, ORBIT_COLOR, 0.55, od.tilt));
-        for (let i = 0; i < od.count; i++) {
-          const eg = makeLabeledParticle(paper() ? 0.11 : 0.22, ELECTRON_COLOR(), '−', 24);
-          eg.userData = {
-            orbitR: od.r,
-            phase: (i / od.count) * Math.PI * 2,
-            speed: od.speed,
-            tilt: od.tilt
-          };
+      // Real distribution of the atom (or ion): K, L, M, N, O, P, Q
+      const shellCounts = atomShells();
+      const TILTS = paper() ? [0.12, -0.18, 0.08, -0.12, 0.16, -0.06, 0.1] : [0, Math.PI*0.06, -Math.PI*0.06, Math.PI*0.04, -Math.PI*0.04, Math.PI*0.02, -Math.PI*0.02];
+      const r0 = paper() ? 1.35 : 1.8, step = paper() ? 0.9 : 1.2;
+      const last = r0 + step * Math.max(0, shellCounts.length - 1);
+      const limit = paper() ? 3.15 : 4.2;
+      const fit = Math.min(1, limit / last);
+      const eSize = (paper() ? 0.11 : 0.22) / Math.sqrt(fit);
+      shellCounts.forEach((count, i) => {
+        if (count <= 0) return;
+        const r = r0 + step * i;
+        const tilt = TILTS[i % TILTS.length];
+        g.add(makeOrbit(r, ORBIT_COLOR, 0.55, tilt));
+        for (let k = 0; k < count; k++) {
+          const eg = makeLabeledParticle(eSize, ELECTRON_COLOR(), '−', 24);
+          eg.userData = { orbitR: r, phase: (k / count) * Math.PI * 2, speed: 1.05 / (1 + 0.5 * i), tilt: tilt };
           electrons.push(eg); g.add(eg);
         }
       });
+      if (fit < 1) g.scale.setScalar(fit);
       return g;
     },
     quantum: (el = 6) => {
-      // 1926 — Schrödinger. Carbon's real ground state (1s² 2s² 2p²) rendered
-      // as separate |ψ|² probability clouds per subshell:
-      //   1s — dense spherical core (cyan)
-      //   2s — wider sphere with a visible radial node (blue)
-      //   2p — perpendicular dumbbell lobes px/py, Hund's rule (violet)
-      // Ionic charge shifts occupancy via Aufbau (e.g. C⁻ gains a pz lobe).
+      // 1926 — Schrödinger. Every occupied subshell of the atom (or ion) as a
+      // |ψ|² probability cloud: hydrogen-like radial density with its nodes and
+      // the real s, p, d, f angular shapes, filled by Aufbau and Hund
+      // (assets/chem/atom-structure.js). Inner shells green, the valence shell
+      // in ink, d/f subshells being filled in amber.
       const g = new THREE.Group(); electrons = []; trackedAtoms = []; bondCount = 0;
-      g.add(makeNucleus(6, 6));
+      g.add(makeNucleus(atomZ, atomN(), 0.6));
+      if (!AS || el <= 0) return g;
 
       const isDark = ((window.atomurusPaperLab && window.atomurusPaperLab.isDark) ? window.atomurusPaperLab.isDark() : document.documentElement.getAttribute('data-theme') === 'dark');
-      const COL = _qShellColors3D(isDark);
-      const occ = _qOccupancy(el);
-      const PTS_PER_E = 220;
+      const COL = isDark
+        ? { core: [0.48, 0.73, 0.62], open: [0.90, 0.67, 0.35], val: [0.91, 0.89, 0.83] }
+        : { core: [0.12, 0.42, 0.31], open: [0.73, 0.42, 0.05], val: [0.08, 0.07, 0.05] };
+      const subs = atomConfig();
+      const per = Math.max(10, Math.min(220, Math.floor(16000 / el)));
+      const clouds = AS.cloud(subs, per);
+      const fit = _qFit(clouds);
 
-      const rand1s = _radialSampler(_qPdf1s, 3.0);
-      const rand2s = _radialSampler(_qPdf2s, 5.6);
-      const rand2p = _radialSampler(_qPdf2p, 6.2);
-
-      function isoDir(){
-        const phi = Math.random() * Math.PI * 2;
-        const ct = 2 * Math.random() - 1;
-        const st = Math.sqrt(1 - ct * ct);
-        return [st * Math.cos(phi), st * Math.sin(phi), ct];
-      }
-      function sphSample(rand){
-        return function(){
-          const r = rand(), d = isoDir();
-          return [d[0] * r, d[1] * r, d[2] * r];
-        };
-      }
-      // Dumbbell along `axis` (0=x,1=y,2=z): cosθ sampled with pdf ∝ cos²θ
-      // (inverse CDF: cosθ = ∛(2u−1) — both lobes emerge naturally).
-      function pSample(rand, axis){
-        return function(){
-          const r = rand();
-          const c = Math.cbrt(2 * Math.random() - 1);
-          const s = Math.sqrt(Math.max(0, 1 - c * c));
-          const phi = Math.random() * Math.PI * 2;
-          const out = [0, 0, 0];
-          out[axis]           = c * r;
-          out[(axis + 1) % 3] = s * Math.cos(phi) * r;
-          out[(axis + 2) % 3] = s * Math.sin(phi) * r;
-          return out;
-        };
-      }
-
-      function addCloud(count, color, sampleFn, size){
-        if (count <= 0) return;
+      clouds.forEach((c) => {
+        const count = c.points.length / 3;
+        if (!count) return;
+        const role = _qRole(c, subs);
+        const color = COL[role];
         const positions = new Float32Array(count * 3);
-        const colors    = new Float32Array(count * 3);
+        const colors = new Float32Array(count * 3);
         for (let i = 0; i < count; i++) {
-          const p = sampleFn();
-          positions[i*3] = p[0]; positions[i*3 + 1] = p[1]; positions[i*3 + 2] = p[2];
+          positions[i*3] = c.points[i*3] * fit; positions[i*3 + 1] = c.points[i*3 + 1] * fit; positions[i*3 + 2] = c.points[i*3 + 2] * fit;
           const t = 0.75 + Math.random() * 0.25;
           colors[i*3] = color[0] * t; colors[i*3 + 1] = color[1] * t; colors[i*3 + 2] = color[2] * t;
         }
@@ -566,24 +529,16 @@
         geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
         geo.setAttribute('color',    new THREE.BufferAttribute(colors,    3));
         const cloud = new THREE.Points(geo, new THREE.PointsMaterial({
-          size: paper() ? 0.055 : size,
+          size: (paper() ? 0.055 : 0.08) * (role === 'core' && el > 10 ? 0.8 : 1),
           vertexColors: true,
           transparent: true,
-          opacity: paper() ? 0.78 : 0.85,
+          opacity: role === 'core' && el > 10 ? 0.45 : (paper() ? 0.78 : 0.85),
           sizeAttenuation: true,
           depthWrite: false
         }));
         cloud.userData.isCloud = true;
         g.add(cloud);
-      }
-
-      const paperInk = paper()
-        ? (isDark ? [0.91, 0.89, 0.83] : [0.08, 0.07, 0.05])
-        : null;
-      const paperGreen = paper() ? [0.12, 0.42, 0.31] : null;
-      addCloud(occ.s1 * PTS_PER_E, paperGreen || COL.s1, sphSample(rand1s), 0.07);
-      addCloud(occ.s2 * PTS_PER_E, paperInk || COL.s2, sphSample(rand2s), 0.08);
-      occ.p.forEach((n, axis) => addCloud(n * PTS_PER_E, paperInk || COL.p, pSample(rand2p, axis), 0.085));
+      });
       return g;
     }
   };
@@ -946,7 +901,7 @@
     document.getElementById('md-limit').textContent = T('limit');
     document.getElementById('md-ok-label').textContent    = _atomI18n('atomicModels.detail.okLabel', 'What it explained');
     document.getElementById('md-limit-label').textContent = _atomI18n('atomicModels.detail.limitLabel', 'Limitations');
-    document.getElementById('md-shells').classList.toggle('on', key === 'quantum');
+    document.getElementById('md-shells').classList.toggle('on', key === 'bohr' || key === 'quantum');
     // Re-trigger the entrance animation on every switch
     card.classList.remove('show');
     void card.offsetWidth;
@@ -981,10 +936,10 @@
     canvas.classList.add('transitioning');
     setTimeout(()=>canvas.classList.remove('transitioning'), 400);
     
-    // Number of electrons depends on ionic charge: e- = Z - charge (Carbon Z=6)
-    let el = 6;
+    // Number of electrons depends on ionic charge: e- = Z - charge
+    let el = atomZ;
     if (key !== 'dalton') {
-      el = Math.max(0, 6 - charge);
+      el = eCount();
     }
 
     rebuildScene(() => {
@@ -1011,6 +966,7 @@
     }
     // Model detail card — appears/re-animates on every switch
     renderModelDetail(key);
+    try { window.dispatchEvent(new CustomEvent('atomurus:atom-state', { detail: { model: key, z: atomZ, charge: charge } })); } catch (e) {}
     if (!skipBtnUpdate){
       document.querySelectorAll('[data-model]').forEach(b=>b.classList.toggle('active', b.dataset.model===key));
     }
@@ -1089,23 +1045,17 @@
       const lGeom  = _atomI18n('atomicModels.meta.geometry', 'geometry');
       metaEl.innerHTML = `<span><b>${atoms}</b> ${lAtoms}</span><span><b>${bondCount}</b> ${lBonds}</span><span>${lGeom} <b>3D</b></span>`;
     } else if (tab === 'atomic'){
-      // Quantum model replaces electron meshes with a probability cloud → use logical count
-      const isQuantum = currentAtomModel === 'quantum';
       const isDalton  = currentAtomModel === 'dalton';
-      const isThomson = currentAtomModel === 'thomson';
-      const electronCount = isDalton ? 0
-                         : isQuantum  ? Math.max(0, 6 - charge)
-                         : isThomson  ? Math.max(0, 6 - charge)
-                         : electrons.length;
-      const hasNucleus = !isDalton;
-      const labelNucleus = _atomI18n('atomicModels.meta.nucleus', 'nucleus');
+      const electronCount = isDalton ? 0 : eCount();
+      const lP = _atomI18n('atomicModels.meta.protons', 'protons');
+      const lN = _atomI18n('atomicModels.meta.neutrons', 'neutrons');
       const labelNoNucl  = _atomI18n('atomicModels.meta.noNucleus', 'no nucleus');
       const labelElec    = _atomI18n(electronCount === 1 ? 'atomicModels.meta.electron' : 'atomicModels.meta.electrons',
                                      electronCount === 1 ? 'electron' : 'electrons');
-      const labelModel   = _atomI18n('atomicModels.meta.modelLabel', 'model');
-      metaEl.innerHTML = `<span>${hasNucleus?'<b>1</b> '+labelNucleus:'<i>'+labelNoNucl+'</i>'}</span>` +
-        (electronCount?`<span><b>${electronCount}</b> ${labelElec}</span>`:'') +
-        `<span>${labelModel} <b>${currentAtomModel}</b></span>`;
+      const sym = (window.AtomurusAtomLab && window.AtomurusAtomLab.symbol) ? window.AtomurusAtomLab.symbol(atomZ) : '';
+      metaEl.innerHTML = (sym ? `<span><b>${sym}</b></span>` : '') +
+        (isDalton ? `<span><i>${labelNoNucl}</i></span>`
+                  : `<span><b>${atomZ}</b> ${lP}</span><span><b>${atomN()}</b> ${lN}</span><span><b>${electronCount}</b> ${labelElec}</span>`);
     } else {
       metaEl.innerHTML = `<span>${_atomI18n('atomicModels.meta.crystal','crystal structure')} · <b>${currentAllotrope}</b></span>`;
     }
@@ -1479,8 +1429,9 @@
   let dragStart = { x: 0, y: 0 };
   let panStart  = { x: 0, y: 0 };
 
+  function chargeMax(){ return Math.min(CHARGE_MAX, atomZ); }
   function changeCharge(delta){
-    const next = Math.max(CHARGE_MIN, Math.min(CHARGE_MAX, charge + delta));
+    const next = Math.max(CHARGE_MIN, Math.min(chargeMax(), charge + delta));
     if (next === charge) return;
     charge = next;
     updateChargeUI();
@@ -1518,7 +1469,7 @@
     const exEl     = document.getElementById('ion-examples');
 
     if (valEl)   valEl.textContent = charge > 0 ? ('+' + charge) : ('' + charge);
-    if (btnUp)   btnUp.disabled   = charge >= CHARGE_MAX;
+    if (btnUp)   btnUp.disabled   = charge >= chargeMax();
     if (btnDown) btnDown.disabled = charge <= CHARGE_MIN;
 
     // Main badge — abstract (no element symbol). Pulls labels from I18N.
@@ -1537,7 +1488,7 @@
     if (badge) badge.className = 'ion-badge ' + cls;
 
     // Educational sub-line — also i18n-aware
-    const electrons = Math.max(0, 6 - charge);
+    const electrons = eCount();
     if (eCountEl) eCountEl.textContent = electrons + ' e⁻';
     if (actionEl){
       let txt;
@@ -1566,6 +1517,19 @@
   window.changeCharge = changeCharge;
   window.resetCharge  = resetCharge;
 
+  function setAtomElement(z){
+    z = Math.max(1, Math.min(118, z | 0));
+    if (z === atomZ) return;
+    atomZ = z;
+    if (charge > chargeMax()) charge = chargeMax();
+    if (currentAtomModel === 'quantum') regenQuantumPoints();
+    if (currentTab === 'atomic') setAtomModel(currentAtomModel, true);
+    updateChargeUI();
+    updateInfoMeta();
+    if (typeof updateSubstrip === 'function') updateSubstrip();
+  }
+  window.addEventListener('atomurus:atom-element', function(e){ if (e && e.detail) setAtomElement(e.detail.z); });
+
   // ══════════════════════════════════════════
   // 2D ATOMIC DIAGRAM PANEL
   // ══════════════════════════════════════════
@@ -1586,6 +1550,25 @@
       p2dCanvas.height = Math.round(cssH * dpr);
       if (p2dCtx) p2dCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
+  }
+
+  // Bohr rings: the original spacing for up to 3 shells, squeezed to fit for more.
+  function _bohrRadii2D(count, r0, step, rMax){
+    const out = [];
+    const st = count > 1 ? Math.min(step, (rMax - r0) / (count - 1)) : step;
+    for (let i = 0; i < count; i++) out.push(r0 + st * i);
+    return out;
+  }
+  // Thomson: the hand-placed spots for small atoms, a sunflower for more.
+  const _THOMSON_SPOTS = [[0.8,0.5],[-.9,0.2],[0.2,-1.1],[-.4,.9],[1.0,-.3],[-.7,-.8],[0.5,-0.6],[-0.3,-0.4]];
+  function _thomson2D(n, handPlaced){
+    if (n <= handPlaced) return _THOMSON_SPOTS.slice(0, n);
+    const out = [], gold = Math.PI * (3 - Math.sqrt(5));
+    for (let i = 0; i < n; i++) {
+      const r = 1.05 * Math.sqrt((i + 0.5) / n), a = i * gold;
+      out.push([Math.cos(a) * r, Math.sin(a) * r]);
+    }
+    return out;
   }
 
   function draw2DAtom(modelKey, time){
@@ -1671,8 +1654,8 @@
       const order = buildNucleonOrder(zP, nP);
       const total = order.length;
       const golden = Math.PI * (3 - Math.sqrt(5)); // ~137.5°
-      const maxR = 14;
-      const partR = 5;
+      const maxR = Math.min(26, 14 * Math.sqrt(Math.max(1, total / 12)) ** 0.75);
+      const partR = Math.max(2.4, 5 * Math.pow(Math.max(1, total / 12), -0.2));
       for (let i = 0; i < total; i++) {
         const a = i * golden;
         const r = Math.sqrt((i + 0.5) / total) * maxR;
@@ -1716,7 +1699,7 @@
       p2dCtx.fill();
       p2dCtx.strokeStyle = isDark ? 'rgba(255,120,80,0.4)' : 'rgba(200,80,50,0.35)';
       p2dCtx.lineWidth = 1.5; p2dCtx.stroke();
-      [[0.8,0.5],[-.9,0.2],[0.2,-1.1],[-.4,.9],[1.0,-.3],[-.7,-.8]].forEach(([dx,dy]) => {
+      _thomson2D(eCount(), 6).forEach(([dx,dy]) => {
         drawElectron(cx + dx * 55, cy + dy * 55);
       });
 
@@ -1727,7 +1710,7 @@
         { rx: 60, ry: 30, rot: -Math.PI / 4.5, sp: 0.32 },
         { rx: 60, ry: 30, rot:  Math.PI / 2.2, sp: 0.24 }
       ];
-      const totalE = Math.max(0, 6 - charge);
+      const totalE = eCount();
       const per = Math.ceil(totalE / 3);
       ellipses.forEach((o, oi) => {
         p2dCtx.save();
@@ -1738,20 +1721,13 @@
         const cnt = Math.min(per, Math.max(0, totalE - oi*per));
         placeOnEllipse(o.rx, o.ry, cnt, o.rot, o.sp);
       });
-      drawNucleus(6, 6);
+      drawNucleus(atomZ, atomN());
 
     } else if (modelKey === 'bohr') {
-      const totalE = Math.max(0, 6 - charge);
-      const k = Math.min(2, totalE);
-      const l = Math.min(8, Math.max(0, totalE - 2));
-      const m = Math.max(0, totalE - 10);
-      drawOrbit(42);
-      if (l > 0 || m > 0) drawOrbit(80);
-      if (m > 0) drawOrbit(118, true);
-      drawNucleus(6, 6);
-      placeOnOrbit(42,  k, -Math.PI/2, 0.55);
-      if (l > 0) placeOnOrbit(80,  l, -Math.PI/2, 0.35);
-      if (m > 0) placeOnOrbit(118, m, -Math.PI/2, 0.25);
+      const radii = _bohrRadii2D(atomShells().length, 42, 38, Math.min(W, H) / 2 - 10);
+      atomShells().forEach((n, i) => drawOrbit(radii[i]));
+      drawNucleus(atomZ, atomN());
+      atomShells().forEach((n, i) => placeOnOrbit(radii[i], n, -Math.PI/2, 0.55 / (1 + 0.55 * i)));
 
     } else if (modelKey === 'quantum') {
       // Stable cached subshell clouds (1s/2s/2p) — drift rotation only
@@ -1767,7 +1743,7 @@
         p2dCtx.fillStyle = 'rgba(' + (shellCol[pt.k] || shellCol.p) + ',' + pt.op.toFixed(2) + ')';
         p2dCtx.fill();
       }
-      drawNucleus(6, 6);
+      drawNucleus(atomZ, atomN());
     }
 
     // Label
@@ -1886,8 +1862,8 @@
 
       // 2D Fibonacci packing — interleaved protons/neutrons, well-separated
       const golden = Math.PI * (3 - Math.sqrt(5));
-      const maxR  = 22 * z;
-      const partR = 8  * z;
+      const maxR  = Math.min(44, 22 * Math.sqrt(Math.max(1, total / 12)) ** 0.75) * z;
+      const partR = Math.max(3.6, 8 * Math.pow(Math.max(1, total / 12), -0.2)) * z;
       for (let i = 0; i < total; i++){
         const a = i * golden;
         const r = Math.sqrt((i + 0.5) / total) * maxR;
@@ -1909,7 +1885,7 @@
       }
     }
 
-    const totalE = Math.max(0, 6 - charge);
+    const totalE = eCount();
 
     if (modelKey === 'dalton'){
       // Solid indivisible sphere — abstract atom (no element label)
@@ -1929,11 +1905,9 @@
       view2dCtx.fill();
       view2dCtx.strokeStyle = isDark ? 'rgba(255,120,80,0.4)' : 'rgba(200,80,50,0.35)';
       view2dCtx.lineWidth = 2; view2dCtx.stroke();
-      const pts = [[0.8,0.5],[-.9,0.2],[0.2,-1.1],[-.4,.9],[1.0,-.3],[-.7,-.8],[0.5,-0.6],[-0.3,-0.4]];
-      for (let i = 0; i < Math.min(totalE, pts.length); i++){
-        const [dx, dy] = pts[i];
+      _thomson2D(totalE, 8).forEach(([dx, dy]) => {
         drawElectron(cx + dx * 90 * z, cy + dy * 90 * z);
-      }
+      });
 
     } else if (modelKey === 'rutherford'){
       // Three elliptic orbits, tilted at distinct angles
@@ -1952,19 +1926,13 @@
         const cnt = Math.min(per, Math.max(0, totalE - oi*per));
         placeOnEllipse(o.rx, o.ry, cnt, o.rot, o.sp);
       });
-      drawNucleus(6, 6);
+      drawNucleus(atomZ, atomN());
 
     } else if (modelKey === 'bohr'){
-      const k = Math.min(2, totalE);
-      const l = Math.min(8, Math.max(0, totalE - 2));
-      const m = Math.max(0, totalE - 10);
-      drawOrbit(68);
-      if (l > 0 || m > 0) drawOrbit(128);
-      if (m > 0) drawOrbit(180, true);
-      drawNucleus(6, 6);
-      placeOnOrbit(68,  k, -Math.PI/2, 0.55);
-      if (l > 0) placeOnOrbit(128, l, -Math.PI/2, 0.35);
-      if (m > 0) placeOnOrbit(180, m, -Math.PI/2, 0.25);
+      const radii = _bohrRadii2D(atomShells().length, 68, 60, Math.min(W, H) / (2 * z) - 16);
+      atomShells().forEach((n, i) => drawOrbit(radii[i]));
+      drawNucleus(atomZ, atomN());
+      atomShells().forEach((n, i) => placeOnOrbit(radii[i], n, -Math.PI/2, 0.55 / (1 + 0.55 * i)));
 
     } else if (modelKey === 'quantum'){
       // Stable cached subshell clouds (1s/2s/2p), slow drift rotation
@@ -1980,7 +1948,7 @@
         view2dCtx.fillStyle = 'rgba(' + (shellCol[pt.k] || shellCol.p) + ',' + pt.op.toFixed(2) + ')';
         view2dCtx.fill();
       }
-      drawNucleus(6, 6);
+      drawNucleus(atomZ, atomN());
     }
 
     // Footer caption
@@ -2165,8 +2133,8 @@
     // Substrip key/value depends on current tab — use known state keys, not text parsing
     if (currentTab === 'atomic') {
       elM.textContent = currentAtomModel;
-      // All five historical models render the same reference atom: carbon-12
-      elE.textContent = _atomI18n('atomicModels.avContextVal', 'reference: carbon-12 (Z = 6)');
+      const sym = (window.AtomurusAtomLab && window.AtomurusAtomLab.symbol) ? window.AtomurusAtomLab.symbol(atomZ) : 'C';
+      elE.textContent = sym + '-' + (AS ? AS.massNumber(atomZ) : 12) + ' (Z = ' + atomZ + ')';
     } else if (currentTab === 'molecule') {
       elM.textContent = currentMolecule;
       const md = molData[currentMolecule];
@@ -2196,7 +2164,7 @@
                        ? window.__ATOM_INIT_MODEL : 'bohr';
   setAtomModel(_initModel, true);
   setAlloElement('carbon');
-  setAtomModel(_initModel, true);  // back to atomic tab default
+  setAtomModel(_initModel);        // back to atomic tab default, list in step with ?model=
   updateInfoMeta();
   updateSubstrip();
   update2DPanel(_initModel);

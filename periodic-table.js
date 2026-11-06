@@ -22,7 +22,9 @@ function _T(key, fallback) {
 }
 
 const PERIODIC_REMOTE_DEPS = {
-  chart: 'https://cdn.jsdelivr.net/npm/chart.js',
+  // pinned: an unversioned URL would follow the next major release (the zoom
+  // plugin 2.2 needs Chart.js 4)
+  chart: 'https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.js',
   chartZoom: 'https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.2.0/dist/chartjs-plugin-zoom.min.js',
   html2canvas: 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
   jspdf: 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
@@ -50,8 +52,43 @@ function loadScriptOnce(key, src, isReady) {
     document.head.appendChild(script);
   }).then(() => {
     if (isReady && !isReady()) throw new Error(`${key} loaded but did not initialize`);
+  }).catch((err) => {
+    // forget the failure so the next attempt (retry button, tab switch) loads again
+    delete _periodicDepPromises[key];
+    const tag = document.querySelector(`script[data-atomurus-dep="${key}"]`);
+    if (tag) tag.remove();
+    throw err;
   });
   return _periodicDepPromises[key];
+}
+
+/* A chart that could not load (offline, blocked CDN) says so and offers a
+   retry instead of leaving an empty box. */
+function showChartUnavailable(canvas, retry) {
+  if (!canvas || !canvas.parentNode) return;
+  canvas.style.display = 'none';
+  let note = canvas.parentNode.querySelector(':scope > .chart-unavailable');
+  if (!note) {
+    note = document.createElement('div');
+    note.className = 'chart-unavailable';
+    note.setAttribute('role', 'status');
+    canvas.parentNode.insertBefore(note, canvas.nextSibling);
+  }
+  note.innerHTML = '';
+  const p = document.createElement('p');
+  p.textContent = _T('ptable.chartLoadError', 'The chart could not load. Check your connection and try again.');
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.textContent = _T('ptable.chartRetry', 'Try again');
+  btn.addEventListener('click', () => { note.remove(); canvas.style.display = ''; retry(); });
+  note.appendChild(p);
+  note.appendChild(btn);
+}
+function clearChartUnavailable(canvas) {
+  if (!canvas || !canvas.parentNode) return;
+  const note = canvas.parentNode.querySelector(':scope > .chart-unavailable');
+  if (note) note.remove();
+  canvas.style.display = '';
 }
 
 function ensureChartJs() {
@@ -4386,8 +4423,11 @@ function buildTrendSelects() { buildTrendSelect(TREND_SELECTS.prop); buildTrendS
 function syncTrendSelectButtons() { syncTrendSelectButton(TREND_SELECTS.prop); syncTrendSelectButton(TREND_SELECTS.scope); }
 
 async function renderTrendChart() {
-  await ensureChartZoom();
+  const trendCanvas = document.getElementById('trend-chart');
+  try { await ensureChartZoom(); }
+  catch (_) { showChartUnavailable(trendCanvas, renderTrendChart); return; }
   if (!window.Chart) { setTimeout(renderTrendChart, 200); return; }
+  clearChartUnavailable(trendCanvas);
   buildTrendSelects();               // (re)build BOTH dropdowns' <select> mirrors + custom listboxes (language-aware)
   applyTrendStoredControlsOnce();    // restore persisted prop/filter — options now all exist
   syncTrendSelectButtons();          // reflect the resolved values on the custom combos
@@ -6197,7 +6237,9 @@ async function drawHalfLifeChart(z) {
   const canvas = document.getElementById('iso-halflife-chart');
   const emptyMsg = document.getElementById('iso-halflife-empty');
   if (!canvas) return;
-  await ensureChartJs();
+  try { await ensureChartJs(); }
+  catch (_) { showChartUnavailable(canvas, () => drawHalfLifeChart(z)); return; }
+  clearChartUnavailable(canvas);
   if (typeof Chart === 'undefined') return;
 
   const isos = (typeof ISOTOPES !== 'undefined' && ISOTOPES[z]) || [];
@@ -6291,7 +6333,9 @@ async function drawAbundanceChart(z) {
   const canvas = document.getElementById('iso-abundance-chart');
   const emptyMsg = document.getElementById('iso-abundance-empty');
   if (!canvas) return;
-  await ensureChartJs();
+  try { await ensureChartJs(); }
+  catch (_) { showChartUnavailable(canvas, () => drawAbundanceChart(z)); return; }
+  clearChartUnavailable(canvas);
   if (typeof Chart === 'undefined') return;
 
   const isos = (typeof ISOTOPES !== 'undefined' && ISOTOPES[z]) || [];

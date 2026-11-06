@@ -255,8 +255,11 @@ return (function(){
     if (!formula) {
       els.forEach(el => { formula += el + (counts[el] > 1 ? subNum(counts[el]) : ''); });
     }
-    const parts = els.map(el => el + ' ' + ((ATOMIC_MASS[el] * counts[el]) / total * 100).toFixed(1) + '%');
-    return formula + ' · MM ' + total.toFixed(2) + ' g/mol · ' + parts.join(' · ');
+    // decimal comma on Portuguese pages (18,02 g/mol · H 11,2%)
+    const pt = (document.documentElement.lang || '').toLowerCase().indexOf('pt') === 0;
+    const dec = (n, d) => { const t = n.toFixed(d); return pt ? t.replace('.', ',') : t; };
+    const parts = els.map(el => el + ' ' + dec((ATOMIC_MASS[el] * counts[el]) / total * 100, 1) + '%');
+    return formula + ' · M ' + dec(total, 2) + ' g/mol · ' + parts.join(' · ');
   }
 
   // ── Molecule data ──
