@@ -373,7 +373,8 @@ assert.match(calculators, /data-pro-lab-tool="calculations"/);
 
 const moleculesHtml = readFileSync(new URL('../viewer/molecules.html', import.meta.url), 'utf8');
 assert.match(moleculesHtml, /data-pro-lab-tool="molecules"/);
-assert.doesNotMatch(moleculesHtml, /bond length|bond angle/i);
+// Geometry claims must come with their source (measured gas-phase values).
+if (/bond length|bond angle/i.test(moleculesHtml)) assert.match(moleculesHtml, /NIST CCCBDB/);
 
 const atomicHtml = readFileSync(new URL('../viewer/atomic-models.html', import.meta.url), 'utf8');
 assert.match(atomicHtml, /data-pro-lab-tool="atomic"/);
