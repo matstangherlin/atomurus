@@ -1,0 +1,9 @@
+{
+  "method": "intervalos min-max das 3 execuções se cruzam → dentro do ruído",
+  "beforeCommit": "805adc8c9378",
+  "afterCommit": "c55c35956c10",
+  "notInAfterCommit": ["15", "16", "17"],
+  "inAfterCommitRelevant": ["04", "14"],
+  "thirdPartyCompleted": { "before": 0, "after": 0 },
+  "note": "Números derivados de docs/perf/lighthouse-before.json e lighthouse-after.json. Metas não estão aqui."
+}
