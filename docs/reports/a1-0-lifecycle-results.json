@@ -14,14 +14,14 @@
       },
       {
         "cycle": 10,
-        "heapMB": 3.57
+        "heapMB": 3.64
       },
       {
         "cycle": 20,
-        "heapMB": 3.63
+        "heapMB": 3.69
       }
     ],
-    "growthMB_5_to_20": 0.28
+    "growthMB_5_to_20": 0.34
   },
   "navigationStress": {
     "rounds": 10,
@@ -37,7 +37,7 @@
       }
     ],
     "growthMB": 0.43,
-    "msPerRoundMedian": 328
+    "msPerRoundMedian": 228
   },
   "authStress": {
     "cycles": 5,
@@ -80,14 +80,14 @@
         "geometries": 0,
         "textures": 0,
         "calls": 0,
-        "heapMB": 3.22
+        "heapMB": 3.16
       },
       {
         "switch": 20,
         "geometries": 0,
         "textures": 0,
         "calls": 0,
-        "heapMB": 3.15
+        "heapMB": 3.17
       }
     ]
   }

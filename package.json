@@ -29,7 +29,7 @@
     "test:data": "node tools/test-element-data.mjs",
     "test:pro-lab": "node tools/test-pro-lab.mjs",
     "test:solver": "node tools/test-solver.mjs && node tools/test-formula-parser.mjs",
-    "test:calc": "node tools/test-calc-validation.mjs",
+    "test:calc": "node tools/test-calc-validation.mjs && node tools/test-sigfigs.mjs",
     "test:lab-access": "node tools/test-lab-access.mjs && node tools/test-viewer-perf.mjs",
     "test:viewer-perf": "node tools/test-viewer-perf.mjs",
     "test:ui-v2": "node tools/test-ui-v2.mjs",

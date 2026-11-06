@@ -12,11 +12,12 @@
   var ABS_ZERO_F = -459.67;
   var DH_SUSPECT_J_THRESHOLD = 5000;
   var DILUTION_STRICT = true;
-  var R_IDEAL = 8.314;
+  // CODATA 2018 exact value (R = N_A · k_B)
+  var R_IDEAL = 8.314462618;
 
   var UNITS = {
-    pressure: ['Pa', 'kPa', 'atm', 'mmHg'],
-    volume: ['L', 'mL', 'm3'],
+    pressure: ['Pa', 'hPa', 'kPa', 'bar', 'atm', 'mmHg', 'Torr', 'psi'],
+    volume: ['L', 'mL', 'dm3', 'cm3', 'm3'],
     temperature: ['K', 'C', 'F']
   };
 
@@ -45,32 +46,12 @@
     return typeof n === 'number' && Number.isFinite(n) && n > 0 && n <= NUMBER_ABS_MAX;
   }
 
-  function toPascals(v, u) {
-    if (u === 'Pa') return v;
-    if (u === 'kPa') return v * 1000;
-    if (u === 'atm') return v * 101325;
-    if (u === 'mmHg') return v * 133.322;
-    return null;
-  }
-  function fromPascals(v, u) {
-    if (u === 'Pa') return v;
-    if (u === 'kPa') return v / 1000;
-    if (u === 'atm') return v / 101325;
-    if (u === 'mmHg') return v / 133.322;
-    return null;
-  }
-  function toM3(v, u) {
-    if (u === 'L') return v / 1000;
-    if (u === 'mL') return v / 1e6;
-    if (u === 'm3') return v;
-    return null;
-  }
-  function fromM3(v, u) {
-    if (u === 'L') return v * 1000;
-    if (u === 'mL') return v * 1e6;
-    if (u === 'm3') return v;
-    return null;
-  }
+  var PA = { Pa: 1, hPa: 100, kPa: 1000, bar: 1e5, atm: 101325, mmHg: 133.322387415, Torr: 101325 / 760, psi: 6894.757293168 };
+  var M3 = { L: 1e-3, mL: 1e-6, dm3: 1e-3, cm3: 1e-6, m3: 1 };
+  function toPascals(v, u) { return PA[u] ? v * PA[u] : null; }
+  function fromPascals(v, u) { return PA[u] ? v / PA[u] : null; }
+  function toM3(v, u) { return M3[u] ? v * M3[u] : null; }
+  function fromM3(v, u) { return M3[u] ? v / M3[u] : null; }
   function toK(v, u) {
     if (u === 'K') return v;
     if (u === 'C') return v + 273.15;
@@ -99,6 +80,12 @@
     ];
     for (var i = 0; i < fields.length; i += 1) {
       if (fields[i][0] === solve) continue;
+      // temperature may be 0 or negative in °C/°F; it must be above absolute zero
+      if (fields[i][0] === 'T') {
+        var tk = typeof input.T === 'number' && isFinite(input.T) ? toK(input.T, input.Tu) : null;
+        if (!(tk > 0) || Math.abs(input.T) > NUMBER_ABS_MAX) return bad('igInvalidPositive', fields[i][1]);
+        continue;
+      }
       if (!positiveBounded(fields[i][2])) return bad('igInvalidPositive', fields[i][1]);
     }
     if (solve === 'T' && input.resultK != null && !(input.resultK > ABS_ZERO_K)) {
@@ -235,6 +222,41 @@
     return { ok: true, pH: pH, pOH: pOH, H: H, OH: OH, autoion: autoion };
   }
 
+  // Weak acid (or base) of analytical concentration C with Ka (or Kb):
+  // exact positive root of x² + Kx − KC = 0, compared with the √(KC) shortcut.
+  function computeWeak(input) {
+    input = input || {};
+    var C = input.C, K = input.K;
+    if (input.pK != null && isFinite(input.pK)) K = Math.pow(10, -input.pK);
+    if (!(C > 0) || !(K > 0) || C > NUMBER_ABS_MAX || K > 1e6) return { ok: false, code: 'positiveNum' };
+    var x = (-K + Math.sqrt(K * K + 4 * K * C)) / 2;
+    var approx = Math.sqrt(K * C);
+    var alpha = x / C;
+    var base = input.type === 'base';
+    // very dilute: water's own ions matter, solve the full balance numerically
+    if (x < 1e-6) {
+      var h = 1e-7;
+      for (var i = 0; i < 200; i++) {
+        var f = h * h - (C * K * h) / (h + K) - KW;
+        var df = 2 * h - (C * K * K) / Math.pow(h + K, 2);
+        var nx = h - f / df;
+        if (!(nx > 0)) nx = h / 2;
+        if (Math.abs(nx - h) < 1e-15) { h = nx; break; }
+        h = nx;
+      }
+      x = h;
+      alpha = Math.min(1, (C * K / (x + K)) / C);
+    }
+    var conc = x;                               // [H⁺] for acids, [OH⁻] for bases
+    var H = base ? KW / conc : conc;
+    var OH = base ? conc : KW / conc;
+    return {
+      ok: true, type: base ? 'base' : 'acid', K: K, pK: -Math.log10(K), C: C,
+      x: x, alpha: alpha, approx: approx, approxOk: alpha < 0.05,
+      H: H, OH: OH, pH: -Math.log10(H), pOH: -Math.log10(OH)
+    };
+  }
+
   function classifyPH(pH) {
     var acidic = '#B96B0C';
     var basic = '#2A4878';
@@ -277,6 +299,9 @@
     formatUnit: formatUnit,
     validateThermo: validateThermo,
     computePH: computePH,
+    computeWeak: computeWeak,
+    PA: PA,
+    M3: M3,
     classifyPH: classifyPH
   };
 });
