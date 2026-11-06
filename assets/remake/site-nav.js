@@ -1,14 +1,20 @@
 /* Atomurus remake — top navigation behaviour.
    Desktop: dropdowns open on hover/focus (CSS) and on click/tap (here).
-   Mobile (<1024px): the burger opens a full-height drawer; dropdown
+   Below 1200px: the burger opens a full-height drawer; dropdown
    sections expand inline. Footer buttons switch language and theme. */
 (function () {
   'use strict';
 
-  var MOBILE = '(max-width: 1023px)';
+  var MOBILE = '(max-width: 1199px)';
+  // cache-busting version of this file, reused for the scripts it loads later
+  var VERSION = (function () {
+    var src = (document.currentScript && document.currentScript.src) || '';
+    var m = /[?&]v=([^&]+)/.exec(src);
+    return m ? m[1] : '';
+  })();
 
   function isMobile() {
-    return window.matchMedia ? window.matchMedia(MOBILE).matches : window.innerWidth < 1024;
+    return window.matchMedia ? window.matchMedia(MOBILE).matches : window.innerWidth < 1200;
   }
 
   function setOffset(header) {
@@ -252,9 +258,56 @@
     try { window.dispatchEvent(new Event('resize')); } catch (e) {}
   }
 
+  // Site search: the palette (site-search.js) and the element list
+  // (elements-lite.js) load the first time it opens.
+  function loadScript(src) {
+    return new Promise(function (resolve, reject) {
+      var s = document.createElement('script');
+      s.src = src + (VERSION ? '?v=' + VERSION : '');
+      s.onload = resolve;
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+  var searchReady = null;
+  function openSearch(from) {
+    if (!searchReady) {
+      searchReady = (window.RM_ELEMENTS ? Promise.resolve() : loadScript('/assets/remake/elements-lite.js'))
+        .then(function () { return window.AtomurusSearch ? null : loadScript('/assets/remake/site-search.js'); });
+      searchReady.catch(function () { searchReady = null; });
+    }
+    searchReady.then(function () { window.AtomurusSearch.open(from); })
+      .catch(function () { window.location.href = '/periodic-table.html'; });
+  }
+  function isTyping(el) {
+    if (!el) return false;
+    var tag = (el.tagName || '').toLowerCase();
+    return tag === 'input' || tag === 'textarea' || tag === 'select' || el.isContentEditable;
+  }
+  function initSearch() {
+    document.addEventListener('click', function (e) {
+      var b = e.target && e.target.closest ? e.target.closest('[data-rm-search-open]') : null;
+      if (!b) return;
+      e.preventDefault();
+      var header = b.closest('[data-rm-header]');
+      if (header && header.classList.contains('is-open')) setDrawer(header, false);
+      openSearch(b);
+    });
+    // pages with their own search field keep "/" and Ctrl/⌘+K for it
+    // (periodic table, articles hub, home hero); the header button works everywhere
+    var pageSearch = document.querySelector('#search-input, #ex-search-input, [data-rm-search] input');
+    document.addEventListener('keydown', function (e) {
+      if (e.defaultPrevented || pageSearch) return;
+      var k = e.key;
+      if ((k === 'k' || k === 'K') && (e.metaKey || e.ctrlKey) && !e.altKey) { e.preventDefault(); openSearch(null); return; }
+      if (k === '/' && !e.metaKey && !e.ctrlKey && !e.altKey && !isTyping(e.target)) { e.preventDefault(); openSearch(null); }
+    });
+  }
+
   function run() {
     document.querySelectorAll('[data-rm-header]').forEach(initHeader);
     initFooter();
+    initSearch();
     enhanceArticle();
     enhanceViewer();
     deferredFrames();

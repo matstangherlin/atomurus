@@ -9,8 +9,14 @@ async function localThree(page) {
 
 test('atomic models: any element, real shells, ions and the element-page link', async ({ page }) => {
   await localThree(page);
-  // the element page opens the viewer on that element
+  // the element page: electron shells and measured properties with units
   await page.goto('/periodic-table/natrium.html?lang=en');
+  await expect(page.locator('.rm-shell-list li')).toHaveCount(3);
+  await expect(page.locator('.rm-shells-outer')).toHaveText('1 in the outer shell (M).');
+  await expect(page.locator('.rm-shell-svg .rm-shell-e')).toHaveCount(11);
+  await expect(page.locator('.rm-el-facts')).toContainText('166 pm');
+  await expect(page.locator('.rm-el-facts')).toContainText('496 kJ/mol');
+  // and opens the viewer on that element
   const view3d = page.locator('a[data-i18n="el.rm.view3d"]');
   await expect(view3d).toHaveAttribute('href', /atomic-models\.html\?model=bohr&el=Na/);
   await view3d.click();

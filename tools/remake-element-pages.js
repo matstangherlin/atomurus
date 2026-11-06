@@ -16,13 +16,16 @@ const { findElementWithClass } = require('./inject-ui-chrome');
 const ROOT = path.resolve(__dirname, '..');
 const DIR = path.join(ROOT, 'periodic-table');
 const PT = DICT.pt;
+const EN = DICT.en;
+const ATOM = require('../assets/chem/atom-structure.js');
+const PROPS = require('../assets/chem/element-props.js');
 
 function loadData() {
   const ctx = { window: {}, console };
   ctx.globalThis = ctx;
   vm.createContext(ctx);
   const code = fs.readFileSync(path.join(ROOT, 'elements-data.js'), 'utf8') +
-    '\n;globalThis.__out = { ELEMENTS, ELEMENT_LATIN, getExtra, getExtra2 };';
+    '\n;globalThis.__out = { ELEMENTS, ELEMENT_LATIN, getExtra, getExtra2, getIonization };';
   vm.runInContext(code, ctx);
   const iso = { window: {} };
   iso.self = iso.window;
@@ -139,6 +142,58 @@ function isotopesSection(z, sym, data) {
       </section>`;
 }
 
+/* Bohr diagram of the neutral atom: nucleus with the symbol, one ring per
+   shell, electrons spaced evenly (K at the top). Colours come from CSS. */
+const SHELL_LETTERS = ['K', 'L', 'M', 'N', 'O', 'P', 'Q'];
+function shellSvg(sym, shells) {
+  const size = 240, c = size / 2, r0 = 34, rMax = 112;
+  const step = shells.length > 1 ? Math.min(26, (rMax - r0) / (shells.length - 1)) : 0;
+  const dot = shells.length > 5 ? 3.2 : shells.length > 3 ? 3.8 : 4.6;
+  let rings = '', dots = '';
+  shells.forEach((n, i) => {
+    const r = r0 + step * i;
+    rings += `<circle class="rm-shell-ring" cx="${c}" cy="${c}" r="${r.toFixed(1)}"/>`;
+    for (let k = 0; k < n; k++) {
+      const a = -Math.PI / 2 + (k / n) * Math.PI * 2 + i * 0.35;
+      dots += `<circle class="rm-shell-e" cx="${(c + Math.cos(a) * r).toFixed(1)}" cy="${(c + Math.sin(a) * r).toFixed(1)}" r="${dot}"/>`;
+    }
+  });
+  return `<svg class="rm-shell-svg" viewBox="0 0 ${size} ${size}" role="img" aria-labelledby="rm-shells-h">${rings}<circle class="rm-shell-nuc" cx="${c}" cy="${c}" r="20"/><text class="rm-shell-sym" x="${c}" y="${c}" text-anchor="middle" dominant-baseline="central">${esc(sym)}</text>${dots}</svg>`;
+}
+
+function shellsSection(el) {
+  const subs = ATOM.groundState(el.z);
+  const shells = ATOM.shells(subs);
+  const L = PT.el.rm, LE = EN.el.rm;
+  const list = shells.map((n, i) => `<li><b>${SHELL_LETTERS[i]}</b><span>${n}</span></li>`).join('');
+  const outer = shells[shells.length - 1];
+  const tplPt = L.shellsOuter.replace('{n}', outer).replace('{shell}', SHELL_LETTERS[shells.length - 1]);
+  const tplEn = LE.shellsOuter.replace('{n}', outer).replace('{shell}', SHELL_LETTERS[shells.length - 1]);
+  return `
+      <section class="rm-el-sec rm-el-shells" aria-labelledby="rm-shells-h">
+        <h2 id="rm-shells-h" data-i18n="el.rm.shellsTitle">${esc(L.shellsTitle)}</h2>
+        <div class="rm-shells">
+          ${shellSvg(el.sym, shells)}
+          <div class="rm-shells-txt">
+            <ol class="rm-shell-list" aria-label="${esc(L.shellsTitle)}" data-i18n-attr="aria-label:el.rm.shellsTitle">${list}</ol>
+            <p class="rm-shells-conf"><span data-i18n="el.rm.config">${esc(L.config)}</span> <span class="rm-mono">${esc(ATOM.notation(subs, true))}</span></p>
+            <p class="rm-shells-outer" data-l10n-pt="${esc(tplPt)}" data-l10n-en="${esc(tplEn)}">${esc(tplPt)}</p>
+            <a class="rm-shells-link" href="/viewer/atomic-models.html?model=bohr&amp;el=${encodeURIComponent(el.sym)}" data-i18n="el.rm.shellsLink">${esc(L.shellsLink)}</a>
+          </div>
+        </div>
+      </section>`;
+}
+
+/* A measured property with unit (element-props.js): PT and EN text, ≈ when predicted. */
+function propRow(key, label, prop, z, raw) {
+  const v = PROPS.value(prop, z, raw);
+  if (v == null) return null;
+  const unit = PROPS.PROPS[prop].unit;
+  const pt = PROPS.format(prop, v, 'pt', z) + (unit ? ' ' + unit : '');
+  const en = PROPS.format(prop, v, 'en', z) + (unit ? ' ' + unit : '');
+  return factRow(key, label, `<span data-l10n-pt="${esc(pt)}" data-l10n-en="${esc(en)}">${esc(pt)}</span>`);
+}
+
 function allotropesSection(z, namePt) {
   const entry = ALLOTROPES[z];
   if (!entry) return '';
@@ -189,6 +244,12 @@ function build(el, data) {
   if (melt) facts.push(factRow('melt', L.melt, `<span data-rm-num="${esc(melt)}">${esc(ptNum(melt))}</span>`));
   const boil = tempLabel(ex.boil);
   if (boil) facts.push(factRow('boil', L.boil, `<span data-rm-num="${esc(boil)}">${esc(ptNum(boil))}</span>`));
+  const extraProps = [
+    propRow('covalent', L.covalent, 'covalent', z, {}),
+    propRow('ionization', L.ionization, 'ionization', z, { ionization: data.getIonization(z) }),
+    propRow('affinity', L.affinity, 'affinity', z, {})
+  ].filter(Boolean);
+  facts.push.apply(facts, extraProps);
   const disc = [el.disc, el.year].filter((v, idx, arr) => v && arr.indexOf(v) === idx).join(', ');
   if (disc) facts.push(factRow('discovered', L.discovered, `<span data-page-field="disc">${esc(disc)}</span>`));
 
@@ -219,7 +280,7 @@ function build(el, data) {
     </section>
 
     <div class="rm-el-body">
-      <div class="rm-el-main">${allotropesSection(z, el.name)}${isotopesSection(z, el.sym, data)}
+      <div class="rm-el-main">${allotropesSection(z, el.name)}${shellsSection(el)}${isotopesSection(z, el.sym, data)}
         <div class="lc-el-desc-block" aria-hidden="true"></div>
 ${pager}
       </div>

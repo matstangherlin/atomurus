@@ -409,6 +409,7 @@ function buildElementEnVariant(srcAbs, ctx) {
   // swaps them too, but crawlers and slow phones see this first).
   out = out.replace(/(data-rm-num="([^"]*)"[^>]*>)[^<]*/g, (_m, open, raw) => open + raw);
   out = out.replace(/(data-hl-en="([^"]*)"[^>]*>)[^<]*/g, (_m, open, en) => open + en);
+  out = out.replace(/(data-l10n-en="([^"]*)"[^>]*>)[^<]*/g, (_m, open, en) => open + en);
 
   const dstAbs = srcAbs.replace(/\.html$/, '.en.html');
   fs.writeFileSync(dstAbs, out, 'utf8');
