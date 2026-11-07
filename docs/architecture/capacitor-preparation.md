@@ -1,79 +1,52 @@
-# Capacitor preparation (A1.0, documentation only)
+# Android app (Capacitor)
 
-Status: **prepared, not installed**. A1.0 does not add `@capacitor/*`, does
-not create an `android/` project, and does not publish anything. This page
-fixes the decisions the Android wave (A1.4) starts from.
+Status: **installed** (Capacitor 8.6, Android project in `android/`). The
+first Google Play build is the internal-testing release. Step-by-step
+instructions for building and uploading are in `ANDROID.md` at the repo root.
 
-## Decisions to confirm (owner)
+## Decisions
 
-| Item | Proposal | Status |
+| Item | Value | Notes |
 | --- | --- | --- |
-| `appId` / Android package | `com.atomurus.app` | **Proposed — owner must confirm before A1.4.** Changing it after a Play upload is impossible. |
-| `appName` | `Atomurus` | Proposed |
-| Capacitor line | Capacitor 8 (current major), no legacy version "to test quickly" | Decided |
-| Android target | API 36 (`targetSdkVersion` / `compileSdkVersion` 36) | Decided |
-| `webDir` | `dist/app` (built by `npm run build:app`) | Decided — never the repository root |
-| Remote WebView | Not used. Assets ship inside the APK; only the API is remote | Decided |
-| Deep links | `atomurus://…` and `https://atomurus.com/…` (App Links) → `resolveDeepLink()` | Contract ready (`src/core/routing/routes.js`) |
+| `appId` / Android package (`applicationId`) | `atomurus.com` | The package name reserved in Play Console. **Permanent after the first Play upload.** The Java namespace stays `com.atomurus` (code only). |
+| `appName` (launcher label) | `Atomurus` | The Play listing name is set in Play Console. |
+| Capacitor | 8.6 | `@capacitor/core`, `@capacitor/android`, `@capacitor/cli` |
+| Android SDK | compile/target 36, min 24 | `android/variables.gradle` |
+| `webDir` | `dist/android-web` | Built by `tools/build-android-web.mjs` from the whole static site |
+| Remote WebView (`server.url`) | **Not used** | Pages ship inside the APK and open offline |
+| Insets | `SystemBars.insetsHandling = native` | The WebView is padded below the status bar; pages need no change |
+| Accounts, plans, payments | **Off in the app for now** | See "App layer" |
+| Ads / analytics | **Off in the app** | AdSense is not allowed in apps; tags are stripped from the APK copy |
 
-## Future `capacitor.config.json`
+## App layer
 
-This is the configuration A1.4 creates. It is kept here (not at the repo
-root) so nothing picks it up early. `tools/test-app-bundle.mjs` checks it.
+`tools/build-android-web.mjs` copies the published site into
+`dist/android-web`, strips ad/analytics tags and puts two files first in every
+page's `<head>`:
 
-```json
-{
-  "appId": "com.atomurus.app",
-  "appName": "Atomurus",
-  "webDir": "dist/app",
-  "android": {
-    "allowMixedContent": false,
-    "captureInput": true,
-    "webContentsDebuggingEnabled": false
-  },
-  "plugins": {
-    "SystemBars": { "insetsHandling": "css" },
-    "CapacitorHttp": { "enabled": true }
-  }
-}
-```
+- `tools/android/android-app.js`
+  - maps extension-less paths (`/app`, `/periodic-table/ferrum`) to their
+    `.html` files — Capacitor's local server answers those with `index.html`;
+  - sends `/login`, `/signup`, `/account`, `/pricing` (and their `.html`) home;
+  - answers `/api/*` with `401 session_expired` locally, so every page behaves
+    as a signed-out visitor without waiting on the network;
+  - records "no ads, no analytics" consent so the cookie banner never shows;
+  - keeps links to atomurus.com inside the app; other hosts open in the browser.
+- `tools/android/android-app.css` hides sign-in, create-account, account
+  menus, plans/pricing, upgrade and Pro unlock entries, save-to-account, the
+  cookie banner and ad slots.
 
-Notes:
+The website never loads either file. To bring accounts to the app later,
+remove the matching rules and the `/api/*` stub, and add the token flow from
+`docs/architecture/auth.md` (the `src/adapters/capacitor/*` adapters and the
+`dist/app` shell were prepared for that).
 
-- **No `server.url`.** Pointing the app at `https://atomurus.com` would make it
-  a remote WebView: slow first start, blank screen offline, no versioned build.
-  `server.url` is allowed only in a local dev override, never committed.
-- **SystemBars / insets.** The app is edge-to-edge. The CSS tokens already
-  accept injected `--safe-area-inset-*` variables before falling back to
-  `env(safe-area-inset-*)` (`src/ui/tokens/safe-area.css`).
-- **CapacitorHttp.** Native HTTP avoids CORS preflights from
-  `https://localhost` to `https://atomurus.com`. The alternative (CORS
-  headers on Functions for the app origin) is decided in A1.1 together with
-  the token endpoint.
-
-## Plugins the adapters expect
-
-| Adapter | Plugin | Used for |
-| --- | --- | --- |
-| `src/adapters/capacitor/capacitor-adapter.js` | `@capacitor/app` | `pause` / `resume` → `Platform.onPause/onResume`, later back button |
-| | `@capacitor/network` | `Platform.isOnline()`, `onNetworkChange` |
-| | `@capacitor/browser` | `Platform.openExternalUrl()` (Custom Tabs) |
-| `src/adapters/capacitor/secure-storage-adapter.js` | a Keystore-backed secure storage plugin (chosen in A1.1), exposed as `Capacitor.Plugins.AtomurusSecureStorage` | Supabase access/refresh tokens |
-
-`src/app/bootstrap/app-main.js` refuses to start the native app if the secure
-storage plugin is missing — tokens are never downgraded to `localStorage`.
-
-## Build flow (A1.4)
+## Build
 
 ```text
-npm ci
-npm run build:app          # → dist/app (hashed, lazy chunks, local Three)
-npx cap sync android       # copies dist/app into the Android project
-./gradlew assembleDebug    # physical-device QA (A1.6)
+npm run android:release            # AAB + APK, signed, in release/android/
+npm run android:release -- --bump  # next versionCode first (every new upload)
 ```
 
-## What stays out of the app bundle
-
-SEO JSON-LD, Open Graph images, canonical/hreflang tags, sitemap, robots,
-ads scripts, cookie banner (the app's consent flow is A1.5), Netlify
-headers/redirects, editorial-only scripts, docs, tools and tests.
+`tools/test-android-web.mjs` (in `npm run ci`) checks the config, the bundle
+and the app layer's routing and API stub.

@@ -23,7 +23,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 function walk(dir, out = []) {
   for (const name of readdirSync(dir)) {
-    if (['node_modules', '.git', 'dist', 'propostas', 'hanzi-logic', 'test-results', 'playwright-report'].includes(name)) continue;
+    if (['node_modules', '.git', 'dist', 'android', 'propostas', 'hanzi-logic', 'test-results', 'playwright-report'].includes(name)) continue;
     const full = path.join(dir, name);
     if (statSync(full).isDirectory()) walk(full, out);
     else if (/\.(js|html)$/.test(name)) out.push(full);

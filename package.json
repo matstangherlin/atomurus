@@ -58,15 +58,27 @@
     "validate": "node tools/validate-site.js",
     "warm:cache": "node tools/warm-edge-cache.js",
     "smoke:prod": "node tools/smoke-prod.js",
-    "ci": "npm run build && npm run test:plan && npm run test:auth && npm run test:study && npm run test:review && npm run test:insights && npm run test:billing && npm run test:ux && npm run test:lang && npm run test:editorial && npm run test:consent && npm run test:content && npm run test:seo && npm run test:data && npm run test:pro-lab && npm run test:solver && npm run test:calc && npm run test:lab-access && npm run test:ui-v2 && npm run test:a1 && npm run validate",
+    "ci": "npm run build && npm run test:plan && npm run test:auth && npm run test:study && npm run test:review && npm run test:insights && npm run test:billing && npm run test:ux && npm run test:lang && npm run test:editorial && npm run test:consent && npm run test:content && npm run test:seo && npm run test:data && npm run test:pro-lab && npm run test:solver && npm run test:calc && npm run test:lab-access && npm run test:ui-v2 && npm run test:a1 && npm run test:android && npm run validate",
     "test:isomers": "node tools/test-isomer-engine.mjs",
     "test:molecules": "node tools/test-mol-insight.mjs",
-    "test:allotropes": "node tools/test-allotropes.mjs"
+    "test:allotropes": "node tools/test-allotropes.mjs",
+    "android:web": "node tools/build-android-web.mjs",
+    "android:sync": "node tools/build-android-web.mjs && npx cap sync android",
+    "android:open": "npx cap open android",
+    "android:bump": "node tools/android-release.mjs --bump-only",
+    "android:release": "node tools/android-release.mjs",
+    "android:apk": "node tools/android-release.mjs --apk-only",
+    "android:aab": "node tools/android-release.mjs --aab-only",
+    "android:icons": "python3 tools/android/make-android-icons.py",
+    "test:android": "node tools/test-android-web.mjs"
   },
   "dependencies": {
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/core": "^8.6.0",
     "stripe": "^22.3.0"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.6.0",
     "@playwright/test": "^1.55.0",
     "esbuild": "0.25.10",
     "three": "0.128.0"

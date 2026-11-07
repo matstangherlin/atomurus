@@ -10,7 +10,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const SKIP = new Set(['node_modules', '.git', 'dist', 'propostas', 'hanzi-logic', 'docs', 'tools', 'e2e', 'scripts', 'supabase', 'test-results', 'playwright-report', 'dev', 'netlify', 'templates']);
+const SKIP = new Set(['node_modules', '.git', 'dist', 'android', 'propostas', 'hanzi-logic', 'docs', 'tools', 'e2e', 'scripts', 'supabase', 'test-results', 'playwright-report', 'dev', 'netlify', 'templates']);
 
 function walk(dir, out = []) {
   for (const name of readdirSync(dir)) {

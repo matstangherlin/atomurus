@@ -23,3 +23,6 @@ Thumbs.db
 # App bundle output (tools/build-app-bundle.mjs)
 dist/
 docs/perf/raw/
+
+# Android release deliverables (APK/AAB, upload key backup) — never commit
+release/

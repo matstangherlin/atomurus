@@ -1,0 +1,73 @@
+name: Android (APK + AAB)
+
+# Builds the Google Play bundle (.aab) and an installable .apk.
+# Run it from GitHub → Actions → "Android (APK + AAB)" → Run workflow.
+#
+# Signing: add these repository secrets (Settings → Secrets → Actions):
+#   ANDROID_UPLOAD_KEYSTORE_BASE64  base64 of android/keystore/atomurus-upload.jks
+#   ANDROID_KEYSTORE_PASSWORD       store password
+#   ANDROID_KEY_ALIAS               atomurus-upload
+#   ANDROID_KEY_PASSWORD            key password
+# Without them the build still runs, but the files are unsigned.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_code:
+        description: 'versionCode (vazio = o de android/gradle.properties). Precisa ser maior que o último enviado ao Play.'
+        required: false
+      version_name:
+        description: 'versionName, ex.: 1.0.1 (vazio = o de android/gradle.properties)'
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+
+      - uses: android-actions/setup-android@v3
+
+      - run: npm ci
+
+      - name: Upload key
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_UPLOAD_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ]; then
+            mkdir -p android/keystore
+            echo "$KEYSTORE_B64" | base64 --decode > android/keystore/atomurus-upload.jks
+            echo "ATOMURUS_KEYSTORE_FILE=keystore/atomurus-upload.jks" >> "$GITHUB_ENV"
+          else
+            echo "::warning::No ANDROID_UPLOAD_KEYSTORE_BASE64 secret: building UNSIGNED files (Google Play will not accept them)."
+          fi
+
+      - name: Build
+        env:
+          ATOMURUS_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ATOMURUS_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ATOMURUS_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ATOMURUS_VERSION_CODE: ${{ inputs.version_code }}
+          ATOMURUS_VERSION_NAME: ${{ inputs.version_name }}
+        run: node tools/test-android-web.mjs && node tools/android-release.mjs
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: atomurus-android
+          path: release/android/*
+          if-no-files-found: error

@@ -66,7 +66,7 @@ assert.equal(both.store.get('atomurus-cookie-consent'), 'accepted');
 
 function htmlFiles(dir, out) {
   for (const name of readdirSync(dir)) {
-    if (name === 'node_modules' || name === '.git') continue;
+    if (name === 'node_modules' || name === '.git' || name === 'dist' || name === 'android') continue;
     const p = join(dir, name);
     if (statSync(p).isDirectory()) htmlFiles(p, out);
     else if (name.endsWith('.html')) out.push(p);

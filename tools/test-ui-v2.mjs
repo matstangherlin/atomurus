@@ -280,7 +280,7 @@ if (read('assets/public-shell.css').includes('ps-boot')) {
 }
 
 const SKIP_HTML_DIRS = new Set([
-  'node_modules', '.git', 'netlify', 'tools', 'scripts', 'supabase',
+  'node_modules', '.git', 'android', 'release', 'dist', 'netlify', 'tools', 'scripts', 'supabase',
   'hanzi-logic', 'propostas', 'dev', 'docs', 'templates'
 ]);
 const HOIST_EXCEPTIONS = new Set([

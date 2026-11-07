@@ -595,6 +595,13 @@
   query  = { lang = "pt-BR" }
 
 [[redirects]]
+  from   = "/app-privacy"
+  to     = "/app-privacy.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
   from   = "/terms"
   to     = "/terms.pt.html"
   status = 200

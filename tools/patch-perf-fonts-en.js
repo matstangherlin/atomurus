@@ -14,7 +14,7 @@ const KEEP_FONTS = new Set([
   '/assets/fonts/figtree-normal-latin.woff2',
 ]);
 
-const SKIP_DIRS = new Set(['node_modules', '.git', 'netlify', 'tools', 'scripts', 'supabase', 'hanzi-logic', 'src', 'dist']);
+const SKIP_DIRS = new Set(['node_modules', '.git', 'netlify', 'tools', 'scripts', 'supabase', 'hanzi-logic', 'src', 'dist', 'android']);
 
 function walk(dir, out) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {

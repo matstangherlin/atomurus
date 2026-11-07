@@ -13,7 +13,7 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const ORIGIN = 'https://atomurus.com';
-const SKIP_DIRS = new Set(['node_modules', 'dev', 'propostas', 'templates', 'fixtures', 'docs', 'test-results', 'e2e', 'tools', 'netlify', 'supabase', 'hanzi-logic', 'scripts', 'src', '.git', 'assets', 'playwright-report', 'dist']);
+const SKIP_DIRS = new Set(['node_modules', 'dev', 'propostas', 'templates', 'fixtures', 'docs', 'test-results', 'e2e', 'tools', 'netlify', 'supabase', 'hanzi-logic', 'scripts', 'src', '.git', 'assets', 'playwright-report', 'dist', 'android']);
 
 function walk(dir, out = []) {
   for (const name of fs.readdirSync(dir)) {
