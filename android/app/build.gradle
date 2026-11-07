@@ -49,8 +49,12 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // R8: shrink + optimise + obfuscate the Java/Kotlin code (Play Console
+            // "DEX code optimisation"). Capacitor ships its own keep rules
+            // (consumerProguardFiles), so plugins keep working.
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             if (hasReleaseKey) {
                 signingConfig signingConfigs.release
             }
