@@ -61,10 +61,9 @@ test('only the two app typefaces ship (Figtree, JetBrains Mono)', () => {
   assert.ok(fonts.every((f) => f === 'fonts.css' || /^(figtree|jetbrains-mono)/.test(f)), fonts.join(', '));
 });
 
-test('no remote-webview shortcut in the Capacitor preparation', () => {
-  const doc = readFileSync(path.join(ROOT, 'docs/architecture/capacitor-preparation.md'), 'utf8');
-  const example = JSON.parse((doc.match(/```json\n([\s\S]*?)\n```/) || [])[1]);
-  assert.equal(example.webDir, 'dist/app');
-  assert.ok(!example.server || !example.server.url, 'production must not point server.url at the website');
-  assert.equal(example.appId, 'com.atomurus.app');
+test('no remote-webview shortcut in the Capacitor config', () => {
+  const cap = JSON.parse(readFileSync(path.join(ROOT, 'capacitor.config.json'), 'utf8'));
+  assert.ok(!cap.server || !cap.server.url, 'production must not point server.url at the website');
+  assert.equal(cap.appId, 'com.atomurus');
+  assert.ok(cap.webDir.startsWith('dist/'), 'webDir is a build output, never the repository root');
 });

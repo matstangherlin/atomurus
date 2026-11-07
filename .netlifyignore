@@ -24,3 +24,8 @@ supabase/
 package.json
 package-lock.json
 propostas/
+
+# Android app (Capacitor): native project, build output and signing keys
+android/
+release/
+capacitor.config.json

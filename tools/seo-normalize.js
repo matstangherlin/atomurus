@@ -16,7 +16,7 @@ const { DICT } = require('./i18n-dict-source');
 
 const ROOT = path.resolve(__dirname, '..');
 const ORIGIN = 'https://atomurus.com';
-const SKIP = new Set(['node_modules', 'dev', 'propostas', 'templates', 'fixtures', 'docs', 'test-results', 'e2e', 'tools', 'netlify', 'supabase', 'hanzi-logic', 'scripts', 'src', 'assets', 'dist', 'playwright-report']);
+const SKIP = new Set(['node_modules', 'dev', 'propostas', 'templates', 'fixtures', 'docs', 'test-results', 'e2e', 'tools', 'netlify', 'supabase', 'hanzi-logic', 'scripts', 'src', 'assets', 'dist', 'android', 'playwright-report']);
 const DEFAULT_IMAGE = ORIGIN + '/assets/og-site.png';
 
 function walk(dir, out) {

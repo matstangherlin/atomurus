@@ -15,7 +15,7 @@ const available = new Set(fs.readdirSync(CHUNK_DIR).filter((f) => f.endsWith('.j
 
 function listHtml() {
   const out = execSync('git ls-files -co --exclude-standard "*.html"', { cwd: ROOT, encoding: 'utf8' });
-  return out.split('\n').filter(Boolean).filter((f) => !/^(node_modules|dist|e2e|test-results|fixtures|dev|propostas|hanzi-logic|templates|docs|tools|scripts)\//.test(f));
+  return out.split('\n').filter(Boolean).filter((f) => !/^(node_modules|dist|android|e2e|test-results|fixtures|dev|propostas|hanzi-logic|templates|docs|tools|scripts)\//.test(f));
 }
 
 // Namespaces that a page's own scripts ask for with I18N.t('<ns>.key'), e.g.

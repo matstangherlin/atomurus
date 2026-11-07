@@ -1,0 +1,92 @@
+/* Atomurus — Android app layer. Injected only into the APK copy of the site.
+   No accounts, plans, purchases, ads or cookie banner in the app for now. */
+
+/* Sign in, create account, account menu, plan badge */
+html.is-native-app .rm-signin,
+html.is-native-app .rm-account,
+html.is-native-app .rm-actions,
+html.is-native-app .rm-ws-signin,
+html.is-native-app .ws-account,
+html.is-native-app .ps-account,
+html.is-native-app [data-atomurus-account],
+html.is-native-app [data-atomurus-plan-badge],
+html.is-native-app .is-guest-cta,
+html.is-native-app .lc-topnav-cta,
+html.is-native-app a[href^="/login"],
+html.is-native-app a[href^="/signup"],
+html.is-native-app a[href^="/account"],
+html.is-native-app a[href^="/forgot-password"],
+html.is-native-app a[href^="/reset-password"],
+html.is-native-app a[href*="atomurus.com/login"],
+html.is-native-app a[href*="atomurus.com/signup"],
+html.is-native-app a[href*="atomurus.com/account"],
+html.is-native-app a[href*="section=account"],
+
+/* Plans, prices, upgrades, Pro unlocks (no purchases inside the app) */
+html.is-native-app a[href^="/pricing"],
+html.is-native-app a[href*="atomurus.com/pricing"],
+html.is-native-app [data-rm-section="plans"],
+html.is-native-app .ws-nav-item.is-upgrade,
+html.is-native-app .pro-lab-discover,
+html.is-native-app .pro-lab-discover-cta,
+html.is-native-app .pro-lab-discover-badge,
+html.is-native-app .pro-lab-discover-dialog,
+html.is-native-app .lab-tool-gate-actions,
+html.is-native-app .study-pro-badge,
+html.is-native-app .rm-jn-guest,
+html.is-native-app .atomurus-guest-nudge,
+html.is-native-app #planos,
+html.is-native-app .solver-discover,
+html.is-native-app [data-pro-lab-tool],
+html.is-native-app [data-pro-canonical],
+html.is-native-app .calc-panel:has([data-pro-canonical]),
+html.is-native-app a[href*="panel=analysis"],
+html.is-native-app a[href*="section=pro-lab"],
+html.is-native-app [data-hub="unlock"],
+html.is-native-app .rm-home-plans,
+html.is-native-app .ws-study-nav-meta,
+html.is-native-app .ws-study-nav-item.is-locked,
+html.is-native-app [data-pro-nav],
+html.is-native-app .calc-menu-item:has(.lab-tool-need),
+html.is-native-app .lab-tool-gate-host,
+html.is-native-app .lab-tool-gate,
+
+/* Save / note / study sets need an account */
+html.is-native-app #atomurus-study-save,
+html.is-native-app [data-study-save],
+html.is-native-app [data-add-to-set],
+html.is-native-app .study-add-set,
+html.is-native-app .study-save-pop,
+
+/* Cookie banner and ads (none in the app) */
+html.is-native-app .aco-cc,
+html.is-native-app #aco-cc,
+html.is-native-app #aco-cookie-banner,
+html.is-native-app .cookie-banner,
+html.is-native-app [data-cookie-banner],
+html.is-native-app .aco-manage-wrap,
+html.is-native-app a[href*="cookie"],
+html.is-native-app [data-open-cookie-settings],
+html.is-native-app .adsbygoogle,
+html.is-native-app ins.adsbygoogle,
+html.is-native-app .ad-slot,
+html.is-native-app [data-ad-slot],
+html.is-native-app [id^="google_ads"],
+html.is-native-app iframe[src*="googlesyndication"],
+html.is-native-app iframe[src*="doubleclick"] {
+  display: none !important;
+}
+
+/* Native feel: no blue tap flash, no text selection on controls, no
+   rubber-band overscroll glow on the page itself. */
+html.is-native-app {
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+html.is-native-app button,
+html.is-native-app [role="button"],
+html.is-native-app .rm-link,
+html.is-native-app .rm-dd-item {
+  -webkit-user-select: none;
+  user-select: none;
+}

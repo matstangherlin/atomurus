@@ -13,7 +13,7 @@ if (mode !== 'includes' && mode !== 'manage') {
 
 function walk(dir, out) {
   for (const name of fs.readdirSync(dir)) {
-    if (name === 'node_modules' || name === '.git' || name === 'dist') continue;
+    if (name === 'node_modules' || name === '.git' || name === 'dist' || name === 'android') continue;
     const full = path.join(dir, name);
     const stat = fs.statSync(full);
     if (stat.isDirectory()) walk(full, out);
