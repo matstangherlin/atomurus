@@ -23,6 +23,9 @@ mesmo sem internet.
   as tags são removidas da cópia do APK e o banner de cookies não aparece.
 - O site continua igual: nada disso é carregado no navegador.
 
+- **Política de privacidade do app:** `app-privacy.pt.html` / `app-privacy.html`
+  no site; dentro do app, o link "Privacidade" abre essa página.
+
 Arquivos: `tools/android/android-app.js` e `android-app.css` (camada do app),
 `tools/build-android-web.mjs` (gera `dist/android-web`), `capacitor.config.json`.
 
@@ -83,6 +86,6 @@ Os arquivos ficam no artefato `atomurus-android` da execução.
 6. Salve → Revisar versão → **Iniciar lançamento para teste interno**.
 
 O Play também pede, antes de liberar: política de privacidade
-(`https://atomurus.com/privacy.html`), classificação de conteúdo, público-alvo,
+(`https://atomurus.com/app-privacy?lang=pt-BR`, a política específica do app; em inglês: `https://atomurus.com/app-privacy`), classificação de conteúdo, público-alvo,
 segurança dos dados (o app não coleta dados nem tem anúncios) e a ficha da loja.
 Ícone 512×512 e imagem de destaque 1024×500 prontos em `android/store/`.

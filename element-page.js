@@ -326,7 +326,7 @@
   function loadStudyCloud() {
     if (window.__atomurusStudyBoot) return;
     var script = document.createElement('script');
-    script.src = '/study-boot.js?v=202611070407';
+    script.src = '/study-boot.js?v=202611070845';
     script.defer = true;
     document.head.appendChild(script);
   }

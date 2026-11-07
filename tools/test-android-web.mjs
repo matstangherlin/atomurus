@@ -76,6 +76,10 @@ assert.deepEqual(boot('/pricing').replaced, ['/'], 'no plans or prices in the ap
 assert.deepEqual(boot('/account.html').replaced, ['/']);
 assert.deepEqual(boot('/no-such-page').replaced, ['/']);
 assert.deepEqual(boot('/').replaced, []);
+assert.deepEqual(boot('/privacy.html', '?lang=en').replaced, ['/app-privacy.html?lang=en'], 'the in-app privacy link opens the app policy');
+assert.deepEqual(boot('/privacy.pt.html', '?lang=pt-BR').replaced, ['/app-privacy.pt.html?lang=pt-BR']);
+assert.deepEqual(boot('/app-privacy', '?lang=pt-BR').replaced, ['/app-privacy.pt.html?lang=pt-BR']);
+assert.deepEqual(boot('/app-privacy.pt.html', '?lang=pt-BR').replaced, []);
 assert.deepEqual(boot('/calculators.html').replaced, []);
 const app = boot('/');
 assert.ok(app.classes.has('is-native-app') && app.classes.has('is-android-app'));

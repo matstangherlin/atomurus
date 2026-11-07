@@ -30,9 +30,24 @@
   }
 
   /* Where a site path lives inside the APK, or null if it does not. */
-  function localPath(path) {
+  /* The app has its own privacy policy (what the site's page describes —
+     analytics, ads, accounts — does not exist in the app). */
+  var APP_PAGES = { '/privacy': 'app-privacy', '/app-privacy': 'app-privacy' };
+
+  function wantsPt(search) {
+    var q = /[?&]lang=([a-z]{2})/i.exec(search || '');
+    if (q) return q[1].toLowerCase() === 'pt';
+    try {
+      var stored = localStorage.getItem('atomurus-lang');
+      if (stored === 'pt' || stored === 'en') return stored === 'pt';
+    } catch (e) {}
+    return String(navigator.language || '').toLowerCase().indexOf('pt') === 0;
+  }
+
+  function localPath(path, search) {
     var p = String(path || '/').replace(/\/+$/, '') || '/';
     if (HIDDEN[bare(p)]) return '/';
+    if (APP_PAGES[bare(p)]) return '/' + APP_PAGES[bare(p)] + (wantsPt(search) ? '.pt.html' : '.html');
     if (p === '/' || p === '/index.html') return '/index.html';
     if (PAGES[p]) return p;
     if (!/\.[a-z0-9]+$/i.test(p)) {
@@ -46,7 +61,7 @@
   /* 1. Routing. */
   (function route() {
     var here = location.pathname;
-    var target = localPath(here);
+    var target = localPath(here, location.search);
     var wanted = target === '/index.html' ? '/' : target;
     if (target === null) { location.replace('/'); return; }
     if (wanted !== here && !(here === '/index.html' && wanted === '/')) {
@@ -101,7 +116,7 @@
     try { u = new URL(href, location.href); } catch (e) { return; }
     var site = u.origin === location.origin || /^(www\.)?atomurus\.com$/i.test(u.hostname);
     if (!site) return;
-    var target = localPath(u.pathname);
+    var target = localPath(u.pathname, u.search);
     event.preventDefault();
     if (target === null || HIDDEN[bare(u.pathname)]) {
       if (HIDDEN[bare(u.pathname)]) return;
