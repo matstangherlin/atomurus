@@ -3904,7 +3904,19 @@
     }
 
     /* Anchored to the piece in screen space, so it does not scale with zoom. */
+    /* Measuring the stage right after the bench was rewritten forces a full
+       layout; one frame later the browser has already done it for free. */
+    var toolbarFrame = 0;
     function placeContextToolbar() {
+      if (typeof requestAnimationFrame !== 'function') { placeContextToolbarNow(); return; }
+      if (toolbarFrame) return;
+      toolbarFrame = requestAnimationFrame(function () {
+        toolbarFrame = 0;
+        placeContextToolbarNow();
+      });
+    }
+
+    function placeContextToolbarNow() {
       var bar = node.querySelector('[data-lab-context]');
       var stage = node.querySelector('[data-lab-stage]');
       if (!bar || !stage) return;
@@ -4928,7 +4940,6 @@
       if (pourBtn) pourBtn.classList.toggle('is-on', Boolean(pourFrom));
       applyWorld();
       refreshMotion();
-      placeContextToolbar();
     }
 
     function syncDock(results) {
