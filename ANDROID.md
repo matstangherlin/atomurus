@@ -21,10 +21,15 @@ mesmo sem internet.
   faturamento do próprio Play para vender recursos digitais dentro do app).
 - **Sem anúncios e sem analytics:** o AdSense não é permitido dentro de apps;
   as tags são removidas da cópia do APK e o banner de cookies não aparece.
+- **Nada vem da internet:** as bibliotecas que o site baixa de CDNs (3D,
+  gráficos, PDF) vão dentro do APK. O formulário de contato fica oculto; o
+  e-mail continua na página.
 - O site continua igual: nada disso é carregado no navegador.
 
 - **Política de privacidade do app:** `app-privacy.pt.html` / `app-privacy.html`
   no site; dentro do app, o link "Privacidade" abre essa página.
+- **Termos de Uso do app:** `app-terms.pt.html` / `app-terms.html`
+  (`https://atomurus.com/app-terms?lang=pt-BR`); o link "Termos" do app abre essa página.
 
 Arquivos: `tools/android/android-app.js` e `android-app.css` (camada do app),
 `tools/build-android-web.mjs` (gera `dist/android-web`), `capacitor.config.json`.

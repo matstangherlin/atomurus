@@ -36,6 +36,14 @@ page's `<head>`:
   menus, plans/pricing, upgrade and Pro unlock entries, save-to-account, the
   cookie banner and ad slots.
 
+Libraries the website loads from CDNs (three.js r128, Chart.js 4.4.4 + zoom
+plugin, Hammer.js, html2canvas, jsPDF) are copied from `node_modules` into
+`dist/android-web/vendor/` and every CDN URL is rewritten to the local copy,
+so the app makes no requests to third-party servers. `ads-gate.js`,
+`lazy-ads.js` and `recaptcha.js` do not ship; the contact form is hidden
+(the email address stays). `tools/test-android-web.mjs` fails if any page
+or script still points at a CDN, ad or analytics host.
+
 The website never loads either file. To bring accounts to the app later,
 remove the matching rules and the `/api/*` stub, and add the token flow from
 `docs/architecture/auth.md` (the `src/adapters/capacitor/*` adapters and the

@@ -4,7 +4,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
-import { buildAndroidWeb } from './build-android-web.mjs';
+import { buildAndroidWeb, REMOTE_CODE } from './build-android-web.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'dist/android-web');
@@ -40,6 +40,24 @@ for (const file of pages) {
   const head = src.slice(src.search(/<head[^>]*>/i));
   assert.match(head.slice(0, 400), /android-app\.js/, `${rel}: app layer is the first thing in <head>`);
   assert.doesNotMatch(src, /googlesyndication|googletagmanager|acscdn\.com/, `${rel}: no ad or analytics tags in the app`);
+}
+// Nothing is downloaded from third parties: CDN libraries ship in /vendor.
+function files(dir, ext, out = []) {
+  for (const name of readdirSync(dir)) {
+    const p = path.join(dir, name);
+    if (statSync(p).isDirectory()) { if (path.relative(OUT, p) !== 'vendor') files(p, ext, out); }
+    else if (ext.some((e) => name.endsWith(e))) out.push(p);
+  }
+  return out;
+}
+for (const file of files(OUT, ['.html', '.js'])) {
+  assert.doesNotMatch(readFileSync(file, 'utf8'), REMOTE_CODE, `${path.relative(OUT, file)}: loads code from a third-party server`);
+}
+for (const lib of ['three.min.js', 'chart.umd.js', 'chartjs-plugin-zoom.min.js', 'hammer.min.js', 'html2canvas.min.js', 'jspdf.umd.min.js']) {
+  assert.ok(statSync(path.join(OUT, 'vendor', lib)).size > 1000, `vendor/${lib} ships in the APK`);
+}
+for (const gone of ['ads-gate.js', 'recaptcha.js', 'lazy-ads.js']) {
+  assert.throws(() => statSync(path.join(OUT, gone)), `${gone} must not ship in the APK`);
 }
 for (const forbidden of ['netlify', 'tools', 'docs', 'e2e', 'node_modules', 'supabase', 'android', 'package.json', 'netlify.toml', 'README.md']) {
   assert.throws(() => statSync(path.join(OUT, forbidden)), `${forbidden} must not ship in the APK`);
@@ -80,6 +98,8 @@ assert.deepEqual(boot('/privacy.html', '?lang=en').replaced, ['/app-privacy.html
 assert.deepEqual(boot('/privacy.pt.html', '?lang=pt-BR').replaced, ['/app-privacy.pt.html?lang=pt-BR']);
 assert.deepEqual(boot('/app-privacy', '?lang=pt-BR').replaced, ['/app-privacy.pt.html?lang=pt-BR']);
 assert.deepEqual(boot('/app-privacy.pt.html', '?lang=pt-BR').replaced, []);
+assert.deepEqual(boot('/terms.html', '?lang=pt-BR').replaced, ['/app-terms.pt.html?lang=pt-BR'], 'the in-app terms link opens the app terms');
+assert.deepEqual(boot('/terms', '?lang=en').replaced, ['/app-terms.html?lang=en']);
 assert.deepEqual(boot('/calculators.html').replaced, []);
 const app = boot('/');
 assert.ok(app.classes.has('is-native-app') && app.classes.has('is-android-app'));
@@ -90,7 +110,7 @@ assert.deepEqual(await (await app.fetch('/assets/app/elements.json')).json(), { 
 
 // 4. The CSS hides every account, plan and save-to-account entry.
 const css = readFileSync(path.join(OUT, 'assets/android/android-app.css'), 'utf8');
-for (const sel of ['.rm-signin', 'a[href^="/login"]', 'a[href^="/signup"]', 'a[href^="/pricing"]', '[data-atomurus-account]', '#aco-cookie-banner', '#atomurus-study-save', '.rm-home-plans']) {
+for (const sel of ['#cform', '.rm-signin', 'a[href^="/login"]', 'a[href^="/signup"]', 'a[href^="/pricing"]', '[data-atomurus-account]', '#aco-cookie-banner', '#atomurus-study-save', '.rm-home-plans']) {
   assert.ok(css.includes(`html.is-native-app ${sel}`), `android-app.css hides ${sel}`);
 }
 
