@@ -3,6 +3,7 @@ import {
   buildSystemPrompt, calibrate, identifyImage, normalizeElement, parseDataUrl, parseDetections, precisionTable, VISION_LIMITS
 } from '../netlify/lib/vision-identify.mjs';
 import { FEATURES } from '../netlify/lib/feature-catalog.mjs';
+import { DETECTION_SCHEMA } from '../netlify/lib/vision-identify.mjs';
 import { createAppQuota, isAppRequest } from '../netlify/lib/vision-app.mjs';
 
 assert.equal(FEATURES.visionIdentify.access, 'pro', 'camera identification is a Pro feature');
@@ -97,3 +98,18 @@ console.log('vision tests passed');
   assert.equal(isAppRequest(req({})), false);
 }
 console.log('vision app quota ok');
+
+// Structured outputs reject numeric/array constraints: the schema must stay basic.
+{
+  const banned = ['maxItems', 'minItems', 'minimum', 'maximum', 'multipleOf', 'minLength', 'maxLength', 'pattern'];
+  const walk = (node, path) => {
+    if (!node || typeof node !== 'object') return;
+    for (const k of Object.keys(node)) {
+      assert.ok(!banned.includes(k), `${path}.${k} is not supported by output_config.format`);
+      walk(node[k], `${path}.${k}`);
+    }
+  };
+  walk(DETECTION_SCHEMA, 'schema');
+  assert.equal(DETECTION_SCHEMA.additionalProperties, false);
+}
+console.log('vision schema ok');

@@ -29,9 +29,12 @@ export const DETECTION_SCHEMA = Object.freeze({
   required: ['detections', 'summary'],
   properties: {
     summary: { type: 'string', description: 'One sentence on what the photo shows and how reliable the estimate is.' },
+    /* Structured outputs accept only basic JSON Schema: no maxItems, minimum or
+       maximum (the API rejects them with a 400). Limits live in the description
+       and are enforced in parseDetections. */
     detections: {
       type: 'array',
-      maxItems: VISION_LIMITS.maxDetections,
+      description: `At most ${VISION_LIMITS.maxDetections} detections, the most relevant first.`,
       items: {
         type: 'object',
         additionalProperties: false,
@@ -40,9 +43,9 @@ export const DETECTION_SCHEMA = Object.freeze({
           element: { type: 'string', description: 'Chemical symbol of the main element in that spot (e.g. Fe, Cu, Al, C, Si, Au). Empty string if no single element dominates.' },
           label: { type: 'string', description: 'Short name of the object or region in the photo, in the user language.' },
           material: { type: 'string', description: 'The material or compound the element is in (e.g. aço inoxidável, latão, vidro, grafite).' },
-          x: { type: 'number', minimum: 0, maximum: 1, description: 'Horizontal position of the point, 0 = left edge, 1 = right edge.' },
-          y: { type: 'number', minimum: 0, maximum: 1, description: 'Vertical position of the point, 0 = top edge, 1 = bottom edge.' },
-          confidence: { type: 'number', minimum: 0, maximum: 1, description: 'How sure you are, from appearance alone.' },
+          x: { type: 'number', description: 'Horizontal position of the point, between 0 (left edge) and 1 (right edge).' },
+          y: { type: 'number', description: 'Vertical position of the point, between 0 (top edge) and 1 (bottom edge).' },
+          confidence: { type: 'number', description: 'How sure you are, from appearance alone, between 0 and 1.' },
           reason: { type: 'string', description: 'What in the image supports it, in the user language. One sentence.' }
         }
       }
@@ -172,7 +175,9 @@ async function defaultCreateMessage({ system, image, mediaType, userText }) {
     throw Object.assign(new Error('Vision is not configured'), { status: 503, code: 'vision_not_configured' });
   }
   client = client || new Anthropic();
-  const response = await client.messages.create({
+  let response;
+  try {
+    response = await client.messages.create({
     model: VISION_MODEL,
     max_tokens: 4000,
     output_config: { effort: 'medium', format: { type: 'json_schema', schema: DETECTION_SCHEMA } },
@@ -184,7 +189,14 @@ async function defaultCreateMessage({ system, image, mediaType, userText }) {
         { type: 'text', text: userText }
       ]
     }]
-  });
+    });
+  } catch (err) {
+    /* Never echo the provider's error to the browser: it names request ids
+       and schema internals. Log it and answer with a generic upstream error. */
+    console.error('vision-identify upstream error', err && err.status, err && err.message);
+    const status = err instanceof Anthropic.RateLimitError ? 429 : 502;
+    throw Object.assign(new Error('Vision is unavailable right now.'), { status, code: status === 429 ? 'vision_busy' : 'vision_upstream' });
+  }
   if (response.stop_reason === 'refusal') {
     throw Object.assign(new Error('The model declined to analyse this photo'), { status: 422, code: 'vision_refused' });
   }
