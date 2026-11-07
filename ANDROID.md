@@ -63,6 +63,13 @@ Saída em `release/android/`:
 - `atomurus-<versão>-v<código>.aab` → **este vai para o Google Play**
 - `atomurus-<versão>-v<código>.apk` → instale direto no celular para testar
 
+O build de release passa pelo R8 (`minifyEnabled` + `shrinkResources` em
+`android/app/build.gradle`): o código Java é reduzido, otimizado e ofuscado,
+o que o Play Console mede como "Otimização de código DEX". As regras de
+`android/app/proguard-rules.pro` mantêm a ponte do Capacitor e guardam os
+números de linha para os relatórios de falha. As páginas do site (assets) não
+são afetadas.
+
 Para cada **novo** envio ao Play, suba o número da versão antes:
 
 ```bash
