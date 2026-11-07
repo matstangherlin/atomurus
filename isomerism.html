@@ -314,9 +314,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg-gradient);color:var(--
 (function(){
   var h=location.hash.replace('#','');
   if(['geometrica','optica','espacial','spatial'].indexOf(h)!==-1){
-    location.replace('viewer/isomerism.html#geometrica');
+    location.replace('viewer/isomerism.html' + location.search + '#geometrica');
   } else {
-    location.replace('viewer/isomerism.html');
+    location.replace('viewer/isomerism.html' + location.search);
   }
 })();
 </script>

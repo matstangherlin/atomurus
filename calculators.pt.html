@@ -1504,11 +1504,17 @@ function formatNumber(n, opts) {
   const plain = Number(n.toPrecision(sig)).toString();
   const frac = (plain.split('.')[1] || '').length;
   const value = Number(plain);
-  return new Intl.NumberFormat(locale, {
-    useGrouping: pt && Math.abs(value) >= 10000,
+  const grouping = pt && Math.abs(value) >= 10000;
+  // Intl.NumberFormat construction costs ~1 ms each; the page formats dozens of
+  // values per run, so keep one formatter per (locale, grouping, digits).
+  const cache = formatNumber._nf || (formatNumber._nf = {});
+  const cacheKey = locale + '|' + (grouping ? 1 : 0) + '|' + frac;
+  const nf = cache[cacheKey] || (cache[cacheKey] = new Intl.NumberFormat(locale, {
+    useGrouping: grouping,
     minimumFractionDigits: frac,
     maximumFractionDigits: frac
-  }).format(value);
+  }));
+  return nf.format(value);
 }
 function fmt(n, sig = 4) {
   return formatNumber(n, { sig: sig });

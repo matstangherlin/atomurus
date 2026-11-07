@@ -91,9 +91,9 @@
 (function(){
   var h=location.hash.replace('#','');
   if(['geometrica','optica','espacial','spatial'].indexOf(h)!==-1){
-    location.replace('isomerism/spatial/geometric.html');
+    location.replace('isomerism/spatial/geometric.html' + location.search);
   } else {
-    location.replace('isomerism/constitutional/function.html#iso-overview');
+    location.replace('isomerism/constitutional/function.html' + location.search);
   }
 })();
 </script>

@@ -928,9 +928,13 @@
     document.getElementById('md-ok-label').textContent    = _atomI18n('atomicModels.detail.okLabel', 'What it explained');
     document.getElementById('md-limit-label').textContent = _atomI18n('atomicModels.detail.limitLabel', 'Limitations');
     document.getElementById('md-shells').classList.toggle('on', key === 'bohr' || key === 'quantum');
-    // Re-trigger the entrance animation on every switch
-    card.classList.remove('show');
-    void card.offsetWidth;
+    // Re-trigger the entrance animation on every switch (the forced reflow is
+    // only needed when the class was already there; at boot it is a wasted
+    // full-page layout)
+    if (card.classList.contains('show')) {
+      card.classList.remove('show');
+      void card.offsetWidth;
+    }
     card.classList.add('show');
   }
 
@@ -961,8 +965,10 @@
   window.setAtomModel = function(key, skipBtnUpdate){
     currentAtomModel = key;
     // Transition animation
-    canvas.classList.remove('transitioning');
-    void canvas.offsetWidth; // reflow
+    if (canvas.classList.contains('transitioning')) {
+      canvas.classList.remove('transitioning');
+      void canvas.offsetWidth; // reflow, only when restarting a running transition
+    }
     canvas.classList.add('transitioning');
     setTimeout(()=>canvas.classList.remove('transitioning'), 400);
     

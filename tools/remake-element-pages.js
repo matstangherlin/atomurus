@@ -19,6 +19,7 @@ const PT = DICT.pt;
 const EN = DICT.en;
 const ATOM = require('../assets/chem/atom-structure.js');
 const PROPS = require('../assets/chem/element-props.js');
+const APPEARANCE = require('../assets/chem/element-appearance.js');
 
 function loadData() {
   const ctx = { window: {}, console };
@@ -194,6 +195,15 @@ function propRow(key, label, prop, z, raw) {
   return factRow(key, label, `<span data-l10n-pt="${esc(pt)}" data-l10n-en="${esc(en)}">${esc(pt)}</span>`);
 }
 
+/* Real colour of the element at room conditions: swatch + PT/EN text
+   (element-appearance.js). Unobserved colours get a hatched swatch. */
+function appearanceRow(z, label) {
+  const a = APPEARANCE.byZ(z);
+  if (!a) return null;
+  const swatch = `<span class="rm-swatch" style="background-color:${a.hex}" data-known="${a.known ? 'true' : 'false'}" aria-hidden="true"></span>`;
+  return `<div><dt data-i18n="el.rm.appearance">${esc(label)}</dt><dd class="rm-appearance">${swatch}<span data-l10n-pt="${esc(a.pt)}" data-l10n-en="${esc(a.en)}">${esc(a.pt)}</span></dd></div>`;
+}
+
 function allotropesSection(z, namePt) {
   const entry = ALLOTROPES[z];
   if (!entry) return '';
@@ -236,6 +246,8 @@ function build(el, data) {
   if (ex.econfig && ex.econfig !== '—') facts.push(factRow('config', L.config, esc(ex.econfig), true));
   if (el.en != null && el.en !== '—' && el.en !== '') facts.push(factRow('en', L.en, numSpan(String(el.en))));
   facts.push(factRow('state', L.state, `<span data-page-field="state">${esc(el.state)}</span>`));
+  const look = appearanceRow(z, L.appearance);
+  if (look) facts.push(look);
   if (ex2.density && ex2.density !== '—') {
     const dm = String(ex2.density).match(/^([\d.]+)\s*(.*)$/);
     facts.push(factRow('density', L.density, dm ? numSpan(dm[1], ' ' + dm[2]) : esc(ex2.density)));

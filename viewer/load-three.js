@@ -60,11 +60,10 @@
       return rect.bottom > -marginPx && rect.top < vh + marginPx;
     }
 
-    if (nearViewport()) {
-      fire();
-      return;
-    }
-
+    // No synchronous getBoundingClientRect here: with the big page stylesheets
+    // that read forced a full style+layout pass in the middle of the boot
+    // script (≈90 ms at 4× CPU throttling on /viewer/molecules). The observer
+    // reports after the browser's own layout, at no extra cost.
     if (!('IntersectionObserver' in global)) {
       fire();
       return;

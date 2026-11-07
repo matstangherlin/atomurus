@@ -865,8 +865,16 @@
     });
   }
 
+  var CALC_FNS = ['runMolar', 'runScientific', 'runUnit', 'runIdeal', 'runDilution', 'runPH', 'runStoich', 'runThermo'];
+
+  function allCalcFnsWrapped() {
+    return CALC_FNS.every(function (name) {
+      return typeof window[name] === 'function' && window[name].__atomurusStudyWrapped;
+    });
+  }
+
   function wrapCalcFns() {
-    ['runMolar', 'runScientific', 'runUnit', 'runIdeal', 'runDilution', 'runPH', 'runStoich', 'runThermo'].forEach(function (name) {
+    CALC_FNS.forEach(function (name) {
       var original = window[name];
       if (typeof original !== 'function' || original.__atomurusStudyWrapped) return;
       var wrapped = function () {
@@ -902,10 +910,11 @@
     }, true);
     wrapCalcFns();
     var tries = 0;
+    if (allCalcFnsWrapped()) return;
     var timer = setInterval(function () {
       wrapCalcFns();
       tries += 1;
-      if (tries > 40) clearInterval(timer);
+      if (tries > 40 || allCalcFnsWrapped()) clearInterval(timer);
     }, 250);
   }
 

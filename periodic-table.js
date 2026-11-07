@@ -491,6 +491,8 @@ function setElementCardMeta(card, el) {
     [_T('ptable.mRadius', 'Atomic Radius'), extra2.radius || '—'],
     [_T('ptable.mEconfig', 'Electron Configuration'), extra.econfig || '—']
   ];
+  const look = appearanceText(el.z);
+  if (look) rows.push([_T('ptable.mAppearance', 'Aparência'), look]);
 
   card.title = `${nm} (${el.sym}) · Z=${el.z} · ${el.mass} u · ${stateName(el.state)} · ${shells || '—'}`;
   card.setAttribute('aria-label', `${nm}, ${el.sym}, Z ${el.z}`);
@@ -2087,7 +2089,7 @@ function heatmapPropValue(z, prop) {
   const el = ELEMENTS.find(e => e.z === z);
   if (!el) return null;
   const key = prop === 'atomic_radius' ? 'radius' : prop;
-  if (key === 'state' || key === 'category') return null;
+  if (key === 'state' || key === 'category' || key === 'appearance') return null;
   const ex = (typeof getExtra === 'function' ? getExtra(z) : {}) || {};
   const ex2 = (typeof getExtra2 === 'function' ? getExtra2(z) : {}) || {};
   let val = NaN;
@@ -2133,11 +2135,91 @@ function heatmapStateLabel(key) {
   return _T(row[0], lang.indexOf('pt') === 0 ? row[2] : row[1]);
 }
 
+// ─── REAL COLOUR ("appearance") VIEW ───
+// Each tile takes the colour of the element itself at room conditions.
+// Data: assets/chem/element-appearance.js (window.AtomurusElementAppearance),
+// loaded before this file. Elements whose colour was never observed are
+// painted neutral grey with a hatch; colourless gases get a pale tint.
+const HM_APPEARANCE_HATCH = 'repeating-linear-gradient(135deg, rgba(0,0,0,.16) 0 3px, transparent 3px 8px)';
+function appearanceApi() {
+  return (typeof window !== 'undefined' && window.AtomurusElementAppearance) || null;
+}
+function appearanceText(z) {
+  const A = appearanceApi();
+  if (!A) return '';
+  const lang = (typeof document !== 'undefined' && document.documentElement.lang) || '';
+  return A.label(z, lang);
+}
+function paintAppearance(card, z) {
+  const A = appearanceApi();
+  const a = A ? A.byZ(z) : null;
+  card.removeAttribute('data-state');
+  if (!a) { paintHeatmapMissing(card); return; }
+  card.style.background = a.hex;
+  card.style.color = A.textOn(a.hex);
+  card.style.borderColor = a.known ? 'rgba(0,0,0,.22)' : 'rgba(0,0,0,.4)';
+  card.dataset.appearance = !a.known ? 'unknown' : (A.isColourless(a) ? 'colourless' : 'known');
+  if (!a.known) card.style.backgroundImage = HM_APPEARANCE_HATCH;
+}
+// Legend for the appearance view. In the remake layout the legacy
+// #heatmap-legend is hidden, so the box goes next to the remake scale box
+// (above the category legend); elsewhere it lives inside #heatmap-legend.
+function appearanceLegendHost() {
+  const rmScale = document.querySelector('#tab-tabela .rm-pt-scale');
+  if (rmScale && rmScale.parentNode) return { parent: rmScale.parentNode, before: rmScale.nextSibling };
+  const legacy = document.getElementById('heatmap-legend');
+  return legacy ? { parent: legacy, before: null } : null;
+}
+function renderAppearanceLegend(show) {
+  let box = document.getElementById('hm-appearance-legend');
+  if (!show) { if (box) box.hidden = true; return; }
+  const host = appearanceLegendHost();
+  if (!host) return;
+  if (!box) {
+    box = document.createElement('div');
+    box.id = 'hm-appearance-legend';
+    box.className = 'hm-appearance-legend';
+    box.setAttribute('role', 'group');
+  }
+  if (box.parentNode !== host.parent) host.parent.insertBefore(box, host.before);
+  box.hidden = false;
+  box.setAttribute('aria-label', _T('config.viewAppearance', 'Cor real'));
+  const A = appearanceApi();
+  const fe = A && A.bySymbol('Fe');
+  const items = [
+    ['metal', fe ? fe.hex : '#B7BABD', _T('ptable.hmAppearanceMetal', 'Metal prateado')],
+    ['colourless', A ? A.GAS_HEX : '#F4F7FA', _T('ptable.hmAppearanceColourless', 'Gás incolor (aparece claro)')],
+    ['unknown', A ? A.UNKNOWN_HEX : '#9E9E9E', _T('ptable.hmAppearanceUnknown', 'Sintético, cor nunca observada (hachurado)')]
+  ];
+  box.textContent = '';
+  const row = document.createElement('div');
+  row.className = 'hm-appearance-row';
+  items.forEach(([kind, hex, text]) => {
+    const item = document.createElement('span');
+    item.className = 'hm-appearance-item';
+    const sw = document.createElement('i');
+    sw.className = 'hm-appearance-swatch';
+    sw.dataset.kind = kind;
+    sw.style.backgroundColor = hex;
+    const label = document.createElement('span');
+    label.textContent = text;
+    item.appendChild(sw);
+    item.appendChild(label);
+    row.appendChild(item);
+  });
+  box.appendChild(row);
+  const note = document.createElement('p');
+  note.className = 'hm-appearance-note';
+  note.textContent = _T('ptable.hmAppearanceNote', 'Cor do elemento em condições ambientes (25 °C, 1 atm); gases incolores aparecem claros; elementos sintéticos sem cor observada aparecem hachurados.');
+  box.appendChild(note);
+}
+
 function paintHeatmapMissing(card) {
   card.style.background = 'var(--surface)';
   card.style.color = 'var(--text-3)';
   card.style.borderColor = 'var(--border)';
   card.removeAttribute('data-state');
+  card.removeAttribute('data-appearance');
 }
 
 function syncHeatmapLegend(prop) {
@@ -2146,6 +2228,13 @@ function syncHeatmapLegend(prop) {
     const scale = legend.querySelector('.heatmap-scale');
     if (!scale) return;
     let stateBox = legend.querySelector('.hm-state-legend');
+    let unitEl = legend.querySelector('.hm-unit');
+    if (prop === 'appearance') {
+      scale.hidden = true;
+      if (stateBox) stateBox.hidden = true;
+      if (unitEl) unitEl.textContent = '';
+      return;
+    }
     if (prop === 'state') {
       scale.hidden = true;
       if (!stateBox) {
@@ -2187,6 +2276,17 @@ function syncHeatmapLegend(prop) {
 function applyHeatmap(prop) {
   const cards = document.querySelectorAll('.el:not(.el-ph)');
   syncHeatmapLegend(prop);
+  renderAppearanceLegend(prop === 'appearance');
+
+  if (prop === 'appearance') {
+    cards.forEach(card => {
+      const z = parseInt(card.dataset.z, 10);
+      if (!z) return;
+      paintAppearance(card, z);
+    });
+    return;
+  }
+  cards.forEach(card => card.removeAttribute('data-appearance'));
 
   if (prop === 'state') {
     cards.forEach(card => {
@@ -2238,13 +2338,17 @@ function applyHeatmap(prop) {
   });
 }
 
+const APPLY_HEATMAP_BASE = applyHeatmap;
+
 function removeHeatmap() {
   document.querySelectorAll('.el:not(.el-ph)').forEach(card => {
     card.style.background = '';
     card.style.color = '';
     card.style.borderColor = '';
     card.removeAttribute('data-state');
+    card.removeAttribute('data-appearance');
   });
+  renderAppearanceLegend(false);
   document.querySelectorAll('.heatmap-legend').forEach(legend => {
     const scale = legend.querySelector('.heatmap-scale');
     const stateBox = legend.querySelector('.hm-state-legend');
@@ -6768,6 +6872,11 @@ function setElSize(size) {
 // ════════════ HEATMAP SELECT (settings panel) ════════════
 function setHeatmap(prop) {
   localStorage.setItem('atomurus-heatmap', prop);
+  const settingsSel = document.getElementById('heatmap-select');
+  if (settingsSel && settingsSel.value !== prop &&
+      Array.prototype.some.call(settingsSel.options, o => o.value === prop)) {
+    settingsSel.value = prop;
+  }
   const tabSel = document.getElementById('hm-select');
   if (tabSel) {
     const mapped = prop === 'atomic_radius' ? 'radius' : prop;
@@ -6780,6 +6889,82 @@ function setHeatmap(prop) {
     applyHeatmap(prop);
   }
 }
+
+// ════════════ REAL COLOUR × REMAKE "COLOUR BY" BAR ════════════
+// assets/remake/ptable-layout.js (loaded after this file) wraps
+// window.applyHeatmap / removeHeatmap and only knows its own numeric and
+// state modes: for any other mode it would flag every tile "no data" and
+// show "Category" as the active button. DOMContentLoaded fires after every
+// deferred script, so by then the bar exists and we can wrap once more:
+// the appearance view bypasses the numeric painter and gets its own button.
+(function wireAppearanceView() {
+  function setup() {
+    const table = document.getElementById('ptable');
+    if (!table || typeof window.applyHeatmap !== 'function') return;
+    const seg = document.querySelector('#tab-tabela .rm-pt-seg');
+    const inner = window.applyHeatmap;
+    const innerRemove = window.removeHeatmap;
+    let active = localStorage.getItem('atomurus-heatmap') === 'appearance';
+    let btn = null;
+
+    function syncBar() {
+      if (btn) {
+        btn.textContent = _T('config.viewAppearance', 'Cor real');
+        btn.classList.toggle('is-on', active);
+        btn.setAttribute('aria-checked', active ? 'true' : 'false');
+      }
+      if (!active || !seg) return;
+      seg.querySelectorAll('[data-color-by]').forEach(b => {
+        b.classList.remove('is-on');
+        b.setAttribute('aria-checked', 'false');
+      });
+      const tab = document.getElementById('tab-tabela');
+      if (tab) tab.classList.remove('rm-pt-heat');
+    }
+
+    window.applyHeatmap = function (prop) {
+      if (prop === 'appearance') {
+        if (typeof innerRemove === 'function') innerRemove();
+        active = true;
+        APPLY_HEATMAP_BASE('appearance');
+        syncBar();
+        return;
+      }
+      active = false;
+      inner(prop);
+      syncBar();
+    };
+    window.removeHeatmap = function () {
+      active = false;
+      if (typeof innerRemove === 'function') innerRemove.apply(this, arguments);
+      syncBar();
+    };
+
+    if (seg) {
+      btn = document.createElement('button');
+      btn.type = 'button';
+      btn.setAttribute('role', 'radio');
+      btn.setAttribute('data-appearance-mode', '');
+      btn.addEventListener('click', () => {
+        if (typeof setHeatmap === 'function') setHeatmap('appearance');
+      });
+      seg.appendChild(btn);
+    }
+    if (active) {
+      // painted before the remake layout existed: move the legend next to it
+      renderAppearanceLegend(true);
+    }
+    syncBar();
+    if (window.I18N && typeof I18N.onChange === 'function') {
+      I18N.onChange(() => {
+        // after ptable-layout's own language handler has re-synced its bar
+        setTimeout(() => { if (active) { renderAppearanceLegend(true); syncBar(); } else if (btn) syncBar(); }, 0);
+      });
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setup);
+  else setTimeout(setup, 0);
+})();
 
 // ════════════ F-BLOCK TOGGLE ════════════
 function setFblock(show, btn) {

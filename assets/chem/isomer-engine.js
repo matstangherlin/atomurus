@@ -13,6 +13,7 @@
      pairType(molA, molB)            → 'cadeia' | 'posicao' | 'funcao' | 'metameria' | 'tautomeria'
      stereo(mol)                     → chiral centres, cis/trans, stereoisomer count
      condensed(mol)                  → 'CH3–CH(OH)–CH3'
+     nameOf(mol, 'pt' | 'en')        → 'butan-2-ol' or null when unsure
      parseStructure('CH3CH(OH)CH3')  → mol (condensed formula or simple SMILES)
      layout2d(mol), embed3d(mol)     → coordinates for drawing */
 (function (root, factory) {
@@ -1163,6 +1164,256 @@
     return { atoms: full.atoms, bonds: full.bonds, coords: P, heavy: full.heavy };
   }
 
+  /* ── IUPAC-style names ───────────────────────────────────────────── */
+  // nameOf(mol, 'pt' | 'en') → a systematic name for the simple cases a
+  // chemistry course meets (acyclic chains with methyl/ethyl, halogen and
+  // alkoxy prefixes and one principal group; cycloalkanes with at most one
+  // substituent; benzene, toluene, phenol), or null when the molecule falls
+  // outside what can be named with confidence.
+  var STEM = ['', 'met', 'et', 'prop', 'but', 'pent', 'hex', 'hept', 'oct', 'non', 'dec'];
+  var STEM_EN = ['', 'meth', 'eth', 'prop', 'but', 'pent', 'hex', 'hept', 'oct', 'non', 'dec'];
+  var MULT = ['', '', 'di', 'tri', 'tetra', 'penta', 'hexa'];
+  var NAME_L = {
+    pt: {
+      stem: STEM, e: 'o', yne: 'in', ol: 'ol', al: 'al', one: 'ona', amine: 'amina',
+      halo: { F: 'flúor', Cl: 'cloro', Br: 'bromo', I: 'iodo' },
+      alkyl: function (k) { return STEM[k] + 'il'; },
+      alkoxy: function (k) { return STEM[k] + 'oxi'; },
+      esterAlkyl: function (k) { return STEM[k] + 'ila'; },
+      cyclo: function (size) { return 'ciclo' + (/^[ho]/.test(STEM[size]) ? '-' : '') + STEM[size]; },
+      acid: function (core) { return 'ácido ' + core + 'oico'; },
+      ester: function (core, alk) { return core + 'oato de ' + alk; },
+      benzene: 'benzeno', toluene: 'tolueno', phenol: 'fenol'
+    },
+    en: {
+      stem: STEM_EN, e: 'e', yne: 'yn', ol: 'ol', al: 'al', one: 'one', amine: 'amine',
+      halo: { F: 'fluoro', Cl: 'chloro', Br: 'bromo', I: 'iodo' },
+      alkyl: function (k) { return STEM_EN[k] + 'yl'; },
+      alkoxy: function (k) { return STEM_EN[k] + 'oxy'; },
+      esterAlkyl: function (k) { return STEM_EN[k] + 'yl'; },
+      cyclo: function (size) { return 'cyclo' + STEM_EN[size]; },
+      acid: function (core) { return core + 'oic acid'; },
+      ester: function (core, alk) { return alk + ' ' + core + 'oate'; },
+      benzene: 'benzene', toluene: 'toluene', phenol: 'phenol'
+    }
+  };
+  function fold(s) { return String(s).normalize ? String(s).normalize('NFD').replace(/[̀-ͯ]/g, '') : String(s); }
+  function numAsc(a, b) { return a - b; }
+  function cmpList(a, b) {
+    for (var i = 0; i < Math.max(a.length, b.length); i++) {
+      if (a[i] == null) return -1;
+      if (b[i] == null) return 1;
+      var x = a[i], y = b[i];
+      if (Array.isArray(x)) { var c = cmpList(x, y); if (c) return c; }
+      else if (x !== y) return x < y ? -1 : 1;
+    }
+    return 0;
+  }
+  // Size of a straight, saturated, all-carbon branch that starts at `start`
+  // (coming from `from`) with `start` at one end; 0 when it is anything else.
+  function alkylBranch(mol, adj, start, from) {
+    var seen = {}; seen[from] = true; seen[start] = true;
+    var stack = [start], size = 0;
+    while (stack.length) {
+      var v = stack.pop(); size++;
+      if (mol.atoms[v].el !== 'C') return 0;
+      if (adj[v].some(function (x) { return x[1] !== 1; })) return 0;
+      var kids = adj[v].filter(function (x) { return !seen[x[0]]; });
+      if (kids.length > 1) return 0;
+      kids.forEach(function (x) { seen[x[0]] = true; stack.push(x[0]); });
+    }
+    return size;
+  }
+  function joinPrefix(pre, rest, lang) {
+    if (!pre) return rest;
+    if (lang === 'pt' && /flúor$/.test(pre) && /^[a-z]/i.test(rest)) return pre + '-' + rest;
+    return pre + rest;
+  }
+
+  function nameOf(mol, lang) {
+    try { return nameMolecule(mol, lang === 'pt' ? 'pt' : 'en'); } catch (e) { return null; }
+  }
+  function nameMolecule(mol, lang) {
+    var L = NAME_L[lang];
+    var n = mol.atoms.length;
+    if (!n || n > 14) return null;
+    var adj = adjacency(mol), hs = hydrogens(mol);
+    if (hs.some(function (h) { return h < 0; })) return null;
+    var counts = { C: 0, N: 0, O: 0, X: 0, other: 0 };
+    mol.atoms.forEach(function (a) {
+      if (a.el === 'C') counts.C++; else if (a.el === 'N') counts.N++; else if (a.el === 'O') counts.O++;
+      else if (HALOGEN[a.el]) counts.X++; else counts.other++;
+    });
+    if (counts.other || !counts.C) return null;
+    if (Object.keys(ringAtoms(mol)).length) return nameCyclic(mol, lang, adj, hs);
+    var cl = classify(mol);
+    var allowed = { acid: [2, 0], ester: [2, 0], aldehyde: [1, 0], ketone: [1, 0], alcohol: [1, 0], ether: [1, 0], amine: [0, 1], halide: [0, 0], alkyne: [0, 0], alkene: [0, 0], alkane: [0, 0] }[cl.main];
+    if (!allowed || counts.O !== allowed[0] || counts.N !== allowed[1]) return null;
+    var needSuffix = { acid: 1, ester: 1, aldehyde: 1, ketone: 1, alcohol: 1, amine: 1 }[cl.main] ? true : false;
+    function carbonyl(c, except) {
+      return adj[c].some(function (y) { return y[0] !== except && mol.atoms[y[0]].el === 'O' && y[1] === 2; });
+    }
+    // every simple path through the carbon skeleton, in both directions
+    var paths = [];
+    (function () {
+      function ext(path, on) {
+        paths.push(path.slice());
+        var last = path[path.length - 1];
+        adj[last].forEach(function (x) {
+          var w = x[0];
+          if (mol.atoms[w].el !== 'C' || on[w]) return;
+          on[w] = true; path.push(w); ext(path, on); path.pop(); on[w] = false;
+        });
+      }
+      for (var c = 0; c < n; c++) if (mol.atoms[c].el === 'C') { var on = {}; on[c] = true; ext([c], on); }
+    })();
+
+    function evaluate(path) {
+      var m = path.length, pos = {};
+      path.forEach(function (p, k) { pos[p] = k + 1; });
+      var enes = [], ynes = [], prefixes = [], suffix = null;
+      for (var k = 0; k < m; k++) {
+        var c = path[k], prev = k ? path[k - 1] : -1, next = k < m - 1 ? path[k + 1] : -1;
+        if (next >= 0) { var ob = bondOrder(mol, c, next); if (ob === 2) enes.push(k + 1); else if (ob === 3) ynes.push(k + 1); }
+        for (var q = 0; q < adj[c].length; q++) {
+          var w = adj[c][q][0], o = adj[c][q][1], el = mol.atoms[w].el;
+          if (w === prev || w === next) continue;
+          if (pos[w]) return null;
+          if (el === 'C') {
+            if (o !== 1) return null;
+            var sz = alkylBranch(mol, adj, w, c);
+            if (!sz || sz > 2) return null;
+            prefixes.push({ name: L.alkyl(sz), loc: k + 1, het: false });
+          } else if (HALOGEN[el]) {
+            if (carbonyl(c, -1)) return null;                       // acyl halide
+            prefixes.push({ name: L.halo[el], loc: k + 1, het: true });
+          } else if (el === 'O') {
+            if (o === 2) {
+              if (suffix) return null;
+              var oh = -1, orAt = -1;
+              adj[c].forEach(function (y) {
+                if (y[0] === w || mol.atoms[y[0]].el !== 'O' || y[1] !== 1) return;
+                if (hs[y[0]] === 1) oh = y[0]; else orAt = y[0];
+              });
+              if (oh >= 0) { if (k !== 0) return null; suffix = { t: 'acid', loc: 1 }; }
+              else if (orAt >= 0) {
+                if (k !== 0) return null;
+                var other = adj[orAt].filter(function (y) { return y[0] !== c; })[0];
+                if (!other || other[1] !== 1) return null;
+                var sa = alkylBranch(mol, adj, other[0], orAt);
+                if (!sa || sa > 4) return null;
+                suffix = { t: 'ester', loc: 1, alkyl: sa };
+              }
+              else if (hs[c] >= 1) { if (k !== 0) return null; suffix = { t: 'al', loc: 1 }; }
+              else suffix = { t: 'one', loc: k + 1 };
+            } else if (hs[w] === 1 && adj[w].length === 1) {
+              if (carbonyl(c, -1)) continue;                         // the OH of an acid
+              if (suffix) return null;
+              suffix = { t: 'ol', loc: k + 1 };
+            } else if (adj[w].length === 2 && hs[w] === 0) {
+              if (carbonyl(c, -1)) continue;                         // the O–R of an ester
+              var oc = adj[w].filter(function (y) { return y[0] !== c; })[0];
+              if (!oc || oc[1] !== 1 || mol.atoms[oc[0]].el !== 'C') return null;
+              if (carbonyl(oc[0], -1)) return null;                  // alkyl side of an ester
+              var so = alkylBranch(mol, adj, oc[0], w);
+              if (!so || so > 4) return null;
+              prefixes.push({ name: L.alkoxy(so), loc: k + 1, het: true });
+            } else return null;
+          } else if (el === 'N') {
+            if (o !== 1 || adj[w].length !== 1 || hs[w] !== 2 || suffix) return null;
+            suffix = { t: 'amine', loc: k + 1 };
+          } else return null;
+        }
+      }
+      if (needSuffix && !suffix) return null;
+      if (!needSuffix && suffix) return null;
+      var mult = enes.length + ynes.length;
+      var hetPrefix = prefixes.some(function (p) { return p.het; });
+      var preLocs = prefixes.map(function (p) { return p.loc; }).sort(numAsc);
+      var alpha = prefixes.slice().sort(function (a, b) { return fold(a.name) < fold(b.name) ? -1 : 1; }).map(function (p) { return p.loc; });
+      var key = [-mult, -m, -prefixes.length, suffix ? suffix.loc : 0, enes.concat(ynes).sort(numAsc), enes.slice(), preLocs, alpha];
+
+      // hydride: stem + unsaturation infixes
+      var stem = L.stem[m];
+      var showLoc = m >= 4 || (m === 3 && (!!suffix || hetPrefix || mult > 1));
+      var hyd = stem;
+      if (enes.length) hyd += (enes.length > 1 ? 'a' : '') + (showLoc ? '-' + enes.join(',') + '-' : '') + MULT[enes.length] + 'en';
+      if (ynes.length) hyd += (ynes.length > 1 && !enes.length ? 'a' : '') + (showLoc ? '-' + ynes.join(',') + '-' : '') + MULT[ynes.length] + L.yne;
+      if (!mult) hyd += 'an';
+      // prefixes, alphabetical, with di/tri for repeats
+      var groups = {};
+      prefixes.forEach(function (p) { (groups[p.name] = groups[p.name] || []).push(p.loc); });
+      var dropLoc = m === 1 || (m === 2 && prefixes.length === 1 && !suffix);
+      var pre = Object.keys(groups).sort(function (a, b) { return fold(a) < fold(b) ? -1 : 1; }).map(function (nm) {
+        var locs = groups[nm].sort(numAsc);
+        return (dropLoc ? '' : locs.join(',') + '-') + MULT[locs.length] + nm;
+      }).join('-');
+      var core, name;
+      function withLoc(sfx, loc, need) { return hyd + (need ? '-' + loc + '-' : '') + sfx; }
+      var t = suffix ? suffix.t : 'none';
+      if (t === 'none') core = hyd + L.e;
+      else if (t === 'ol') core = withLoc(L.ol, suffix.loc, m > 2);
+      else if (t === 'al') core = hyd + L.al;
+      else if (t === 'one') core = withLoc(L.one, suffix.loc, m > 4 || mult > 0);
+      else if (t === 'amine') core = withLoc(L.amine, suffix.loc, m > 2);
+      else core = hyd;                                               // acid / ester: wrapped below
+      core = joinPrefix(pre, core, lang);
+      if (t === 'acid') name = L.acid(core);
+      else if (t === 'ester') name = L.ester(core, L.esterAlkyl(suffix.alkyl));
+      else name = core;
+      return { key: key, name: name };
+    }
+
+    var best = null, clash = false;
+    paths.forEach(function (p) {
+      var r = evaluate(p);
+      if (!r) return;
+      if (!best) { best = r; return; }
+      var c = cmpList(r.key, best.key);
+      if (c < 0) { best = r; clash = false; }
+      else if (c === 0 && r.name !== best.name) clash = true;
+    });
+    return best && !clash ? best.name : null;
+  }
+
+  function nameCyclic(mol, lang, adj, hs) {
+    var L = NAME_L[lang];
+    if (mol.bonds.length - mol.atoms.length + 1 !== 1) return null;   // exactly one ring
+    var ring = Object.keys(ringAtoms(mol)).map(Number);
+    if (ring.some(function (i) { return mol.atoms[i].el !== 'C'; })) return null;
+    var size = ring.length;
+    if (size < 3 || size > 8) return null;
+    var inRing = {}; ring.forEach(function (i) { inRing[i] = true; });
+    var subs = [];
+    ring.forEach(function (c) { adj[c].forEach(function (x) { if (!inRing[x[0]]) subs.push({ c: c, w: x[0], o: x[1] }); }); });
+    var s = subs[0], el = s ? mol.atoms[s.w].el : null;
+    if (Object.keys(aromaticAtoms(mol)).length) {
+      if (size !== 6) return null;
+      if (!subs.length) return L.benzene;
+      if (subs.length !== 1 || s.o !== 1) return null;
+      if (el === 'C' && alkylBranch(mol, adj, s.w, s.c) === 1) return L.toluene;
+      if (el === 'O' && hs[s.w] === 1 && adj[s.w].length === 1) return L.phenol;
+      return null;
+    }
+    var ringMult = mol.bonds.filter(function (b) { return inRing[b.a] && inRing[b.b] && b.o > 1; });
+    if (ringMult.length > 1 || ringMult.some(function (b) { return b.o !== 2; })) return null;
+    var cyc = L.cyclo(size);
+    if (ringMult.length) return subs.length ? null : cyc + 'en' + L.e;
+    if (!subs.length) return cyc + 'an' + L.e;
+    if (subs.length !== 1) return null;
+    if (el === 'C') {
+      if (s.o !== 1) return null;
+      var sz = alkylBranch(mol, adj, s.w, s.c);
+      if (!sz || sz > 2) return null;
+      return L.alkyl(sz) + cyc + 'an' + L.e;
+    }
+    if (HALOGEN[el]) return joinPrefix(L.halo[el], cyc + 'an' + L.e, lang);
+    if (el === 'O' && s.o === 1 && hs[s.w] === 1) return cyc + 'an' + L.ol;
+    if (el === 'O' && s.o === 2) return cyc + 'an' + L.one;
+    if (el === 'N' && s.o === 1 && adj[s.w].length === 1 && hs[s.w] === 2) return cyc + 'an' + L.amine;
+    return null;
+  }
+
   // Geometry report from 3D coordinates (bond lengths and angles at heavy atoms).
   function geometry(model) {
     function d(i, j) { var a = model.coords[i], b = model.coords[j]; return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2) + Math.pow(a[2] - b[2], 2)); }
@@ -1195,6 +1446,7 @@
     withHydrogens: withHydrogens,
     assignRS: assignRS,
     condensed: condensed,
+    nameOf: nameOf,
     parseStructure: parseStructure,
     parseSmiles: parseSmiles,
     parseCondensed: parseCondensed,

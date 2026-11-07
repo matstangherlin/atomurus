@@ -818,4 +818,51 @@ assert.ok(lab.distillSetup(revived, rigFlask.id), 'the revived board is still a 
 assert.equal(lab.attachmentOf(revived, revived.board.attachments[0].toolId).kind, 'probe');
 assert.equal(lab.distill(revived, rigFlask.id).ok, true, 'and it still runs');
 
+// Smart search: phrases with amounts and names in either language.
+const sol = lab.suggest('solução de NaCl 0,5 mol/L em 100 mL', 'pt');
+assert.equal(sol.status, 'ok');
+assert.equal(sol.best.kind, 'recipe');
+assert.equal(sol.best.recipe.solute, 'nacl');
+assert.equal(sol.best.recipe.waterMl, 100);
+assert.equal(sol.best.recipe.grams, 2.92, 'm = C·V·M = 0.5 × 0.1 × 58.44');
+assert.ok(sol.best.detail.indexOf('100 mL') !== -1, 'the volume is printed whole, not stripped to 1');
+const waterQty = lab.suggest('40 mL de água', 'pt');
+assert.equal(waterQty.best.kind, 'substance');
+assert.equal(waterQty.best.id, 'water');
+assert.equal(waterQty.best.amount, 40);
+const saltIn = lab.suggest('5 g de sal em 50 ml de agua', 'pt');
+assert.equal(saltIn.best.kind, 'recipe');
+assert.equal(saltIn.best.recipe.solute, 'nacl');
+assert.equal(saltIn.best.recipe.grams, 5);
+assert.equal(saltIn.best.recipe.waterMl, 50);
+assert.equal(lab.suggest('bureta', 'pt').best.id, 'burette');
+assert.equal(lab.suggest('beker', 'en').best.id, 'beaker', 'one typo still finds the glassware');
+assert.equal(lab.suggest('destilação', 'pt').best.kind, 'creation');
+assert.equal(lab.suggest('gasolina', 'pt').best.id, 'petroleum');
+assert.equal(lab.suggest('CuSO4', 'en').best.id, 'cusulfate');
+assert.equal(lab.suggest('açúcar', 'pt').best.id, 'sucrose', 'the material wins over the guided experiment');
+assert.ok(lab.suggest('açúcar', 'pt').items.some((row) => row.kind === 'creation' && row.id === 'sugar'), 'but the experiment is still offered');
+assert.equal(lab.suggest('explosivo', 'pt').status, 'unavailable');
+assert.equal(lab.suggest('xyzzy', 'pt').status, 'unknown');
+assert.equal(lab.suggest('', 'pt').status, 'empty');
+const amounts = lab.parseAmounts('2 L de agua com 500 mg de sal');
+assert.equal(amounts.ml, 2000);
+assert.equal(amounts.g, 0.5);
+assert.equal(lab.substanceName(lab.SUBSTANCES.water, 'pt'), 'Água');
+assert.equal(lab.substanceName(lab.SUBSTANCES.water, 'en'), 'Water');
+for (const id of Object.keys(lab.SUBSTANCES)) {
+  assert.ok(lab.SUBSTANCES[id].namePt, `${id} has a Portuguese name`);
+  assert.match(lab.SUBSTANCES[id].color, /^#[0-9A-Fa-f]{6}$/, `${id} has a real colour`);
+}
+// Colours follow the chemistry: water is colourless, copper sulfate dissolves blue,
+// a universal indicator goes red in acid and blue in base.
+assert.equal(lab.SUBSTANCES.water.clear, true);
+const blue = lab.emptySession({ title: 'Blue', mode: 'bench' });
+lab.addToContainer(blue, 'beaker-a', 'water', 50);
+lab.addToContainer(blue, 'beaker-a', 'cusulfate', 5);
+assert.equal(blue.containers[0].color, lab.SUBSTANCES.cusulfate.solutionColor);
+assert.equal(lab.indicatorColor(1), '#D7263D');
+assert.equal(lab.indicatorColor(7), '#4CAF50');
+assert.equal(lab.indicatorColor(13), '#6A2C91');
+
 console.log('virtual lab tests passed');
