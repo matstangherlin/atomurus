@@ -1485,7 +1485,6 @@ function formatNumber(n, opts) {
   const sig = opts && opts.sig != null ? opts.sig : 4;
   const lang = (opts && opts.lang) || (calcLangIsPt() ? 'pt' : 'en');
   const pt = String(lang).toLowerCase().indexOf('pt') === 0;
-  const locale = pt ? 'pt-BR' : 'en-US';
   if (!isFinite(n)) return '∞';
   if (n === 0) return '0';
   const abs = Math.abs(n);
@@ -1504,17 +1503,20 @@ function formatNumber(n, opts) {
   const plain = Number(n.toPrecision(sig)).toString();
   const frac = (plain.split('.')[1] || '').length;
   const value = Number(plain);
-  const grouping = pt && Math.abs(value) >= 10000;
-  // Intl.NumberFormat construction costs ~1 ms each; the page formats dozens of
-  // values per run, so keep one formatter per (locale, grouping, digits).
-  const cache = formatNumber._nf || (formatNumber._nf = {});
-  const cacheKey = locale + '|' + (grouping ? 1 : 0) + '|' + frac;
-  const nf = cache[cacheKey] || (cache[cacheKey] = new Intl.NumberFormat(locale, {
-    useGrouping: grouping,
-    minimumFractionDigits: frac,
-    maximumFractionDigits: frac
-  }));
-  return nf.format(value);
+  // `value` already has exactly `frac` decimals, so toFixed(frac) yields the
+  // same digits Intl.NumberFormat(locale, { minimumFractionDigits: frac,
+  // maximumFractionDigits: frac }) did — without the first-use ICU locale load
+  // (≈15 ms on a laptop, far more on phones) that Intl charged every visit.
+  let out = value.toFixed(frac);
+  if (!pt) return out;
+  const neg = out.charAt(0) === '-' ? '-' : '';
+  if (neg) out = out.slice(1);
+  const dot = out.indexOf('.');
+  let intPart = dot < 0 ? out : out.slice(0, dot);
+  const decPart = dot < 0 ? '' : out.slice(dot + 1);
+  // pt-BR groups thousands with "." and uses "," as the decimal separator
+  if (Math.abs(value) >= 10000) intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  return neg + intPart + (decPart ? ',' + decPart : '');
 }
 function fmt(n, sig = 4) {
   return formatNumber(n, { sig: sig });

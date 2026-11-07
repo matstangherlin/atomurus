@@ -309,10 +309,10 @@
   if (current() !== 'category' && typeof window.applyHeatmap === 'function' && table.querySelector('.el[data-z]')) window.applyHeatmap(current());
   var raf = 0;
   function schedule() { cancelAnimationFrame(raf); raf = requestAnimationFrame(placeAxes); }
-  /* ResizeObserver delivers an initial notification once the table has been
-     laid out, so the first placement reads clean geometry instead of forcing
-     a full style+layout pass right after buildTable() (≈60 ms at 4× CPU). */
-  if (window.ResizeObserver) new ResizeObserver(schedule).observe(table);
+  /* ResizeObserver callbacks run after layout, so measuring there is free:
+     the first placement no longer forces a full style+layout pass right after
+     buildTable() (≈60 ms at 4× CPU), and resizes are measured once per frame. */
+  if (window.ResizeObserver) new ResizeObserver(function () { cancelAnimationFrame(raf); raf = 0; placeAxes(); }).observe(table);
   else { placeAxes(); window.addEventListener('resize', schedule); }
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
   if (window.I18N && typeof window.I18N.onChange === 'function') window.I18N.onChange(function () {
