@@ -24,6 +24,11 @@ mesmo sem internet.
 - **Nada vem da internet:** as bibliotecas que o site baixa de CDNs (3D,
   gráficos, PDF) vão dentro do APK. O formulário de contato fica oculto; o
   e-mail continua na página.
+- **Botão voltar do Android:** fecha menu, diálogos e painéis abertos; depois
+  volta na história; na primeira tela devolve o app ao sistema
+  (`@capacitor/app`, tratado em `tools/android/android-app.js`).
+- **Toque nos 3D:** um dedo gira, dois dedos aproximam/afastam (pinça) em
+  moléculas, modelos atômicos, alótropos e isomeria; o canvas não rola a página.
 - O site continua igual: nada disso é carregado no navegador.
 
 - **Política de privacidade do app:** `app-privacy.pt.html` / `app-privacy.html`

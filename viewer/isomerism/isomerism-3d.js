@@ -968,6 +968,21 @@
       rotVelX += dy * 0.006;
     });
     window.addEventListener('pointerup', function () { isDragging = false; });
+    // Two fingers: pinch to zoom (pointer events only track one finger here).
+    var pinchDist = 0;
+    canvas.style.touchAction = 'none';
+    function touchDist(t) { return Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY); }
+    canvas.addEventListener('touchstart', function (e) {
+      if (e.touches.length >= 2) { pinchDist = touchDist(e.touches); isDragging = false; e.preventDefault(); }
+    }, { passive: false });
+    canvas.addEventListener('touchmove', function (e) {
+      if (e.touches.length < 2) return;
+      var d = touchDist(e.touches);
+      if (pinchDist > 0 && d > 0) zoom = Math.max(0.4, Math.min(2.6, zoom * (d / pinchDist)));
+      pinchDist = d;
+      e.preventDefault();
+    }, { passive: false });
+    canvas.addEventListener('touchend', function (e) { if (e.touches.length < 2) pinchDist = 0; });
     if (lab && lab.bindPageScrollWheel) {
       lab.bindPageScrollWheel(canvas, function (e) {
         zoom = Math.max(0.4, Math.min(2.6, zoom * (e.deltaY > 0 ? 0.92 : 1.08)));
@@ -1058,7 +1073,7 @@
     return Boolean(document.querySelector('script[data-atomurus-runtime="isomerism-3d.js"]'));
   }
 
-  var PAPER_LAB_SRC = '/viewer/runtime/paper-lab.js?v=202611070939';
+  var PAPER_LAB_SRC = '/viewer/runtime/paper-lab.js?v=202611070952';
   function loadPaperLab() {
     if (window.atomurusPaperLab) return Promise.resolve();
     if (window.__atomurusPaperLabPending) return window.__atomurusPaperLabPending;

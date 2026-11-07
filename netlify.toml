@@ -216,6 +216,16 @@
   status = 200
 
 [[redirects]]
+  from   = "/api/vision/identify"
+  to     = "/.netlify/functions/vision-identify"
+  status = 200
+
+[[redirects]]
+  from   = "/api/vision/feedback"
+  to     = "/.netlify/functions/vision-feedback"
+  status = 200
+
+[[redirects]]
   from   = "/api/pro-lab/calculate"
   to     = "/.netlify/functions/pro-lab-calculate"
   status = 200
@@ -562,6 +572,13 @@
 [[redirects]]
   from   = "/periodic-table"
   to     = "/periodic-table.pt.html"
+  status = 200
+  force  = true
+  query  = { lang = "pt-BR" }
+
+[[redirects]]
+  from   = "/vision"
+  to     = "/vision.pt.html"
   status = 200
   force  = true
   query  = { lang = "pt-BR" }

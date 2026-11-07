@@ -21,7 +21,7 @@
   var PAGES = /*__PAGES__*/{};
   var HIDDEN = {
     '/login': 1, '/signup': 1, '/account': 1, '/forgot-password': 1, '/reset-password': 1,
-    '/pricing': 1, '/checkout': 1, '/billing': 1, '/auth/callback': 1, '/confirm': 1
+    '/pricing': 1, '/vision': 1, '/checkout': 1, '/billing': 1, '/auth/callback': 1, '/confirm': 1
   };
 
   function bare(path) {
@@ -148,8 +148,43 @@
     location.assign((target === '/index.html' ? '/' : target) + u.search + u.hash);
   }, true);
 
-  /* 5. Script-driven navigation to an account page (e.g. a "save" button
-     that wants you signed in) ends on the page you were on. */
+  /* 5. Android back button. First close whatever is open on top of the page
+     (menu drawer, dialogs, the lab dock, a 3D panel in fullscreen); then go
+     back in history; on the first page, hand the app to the system. */
+  function closeOverlay() {
+    var header = document.querySelector('[data-rm-header].is-open');
+    if (header) {
+      var burger = header.querySelector('[data-rm-burger]');
+      if (burger) { burger.click(); return true; }
+    }
+    var dd = document.querySelector('.rm-dd.is-open');
+    if (dd) { dd.classList.remove('is-open'); var tg = dd.querySelector('[aria-expanded]'); if (tg) tg.setAttribute('aria-expanded', 'false'); return true; }
+    var closers = ['[data-rm-search-close]', '.ws-dialog-host [data-dialog-close]', '.ws-dialog-host button[aria-label="Fechar"]', '.ws-dialog-host button[aria-label="Close"]',
+      '#modal.active .modal-close, #modal.open .modal-close, .modal-overlay.active .modal-close', '[data-dock-close]', '.lab-zoom-menu:not([hidden]) ~ [data-lab-zoom-menu]', '.pro-lab-discover-dialog .pro-lab-discover-ghost'];
+    for (var i = 0; i < closers.length; i++) {
+      var btn = document.querySelector(closers[i]);
+      if (btn && btn.offsetParent !== null) { btn.click(); return true; }
+    }
+    if (document.fullscreenElement && document.exitFullscreen) { document.exitFullscreen(); return true; }
+    var sheet = document.querySelector('.rm-cmdk.is-open, .rm-search.is-open, [data-rm-search][open]');
+    if (sheet) { var esc = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }); document.dispatchEvent(esc); return true; }
+    return false;
+  }
+  function bindBackButton() {
+    var cap = window.Capacitor;
+    var app = cap && cap.Plugins && cap.Plugins.App;
+    if (!app || typeof app.addListener !== 'function') return;
+    app.addListener('backButton', function (ev) {
+      if (closeOverlay()) return;
+      if (ev && ev.canGoBack) { history.back(); return; }
+      if (location.pathname !== '/' && location.pathname !== '/index.html') { location.replace('/'); return; }
+      if (typeof app.minimizeApp === 'function') app.minimizeApp();
+      else if (typeof app.exitApp === 'function') app.exitApp();
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bindBackButton);
+  else bindBackButton();
+
   window.addEventListener('pageshow', function () {
     root.classList.add('is-native-ready');
   });

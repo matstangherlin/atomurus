@@ -625,20 +625,50 @@
     });
   }
 
+  /* One finger orbits; two fingers pinch to zoom (api.onPinch(ratio), ratio > 1
+     means the fingers moved apart). The page never scrolls from the canvas. */
+  function touchDistance(t) {
+    var dx = t[0].clientX - t[1].clientX;
+    var dy = t[0].clientY - t[1].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
   function bindTouchOrbit(canvas, api) {
     if (!canvas || !api) return;
     var lastX = 0;
     var lastY = 0;
+    var pinchDist = 0;
+    canvas.style.touchAction = 'none';
     canvas.addEventListener('touchstart', function (e) {
       if (!e.touches || !e.touches.length) return;
       if (api.enabled && !api.enabled()) return;
+      if (e.touches.length >= 2) {
+        pinchDist = touchDistance(e.touches);
+        if (api.onPinchStart) api.onPinchStart();
+        e.preventDefault();
+        return;
+      }
+      pinchDist = 0;
       if (api.onDown) api.onDown();
       lastX = e.touches[0].clientX;
       lastY = e.touches[0].clientY;
-    }, { passive: true });
+    }, { passive: false });
     canvas.addEventListener('touchmove', function (e) {
       if (!e.touches || !e.touches.length) return;
       if (api.enabled && !api.enabled()) return;
+      if (e.touches.length >= 2) {
+        var d = touchDistance(e.touches);
+        if (pinchDist > 0 && d > 0 && api.onPinch) api.onPinch(d / pinchDist);
+        pinchDist = d;
+        e.preventDefault();
+        return;
+      }
+      if (pinchDist > 0) {
+        /* Second finger lifted: continue as a drag from here, not from the
+           first finger's old position. */
+        pinchDist = 0;
+        lastX = e.touches[0].clientX;
+        lastY = e.touches[0].clientY;
+      }
       var dx = (e.touches[0].clientX - lastX) * 0.011;
       var dy = (e.touches[0].clientY - lastY) * 0.011;
       if (api.onDrag) api.onDrag(dx, dy);
@@ -646,7 +676,15 @@
       lastY = e.touches[0].clientY;
       e.preventDefault();
     }, { passive: false });
-    function endTouch() {
+    function endTouch(e) {
+      if (e && e.touches && e.touches.length >= 2) return;
+      if (e && e.touches && e.touches.length === 1) {
+        pinchDist = 0;
+        lastX = e.touches[0].clientX;
+        lastY = e.touches[0].clientY;
+        return;
+      }
+      pinchDist = 0;
       if (api.onUp) api.onUp();
     }
     canvas.addEventListener('touchend', endTouch);

@@ -94,15 +94,29 @@
       e.preventDefault();
     }, { passive:false });
   }
-  let lastTouchX=0,lastTouchY=0;
+  // One finger orbits, two fingers pinch to zoom; the canvas never scrolls the page.
+  let lastTouchX=0,lastTouchY=0,pinchDist=0;
+  const touchDist = (t) => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+  canvas.style.touchAction = 'none';
   canvas.addEventListener('touchstart', e => {
     if (staticMode) return;
+    if (e.touches.length >= 2) { pinchDist = touchDist(e.touches); isDragging=false; e.preventDefault(); return; }
+    pinchDist = 0;
     if (intro) intro.userToggle();
     isDragging=true; autoRotate=false; updateRotateBtn();
+    rotVelX = 0; rotVelY = 0;
     lastTouchX=e.touches[0].clientX; lastTouchY=e.touches[0].clientY;
-  });
+  }, { passive:false });
   canvas.addEventListener('touchmove', e => {
     if (staticMode) return;
+    if (e.touches.length >= 2) {
+      const d = touchDist(e.touches);
+      if (pinchDist > 0 && d > 0) camera.position.z = Math.max(3, Math.min(20, camera.position.z * (pinchDist / d)));
+      pinchDist = d;
+      e.preventDefault();
+      return;
+    }
+    if (pinchDist > 0) { pinchDist = 0; lastTouchX=e.touches[0].clientX; lastTouchY=e.touches[0].clientY; }
     isDragging=true;
     const dx = (e.touches[0].clientX - lastTouchX) * 0.011;
     const dy = (e.touches[0].clientY - lastTouchY) * 0.011;
@@ -112,7 +126,11 @@
     lastTouchX=e.touches[0].clientX; lastTouchY=e.touches[0].clientY;
     e.preventDefault();
   }, { passive:false });
-  function endAtomicTouch(){ isDragging=false; }
+  function endAtomicTouch(e){
+    if (e && e.touches && e.touches.length >= 2) return;
+    if (e && e.touches && e.touches.length === 1) { pinchDist = 0; lastTouchX=e.touches[0].clientX; lastTouchY=e.touches[0].clientY; return; }
+    pinchDist = 0; isDragging=false;
+  }
   canvas.addEventListener('touchend', endAtomicTouch);
   canvas.addEventListener('touchcancel', endAtomicTouch);
   window.addEventListener('touchend', endAtomicTouch);

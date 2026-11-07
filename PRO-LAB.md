@@ -37,6 +37,7 @@ Defined in `netlify/lib/plan-access.mjs`. All currently follow `isPro`, but they
 | `advancedMoleculeCompare` | Molecule compare API |
 | `advancedAtomicCompare` | Atomic compare API |
 | `savedLabSessions` | Session CRUD |
+| `visionIdentify` | `POST /api/vision/identify`, `POST /api/vision/feedback` (camera: photo → elements, learns from feedback) |
 
 Server authority is `requireFeature(...)`. Unsigned → `401 session_expired`. Free → `403 feature_locked`. Trial / paid / admin → allowed.
 

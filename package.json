@@ -28,7 +28,7 @@
     "test:content": "node tools/test-content-facts.mjs",
     "test:seo": "node tools/test-seo.mjs",
     "test:data": "node tools/test-element-data.mjs && node tools/test-element-props.mjs && node tools/test-atom-structure.mjs && node tools/test-element-appearance.mjs",
-    "test:pro-lab": "node tools/test-pro-lab.mjs",
+    "test:pro-lab": "node tools/test-pro-lab.mjs && node tools/test-vision.mjs",
     "test:solver": "node tools/test-solver.mjs && node tools/test-formula-parser.mjs",
     "test:calc": "node tools/test-calc-validation.mjs && node tools/test-sigfigs.mjs",
     "test:lab-access": "node tools/test-lab-access.mjs && node tools/test-viewer-perf.mjs",
@@ -70,10 +70,13 @@
     "android:apk": "node tools/android-release.mjs --apk-only",
     "android:aab": "node tools/android-release.mjs --aab-only",
     "android:icons": "python3 tools/android/make-android-icons.py",
-    "test:android": "node tools/test-android-web.mjs"
+    "test:android": "node tools/test-android-web.mjs",
+    "test:vision": "node tools/test-vision.mjs"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.6.0",
     "@capacitor/android": "^8.6.0",
+    "@capacitor/app": "^8.1.2",
     "@capacitor/core": "^8.6.0",
     "stripe": "^22.3.0"
   },
