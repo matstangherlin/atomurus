@@ -49,7 +49,8 @@
     advancedElementCompare: { access: 'pro', category: 'analyze' },
     advancedMoleculeCompare: { access: 'pro', category: 'analyze' },
     advancedAtomicCompare: { access: 'pro', category: 'analyze' },
-    savedLabSessions: { access: 'pro', category: 'analyze' }
+    savedLabSessions: { access: 'pro', category: 'analyze' },
+    visionIdentify: { access: 'pro', category: 'analyze' }
   };
 
   var LAB_TABS = {

@@ -16,7 +16,7 @@
 // The website itself is untouched: this only writes into dist/android-web.
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'dist/android-web');
@@ -29,9 +29,9 @@ const SKIP_DIRS = new Set([
 const SKIP_IN_ASSETS = new Set(['concepts']);
 const SKIP_FILES = new Set([
   'package.json', 'package-lock.json', 'netlify.toml', 'playwright.config.js', 'capacitor.config.json',
-  'robots.txt', 'sitemap.xml', 'ads.txt', 'manifest.json', '_redirects', '_headers',
+  'robots.txt', 'sitemap.xml', 'ads.txt', '_redirects', '_headers',
   'bump-version.js', 'bump-version.ps1', 'build-i18n.js', 'patch.js', 'sync-en-meta.js', 'migrate-element-seo.js',
-  'enrich-element-schema.js', 'ensure-elements-en.js', 'add-content-script.js', 'add-share-script.js',
+  'enrich-element-schema.js', 'add-content-script.js', 'add-share-script.js',
   'fix-adsense-head.js', 'fix-element-i18n.js', 'fix-mobile-scroll.js', 'lazy-ads.js', 'ads-gate.js', 'recaptcha.js'
 ]);
 const SKIP_JS_REWRITE = new Set();
@@ -104,7 +104,16 @@ function injectAppLayer(html, version) {
   return tag + html;
 }
 
-export function buildAndroidWeb({ quiet = false } = {}) {
+/* Server data the public features read through /api, answered locally by
+   android-app.js inside the app (offline, no account). */
+async function offlineApiData() {
+  const coords = await import(pathToFileURL(path.join(ROOT, 'netlify/lib/viewer-molecule-coords.mjs')).href);
+  const molecules = {};
+  for (const key of coords.VIEWER_MOLECULE_KEYS) molecules[key] = coords.viewerMoleculePayload(key);
+  return { molecules };
+}
+
+export async function buildAndroidWeb({ quiet = false } = {}) {
   rmSync(OUT, { recursive: true, force: true });
   mkdirSync(OUT, { recursive: true });
   const files = walk(ROOT, '', []);
@@ -145,6 +154,8 @@ export function buildAndroidWeb({ quiet = false } = {}) {
     .replace('/*__PAGES__*/{}', JSON.stringify(pages));
   writeFileSync(path.join(OUT, 'assets/android/android-app.js'), js);
   cpSync(path.join(ROOT, 'tools/android/android-app.css'), path.join(OUT, 'assets/android/android-app.css'));
+  const api = await offlineApiData();
+  writeFileSync(path.join(OUT, 'assets/android/molecules.json'), JSON.stringify(api.molecules));
   if (!existsSync(path.join(OUT, 'index.html'))) throw new Error('index.html missing from the Android bundle');
   const summary = { files: files.length + 2 + VENDOR.length, pages: Object.keys(pages).length, megabytes: +(bytes / 1048576).toFixed(1), adsStrippedFrom: stripped };
   writeFileSync(path.join(OUT, 'android-build.json'), JSON.stringify(summary, null, 2));
@@ -152,4 +163,4 @@ export function buildAndroidWeb({ quiet = false } = {}) {
   return summary;
 }
 
-if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) buildAndroidWeb();
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) await buildAndroidWeb();

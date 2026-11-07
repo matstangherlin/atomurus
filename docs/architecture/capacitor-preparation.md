@@ -15,7 +15,8 @@ instructions for building and uploading are in `ANDROID.md` at the repo root.
 | `webDir` | `dist/android-web` | Built by `tools/build-android-web.mjs` from the whole static site |
 | Remote WebView (`server.url`) | **Not used** | Pages ship inside the APK and open offline |
 | Insets | `SystemBars.insetsHandling = native` | The WebView is padded below the status bar; pages need no change |
-| Accounts, plans, payments | **Off in the app for now** | See "App layer" |
+| Accounts, plans, payments | **Off in the app for now** | See "App layer". Paid features (e.g. `/vision`) stay web-only until accounts + Google Play Billing ship in the app |
+| Back button | `@capacitor/app` `backButton` listener in android-app.js | Closes overlays → history.back() → minimizeApp() |
 | Ads / analytics | **Off in the app** | AdSense is not allowed in apps; tags are stripped from the APK copy |
 
 ## App layer

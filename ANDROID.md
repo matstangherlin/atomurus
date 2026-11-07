@@ -24,6 +24,11 @@ mesmo sem internet.
 - **Nada vem da internet:** as bibliotecas que o site baixa de CDNs (3D,
   gráficos, PDF) vão dentro do APK. O formulário de contato fica oculto; o
   e-mail continua na página.
+- **Botão voltar do Android:** fecha menu, diálogos e painéis abertos; depois
+  volta na história; na primeira tela devolve o app ao sistema
+  (`@capacitor/app`, tratado em `tools/android/android-app.js`).
+- **Toque nos 3D:** um dedo gira, dois dedos aproximam/afastam (pinça) em
+  moléculas, modelos atômicos, alótropos e isomeria; o canvas não rola a página.
 - O site continua igual: nada disso é carregado no navegador.
 
 - **Política de privacidade do app:** `app-privacy.pt.html` / `app-privacy.html`
@@ -93,4 +98,10 @@ Os arquivos ficam no artefato `atomurus-android` da execução.
 O Play também pede, antes de liberar: política de privacidade
 (`https://atomurus.com/app-privacy?lang=pt-BR`, a política específica do app; em inglês: `https://atomurus.com/app-privacy`), classificação de conteúdo, público-alvo,
 segurança dos dados (o app não coleta dados nem tem anúncios) e a ficha da loja.
-Ícone 512×512 e imagem de destaque 1024×500 prontos em `android/store/`.
+Ficha da loja pronta: textos em `android/store/listing-pt-BR.md` e
+`listing-en-US.md`. Para refazer capturas, recurso gráfico e ícone (saem em
+`release/android/store/`), sirva `dist/android-web` como o Capacitor e rode:
+
+```bash
+node tools/android/store-screens.cjs /tmp/raw && python3 tools/android/store-compose.py /tmp/raw release/android/store
+```

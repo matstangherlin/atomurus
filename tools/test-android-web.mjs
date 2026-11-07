@@ -23,7 +23,7 @@ const netlifyIgnore = readFileSync(path.join(ROOT, '.netlifyignore'), 'utf8');
 assert.match(netlifyIgnore, /^android\/$/m, 'the native project is never published with the site');
 
 // 2. Bundle: every page carries the app layer first, no ads anywhere.
-const summary = buildAndroidWeb({ quiet: true });
+const summary = await buildAndroidWeb({ quiet: true });
 assert.ok(summary.pages > 300, `expected the whole site, got ${summary.pages} pages`);
 function html(dir, out = []) {
   for (const name of readdirSync(dir)) {
@@ -59,6 +59,20 @@ for (const lib of ['three.min.js', 'chart.umd.js', 'chartjs-plugin-zoom.min.js',
 for (const gone of ['ads-gate.js', 'recaptcha.js', 'lazy-ads.js']) {
   assert.throws(() => statSync(path.join(OUT, gone)), `${gone} must not ship in the APK`);
 }
+// Every local script and stylesheet a page loads is in the bundle.
+const missing = new Set();
+for (const file of pages) {
+  const src = readFileSync(file, 'utf8');
+  const refs = [...src.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["']/gi), ...src.matchAll(/<link\b[^>]*rel=["'](?:stylesheet|manifest)["'][^>]*href=["']([^"']+)["']/gi)].map((m) => m[1]);
+  for (const ref of refs) {
+    if (/^(https?:)?\/\//i.test(ref) || ref.startsWith('data:')) continue;
+    // Resolve like the WebView does (extra ../ stop at the root).
+    const pathname = decodeURIComponent(new URL(ref, 'https://localhost/' + path.relative(OUT, file).split(path.sep).join('/')).pathname);
+    const abs = path.join(OUT, pathname);
+    try { statSync(abs); } catch (_e) { missing.add(`${path.relative(OUT, file)} → ${ref}`); }
+  }
+}
+assert.equal(missing.size, 0, `pages load files that are not in the APK:\n${[...missing].slice(0, 10).join('\n')}`);
 for (const forbidden of ['netlify', 'tools', 'docs', 'e2e', 'node_modules', 'supabase', 'android', 'package.json', 'netlify.toml', 'README.md']) {
   assert.throws(() => statSync(path.join(OUT, forbidden)), `${forbidden} must not ship in the APK`);
 }
@@ -107,11 +121,13 @@ assert.equal(JSON.parse(app.store.get('atomurus-cookie-consent-v2')).ads, false,
 const me = await app.fetch('/api/auth/me');
 assert.equal(me.status, 401, 'the API answers "signed out" without a network call');
 assert.deepEqual(await (await app.fetch('/assets/app/elements.json')).json(), { real: true }, 'other requests are untouched');
+const mols = JSON.parse(readFileSync(path.join(OUT, 'assets/android/molecules.json'), 'utf8'));
+assert.ok(Object.keys(mols).length >= 40 && Array.isArray(mols.water.atoms), 'molecule coordinates ship in the APK');
 
 // 4. The CSS hides every account, plan and save-to-account entry.
 const css = readFileSync(path.join(OUT, 'assets/android/android-app.css'), 'utf8');
 for (const sel of ['#cform', '.rm-signin', 'a[href^="/login"]', 'a[href^="/signup"]', 'a[href^="/pricing"]', '[data-atomurus-account]', '#aco-cookie-banner', '#atomurus-study-save', '.rm-home-plans']) {
-  assert.ok(css.includes(`html.is-native-app ${sel}`), `android-app.css hides ${sel}`);
+  assert.ok(css.includes(`html.is-native-app:not(#_a):not(#_b) ${sel}`), `android-app.css hides ${sel}`);
 }
 
 console.log(`android app tests passed (${summary.pages} pages, ${summary.megabytes} MB)`);

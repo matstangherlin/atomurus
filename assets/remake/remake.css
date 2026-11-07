@@ -1547,6 +1547,26 @@ html[data-rm] body.rm.rm .viewer .vc-btn { color: #F2EFE7 !important; border-rad
 html[data-rm] body.rm.rm .viewer .vc-btn:hover { background: #2E2A22 !important; }
 html[data-rm] body.rm.rm .viewer .vc-btn.active { background: #F2EFE7 !important; color: #14120E !important; }
 html[data-rm] body.rm.rm .viewer .vc-sep { background: #3D372C !important; }
+/* Phones: the mode switch (3D/2D, Ball/Space/Stick) and the view controls
+   both sit at the top of the stage. Side by side they overlapped and hid
+   each other's buttons, so on narrow screens they stack in two rows and
+   scroll sideways if a row is still too wide. */
+@media (max-width: 760px) {
+  html[data-rm] body.rm.rm .viewer .canvas-wrap > .viewer-mode-toggle,
+  html[data-rm] body.rm.rm .viewer .canvas-wrap > .viewer-controls {
+    max-width: calc(100% - 20px) !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  html[data-rm] body.rm.rm .viewer .canvas-wrap > .viewer-mode-toggle::-webkit-scrollbar,
+  html[data-rm] body.rm.rm .viewer .canvas-wrap > .viewer-controls::-webkit-scrollbar { display: none; }
+  html[data-rm] body.rm.rm .viewer .canvas-wrap > .viewer-mode-toggle { top: 10px !important; left: 10px !important; right: auto !important; }
+  html[data-rm] body.rm.rm .viewer .canvas-wrap > .viewer-controls { top: 10px !important; left: auto !important; right: 10px !important; }
+  html[data-rm] body.rm.rm .viewer .canvas-wrap:has(> .viewer-mode-toggle) > .viewer-controls { top: 64px !important; left: 10px !important; right: auto !important; }
+  html[data-rm] body.rm.rm .viewer .canvas-wrap > .viewer-mode-toggle .vc-btn,
+  html[data-rm] body.rm.rm .viewer .canvas-wrap > .viewer-controls .vc-btn { flex: 0 0 auto; }
+}
 /* info column */
 html[data-rm] body.rm.rm .viewer .info-name { margin: 0 0 8px !important; font: 700 28px/1.15 var(--rm-font) !important; letter-spacing: -0.02em !important; color: var(--rm-ink) !important; text-transform: none !important; }
 html[data-rm] body.rm.rm .viewer .info-desc { margin: 0 0 16px !important; font: 400 16px/1.55 var(--rm-font) !important; color: var(--rm-ink-2) !important; }
@@ -1596,6 +1616,11 @@ html[data-rm] body.rm.rm .sub-tabs { border-radius: 14px !important; background:
 html[data-rm] body.rm.rm .iso-group-btn.active,
 html[data-rm] body.rm.rm .sub-tab.active { border-radius: 10px !important; background: var(--rm-green-soft) !important; border-color: transparent !important; color: var(--rm-green) !important; }
 html[data-rm] body.rm.rm .iso-group-btn, html[data-rm] body.rm.rm .sub-tab { font-family: var(--rm-font) !important; }
+/* public-shell.css pins these buttons at height:44px; on phones the label
+   ("Isomeria Constitucional" + its subtitle) wraps to 3–4 lines and spilled
+   out of the highlighted pill. Grow with the text, keep the 44px minimum. */
+html[data-rm] body.rm.rm .iso-group-toggle { align-items: stretch !important; }
+html[data-rm] body.rm.rm .iso-group-btn { height: auto !important; min-height: 44px !important; padding-top: 8px !important; padding-bottom: 8px !important; }
 html[data-rm] body.rm.rm .sub-tab .sub-num { display: none !important; }
 html[data-rm] body.rm.rm .iso-lab,
 html[data-rm] body.rm.rm .mol-card,

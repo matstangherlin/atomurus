@@ -84,7 +84,10 @@ return (function(){
         rotVelY = dx * 0.6 + rotVelY * 0.4;
         rotVelX = dy * 0.6 + rotVelX * 0.4;
       },
-      onUp: function () { isDragging=false; }
+      onUp: function () { isDragging=false; },
+      onPinch: function (ratio) {
+        camera.position.z = Math.max(2.8, Math.min(20, camera.position.z / ratio));
+      }
     });
   }
 

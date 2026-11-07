@@ -59,7 +59,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     console.warn('⚠ No upload key (android/keystore.properties or ATOMURUS_KEYSTORE_FILE): the release will be UNSIGNED and Google Play will reject it.');
   }
 
-  buildAndroidWeb();
+  await buildAndroidWeb();
   run('npx', ['cap', 'sync', 'android'], ROOT);
 
   const gradlew = process.platform === 'win32' ? 'gradlew.bat' : './gradlew';

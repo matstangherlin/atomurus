@@ -227,6 +227,24 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://atomurus.com/app-terms"/>
   </url>
   <url>
+    <loc>https://atomurus.com/vision</loc>
+    <lastmod>2026-11-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atomurus.com/vision?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://atomurus.com/vision?lang=pt-BR"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atomurus.com/vision"/>
+  </url>
+  <url>
+    <loc>https://atomurus.com/vision?lang=pt-BR</loc>
+    <lastmod>2026-11-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://atomurus.com/vision?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://atomurus.com/vision?lang=pt-BR"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://atomurus.com/vision"/>
+  </url>
+  <url>
     <loc>https://atomurus.com/privacy?lang=pt-BR</loc>
     <lastmod>2026-11-05</lastmod>
     <changefreq>monthly</changefreq>
