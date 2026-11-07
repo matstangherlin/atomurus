@@ -127,7 +127,7 @@ const dryCopper = mix(0, { cusulfate: 8 });
 assert.equal(dryCopper.appearance, 'white powder');
 const wetCopper = mix(40, { cusulfate: 8 });
 assert.equal(wetCopper.appearance, 'blue solution');
-assert.match(wetCopper.color, /63,\s*140,\s*218|3F8CDA/i);
+assert.equal(wetCopper.color, lab.SUBSTANCES.cusulfate.solutionColor, 'dissolved copper paints the whole solution');
 
 assert.equal(lab.SUBSTANCES.fibre.category, 'biomass');
 assert.equal(lab.passesFilter(lab.SUBSTANCES.fibre), false);

@@ -164,7 +164,7 @@
       if (!shouldLocalizeHref(raw, url)) return;
       url.searchParams.set('lang', langParam);
       const next = location.protocol === 'file:' ? url.href : url.pathname + url.search + url.hash;
-      a.setAttribute('href', next);
+      if (raw !== next) a.setAttribute('href', next);
     });
   }
 
@@ -454,7 +454,8 @@
     root.querySelectorAll('[data-i18n-attr]').forEach(function (el) {
       applyAttrSpec(el, el.getAttribute('data-i18n-attr'));
     });
-    document.documentElement.lang = HTML_LANG[I18N.lang] || I18N.lang;
+    const htmlLang = HTML_LANG[I18N.lang] || I18N.lang;
+    if (document.documentElement.lang !== htmlLang) document.documentElement.lang = htmlLang;
     localizeLinks(root);
     if (root === document) syncAuthNav();
   }

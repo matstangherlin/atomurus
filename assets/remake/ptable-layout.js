@@ -261,18 +261,20 @@
       if (r && r <= 7 && !rows[r]) rows[r] = card;
     });
     var html = '';
+    var tableRect = table.getBoundingClientRect();
+    var top = tableRect.top - base.top;
+    var left = tableRect.left - base.left - 30;
     for (var c = 1; c <= 18; c++) {
       if (!cols[c]) continue;
       var a = cols[c].getBoundingClientRect();
-      var top = table.getBoundingClientRect().top - base.top;
       html += '<span class="rm-pt-g" style="left:' + (a.left - base.left) + 'px;width:' + a.width + 'px;top:' + (top - 24) + 'px">' + c + '</span>';
     }
     for (var r = 1; r <= 7; r++) {
       if (!rows[r]) continue;
       var b = rows[r].getBoundingClientRect();
-      html += '<span class="rm-pt-p" style="top:' + (b.top - base.top) + 'px;height:' + b.height + 'px;left:' + (table.getBoundingClientRect().left - base.left - 30) + 'px">' + r + '</span>';
+      html += '<span class="rm-pt-p" style="top:' + (b.top - base.top) + 'px;height:' + b.height + 'px;left:' + left + 'px">' + r + '</span>';
     }
-    axes.innerHTML = html;
+    if (axes.innerHTML !== html) axes.innerHTML = html;
   }
 
   /* 4 · full f-block row labels */
@@ -305,11 +307,13 @@
 
   sync();
   if (current() !== 'category' && typeof window.applyHeatmap === 'function' && table.querySelector('.el[data-z]')) window.applyHeatmap(current());
-  placeAxes();
   var raf = 0;
   function schedule() { cancelAnimationFrame(raf); raf = requestAnimationFrame(placeAxes); }
-  if (window.ResizeObserver) new ResizeObserver(schedule).observe(table);
-  else window.addEventListener('resize', schedule);
+  /* ResizeObserver callbacks run after layout, so measuring there is free:
+     the first placement no longer forces a full style+layout pass right after
+     buildTable() (≈60 ms at 4× CPU), and resizes are measured once per frame. */
+  if (window.ResizeObserver) new ResizeObserver(function () { cancelAnimationFrame(raf); raf = 0; placeAxes(); }).observe(table);
+  else { placeAxes(); window.addEventListener('resize', schedule); }
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
   if (window.I18N && typeof window.I18N.onChange === 'function') window.I18N.onChange(function () {
     if (current() !== 'category' && typeof window.applyHeatmap === 'function') window.applyHeatmap(current());

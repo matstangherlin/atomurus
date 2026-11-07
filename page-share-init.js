@@ -144,8 +144,12 @@
 
   function loadStudyCloud() {
     if (window.__atomurusStudyBoot) return;
+    // Pages that ship their own deferred <script src="study-boot.js"> (calculators,
+    // viewers) have not run it yet when this deferred script executes; do not
+    // fetch and parse it a second time.
+    if (document.querySelector('script[src*="study-boot.js"]')) return;
     var script = document.createElement('script');
-    script.src = '/study-boot.js?v=202611061456';
+    script.src = '/study-boot.js?v=202611070033';
     script.defer = true;
     document.head.appendChild(script);
   }

@@ -4134,3 +4134,51 @@ body[data-pt-tab="heatmap"] #legend { display: flex !important; }
   border-color: var(--accent);
   color: #fff;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   REAL COLOUR VIEW ("Cor real") — tiles take the element's own colour.
+   Painted inline by periodic-table.js applyHeatmap('appearance'); data in
+   assets/chem/element-appearance.js. Unknown colours are hatched.
+   ═══════════════════════════════════════════════════════════════════ */
+.el[data-appearance="unknown"] { outline: 1.5px dashed rgba(0,0,0,.45); outline-offset: -3px; }
+html[data-rm] body.rm.rm .ptable .el[data-appearance] { border-color: rgba(20,18,14,.18) !important; }
+html[data-rm] body.rm.rm .ptable .el[data-appearance="unknown"] { border-color: rgba(20,18,14,.35) !important; }
+html[data-rm] body.rm.rm .ptable .el[data-appearance] .el-z,
+html[data-rm] body.rm.rm .ptable .el[data-appearance] .el-name { opacity: .85; }
+
+.hm-appearance-legend {
+  display: flex; flex-direction: column; gap: 8px;
+  margin: 24px 0 0; padding: 18px 0 0;
+  border-top: 1px solid var(--rm-line, var(--border));
+}
+.hm-appearance-legend[hidden] { display: none; }
+#heatmap-legend .hm-appearance-legend { margin: 0; padding: 0; border: 0; }
+.hm-appearance-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+.hm-appearance-item {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 600; color: var(--rm-ink-2, var(--text-2));
+}
+.hm-appearance-swatch {
+  width: 14px; height: 14px; border-radius: 4px; display: inline-block;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.18);
+}
+.hm-appearance-swatch[data-kind="unknown"] {
+  background-image: repeating-linear-gradient(135deg, rgba(0,0,0,.16) 0 3px, transparent 3px 8px);
+  outline: 1.5px dashed rgba(0,0,0,.45); outline-offset: -2px;
+}
+.hm-appearance-note { margin: 0; font-size: 12.5px; line-height: 1.45; color: var(--rm-ink-3, var(--text-3)); }
+#heatmap-legend .hm-appearance-note { font-size: 11px; }
+[data-theme="dark"] .hm-appearance-swatch { box-shadow: inset 0 0 0 1px rgba(255,255,255,.22); }
+
+/* Element page data card: appearance swatch + description */
+.rm-swatch {
+  display: inline-block; width: 14px; height: 14px; border-radius: 4px;
+  vertical-align: -2px; margin-right: 7px; flex: none;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.18);
+}
+.rm-swatch[data-known="false"] {
+  background-image: repeating-linear-gradient(135deg, rgba(0,0,0,.16) 0 3px, transparent 3px 8px);
+  outline: 1.5px dashed rgba(0,0,0,.45); outline-offset: -2px;
+}
+[data-theme="dark"] .rm-swatch { box-shadow: inset 0 0 0 1px rgba(255,255,255,.22); }
+.rm-el-facts dd.rm-appearance { font-weight: 500; font-size: 14px; line-height: 1.35; }

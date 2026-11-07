@@ -69,5 +69,5 @@ test('ready saline is 0.9% and dissolved copper sulfate is blue', async ({ page 
   }
   await page.locator('[data-ready="cu_ready"]').click();
   await expect(page.locator('.lab-kv').filter({ hasText: 'Appearance' })).toContainText('blue solution');
-  await expect(page.locator('.lab-beaker .lab-liquid')).toHaveAttribute('fill', '#3F8CDA');
+  await expect(page.locator('.lab-beaker .lab-liquid')).toHaveAttribute('fill', '#2F7FD6');
 });

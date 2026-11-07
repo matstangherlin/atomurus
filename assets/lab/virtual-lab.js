@@ -134,37 +134,53 @@
     }
   }
 
+  /* Colours are the real appearance of each material at the bench: colourless
+     liquids carry `clear: true` and a faint tint so the liquid still reads in
+     the glass; `solutionColor` is what the dissolved substance looks like. */
   var SUBSTANCES = {
-    water: { id: 'water', name: 'Water', formula: 'H₂O', category: 'solvent', color: '#7EB6D9', state: 'liquid', ph: 7, bp: 100, allowed: true, chem: { kind: 'solvent' } },
-    nacl: { id: 'nacl', name: 'Sodium chloride', formula: 'NaCl', category: 'salt', color: '#F4F1E4', state: 'solid', allowed: true, chem: { kind: 'neutral', molarMass: 58.44 } },
-    sucrose: { id: 'sucrose', name: 'Sucrose', formula: 'C₁₂H₂₂O₁₁', category: 'sugar', color: '#F7E7C6', state: 'solid', allowed: true, chem: { kind: 'neutral', molarMass: 342.30 } },
-    citric_acid: { id: 'citric_acid', name: 'Citric acid', formula: 'C₆H₈O₇', category: 'acid', color: '#F3E27A', state: 'solid', ph: 2.2, allowed: true, chem: { kind: 'weak-acid', molarMass: 192.12, pKa: [3.13, 4.76, 6.40], nH: 3 } },
-    bicarbonate: { id: 'bicarbonate', name: 'Sodium bicarbonate', formula: 'NaHCO₃', category: 'base', color: '#EEEAE0', state: 'solid', ph: 8.3, allowed: true, chem: { kind: 'bicarbonate', molarMass: 84.007, pKa: [6.35, 10.33] } },
-    indicator: { id: 'indicator', name: 'Virtual pH indicator', formula: 'In', category: 'indicator', color: '#D9A7C7', state: 'liquid', allowed: true },
+    water: { id: 'water', name: 'Water', namePt: 'Água', formula: 'H₂O', category: 'solvent', color: '#DCE9F0', clear: true, state: 'liquid', ph: 7, bp: 100, allowed: true, chem: { kind: 'solvent' } },
+    nacl: { id: 'nacl', name: 'Sodium chloride', namePt: 'Cloreto de sódio', formula: 'NaCl', category: 'salt', color: '#F7F5EE', solutionColor: '#DCE9F0', state: 'solid', allowed: true, chem: { kind: 'neutral', molarMass: 58.44 } },
+    sucrose: { id: 'sucrose', name: 'Sucrose', namePt: 'Sacarose', formula: 'C₁₂H₂₂O₁₁', category: 'sugar', color: '#F8F4EA', solutionColor: '#E6E9E4', state: 'solid', allowed: true, chem: { kind: 'neutral', molarMass: 342.30 } },
+    citric_acid: { id: 'citric_acid', name: 'Citric acid', namePt: 'Ácido cítrico', formula: 'C₆H₈O₇', category: 'acid', color: '#F6F3EC', solutionColor: '#E4EAE8', state: 'solid', ph: 2.2, allowed: true, chem: { kind: 'weak-acid', molarMass: 192.12, pKa: [3.13, 4.76, 6.40], nH: 3 } },
+    bicarbonate: { id: 'bicarbonate', name: 'Sodium bicarbonate', namePt: 'Bicarbonato de sódio', formula: 'NaHCO₃', category: 'base', color: '#F4F2EC', solutionColor: '#E2E8E8', state: 'solid', ph: 8.3, allowed: true, chem: { kind: 'bicarbonate', molarMass: 84.007, pKa: [6.35, 10.33] } },
+    indicator: { id: 'indicator', name: 'Virtual pH indicator', namePt: 'Indicador de pH virtual', formula: 'In', category: 'indicator', color: '#7EBF7A', state: 'liquid', allowed: true },
     /* Anhydrous CuSO₄ is white. The blue colour is the hexaaqua ion once it dissolves.
        TODO química: no pKa for Cu²⁺ hydrolysis is cited here, so the salt stays neutral. */
-    cusulfate: { id: 'cusulfate', name: 'Copper sulfate', formula: 'CuSO₄', category: 'salt', color: '#D9DCE0', solutionColor: '#3F8CDA', state: 'solid', allowed: true, chem: { kind: 'neutral', molarMass: 159.61 } },
-    fe: { id: 'fe', name: 'Iron', formula: 'Fe', category: 'element', color: '#8A8680', state: 'solid', allowed: true },
-    cu: { id: 'cu', name: 'Copper', formula: 'Cu', category: 'element', color: '#C47A4A', state: 'solid', allowed: true },
-    zn: { id: 'zn', name: 'Zinc', formula: 'Zn', category: 'element', color: '#C5CBD1', state: 'solid', allowed: true },
-    s: { id: 's', name: 'Sulfur', formula: 'S', category: 'element', color: '#E3C95A', state: 'solid', allowed: true },
-    c: { id: 'c', name: 'Carbon', formula: 'C', category: 'element', color: '#3A3732', state: 'solid', allowed: true },
-    limonene: { id: 'limonene', name: 'Limonene', formula: 'C₁₀H₁₆', category: 'fragrance', color: '#E8C15A', family: 'citrus', note: 'top', allowed: true },
-    linalool: { id: 'linalool', name: 'Linalool', formula: 'C₁₀H₁₈O', category: 'fragrance', color: '#C9D48A', family: 'floral', note: 'heart', allowed: true },
-    vanillin: { id: 'vanillin', name: 'Vanillin', formula: 'C₈H₈O₃', category: 'fragrance', color: '#E6C39A', family: 'gourmand', note: 'base', allowed: true },
-    carbon: { id: 'carbon', name: 'Carbon (graphite)', formula: 'C', category: 'allotrope', color: '#3A3732', state: 'solid', allowed: true, inventory: false },
-    zno: { id: 'zno', name: 'Zinc oxide', formula: 'ZnO', category: 'mineral', color: '#F4F1EA', state: 'solid', allowed: true },
-    tio2: { id: 'tio2', name: 'Titanium dioxide', formula: 'TiO₂', category: 'mineral', color: '#E8EEF2', state: 'solid', allowed: true },
-    oil: { id: 'oil', name: 'Virtual carrier oil', formula: 'oil', category: 'solvent', color: '#E6D5A2', state: 'liquid', bp: 300, allowed: true },
-    ethanol: { id: 'ethanol', name: 'Ethanol', formula: 'C₂H₅OH', category: 'solvent', color: '#E8E2CE', state: 'liquid', bp: 78, allowed: true },
-    frac_light: { id: 'frac_light', name: 'Virtual light fraction', formula: 'C₅–C₈', category: 'fraction', color: '#F2E3B0', state: 'liquid', bp: 65, allowed: true },
-    frac_mid: { id: 'frac_mid', name: 'Virtual mid fraction', formula: 'C₉–C₁₆', category: 'fraction', color: '#DCC07C', state: 'liquid', bp: 175, allowed: true },
-    frac_heavy: { id: 'frac_heavy', name: 'Virtual heavy fraction', formula: 'C₁₇+', category: 'fraction', color: '#A88B4E', state: 'liquid', bp: 330, allowed: true },
-    yeast: { id: 'yeast', name: 'Virtual yeast', formula: 'S. cerevisiae', category: 'culture', color: '#D8C79A', state: 'solid', allowed: true },
-    cane_juice: { id: 'cane_juice', name: 'Virtual cane juice', formula: 'sucrose + water', category: 'solution', color: '#C9B074', state: 'liquid', bp: 100, allowed: true },
+    cusulfate: { id: 'cusulfate', name: 'Copper sulfate', namePt: 'Sulfato de cobre', formula: 'CuSO₄', category: 'salt', color: '#E9EBEC', solutionColor: '#2F7FD6', state: 'solid', allowed: true, chem: { kind: 'neutral', molarMass: 159.61 } },
+    fe: { id: 'fe', name: 'Iron', namePt: 'Ferro', formula: 'Fe', category: 'element', color: '#6F6C68', state: 'solid', allowed: true },
+    cu: { id: 'cu', name: 'Copper', namePt: 'Cobre', formula: 'Cu', category: 'element', color: '#B87333', state: 'solid', allowed: true },
+    zn: { id: 'zn', name: 'Zinc', namePt: 'Zinco', formula: 'Zn', category: 'element', color: '#AEB4BA', state: 'solid', allowed: true },
+    s: { id: 's', name: 'Sulfur', namePt: 'Enxofre', formula: 'S', category: 'element', color: '#F2D338', state: 'solid', allowed: true },
+    c: { id: 'c', name: 'Carbon', namePt: 'Carbono', formula: 'C', category: 'element', color: '#2B2A28', state: 'solid', allowed: true },
+    limonene: { id: 'limonene', name: 'Limonene', namePt: 'Limoneno', formula: 'C₁₀H₁₆', category: 'fragrance', color: '#F1EBD2', clear: true, family: 'citrus', note: 'top', allowed: true },
+    linalool: { id: 'linalool', name: 'Linalool', namePt: 'Linalol', formula: 'C₁₀H₁₈O', category: 'fragrance', color: '#ECEEE6', clear: true, family: 'floral', note: 'heart', allowed: true },
+    vanillin: { id: 'vanillin', name: 'Vanillin', namePt: 'Vanilina', formula: 'C₈H₈O₃', category: 'fragrance', color: '#F3EADB', family: 'gourmand', note: 'base', allowed: true },
+    carbon: { id: 'carbon', name: 'Carbon (graphite)', namePt: 'Carbono (grafite)', formula: 'C', category: 'allotrope', color: '#2B2A28', state: 'solid', allowed: true, inventory: false },
+    zno: { id: 'zno', name: 'Zinc oxide', namePt: 'Óxido de zinco', formula: 'ZnO', category: 'mineral', color: '#F6F4EE', state: 'solid', allowed: true },
+    tio2: { id: 'tio2', name: 'Titanium dioxide', namePt: 'Dióxido de titânio', formula: 'TiO₂', category: 'mineral', color: '#F8F8F6', state: 'solid', allowed: true },
+    oil: { id: 'oil', name: 'Virtual carrier oil', namePt: 'Óleo carreador virtual', formula: 'oil', category: 'solvent', color: '#EBDCA0', state: 'liquid', bp: 300, allowed: true },
+    ethanol: { id: 'ethanol', name: 'Ethanol', namePt: 'Etanol', formula: 'C₂H₅OH', category: 'solvent', color: '#E6ECEE', clear: true, state: 'liquid', bp: 78, allowed: true },
+    frac_light: { id: 'frac_light', name: 'Virtual light fraction', namePt: 'Fração leve virtual', formula: 'C₅–C₈', category: 'fraction', color: '#F0E6B8', state: 'liquid', bp: 65, allowed: true },
+    frac_mid: { id: 'frac_mid', name: 'Virtual mid fraction', namePt: 'Fração média virtual', formula: 'C₉–C₁₆', category: 'fraction', color: '#D9B55A', state: 'liquid', bp: 175, allowed: true },
+    frac_heavy: { id: 'frac_heavy', name: 'Virtual heavy fraction', namePt: 'Fração pesada virtual', formula: 'C₁₇+', category: 'fraction', color: '#5A4426', state: 'liquid', bp: 330, allowed: true },
+    yeast: { id: 'yeast', name: 'Virtual yeast', namePt: 'Levedura virtual', formula: 'S. cerevisiae', category: 'culture', color: '#D8C79A', state: 'solid', allowed: true },
+    cane_juice: { id: 'cane_juice', name: 'Virtual cane juice', namePt: 'Caldo de cana virtual', formula: 'sucrose + water', category: 'solution', color: '#A9A86A', state: 'liquid', bp: 100, allowed: true },
     /* Cellulose is not a mineral. sugar would pass the filter; no other category fits. */
-    fibre: { id: 'fibre', name: 'Virtual plant fibre', formula: 'cellulose', category: 'biomass', color: '#9A8B63', state: 'solid', allowed: true }
+    fibre: { id: 'fibre', name: 'Virtual plant fibre', namePt: 'Fibra vegetal virtual', formula: 'cellulose', category: 'biomass', color: '#C8B583', state: 'solid', allowed: true }
   };
+
+  /* The little colour dot next to a material. Colourless liquids get a hollow
+     dot so "água" does not look like a blue dye. */
+  function swatchHtml(spec) {
+    if (!spec) return '<i class="lab-chip-swatch" style="background:#ccc"></i>';
+    var color = safeColor(spec.color);
+    return '<i class="lab-chip-swatch' + (spec.clear ? ' is-clear' : '') + '" style="background:' + color + '"></i>';
+  }
+
+  function substanceName(spec, lang) {
+    if (!spec) return '';
+    return lang === 'pt' ? (spec.namePt || spec.name) : (spec.name || spec.namePt || spec.id);
+  }
 
   function eq(id, category, en, pt, o) {
     o = o || {};
@@ -1611,19 +1627,25 @@
     return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
   }
 
+  /* Universal-indicator scale: red in strong acid, through yellow and green,
+     to blue and violet in strong base. */
+  function indicatorColor(ph) {
+    if (ph < 3) return '#D7263D';
+    if (ph < 5) return '#E8792B';
+    if (ph < 6.5) return '#E6C229';
+    if (ph < 7.5) return '#4CAF50';
+    if (ph < 9) return '#2E86DE';
+    if (ph < 11) return '#3F51B5';
+    return '#6A2C91';
+  }
+
   function mixColor(container) {
     var contents = container.contents || [];
     if (!contents.length) return 'transparent';
+    var wet = (Number(container.volumeMl) || 0) > 0;
     var hasIndicator = contents.some(function (row) { return row.id === 'indicator'; });
-    if (hasIndicator && container.ph != null) {
-      var ph = Number(container.ph);
-      if (ph < 4) return '#E06B6B';
-      if (ph < 6) return '#E6A15A';
-      if (ph < 8) return '#7EBF7A';
-      if (ph < 10) return '#5B8FD9';
-      return '#8A6BBF';
-    }
-    var dissolvedCopper = (Number(container.volumeMl) || 0) > 0 && contents.some(function (row) {
+    if (hasIndicator && wet && container.ph != null) return indicatorColor(Number(container.ph));
+    var dissolvedCopper = wet && contents.some(function (row) {
       return row.id === 'cusulfate' && (Number(row.amount) || 0) > 0;
     });
     if (dissolvedCopper && SUBSTANCES.cusulfate && SUBSTANCES.cusulfate.solutionColor) {
@@ -1638,7 +1660,13 @@
       if (!spec) return;
       var amt = Number(row.amount) || 1;
       var swatch = spec.color;
-      if (spec.id === 'cusulfate' && (Number(container.volumeMl) || 0) > 0 && spec.solutionColor) swatch = spec.solutionColor;
+      /* A dissolved solid takes the colour of its solution; an insoluble solid
+         (metal filings, minerals) only tints the liquid a little, the way a
+         suspension does, instead of painting the whole beaker. */
+      if (wet && spec.state === 'solid') {
+        if (spec.solutionColor) swatch = spec.solutionColor;
+        else amt = amt * 0.25;
+      }
       var rgb = hexRgb(swatch);
       r += rgb.r * amt;
       g += rgb.g * amt;
@@ -2024,7 +2052,7 @@
     observe(session, line(
       session,
       'Added virtual ' + spec.name + ' (' + spec.formula + ') to ' + (container.label || container.id) + '.',
-      'Adicionou ' + spec.name + ' (' + spec.formula + ') virtual em ' + (container.label || container.id) + '.'
+      'Adicionou ' + substanceName(spec, 'pt') + ' (' + spec.formula + ') virtual em ' + (container.label || container.id) + '.'
     ));
     noteProduct(session, container, beforeProduct);
     var fired = noteReaction(session, container, beforeReaction);
@@ -2052,7 +2080,7 @@
     observe(session, line(
       session,
       'Removed ' + spec.name + ' from ' + (container.label || containerId) + '.',
-      'Removeu ' + spec.name + ' de ' + (container.label || containerId) + '.'
+      'Removeu ' + substanceName(spec, 'pt') + ' de ' + (container.label || containerId) + '.'
     ));
     noteProduct(session, container, beforeProduct);
     noteReaction(session, container, beforeReaction);
@@ -2806,7 +2834,7 @@
     observe(session, line(
       session,
       'Distilled ' + move + ' mL of ' + lightSpec.name + ' at ' + Math.round(needed) + ' °C into ' + (rig.receiver.label || rig.receiver.id) + ' (virtual, ' + purity + '%).',
-      'Destilou ' + move + ' mL de ' + lightSpec.name + ' a ' + Math.round(needed) + ' °C para ' + (rig.receiver.label || rig.receiver.id) + ' (virtual, ' + purity + '%).'
+      'Destilou ' + move + ' mL de ' + substanceName(lightSpec, 'pt') + ' a ' + Math.round(needed) + ' °C para ' + (rig.receiver.label || rig.receiver.id) + ' (virtual, ' + purity + '%).'
     ));
     if (carry > 0) {
       observe(session, line(
@@ -2984,6 +3012,7 @@
     return {
       id: id,
       name: spec.name,
+      namePt: spec.namePt,
       formula: spec.formula,
       color: spec.color,
       amount: amount,
@@ -3029,12 +3058,14 @@
     }
     var names = equipment.map(function (row) { return row.labelEn; })
       .concat(materials.concat(options).map(function (row) { return row.name; }));
+    var namesPt = equipment.map(function (row) { return row.labelPt || row.labelEn; })
+      .concat(materials.concat(options).map(function (row) { return row.namePt || row.name; }));
     var hints = [
       step.why
         ? { en: step.why.en || step.why.pt, pt: step.why.pt || step.why.en }
         : { en: verb.en + ' to move this step forward.', pt: verb.pt + ' para avançar neste passo.' },
       names.length
-        ? { en: 'You need: ' + names.join(', ') + '.', pt: 'Você precisa de: ' + names.join(', ') + '.' }
+        ? { en: 'You need: ' + names.join(', ') + '.', pt: 'Você precisa de: ' + namesPt.join(', ') + '.' }
         : { en: 'Use the board actions under the canvas.', pt: 'Use as ações da bancada abaixo do canvas.' },
       {
         en: equipment.length || materials.length || options.length
@@ -3092,13 +3123,273 @@
         items.push({ type: 'substance', row: spec });
       }
     });
-    if (!items.length && q) return { status: 'unknown', items: [], message: 'This material is not available in the current Lab catalog.' };
-    return { status: 'ok', items: items, resolved: resolved };
+    var smart = suggest(raw);
+    if (!resolved.ok && smart.best) {
+      var bk = smart.best.kind === 'recipe' ? 'substance' : smart.best.kind;
+      resolved = { ok: true, kind: bk, id: smart.best.kind === 'recipe' ? smart.best.recipe.solute : smart.best.id };
+    }
+    if (!items.length && q && smart.status !== 'ok') return { status: 'unknown', items: [], message: 'This material is not available in the current Lab catalog.' };
+    return { status: 'ok', items: items, resolved: resolved, suggestions: smart.items, best: smart.best, amounts: smart.amounts };
+  }
+
+  /* ── Smart search ──────────────────────────────────────────────────
+     "solução de NaCl 0,5 mol/L em 100 mL", "40 mL de água", "bureta",
+     "destilação": one box understands materials, glassware, ready mixes and
+     guided experiments, in PT or EN, with the amount written in the phrase.
+     Nothing is invented: every hit maps to a catalog entry. */
+  var FILLER = {
+    de: 1, da: 1, do: 1, das: 1, dos: 1, em: 1, no: 1, na: 1, com: 1, um: 1, uma: 1, o: 1, a: 1, os: 1, as: 1,
+    e: 1, para: 1, pra: 1, of: 1, in: 1, the: 1, an: 1, with: 1, and: 1, to: 1, into: 1, some: 1,
+    preparar: 1, prepare: 1, fazer: 1, make: 1, criar: 1, create: 1, adicionar: 1, adicione: 1, add: 1,
+    colocar: 1, coloque: 1, put: 1, quero: 1, want: 1, montar: 1, build: 1, virtual: 1, please: 1, favor: 1
+  };
+  var SOLUTION_WORDS = { solucao: 1, solution: 1, solucoes: 1, solutions: 1 };
+  var EQUIPMENT_ALIASES = {
+    bequer: 'beaker', copo: 'beaker', 'copo de bequer': 'beaker', erlenmeyer: 'flask', proveta: 'cylinder',
+    'balao volumetrico': 'volumetric-flask', 'balao de fundo redondo': 'round-flask', balao: 'round-flask',
+    'tubo de ensaio': 'test-tube', tubo: 'test-tube', 'vidro de relogio': 'watch-glass',
+    pipeta: 'pipette-graduated', 'conta-gotas': 'dropper', 'conta gotas': 'dropper', bureta: 'burette',
+    funil: 'funnel', 'funil de decantacao': 'separatory-funnel', 'funil de separacao': 'separatory-funnel',
+    almofariz: 'mortar', pistilo: 'pestle', espatula: 'spatula', 'bico de bunsen': 'bunsen', bunsen: 'bunsen',
+    'chapa aquecedora': 'hot-plate', chapa: 'hot-plate', manta: 'heating-mantle', tripe: 'tripod',
+    'suporte universal': 'retort-stand', suporte: 'retort-stand', garra: 'clamp', anel: 'ring',
+    termometro: 'thermometer', phmetro: 'ph-meter', 'medidor de ph': 'ph-meter', 'ph metro': 'ph-meter',
+    balanca: 'balance', condensador: 'condenser', 'balao coletor': 'receiving-flask', seringa: 'piston',
+    'seringa de gas': 'piston', estante: 'rack', tela: 'heating-gauze'
+  };
+  var SUBSTANCE_SYNONYMS = {
+    sal: 'nacl', 'sal de cozinha': 'nacl', 'sal de mesa': 'nacl', 'table salt': 'nacl', acucar: 'sucrose', sacarose: 'sucrose',
+    agua: 'water', 'agua destilada': 'water', bicarbonato: 'bicarbonate', 'baking soda': 'bicarbonate', 'bicarbonato de sodio': 'bicarbonate',
+    alcool: 'ethanol', 'alcool etilico': 'ethanol', 'ethyl alcohol': 'ethanol', oleo: 'oil', 'oleo vegetal': 'oil',
+    'acido citrico': 'citric_acid', citrico: 'citric_acid', indicador: 'indicator', 'indicador de ph': 'indicator',
+    'indicador universal': 'indicator', 'universal indicator': 'indicator', 'sulfato de cobre': 'cusulfate', 'copper sulphate': 'cusulfate',
+    levedura: 'yeast', 'fermento biologico': 'yeast', 'caldo de cana': 'cane_juice', 'garapa': 'cane_juice',
+    celulose: 'fibre', fibra: 'fibre', 'oxido de zinco': 'zno', 'dioxido de titanio': 'tio2', vanilina: 'vanillin',
+    baunilha: 'vanillin', limoneno: 'limonene', 'laranja': 'limonene', linalol: 'linalool', lavanda: 'linalool',
+    gasolina_fracao: 'frac_light', nafta: 'frac_light', querosene: 'frac_mid', diesel: 'frac_mid', 'oleo pesado': 'frac_heavy', asfalto: 'frac_heavy'
+  };
+  var catalogIndex = null;
+
+  function formulaKey(text) {
+    return norm(String(text || '').replace(/[₀-₉]/g, function (d) { return '₀₁₂₃₄₅₆₇₈₉'.indexOf(d); }));
+  }
+
+  function buildCatalogIndex() {
+    var rows = [];
+    Object.keys(SUBSTANCES).forEach(function (id) {
+      var spec = SUBSTANCES[id];
+      if (!spec || !spec.allowed || spec.inventory === false) return;
+      var keys = [id, norm(spec.name), norm(spec.namePt), formulaKey(spec.formula), norm(spec.category)];
+      Object.keys(ALIASES).forEach(function (k) { if (ALIASES[k] === id) keys.push(norm(k)); });
+      Object.keys(SUBSTANCE_SYNONYMS).forEach(function (k) { if (SUBSTANCE_SYNONYMS[k] === id) keys.push(norm(k)); });
+      rows.push({ kind: 'substance', id: id, keys: keys, spec: spec });
+    });
+    Object.keys(EQUIPMENT).forEach(function (type) {
+      var spec = EQUIPMENT[type];
+      var keys = [type, norm(type.replace(/-/g, ' ')), norm(spec.labelEn), norm(spec.labelPt), norm(spec.category)];
+      Object.keys(EQUIPMENT_ALIASES).forEach(function (k) { if (EQUIPMENT_ALIASES[k] === type) keys.push(norm(k)); });
+      rows.push({ kind: 'equipment', id: type, keys: keys, spec: spec });
+    });
+    READY.forEach(function (kit) {
+      rows.push({ kind: 'ready', id: kit.id, keys: [kit.id, norm(kit.labelEn), norm(kit.labelPt)], spec: kit });
+    });
+    CREATIONS.forEach(function (row) {
+      var keys = [row.id, norm(row.slug.replace(/-/g, ' ')), norm(row.title.en), norm(row.title.pt), norm(row.category)];
+      Object.keys(ALIASES).forEach(function (k) { if (ALIASES[k] === 'guided:' + row.id) keys.push(norm(k)); });
+      rows.push({ kind: 'creation', id: row.id, keys: keys, spec: row });
+    });
+    return rows;
+  }
+
+  function editDistance(a, b) {
+    if (a === b) return 0;
+    if (!a.length || !b.length) return Math.max(a.length, b.length);
+    var prev = [];
+    var i;
+    var j;
+    for (j = 0; j <= b.length; j += 1) prev[j] = j;
+    for (i = 1; i <= a.length; i += 1) {
+      var cur = [i];
+      for (j = 1; j <= b.length; j += 1) {
+        cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      }
+      prev = cur;
+    }
+    return prev[b.length];
+  }
+
+  function scoreKey(key, q, tokens) {
+    if (!key || !q) return 0;
+    if (key === q) return 100;
+    if (key.indexOf(q) === 0) return 85;
+    if (key.indexOf(' ' + q) !== -1) return 75;
+    if (key.indexOf(q) !== -1) return 60;
+    if (tokens.length > 1) {
+      var keyWords = key.split(' ');
+      var hit = tokens.filter(function (tok) {
+        return keyWords.some(function (w) { return w.indexOf(tok) === 0 || (tok.length > 3 && editDistance(w, tok) <= 1); });
+      }).length;
+      if (hit === tokens.length) return 58;
+      if (hit >= 1 && hit >= tokens.length - 1) return 48;
+    } else if (q.length >= 4) {
+      var best = 0;
+      key.split(' ').forEach(function (w) {
+        var d = editDistance(w, q);
+        if (d <= (q.length >= 7 ? 2 : 1)) best = Math.max(best, 50 - d * 4);
+      });
+      return best;
+    }
+    return 0;
+  }
+
+  /* Pull the numbers out of the phrase: volumes, masses and a concentration. */
+  function parseAmounts(raw) {
+    var text = ' ' + String(raw || '').replace(/,/g, '.') + ' ';
+    var out = { ml: null, g: null, molar: null, percent: null };
+    var re = /(\d+(?:\.\d+)?)\s*(mol\s*\/\s*l|mol\.l-1|molar|ml|mililitros?|millilitres?|milliliters?|litros?|liters?|litres?|kg|quilos?|mg|gramas?|grams?|g|l|m|%)(?=[\s.;,)]|$)/gi;
+    var m;
+    while ((m = re.exec(text))) {
+      var n = Number(m[1]);
+      var unit = m[2].toLowerCase().replace(/\s+/g, '');
+      if (!isFinite(n)) continue;
+      if (unit === 'mol/l' || unit === 'mol.l-1' || unit === 'molar' || (m[2] === 'M')) out.molar = n;
+      else if (unit === 'ml' || unit.indexOf('milil') === 0 || unit.indexOf('millil') === 0) out.ml = n;
+      else if (unit === 'l' || unit.indexOf('litro') === 0 || unit.indexOf('liter') === 0 || unit.indexOf('litre') === 0) out.ml = n * 1000;
+      else if (unit === 'kg' || unit.indexOf('quilo') === 0) out.g = n * 1000;
+      else if (unit === 'mg') out.g = n / 1000;
+      else if (unit === 'g' || unit.indexOf('grama') === 0 || unit.indexOf('gram') === 0) out.g = n;
+      else if (unit === '%') out.percent = n;
+      text = text.replace(m[0], ' ');
+      re.lastIndex = 0;
+    }
+    out.rest = text.replace(/\s+/g, ' ').trim();
+    return out;
+  }
+
+  function nameTokens(text) {
+    return norm(text).replace(/[^a-z0-9\s\/+-]/g, ' ').split(/\s+/).filter(function (tok) {
+      return tok && !FILLER[tok] && !SOLUTION_WORDS[tok];
+    });
+  }
+
+  function fmtNum(value, lang, digits) {
+    var n = Number(value) || 0;
+    var d = digits == null ? (n >= 100 ? 0 : (n >= 10 ? 1 : 2)) : digits;
+    var txt = n.toFixed(d);
+    if (txt.indexOf('.') !== -1) txt = txt.replace(/0+$/, '').replace(/\.$/, '');
+    if (txt === '' || txt === '-0') txt = '0';
+    return lang === 'pt' ? txt.replace('.', ',') : txt;
+  }
+
+  /* Ranked suggestions for a phrase. `best` is the one Enter runs. */
+  function suggest(raw, lang) {
+    lang = lang === 'pt' ? 'pt' : 'en';
+    var text = String(raw || '').trim();
+    if (!text) return { status: 'empty', items: [], best: null };
+    var q = norm(text);
+    if (DENIED[q] || DENIED[q.replace(/\s+/g, '_')]) {
+      logDeny('denied', q);
+      return { status: 'unavailable', items: [], best: null };
+    }
+    if (!catalogIndex) catalogIndex = buildCatalogIndex();
+    var amounts = parseAmounts(text);
+    var tokens = nameTokens(amounts.rest);
+    var wantsSolution = norm(text).split(/\s+/).some(function (tok) { return SOLUTION_WORDS[tok]; });
+    var nameQ = tokens.join(' ');
+    var scored = [];
+    catalogIndex.forEach(function (row) {
+      var sc = 0;
+      row.keys.forEach(function (key) { sc = Math.max(sc, scoreKey(key, nameQ, tokens)); });
+      if (!sc && !nameQ && amounts.ml && row.id === 'water') sc = 70;
+      if (!sc) return;
+      if (row.kind === 'substance') sc += 2;
+      if (wantsSolution && row.kind === 'substance' && row.spec.chem && row.spec.chem.molarMass) sc += 6;
+      /* "5 g de sal em 50 mL de água": the solid is the point, water is the solvent. */
+      if (row.kind === 'substance' && row.spec.state === 'solid' && amounts.g != null) sc += 12;
+      if (row.kind === 'substance' && row.id === 'water' && tokens.length > 1 && (amounts.g != null || amounts.molar != null)) sc -= 20;
+      scored.push({ row: row, score: sc });
+    });
+    scored.sort(function (a, b) { return b.score - a.score; });
+    var items = scored.slice(0, 8).map(function (hit) { return describeHit(hit.row, hit.score, amounts, wantsSolution, lang); });
+    var best = items[0] && items[0].score >= 45 ? items[0] : null;
+    if (!best) {
+      logDeny('unknown', q);
+      return { status: 'unknown', items: items, best: null, amounts: amounts };
+    }
+    return { status: 'ok', items: items, best: best, amounts: amounts };
+  }
+
+  function describeHit(row, score, amounts, wantsSolution, lang) {
+    var pt = lang === 'pt';
+    var item = { kind: row.kind, id: row.id, score: score, label: '', detail: '', amount: null, unit: '' };
+    if (row.kind === 'substance') {
+      var spec = row.spec;
+      var liquid = spec.state === 'liquid';
+      item.label = substanceName(spec, lang);
+      item.color = spec.color;
+      item.clear = Boolean(spec.clear);
+      var molar = spec.chem && spec.chem.molarMass;
+      if (amounts.molar && molar) {
+        var volMl = amounts.ml || 100;
+        var grams = Math.round(amounts.molar * (volMl / 1000) * molar * 100) / 100;
+        item.kind = 'recipe';
+        item.recipe = { solute: spec.id, grams: grams, waterMl: volMl, molar: amounts.molar, molarMass: molar };
+        item.label = (pt ? 'Solução de ' : 'Solution of ') + substanceName(spec, lang) + ' ' + fmtNum(amounts.molar, lang) + ' mol/L';
+        item.detail = fmtNum(grams, lang) + ' g ' + (pt ? 'de' : 'of') + ' ' + spec.formula + ' ' + (pt ? 'em' : 'in') + ' ' + fmtNum(volMl, lang) + ' mL ' + (pt ? 'de água · M = ' : 'of water · M = ') + fmtNum(molar, lang, 2) + ' g/mol';
+        item.score += 10;
+        return item;
+      }
+      if (amounts.percent != null && !liquid && amounts.g == null && amounts.molar == null) {
+        var volP = amounts.ml || 100;
+        var gramsP = Math.round(amounts.percent / 100 * volP * 100) / 100;
+        item.kind = 'recipe';
+        item.recipe = { solute: spec.id, grams: gramsP, waterMl: volP, molar: null, molarMass: molar || null, percent: amounts.percent };
+        item.label = (pt ? 'Solução de ' : 'Solution of ') + substanceName(spec, lang) + ' ' + fmtNum(amounts.percent, lang) + '% (m/v)';
+        item.detail = fmtNum(gramsP, lang) + ' g ' + (pt ? 'em' : 'in') + ' ' + fmtNum(volP, lang) + ' mL ' + (pt ? 'de água' : 'of water');
+        item.score += 10;
+        return item;
+      }
+      if (wantsSolution && !liquid && amounts.g == null && amounts.molar == null) {
+        var vol2 = amounts.ml || 100;
+        item.kind = 'recipe';
+        item.recipe = { solute: spec.id, grams: Math.round(Math.max(1, vol2 * 0.05) * 100) / 100, waterMl: vol2, molar: null, molarMass: molar || null };
+        item.label = (pt ? 'Solução de ' : 'Solution of ') + substanceName(spec, lang);
+        item.detail = fmtNum(item.recipe.grams, lang) + ' g ' + (pt ? 'em' : 'in') + ' ' + fmtNum(vol2, lang) + ' mL ' + (pt ? 'de água' : 'of water');
+        return item;
+      }
+      var qty = liquid ? amounts.ml : amounts.g;
+      if (qty == null && !liquid && amounts.ml != null && row.id !== 'water') qty = null;
+      item.amount = qty != null ? qty : null;
+      item.unit = liquid ? 'mL' : 'g';
+      item.detail = spec.formula + (qty != null ? ' · ' + fmtNum(qty, lang) + ' ' + item.unit : '');
+      item.kindLabel = pt ? 'Material' : 'Material';
+      if (amounts.g != null && !liquid && amounts.ml != null) {
+        item.kind = 'recipe';
+        item.recipe = { solute: spec.id, grams: amounts.g, waterMl: amounts.ml, molar: null, molarMass: molar || null };
+        item.label = substanceName(spec, lang) + ' ' + (pt ? 'em água' : 'in water');
+        item.detail = fmtNum(amounts.g, lang) + ' g ' + (pt ? 'em' : 'in') + ' ' + fmtNum(amounts.ml, lang) + ' mL ' + (pt ? 'de água' : 'of water');
+      }
+      return item;
+    }
+    if (row.kind === 'equipment') {
+      item.label = pt ? row.spec.labelPt : row.spec.labelEn;
+      item.detail = (pt ? 'Vidraria e ferramentas' : 'Glassware and tools') + (row.spec.capacityMl ? ' · ' + row.spec.capacityMl + ' mL' : '');
+      return item;
+    }
+    if (row.kind === 'ready') {
+      item.label = pt ? row.spec.labelPt : row.spec.labelEn;
+      item.detail = pt ? 'Mistura pronta' : 'Ready mixture';
+      return item;
+    }
+    item.label = pt ? row.spec.title.pt : row.spec.title.en;
+    item.detail = (pt ? 'Experimento guiado · ' : 'Guided experiment · ') + (row.spec.tutorial || []).length + (pt ? ' passos' : ' steps');
+    return item;
   }
 
   function labelOf(row, lang) {
     if (!row) return '';
     if (row.title) return (lang === 'pt' ? row.title.pt : row.title.en) || row.title.en;
+    if (lang === 'pt' && row.namePt) return row.namePt;
     return row.name || row.id;
   }
 
@@ -3274,8 +3565,8 @@
             if (!spec || spec.inventory === false) return '';
             var on = highlight && highlight[id] ? ' is-wanted' : '';
             return '<button type="button" class="lab-chip' + on + '" data-add="' + esc(id) + '">' +
-              '<i class="lab-chip-swatch" style="background:' + esc(spec.color) + '"></i>' +
-              esc(spec.name) + '<span>' + esc(spec.formula) + '</span></button>';
+              swatchHtml(spec) +
+              esc(substanceName(spec, lang)) + '<span>' + esc(spec.formula) + '</span></button>';
           }).join('') + '</div></div>';
       }).join('');
     }
@@ -3386,7 +3677,7 @@
         out += '<span class="lab-chip-group-title">' + esc(copy('Materials found', 'Materiais encontrados')) + '</span><div class="lab-chips">' +
           substances.map(function (row) {
             return '<button type="button" class="lab-chip" data-add="' + esc(row.row.id) + '">' +
-              '<i class="lab-chip-swatch" style="background:' + esc(row.row.color) + '"></i>' + esc(row.row.name) + '</button>';
+              swatchHtml(row.row) + esc(substanceName(row.row, lang)) + '</button>';
           }).join('') + '</div>';
       }
       return out;
@@ -3465,15 +3756,15 @@
       var into = plan.into ? ' data-step-into="' + esc(plan.into) + '"' : '';
       plan.materials.forEach(function (row) {
         out.push('<button type="button" class="lab-do-chip" data-step-add="' + esc(row.id) + '" data-step-amount="' + esc(row.amount) + '"' + into + '>' +
-          '<i class="lab-chip-swatch" style="background:' + esc(row.color) + '"></i>+ ' +
-          esc(row.name) + ' ' + esc(row.amount) + ' ' + esc(row.unit) + '</button>');
+          swatchHtml(SUBSTANCES[row.id]) + '+ ' +
+          esc(lang === 'pt' ? (row.namePt || row.name) : row.name) + ' ' + esc(row.amount) + ' ' + esc(row.unit) + '</button>');
       });
       if (plan.options.length) {
         out.push('<span class="lab-do-or">' + esc(copy('either', 'ou')) + '</span>');
         plan.options.forEach(function (row) {
           out.push('<button type="button" class="lab-do-chip" data-step-add="' + esc(row.id) + '" data-step-amount="' + esc(row.amount) + '"' + into + '>' +
-            '<i class="lab-chip-swatch" style="background:' + esc(row.color) + '"></i>+ ' +
-            esc(row.name) + ' ' + esc(row.amount) + ' ' + esc(row.unit) + '</button>');
+            swatchHtml(SUBSTANCES[row.id]) + '+ ' +
+            esc(lang === 'pt' ? (row.namePt || row.name) : row.name) + ' ' + esc(row.amount) + ' ' + esc(row.unit) + '</button>');
         });
       }
       if (plan.needsStir) {
@@ -3613,7 +3904,19 @@
     }
 
     /* Anchored to the piece in screen space, so it does not scale with zoom. */
+    /* Measuring the stage right after the bench was rewritten forces a full
+       layout; one frame later the browser has already done it for free. */
+    var toolbarFrame = 0;
     function placeContextToolbar() {
+      if (typeof requestAnimationFrame !== 'function') { placeContextToolbarNow(); return; }
+      if (toolbarFrame) return;
+      toolbarFrame = requestAnimationFrame(function () {
+        toolbarFrame = 0;
+        placeContextToolbarNow();
+      });
+    }
+
+    function placeContextToolbarNow() {
       var bar = node.querySelector('[data-lab-context]');
       var stage = node.querySelector('[data-lab-stage]');
       if (!bar || !stage) return;
@@ -3842,11 +4145,11 @@
       var contentRows = (container.contents || []).map(function (row) {
         var spec = SUBSTANCES[row.id];
         return '<li class="lab-content-row">' +
-          '<i class="lab-chip-swatch" style="background:' + esc((spec && spec.color) || '#ccc') + '"></i>' +
-          '<span>' + esc((spec && spec.name) || row.id) + '</span>' +
-          '<b>' + esc(formatQty(row.amount)) + (row.unit ? ' ' + esc(row.unit) : '') + '</b>' +
+          swatchHtml(spec) +
+          '<span>' + esc(spec ? substanceName(spec, lang) : row.id) + '</span>' +
+          '<b>' + esc(fmtNum(formatQty(row.amount), lang, 2)) + (row.unit ? ' ' + esc(row.unit) : '') + '</b>' +
           '<button type="button" class="lab-content-drop" data-lab-remove="' + esc(row.id) + '" aria-label="' +
-          esc(copy('Remove ', 'Remover ') + ((spec && spec.name) || row.id)) + '" title="' +
+          esc(copy('Remove ', 'Remover ') + (spec ? substanceName(spec, lang) : row.id)) + '" title="' +
           esc(copy('Remove', 'Remover')) + '">×</button></li>';
       }).join('');
       var contentsHtml = contentRows
@@ -3903,10 +4206,10 @@
         '<div class="lab-kv lab-kv-ph"><span>pH</span><strong>' + esc(container.ph == null ? '—' : container.ph) + '</strong>' +
         (phWord ? '<em>' + esc(phWord) + '</em>' : '') + '</div>' +
         reactionBlock + brewBlock + growBlock + rigBlock + refluxBlock + filterBlock +
-        '<div class="lab-kv lab-kv-vol"><span>' + esc(copy('Volume', 'Volume')) + '</span><strong>' + esc(container.volumeMl) + (capMl ? ' / ' + esc(capMl) : '') + ' mL</strong></div>' +
+        '<div class="lab-kv lab-kv-vol"><span>' + esc(copy('Volume', 'Volume')) + '</span><strong>' + esc(fmtNum(container.volumeMl, lang, 1)) + (capMl ? ' / ' + esc(capMl) : '') + ' mL</strong></div>' +
         (capMl ? '<div class="lab-volbar" aria-hidden="true"><i style="width:' + volPct + '%"></i></div>' : '') +
         '<div class="lab-kv lab-kv-stack"><span>' + esc(copy('Contents', 'Conteúdo')) + '</span></div>' + contentsHtml +
-        '<div class="lab-kv"><span>' + esc(copy('Mass', 'Massa')) + '</span><strong>' + esc(Math.round(containerMass(container) * 10) / 10) + ' g</strong></div>' +
+        '<div class="lab-kv"><span>' + esc(copy('Mass', 'Massa')) + '</span><strong>' + esc(fmtNum(Math.round(containerMass(container) * 10) / 10, lang, 1)) + ' g</strong></div>' +
         '<div class="lab-kv"><span>' + esc(copy('Temperature', 'Temperatura')) + '</span><strong>' + esc(container.temperatureC) + ' °C</strong></div>' +
         (container.phEstimated ? '<p class="ws-lede">' + esc(copy(
           'Estimated by the ideal model: total solute is above 1 mol/L.',
@@ -4035,6 +4338,41 @@
       );
     }
 
+    /* A piece that just landed pops in; the class is gone before the next paint
+       so the board diff never sees it. */
+    /* A drop of the material flies from the chip to the vessel it lands in. */
+    function flyToVessel(fromEl, vesselId, color) {
+      if (!fromEl || !vesselId || reducedMotion()) return;
+      var piece = node.querySelector('[data-vessel="' + vesselId + '"]');
+      if (!piece || typeof piece.animate !== 'function') return;
+      var a = fromEl.getBoundingClientRect();
+      var b = piece.getBoundingClientRect();
+      if (!a.width || !b.width) return;
+      var dot = document.createElement('i');
+      dot.className = 'lab-fly';
+      dot.style.background = safeColor(color);
+      dot.style.left = (a.left + a.width / 2 - 7) + 'px';
+      dot.style.top = (a.top + a.height / 2 - 7) + 'px';
+      document.body.appendChild(dot);
+      var dx = (b.left + b.width / 2) - (a.left + a.width / 2);
+      var dy = (b.top + b.height * 0.35) - (a.top + a.height / 2);
+      var anim = dot.animate([
+        { transform: 'translate(0,0) scale(.6)', opacity: 0.2 },
+        { transform: 'translate(' + (dx * 0.5) + 'px,' + (dy * 0.5 - 40) + 'px) scale(1.1)', opacity: 1, offset: 0.55 },
+        { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(.4)', opacity: 0 }
+      ], { duration: 520, easing: 'cubic-bezier(.3,.7,.4,1)' });
+      anim.onfinish = function () { dot.remove(); };
+      setTimeout(function () { if (dot.parentNode) dot.remove(); }, 700);
+    }
+
+    function markNewPiece(id) {
+      if (!id || reducedMotion()) return;
+      var piece = node.querySelector('[data-vessel="' + id + '"]');
+      if (!piece) return;
+      piece.classList.add('is-new');
+      setTimeout(function () { piece.classList.remove('is-new'); }, 520);
+    }
+
     function pulseLiquid(id) {
       var piece = id
         ? node.querySelector('[data-vessel="' + id + '"]')
@@ -4066,9 +4404,30 @@
     }
 
     /* A reaction is a moment, so it gets one short burst and then stops. */
+    var toastTimer = 0;
+    function showToast(title, eq, text) {
+      var shell = node.querySelector('.lab-stage-frame') || node.querySelector('.lab-stage-shell');
+      if (!shell) return;
+      var oldToast = shell.querySelector('.lab-toast');
+      if (oldToast) oldToast.remove();
+      var toast = document.createElement('div');
+      toast.className = 'lab-toast';
+      toast.setAttribute('role', 'status');
+      toast.innerHTML = '<span class="lab-toast-tag">' + esc(title) + '</span>' +
+        (eq ? '<code class="lab-toast-eq">' + esc(eq) + '</code>' : '') +
+        (text ? '<p>' + esc(text) + '</p>' : '');
+      shell.appendChild(toast);
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () {
+        toast.classList.add('is-leaving');
+        setTimeout(function () { toast.remove(); }, 320);
+      }, 4200);
+    }
+
     function playReactionFx(id, model) {
       if (!model) return;
       playSound('reaction');
+      showToast(copy('Reaction', 'Reação'), model.equation, lang === 'pt' ? model.pt : model.en);
       var piece = node.querySelector('[data-vessel="' + id + '"]');
       if (!piece || reducedMotion()) return;
       piece.classList.remove('is-reacting');
@@ -4473,6 +4832,71 @@
       playSound(wanted.state.complete ? 'complete' : 'step');
     }
 
+    /* Only pieces whose markup changed are swapped; the rest stay put, so a
+       bubbling flask keeps bubbling and the board does not rebuild itself for
+       every click. Keyed by vessel id; overlay layers by class name. */
+    /* Skip the DOM rebuild when a panel's markup did not change: most clicks
+       touch one vessel, not the whole dock, guide and notebook. */
+    function setHtml(el, html) {
+      if (el._labHtml === html) return false;
+      el.innerHTML = html;
+      el._labHtml = html;
+      return true;
+    }
+
+    function patchBoard(bench, html) {
+      if (typeof document.createElement('template').content === 'undefined') {
+        bench.innerHTML = html;
+        return;
+      }
+      var tpl = document.createElement('template');
+      tpl.innerHTML = html;
+      var fresh = Array.prototype.slice.call(tpl.content.children);
+      var old = {};
+      Array.prototype.forEach.call(bench.children, function (el) {
+        old[el.getAttribute('data-vessel') || ('layer:' + el.className)] = el;
+      });
+      var seen = {};
+      var cursor = null;
+      fresh.forEach(function (next) {
+        var key = next.getAttribute('data-vessel') || ('layer:' + next.className);
+        seen[key] = true;
+        var prev = old[key];
+        var keep = next;
+        if (prev && prev.outerHTML === next.outerHTML) keep = prev;
+        else if (prev) prev.replaceWith(next);
+        var after = cursor ? cursor.nextSibling : bench.firstChild;
+        if (keep !== after) bench.insertBefore(keep, after);
+        cursor = keep;
+      });
+      Object.keys(old).forEach(function (key) { if (!seen[key]) old[key].remove(); });
+    }
+
+    var lastReading = { id: '', ph: '', vol: -1 };
+
+    /* The inspector is rebuilt as a string; these two touches make the pH
+       reading flash and the volume bar slide when the same vessel changes. */
+    function liftReadings(inspector) {
+      var container = selected();
+      var same = container && lastReading.id === container.id;
+      var phEl = inspector.querySelector('.lab-kv-ph strong');
+      var bar = inspector.querySelector('.lab-volbar i');
+      var phText = phEl ? phEl.textContent : '';
+      var volPct = bar ? parseFloat(bar.style.width) || 0 : -1;
+      if (same && phEl && phText !== lastReading.ph && !reducedMotion()) {
+        phEl.classList.add('is-changed');
+        setTimeout(function () { phEl.classList.remove('is-changed'); }, 700);
+      }
+      if (same && bar && lastReading.vol >= 0 && lastReading.vol !== volPct && !reducedMotion()) {
+        bar.style.transition = 'none';
+        bar.style.width = lastReading.vol + '%';
+        void bar.offsetWidth;
+        bar.style.transition = '';
+        bar.style.width = volPct + '%';
+      }
+      lastReading = { id: container ? container.id : '', ph: phText, vol: volPct };
+    }
+
     function updateLive() {
       var bench = node.querySelector('[data-lab-bench]');
       var inspector = node.querySelector('[data-lab-inspector]');
@@ -4487,7 +4911,7 @@
            left the keyboard pointing at the document body and every board
            shortcut dead. The stage is the board's keyboard home. */
         var hadFocus = document.activeElement && bench.contains(document.activeElement);
-        bench.innerHTML = boardHtml();
+        patchBoard(bench, boardHtml());
         if (hadFocus) {
           var stageEl = node.querySelector('[data-lab-stage]');
           if (stageEl) {
@@ -4495,17 +4919,19 @@
           }
         }
       }
-      if (inspector) inspector.innerHTML = inspectorHtml();
-      if (notes) notes.innerHTML = notesHtml();
+      if (inspector) {
+        inspector.innerHTML = inspectorHtml();
+        liftReadings(inspector);
+      }
+      if (notes) setHtml(notes, notesHtml());
       var countChip = node.querySelector('[data-lab-count]');
       if (countChip) countChip.textContent = benchCountText();
       var lastChip = node.querySelector('[data-lab-last]');
       if (lastChip) lastChip.innerHTML = lastStepHtml();
-      if (guide) guide.innerHTML = tutorialHtml();
+      if (guide) setHtml(guide, tutorialHtml());
       if (dockBody && dockOpen) {
         var keepTop = dockBody.scrollTop;
-        dockBody.innerHTML = dockBodyHtml(dockOpen);
-        dockBody.scrollTop = keepTop;
+        if (setHtml(dockBody, dockBodyHtml(dockOpen))) dockBody.scrollTop = keepTop;
       }
       amounts.forEach(function (btn) {
         btn.classList.toggle('is-on', Number(btn.getAttribute('data-amount')) === amount);
@@ -4514,7 +4940,6 @@
       if (pourBtn) pourBtn.classList.toggle('is-on', Boolean(pourFrom));
       applyWorld();
       refreshMotion();
-      placeContextToolbar();
     }
 
     function syncDock(results) {
@@ -4671,8 +5096,9 @@
         '<form class="lab-search lab-bar-search" data-lab-search role="search">' +
         '<label class="lc-sr-only" for="lab-q">' + esc(copy('What would you like to create?', 'O que você quer criar?')) + '</label>' +
         '<span class="lab-search-ico" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.6" stroke="currentColor" stroke-width="1.5"/><path d="M10.4 10.4 14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>' +
-        '<input id="lab-q" name="q" type="search" value="' + esc(searchValue) + '" placeholder="' + esc(copy('What would you like to create? e.g. 0.5 mol/L NaCl solution', 'O que você quer criar? ex.: solução de NaCl 0,5 mol/L')) + '" autocomplete="off">' +
+        '<input id="lab-q" name="q" type="search" value="' + esc(searchValue) + '" placeholder="' + esc(copy('Material, glassware or experiment… e.g. 0.5 mol/L NaCl solution in 100 mL', 'Material, vidraria ou experimento… ex.: solução de NaCl 0,5 mol/L em 100 mL')) + '" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="lab-suggest-list" enterkeyhint="go">' +
         '<button type="submit" class="ws-btn ws-btn-sm ws-btn-secondary">' + esc(copy('Create', 'Criar')) + '</button>' +
+        '<div class="lab-suggest" data-lab-suggest hidden></div>' +
         '</form>' +
         '<div class="lab-bar-group lab-toolbar">' +
         '<button type="button" class="lab-icon-btn" data-lab-sound aria-pressed="true" title="' + esc(copy('Sound on', 'Som ligado')) + '">' + icon('sound') + '</button>' +
@@ -4743,6 +5169,271 @@
         return;
       }
       rootEl.dataset.labBound = '1';
+      /* ── Search box: suggestions while typing, Enter runs the best one ── */
+      var suggestTimer = 0;
+      var suggestList = [];
+      var suggestIndex = -1;
+      var statusTimer = 0;
+
+      function flashFor(html, ms) {
+        flashStatus(html);
+        if (statusTimer) clearTimeout(statusTimer);
+        statusTimer = setTimeout(function () {
+          statusTimer = 0;
+          if (lastStatus === html) flashStatus('');
+        }, ms || 4500);
+      }
+      function okMsg(text) { return '<div class="lab-msg is-ok" role="status">' + esc(text) + '</div>'; }
+      function warnMsg(text) { return '<div class="lab-msg" role="status">' + esc(text) + '</div>'; }
+
+      function suggestBox() { return rootEl.querySelector('[data-lab-suggest]'); }
+      function closeSuggest() {
+        var box = suggestBox();
+        suggestList = [];
+        suggestIndex = -1;
+        if (box) { box.hidden = true; box.innerHTML = ''; }
+        var input = rootEl.querySelector('#lab-q');
+        if (input) input.setAttribute('aria-expanded', 'false');
+      }
+      function kindTag(item) {
+        if (item.kind === 'recipe') return copy('Solution', 'Solução');
+        if (item.kind === 'substance') return copy('Material', 'Material');
+        if (item.kind === 'equipment') return copy('Glassware', 'Vidraria');
+        if (item.kind === 'ready') return copy('Ready mix', 'Mistura pronta');
+        return copy('Guided', 'Guiado');
+      }
+      function renderSuggest(result) {
+        var box = suggestBox();
+        var input = rootEl.querySelector('#lab-q');
+        if (!box) return;
+        suggestList = result && result.items ? result.items.slice(0, 6) : [];
+        suggestIndex = -1;
+        if (!result || result.status === 'empty') { closeSuggest(); return; }
+        if (result.status === 'unavailable') {
+          box.innerHTML = '<p class="lab-suggest-empty">' + esc(copy('This experiment isn\'t available in Atomurus Lab.', 'Este experimento não está disponível no Atomurus Lab.')) + '</p>';
+        } else if (!suggestList.length) {
+          box.innerHTML = '<p class="lab-suggest-empty">' + esc(copy('Nothing in the catalog matches. Try a material (água, NaCl), glassware (bureta) or an experiment (destilação).', 'Nada no catálogo combina. Tente um material (água, NaCl), uma vidraria (bureta) ou um experimento (destilação).')) + '</p>';
+        } else {
+          box.innerHTML = '<ul class="lab-suggest-list" role="listbox" id="lab-suggest-list">' + suggestList.map(function (item, i) {
+            var sw = item.kind === 'substance' || item.kind === 'recipe'
+              ? '<i class="lab-chip-swatch' + (item.clear ? ' is-clear' : '') + '" style="background:' + safeColor(item.color || (SUBSTANCES[item.recipe && item.recipe.solute] || {}).color) + '"></i>'
+              : '<i class="lab-suggest-ico is-' + esc(item.kind) + '"></i>';
+            return '<li role="option" id="lab-suggest-' + i + '" aria-selected="false"><button type="button" class="lab-suggest-item' + (i === 0 ? ' is-best' : '') + '" data-suggest="' + i + '">' +
+              sw + '<span class="lab-suggest-text"><strong>' + esc(item.label) + '</strong>' + (item.detail ? '<small>' + esc(item.detail) + '</small>' : '') + '</span>' +
+              '<span class="lab-suggest-kind">' + esc(kindTag(item)) + (i === 0 ? ' · ↵' : '') + '</span></button></li>';
+          }).join('') + '</ul>';
+        }
+        box.hidden = false;
+        if (input) input.setAttribute('aria-expanded', 'true');
+      }
+      function moveSuggest(delta) {
+        if (!suggestList.length) return;
+        suggestIndex = (suggestIndex + delta + suggestList.length) % suggestList.length;
+        var box = suggestBox();
+        if (!box) return;
+        box.querySelectorAll('[role="option"]').forEach(function (li, i) {
+          var on = i === suggestIndex;
+          li.setAttribute('aria-selected', on ? 'true' : 'false');
+          li.classList.toggle('is-active', on);
+        });
+        var input = rootEl.querySelector('#lab-q');
+        if (input) input.setAttribute('aria-activedescendant', 'lab-suggest-' + suggestIndex);
+      }
+
+      function vesselWithRoom(ml) {
+        var current = preferredVessel();
+        if (current && (Number(current.capacityMl) || 0) - (Number(current.volumeMl) || 0) >= ml - 0.05) return current;
+        return (session.containers || []).filter(function (row) {
+          return canHold(row) && hasCap(row, 'contain') && (Number(row.capacityMl) || 0) - (Number(row.volumeMl) || 0) >= ml - 0.05;
+        })[0] || null;
+      }
+
+      /* Run one suggestion. Returns true when something changed on the bench. */
+      function runSuggestion(item, q) {
+        var input = rootEl.querySelector('#lab-q');
+        closeSuggest();
+        if (!item) return false;
+        var into;
+        var wasAt;
+        if (item.kind === 'creation') {
+          session.creationId = item.id;
+          session.mode = 'guided';
+          hintLevel = 0;
+          lastStepKey = '';
+          sideTab = 'guide';
+          dockOpen = 'create';
+          params.set('q', q || '');
+          observe(session, copy('Started a guided creation.', 'Iniciou uma criação guiada.'));
+          flushSave();
+          paint(searchCatalog(q || ''));
+          playSound('step');
+          return true;
+        }
+        if (input) input.value = '';
+        params.delete('q');
+        if (item.kind === 'equipment') {
+          var placed = addVessel(session, item.id);
+          queueSave();
+          updateLive();
+          if (placed && placed.ok === false) {
+            playSound('deny');
+            flashFor(warnMsg(copy('The bench is full.', 'A bancada está cheia.')));
+            return false;
+          }
+          markNewPiece(placed.container.id);
+          playSound('place');
+          flashFor(okMsg(copy('Added ', 'Adicionou ') + item.label + copy(' to the bench. Drag it anywhere.', ' à bancada. Arraste para onde quiser.')));
+          return true;
+        }
+        if (item.kind === 'ready') {
+          into = preferredVessel();
+          if (!into) { playSound('deny'); flashFor(warnMsg(copy('Select a vessel that can hold a mixture first.', 'Selecione um vidro que possa reter a mistura.'))); return false; }
+          wasAt = fillLevelOf(into.id);
+          var kit = addReady(session, item.id, into.id);
+          session.selectedId = into.id;
+          queueSave();
+          updateLive();
+          if (!kit.ok) { playSound('deny'); return false; }
+          animateRise(into.id, wasAt);
+          pulseLiquid(into.id);
+          playSound('pour');
+          flashFor(okMsg(item.label + copy(' poured into ', ' despejada em ') + labelFor(into, lang) + '.'));
+          return true;
+        }
+        if (item.kind === 'substance') {
+          pourFrom = '';
+          into = preferredVessel();
+          if (!into) { playSound('deny'); flashFor(warnMsg(copy('Select a beaker or flask first.', 'Selecione um béquer ou erlenmeyer antes.'))); return false; }
+          var qty = item.amount != null ? item.amount : amount;
+          wasAt = fillLevelOf(into.id);
+          var hit = addToContainer(session, into.id, item.id, qty);
+          if (hit.ok) flyToVessel(input, into.id, (SUBSTANCES[item.id] || {}).color);
+          session.selectedId = into.id;
+          queueSave();
+          updateLive();
+          if (hit.ok) {
+            animateRise(into.id, wasAt);
+            pulseLiquid(into.id);
+            if (hit.reaction) playReactionFx(into.id, hit.reaction);
+            else playSound('material');
+            flashFor(okMsg(copy('Added ', 'Adicionou ') + fmtNum(qty, lang) + ' ' + (item.unit || '') + ' ' + copy('of ', 'de ') + item.label + copy(' to ', ' em ') + labelFor(into, lang) + '.'));
+            return true;
+          }
+          playSound('deny');
+          flashFor(warnMsg(hit.reason === 'full'
+            ? copy('That vessel is full. Empty it or pour into another glass.', 'Esse vidro está cheio. Esvazie ou transfira para outro.')
+            : copy('That tool does not hold a mixture. Select a beaker or flask.', 'Essa ferramenta não retém mistura. Selecione um béquer ou erlenmeyer.')));
+          return false;
+        }
+        if (item.kind === 'recipe') {
+          var r = item.recipe;
+          pourFrom = '';
+          into = vesselWithRoom(r.waterMl);
+          if (!into) {
+            playSound('deny');
+            flashFor(warnMsg(copy('No vessel has room for ', 'Nenhum vidro tem espaço para ') + fmtNum(r.waterMl, lang) + ' mL. ' + copy('Empty one or add a bigger beaker.', 'Esvazie um ou adicione um béquer maior.')));
+            return false;
+          }
+          wasAt = fillLevelOf(into.id);
+          var water = addToContainer(session, into.id, 'water', r.waterMl);
+          var solute = water.ok ? addToContainer(session, into.id, r.solute, r.grams) : water;
+          if (solute.ok) flyToVessel(input, into.id, (SUBSTANCES[r.solute] || {}).color);
+          session.selectedId = into.id;
+          var soluteSpec = SUBSTANCES[r.solute];
+          if (solute.ok) {
+            var calc = r.molar
+              ? (lang === 'pt'
+                ? 'Preparou ' + fmtNum(r.waterMl, lang) + ' mL de solução ' + fmtNum(r.molar, lang) + ' mol/L de ' + substanceName(soluteSpec, 'pt') + ': m = C · V · M = ' + fmtNum(r.molar, lang) + ' × ' + fmtNum(r.waterMl / 1000, lang, 3) + ' L × ' + fmtNum(r.molarMass, lang, 2) + ' g/mol = ' + fmtNum(r.grams, lang) + ' g.'
+                : 'Prepared ' + fmtNum(r.waterMl, lang) + ' mL of ' + fmtNum(r.molar, lang) + ' mol/L ' + substanceName(soluteSpec, 'en') + ': m = C · V · M = ' + fmtNum(r.molar, lang) + ' × ' + fmtNum(r.waterMl / 1000, lang, 3) + ' L × ' + fmtNum(r.molarMass, lang, 2) + ' g/mol = ' + fmtNum(r.grams, lang) + ' g.')
+              : (lang === 'pt'
+                ? 'Dissolveu ' + fmtNum(r.grams, lang) + ' g de ' + substanceName(soluteSpec, 'pt') + ' em ' + fmtNum(r.waterMl, lang) + ' mL de água' + (r.molarMass ? ' (' + fmtNum((r.grams / r.molarMass) / (r.waterMl / 1000), lang, 3) + ' mol/L).' : '.')
+                : 'Dissolved ' + fmtNum(r.grams, lang) + ' g of ' + substanceName(soluteSpec, 'en') + ' in ' + fmtNum(r.waterMl, lang) + ' mL of water' + (r.molarMass ? ' (' + fmtNum((r.grams / r.molarMass) / (r.waterMl / 1000), lang, 3) + ' mol/L).' : '.'));
+            observe(session, calc);
+            queueSave();
+            updateLive();
+            animateRise(into.id, wasAt);
+            pulseLiquid(into.id);
+            if (solute.reaction) playReactionFx(into.id, solute.reaction);
+            else playSound('pour');
+            flashFor(okMsg(calc), 9000);
+            return true;
+          }
+          queueSave();
+          updateLive();
+          playSound('deny');
+          flashFor(warnMsg(copy('Could not prepare that here. Empty the vessel and try again.', 'Não deu para preparar aqui. Esvazie o vidro e tente de novo.')));
+          return false;
+        }
+        return false;
+      }
+
+      rootEl.addEventListener('input', function (event) {
+        var input = event.target;
+        if (!input || input.id !== 'lab-q') return;
+        var value = input.value;
+        if (suggestTimer) clearTimeout(suggestTimer);
+        suggestTimer = setTimeout(function () {
+          suggestTimer = 0;
+          if (!value.trim()) { renderExamples(); return; }
+          renderSuggest(suggest(value, lang));
+        }, 110);
+      }, opts);
+      var SEARCH_EXAMPLES = [
+        { en: '0.5 mol/L NaCl solution in 100 mL', pt: 'solução de NaCl 0,5 mol/L em 100 mL' },
+        { en: '40 mL of water', pt: '40 mL de água' },
+        { en: '0.9% saline', pt: 'soro 0,9%' },
+        { en: 'copper sulfate', pt: 'sulfato de cobre' },
+        { en: 'burette', pt: 'bureta' },
+        { en: 'distillation', pt: 'destilação' }
+      ];
+      function renderExamples() {
+        var box = suggestBox();
+        if (!box) return;
+        suggestList = [];
+        suggestIndex = -1;
+        box.innerHTML = '<p class="lab-suggest-empty">' + esc(copy('Try one of these, or type what you want in your own words:', 'Experimente um destes, ou escreva o que quer com suas palavras:')) + '</p>' +
+          '<div class="lab-suggest-examples">' + SEARCH_EXAMPLES.map(function (row) {
+            var text = lang === 'pt' ? row.pt : row.en;
+            return '<button type="button" class="lab-suggest-example" data-suggest-example="' + esc(text) + '">' + esc(text) + '</button>';
+          }).join('') + '</div>';
+        box.hidden = false;
+      }
+      rootEl.addEventListener('focusin', function (event) {
+        var input = event.target;
+        if (!input || input.id !== 'lab-q') return;
+        if (!input.value.trim()) { renderExamples(); return; }
+        renderSuggest(suggest(input.value, lang));
+      }, opts);
+      rootEl.addEventListener('focusout', function (event) {
+        if (!event.target || event.target.id !== 'lab-q') return;
+        var next = event.relatedTarget;
+        if (next && next.closest && next.closest('[data-lab-suggest]')) return;
+        setTimeout(function () {
+          var active = document.activeElement;
+          if (active && active.closest && active.closest('[data-lab-suggest]')) return;
+          closeSuggest();
+        }, 120);
+      }, opts);
+      rootEl.addEventListener('keydown', function (event) {
+        var input = event.target;
+        if (!input || input.id !== 'lab-q') return;
+        if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+          if (!suggestList.length && input.value.trim()) renderSuggest(suggest(input.value, lang));
+          event.preventDefault();
+          moveSuggest(event.key === 'ArrowDown' ? 1 : -1);
+          return;
+        }
+        if (event.key === 'Escape' && suggestList.length) {
+          event.preventDefault();
+          event.stopPropagation();
+          closeSuggest();
+          return;
+        }
+        if (event.key === 'Enter' && suggestIndex >= 0 && suggestList[suggestIndex]) {
+          event.preventDefault();
+          runSuggestion(suggestList[suggestIndex], input.value);
+        }
+      }, opts);
       rootEl.addEventListener('submit', function (event) {
         var form = event.target && event.target.closest && event.target.closest('[data-lab-search]');
         if (!form) return;
@@ -4750,51 +5441,38 @@
         var input = rootEl.querySelector('#lab-q');
         var q = input ? input.value : '';
         var found = searchCatalog(q);
-        params.set('q', q);
-        if (found.status === 'unavailable' || found.status === 'unknown') {
+        var smart = suggest(q, lang);
+        if (smart.status === 'unavailable' || smart.status === 'unknown' || !smart.best) {
+          closeSuggest();
+          params.set('q', q);
           dockOpen = '';
           paint(found);
           playSound('deny');
+          if (smart.status === 'unknown') flashFor(warnMsg(copy('Nothing in the catalog matches “' + q + '”. Try a material, glassware or an experiment.', 'Nada no catálogo combina com “' + q + '”. Tente um material, uma vidraria ou um experimento.')), 6000);
           return;
         }
-        if (found.resolved && found.resolved.kind === 'creation') {
-          session.creationId = found.resolved.id;
-          session.mode = 'guided';
-          hintLevel = 0;
-          lastStepKey = '';
-          sideTab = 'guide';
-          dockOpen = 'create';
-          observe(session, copy('Started a guided creation.', 'Iniciou uma criação guiada.'));
-          flushSave();
-          paint(found);
-          playSound('step');
-          return;
-        }
-        if (found.resolved && found.resolved.kind === 'substance') {
-          pourFrom = '';
-          var into = preferredVessel();
-          var hit = into ? addToContainer(session, into.id, found.resolved.id, amount) : { ok: false };
-          if (into) session.selectedId = into.id;
-          queueSave();
-          dockOpen = 'create';
-          paint(found);
-          if (hit.ok) {
-            pulseLiquid();
-            playSound('material');
-          } else {
-            playSound('deny');
-          }
-          return;
-        }
-        dockOpen = 'create';
-        paint(found);
+        runSuggestion(smart.best, q);
       }, opts);
       rootEl.addEventListener('click', function (event) {
         try {
           var t = event.target && event.target.closest
-            ? event.target.closest('[data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-redo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel], [data-ready], [data-lab-zoom], [data-lab-fit], [data-lab-fit-all], [data-lab-zoom-menu], [data-lab-zoom-to], [data-lab-fit-selection], [data-board-tool], [data-lab-aspirate], [data-lab-dispense], [data-lab-drop], [data-lab-grind], [data-lab-drain], [data-lab-connect], [data-lab-duplicate], [data-lab-delete], [data-lab-rotate], [data-dock], [data-dock-close], [data-lab-open-materials], [data-side], [data-lab-sound], [data-lab-focus], [data-start-creation], [data-stop-creation], [data-step-add], [data-lab-hint], [data-step-connect], [data-step-heat], [data-step-distill], [data-lab-distill], [data-lab-filter], [data-lab-reflux], [data-step-reflux], [data-step-reflux-connect], [data-lab-remove], [data-lab-stack], [data-lab-ferment], [data-step-ferment], [data-lab-crystallise], [data-step-crystallise], [data-step-filter]')
+            ? event.target.closest('[data-suggest], [data-suggest-example], [data-add], [data-vessel], [data-measure], [data-amount], [data-lab-undo], [data-lab-redo], [data-lab-reset], [data-lab-save], [data-lab-pour], [data-lab-stir], [data-lab-empty], [data-heat], [data-add-vessel], [data-ready], [data-lab-zoom], [data-lab-fit], [data-lab-fit-all], [data-lab-zoom-menu], [data-lab-zoom-to], [data-lab-fit-selection], [data-board-tool], [data-lab-aspirate], [data-lab-dispense], [data-lab-drop], [data-lab-grind], [data-lab-drain], [data-lab-connect], [data-lab-duplicate], [data-lab-delete], [data-lab-rotate], [data-dock], [data-dock-close], [data-lab-open-materials], [data-side], [data-lab-sound], [data-lab-focus], [data-start-creation], [data-stop-creation], [data-step-add], [data-lab-hint], [data-step-connect], [data-step-heat], [data-step-distill], [data-lab-distill], [data-lab-filter], [data-lab-reflux], [data-step-reflux], [data-step-reflux-connect], [data-lab-remove], [data-lab-stack], [data-lab-ferment], [data-step-ferment], [data-lab-crystallise], [data-step-crystallise], [data-step-filter]')
             : null;
           if (!t) return;
+          if (t.hasAttribute('data-suggest-example')) {
+            var exText = t.getAttribute('data-suggest-example');
+            var exInput = rootEl.querySelector('#lab-q');
+            if (exInput) exInput.value = exText;
+            var exBest = suggest(exText, lang).best;
+            if (exBest) runSuggestion(exBest, exText);
+            return;
+          }
+          if (t.hasAttribute('data-suggest')) {
+            var sIdx = Number(t.getAttribute('data-suggest'));
+            var sInput = rootEl.querySelector('#lab-q');
+            runSuggestion(suggestList[sIdx], sInput ? sInput.value : '');
+            return;
+          }
           if (t.hasAttribute('data-lab-sound')) {
             var soundOn = setSoundEnabled(!soundEnabled());
             syncSound();
@@ -5053,7 +5731,9 @@
             pourFrom = '';
             var intoId = selected().id;
             var wasAt = fillLevelOf(intoId);
+            var addSpec = SUBSTANCES[t.getAttribute('data-add')];
             var added = addToContainer(session, intoId, t.getAttribute('data-add'), amount);
+            if (added.ok) flyToVessel(t, intoId, addSpec && addSpec.color);
             queueSave();
             updateLive();
             if (added.ok) animateRise(intoId, wasAt);
@@ -5094,6 +5774,7 @@
             var placed = addVessel(session, t.getAttribute('data-add-vessel'));
             queueSave();
             updateLive();
+            if (placed && placed.ok !== false && placed.container) markNewPiece(placed.container.id);
             playSound(placed && placed.ok === false ? 'deny' : 'place');
             return;
           }
@@ -5101,6 +5782,7 @@
             var kitId = selected().id;
             var kitWasAt = fillLevelOf(kitId);
             var kit = addReady(session, t.getAttribute('data-ready'), kitId);
+            if (kit.ok) flyToVessel(t, kitId, '#9BB7C8');
             queueSave();
             updateLive();
             if (kit.ok) animateRise(kitId, kitWasAt);
@@ -5895,6 +6577,10 @@
 
   root.AtomurusLab = {
     SUBSTANCES: SUBSTANCES,
+    suggest: suggest,
+    parseAmounts: parseAmounts,
+    substanceName: substanceName,
+    indicatorColor: indicatorColor,
     CREATIONS: CREATIONS,
     EQUIPMENT: EQUIPMENT,
     READY: READY,

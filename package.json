@@ -27,7 +27,7 @@
     "test:consent": "node tools/test-consent.mjs",
     "test:content": "node tools/test-content-facts.mjs",
     "test:seo": "node tools/test-seo.mjs",
-    "test:data": "node tools/test-element-data.mjs && node tools/test-element-props.mjs && node tools/test-atom-structure.mjs",
+    "test:data": "node tools/test-element-data.mjs && node tools/test-element-props.mjs && node tools/test-atom-structure.mjs && node tools/test-element-appearance.mjs",
     "test:pro-lab": "node tools/test-pro-lab.mjs",
     "test:solver": "node tools/test-solver.mjs && node tools/test-formula-parser.mjs",
     "test:calc": "node tools/test-calc-validation.mjs && node tools/test-sigfigs.mjs",

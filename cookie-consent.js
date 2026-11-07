@@ -127,6 +127,15 @@
     if (returnFocus && returnFocus.focus) returnFocus.focus();
   }
 
+  // focus() forces style+layout; deferring it one frame lets it use the layout
+  // the browser computes for that frame anyway instead of a second full pass.
+  function focusSoon(el) {
+    var raf = window.requestAnimationFrame || function (fn) { return setTimeout(fn, 16); };
+    raf(function () {
+      if (mode === 'choice' && el.isConnected !== false && !bar.hidden) el.focus();
+    });
+  }
+
   function choiceView(text) {
     mode = 'choice';
     bar.setAttribute('aria-label', text.dialog);
@@ -151,7 +160,7 @@
     });
     showBar();
     var accept = bar.querySelector('#aco-cc-accept');
-    if (accept) accept.focus();
+    if (accept) focusSoon(accept);
   }
 
   function configureView(text) {

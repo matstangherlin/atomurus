@@ -88,4 +88,67 @@ butene.bonds.filter((x) => x.a < butene.heavy && x.b < butene.heavy).forEach((x)
   if (x.o === 2) assert.ok(d > 1.26 && d < 1.42, 'C=C ' + d);
 });
 
+// IUPAC-style names (PT and EN), null when the engine is not sure.
+const name = (s, lang) => E.nameOf(P(s), lang);
+const NAMES = [
+  ['CH3CH2CH2CH3', 'butano', 'butane'],
+  ['CH3CH(CH3)CH3', '2-metilpropano', '2-methylpropane'],
+  ['C(CH3)4', '2,2-dimetilpropano', '2,2-dimethylpropane'],
+  ['CH3CH(CH3)CH2CH(CH3)CH3', '2,4-dimetilpentano', '2,4-dimethylpentane'],
+  ['CH3CH2CH(CH3)CH2CH2CH3', '3-metilhexano', '3-methylhexane'],
+  ['CH3CH(OH)CH2CH3', 'butan-2-ol', 'butan-2-ol'],
+  ['(CH3)3COH', '2-metilpropan-2-ol', '2-methylpropan-2-ol'],
+  ['CH3CH2OH', 'etanol', 'ethanol'],
+  ['CH3CH2CH2OH', 'propan-1-ol', 'propan-1-ol'],
+  ['CH2=CHCH2OH', 'prop-2-en-1-ol', 'prop-2-en-1-ol'],
+  ['CH3OCH2CH3', 'metoxietano', 'methoxyethane'],
+  ['CH3OCH3', 'metoximetano', 'methoxymethane'],
+  ['CH3CH2OCH2CH3', 'etoxietano', 'ethoxyethane'],
+  ['CH3CH2CH2CHO', 'butanal', 'butanal'],
+  ['HCHO', 'metanal', 'methanal'],
+  ['CH3COCH2CH3', 'butanona', 'butanone'],
+  ['CH3COCH3', 'propanona', 'propanone'],
+  ['CH3CH2COCH2CH3', 'pentan-3-ona', 'pentan-3-one'],
+  ['CH3CH2CH2COOH', 'ácido butanoico', 'butanoic acid'],
+  ['HCOOH', 'ácido metanoico', 'methanoic acid'],
+  ['CH3COOCH3', 'etanoato de metila', 'methyl ethanoate'],
+  ['HCOOCH2CH3', 'metanoato de etila', 'ethyl methanoate'],
+  ['CH2=CHCH2CH3', 'but-1-eno', 'but-1-ene'],
+  ['CH3CH=CHCH3', 'but-2-eno', 'but-2-ene'],
+  ['CH2=C(CH3)CH3', '2-metilpropeno', '2-methylpropene'],
+  ['CH2=CH-CH=CH2', 'buta-1,3-dieno', 'buta-1,3-diene'],
+  ['CH3CH2C#CH', 'but-1-ino', 'but-1-yne'],
+  ['C1CCC1', 'ciclobutano', 'cyclobutane'],
+  ['C1CCCCC1', 'ciclo-hexano', 'cyclohexane'],
+  ['CC1CC1', 'metilciclopropano', 'methylcyclopropane'],
+  ['C1CCCCC1O', 'ciclo-hexanol', 'cyclohexanol'],
+  ['c1ccccc1', 'benzeno', 'benzene'],
+  ['Cc1ccccc1', 'tolueno', 'toluene'],
+  ['Oc1ccccc1', 'fenol', 'phenol'],
+  ['CH3CH2CH2Cl', '1-cloropropano', '1-chloropropane'],
+  ['CH3CHClCH3', '2-cloropropano', '2-chloropropane'],
+  ['CH3CHCl2', '1,1-dicloroetano', '1,1-dichloroethane'],
+  ['CH3CHClCH2OH', '2-cloropropan-1-ol', '2-chloropropan-1-ol'],
+  ['CH3CH2CH2NH2', 'propan-1-amina', 'propan-1-amine'],
+  ['CH3NH2', 'metanamina', 'methanamine'],
+  // outside the confident set → null (diol, secondary amine, enol, acyl chloride, disubstituted ring)
+  ['CH3CH(OH)CH(OH)CH3', null, null],
+  ['CH3NHCH3', null, null],
+  ['CH2=C(OH)CH3', null, null],
+  ['CH3COCl', null, null],
+  ['CC1CC1C', null, null]
+];
+for (const [s, pt, en] of NAMES) {
+  assert.equal(name(s, 'pt'), pt, s + ' (pt)');
+  assert.equal(name(s, 'en'), en, s + ' (en)');
+}
+// Different isomers never share a name.
+for (const f of ['C4H10O', 'C5H12', 'C6H14', 'C4H8', 'C5H10', 'C3H6O', 'C4H8O2', 'C3H7Cl', 'C4H9Cl', 'C3H9N', 'C5H10O']) {
+  for (const lang of ['pt', 'en']) {
+    const names = E.enumerate(f).isomers.map((m) => E.nameOf(m, lang)).filter(Boolean);
+    assert.equal(new Set(names).size, names.length, f + ' ' + lang + ' duplicate names: ' + names.join(', '));
+  }
+}
+assert.equal(E.enumerate('C4H10O').isomers.filter((m) => E.nameOf(m, 'pt')).length, 7);
+
 console.log('isomer engine ok');
