@@ -93,4 +93,10 @@ Os arquivos ficam no artefato `atomurus-android` da execução.
 O Play também pede, antes de liberar: política de privacidade
 (`https://atomurus.com/app-privacy?lang=pt-BR`, a política específica do app; em inglês: `https://atomurus.com/app-privacy`), classificação de conteúdo, público-alvo,
 segurança dos dados (o app não coleta dados nem tem anúncios) e a ficha da loja.
-Ícone 512×512 e imagem de destaque 1024×500 prontos em `android/store/`.
+Ficha da loja pronta: textos em `android/store/listing-pt-BR.md` e
+`listing-en-US.md`. Para refazer capturas, recurso gráfico e ícone (saem em
+`release/android/store/`), sirva `dist/android-web` como o Capacitor e rode:
+
+```bash
+node tools/android/store-screens.cjs /tmp/raw && python3 tools/android/store-compose.py /tmp/raw release/android/store
+```

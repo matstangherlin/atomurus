@@ -81,7 +81,27 @@
     }
   } catch (e) {}
 
-  /* 3. The site's API is not part of the app yet: answer "signed out". */
+  /* 3. The site's API is not part of the app yet: public data the pages need
+     (molecule coordinates for the 3D viewer) is answered from files in the
+     APK; everything else answers "signed out". */
+  function jsonResponse(status, body) {
+    return new Response(JSON.stringify(body), { status: status, headers: { 'Content-Type': 'application/json' } });
+  }
+  var moleculesFile = null;
+  function localApi(u, nativeFetch) {
+    if (u.pathname === '/api/pro-lab/viewer/molecule') {
+      var key = String(u.searchParams.get('key') || '').toLowerCase();
+      if (!moleculesFile) {
+        moleculesFile = nativeFetch('/assets/android/molecules.json').then(function (r) { return r.json(); })
+          .catch(function (e) { moleculesFile = null; throw e; });
+      }
+      return moleculesFile.then(function (all) {
+        var mol = Object.prototype.hasOwnProperty.call(all, key) ? all[key] : null;
+        return mol ? jsonResponse(200, { ok: true, molecule: mol }) : jsonResponse(404, { ok: false, error: 'Molecule not found.', code: 'molecule_not_found' });
+      });
+    }
+    return null;
+  }
   if (typeof window.fetch === 'function') {
     var nativeFetch = window.fetch.bind(window);
     window.fetch = function (input, init) {
@@ -90,6 +110,8 @@
         var u = new URL(url, location.href);
         var ours = u.origin === location.origin || /(^|\.)atomurus\.com$/i.test(u.hostname);
         if (ours && u.pathname.indexOf('/api/') === 0) {
+          var local = localApi(u, nativeFetch);
+          if (local) return local;
           return Promise.resolve(new Response(JSON.stringify({ ok: false, error: 'session_expired', code: 'app_no_accounts' }), {
             status: 401,
             headers: { 'Content-Type': 'application/json' }
