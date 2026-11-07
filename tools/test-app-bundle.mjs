@@ -64,6 +64,6 @@ test('only the two app typefaces ship (Figtree, JetBrains Mono)', () => {
 test('no remote-webview shortcut in the Capacitor config', () => {
   const cap = JSON.parse(readFileSync(path.join(ROOT, 'capacitor.config.json'), 'utf8'));
   assert.ok(!cap.server || !cap.server.url, 'production must not point server.url at the website');
-  assert.equal(cap.appId, 'com.atomurus');
+  assert.equal(cap.appId, 'atomurus.com', 'the package reserved in Google Play Console');
   assert.ok(cap.webDir.startsWith('dist/'), 'webDir is a build output, never the repository root');
 });

@@ -8,7 +8,7 @@ instructions for building and uploading are in `ANDROID.md` at the repo root.
 
 | Item | Value | Notes |
 | --- | --- | --- |
-| `appId` / Android package | `com.atomurus` | Reverse-DNS of atomurus.com. **Permanent after the first Play upload.** |
+| `appId` / Android package (`applicationId`) | `atomurus.com` | The package name reserved in Play Console. **Permanent after the first Play upload.** The Java namespace stays `com.atomurus` (code only). |
 | `appName` (launcher label) | `Atomurus` | The Play listing name is set in Play Console. |
 | Capacitor | 8.6 | `@capacitor/core`, `@capacitor/android`, `@capacitor/cli` |
 | Android SDK | compile/target 36, min 24 | `android/variables.gradle` |

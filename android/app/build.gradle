@@ -21,10 +21,11 @@ def appVersionCode = (System.getenv('ATOMURUS_VERSION_CODE') ?: project.findProp
 def appVersionName = System.getenv('ATOMURUS_VERSION_NAME') ?: project.findProperty('atomurusVersionName') ?: '1.0.0'
 
 android {
+    // Java/Kotlin namespace (code only). The Play package is applicationId below.
     namespace = "com.atomurus"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.atomurus"
+        applicationId "atomurus.com"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode appVersionCode

@@ -6,7 +6,7 @@ mesmo sem internet.
 
 | | |
 |---|---|
-| Pacote (ID do app) | `com.atomurus` — **não muda depois do 1º envio ao Play** |
+| Pacote (ID do app) | `atomurus.com` — o nome de pacote reservado no Play Console; **não muda depois do 1º envio** |
 | Nome no celular | Atomurus |
 | Versão atual | `android/gradle.properties` → `atomurusVersionCode` / `atomurusVersionName` |
 | Android | alvo API 36 (Android 16), mínimo API 24 (Android 7) |
@@ -77,7 +77,7 @@ Os arquivos ficam no artefato `atomurus-android` da execução.
 1. Play Console → seu app → **Testar e lançar → Teste interno → Criar nova versão**.
 2. Em **Assinatura de apps do Google Play**, aceite (o Google guarda a chave do
    app; a sua chave vira a chave de upload).
-3. Envie o arquivo **`.aab`**. O pacote `com.atomurus` fica fixo a partir daqui.
+3. Envie o arquivo **`.aab`**. O pacote `atomurus.com` fica fixo a partir daqui.
 4. Nome da versão: aparece sozinho (ex.: `1 (1.0.0)`). Escreva as notas da versão.
 5. Aba **Testadores**: crie uma lista de e-mails e copie o link de participação.
 6. Salve → Revisar versão → **Iniciar lançamento para teste interno**.
