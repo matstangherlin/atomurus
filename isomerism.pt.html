@@ -292,10 +292,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg-gradient);color:var(--
 <script>
 (function(){
   var h=location.hash.replace('#','');
+  var q=new URLSearchParams(location.search);
+  if(!q.has('lang'))q.set('lang','pt-BR');
   if(['geometrica','optica','espacial','spatial'].indexOf(h)!==-1){
-    location.replace('viewer/isomerism.html?lang=pt-BR#geometrica');
+    location.replace('viewer/isomerism.html?'+q.toString()+'#geometrica');
   } else {
-    location.replace('viewer/isomerism.html?lang=pt-BR');
+    location.replace('viewer/isomerism.html?'+q.toString());
   }
 })();
 </script>
