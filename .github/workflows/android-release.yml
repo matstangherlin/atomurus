@@ -1,0 +1,177 @@
+name: Android release (manual)
+
+# The only path that produces a store build of the Atomurus Android app.
+#
+# - workflow_dispatch only, and only from main: merging never publishes.
+# - Builds a signed release APK + AAB with the upload key (Google Play App Signing).
+# - If GOOGLE_PLAY_SERVICE_ACCOUNT_JSON is set, uploads the AAB to the chosen
+#   Play track. Without it, the signed files are left as workflow artifacts
+#   for a manual upload in the Play Console.
+# - production requires typing PUBLICAR-PRODUCAO.
+#
+# Secrets (Settings → Secrets and variables → Actions), see docs/ANDROID.md:
+#   ATOMURUS_ANDROID_KEYSTORE_BASE64, ATOMURUS_ANDROID_KEYSTORE_PASSWORD,
+#   ATOMURUS_ANDROID_KEY_ALIAS, ATOMURUS_ANDROID_KEY_PASSWORD,
+#   GOOGLE_PLAY_SERVICE_ACCOUNT_JSON (optional)
+
+on:
+  workflow_dispatch:
+    inputs:
+      track:
+        description: "Google Play track"
+        type: choice
+        options: [internal, alpha, beta, production]
+        default: internal
+      release_status:
+        description: "draft = you finish the rollout in the Play Console; completed = goes live on the track"
+        type: choice
+        options: [draft, completed]
+        default: draft
+      release_notes:
+        description: "What's new (pt-BR, up to 500 characters)"
+        type: string
+        required: false
+      confirm_production:
+        description: "For production, type PUBLICAR-PRODUCAO"
+        type: string
+        required: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Android release → ${{ inputs.track }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Guard — main only, production opt-in
+        env:
+          TRACK: ${{ inputs.track }}
+          CONFIRM: ${{ inputs.confirm_production }}
+        run: |
+          if [ "$GITHUB_REF" != "refs/heads/main" ]; then
+            echo "SOURCE_NOT_MAIN: Android releases are built from main only (got $GITHUB_REF)"; exit 6
+          fi
+          if [ "$TRACK" = "production" ] && [ "$CONFIRM" != "PUBLICAR-PRODUCAO" ]; then
+            echo "PRODUCTION_NOT_CONFIRMED: type PUBLICAR-PRODUCAO in confirm_production"; exit 6
+          fi
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Signing secrets present? (names only)
+        id: creds
+        env:
+          KS_B64: ${{ secrets.ATOMURUS_ANDROID_KEYSTORE_BASE64 }}
+          KS_PASS: ${{ secrets.ATOMURUS_ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ATOMURUS_ANDROID_KEY_ALIAS }}
+          KEY_PASS: ${{ secrets.ATOMURUS_ANDROID_KEY_PASSWORD }}
+          PLAY_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          missing=""
+          [ -n "$KS_B64" ] || missing="$missing ATOMURUS_ANDROID_KEYSTORE_BASE64"
+          [ -n "$KS_PASS" ] || missing="$missing ATOMURUS_ANDROID_KEYSTORE_PASSWORD"
+          [ -n "$KEY_ALIAS" ] || missing="$missing ATOMURUS_ANDROID_KEY_ALIAS"
+          [ -n "$KEY_PASS" ] || missing="$missing ATOMURUS_ANDROID_KEY_PASSWORD"
+          if [ -n "$missing" ]; then
+            echo "BLOCKED_SIGNING_SECRETS: add these repository secrets (docs/ANDROID.md):$missing" | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 4
+          fi
+          play=blocked
+          [ -n "$PLAY_JSON" ] && play=ready
+          echo "play=$play" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: App bundle + architecture gates
+        run: npm run test:a1
+
+      - name: Temporary keystore (outside the workspace)
+        env:
+          KS_B64: ${{ secrets.ATOMURUS_ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          umask 077
+          ks="$RUNNER_TEMP/atomurus-upload.jks"
+          printf '%s' "$KS_B64" | base64 --decode > "$ks"
+          echo "ATOMURUS_ANDROID_KEYSTORE_PATH=$ks" >> "$GITHUB_ENV"
+
+      - name: Signed release APK + AAB
+        env:
+          ATOMURUS_ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ATOMURUS_ANDROID_KEYSTORE_PASSWORD }}
+          ATOMURUS_ANDROID_KEY_ALIAS: ${{ secrets.ATOMURUS_ANDROID_KEY_ALIAS }}
+          ATOMURUS_ANDROID_KEY_PASSWORD: ${{ secrets.ATOMURUS_ANDROID_KEY_PASSWORD }}
+        run: |
+          export ATOMURUS_ANDROID_VERSION_CODE=$(git rev-list --count HEAD)
+          node tools/android-build.mjs release
+
+      - name: Remove temporary keystore
+        if: always()
+        run: rm -f "$RUNNER_TEMP/atomurus-upload.jks"
+
+      - name: Release notes
+        if: steps.creds.outputs.play == 'ready'
+        env:
+          NOTES: ${{ inputs.release_notes }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/whatsnew"
+          printf '%s' "${NOTES:-Melhorias e correções.}" | head -c 500 > "$RUNNER_TEMP/whatsnew/whatsnew-pt-BR"
+          echo "AAB_PATH=$(ls release-artifacts/*.aab)" >> "$GITHUB_ENV"
+
+      - name: Upload to Google Play (${{ inputs.track }})
+        if: steps.creds.outputs.play == 'ready'
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: atomurus.com
+          releaseFiles: ${{ env.AAB_PATH }}
+          track: ${{ inputs.track }}
+          status: ${{ inputs.release_status }}
+          whatsNewDirectory: ${{ runner.temp }}/whatsnew
+
+      - name: Summary
+        if: always()
+        env:
+          PLAY: ${{ steps.creds.outputs.play }}
+          TRACK: ${{ inputs.track }}
+        run: |
+          {
+            echo "### Android release — $TRACK"
+            echo "| Item | Value |"
+            echo "| --- | --- |"
+            echo "| SHA (main) | \`$(git rev-parse HEAD)\` |"
+            for f in release-artifacts/*.apk release-artifacts/*.aab; do
+              [ -f "$f" ] && echo "| File | $(basename "$f") |"
+            done
+            if [ "$PLAY" = "ready" ]; then
+              echo "| Google Play | uploaded to **$TRACK** |"
+            else
+              echo "| Google Play | not uploaded (no GOOGLE_PLAY_SERVICE_ACCOUNT_JSON) — upload the .aab in the Play Console |"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload signed APK + AAB
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: atomurus-android-release-${{ github.run_number }}
+          path: release-artifacts/
+          if-no-files-found: error
+          retention-days: 90

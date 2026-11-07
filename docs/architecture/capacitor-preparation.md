@@ -1,14 +1,14 @@
-# Capacitor preparation (A1.0, documentation only)
+# Capacitor configuration
 
-Status: **prepared, not installed**. A1.0 does not add `@capacitor/*`, does
-not create an `android/` project, and does not publish anything. This page
-fixes the decisions the Android wave (A1.4) starts from.
+Status: **installed**. Capacitor 8 and the `android/` project are in the
+repository; CI builds an APK + AAB on every PR (`.github/workflows/android-build.yml`).
+Build, signing and Play release steps: [`docs/ANDROID.md`](../ANDROID.md).
 
 ## Decisions to confirm (owner)
 
 | Item | Proposal | Status |
 | --- | --- | --- |
-| `appId` / Android package | `com.atomurus.app` | **Proposed — owner must confirm before A1.4.** Changing it after a Play upload is impossible. |
+| `appId` / Android package | `atomurus.com` | **Confirmed by the owner.** Changing it after a Play upload is impossible. |
 | `appName` | `Atomurus` | Proposed |
 | Capacitor line | Capacitor 8 (current major), no legacy version "to test quickly" | Decided |
 | Android target | API 36 (`targetSdkVersion` / `compileSdkVersion` 36) | Decided |
@@ -16,14 +16,14 @@ fixes the decisions the Android wave (A1.4) starts from.
 | Remote WebView | Not used. Assets ship inside the APK; only the API is remote | Decided |
 | Deep links | `atomurus://…` and `https://atomurus.com/…` (App Links) → `resolveDeepLink()` | Contract ready (`src/core/routing/routes.js`) |
 
-## Future `capacitor.config.json`
+## `capacitor.config.json`
 
-This is the configuration A1.4 creates. It is kept here (not at the repo
-root) so nothing picks it up early. `tools/test-app-bundle.mjs` checks it.
+The file at the repository root must match this block;
+`tools/test-app-bundle.mjs` checks both.
 
 ```json
 {
-  "appId": "com.atomurus.app",
+  "appId": "atomurus.com",
   "appName": "Atomurus",
   "webDir": "dist/app",
   "android": {
@@ -58,18 +58,16 @@ Notes:
 | `src/adapters/capacitor/capacitor-adapter.js` | `@capacitor/app` | `pause` / `resume` → `Platform.onPause/onResume`, later back button |
 | | `@capacitor/network` | `Platform.isOnline()`, `onNetworkChange` |
 | | `@capacitor/browser` | `Platform.openExternalUrl()` (Custom Tabs) |
-| `src/adapters/capacitor/secure-storage-adapter.js` | a Keystore-backed secure storage plugin (chosen in A1.1), exposed as `Capacitor.Plugins.AtomurusSecureStorage` | Supabase access/refresh tokens |
+| `src/adapters/capacitor/secure-storage-adapter.js` | `AtomurusSecureStorage`, an in-app plugin (`android/app/src/main/java/atomurus/com/AtomurusSecureStoragePlugin.java`, AES-GCM with an Android Keystore key) | Supabase access/refresh tokens |
 
 `src/app/bootstrap/app-main.js` refuses to start the native app if the secure
 storage plugin is missing — tokens are never downgraded to `localStorage`.
 
-## Build flow (A1.4)
+## Build flow
 
 ```text
 npm ci
-npm run build:app          # → dist/app (hashed, lazy chunks, local Three)
-npx cap sync android       # copies dist/app into the Android project
-./gradlew assembleDebug    # physical-device QA (A1.6)
+npm run android:debug      # build:app + cap sync + assembleDebug/bundleDebug → release-artifacts/
 ```
 
 ## What stays out of the app bundle

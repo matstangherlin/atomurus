@@ -66,5 +66,7 @@ test('no remote-webview shortcut in the Capacitor preparation', () => {
   const example = JSON.parse((doc.match(/```json\n([\s\S]*?)\n```/) || [])[1]);
   assert.equal(example.webDir, 'dist/app');
   assert.ok(!example.server || !example.server.url, 'production must not point server.url at the website');
-  assert.equal(example.appId, 'com.atomurus.app');
+  assert.equal(example.appId, 'atomurus.com');
+  const actual = JSON.parse(readFileSync(path.join(ROOT, 'capacitor.config.json'), 'utf8'));
+  assert.deepEqual(actual, example, 'capacitor.config.json matches docs/architecture/capacitor-preparation.md');
 });

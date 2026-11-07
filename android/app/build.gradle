@@ -1,0 +1,66 @@
+apply plugin: 'com.android.application'
+
+// Version contract (docs/ANDROID.md): versionName and the versionCode floor live
+// in android/version.properties. CI passes ATOMURUS_ANDROID_VERSION_CODE (commit
+// count of the built ref) so every build has a higher code than the last one.
+def atomurusVersionProps = new Properties()
+rootProject.file('version.properties').withInputStream { atomurusVersionProps.load(it) }
+def atomurusVersionName = atomurusVersionProps.getProperty('versionName').trim()
+def atomurusVersionFloor = Integer.parseInt(atomurusVersionProps.getProperty('versionCode').trim())
+def atomurusVersionCodeEnv = System.getenv('ATOMURUS_ANDROID_VERSION_CODE')?.trim()
+def atomurusVersionCode = atomurusVersionCodeEnv ? Integer.parseInt(atomurusVersionCodeEnv) : atomurusVersionFloor
+if (atomurusVersionCode < atomurusVersionFloor) {
+    throw new GradleException("ATOMURUS_ANDROID_VERSION_CODE ${atomurusVersionCode} is below the floor ${atomurusVersionFloor} (android/version.properties)")
+}
+
+android {
+    namespace = "atomurus.com"
+    compileSdk = rootProject.ext.compileSdkVersion
+    defaultConfig {
+        applicationId "atomurus.com"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode atomurusVersionCode
+        versionName atomurusVersionName
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        aaptOptions {
+             // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
+             // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
+            ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+        }
+    }
+    buildTypes {
+        release {
+            // Signing: atomurus-signing.gradle. Never the debug key.
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+repositories {
+    flatDir{
+        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
+    implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
+    implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
+    implementation project(':capacitor-android')
+    implementation project(':capacitor-cordova-android-plugins')
+}
+
+apply from: 'capacitor.build.gradle'
+apply from: 'atomurus-signing.gradle'
+
+try {
+    def servicesJSON = file('google-services.json')
+    if (servicesJSON.text) {
+        apply plugin: 'com.google.gms.google-services'
+    }
+} catch(Exception e) {
+    logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
+}

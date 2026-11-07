@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Atomurus</string>
+    <string name="title_activity_main">Atomurus</string>
+    <string name="package_name">atomurus.com</string>
+    <string name="custom_url_scheme">atomurus.com</string>
+</resources>

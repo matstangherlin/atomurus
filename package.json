@@ -15,6 +15,11 @@
     "build:app-data": "node tools/build-app-data.mjs",
     "build": "node tools/build-formula-parser.mjs && node tools/build-ui.mjs && node tools/build-core-bundle.mjs && node tools/build-app-data.mjs && node tools/build-critical-css.js && node tools/build-home-preview-data.js && node tools/build-remake-data.js && node tools/build-product-catalog.js && node tools/build-i18n-assets.js && node tools/build-element-content-chunks.js && node tools/generate-isomerism-pt-variants.js && node tools/patch-perf-async-css.js && node tools/inject-ui-chrome.js && node tools/apply-remake-chrome.js && node bump-version.js && node build-i18n.js && node tools/inject-i18n-chunks.js && node tools/drop-legacy-css.js && node tools/seo-normalize.js",
     "build:app": "node tools/build-app-bundle.mjs",
+    "android:sync": "node tools/android-build.mjs sync",
+    "android:open": "node tools/android-build.mjs open",
+    "android:debug": "node tools/android-build.mjs debug",
+    "android:release": "node tools/android-build.mjs release",
+    "android:icons": "python3 tools/build-android-icons.py",
     "test:plan": "node tools/test-feature-catalog.mjs && node tools/test-plan-access.mjs && node tools/test-lab-tool-access.mjs",
     "test:auth": "node tools/test-auth-provider.mjs && node tools/test-auth-flows.mjs && node tools/test-auth-recovery.mjs && node tools/test-auth-rate-limit.mjs && node tools/test-auth-sync.mjs",
     "test:study": "node tools/test-study-cloud.mjs && node tools/test-study-journey.mjs",
@@ -64,9 +69,15 @@
     "test:allotropes": "node tools/test-allotropes.mjs"
   },
   "dependencies": {
+    "@capacitor/android": "8.5.2",
+    "@capacitor/app": "8.1.1",
+    "@capacitor/browser": "8.0.4",
+    "@capacitor/core": "8.5.2",
+    "@capacitor/network": "8.0.1",
     "stripe": "^22.3.0"
   },
   "devDependencies": {
+    "@capacitor/cli": "8.5.2",
     "@playwright/test": "^1.55.0",
     "esbuild": "0.25.10",
     "three": "0.128.0"

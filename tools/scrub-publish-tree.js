@@ -26,6 +26,10 @@ const REMOVE_PATHS = [
   'docs',
   // The packaged app bundle (A1.0) is a separate artifact, never part of the site.
   'dist',
+  // Android app project (Capacitor) and its build outputs.
+  'android',
+  'release-artifacts',
+  'capacitor.config.json',
   '.env.example',
 ];
 

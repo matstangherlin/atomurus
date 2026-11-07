@@ -24,3 +24,8 @@ supabase/
 package.json
 package-lock.json
 propostas/
+
+# Android app project and build outputs — not part of the site
+android/
+release-artifacts/
+capacitor.config.json

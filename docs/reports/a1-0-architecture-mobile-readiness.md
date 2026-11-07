@@ -231,7 +231,7 @@ Reading it honestly: public pages pay **+15 KB uncompressed (+1 request)** — t
 1. **12 Playwright failures exist on `main` and here, identically.** 11 (lab-access ×10, viz-prototype ×1) fail because this sandbox blocks `cdnjs.cloudflare.com`, so Three.js never loads; with Three served locally they pass (§21). 1 (`workspace.spec.js` "Pro walkthrough") fails deterministically on `main`: its locator `.ws-toast, [role="status"]` matches two toasts that are correctly visible together (strict-mode violation). It is a test bug outside A1.0 and was left for a separate fix.
 2. **Native auth is architected, not live.** The bearer path works server-side; the token-issuing endpoint, CORS/CapacitorHttp choice, bearer exemption from `verifySameOrigin`, and the secure-storage plugin are A1.1.
 3. **No real device, no soft keyboard.** Keyboard behaviour is simulated by shrinking the viewport (Android `adjustResize`); safe areas by injected variables; WebGL is SwiftShader. Physical-device QA is A1.6.
-4. **App ID not fixed.** `com.atomurus.app` is a proposal awaiting owner confirmation (irreversible after a Play upload).
+4. **App ID fixed.** `atomurus.com`, confirmed by the owner (irreversible after a Play upload).
 5. **Legacy remains** as listed in §6–8; `!important` count unchanged (no legacy screen was migrated off its CSS in this wave).
 6. **Web still publishes the repo root.** `dist/web` was not introduced: moving Netlify's publish directory is a deployment change that deserves its own review. The app output is separate (`dist/app`).
 7. **Hosted dev harness** (`/dev/app-shell.html` on atomurus.com) imports un-versioned `/src/*.js` modules under the site's immutable cache policy; it is a noindex dev page, and the packaged app uses hashed files.

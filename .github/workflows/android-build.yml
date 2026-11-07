@@ -1,0 +1,82 @@
+name: Android build
+
+# Builds the Atomurus Android app (Capacitor, webDir dist/app) on every PR and
+# on every push to main, and uploads an installable debug APK + AAB as a
+# workflow artifact (Actions → this run → Artifacts).
+#
+# Debug builds are signed with the SDK debug key: install the APK directly on
+# a phone for QA. They are never sent to Google Play — that is
+# android-release.yml (manual, main only, upload key). See docs/ANDROID.md.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android-debug:
+    name: Debug APK + AAB
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # versionCode = commit count of the built ref.
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: App bundle + architecture gates
+        run: npm run test:a1
+
+      - name: Build debug APK + AAB
+        env:
+          GITHUB_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          export ATOMURUS_ANDROID_VERSION_CODE=$(git rev-list --count HEAD)
+          node tools/android-build.mjs debug
+
+      - name: Artifact name
+        id: identity
+        run: |
+          base=$(ls release-artifacts/*.provenance.json | head -n1 | xargs -n1 basename | sed 's/\.provenance\.json$//')
+          echo "base=$base" >> "$GITHUB_OUTPUT"
+          {
+            echo "### Android debug build — \`$base\`"
+            echo ""
+            echo "| File | Size |"
+            echo "| --- | --- |"
+            for f in release-artifacts/*.apk release-artifacts/*.aab; do
+              echo "| $(basename "$f") | $(du -h "$f" | cut -f1) |"
+            done
+            echo ""
+            echo "Download: **Summary → Artifacts → $base**. Unzip and install the \`.apk\` on an Android phone (allow installs from unknown sources)."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload APK + AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.identity.outputs.base }}
+          path: release-artifacts/
+          if-no-files-found: error
+          retention-days: ${{ github.event_name == 'push' && 30 || 7 }}

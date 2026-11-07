@@ -1,0 +1,68 @@
+// Release signing for Atomurus Android (docs/ANDROID.md).
+//
+// Google Play App Signing: what signs here is the UPLOAD key; Google keeps the
+// distribution key. Values come from environment variables (CI) or, locally,
+// from android/keystore.properties (gitignored). Environment wins.
+//
+//   ATOMURUS_ANDROID_KEYSTORE_PATH      <-> storeFile
+//   ATOMURUS_ANDROID_KEYSTORE_PASSWORD  <-> storePassword
+//   ATOMURUS_ANDROID_KEY_ALIAS          <-> keyAlias
+//   ATOMURUS_ANDROID_KEY_PASSWORD       <-> keyPassword
+//
+// Debug builds need none of this. A release build without all four values
+// fails (BLOCKED_SIGNING_SECRETS) instead of silently using the debug key.
+// Only variable NAMES are ever printed, never values.
+
+def atomurusSigningKeys = [
+    [env: 'ATOMURUS_ANDROID_KEYSTORE_PATH', prop: 'storeFile'],
+    [env: 'ATOMURUS_ANDROID_KEYSTORE_PASSWORD', prop: 'storePassword'],
+    [env: 'ATOMURUS_ANDROID_KEY_ALIAS', prop: 'keyAlias'],
+    [env: 'ATOMURUS_ANDROID_KEY_PASSWORD', prop: 'keyPassword'],
+]
+
+def atomurusSigningProps = new Properties()
+def atomurusSigningPropsFile = rootProject.file('keystore.properties')
+if (atomurusSigningPropsFile.isFile()) {
+    atomurusSigningPropsFile.withInputStream { atomurusSigningProps.load(it) }
+}
+
+def atomurusSigning = [:]
+atomurusSigningKeys.each { key ->
+    def value = System.getenv(key.env) ?: atomurusSigningProps.getProperty(key.prop)
+    atomurusSigning[key.env] = value?.trim() ? value.trim() : null
+}
+
+def atomurusSigningMissing = atomurusSigningKeys.findAll { !atomurusSigning[it.env] }.collect { it.env }
+def atomurusKeystoreFile = atomurusSigning.ATOMURUS_ANDROID_KEYSTORE_PATH ? rootProject.file(atomurusSigning.ATOMURUS_ANDROID_KEYSTORE_PATH) : null
+if (atomurusKeystoreFile != null && !atomurusKeystoreFile.isFile()) {
+    atomurusSigningMissing << 'ATOMURUS_ANDROID_KEYSTORE_PATH (file not found)'
+}
+def atomurusReleaseSigningReady = atomurusSigningMissing.isEmpty()
+
+android {
+    signingConfigs {
+        if (atomurusReleaseSigningReady) {
+            atomurusRelease {
+                storeFile atomurusKeystoreFile
+                storePassword atomurusSigning.ATOMURUS_ANDROID_KEYSTORE_PASSWORD
+                keyAlias atomurusSigning.ATOMURUS_ANDROID_KEY_ALIAS
+                keyPassword atomurusSigning.ATOMURUS_ANDROID_KEY_PASSWORD
+            }
+        }
+    }
+    buildTypes {
+        release {
+            signingConfig atomurusReleaseSigningReady ? signingConfigs.atomurusRelease : null
+        }
+    }
+}
+
+gradle.taskGraph.whenReady { graph ->
+    def releaseTasks = graph.allTasks.findAll { it.project == project && it.name ==~ /(assemble|bundle|package|sign|install).*Release.*/ }
+    if (!releaseTasks.isEmpty() && !atomurusReleaseSigningReady) {
+        throw new GradleException(
+            "BLOCKED_SIGNING_SECRETS: Atomurus release builds must be signed. Missing: ${atomurusSigningMissing.join(', ')}. " +
+            "Set the environment variables or android/keystore.properties (docs/ANDROID.md)."
+        )
+    }
+}
