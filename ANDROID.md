@@ -28,6 +28,8 @@ mesmo sem internet.
 
 - **Política de privacidade do app:** `app-privacy.pt.html` / `app-privacy.html`
   no site; dentro do app, o link "Privacidade" abre essa página.
+- **Termos de Uso do app:** `app-terms.pt.html` / `app-terms.html`
+  (`https://atomurus.com/app-terms?lang=pt-BR`); o link "Termos" do app abre essa página.
 
 Arquivos: `tools/android/android-app.js` e `android-app.css` (camada do app),
 `tools/build-android-web.mjs` (gera `dist/android-web`), `capacitor.config.json`.

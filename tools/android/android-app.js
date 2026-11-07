@@ -30,9 +30,9 @@
   }
 
   /* Where a site path lives inside the APK, or null if it does not. */
-  /* The app has its own privacy policy (what the site's page describes —
-     analytics, ads, accounts — does not exist in the app). */
-  var APP_PAGES = { '/privacy': 'app-privacy', '/app-privacy': 'app-privacy' };
+  /* The app has its own privacy policy and terms (what the site's pages
+     describe — analytics, ads, accounts, payments — does not exist in the app). */
+  var APP_PAGES = { '/privacy': 'app-privacy', '/app-privacy': 'app-privacy', '/terms': 'app-terms', '/app-terms': 'app-terms' };
 
   function wantsPt(search) {
     var q = /[?&]lang=([a-z]{2})/i.exec(search || '');

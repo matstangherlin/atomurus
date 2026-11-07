@@ -67,7 +67,7 @@
       var link = document.createElement('link');
       link.id = 'atomurus-workspace-ui-css';
       link.rel = 'stylesheet';
-      link.href = '/assets/app-workspace.css?v=202611070845';
+      link.href = '/assets/app-workspace.css?v=202611070910';
       document.head.appendChild(link);
     }
     var node = document.getElementById(id);

@@ -98,6 +98,8 @@ assert.deepEqual(boot('/privacy.html', '?lang=en').replaced, ['/app-privacy.html
 assert.deepEqual(boot('/privacy.pt.html', '?lang=pt-BR').replaced, ['/app-privacy.pt.html?lang=pt-BR']);
 assert.deepEqual(boot('/app-privacy', '?lang=pt-BR').replaced, ['/app-privacy.pt.html?lang=pt-BR']);
 assert.deepEqual(boot('/app-privacy.pt.html', '?lang=pt-BR').replaced, []);
+assert.deepEqual(boot('/terms.html', '?lang=pt-BR').replaced, ['/app-terms.pt.html?lang=pt-BR'], 'the in-app terms link opens the app terms');
+assert.deepEqual(boot('/terms', '?lang=en').replaced, ['/app-terms.html?lang=en']);
 assert.deepEqual(boot('/calculators.html').replaced, []);
 const app = boot('/');
 assert.ok(app.classes.has('is-native-app') && app.classes.has('is-android-app'));
