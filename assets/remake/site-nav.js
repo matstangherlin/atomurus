@@ -315,4 +315,27 @@
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
   else run();
+
+  /* Bottom tab bar (phones): mark the section of the current page. */
+  (function markTab() {
+    var bars = document.querySelectorAll('[data-rm-tabbar]');
+    if (!bars.length) return;
+    var p = location.pathname.replace(/\.(pt|en)\.html$/, '.html');
+    var q = location.search;
+    var key = '';
+    if (/^\/periodic-table/.test(p)) key = 'periodic';
+    else if (/^\/viewer\//.test(p) || /^\/isomerism/.test(p)) key = 'models';
+    else if (/^\/vision/.test(p)) key = 'camera';
+    else if (/^\/calculators/.test(p)) key = 'calculators';
+    else if (/^\/app/.test(p)) key = 'lab';
+    else if (/^\/explore/.test(p)) key = 'explore';
+    bars.forEach(function (bar) {
+      bar.querySelectorAll('[data-rm-tab]').forEach(function (a) {
+        var on = a.getAttribute('data-rm-tab') === key;
+        a.classList.toggle('is-active', on);
+        if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+      });
+    });
+    document.documentElement.classList.add('has-rm-tabbar');
+  })();
 })();
