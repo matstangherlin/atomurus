@@ -105,6 +105,7 @@ assert.deepEqual(boot('/periodic-table/ferrum').replaced, ['/periodic-table/ferr
 assert.deepEqual(boot('/login', '?next=%2Fapp').replaced, ['/'], 'sign-in sends you home');
 assert.deepEqual(boot('/signup').replaced, ['/']);
 assert.deepEqual(boot('/pricing').replaced, ['/'], 'no plans or prices in the app');
+assert.deepEqual(boot('/vision.html').replaced, [], 'the camera page ships in the app (open, no account)');
 assert.deepEqual(boot('/account.html').replaced, ['/']);
 assert.deepEqual(boot('/no-such-page').replaced, ['/']);
 assert.deepEqual(boot('/').replaced, []);
@@ -121,12 +122,35 @@ assert.equal(JSON.parse(app.store.get('atomurus-cookie-consent-v2')).ads, false,
 const me = await app.fetch('/api/auth/me');
 assert.equal(me.status, 401, 'the API answers "signed out" without a network call');
 assert.deepEqual(await (await app.fetch('/assets/app/elements.json')).json(), { real: true }, 'other requests are untouched');
+{
+  const calls = [];
+  const sandboxFetch = async (url, init) => { calls.push({ url, init }); return new Response('{"ok":true,"scanId":null,"left":null}'); };
+  const appV = (function () {
+    const store = new Map();
+    const sandbox = {
+      document: { documentElement: { classList: { add() {} }, setAttribute() {} }, addEventListener() {} },
+      location: { pathname: '/vision.html', search: '', hash: '', href: 'https://localhost/vision.html', origin: 'https://localhost', replace() {}, assign() {} },
+      localStorage: { getItem: (k) => (store.has(k) ? store.get(k) : null), setItem: (k, v) => store.set(k, String(v)) },
+      navigator: {}, crypto: { getRandomValues: (a) => a.fill(7) }, fetch: sandboxFetch, Headers, URL, Response, JSON, Promise, Date, Object, String, Array, Uint8Array, addEventListener() {}
+    };
+    sandbox.window = sandbox;
+    vm.runInNewContext(layer, sandbox);
+    return sandbox;
+  })();
+  const r = await appV.window.fetch('/api/vision/identify', { method: 'POST', body: '{}' });
+  assert.equal((await r.json()).left, null, 'open in the app: no daily limit');
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].url, 'https://atomurus.com/api/vision/identify', 'vision goes to the real server');
+  assert.equal(calls[0].init.headers.get('X-Atomurus-App'), 'android');
+  assert.match(calls[0].init.headers.get('X-Atomurus-Device'), /^d-[0-9a-f]{24}$/);
+  assert.equal(calls[0].init.credentials, 'omit');
+}
 const mols = JSON.parse(readFileSync(path.join(OUT, 'assets/android/molecules.json'), 'utf8'));
 assert.ok(Object.keys(mols).length >= 40 && Array.isArray(mols.water.atoms), 'molecule coordinates ship in the APK');
 
 // 4. The CSS hides every account, plan and save-to-account entry.
 const css = readFileSync(path.join(OUT, 'assets/android/android-app.css'), 'utf8');
-for (const sel of ['#cform', '.rm-signin', 'a[href^="/login"]', 'a[href^="/signup"]', 'a[href^="/pricing"]', '[data-atomurus-account]', '#aco-cookie-banner', '#atomurus-study-save', '.rm-home-plans']) {
+for (const sel of ['#cform', '.rm-signin', 'a[href^="/login"]', 'a[href^="/signup"]', 'a[href^="/pricing"]', '[data-atomurus-account]', '#aco-cookie-banner', '#atomurus-study-save', '.rm-home-plans', '.rm-pro-tag', '.vision-pro', '.vision-gate']) {
   assert.ok(css.includes(`html.is-native-app:not(#_a):not(#_b) ${sel}`), `android-app.css hides ${sel}`);
 }
 

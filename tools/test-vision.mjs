@@ -3,6 +3,7 @@ import {
   buildSystemPrompt, calibrate, identifyImage, normalizeElement, parseDataUrl, parseDetections, precisionTable, VISION_LIMITS
 } from '../netlify/lib/vision-identify.mjs';
 import { FEATURES } from '../netlify/lib/feature-catalog.mjs';
+import { createAppQuota, isAppRequest } from '../netlify/lib/vision-app.mjs';
 
 assert.equal(FEATURES.visionIdentify.access, 'pro', 'camera identification is a Pro feature');
 
@@ -73,3 +74,26 @@ assert.throws(() => parseDataUrl('data:text/html;base64,AAAA'), /JPEG, PNG or We
 assert.throws(() => parseDataUrl('data:image/png;base64,' + 'A'.repeat(7 * 1024 * 1024)), /too large/);
 
 console.log('vision tests passed');
+
+// Android app: no accounts yet, the camera is open (no per-device limit by default).
+{
+  const open = createAppQuota();
+  assert.deepEqual(open.peek('d-1', '1.1.1.1'), { allowed: true, left: 300 }, 'no device limit by default, only the IP abuse guard');
+  for (let i = 0; i < 50; i += 1) assert.equal(open.take('d-1', '1.1.1.1').allowed, true);
+  assert.equal(open.peek('d-1', '1.1.1.1').left, 250);
+  assert.deepEqual(createAppQuota({ perDevice: 0, perIp: 0 }).peek('d-1', 'ip'), { allowed: true, left: null }, 'unlimited');
+
+  const guarded = createAppQuota({ perDevice: 2, perIp: 3 });
+  assert.deepEqual(guarded.take('d-a', 'ip'), { allowed: true, left: 1 });
+  assert.deepEqual(guarded.take('d-a', 'ip'), { allowed: true, left: 0 });
+  assert.deepEqual(guarded.take('d-a', 'ip'), { allowed: false, left: 0 }, 'device cap');
+  assert.deepEqual(guarded.take('d-b', 'ip'), { allowed: true, left: 0 }, 'ip cap shared across devices');
+  assert.deepEqual(guarded.take('d-c', 'ip'), { allowed: false, left: 0 });
+  assert.deepEqual(createAppQuota({ perDevice: '0', perIp: 'x' }).peek('d', 'ip'), { allowed: true, left: null }, 'bad env values mean no limit');
+
+  const req = (headers) => ({ headers: new Headers(headers) });
+  assert.equal(isAppRequest(req({ 'X-Atomurus-App': 'android', 'X-Atomurus-Device': 'd-0123456789abcdef01234567' })), true);
+  assert.equal(isAppRequest(req({ 'X-Atomurus-App': 'android', 'X-Atomurus-Device': 'bad id!' })), false);
+  assert.equal(isAppRequest(req({})), false);
+}
+console.log('vision app quota ok');

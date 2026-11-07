@@ -4,7 +4,8 @@
    For now the app has no accounts and no purchases:
      - every sign-in, sign-up, account, plan and upgrade entry is hidden
        (android-app.css) and their pages send you back home;
-     - /api/* answers "signed out" locally, so nothing waits on the network;
+     - /api/* answers "signed out" locally, so nothing waits on the network
+       (except the camera, which goes to atomurus.com and is open per device);
      - no ads and no analytics, so the cookie banner is not needed.
 
    Capacitor's local server answers every extension-less path with
@@ -21,7 +22,7 @@
   var PAGES = /*__PAGES__*/{};
   var HIDDEN = {
     '/login': 1, '/signup': 1, '/account': 1, '/forgot-password': 1, '/reset-password': 1,
-    '/pricing': 1, '/vision': 1, '/checkout': 1, '/billing': 1, '/auth/callback': 1, '/confirm': 1
+    '/pricing': 1, '/checkout': 1, '/billing': 1, '/auth/callback': 1, '/confirm': 1
   };
 
   function bare(path) {
@@ -87,6 +88,29 @@
   function jsonResponse(status, body) {
     return new Response(JSON.stringify(body), { status: status, headers: { 'Content-Type': 'application/json' } });
   }
+  /* Vision identify runs on the server (the only feature that does): the app
+     calls atomurus.com directly, identified by a per-device id, and the
+     server allows a few analyses per day without an account. */
+  var SITE = 'https://atomurus.com';
+  function deviceId() {
+    try {
+      var id = localStorage.getItem('atomurus-device');
+      if (!id) {
+        id = 'd-' + Array.from(crypto.getRandomValues(new Uint8Array(12))).map(function (b) { return ('0' + b.toString(16)).slice(-2); }).join('');
+        localStorage.setItem('atomurus-device', id);
+      }
+      return id;
+    } catch (e) { return 'd-anonymous-device'; }
+  }
+  function remoteVision(u, init, nativeFetch) {
+    var opts = Object.assign({}, init || {});
+    var headers = new Headers((init && init.headers) || {});
+    headers.set('X-Atomurus-App', 'android');
+    headers.set('X-Atomurus-Device', deviceId());
+    opts.headers = headers;
+    opts.credentials = 'omit';
+    return nativeFetch(SITE + u.pathname + u.search, opts);
+  }
   var moleculesFile = null;
   function localApi(u, nativeFetch) {
     if (u.pathname === '/api/pro-lab/viewer/molecule') {
@@ -112,6 +136,7 @@
         if (ours && u.pathname.indexOf('/api/') === 0) {
           var local = localApi(u, nativeFetch);
           if (local) return local;
+          if (u.pathname.indexOf('/api/vision/') === 0) return remoteVision(u, init, nativeFetch);
           return Promise.resolve(new Response(JSON.stringify({ ok: false, error: 'session_expired', code: 'app_no_accounts' }), {
             status: 401,
             headers: { 'Content-Type': 'application/json' }

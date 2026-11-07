@@ -24,9 +24,12 @@ html.is-native-app:not(#_a):not(#_b) a[href*="atomurus.com/signup"],
 html.is-native-app:not(#_a):not(#_b) a[href*="atomurus.com/account"],
 html.is-native-app:not(#_a):not(#_b) a[href*="section=account"],
 
-/* Plans, prices, upgrades, Pro unlocks (no purchases inside the app) */
+/* Plans, prices, upgrades, Pro unlocks (no purchases inside the app).
+   The camera is open in the app for now, so its PRO tags go too. */
+html.is-native-app:not(#_a):not(#_b) .rm-pro-tag,
+html.is-native-app:not(#_a):not(#_b) .vision-pro,
+html.is-native-app:not(#_a):not(#_b) .vision-gate,
 html.is-native-app:not(#_a):not(#_b) a[href^="/pricing"],
-html.is-native-app:not(#_a):not(#_b) a[href^="/vision"],
 html.is-native-app:not(#_a):not(#_b) a[href*="atomurus.com/pricing"],
 html.is-native-app:not(#_a):not(#_b) [data-rm-section="plans"],
 html.is-native-app:not(#_a):not(#_b) .ws-nav-item.is-upgrade,

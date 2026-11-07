@@ -29,6 +29,16 @@ mesmo sem internet.
   (`@capacitor/app`, tratado em `tools/android/android-app.js`).
 - **Toque nos 3D:** um dedo gira, dois dedos aproximam/afastam (pinça) em
   moléculas, modelos atômicos, alótropos e isomeria; o canvas não rola a página.
+- **Câmera (identificar elementos):** aberta no app por enquanto, sem conta e
+  sem limite diário (no site é Pro). A foto vai para `atomurus.com/api/vision/*`
+  com o cabeçalho `X-Atomurus-App: android` e um id do aparelho; o resultado e
+  o ✓/✗ ficam guardados por aparelho (migração `012_vision_app_scans.sql`),
+  a foto nunca. O manifesto declara `CAMERA`; o Android pede a permissão na
+  primeira foto. Limites só contra abuso: `VISION_APP_PER_DAY` (0 = sem
+  limite) e `VISION_APP_IP_PER_DAY` (300) no Netlify. Quando a câmera virar
+  paga no app, basta baixar `VISION_APP_PER_DAY` e ligar o faturamento do Play.
+- **Barra inferior:** no celular a navegação principal (Tabela, 3D, Calc,
+  Laboratório, Câmera, Matérias) fica em abas fixas no rodapé, no app e no site.
 - O site continua igual: nada disso é carregado no navegador.
 
 - **Política de privacidade do app:** `app-privacy.pt.html` / `app-privacy.html`

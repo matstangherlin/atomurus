@@ -66,8 +66,9 @@
     }
     if (status !== 'locked' && node.kind !== 'practice' && status === 'current') badge = '<span class="rm-jn-badge">' + esc(c('Start', 'Começar')) + '</span>';
     var pop = openNodeId === node.id ? popHtml(unit, node, status, state) : '';
-    return '<div class="rm-jn-row" style="--off:' + off + 'px">' +
-      '<button type="button" class="rm-jn-node is-' + status + ' is-' + node.kind + '"' + ring + ' data-jn-node="' + esc(node.id) + '"' +
+    var justDone = status === 'done' && lastDone && !lastDone[node.id];
+    return '<div class="rm-jn-row" style="--off:' + off + 'px;--i:' + index + '">' +
+      '<button type="button" class="rm-jn-node is-' + status + ' is-' + node.kind + (justDone ? ' is-just-done' : '') + '"' + ring + ' data-jn-node="' + esc(node.id) + '"' +
       (status === 'locked' ? ' aria-disabled="true"' : '') + ' aria-label="' + esc(tx(node.title) + ' · ' + kindLabel(node.kind)) + '">' +
       badge + '<span class="rm-jn-dot">' + ico + '</span></button>' +
       '<span class="rm-jn-name">' + esc(tx(node.title)) + '</span>' +
@@ -158,6 +159,16 @@
   }
 
   var mounted = null;
+  /* Done-set from the previous paint: a node that is done now but was not
+     before gets the pop animation. */
+  var lastDone = null;
+  var lastXp = null;
+  function rememberDone(state) {
+    var map = {};
+    Object.keys(state.done || {}).forEach(function (k) { if (state.done[k]) map[k] = true; });
+    return map;
+  }
+
   function mount(container) {
     if (!container) return;
     var state = J.load();
@@ -172,6 +183,12 @@
       container.insertBefore(host, container.firstChild);
     }
     host.innerHTML = journeyHtml(state);
+    lastDone = rememberDone(state);
+    if (lastXp !== null && state.xp !== lastXp) {
+      var xpStat = host.querySelectorAll('.rm-jn-stat')[1];
+      if (xpStat) { xpStat.classList.add('is-bump'); setTimeout(function () { xpStat.classList.remove('is-bump'); }, 600); }
+    }
+    lastXp = state.xp;
     mounted = container;
     container.classList.add('has-journey');
     if (!host.dataset.bound) {
@@ -326,6 +343,41 @@
         '<button type="button" class="rm-lesson-btn is-primary" data-ls-close>' + esc(c('Continue', 'Continuar')) + '</button></div>';
       var b = root.querySelector('[data-ls-close]');
       if (b) try { b.focus(); } catch (e) {}
+      celebrate(root.querySelector('.rm-lesson-done'), xp, res.perfect);
+    }
+
+    /* Confetti and a counting XP number on the finish screen. */
+    function celebrate(box, xp, perfect) {
+      if (!box) return;
+      var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (document.documentElement.getAttribute('data-reduced-motion') === '1') reduced = true;
+      var xpEl = box.querySelector('.rm-lesson-done-stats b');
+      if (xpEl && !reduced && xp > 0) {
+        var t0 = performance.now();
+        var dur = 700;
+        (function tick(now) {
+          var k = Math.min(1, (now - t0) / dur);
+          var eased = 1 - Math.pow(1 - k, 3);
+          xpEl.textContent = '+' + Math.round(xp * eased);
+          if (k < 1) requestAnimationFrame(tick);
+        })(t0);
+      }
+      if (reduced) return;
+      var colors = ['#1E6A50', '#3DBE84', '#F2D338', '#C45C4A', '#2E86DE', '#F2EFE7'];
+      var n = perfect ? 90 : 50;
+      for (var i = 0; i < n; i++) {
+        var piece = document.createElement('i');
+        piece.className = 'rm-confetti';
+        piece.style.left = (Math.random() * 100) + '%';
+        piece.style.background = colors[i % colors.length];
+        piece.style.setProperty('--x', ((Math.random() - 0.5) * 160) + 'px');
+        piece.style.setProperty('--r', (360 + Math.random() * 720) + 'deg');
+        piece.style.setProperty('--d', (1.8 + Math.random() * 1.4) + 's');
+        piece.style.setProperty('--dl', (Math.random() * 0.6) + 's');
+        if (i % 3 === 0) piece.style.borderRadius = '50%';
+        box.appendChild(piece);
+      }
+      setTimeout(function () { box.querySelectorAll('.rm-confetti').forEach(function (el) { el.remove(); }); }, 4200);
     }
 
     function next() {

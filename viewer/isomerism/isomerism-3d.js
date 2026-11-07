@@ -1073,7 +1073,7 @@
     return Boolean(document.querySelector('script[data-atomurus-runtime="isomerism-3d.js"]'));
   }
 
-  var PAPER_LAB_SRC = '/viewer/runtime/paper-lab.js?v=202611070952';
+  var PAPER_LAB_SRC = '/viewer/runtime/paper-lab.js?v=202611071036';
   function loadPaperLab() {
     if (window.atomurusPaperLab) return Promise.resolve();
     if (window.__atomurusPaperLabPending) return window.__atomurusPaperLabPending;

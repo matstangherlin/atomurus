@@ -3614,3 +3614,112 @@ html[data-rm] body.rm.rm .rm-shells-link { font: 600 15px/1.4 var(--rm-font); co
   /* 320px phones: the mark alone keeps search, theme and menu on the line */
   .rm-header-in > .rm-brand .rm-brand-name { display: none; }
 }
+
+/* 11 ── Bottom tab bar (phones) ─────────────────────────────────────
+   On narrow screens the main sections live in a fixed bar at the bottom,
+   like a native app; the burger keeps the secondary links. */
+.rm-tabbar { display: none; }
+@media (max-width: 1023px) {
+  .rm-tabbar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    padding: 6px 6px calc(6px + env(safe-area-inset-bottom, 0px));
+    background: color-mix(in oklab, var(--rm-paper) 92%, transparent);
+    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    border-top: 1px solid var(--rm-line);
+    box-shadow: 0 -8px 24px rgba(20, 18, 14, .06);
+  }
+  .rm-tab {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+    min-height: 52px; padding: 4px 2px; border-radius: 12px;
+    color: var(--rm-ink-2); font: 600 11.5px/1.1 var(--rm-font); text-decoration: none;
+    -webkit-tap-highlight-color: transparent; transition: color .15s, background .15s, transform .15s;
+  }
+  .rm-tab svg { width: 24px; height: 24px; transition: transform .2s cubic-bezier(.22, 1.4, .36, 1); }
+  .rm-tab:active { transform: scale(.94); }
+  .rm-tab.is-active { color: var(--rm-green); background: var(--rm-green-soft); }
+  .rm-tab.is-active svg { transform: translateY(-1px) scale(1.08); }
+  html.has-rm-tabbar body, html.has-rm-tabbar body.ps-body, html.has-rm-tabbar body.ws-body { padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important; }
+  html.has-rm-tabbar .rm-footer { padding-bottom: 24px; }
+  /* The header drawer no longer needs the five main links: the bar has them. */
+  html.has-rm-tabbar .rm-header.is-open .rm-nav > .rm-link[data-rm-section="periodic"],
+  html.has-rm-tabbar .rm-header.is-open .rm-nav > .rm-link[data-rm-section="lab"],
+  html.has-rm-tabbar .rm-header.is-open .rm-nav > .rm-link[data-rm-section="explore"] { display: none; }
+  html.rm-lesson-open .rm-tabbar, html:fullscreen .rm-tabbar { display: none; }
+  /* App shell: the bar replaces the old three-item bottom nav. */
+  html[data-rm-ws][data-rm-app] .ws-bottom { display: none !important; }
+  html[data-rm-ws][data-rm-app].has-rm-tabbar .ws-main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important; }
+}
+html[data-theme="dark"] .rm-tabbar { background: color-mix(in oklab, #14120E 90%, transparent); box-shadow: 0 -8px 24px rgba(0, 0, 0, .35); }
+
+/* 12 ── Study journey: motion ────────────────────────────────────────
+   Nodes slide in along the path, the current one breathes, a node that just
+   got done pops, bars fill, options bounce, wrong shakes, the finish screen
+   showers confetti and counts XP. All off under reduced motion. */
+.rm-jn-row { animation: rm-jn-in 480ms cubic-bezier(.22, 1, .36, 1) both; animation-delay: calc(var(--i, 0) * 55ms); }
+@keyframes rm-jn-in { from { opacity: 0; transform: translateX(var(--off, 0)) translateY(18px) scale(.94); } to { opacity: 1; transform: translateX(var(--off, 0)) translateY(0) scale(1); } }
+.rm-jn-dot { transition: transform .18s cubic-bezier(.22, 1.4, .36, 1), background .2s, box-shadow .2s; }
+.rm-jn-node:active .rm-jn-dot { transform: scale(.92); }
+.rm-jn-node.is-current .rm-jn-dot { animation: rm-jn-breathe 2.2s ease-in-out infinite; }
+@keyframes rm-jn-breathe { 0%, 100% { box-shadow: 0 0 0 3px var(--rm-paper), 0 0 0 6px var(--rm-green); } 50% { box-shadow: 0 0 0 3px var(--rm-paper), 0 0 0 9px color-mix(in oklab, var(--rm-green) 55%, transparent); } }
+.rm-jn-node.is-current.is-practice .rm-jn-dot { animation: none; }
+.rm-jn-node.is-current.is-practice::before { transition: background .5s; }
+.rm-jn-node.is-just-done .rm-jn-dot { animation: rm-jn-pop 720ms cubic-bezier(.22, 1.6, .36, 1); }
+@keyframes rm-jn-pop { 0% { transform: scale(.6) rotate(-12deg); } 60% { transform: scale(1.18) rotate(4deg); } 100% { transform: scale(1) rotate(0); } }
+.rm-jn-node.is-just-done::after { content: ""; position: absolute; inset: -4px; border-radius: 50%; border: 3px solid var(--rm-green); animation: rm-jn-ring 900ms ease-out forwards; pointer-events: none; }
+@keyframes rm-jn-ring { from { opacity: .9; transform: scale(.8); } to { opacity: 0; transform: scale(1.7); } }
+.rm-jn-badge { animation: rm-jn-badge 600ms cubic-bezier(.22, 1.4, .36, 1) both; animation-delay: calc(var(--i, 0) * 55ms + 240ms); }
+@keyframes rm-jn-badge { from { opacity: 0; transform: translateX(-50%) translateY(6px) scale(.8); } to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); } }
+.rm-jn-pop { animation: rm-jn-popin 220ms cubic-bezier(.22, 1.3, .36, 1); transform-origin: top center; }
+@keyframes rm-jn-popin { from { opacity: 0; transform: translateY(-8px) scale(.94); } to { opacity: 1; transform: none; } }
+.rm-jn-unit-bar i, .rm-jn-bar i { transition: width .7s cubic-bezier(.22, 1, .36, 1); }
+.rm-jn-stat-k.is-fire svg { animation: rm-jn-flame 1.6s ease-in-out infinite; transform-origin: 50% 90%; }
+@keyframes rm-jn-flame { 0%, 100% { transform: scale(1) rotate(-3deg); } 50% { transform: scale(1.12) rotate(3deg); } }
+.rm-jn-stat b { transition: transform .2s; }
+.rm-jn-stat.is-bump b { animation: rm-jn-bump 500ms cubic-bezier(.22, 1.6, .36, 1); }
+@keyframes rm-jn-bump { 50% { transform: scale(1.25); color: var(--rm-green); } }
+.rm-jn-go { transition: transform .12s, box-shadow .12s; }
+.rm-jn-go:active { transform: translateY(2px); }
+.rm-jn-free-item, .rm-jn-card { transition: transform .15s, box-shadow .15s; }
+.rm-jn-free-item:hover { transform: translateX(3px); }
+
+/* lesson player */
+.rm-lesson { animation: rm-ls-in 260ms cubic-bezier(.22, 1, .36, 1); }
+@keyframes rm-ls-in { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+.rm-lesson-body { animation: rm-ls-step 260ms cubic-bezier(.22, 1, .36, 1); }
+@keyframes rm-ls-step { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
+.rm-lesson-bar i { transition: width .45s cubic-bezier(.22, 1, .36, 1); }
+.rm-lesson-opt { transition: transform .12s, background .15s, border-color .15s, box-shadow .15s; }
+.rm-lesson-opt:active:not(:disabled) { transform: scale(.97); }
+.rm-lesson-opt.is-picked { animation: rm-ls-pick 220ms cubic-bezier(.22, 1.5, .36, 1); }
+@keyframes rm-ls-pick { 50% { transform: scale(1.03); } }
+.rm-lesson-opt.is-right { animation: rm-ls-right 600ms cubic-bezier(.22, 1.4, .36, 1); }
+@keyframes rm-ls-right { 0% { transform: scale(1); } 35% { transform: scale(1.05); box-shadow: 0 0 0 6px color-mix(in oklab, var(--rm-green) 30%, transparent); } 100% { transform: scale(1); } }
+.rm-lesson-opt.is-wrong { animation: rm-ls-shake 480ms cubic-bezier(.36, .07, .19, .97); }
+@keyframes rm-ls-shake { 10%, 90% { transform: translateX(-2px); } 20%, 80% { transform: translateX(4px); } 30%, 50%, 70% { transform: translateX(-6px); } 40%, 60% { transform: translateX(6px); } }
+.rm-lesson-foot.is-ok, .rm-lesson-foot.is-bad { animation: rm-ls-foot 300ms cubic-bezier(.22, 1, .36, 1); }
+@keyframes rm-ls-foot { from { transform: translateY(100%); } to { transform: none; } }
+.rm-lesson-tile { animation: rm-ls-tile 500ms cubic-bezier(.22, 1.4, .36, 1); }
+@keyframes rm-ls-tile { from { opacity: 0; transform: rotate(-6deg) scale(.8); } to { opacity: 1; transform: none; } }
+.rm-lesson-btn.is-primary:active:not(:disabled) { transform: translateY(2px); box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .18); }
+.rm-lesson-done { position: relative; overflow: hidden; }
+.rm-lesson-done-ico { animation: rm-ls-done 700ms cubic-bezier(.22, 1.6, .36, 1); }
+@keyframes rm-ls-done { 0% { transform: scale(0) rotate(-30deg); } 70% { transform: scale(1.15) rotate(5deg); } 100% { transform: scale(1) rotate(0); } }
+.rm-lesson-done h2, .rm-lesson-done-stats, .rm-lesson-done > .rm-lesson-btn { animation: rm-ls-rise 500ms cubic-bezier(.22, 1, .36, 1) both; }
+.rm-lesson-done h2 { animation-delay: 150ms; } .rm-lesson-done-stats { animation-delay: 300ms; } .rm-lesson-done > .rm-lesson-btn { animation-delay: 450ms; }
+@keyframes rm-ls-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.rm-confetti { position: absolute; top: -12px; width: 10px; height: 14px; border-radius: 2px; opacity: .95; animation: rm-confetti var(--d, 2.4s) cubic-bezier(.2, .6, .4, 1) var(--dl, 0s) both; pointer-events: none; }
+@keyframes rm-confetti { 0% { transform: translate(0, 0) rotate(0); opacity: 1; } 100% { transform: translate(var(--x, 0), 110vh) rotate(var(--r, 720deg)); opacity: .7; } }
+@media (prefers-reduced-motion: reduce), (html[data-reduced-motion="1"]) {
+  .rm-jn-row, .rm-jn-badge, .rm-jn-pop, .rm-jn-node .rm-jn-dot, .rm-jn-node.is-just-done::after, .rm-jn-stat-k.is-fire svg, .rm-lesson, .rm-lesson-body, .rm-lesson-opt, .rm-lesson-foot, .rm-lesson-tile, .rm-lesson-done *, .rm-confetti { animation: none !important; }
+}
+html[data-reduced-motion="1"] .rm-jn-row, html[data-reduced-motion="1"] .rm-jn-node .rm-jn-dot, html[data-reduced-motion="1"] .rm-lesson-opt, html[data-reduced-motion="1"] .rm-confetti { animation: none !important; }
+/* Camera: its own item in the top nav, with the Pro tag; six tabs on phones */
+.rm-link-camera { display: inline-flex; align-items: center; gap: 6px; }
+.rm-pro-tag { display: inline-block; padding: 2px 6px; border-radius: 999px; background: var(--rm-green-soft); color: var(--rm-green); font: 700 10px/1.2 var(--rm-font); letter-spacing: .06em; }
+@media (max-width: 1023px) {
+  .rm-tabbar { grid-template-columns: repeat(6, 1fr); padding-left: 2px; padding-right: 2px; }
+  .rm-tab { font-size: 10.5px; padding: 4px 0; }
+  .rm-tab svg { width: 22px; height: 22px; }
+  html.has-rm-tabbar .rm-header.is-open .rm-nav > .rm-link[data-rm-section="camera"] { display: none; }
+}

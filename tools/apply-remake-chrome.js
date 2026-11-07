@@ -37,6 +37,7 @@ function sectionFor(rel) {
   if (/^periodic-table(\.pt)?\.html$/.test(r) || r.startsWith('periodic-table/')) return 'periodic';
   if (r.startsWith('viewer/') || /^isomerism(\.pt)?\.html$/.test(r) || r.startsWith('isomerism/')) return 'models';
   if (/^calculators(\.pt)?\.html$/.test(r)) return 'calculators';
+  if (/^vision(\.pt)?\.html$/.test(r)) return 'camera';
   if (/^explore(\.pt)?\.html$/.test(r) || r.startsWith('explore/')) return 'explore';
   if (/^pricing(\.pt)?\.html$/.test(r)) return 'plans';
   return '';
@@ -51,7 +52,7 @@ function headerFor(rel) {
   const section = sectionFor(rel);
   if (section) {
     html = html.replace(
-      new RegExp(`(<a class="rm-link)(" data-rm-section="${section}")`),
+      new RegExp(`(<a class="rm-link[^"]*)(" data-rm-section="${section}")`),
       '$1 is-active" aria-current="page$2'
     );
     html = html.replace(
@@ -63,8 +64,12 @@ function headerFor(rel) {
     // Sign-in keeps only the brand: no navigation, no account chip.
     html = html.replace('<header class="rm-header"', '<header class="rm-header rm-header--minimal"');
     const cut = html.indexOf('    <button class="rm-burger"');
-    const end = html.lastIndexOf('  </div>\n</header>');
+    const end = html.lastIndexOf('  </div>\n  <nav class="rm-tabbar"') !== -1
+      ? html.lastIndexOf('  </div>\n  <nav class="rm-tabbar"')
+      : html.lastIndexOf('  </div>\n</header>');
     if (cut !== -1 && end > cut) html = html.slice(0, cut) + html.slice(end);
+    // No bottom tab bar on the sign-in page either.
+    html = html.replace(/  <nav class="rm-tabbar"[\s\S]*?<\/nav>\n/, '');
   }
   return html;
 }
