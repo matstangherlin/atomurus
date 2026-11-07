@@ -21,6 +21,9 @@ mesmo sem internet.
   faturamento do próprio Play para vender recursos digitais dentro do app).
 - **Sem anúncios e sem analytics:** o AdSense não é permitido dentro de apps;
   as tags são removidas da cópia do APK e o banner de cookies não aparece.
+- **Nada vem da internet:** as bibliotecas que o site baixa de CDNs (3D,
+  gráficos, PDF) vão dentro do APK. O formulário de contato fica oculto; o
+  e-mail continua na página.
 - O site continua igual: nada disso é carregado no navegador.
 
 - **Política de privacidade do app:** `app-privacy.pt.html` / `app-privacy.html`
